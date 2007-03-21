@@ -1,4 +1,3 @@
-debian/tmp/usr/bin/firefox-* usr/bin
 debian/tmp/usr/lib/firefox-*/*.so usr/lib/firefox-trunk
 debian/tmp/usr/lib/firefox-*/components usr/lib/firefox-trunk
 debian/tmp/usr/lib/firefox-*/firefox-trunk-bin usr/lib/firefox-trunk
