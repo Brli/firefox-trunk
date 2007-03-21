@@ -1,0 +1,88 @@
+#!/usr/bin/make -f
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_BUILD_ARCH  ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+
+DEBIAN_VERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
+DEBIAN_REV_CODE := $(shell echo $(DEBIAN_VERSION) | sed 's/^.*-\([0-9]*\)[^-]*$$/0\1/ ; s/^.*\(..\)$$/\1/')
+
+DEB_TAR_SRCDIR		:= mozilla
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+        OPTFLAGS = -O0
+else
+        OPTFLAGS = -O2 -fno-strict-aliasing
+endif
+
+OPTFLAGS += -g
+
+DEB_AUTO_UPDATE_DEBIAN_CONTROL=1
+DEB_AUTO_UPDATE_AUTOCONF=2.13
+
+include /usr/share/cdbs/1/rules/tarball.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/patchsys-quilt.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+DEB_CONFIGURE_USER_FLAGS= \
+	--disable-debug \
+        --with-default-mozilla-five-home=$(LIB_DIR) \
+        --with-user-appdir=.mozilla \
+        --with-system-png=/usr \
+        --with-system-jpeg=/usr \
+        --with-system-zlib=/usr \
+        --without-system-nspr \
+        --disable-composer \
+        --disable-debug \
+        --disable-elf-dynstr-gc \
+        --disable-gtktest \
+        --disable-installer \
+        --disable-ldap \
+        --disable-mailnews \
+        --disable-profilesharing \
+        --disable-strip \
+        --disable-strip-libs \
+        --disable-tests \
+        --disable-updater \
+        --disable-xprint \
+	--enable-application=browser \
+        --enable-canvas \
+        --enable-default-toolkit=cairo-gtk2 \
+        --enable-gnomevfs \
+	--enable-optimize="-pipe -w $(OPTFLAGS)" \
+        --enable-pango \
+        --enable-postscript \
+        --enable-svg \
+        --enable-svg-renderer=cairo \
+        --disable-system-cairo \
+        --enable-mathml \
+        --enable-xft \
+        --enable-xinerama \
+        --enable-extensions=default \
+        --enable-single-profile \
+        --enable-system-myspell \
+        --with-distribution-id=com.ubuntu \
+	--with-branding=browser/branding/unofficial \
+        $(NULL)
+
+
+UUDECODE = \
+	debsearch.gif \
+	wikipedia.gif \
+	$(NULL)
+
+pre-build::
+	set -e; for i in $(UUDECODE); do \
+		uudecode -o debian/$$i debian/$$i.uu; \
+		done
+
+clean::
+	set -e; for i in $(UUDECODE); do \
+		rm -f debian/$$i; \
+		done
+
+CFLAGS =
+CXXFLAGS =

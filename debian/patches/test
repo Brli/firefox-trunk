@@ -1,0 +1,31 @@
+---
+ browser/locales/Makefile.in |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: mozilla/browser/locales/Makefile.in
+===================================================================
+--- mozilla.orig/browser/locales/Makefile.in	2007-03-20 22:14:00.000000000 +0000
++++ mozilla/browser/locales/Makefile.in	2007-03-20 22:14:16.000000000 +0000
+@@ -47,20 +47,20 @@
+ 
+ vpath %.xml @srcdir@/en-US/searchplugins
+ vpath %.xml $(LOCALE_SRCDIR)/searchplugins
+ 
+ run_for_effects := $(shell if ! test -d $(DIST); then $(NSINSTALL) -D $(DIST); fi; if ! test -d $(DIST)/branding; then $(NSINSTALL) -D $(DIST)/branding; fi)
+ _ABS_DIST := $(shell cd $(DIST) && pwd)
+ 
+ ifdef MOZ_BRANDING_DIRECTORY
+ SUBMAKEFILES += \
+-	$(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/Makefile \
+-	$(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/locales/Makefile \
++	$(topsrcdir)/$(MOZ_BRANDING_DIRECTORY)/Makefile \
++	$(topsrcdir)/$(MOZ_BRANDING_DIRECTORY)/locales/Makefile \
+ 	$(NULL)
+ endif
+ 
+ # This makefile uses variable overrides from the libs-% target to
+ # build non-default locales to non-default dist/ locations. Be aware!
+ 
+ AB = $(firstword $(subst -, ,$(AB_CD)))
+ 
+ APP_VERSION := $(shell cat $(srcdir)/../config/version.txt)

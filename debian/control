@@ -1,0 +1,65 @@
+Source: firefox-trunk
+Section: web
+Priority: optional
+Maintainer: Alexander Sack <asac@ubuntu.com>
+Build-Depends: cdbs (>= 0.4.23-1.1), bzip2, autotools-dev, debhelper (>= 5), quilt, patchutils (>= 0.2.25), cdbs (>= 0.4.27-1), autoconf2.13, libx11-dev, libxt-dev, libgtk2.0-dev (>= 2.8), zlib1g-dev, liborbit2-dev, libidl-dev (>= 0.8.0), zip, libxft-dev, libfreetype6-dev, libpng12-dev, libjpeg62-dev, libxrender-dev, libxinerama-dev, libcairo2-dev, libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev, sharutils, m4, binutils (>= 2.17-1) [mips mipsel], libhunspell-dev
+Standards-Version: 3.7.2.1
+
+Package: firefox-trunk
+Architecture: any
+Depends: fontconfig, psmisc, debianutils (>= 1.16), ${shlibs:Depends}, libnspr4 (>= 2:1.firefox1.5.dfsg+1.5.0.5-0ubuntu6.06.1), libnss3 (>= 2:1.firefox1.5.dfsg+1.5.0.5-0ubuntu6.06.1)
+Suggests: firefox-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
+Provides: www-browser
+Conflicts: mozilla-firefox (<< 1.5.dfsg-1)
+Replaces: mozilla-firefox
+Description: lightweight web browser based on Mozilla (Development Version)
+ Firefox is a redesign of the Mozilla browser component, similar to
+ Galeon, K-Meleon and Camino, but written using the XUL user interface
+ language and designed to be lightweight and cross-platform.
+ .
+ This browser was previously known as Firebird and Phoenix.
+ .
+ This is a build of a random development version (aka trunk). It is ment for preview 
+ and not for production use.
+
+Package: firefox-trunk-dom-inspector
+Architecture: all
+Depends: firefox (>= ${source:Version}), firefox (<< ${source:Version}.1~)
+Provides: mozilla-firefox-dom-inspector
+Replaces: mozilla-firefox-dom-inspector 
+Conflicts: mozilla-firefox-dom-inspector
+Description: tool for inspecting the DOM of pages in Mozilla Firefox (Development Version)
+ This is a tool that allows you to inspect the DOM for web pages in
+ Firefox.  This is of great use to people who are doing Mozilla chrome
+ development or web page development.
+
+Package: firefox-trunk-gnome-support
+Architecture: any
+Section: gnome
+Depends: ${shlibs:Depends}, firefox (= ${Source-Version})
+Provides: gnome-www-browser
+Description: Support for Gnome in Mozilla Firefox (Development Version)
+ This is an extension to Firefox that allows it to use protocol
+ handlers from Gnome-VFS, such as smb or sftp, and other Gnome
+ integration features.
+
+Package: firefox-trunk-dbg
+Architecture: any
+Priority: extra
+Section: devel
+Depends: firefox (= ${Source-Version})
+Description: debugging symbols for firefox (Development Version)
+ Firefox is a redesign of the Mozilla browser component, similar to
+ Galeon, K-Meleon and Camino, but written using the XUL user interface
+ language and designed to be lightweight and cross-platform.
+ .
+ This package contains the debugging symbols for firefox (Development Version).
+
+Package: firefox-dev
+Architecture: any
+Section: devel
+Depends: firefox (= ${Source-Version})
+Description: Development files for Mozilla Firefox (Development Version)
+ This package contains the development headers, idl files and static libraries 
+ needed to develop applications using Mozilla Firefox.
+

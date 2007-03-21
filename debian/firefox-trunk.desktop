@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Firefox Web Browser (Development Version)
+Comment=Browse the Bleeding Edge
+GenericName=Bleed Browser
+Exec=firefox-trunk %u
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=firefox-trunk.png
+Categories=Application;Network;
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png
+StartupWMClass=Firefox-Trunk-bin
+StartupNotify=true

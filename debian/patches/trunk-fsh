@@ -1,0 +1,94 @@
+---
+ build/unix/Makefile.in |   10 +++++-----
+ config/autoconf.mk.in  |    8 ++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+Index: mozilla/build/unix/Makefile.in
+===================================================================
+--- mozilla.orig/build/unix/Makefile.in	2006-04-28 14:54:52.000000000 +0000
++++ mozilla/build/unix/Makefile.in	2007-03-20 14:25:01.000000000 +0000
+@@ -67,13 +67,13 @@
+ 
+ _DEFS = $(subst \,\\\\\,$(ACDEFINES))
+ 
+-pkg_config_files=$(MOZ_APP_NAME)-nspr.pc $(MOZ_APP_NAME)-xpcom.pc \
+-	$(MOZ_APP_NAME)-js.pc \
+-	$(MOZ_APP_NAME)-nss.pc $(MOZ_APP_NAME)-plugin.pc
++pkg_config_files=$(MOZ_APP_NAME)-trunk-nspr.pc $(MOZ_APP_NAME)-trunk-xpcom.pc \
++	$(MOZ_APP_NAME)-trunk-js.pc \
++	$(MOZ_APP_NAME)-trunk-nss.pc $(MOZ_APP_NAME)-trunk-plugin.pc
+ 
+-GARBAGE	= $(pkg_config_files) $(MOZ_APP_NAME)-config
++GARBAGE	= $(pkg_config_files) $(MOZ_APP_NAME)-trunk-config
+ 
+-$(MOZ_APP_NAME)-config:: mozilla-config.in Makefile.in Makefile $(DEPTH)/config/autoconf.mk
++$(MOZ_APP_NAME)-trunk-config:: mozilla-config.in Makefile.in Makefile $(DEPTH)/config/autoconf.mk
+ 	cat $< | sed \
+ 	-e "s|%prefix%|$(prefix)|" \
+ 	-e "s|%exec_prefix%|$(exec_prefix)|" \
+@@ -85,7 +85,7 @@
+ 	-e "s|%FULL_NSPR_LIBS%|$(FULL_NSPR_LIBS)|" \
+ 	-e "s|%FULL_NSPR_CFLAGS%|$(FULL_NSPR_CFLAGS)|" > $@
+ 
+-$(MOZ_APP_NAME)-%.pc : mozilla-%.pc.in Makefile.in Makefile $(DEPTH)/config/autoconf.mk
++$(MOZ_APP_NAME)-trunk-%.pc : mozilla-%.pc.in Makefile.in Makefile $(DEPTH)/config/autoconf.mk
+ 	cat $< | sed \
+ 	-e "s|%prefix%|$(prefix)|" \
+ 	-e "s|%exec_prefix%|$(exec_prefix)|" \
+@@ -101,7 +101,7 @@
+ 	-e "s|%NSPR_NAME%|$(NSPR_NAME)|" \
+ 	-e "s|%NSPR_VERSION%|$(NSPR_VERSION)|" > $@
+ 
+-libs:: $(MOZ_APP_NAME)-config
++libs:: $(MOZ_APP_NAME)-trunk-config
+ 	chmod 755 $<
+ 	$(INSTALL) -m 755 $< $(DIST)/bin
+ 
+@@ -116,7 +116,7 @@
+ install:: run-mozilla.sh
+ 	$(SYSINSTALL) $(IFLAGS2) $< $(DESTDIR)$(mozappdir)
+ 
+-install:: $(MOZ_APP_NAME)-config
++install:: $(MOZ_APP_NAME)-trunk-config
+ 	$(SYSINSTALL) $(IFLAGS2) $< $(DESTDIR)$(bindir)
+ 
+ install:: $(pkg_config_files)
+Index: mozilla/config/autoconf.mk.in
+===================================================================
+--- mozilla.orig/config/autoconf.mk.in	2007-01-17 20:38:56.000000000 +0000
++++ mozilla/config/autoconf.mk.in	2007-03-20 14:25:01.000000000 +0000
+@@ -58,14 +58,14 @@
+ prefix		= @prefix@
+ exec_prefix	= @exec_prefix@
+ bindir		= @bindir@
+-includedir	= @includedir@/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
++includedir	= @includedir@/$(MOZ_APP_NAME)-trunk
+ libdir		= @libdir@
+ datadir		= @datadir@
+ mandir		= @mandir@
+-idldir		= @datadir@/idl/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
++idldir		= @datadir@/idl/$(MOZ_APP_NAME)-trunk
+ 
+-mozappdir	= $(libdir)/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
+-mredir		= $(libdir)/mre/mre-$(MOZ_APP_VERSION)
++mozappdir	= $(libdir)/$(MOZ_APP_NAME)-trunk
++mredir		= $(libdir)/mre/mre-trunk
+ mrelibdir	= $(mredir)/lib
+ 
+ DIST		= $(DEPTH)/dist
+Index: mozilla/browser/app/Makefile.in
+===================================================================
+--- mozilla.orig/browser/app/Makefile.in	2007-03-20 15:27:15.000000000 +0000
++++ mozilla/browser/app/Makefile.in	2007-03-20 16:53:10.000000000 +0000
+@@ -87,9 +87,9 @@
+ MOZILLA_INTERNAL_API = 1
+ 
+ ifeq ($(USE_SHORT_LIBNAME), 1)
+-PROGRAM = $(MOZ_APP_NAME)$(BIN_SUFFIX)
++PROGRAM = $(MOZ_APP_NAME)-trunk$(BIN_SUFFIX)
+ else
+-PROGRAM = $(MOZ_APP_NAME)-bin$(BIN_SUFFIX)
++PROGRAM = $(MOZ_APP_NAME)-trunk-bin$(BIN_SUFFIX)
+ endif
+ 
+ REQUIRES = \

@@ -1,0 +1,8 @@
+debian/tmp/usr/lib/pkgconfig/*.pc usr/lib/pkgconfig
+debian/*.pc usr/lib/pkgconfig
+debian/tmp/usr/share/idl/firefox-*/* usr/share/idl/firefox-trunk/
+debian/tmp/usr/include/firefox-*/* usr/include/firefox-trunk
+debian/tmp/usr/bin/firefox-trunk-config usr/bin
+
+debian/tmp/usr/lib/firefox-*/regxpcom usr/lib/firefox-trunk
+debian/tmp/usr/lib/firefox-*/xp* usr/lib/firefox-trunk

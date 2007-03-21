@@ -1,0 +1,13 @@
+Index: mozilla/browser/branding/unofficial/Makefile.in
+===================================================================
+--- mozilla.orig/browser/branding/unofficial/Makefile.in	2007-03-21 03:49:39.000000000 +0100
++++ mozilla/browser/branding/unofficial/Makefile.in	2007-03-21 03:50:18.000000000 +0100
+@@ -4,7 +4,7 @@
+ #    resources
+ 
+ DEPTH = ../../..
+-topsrcdir = @top_srcdir@
++topsrcdir = $(DEPTH)
+ srcdir = @srcdir@
+ VPATH = @srcdir@
+ 

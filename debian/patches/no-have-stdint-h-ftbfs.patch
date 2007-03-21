@@ -1,0 +1,24 @@
+diff -Nur firefox-trunk/build-tree/mozilla/configure.in firefox-trunk.new/build-tree/mozilla/configure.in
+--- mozilla/configure.in	2007-01-31 16:12:09.000000000 +0000
++++ mozilla/configure.in	2007-03-19 16:00:22.000000000 +0000
+@@ -7198,14 +7198,14 @@
+    MOZ_TREE_CAIRO=,
+    MOZ_TREE_CAIRO=1 )
+ 
+-   if test "$MOZ_TREE_CAIRO"; then
+-       # Check for headers defining standard int types.
+-       AC_CHECK_HEADERS(stdint.h inttypes.h sys/int_types.h)
++   # Check for headers defining standard int types.
++   AC_CHECK_HEADERS(stdint.h inttypes.h sys/int_types.h)
+ 
+-       # For now we assume that we will have a uint64_t available through
+-       # one of the above headers or mozstdint.h.
+-       AC_DEFINE(HAVE_UINT64_T)
++   # For now we assume that we will have a uint64_t available through
++   # one of the above headers or mozstdint.h.
++   AC_DEFINE(HAVE_UINT64_T)
+ 
++   if test "$MOZ_TREE_CAIRO"; then
+        # Define macros for cairo-features.h
+        if test "$MOZ_X11"; then
+            XLIB_SURFACE_FEATURE="#define CAIRO_HAS_XLIB_SURFACE 1"
