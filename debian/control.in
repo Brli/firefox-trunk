@@ -10,8 +10,6 @@ Architecture: any
 Depends: fontconfig, psmisc, debianutils (>= 1.16), ${shlibs:Depends}, libnspr4 (>= 2:1.firefox1.5.dfsg+1.5.0.5-0ubuntu6.06.1), libnss3 (>= 2:1.firefox1.5.dfsg+1.5.0.5-0ubuntu6.06.1)
 Suggests: firefox-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
 Provides: www-browser
-Conflicts: mozilla-firefox (<< 1.5.dfsg-1)
-Replaces: mozilla-firefox
 Description: lightweight web browser based on Mozilla (Development Version)
  Firefox is a redesign of the Mozilla browser component, similar to
  Galeon, K-Meleon and Camino, but written using the XUL user interface
@@ -24,10 +22,7 @@ Description: lightweight web browser based on Mozilla (Development Version)
 
 Package: firefox-trunk-dom-inspector
 Architecture: all
-Depends: firefox (>= ${source:Version}), firefox (<< ${source:Version}.1~)
-Provides: mozilla-firefox-dom-inspector
-Replaces: mozilla-firefox-dom-inspector 
-Conflicts: mozilla-firefox-dom-inspector
+Depends: firefox-trunk (>= ${source:Version}), firefox-trunk (<< ${source:Version}.1~)
 Description: tool for inspecting the DOM of pages in Mozilla Firefox (Development Version)
  This is a tool that allows you to inspect the DOM for web pages in
  Firefox.  This is of great use to people who are doing Mozilla chrome
@@ -47,7 +42,7 @@ Package: firefox-trunk-dbg
 Architecture: any
 Priority: extra
 Section: devel
-Depends: firefox (= ${Source-Version})
+Depends: firefox-trunk (= ${Source-Version})
 Description: debugging symbols for firefox (Development Version)
  Firefox is a redesign of the Mozilla browser component, similar to
  Galeon, K-Meleon and Camino, but written using the XUL user interface
@@ -55,10 +50,10 @@ Description: debugging symbols for firefox (Development Version)
  .
  This package contains the debugging symbols for firefox (Development Version).
 
-Package: firefox-dev
+Package: firefox-trunk-dev
 Architecture: any
 Section: devel
-Depends: firefox (= ${Source-Version})
+Depends: firefox-trunk (= ${Source-Version})
 Description: Development files for Mozilla Firefox (Development Version)
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
