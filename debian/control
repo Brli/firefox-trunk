@@ -31,7 +31,7 @@ Description: tool for inspecting the DOM of pages in Mozilla Firefox (Developmen
 Package: firefox-trunk-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox (= ${Source-Version})
+Depends: ${shlibs:Depends}, firefox-trunk (= ${Source-Version})
 Provides: gnome-www-browser
 Description: Support for Gnome in Mozilla Firefox (Development Version)
  This is an extension to Firefox that allows it to use protocol
