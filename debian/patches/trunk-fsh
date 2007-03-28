@@ -1,13 +1,45 @@
 ---
- build/unix/Makefile.in |   10 +++++-----
- config/autoconf.mk.in  |    8 ++++----
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ browser/app/Makefile.in |    4 ++--
+ build/unix/Makefile.in  |   16 ++++++++--------
+ config/autoconf.mk.in   |    8 ++++----
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
+Index: mozilla/browser/app/Makefile.in
+===================================================================
+--- mozilla.orig/browser/app/Makefile.in	2007-02-03 02:24:35.000000000 +0100
++++ mozilla/browser/app/Makefile.in	2007-03-22 02:21:42.000000000 +0100
+@@ -82,19 +82,19 @@
+ include $(topsrcdir)/config/rules.mk
+ 
+ else
+ # Build a binary bootstrapping with XRE_main
+ 
+ MOZILLA_INTERNAL_API = 1
+ 
+ ifeq ($(USE_SHORT_LIBNAME), 1)
+-PROGRAM = $(MOZ_APP_NAME)$(BIN_SUFFIX)
++PROGRAM = $(MOZ_APP_NAME)-trunk$(BIN_SUFFIX)
+ else
+-PROGRAM = $(MOZ_APP_NAME)-bin$(BIN_SUFFIX)
++PROGRAM = $(MOZ_APP_NAME)-trunk-bin$(BIN_SUFFIX)
+ endif
+ 
+ REQUIRES = \
+ 	xpcom \
+ 	xulapp \
+ 	$(NULL)
+ 
+ CPPSRCS = nsBrowserApp.cpp
 Index: mozilla/build/unix/Makefile.in
 ===================================================================
---- mozilla.orig/build/unix/Makefile.in	2006-04-28 14:54:52.000000000 +0000
-+++ mozilla/build/unix/Makefile.in	2007-03-20 14:25:01.000000000 +0000
-@@ -67,13 +67,13 @@
+--- mozilla.orig/build/unix/Makefile.in	2006-04-28 16:54:52.000000000 +0200
++++ mozilla/build/unix/Makefile.in	2007-03-22 02:21:42.000000000 +0100
+@@ -62,64 +62,64 @@
+ endif
+ 
+ ifdef MOZ_ENABLE_GTK
+ SUPERWIN_LIBS=-lgtksuperwin
+ endif
  
  _DEFS = $(subst \,\\\\\,$(ACDEFINES))
  
@@ -26,7 +58,11 @@ Index: mozilla/build/unix/Makefile.in
  	cat $< | sed \
  	-e "s|%prefix%|$(prefix)|" \
  	-e "s|%exec_prefix%|$(exec_prefix)|" \
-@@ -85,7 +85,7 @@
+ 	-e "s|%includedir%|$(includedir)|" \
+ 	-e "s|%libdir%|$(mozappdir)|" \
+ 	-e "s|%idldir%|$(idldir)|" \
+ 	-e "s|%MOZILLA_VERSION%|$(MOZ_APP_VERSION)|" \
+ 	-e "s|%DEFS%|$(_DEFS)|" \
  	-e "s|%FULL_NSPR_LIBS%|$(FULL_NSPR_LIBS)|" \
  	-e "s|%FULL_NSPR_CFLAGS%|$(FULL_NSPR_CFLAGS)|" > $@
  
@@ -35,7 +71,15 @@ Index: mozilla/build/unix/Makefile.in
  	cat $< | sed \
  	-e "s|%prefix%|$(prefix)|" \
  	-e "s|%exec_prefix%|$(exec_prefix)|" \
-@@ -101,7 +101,7 @@
+ 	-e "s|%includedir%|$(includedir)|" \
+ 	-e "s|%libdir%|$(mozappdir)|" \
+ 	-e "s|%idldir%|$(idldir)|" \
+ 	-e "s|%MOZ_APP_NAME%|$(MOZ_APP_NAME)|" \
+ 	-e "s|%MOZILLA_VERSION%|$(MOZ_APP_VERSION)|" \
+ 	-e "s|%SUPERWIN_LIBS%|$(SUPERWIN_LIBS)|" \
+ 	-e "s|%DEFS%|$(_DEFS)|" \
+ 	-e "s|%FULL_NSPR_LIBS%|$(FULL_NSPR_LIBS)|" \
+ 	-e "s|%FULL_NSPR_CFLAGS%|$(FULL_NSPR_CFLAGS)|" \
  	-e "s|%NSPR_NAME%|$(NSPR_NAME)|" \
  	-e "s|%NSPR_VERSION%|$(NSPR_VERSION)|" > $@
  
@@ -44,7 +88,14 @@ Index: mozilla/build/unix/Makefile.in
  	chmod 755 $<
  	$(INSTALL) -m 755 $< $(DIST)/bin
  
-@@ -116,7 +116,7 @@
+ libs:: $(srcdir)/run-mozilla.sh $(pkg_config_files)
+ 	$(INSTALL) $< $(DIST)/bin
+ 
+ ifeq ($(OS_ARCH),OpenVMS)
+ libs:: vms/mozilla.com vms/install.com vms/getinfo.com
+ 	$(INSTALL) $? $(DIST)/bin
+ endif
+ 
  install:: run-mozilla.sh
  	$(SYSINSTALL) $(IFLAGS2) $< $(DESTDIR)$(mozappdir)
  
@@ -53,11 +104,19 @@ Index: mozilla/build/unix/Makefile.in
  	$(SYSINSTALL) $(IFLAGS2) $< $(DESTDIR)$(bindir)
  
  install:: $(pkg_config_files)
+ 	chmod 644 $<
+ 	$(SYSINSTALL) $(IFLAGS1) $(pkg_config_files) \
+ 		$(DESTDIR)$(libdir)/pkgconfig
 Index: mozilla/config/autoconf.mk.in
 ===================================================================
---- mozilla.orig/config/autoconf.mk.in	2007-01-17 20:38:56.000000000 +0000
-+++ mozilla/config/autoconf.mk.in	2007-03-20 14:25:01.000000000 +0000
-@@ -58,14 +58,14 @@
+--- mozilla.orig/config/autoconf.mk.in	2007-01-17 21:38:56.000000000 +0100
++++ mozilla/config/autoconf.mk.in	2007-03-22 02:21:42.000000000 +0100
+@@ -53,24 +53,24 @@
+ MOZ_APP_DISPLAYNAME = @MOZ_APP_DISPLAYNAME@
+ MOZ_APP_VERSION = @MOZ_APP_VERSION@
+ 
+ MOZ_PKG_SPECIAL = @MOZ_PKG_SPECIAL@
+ 
  prefix		= @prefix@
  exec_prefix	= @exec_prefix@
  bindir		= @bindir@
@@ -76,19 +135,8 @@ Index: mozilla/config/autoconf.mk.in
  mrelibdir	= $(mredir)/lib
  
  DIST		= $(DEPTH)/dist
-Index: mozilla/browser/app/Makefile.in
-===================================================================
---- mozilla.orig/browser/app/Makefile.in	2007-03-20 15:27:15.000000000 +0000
-+++ mozilla/browser/app/Makefile.in	2007-03-20 16:53:10.000000000 +0000
-@@ -87,9 +87,9 @@
- MOZILLA_INTERNAL_API = 1
+ LIBXUL_SDK      = @LIBXUL_SDK@
  
- ifeq ($(USE_SHORT_LIBNAME), 1)
--PROGRAM = $(MOZ_APP_NAME)$(BIN_SUFFIX)
-+PROGRAM = $(MOZ_APP_NAME)-trunk$(BIN_SUFFIX)
+ ifdef LIBXUL_SDK
+ LIBXUL_DIST = $(LIBXUL_SDK)
  else
--PROGRAM = $(MOZ_APP_NAME)-bin$(BIN_SUFFIX)
-+PROGRAM = $(MOZ_APP_NAME)-trunk-bin$(BIN_SUFFIX)
- endif
- 
- REQUIRES = \

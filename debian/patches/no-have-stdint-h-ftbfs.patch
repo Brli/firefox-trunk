@@ -1,7 +1,17 @@
-diff -Nur firefox-trunk/build-tree/mozilla/configure.in firefox-trunk.new/build-tree/mozilla/configure.in
---- mozilla/configure.in	2007-01-31 16:12:09.000000000 +0000
-+++ mozilla/configure.in	2007-03-19 16:00:22.000000000 +0000
-@@ -7198,14 +7198,14 @@
+---
+ configure.in |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+Index: mozilla/configure.in
+===================================================================
+--- mozilla.orig/configure.in	2007-01-31 17:12:09.000000000 +0100
++++ mozilla/configure.in	2007-03-22 02:21:42.000000000 +0100
+@@ -7193,24 +7193,24 @@
+    MOZ_CAIRO_CFLAGS='-I$(LIBXUL_DIST)/include/cairo'
+ 
+    MOZ_TREE_CAIRO=1
+    MOZ_ARG_ENABLE_BOOL(system-cairo,
+    [ --enable-system-cairo Use system cairo (located with pkgconfig)],
     MOZ_TREE_CAIRO=,
     MOZ_TREE_CAIRO=1 )
  
@@ -22,3 +32,8 @@ diff -Nur firefox-trunk/build-tree/mozilla/configure.in firefox-trunk.new/build-
         # Define macros for cairo-features.h
         if test "$MOZ_X11"; then
             XLIB_SURFACE_FEATURE="#define CAIRO_HAS_XLIB_SURFACE 1"
+            PS_SURFACE_FEATURE="#define CAIRO_HAS_PS_SURFACE 1"
+            PDF_SURFACE_FEATURE="#define CAIRO_HAS_PDF_SURFACE 1"
+            FT_FONT_FEATURE="#define CAIRO_HAS_FT_FONT 1"
+            MOZ_ENABLE_CAIRO_FT=1
+            CAIRO_FT_CFLAGS="$FT2_CFLAGS"

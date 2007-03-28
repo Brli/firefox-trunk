@@ -1,4 +1,4 @@
 no-have-stdint-h-ftbfs.patch
 trunk-fsh
-test
-brandir-dir-depth-fix
+ftbfs-with-branding-dir
+bz364093-thebes-system-cairo-fix

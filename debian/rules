@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+MOZ_CVS_ROOT := :pserver:anonymous@cvs-mirror.mozilla.org:/cvsroot
+
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
 DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
@@ -7,7 +9,9 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH  ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 DEBIAN_VERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
+DEBIAN_UPSTREAM_VERSION := $(shell echo $(DEBIAN_VERSION) | sed 's/^\(.*\)-[^-]*$$/\1/')
 DEBIAN_REV_CODE := $(shell echo $(DEBIAN_VERSION) | sed 's/^.*-\([0-9]*\)[^-]*$$/0\1/ ; s/^.*\(..\)$$/\1/')
+DEBIAN_DATE := $(shell echo $(DEBIAN_VERSION) | sed 's/^.*cvs\([0-9]*\).*$$/\1/')
 
 DEB_TAR_SRCDIR		:= mozilla
 
@@ -26,6 +30,8 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
+
+DEB_MOZ_APPLICATION=browser
 
 DEB_CONFIGURE_USER_FLAGS= \
 	--disable-debug \
@@ -48,16 +54,15 @@ DEB_CONFIGURE_USER_FLAGS= \
         --disable-tests \
         --disable-updater \
         --disable-xprint \
-	--enable-application=browser \
+        --enable-application=browser \
         --enable-canvas \
         --enable-default-toolkit=cairo-gtk2 \
         --enable-gnomevfs \
-	--enable-optimize="-pipe -w $(OPTFLAGS)" \
+        --enable-optimize="-pipe -w $(OPTFLAGS)" \
         --enable-pango \
         --enable-postscript \
         --enable-svg \
         --enable-svg-renderer=cairo \
-        --disable-system-cairo \
         --enable-mathml \
         --enable-xft \
         --enable-xinerama \
@@ -65,9 +70,18 @@ DEB_CONFIGURE_USER_FLAGS= \
         --enable-single-profile \
         --enable-system-myspell \
         --with-distribution-id=com.ubuntu \
-	--with-branding=browser/branding/unofficial \
-        $(NULL)
+        --with-branding=browser/branding/unofficial
 
+USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.4.0'; a=$$?; if test $$a != 1; then echo 1; fi)
+
+# for old cairo versions we cannot use system cairo
+ifeq (1, $(USE_SYSTEM_CAIRO))
+   DEB_CONFIGURE_USER_FLAGS += \
+        --enable-system-cairo
+else
+   DEB_CONFIGURE_USER_FLAGS += \
+        --disable-system-cairo
+endif
 
 UUDECODE = \
 	debsearch.gif \
@@ -83,6 +97,30 @@ clean::
 	set -e; for i in $(UUDECODE); do \
 		rm -f debian/$$i; \
 		done
+
+date := $(shell date +%Y%m%d)
+
+mozilla:
+ifeq (HEAD, $(DEBIAN_DATE))
+	set -e; sh -c "cvs -d$(MOZ_CVS_ROOT) co mozilla/client.mk; cd mozilla && make -f client.mk checkout MOZ_CO_PROJECT=$(DEB_MOZ_APPLICATION)"
+else
+	set -e; sh -c "cvs -d$(MOZ_CVS_ROOT) co mozilla/client.mk; cd mozilla && make -f client.mk checkout MOZ_CO_DATE=$(DEBIAN_DATE) MOZ_CO_PROJECT=$(DEB_MOZ_APPLICATION)"
+endif
+	rm -f cvsco*
+
+$(DEB_MOZ_APPLICATION)-snapshot-%.tar.bz2: mozilla
+	set -e; tar cjf $@ $^ || rm -f $@
+	set -e; rm -rf $^
+
+snapshot: $(DEB_MOZ_APPLICATION)-snapshot-$(date).tar.bz2
+
+../firefox-trunk_$(DEBIAN_UPSTREAM_VERSION).orig.tar.gz: $(DEB_MOZ_APPLICATION)-snapshot-$(date).tar.bz2
+	set -e; rm -rf firefox-trunk-$(DEBIAN_UPSTREAM_VERSION); mkdir firefox-trunk-$(DEBIAN_UPSTREAM_VERSION); \
+		cp  $(DEB_MOZ_APPLICATION)-snapshot-$(date).tar.bz2 firefox-trunk-$(DEBIAN_UPSTREAM_VERSION); \
+		tar cvzf $@ firefox-trunk-$(DEB_UPSTREAM_VERSION)/; \
+		rm -rf firefox-trunk-$(DEBIAN_UPSTREAM_VERSION)
+
+neworig: ../firefox-trunk_$(DEBIAN_UPSTREAM_VERSION).orig.tar.gz
 
 CFLAGS =
 CXXFLAGS =
