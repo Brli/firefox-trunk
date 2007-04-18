@@ -40,7 +40,8 @@ DEB_CONFIGURE_USER_FLAGS= \
         --with-system-png=/usr \
         --with-system-jpeg=/usr \
         --with-system-zlib=/usr \
-        --without-system-nspr \
+        --with-system-nspr \
+        --with-system-nss \
         --disable-composer \
         --disable-debug \
         --disable-elf-dynstr-gc \

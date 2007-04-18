@@ -1,8 +1,11 @@
-firefox-trunk (2.99+2cvs20070328-0ubuntu0) feisty; urgency=low
+firefox-trunk (2.99+2cvs20070417-0ubuntu0) feisty; urgency=low
 
   * update upstream cvs
+  * debian/rules, debian/control[.in]: build against system-nspr and 
+    system-nss for gutsy; drop explicity depends on libnspr and libnss
+    as those are now properly detected
 
- -- Alexander Sack <asac@ubuntu.com>  Wed, 28 Mar 2007 11:00:00 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 18 Apr 2007 13:00:00 +0200
 
 firefox-trunk (2.99+1-3.0a.20070201-0ubuntu0) feisty; urgency=low
 
