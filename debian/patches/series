@@ -1,3 +1,4 @@
 no-have-stdint-h-ftbfs.patch
 trunk-fsh
 ftbfs-with-branding-dir
+nspr_macro_backport_for_gfx_thebes
