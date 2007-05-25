@@ -1,3 +1,9 @@
+firefox-trunk (2.99+2cvs20070526-0ubuntu0) feisty; urgency=low
+
+  * update upstream cvs
+
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 25 May 2007 10:10:00 +0200
+
 firefox-trunk (2.99+2cvs20070417-0ubuntu0) feisty; urgency=low
 
   * update upstream cvs
