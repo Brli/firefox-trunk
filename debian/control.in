@@ -2,7 +2,7 @@ Source: firefox-trunk
 Section: web
 Priority: optional
 Maintainer: Alexander Sack <asac@ubuntu.com>
-Build-Depends: @cdbs@, libx11-dev, libxt-dev, libgtk2.0-dev (>= 2.8), zlib1g-dev, liborbit2-dev, libidl-dev (>= 0.8.0), zip, libxft-dev, libfreetype6-dev, libpng12-dev, libjpeg62-dev, libxrender-dev, libxinerama-dev, libcairo2-dev, libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev, sharutils, m4, binutils (>= 2.17-1) [mips mipsel], libhunspell-dev, libnspr4-dev, libnss3-dev
+Build-Depends: @cdbs@, libx11-dev, libxt-dev, libgtk2.0-dev (>= 2.8), zlib1g-dev, liborbit2-dev, libidl-dev (>= 0.8.0), zip, libxft-dev, libfreetype6-dev, libpng12-dev, libjpeg62-dev, libxrender-dev, libxinerama-dev, libcairo2-dev, libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev, sharutils, m4, binutils (>= 2.17-1) [mips mipsel], libhunspell-dev
 Standards-Version: 3.7.2.1
 
 Package: firefox-trunk
