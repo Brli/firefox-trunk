@@ -1,6 +1,11 @@
-firefox-trunk (2.99+2cvs20070526-0ubuntu0) feisty; urgency=low
+firefox-trunk (2.99+2cvs20070601-0ubuntu0) feisty; urgency=low
 
   * update upstream cvs
+  * debian/rules: don't use system-nspr and system-nss anymore
+  * debian/control*: drop build-depends accordingly
+  * debian/firefox-trunk.links: don't create link 
+    usr/lib/firefox/libnssckbi.so ... which was the wrong place
+    anyway
 
  -- Alexander Sack <asac@ubuntu.com>  Fri, 25 May 2007 10:10:00 +0200
 
