@@ -6,6 +6,8 @@ firefox-trunk (2.99+2cvs20070601-0ubuntu0) feisty; urgency=low
   * debian/firefox-trunk.links: don't create link 
     usr/lib/firefox/libnssckbi.so ... which was the wrong place
     anyway
+  * debian/patches/series, debian/patches/nspr_macro_backport_for_gfx_thebes:
+    drop nspr hack as we don't build against system nss/nspr for the time being
 
  -- Alexander Sack <asac@ubuntu.com>  Fri, 25 May 2007 10:10:00 +0200
 
