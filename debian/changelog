@@ -3326,7 +3326,7 @@ phoenix (0.5-3) unstable; urgency=low
     to start.
   * debian/phoenix.install: 
     + Install phoenix-xremote-client, and don't install
-	  mozilla-xremote-client.
+      mozilla-xremote-client.
     + Install phoenixrc.
 
  -- Eric Dorland <eric@debian.org>  Mon, 23 Dec 2002 02:52:21 -0500
