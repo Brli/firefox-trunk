@@ -1,3 +1,11 @@
+firefox-trunk (2.99+2cvs20070614-0ubuntu0) feisty; urgency=low
+
+  * merging copyright file fix from granparadiso branch
+  * debian/copyright, debian/MPL, debian/docs: added previously missed
+    copyright files.
+
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 15 Jun 2007 13:52:16 +0200
+
 firefox-trunk (2.99+2cvs20070601-0ubuntu0) feisty; urgency=low
 
   * update upstream cvs
