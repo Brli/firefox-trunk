@@ -1,0 +1,20 @@
+---
+ toolkit/xre/Makefile.in |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: mozilla/toolkit/xre/Makefile.in
+===================================================================
+--- mozilla.orig/toolkit/xre/Makefile.in	2007-07-04 06:59:26.000000000 -0400
++++ mozilla/toolkit/xre/Makefile.in	2007-07-04 07:21:58.000000000 -0400
+@@ -254,10 +254,10 @@
+ 	$(INSTALL) $^ .
+ 
+ platform.ini: FORCE
+ 	$(PYTHON) $(srcdir)/make-platformini.py $(topsrcdir)/config/milestone.txt > $@
+ 
+ libs:: platform.ini
+ 	$(INSTALL) $^ $(DIST)/bin
+ 
+-install::
++install:: platform.ini
+ 	$(INSTALL) $(IFLAGS1) $^ $(DESTDIR)$(mozappdir)
