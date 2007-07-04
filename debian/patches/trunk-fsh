@@ -6,15 +6,15 @@
 
 Index: mozilla/browser/app/Makefile.in
 ===================================================================
---- mozilla.orig/browser/app/Makefile.in	2007-02-03 02:24:35.000000000 +0100
-+++ mozilla/browser/app/Makefile.in	2007-03-22 02:21:42.000000000 +0100
-@@ -82,19 +82,19 @@
- include $(topsrcdir)/config/rules.mk
+--- mozilla.orig/browser/app/Makefile.in	2007-07-02 18:20:24.000000000 +0000
++++ mozilla/browser/app/Makefile.in	2007-07-03 22:32:07.000000000 +0000
+@@ -71,19 +71,19 @@
+ GRE_BUILDID = $(shell $(PYTHON) $(topsrcdir)/config/printconfigsetting.py $(LIBXUL_DIST)/bin/platform.ini Build BuildID)
  
- else
+ DEFINES += -DGRE_MILESTONE=$(GRE_MILESTONE) -DGRE_BUILDID=$(GRE_BUILDID)
+ 
+ ifndef LIBXUL_SDK
  # Build a binary bootstrapping with XRE_main
- 
- MOZILLA_INTERNAL_API = 1
  
  ifeq ($(USE_SHORT_LIBNAME), 1)
 -PROGRAM = $(MOZ_APP_NAME)$(BIN_SUFFIX)
@@ -26,14 +26,14 @@ Index: mozilla/browser/app/Makefile.in
  
  REQUIRES = \
  	xpcom \
+ 	string \
  	xulapp \
  	$(NULL)
  
- CPPSRCS = nsBrowserApp.cpp
 Index: mozilla/build/unix/Makefile.in
 ===================================================================
---- mozilla.orig/build/unix/Makefile.in	2006-04-28 16:54:52.000000000 +0200
-+++ mozilla/build/unix/Makefile.in	2007-03-22 02:21:42.000000000 +0100
+--- mozilla.orig/build/unix/Makefile.in	2006-04-28 14:54:52.000000000 +0000
++++ mozilla/build/unix/Makefile.in	2007-07-03 22:17:59.000000000 +0000
 @@ -62,64 +62,64 @@
  endif
  
@@ -109,8 +109,8 @@ Index: mozilla/build/unix/Makefile.in
  		$(DESTDIR)$(libdir)/pkgconfig
 Index: mozilla/config/autoconf.mk.in
 ===================================================================
---- mozilla.orig/config/autoconf.mk.in	2007-01-17 21:38:56.000000000 +0100
-+++ mozilla/config/autoconf.mk.in	2007-03-22 02:21:42.000000000 +0100
+--- mozilla.orig/config/autoconf.mk.in	2007-06-21 16:11:07.000000000 +0000
++++ mozilla/config/autoconf.mk.in	2007-07-03 22:17:59.000000000 +0000
 @@ -53,24 +53,24 @@
  MOZ_APP_DISPLAYNAME = @MOZ_APP_DISPLAYNAME@
  MOZ_APP_VERSION = @MOZ_APP_VERSION@
