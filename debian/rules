@@ -37,7 +37,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--disable-debug \
         --with-default-mozilla-five-home=$(LIB_DIR) \
         --with-user-appdir=.mozilla \
-        --with-system-png=/usr \
         --with-system-jpeg=/usr \
         --with-system-zlib=/usr \
         --without-system-nspr \

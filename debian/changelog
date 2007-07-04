@@ -1,4 +1,21 @@
-firefox-trunk (2.99+2cvs20070614-0ubuntu0) feisty; urgency=low
+firefox-trunk (2.99+2cvs20070703-0ubuntu0) feisty; urgency=low
+
+  * debian/patches/trunk-fsh: applied manually to build-tree/mozilla
+    /browser/app/makefile.in, due to failure to apply during build
+  * debian/patches/ftbfs_toolkit_xre_Makefile_in: Made and applied to fix
+    toolkit/xre/Makefile.in to fix failure to build
+  * debian/patches: Removed old patches that are no longer needed
+    - removed submakefiles-fix
+    - removed test
+  * debian/patches/series: updated as needed
+  * debian/rules: Removed --with-system-png=/usr \ due to failure to
+    build during configure, stating system's libpng doesn't have APNG 
+    support 
+  * Reminder to see if we can patch libpng (asac)
+
+ -- John Vivirito <gnomefreak@ubuntu.com>  Wed, 04 Jul 2007 07:53:00 -0400
+
+firefox-trunk (2.99+2cvs20070628-0ubuntu0) feisty; urgency=low
 
   * merging copyright file fix from granparadiso branch
   * debian/copyright, debian/MPL, debian/docs: added previously missed
