@@ -1,3 +1,9 @@
+firefox-trunk (2.99+2cvs20070722-0ubuntu0) gutsy; urgency=low
+
+  * new cvs snapshot: 2.99+2cvs20070722-0ubuntu0 
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 23 Jul 2007 09:43:55 +0000
+
 firefox-trunk (2.99+2cvs20070703-0ubuntu0) feisty; urgency=low
 
   * debian/patches/trunk-fsh: applied manually to build-tree/mozilla
