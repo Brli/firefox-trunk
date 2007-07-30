@@ -3,3 +3,4 @@ ftbfs-with-branding-dir
 ftbfs_toolkit_xre_Makefile_in
 config_rules_install_dist_files
 fix_make_install
+no-have-stdint-h-ftbfs.patch
