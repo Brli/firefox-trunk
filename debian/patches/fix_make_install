@@ -1,0 +1,1051 @@
+---
+ Makefile.in                            |    5 -
+ browser/app/Makefile.in                |    3 
+ browser/app/mozilla.in                 |    3 
+ browser/build.mk                       |    3 
+ browser/components/build/Makefile.in   |    2 
+ browser/installer/Makefile.in          |    8 +
+ browser/installer/unix/packages-static |   10 +-
+ build/unix/Makefile.in                 |   69 -------------
+ config/Makefile.in                     |    1 
+ config/autoconf.mk.in                  |    7 -
+ config/rules.mk                        |  164 ---------------------------------
+ intl/unicharutil/util/Makefile.in      |    6 +
+ modules/libreg/src/Makefile.in         |    3 
+ toolkit/library/Makefile.in            |    6 +
+ toolkit/mozapps/installer/packager.mk  |   46 ++++++++-
+ xpinstall/packager/xptlink.pl          |    8 +
+ 16 files changed, 87 insertions(+), 257 deletions(-)
+
+Index: mozilla/Makefile.in
+===================================================================
+--- mozilla.orig/Makefile.in	2007-07-09 23:37:28.000000000 +0200
++++ mozilla/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -77,21 +77,16 @@
+    $(topsrcdir)/.mozconfig.mk $(topsrcdir)/.mozconfig.out 
+ 
+ # Build pseudo-external modules first when export is explicitly called
+ export::
+ 	$(RM) -rf $(DIST)/sdk
+ 	$(MAKE) -C config export
+ 	$(MAKE) tier_nspr
+ 
+-install::
+-ifdef MOZ_LDAP_XPCOM
+-	$(MAKE) -C directory/c-sdk real_install DESTDIR=$(DESTDIR) libdir=$(mozappdir) includedir=$(includedir)/ldap
+-endif
+-
+ include $(topsrcdir)/config/rules.mk
+ 
+ # After we build tier toolkit, go back and build the tools from previous dirs
+ tier_toolkit::
+ 	$(MAKE) tools_tier_js
+ 	$(MAKE) tools_tier_xpcom
+ 	$(MAKE) tools_tier_necko
+ 	$(MAKE) tools_tier_gecko
+Index: mozilla/browser/build.mk
+===================================================================
+--- mozilla.orig/browser/build.mk	2007-07-17 23:08:24.000000000 +0200
++++ mozilla/browser/build.mk	2007-07-30 18:36:26.000000000 +0200
+@@ -51,8 +51,11 @@
+ 
+ tier_app_dirs += browser
+ 
+ installer:
+ 	@$(MAKE) -C browser/installer installer
+ 
+ package:
+ 	@$(MAKE) -C browser/installer
++
++install:
++	@$(MAKE) -C browser/installer install
+Index: mozilla/browser/app/Makefile.in
+===================================================================
+--- mozilla.orig/browser/app/Makefile.in	2007-07-30 18:36:07.000000000 +0200
++++ mozilla/browser/app/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -269,18 +269,17 @@
+ 
+ LDFLAGS += -Zlinker /NOE
+ endif
+ endif
+ 
+ ifneq (,$(filter-out OS2 WINNT,$(OS_ARCH)))
+ 
+ $(MOZ_APP_NAME):: mozilla.in Makefile.in Makefile $(DEPTH)/config/autoconf.mk
+-	cat $< | sed -e "s|%MOZAPPDIR%|$(mozappdir)|" \
+-		-e "s|%MREDIR%|$(mredir)|" > $@
++	cat $< | sed -e "s|%MOZAPPDIR%|$(installdir)|" > $@
+ 	chmod +x $@
+ 
+ libs:: $(MOZ_APP_NAME)
+ 	$(INSTALL) $< $(DIST)/bin
+ 
+ install:: $(MOZ_APP_NAME)
+ 	$(SYSINSTALL) $< $(DESTDIR)$(bindir)
+ 
+Index: mozilla/browser/app/mozilla.in
+===================================================================
+--- mozilla.orig/browser/app/mozilla.in	2007-06-23 07:30:29.000000000 +0200
++++ mozilla/browser/app/mozilla.in	2007-07-30 18:36:26.000000000 +0200
+@@ -48,17 +48,16 @@
+ ## The script will setup all the environment voodoo needed to make
+ ## the mozilla-bin binary to work.
+ ##
+ 
+ #uncomment for debugging
+ #set -x
+ 
+ moz_libdir=%MOZAPPDIR%
+-MRE_HOME=%MREDIR%
+ 
+ # Use run-mozilla.sh in the current dir if it exists
+ # If not, then start resolving symlinks until we find run-mozilla.sh
+ found=0
+ progname="$0"
+ curdir=`dirname "$progname"`
+ progbase=`basename "$progname"`
+ run_moz="$curdir/run-mozilla.sh"
+@@ -126,18 +125,16 @@
+       arg="$1"
+       shift
+       set -- "$@" "$arg"
+       pass_arg_count=`expr $pass_arg_count + 1`
+       ;;
+   esac
+ done
+ 
+-export MRE_HOME
+-
+ if [ $debugging = 1 ]
+ then
+   echo $dist_bin/run-mozilla.sh $script_args $dist_bin/$MOZILLA_BIN "$@"
+ fi
+ "$dist_bin/run-mozilla.sh" $script_args "$dist_bin/$MOZILLA_BIN" "$@"
+ exitcode=$?
+ 
+ exit $exitcode
+Index: mozilla/browser/components/build/Makefile.in
+===================================================================
+--- mozilla.orig/browser/components/build/Makefile.in	2007-07-17 23:08:25.000000000 +0200
++++ mozilla/browser/components/build/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -73,17 +73,17 @@
+ ifdef MOZ_SAFE_BROWSING
+ REQUIRES += safebrowsing
+ LOCAL_INCLUDES += -I$(srcdir)/../safebrowsing/src
+ SHARED_LIBRARY_LIBS += ../safebrowsing/src/$(LIB_PREFIX)safebrowsing_s.$(LIB_SUFFIX)
+ endif
+ 
+ EXTRA_DSO_LDOPTS += \
+ 	$(call EXPAND_LIBNAME_PATH,unicharutil_external_s,$(LIBXUL_DIST)/lib) \
+-	$(LIBXUL_DIST)/../modules/libreg/src/$(LIB_PREFIX)mozreg_s.$(LIB_SUFFIX) \
++	$(LIBXUL_DIST)/lib/$(LIB_PREFIX)mozreg_s.$(LIB_SUFFIX) \
+ 	$(MOZ_JS_LIBS) \
+ 	$(LIBXUL_DIST)/lib/$(LIB_PREFIX)xpcomglue_s.$(LIB_SUFFIX) \
+ 	$(MOZ_COMPONENT_LIBS) \
+ 	$(NULL)
+ 
+ # Mac: Need to link with CoreFoundation for Mac Migrators (PList reading code)
+ # GTK2: Need to link with glib for GNOME shell service
+ ifneq (,$(filter mac cocoa gtk2,$(MOZ_WIDGET_TOOLKIT)))
+Index: mozilla/browser/installer/Makefile.in
+===================================================================
+--- mozilla.orig/browser/installer/Makefile.in	2007-07-02 17:58:19.000000000 +0200
++++ mozilla/browser/installer/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -62,44 +62,48 @@
+ ifeq (WINNT,$(OS_ARCH))
+ MOZ_PKG_MANIFEST_P = $(srcdir)/windows/packages-static
+ else
+ ifneq (,$(filter-out OS2 Darwin,$(OS_ARCH)))
+ MOZ_PKG_MANIFEST_P = $(srcdir)/unix/packages-static
+ endif
+ endif
+ else
+-$(error you need a "--enable-static or --enable-libxul" build to create an installer)
++$(error you need a "--enable-static or --enable-libxul" build to package a build)
+ endif
+ 
+ MOZ_NONLOCALIZED_PKG_LIST = \
+ 	xpcom \
+ 	browser \
+ 	$(NULL)
+ 
+ MOZ_LOCALIZED_PKG_LIST = $(AB_CD)
+ 
+ MOZ_OPTIONAL_PKG_LIST = \
+ 	adt \
+ 	$(NULL)
+ 
+-DEFINES += -DAB_CD=$(AB_CD) -DMOZ_APP_NAME=$(MOZ_APP_NAME)
++DEFINES += -DAB_CD=$(AB_CD) -DMOZ_APP_NAME=$(MOZ_APP_NAME) -DPREF_DIR=$(PREF_DIR)
+ 
+ ifdef MOZ_PKG_MANIFEST_P
+ MOZ_PKG_MANIFEST = packages-static
+ 
+ $(MOZ_PKG_MANIFEST): $(MOZ_PKG_MANIFEST_P)
+ 	$(PERL) $(topsrcdir)/config/preprocessor.pl $(DEFINES) $(ACDEFINES) $< > $@
+ endif
+ 
+ ifneq (,$(filter mac cocoa,$(MOZ_WIDGET_TOOLKIT)))
+ MOZ_PKG_MAC_DSSTORE=branding/dsstore
+ MOZ_PKG_MAC_BACKGROUND=branding/background.png
+ MOZ_PKG_MAC_ICON=branding/disk.icns
+ MOZ_PKG_MAC_RSRC=branding/license.r
+ endif
+ 
++ifndef LIBXUL_SDK
++INSTALL_SDK = 1
++endif
++
+ include $(topsrcdir)/toolkit/mozapps/installer/packager.mk
+ 
+ installer: removed-files
+ ifdef INSTALLER_DIR
+ 	$(MAKE) -C $(INSTALLER_DIR)
+ endif
+Index: mozilla/browser/installer/unix/packages-static
+===================================================================
+--- mozilla.orig/browser/installer/unix/packages-static	2007-07-26 08:36:03.000000000 +0200
++++ mozilla/browser/installer/unix/packages-static	2007-07-30 18:36:26.000000000 +0200
+@@ -10,17 +10,17 @@
+ 
+ #filter substitution
+ 
+ bin/.autoreg
+ 
+ [@AB_CD@]
+ bin/chrome/@AB_CD@.jar
+ bin/chrome/@AB_CD@.manifest
+-bin/defaults/pref/firefox-l10n.js
++bin/@PREF_DIR@/firefox-l10n.js
+ bin/defaults/existing-profile-defaults.js
+ ; If you add a new directory you must explicitly call addDirectory in ab-CD.jst
+ bin/browserconfig.properties
+ bin/old-homepage-default.properties
+ bin/searchplugins/*
+ bin/defaults/profile/bookmarks.html
+ bin/defaults/profile/localstore.rdf
+ bin/defaults/profile/prefs.js
+@@ -263,27 +263,27 @@
+ bin/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/install.rdf
+ bin/chrome/comm.jar
+ bin/chrome/comm.manifest
+ bin/chrome/toolkit.jar
+ bin/chrome/toolkit.manifest
+ bin/chrome/icons/default/default.xpm
+ bin/chrome/reporter.manifest
+ bin/chrome/reporter.jar
+-bin/defaults/pref/reporter.js
++bin/@PREF_DIR@/reporter.js
+ 
+ ; shell icons
+ bin/icons/*.xpm
+ bin/icons/*.png
+ 
+ ; [Default Preferences]
+ ; All the pref files must be part of base to prevent migration bugs
+-bin/defaults/pref/firefox.js
+-bin/defaults/pref/firefox-branding.js
+-bin/defaults/pref/channel-prefs.js
++bin/@PREF_DIR@/firefox.js
++bin/@PREF_DIR@/firefox-branding.js
++bin/@PREF_DIR@/channel-prefs.js
+ bin/greprefs/all.js
+ bin/greprefs/security-prefs.js
+ bin/greprefs/xpinstall.js
+ bin/defaults/autoconfig/platform.js
+ bin/defaults/autoconfig/prefcalls.js
+ 
+ ; [Layout Engine Resources]
+ ; Style Sheets, Graphics and other Resources used by the layout engine. 
+Index: mozilla/build/unix/Makefile.in
+===================================================================
+--- mozilla.orig/build/unix/Makefile.in	2007-07-30 18:36:07.000000000 +0200
++++ mozilla/build/unix/Makefile.in	2007-07-30 18:38:28.000000000 +0200
+@@ -43,83 +43,16 @@
+ 
+ include $(DEPTH)/config/autoconf.mk
+ 
+ MODULE       = build
+ PACKAGE_FILE = unix.pkg
+ 
+ include $(topsrcdir)/config/rules.mk
+ 
+-# Hack to make sure that mozilla-config has the proper nspr dependencies
+-ifdef MOZ_NATIVE_NSPR
+-FULL_NSPR_CFLAGS=$(shell $(NSPR_CONFIG) --cflags)
+-FULL_NSPR_LIBS=$(shell $(NSPR_CONFIG) --libs)
+-NSPR_NAME=nspr
+-NSPR_VERSION=$(shell $(NSPR_CONFIG) --version)
+-else
+-FULL_NSPR_CFLAGS=-I$(includedir)/nspr
+-FULL_NSPR_LIBS=$(subst -L$(libdir),-L$(mozappdir),$(shell $(DEPTH)/nsprpub/config/nspr-config --libs))
+-NSPR_NAME=$(MOZ_APP_NAME)-nspr
+-NSPR_VERSION=$(shell $(DEPTH)/nsprpub/config/nspr-config --version)
+-endif
+-
+-ifdef MOZ_ENABLE_GTK
+-SUPERWIN_LIBS=-lgtksuperwin
+-endif
+-
+-_DEFS = $(subst \,\\\\\,$(ACDEFINES))
+-
+-pkg_config_files=$(MOZ_APP_NAME)-trunk-nspr.pc $(MOZ_APP_NAME)-trunk-xpcom.pc \
+-	$(MOZ_APP_NAME)-trunk-js.pc \
+-	$(MOZ_APP_NAME)-trunk-nss.pc $(MOZ_APP_NAME)-trunk-plugin.pc
+-
+-GARBAGE	= $(pkg_config_files) $(MOZ_APP_NAME)-trunk-config
+-
+-$(MOZ_APP_NAME)-trunk-config:: mozilla-config.in Makefile.in Makefile $(DEPTH)/config/autoconf.mk
+-	cat $< | sed \
+-	-e "s|%prefix%|$(prefix)|" \
+-	-e "s|%exec_prefix%|$(exec_prefix)|" \
+-	-e "s|%includedir%|$(includedir)|" \
+-	-e "s|%libdir%|$(mozappdir)|" \
+-	-e "s|%idldir%|$(idldir)|" \
+-	-e "s|%MOZILLA_VERSION%|$(MOZ_APP_VERSION)|" \
+-	-e "s|%DEFS%|$(_DEFS)|" \
+-	-e "s|%FULL_NSPR_LIBS%|$(FULL_NSPR_LIBS)|" \
+-	-e "s|%FULL_NSPR_CFLAGS%|$(FULL_NSPR_CFLAGS)|" > $@
+-
+-$(MOZ_APP_NAME)-trunk-%.pc : mozilla-%.pc.in Makefile.in Makefile $(DEPTH)/config/autoconf.mk
+-	cat $< | sed \
+-	-e "s|%prefix%|$(prefix)|" \
+-	-e "s|%exec_prefix%|$(exec_prefix)|" \
+-	-e "s|%includedir%|$(includedir)|" \
+-	-e "s|%libdir%|$(mozappdir)|" \
+-	-e "s|%idldir%|$(idldir)|" \
+-	-e "s|%MOZ_APP_NAME%|$(MOZ_APP_NAME)|" \
+-	-e "s|%MOZILLA_VERSION%|$(MOZ_APP_VERSION)|" \
+-	-e "s|%SUPERWIN_LIBS%|$(SUPERWIN_LIBS)|" \
+-	-e "s|%DEFS%|$(_DEFS)|" \
+-	-e "s|%FULL_NSPR_LIBS%|$(FULL_NSPR_LIBS)|" \
+-	-e "s|%FULL_NSPR_CFLAGS%|$(FULL_NSPR_CFLAGS)|" \
+-	-e "s|%NSPR_NAME%|$(NSPR_NAME)|" \
+-	-e "s|%NSPR_VERSION%|$(NSPR_VERSION)|" > $@
+-
+-libs:: $(MOZ_APP_NAME)-trunk-config
+-	chmod 755 $<
+-	$(INSTALL) -m 755 $< $(DIST)/bin
+-
+-libs:: $(srcdir)/run-mozilla.sh $(pkg_config_files)
++libs:: $(srcdir)/run-mozilla.sh
+ 	$(INSTALL) $< $(DIST)/bin
+ 
+ ifeq ($(OS_ARCH),OpenVMS)
+ libs:: vms/mozilla.com vms/install.com vms/getinfo.com
+ 	$(INSTALL) $? $(DIST)/bin
+ endif
+ 
+-install:: run-mozilla.sh
+-	$(SYSINSTALL) $(IFLAGS2) $< $(DESTDIR)$(mozappdir)
+-
+-install:: $(MOZ_APP_NAME)-trunk-config
+-	$(SYSINSTALL) $(IFLAGS2) $< $(DESTDIR)$(bindir)
+-
+-install:: $(pkg_config_files)
+-	chmod 644 $<
+-	$(SYSINSTALL) $(IFLAGS1) $(pkg_config_files) \
+-		$(DESTDIR)$(libdir)/pkgconfig
+Index: mozilla/config/Makefile.in
+===================================================================
+--- mozilla.orig/config/Makefile.in	2007-07-24 07:56:07.000000000 +0200
++++ mozilla/config/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -96,17 +96,16 @@
+ 	$(DEPTH)/mozilla-config.h \
+ 	$(srcdir)/nsStaticComponents.h \
+ 	$(NULL)
+ 
+ export:: $(TARGETS) $(HEADERS)
+ 	$(INSTALL) $(IFLAGS1) $(HEADERS) $(DIST)/include
+ 	-rm -f $(FINAL_LINK_COMPS) $(FINAL_LINK_LIBS) $(FINAL_LINK_COMP_NAMES)
+ 	-rm -f $(DIST)/bin/chrome/chromelist.txt
+-	$(NSINSTALL) -t $(IFLAGS1) $(HEADERS) $(DIST)/sdk/include
+ ifdef HOST_PROGRAM
+ 	$(INSTALL) $(HOST_PROGRAM) $(DIST)/bin
+ endif
+ 
+ ifdef WRAP_SYSTEM_INCLUDES
+ export::
+ 	if test ! -d system_wrappers; then mkdir system_wrappers; fi
+ 	$(PERL) $(topsrcdir)/config/preprocessor.pl $(DEFINES) $(ACDEFINES) \
+Index: mozilla/config/autoconf.mk.in
+===================================================================
+--- mozilla.orig/config/autoconf.mk.in	2007-07-30 18:36:07.000000000 +0200
++++ mozilla/config/autoconf.mk.in	2007-07-30 18:39:14.000000000 +0200
+@@ -57,21 +57,20 @@
+ 
+ prefix		= @prefix@
+ exec_prefix	= @exec_prefix@
+ bindir		= @bindir@
+ includedir	= @includedir@/$(MOZ_APP_NAME)-trunk
+ libdir		= @libdir@
+ datadir		= @datadir@
+ mandir		= @mandir@
+-idldir		= @datadir@/idl/$(MOZ_APP_NAME)-trunk
++idldir		= $(datadir)/idl/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
+ 
+-mozappdir	= $(libdir)/$(MOZ_APP_NAME)-trunk
+-mredir		= $(libdir)/mre/mre-trunk
+-mrelibdir	= $(mredir)/lib
++installdir	= $(libdir)/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
++sdkdir		= $(libdir)/$(MOZ_APP_NAME)-devel-$(MOZ_APP_VERSION)
+ 
+ DIST		= $(DEPTH)/dist
+ LIBXUL_SDK      = @LIBXUL_SDK@
+ 
+ ifdef LIBXUL_SDK
+ LIBXUL_DIST = $(LIBXUL_SDK)
+ else
+ LIBXUL_DIST = $(DIST)
+Index: mozilla/config/rules.mk
+===================================================================
+--- mozilla.orig/config/rules.mk	2007-07-30 18:36:13.000000000 +0200
++++ mozilla/config/rules.mk	2007-07-30 18:36:26.000000000 +0200
+@@ -759,88 +759,16 @@
+ else
+ 	$(INSTALL) $(IFLAGS1) $(JAVA_LIBRARY) $(FINAL_TARGET)
+ endif
+ endif # JAVA_LIBRARY
+ endif # !NO_DIST_INSTALL
+ 	+$(LOOP_OVER_DIRS)
+ 
+ ##############################################
+-install:: $(SUBMAKEFILES) $(MAKE_DIRS)
+-	+$(LOOP_OVER_DIRS)
+-	+$(LOOP_OVER_TOOL_DIRS)
+-
+-ifndef NO_INSTALL
+-ifneq (,$(EXPORTS))
+-install:: $(EXPORTS)
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(includedir)/$(MODULE)
+-endif
+-
+-ifneq (,$(SDK_HEADERS))
+-install:: $(SDK_HEADERS)
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(includedir)/$(MODULE)
+-endif
+-endif
+-
+-install:: $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(LIBRARY) $(PROGRAM) $(SIMPLE_PROGRAMS) $(JAVA_LIBRARY)
+-ifndef NO_INSTALL
+-#ifdef LIBRARY
+-#ifndef IS_COMPONENT
+-#ifdef MRE_DIST
+-#	$(SYSINSTALL) $(IFLAGS1) $(LIBRARY) $(DESTDIR)$(mredir)
+-#else
+-#	$(SYSINSTALL) $(IFLAGS1) $(LIBRARY) $(DESTDIR)$(mozappdir)
+-#endif
+-#endif # !IS_COMPONENT
+-#endif # LIBRARY
+-ifdef SHARED_LIBRARY
+-ifdef IS_COMPONENT
+-ifdef MRE_DIST
+-	$(SYSINSTALL) $(IFLAGS2) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(DESTDIR)$(mredir)/components
+-else
+-	$(SYSINSTALL) $(IFLAGS2) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(DESTDIR)$(mozappdir)/components
+-endif
+-else
+-ifdef MRE_DIST
+-	$(SYSINSTALL) $(IFLAGS2) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(DESTDIR)$(mredir)
+-else
+-	$(SYSINSTALL) $(IFLAGS2) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(DESTDIR)$(mozappdir)
+-endif
+-endif
+-endif # SHARED_LIBRARY
+-ifdef PROGRAM
+-ifdef MRE_DIST
+-	$(SYSINSTALL) $(IFLAGS2) $(PROGRAM) $(DESTDIR)$(mredir)
+-else
+-	$(SYSINSTALL) $(IFLAGS2) $(PROGRAM) $(DESTDIR)$(mozappdir)
+-endif
+-endif # PROGRAM
+-ifdef SIMPLE_PROGRAMS
+-ifdef MRE_DIST
+-	$(SYSINSTALL) $(IFLAGS2) $(SIMPLE_PROGRAMS) $(DESTDIR)$(mredir)
+-else
+-	$(SYSINSTALL) $(IFLAGS2) $(SIMPLE_PROGRAMS) $(DESTDIR)$(mozappdir)
+-endif
+-endif # SIMPLE_PROGRAMS
+-ifdef JAVA_LIBRARY
+-ifdef IS_COMPONENT
+-ifdef MRE_DIST
+-	$(SYSINSTALL) $(IFLAGS2) $(JAVA_LIBRARY) $(DESTDIR)$(mredir)/components
+-else
+-	$(SYSINSTALL) $(IFLAGS2) $(JAVA_LIBRARY) $(DESTDIR)$(mozappdir)/components
+-endif
+-else
+-ifdef MRE_DIST
+-	$(SYSINSTALL) $(IFLAGS2) $(JAVA_LIBRARY) $(DESTDIR)$(mredir)
+-else
+-	$(SYSINSTALL) $(IFLAGS2) $(JAVA_LIBRARY) $(DESTDIR)$(mozappdir)
+-endif
+-endif
+-endif # JAVA_LIBRARY
+-endif # NO_INSTALL
+ 
+ checkout:
+ 	$(MAKE) -C $(topsrcdir) -f client.mk checkout
+ 
+ run_viewer: $(FINAL_TARGET)/viewer
+ 	cd $(FINAL_TARGET); \
+ 	MOZILLA_FIVE_HOME=`pwd` \
+ 	LD_LIBRARY_PATH=".:$(LIBS_PATH):$$LD_LIBRARY_PATH" \
+@@ -1464,71 +1392,56 @@
+ export:: $(SDK_HEADERS) $(PUBLIC)
+ 	$(INSTALL) $(IFLAGS1) $^
+ endif 
+ endif # NO_DIST_INSTALL
+ 
+ ################################################################################
+ # Copy each element of PREF_JS_EXPORTS
+ 
+-ifneq ($(PREF_JS_EXPORTS),)
+ ifdef GRE_MODULE
+ PREF_DIR = greprefs
+ else
+ ifneq (,$(XPI_NAME)$(LIBXUL_SDK))
+ PREF_DIR = defaults/preferences
+ else
+ PREF_DIR = defaults/pref
+ endif
+ endif
+ 
++ifneq ($(PREF_JS_EXPORTS),)
+ # on win32, pref files need CRLF line endings... see bug 206029
+ ifeq (WINNT,$(OS_ARCH))
+ PREF_PPFLAGS = --line-endings=crlf
+ endif
+ 
+ ifndef NO_DIST_INSTALL
+ libs:: $(PREF_JS_EXPORTS)
+ 	if test ! -d $(FINAL_TARGET)/$(PREF_DIR); then $(NSINSTALL) -D $(FINAL_TARGET)/$(PREF_DIR); fi
+ 	$(EXIT_ON_ERROR)  \
+ 	for i in $(PREF_JS_EXPORTS); do \
+ 	  dest=$(FINAL_TARGET)/$(PREF_DIR)/`basename $$i`; \
+ 	  $(RM) -f $$dest; \
+ 	  $(PYTHON) $(topsrcdir)/config/Preprocessor.py $(PREF_PPFLAGS) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $$i > $$dest; \
+ 	done
+ endif
+-
+-ifndef NO_INSTALL
+-install:: $(PREF_JS_EXPORTS)
+-	if test ! -d $(DESTDIR)$(mozappdir)/$(PREF_DIR); then $(NSINSTALL) -D $(DESTDIR)$(mozappdir)/$(PREF_DIR); fi
+-	$(EXIT_ON_ERROR)  \
+-	for i in $(PREF_JS_EXPORTS); do \
+-	  dest=$(DESTDIR)$(mozappdir)/$(PREF_DIR)/`basename $$i`; \
+-	  $(RM) -f $$dest; \
+-	  $(PYTHON) $(topsrcdir)/config/Preprocessor.py $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $$i > $$dest; \
+-	done
+-endif
+ endif
+ 
+ ################################################################################
+ # Copy each element of AUTOCFG_JS_EXPORTS to $(FINAL_TARGET)/defaults/autoconfig
+ 
+ ifneq ($(AUTOCFG_JS_EXPORTS),)
+ $(FINAL_TARGET)/defaults/autoconfig::
+ 	@if test ! -d $@; then echo Creating $@; rm -rf $@; $(NSINSTALL) -D $@; else true; fi
+ 
+ ifndef NO_DIST_INSTALL
+ export:: $(AUTOCFG_JS_EXPORTS) $(FINAL_TARGET)/defaults/autoconfig
+ 	$(INSTALL) $(IFLAGS1) $^
+ endif
+ 
+-install:: $(AUTOCFG_JS_EXPORTS)
+-ifndef NO_INSTALL
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(mozappdir)/defaults/autoconfig
+-endif
+ endif 
+ ################################################################################
+ # Export the elements of $(XPIDLSRCS) & $(SDK_XPIDLSRCS), 
+ # generating .h and .xpt files and moving them to the appropriate places.
+ 
+ ifneq ($(XPIDLSRCS)$(SDK_XPIDLSRCS),)
+ 
+ export:: $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.h, $(XPIDLSRCS))
+@@ -1577,49 +1490,32 @@
+ 	$(XPIDL_LINK) $(XPIDL_GEN_DIR)/$(XPIDL_MODULE).xpt $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.xpt,$(XPIDLSRCS) $(SDK_XPIDLSRCS)) 
+ endif # XPIDL_MODULE.xpt != XPIDLSRCS
+ 
+ libs:: $(XPIDL_GEN_DIR)/$(XPIDL_MODULE).xpt
+ ifndef NO_DIST_INSTALL
+ 	$(INSTALL) $(IFLAGS1) $(XPIDL_GEN_DIR)/$(XPIDL_MODULE).xpt $(FINAL_TARGET)/components
+ endif
+ 
+-install:: $(XPIDL_GEN_DIR)/$(XPIDL_MODULE).xpt
+-ifndef NO_INSTALL
+-ifdef MRE_DIST
+-	$(SYSINSTALL) $(IFLAGS1) $(XPIDL_GEN_DIR)/$(XPIDL_MODULE).xpt $(DESTDIR)$(mredir)/components
+-else 
+-	$(SYSINSTALL) $(IFLAGS1) $(XPIDL_GEN_DIR)/$(XPIDL_MODULE).xpt $(DESTDIR)$(mozappdir)/components
+-endif 
+-endif # NO_INSTALL
+ endif # NO_GEN_XPT
+ 
+ GARBAGE_DIRS		+= $(XPIDL_GEN_DIR)
+ 
+ endif # XPIDLSRCS || SDK_XPIDLSRCS
+ 
+ ifneq ($(XPIDLSRCS),)
+ # export .idl files to $(IDL_DIR)
+ ifndef NO_DIST_INSTALL
+ export:: $(XPIDLSRCS) $(IDL_DIR)
+ 	$(INSTALL) $(IFLAGS1) $^
+ 
+ export:: $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.h, $(XPIDLSRCS)) $(PUBLIC)
+ 	$(INSTALL) $(IFLAGS1) $^ 
+ endif # NO_DIST_INSTALL
+ 
+-
+-ifndef NO_INSTALL
+-install:: $(XPIDLSRCS)
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(idldir)
+-
+-install:: $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.h, $(XPIDLSRCS))
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(includedir)/$(MODULE)
+-endif
+-
+ endif # XPIDLSRCS
+ 
+ 
+ 
+ #
+ # General rules for exporting idl files.
+ #
+ # WORK-AROUND ONLY, for mozilla/tools/module-deps/bootstrap.pl build.
+@@ -1654,24 +1550,16 @@
+ 
+ export:: $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.h, $(SDK_XPIDLSRCS)) $(PUBLIC)
+ 	$(INSTALL) $(IFLAGS1) $^
+ 
+ export:: $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.h, $(SDK_XPIDLSRCS)) $(SDK_PUBLIC)
+ 	$(INSTALL) $(IFLAGS1) $^
+ endif
+ 
+-ifndef NO_INSTALL
+-install:: $(SDK_XPIDLSRCS)
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(idldir)
+-
+-install:: $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.h, $(SDK_XPIDLSRCS))
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(includedir)/$(MODULE)
+-endif
+-
+ endif # SDK_XPIDLSRCS
+ 
+ 
+ 
+ ifdef MOZ_JAVAXPCOM
+ ifneq ($(XPIDLSRCS)$(SDK_XPIDLSRCS),)
+ 
+ JAVA_XPIDLSRCS = $(XPIDLSRCS) $(SDK_XPIDLSRCS)
+@@ -1701,91 +1589,65 @@
+ else
+ JAVA_INSTALL_DIR = $(JAVA_DIST_DIR)/default
+ endif
+ 
+ $(JAVA_INSTALL_DIR):
+ 	$(NSINSTALL) -D $@
+ 
+ export:: $(JAVA_DIST_DIR) $(JAVADEPFILES) $(JAVA_INSTALL_DIR)
+-	(cd $(JAVA_GEN_DIR) && tar $(TAR_CREATE_FLAGS) - *) | (cd $(JAVA_INSTALL_DIR) && tar -xf -)
++	(cd $(JAVA_GEN_DIR) && tar $(TAR_CREATE_FLAGS) - .) | (cd $(JAVA_INSTALL_DIR) && tar -xf -)
+ 
+ endif # XPIDLSRCS || SDK_XPIDLSRCS
+ endif # MOZ_JAVAXPCOM
+ 
+ ################################################################################
+ # Copy each element of EXTRA_COMPONENTS to $(FINAL_TARGET)/components
+ ifdef EXTRA_COMPONENTS
+ libs:: $(EXTRA_COMPONENTS)
+ ifndef NO_DIST_INSTALL
+ 	$(INSTALL) $(IFLAGS1) $^ $(FINAL_TARGET)/components
+ endif
+ 
+-install:: $(EXTRA_COMPONENTS)
+-ifndef NO_INSTALL
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(mozappdir)/components
+-endif
+ endif
+ 
+ ifdef EXTRA_PP_COMPONENTS
+ libs:: $(EXTRA_PP_COMPONENTS)
+ ifndef NO_DIST_INSTALL
+ 	$(EXIT_ON_ERROR) \
+ 	for i in $^; do \
+ 	  dest=$(FINAL_TARGET)/components/`basename $$i`; \
+ 	  $(RM) -f $$dest; \
+ 	  $(PYTHON) $(topsrcdir)/config/Preprocessor.py $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $$i > $$dest; \
+ 	done
+ endif
+ 
+-install:: $(EXTRA_PP_COMPONENTS)
+-ifndef NO_INSTALL
+-	$(EXIT_ON_ERROR) \
+-	for i in $^; do \
+-	  dest=$(DESTDIR)$(mozappdir)/components/`basename $$i`; \
+-	  $(RM) -f $$dest; \
+-	  $(PYTHON) $(topsrcdir)/config/Preprocessor.py $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $$i > $$dest; \
+-	done
+-endif
+ endif
+ 
+ ################################################################################
+ # Copy each element of EXTRA_JS_MODULES to $(FINAL_TARGET)/modules
+ ifdef EXTRA_JS_MODULES
+ libs:: $(EXTRA_JS_MODULES)
+ ifndef NO_DIST_INSTALL
+ 	$(INSTALL) $(IFLAGS1) $^ $(FINAL_TARGET)/modules
+ endif
+ 
+-install:: $(EXTRA_JS_MODULES)
+-ifndef NO_INSTALL
+-	$(SYSINSTALL) $(IFLAGS1) $^ $(DESTDIR)$(mozappdir)/modules
+-endif
+ endif
+ 
+ ifdef EXTRA_PP_JS_MODULES
+ libs:: $(EXTRA_PP_JS_MODULES)
+ ifndef NO_DIST_INSTALL
+ 	$(EXIT_ON_ERROR) \
+ 	for i in $^; do \
+ 	  dest=$(FINAL_TARGET)/modules/`basename $$i`; \
+ 	  $(RM) -f $$dest; \
+ 	  $(PYTHON) $(topsrcdir)/config/Preprocessor.py $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $$i > $$dest; \
+ 	done
+ endif
+ 
+-install:: $(EXTRA_PP_JS_MODULES)
+-ifndef NO_INSTALL
+-	$(EXIT_ON_ERROR) \
+-	for i in $^; do \
+-	  dest=$(DESTDIR)$(mozappdir)/modules/`basename $$i`; \
+-	  $(RM) -f $$dest; \
+-	  $(PYTHON) $(topsrcdir)/config/Preprocessor.py $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $$i > $$dest; \
+-	done
+-endif
+ endif
+ 
+ ################################################################################
+ # SDK
+ 
+ ifneq (,$(SDK_LIBRARY))
+ $(SDK_LIB_DIR)::
+ 	@if test ! -d $@; then echo Creating $@; rm -rf $@; $(NSINSTALL) -D $@; else true; fi
+@@ -1827,33 +1689,16 @@
+ 	  $(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py $(XULPPFLAGS) $(DEFINES) $(ACDEFINES) \
+ 	    $(JAR_MANIFEST) | \
+ 	  $(PERL) -I$(MOZILLA_DIR)/config $(MOZILLA_DIR)/config/make-jars.pl \
+ 	    -d $(MAKE_JARS_TARGET)/chrome -j $(FINAL_TARGET)/chrome \
+ 	    $(MAKE_JARS_FLAGS) -- "$(XULPPFLAGS) $(DEFINES) $(ACDEFINES)"; \
+ 	fi
+ endif
+ 
+-install:: $(CHROME_DEPS)
+-ifneq (,$(filter flat symlink,$(MOZ_CHROME_FILE_FORMAT)))
+-	$(error Flat chrome is for debugging only, and should not be used with the install target.)
+-endif
+-ifndef NO_INSTALL
+-	@$(EXIT_ON_ERROR) \
+-	if test -f $(JAR_MANIFEST); then \
+-	  if test ! -d $(DESTDIR)$(mozappdir)/chrome; then $(NSINSTALL) -D $(DESTDIR)$(mozappdir)/chrome; fi; \
+-	  if test ! -d $(MAKE_JARS_TARGET)/chrome; then $(NSINSTALL) -D $(MAKE_JARS_TARGET)/chrome; fi; \
+-	  $(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py $(XULPPFLAGS) $(DEFINES) $(ACDEFINES) \
+-	    $(JAR_MANIFEST) | \
+-	  $(PERL) -I$(MOZILLA_DIR)/config $(MOZILLA_DIR)/config/make-jars.pl \
+-	    -d $(MAKE_JARS_TARGET)/chrome -j $(DESTDIR)$(mozappdir)/chrome \
+-	    $(MAKE_JARS_FLAGS) -- "$(XULPPFLAGS) $(DEFINES) $(ACDEFINES)"; \
+-	fi
+-endif
+-
+ ifneq ($(DIST_FILES),)
+ libs:: $(DIST_FILES)
+ 	@$(EXIT_ON_ERROR) \
+ 	for f in $(DIST_FILES); do \
+ 	  dest=$(FINAL_TARGET)/`basename $$f`; \
+ 	  $(RM) -f $$dest; \
+ 	  $(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py \
+ 	    $(XULAPP_DEFINES) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) \
+@@ -1939,21 +1784,18 @@
+ ifdef INSTALL_EXTENSION_ID
+ ifndef XPI_NAME
+ $(error XPI_NAME must be set for INSTALL_EXTENSION_ID)
+ endif
+ 
+ libs::
+ 	$(RM) -rf "$(DIST)/bin/extensions/$(INSTALL_EXTENSION_ID)"
+ 	$(NSINSTALL) -D "$(DIST)/bin/extensions/$(INSTALL_EXTENSION_ID)"
+-	cd $(FINAL_TARGET) && tar $(TAR_CREATE_FLAGS) - * | (cd "../../bin/extensions/$(INSTALL_EXTENSION_ID)" && tar -xf -)
++	cd $(FINAL_TARGET) && tar $(TAR_CREATE_FLAGS) - . | (cd "../../bin/extensions/$(INSTALL_EXTENSION_ID)" && tar -xf -)
+ 
+-install::
+-	$(NSINSTALL) -D "$(DESTDIR)$(mozappdir)/extensions/$(INSTALL_EXTENSION_ID)"
+-	cd $(FINAL_TARGET) && tar $(TAR_CREATE_FLAGS) - * | (cd "$(DESTDIR)$(mozappdir)/extensions/$(INSTALL_EXTENSION_ID)" && tar -xf -)
+ endif
+ 
+ ifneq (,$(filter flat symlink,$(MOZ_CHROME_FILE_FORMAT)))
+ _JAR_REGCHROME_DISABLE_JAR=1
+ else
+ _JAR_REGCHROME_DISABLE_JAR=0
+ endif
+ 
+Index: mozilla/intl/unicharutil/util/Makefile.in
+===================================================================
+--- mozilla.orig/intl/unicharutil/util/Makefile.in	2007-07-01 07:56:10.000000000 +0200
++++ mozilla/intl/unicharutil/util/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -48,24 +48,28 @@
+ 
+ DIRS = internal
+ 
+ include $(srcdir)/objs.mk
+ 
+ MODULE=unicharutil
+ LIBRARY_NAME=unicharutil_external_s
+ DIST_INSTALL = 1
++SDK_LIBRARY = $(LIBRARY)
+ 
+ REQUIRES=xpcom \
+ 		string \
+ 		uconv \
+ 		$(NULL)
+ 
+-EXPORTS = \
++SDK_HEADERS = \
+ 	nsUnicharUtils.h \
++	$(NULL)
++
++EXPORTS = \
+ 	nsCompressedCharMap.h \
+ 	nsBidiUtils.h \
+ 	$(NULL)
+ 
+ CPPSRCS	= \
+ 	nsUnicharUtils.cpp \
+ 	nsBidiUtils.cpp \
+ 	$(NULL)
+Index: mozilla/modules/libreg/src/Makefile.in
+===================================================================
+--- mozilla.orig/modules/libreg/src/Makefile.in	2007-06-20 21:22:02.000000000 +0200
++++ mozilla/modules/libreg/src/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -40,16 +40,17 @@
+ srcdir		= @srcdir@
+ VPATH		= @srcdir@
+ 
+ include $(DEPTH)/config/autoconf.mk
+ include $(srcdir)/objs.mk
+ 
+ MODULE		= libreg
+ LIBRARY_NAME	= mozreg_s
++DIST_INSTALL = 1
+ 
+ # MacOSX requires the MoreFiles module
+ ifeq ($(OS_ARCH),Darwin)
+ REQUIRES = macmorefiles
+ endif
+ 
+ CSRCS		= $(MODULES_LIBREG_SRC_LCSRCS) nr_bufio.c
+ 
+@@ -62,16 +63,18 @@
+ # Force use of PIC
+ FORCE_USE_PIC	= 1
+ 
+ # We do want this in the static libraries list
+ EXPORT_LIBRARY = 1
+ 
+ USE_STATIC_LIBS = 1
+ 
++SDK_LIBRARY = $(LIBRARY)
++
+ ifeq (cocoa,$(MOZ_WIDGET_TOOLKIT))
+ SHARED_LIBRARY_LIBS += $(DEPTH)/xpcom/MoreFiles/libmacmorefiles_s.a
+ endif
+ 
+ include $(topsrcdir)/config/config.mk
+ 
+ DEFINES         += -DUSE_BUFFERED_REGISTRY_IO	
+ # Memory mapped files are not supported under QNX, Neutrino, HP-UX and BeOS
+Index: mozilla/toolkit/library/Makefile.in
+===================================================================
+--- mozilla.orig/toolkit/library/Makefile.in	2007-07-25 08:17:09.000000000 +0200
++++ mozilla/toolkit/library/Makefile.in	2007-07-30 18:36:26.000000000 +0200
+@@ -163,16 +163,22 @@
+ 	$(NULL)
+ endif
+ else
+ ifdef NS_TRACE_MALLOC
+ EXTRA_DSO_LIBS += tracemalloc
+ endif
+ endif
+ 
++ifneq (,$(filter OS2 WINCE WINNT,$(OS_ARCH)))
++SDK_LIBRARY = $(IMPORT_LIBRARY)
++else
++SDK_LIBRARY = $(SHARED_LIBRARY)
++endif
++
+ include $(topsrcdir)/config/rules.mk
+ 
+ export:: $(RDF_UTIL_SRC_CPPSRCS) $(INTL_UNICHARUTIL_UTIL_CPPSRCS)
+ 	$(INSTALL) $^ .
+ 
+ EXTRA_DSO_LDOPTS += $(LIBS_DIR) $(EXTRA_DSO_LIBS)
+ 
+ ifdef MOZ_ENABLE_LIBXUL
+Index: mozilla/toolkit/mozapps/installer/packager.mk
+===================================================================
+--- mozilla.orig/toolkit/mozapps/installer/packager.mk	2007-04-17 22:42:54.000000000 +0200
++++ mozilla/toolkit/mozapps/installer/packager.mk	2007-07-30 18:36:26.000000000 +0200
+@@ -303,30 +303,30 @@
+ 	$(call PACKAGER_COPY, "$(DIST)",\
+ 		"$(DEPTH)/installer-stage/localized", \
+ 		"$(MOZ_PKG_MANIFEST)", "$(PKGCP_OS)", 1, 0, 1 \
+ 		$(foreach pkg,$(MOZ_LOCALIZED_PKG_LIST),$(PKG_ARG)) )
+ 	$(call PACKAGER_COPY, "$(DIST)",\
+ 		"$(DEPTH)/installer-stage/optional", \
+ 		"$(MOZ_PKG_MANIFEST)", "$(PKGCP_OS)", 1, 0, 1 \
+ 		$(foreach pkg,$(MOZ_OPTIONAL_PKG_LIST),$(PKG_ARG)) )
+-	$(PERL) $(topsrcdir)/xpinstall/packager/xptlink.pl -s $(DIST) -d $(DIST)/xpt -f $(DEPTH)/installer-stage/nonlocalized/components -v
++	$(PERL) $(topsrcdir)/xpinstall/packager/xptlink.pl -s $(DIST) -d $(DIST)/xpt -f $(DEPTH)/installer-stage/nonlocalized/components -v -x $(LIBXUL_DIST)/bin/xpt_link
+ 
+ stage-package: $(MOZ_PKG_MANIFEST) $(MOZ_PKG_REMOVALS_GEN)
+ 	@rm -rf $(DIST)/$(MOZ_PKG_APPNAME) $(DIST)/$(PKG_BASENAME).tar $(DIST)/$(PKG_BASENAME).dmg $@ $(EXCLUDE_LIST)
+ # NOTE: this must be a tar now that dist links into the tree so that we
+ # do not strip the binaries actually in the tree.
+ 	@echo "Creating package directory..."
+ 	@mkdir $(DIST)/$(MOZ_PKG_APPNAME)
+ ifdef MOZ_PKG_MANIFEST
+ 	$(RM) -rf $(DIST)/xpt
+ 	$(call PACKAGER_COPY, "$(DIST)",\
+ 		 "$(DIST)/$(MOZ_PKG_APPNAME)", \
+ 		"$(MOZ_PKG_MANIFEST)", "$(PKGCP_OS)", 1, 0, 1)
+-	$(PERL) $(topsrcdir)/xpinstall/packager/xptlink.pl -s $(DIST) -d $(DIST)/xpt -f $(DIST)/$(MOZ_PKG_APPNAME)/components -v
++	$(PERL) $(topsrcdir)/xpinstall/packager/xptlink.pl -s $(DIST) -d $(DIST)/xpt -f $(DIST)/$(MOZ_PKG_APPNAME)/components -v -x $(LIBXUL_DIST)/bin/xpt_link
+ else # !MOZ_PKG_MANIFEST
+ ifeq ($(MOZ_PKG_FORMAT),DMG)
+ # If UNIVERSAL_BINARY, the package will be made from an already-prepared
+ # STAGEPATH
+ ifndef UNIVERSAL_BINARY
+ 	@cd $(DIST) && rsync -auv --copy-unsafe-links $(_APPNAME) $(MOZ_PKG_APPNAME)
+ endif
+ else
+@@ -365,9 +365,49 @@
+ 	cd $(DIST)/$(STAGEPATH)$(MOZ_PKG_APPNAME)$(_BINPATH); rm -rf $(NO_PKG_FILES)
+ endif
+ ifdef MOZ_PKG_REMOVALS
+ 	$(SYSINSTALL) $(MOZ_PKG_REMOVALS_GEN) $(DIST)/$(STAGEPATH)$(MOZ_PKG_APPNAME)$(_BINPATH)
+ endif # MOZ_PKG_REMOVALS
+ 
+ make-package: stage-package
+ 	@echo "Compressing..."
+-	cd $(DIST); $(MAKE_PACKAGE)
++	cd $(DIST) && $(MAKE_PACKAGE)
++
++install:: stage-package
++ifeq (WINNT,$(OS_ARCH))
++	$(error "make install" is not supported on Windows. Use "make package" instead.)
++endif
++	$(NSINSTALL) -D $(DESTDIR)$(installdir)
++	(cd $(DIST)/$(MOZ_PKG_APPNAME) && tar $(TAR_CREATE_FLAGS) - .) | \
++	  (cd $(DESTDIR)$(installdir) && tar -xf -)
++	$(NSINSTALL) -D $(DESTDIR)$(bindir)
++	$(RM) -f $(DESTDIR)$(bindir)/$(MOZ_APP_NAME)
++	ln -s $(installdir)/$(MOZ_APP_NAME) $(DESTDIR)$(bindir)
++ifdef INSTALL_SDK # Here comes the hard part
++# include directory is stable (dist/sdk/include) and unstable (dist/include)
++	$(NSINSTALL) -D $(DESTDIR)$(includedir)/stable
++	$(NSINSTALL) -D $(DESTDIR)$(includedir)/unstable
++	(cd $(DIST)/sdk/include && tar $(TAR_CREATE_FLAGS) - .) | \
++	  (cd $(DESTDIR)$(includedir)/stable && tar -xf -)
++# The dist/include has module subdirectories that we need to flatten
++	find $(DIST)/include -xtype f -exec $(SYSINSTALL) $(IFLAGS1) {} $(DESTDIR)$(includedir)/unstable \;
++# IDL directory is stable (dist/sdk/idl) and unstable (dist/idl)
++	$(NSINSTALL) -D $(DESTDIR)$(idldir)/stable 
++	$(NSINSTALL) -D $(DESTDIR)$(idldir)/unstable
++	(cd $(DIST)/sdk/idl && tar $(TAR_CREATE_FLAGS) - .) | \
++	  (cd $(DESTDIR)$(idldir)/stable && tar -xf -)
++	(cd $(DIST)/idl && tar $(TAR_CREATE_FLAGS) - .) | \
++	  (cd $(DESTDIR)$(idldir)/unstable && tar -xf -)
++# SDK directory is the libs + a bunch of symlinks
++	$(NSINSTALL) -D $(DESTDIR)$(sdkdir)/sdk/lib
++	if test -f $(DIST)/sdk/include/xpcom-config.h; then \
++	  $(SYSINSTALL) $(IFLAGS1) $(DIST)/sdk/include/xpcom-config.h $(DESTDIR)$(sdkdir); \
++	fi
++	(cd $(DIST)/sdk/lib && tar $(TAR_CREATE_FLAGS) - .) | (cd $(DESTDIR)$(sdkdir)/sdk/lib && tar -xf -)
++	$(RM) -f $(DESTDIR)$(sdkdir)/lib $(DESTDIR)$(sdkdir)/bin $(DESTDIR)$(sdkdir)/sdk/include $(DESTDIR)$(sdkdir)/include $(DESTDIR)$(sdkdir)/sdk/idl $(DESTDIR)$(sdkdir)/idl
++	ln -s $(sdkdir)/sdk/lib $(DESTDIR)$(sdkdir)/lib
++	ln -s $(installdir) $(DESTDIR)$(sdkdir)/bin
++	ln -s $(includedir)/stable $(DESTDIR)$(sdkdir)/sdk/include
++	ln -s $(includedir)/unstable $(DESTDIR)$(sdkdir)/include
++	ln -s $(idldir)/stable $(DESTDIR)$(sdkdir)/sdk/idl
++	ln -s $(idldir)/unstable $(DESTDIR)$(sdkdir)/idl
++endif # INSTALL_SDK
+Index: mozilla/xpinstall/packager/xptlink.pl
+===================================================================
+--- mozilla.orig/xpinstall/packager/xptlink.pl	2005-09-26 21:59:38.000000000 +0200
++++ mozilla/xpinstall/packager/xptlink.pl	2007-07-30 18:36:26.000000000 +0200
+@@ -49,24 +49,26 @@
+ 
+ # initialize variables
+ $srcdir           = "";		# root directory being copied from
+ $destdir          = "";		# root directory being copied to
+ $finaldir         = "";   # where to put the final linked XPT
+ $verbose          = 0;		# shorthand for --debug 1
+ $debug            = 0;		# controls amount of debug output
+ $help             = 0;		# flag: if set, print usage
++$xptlink          = "";   # path to the xpt_link binary
+ 
+ # get command line options
+ $return = GetOptions(	"source|s=s",           \$srcdir,
+ 			"destination|d=s",      \$destdir,
+       "final|f=s",            \$finaldir,
+ 			"help|h",               \$help,
+ 			"debug=i",              \$debug,
+ 			"verbose|v",            \$verbose,
++			"xptlink|x=s",          \$xptlink,
+ 			"<>",                   \&do_badargument
+ 			);
+ 
+ if ($finaldir ne "") {
+   $bindir = "";
+ }
+ else {
+   $bindir = "bin/";
+@@ -149,17 +151,17 @@
+ 	  $realmerged = `cygpath -t mixed $merged`;
+ 	  chomp $realmerged;
+       }
+       else {
+           @realxptfiles = @xptfiles;
+ 	  $realmerged = $merged;
+       }
+ 
+-      my $cmdline = "$srcdir/bin/xpt_link $realmerged @realxptfiles";
++      my $cmdline = "$xptlink $realmerged @realxptfiles";
+ 			($debug >= 4) && print "$cmdline\n";
+ 			system($cmdline) == 0 || die ("'$cmdline' failed");
+ 
+       if ($finaldir eq "") {
+         # remove old .xpt files in the component directory.
+         ($debug >= 2) && print "Deleting individual xpt files.\n";
+         for my $file (@xptfiles) {
+           ($debug >= 4) && print "\t$file";
+@@ -214,16 +216,20 @@
+ 		$exitval += 2;
+ 	}
+ 
+ 	if ($exitval) {
+ 		print "See \'$0 --help\' for more information.\n";
+ 		print "Exiting...\n";
+ 		exit ($exitval);
+ 	}
++
++	if ($xptlink eq "") {
++		$xptlink = "$srcdir/bin/xpt_link";
++	}
+ }
+ 
+ 
+ #
+ # This is called by GetOptions when there are extra command line arguments
+ # it doesn't understand.
+ #
+ sub do_badargument
