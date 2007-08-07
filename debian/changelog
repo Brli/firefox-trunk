@@ -1,6 +1,6 @@
-firefox-trunk (2.99+2cvs20070722-0ubuntu0) gutsy; urgency=low
+firefox-trunk (2.99+2cvs20070805-0ubuntu1) gutsy; urgency=low
 
-  * new cvs snapshot: 2.99+2cvs20070722-0ubuntu0 
+  * new cvs snapshot: 2.99+2cvs20070805
 
  -- Alexander Sack <asac@ubuntu.com>  Mon, 23 Jul 2007 09:43:55 +0000
 
