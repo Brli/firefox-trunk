@@ -62,7 +62,6 @@ DEB_CONFIGURE_USER_FLAGS= \
         --enable-pango \
         --enable-postscript \
         --enable-svg \
-        --enable-svg-renderer=cairo \
         --enable-mathml \
         --enable-xft \
         --enable-xinerama \
