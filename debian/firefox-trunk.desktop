@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Firefox Web Browser (Development Version)
+Name=Minefield Web Browser
 Comment=Browse the Bleeding Edge
 GenericName=Bleed Browser
 Exec=firefox-trunk %u
