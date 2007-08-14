@@ -6,3 +6,19 @@ if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/x-www-browser \
         x-www-browser /usr/bin/firefox-trunk 40
 fi
+
+echo "Please restart all running instances of Firefox-Trunk, or you will experience problems."
+
+UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
+
+if [ -d $UPDATENOTIFIERDIR ] ; then
+  # pgrep matches application names from /proc/<pid>/status which is
+  # truncated according to sys/procfs.h definition. Problem is it's
+  # platform dependent. Either 15 or 16 chars.
+  if [ `/usr/bin/pgrep -c firefox-trunk-b` -ne 0 ] || \
+     [ `/usr/bin/pgrep -c firefox-trunk-bi` -ne 0 ] ;  then
+    cp -f /usr/share/firefox-trunk/firefox-trunk-restart-required.update-notifier \
+        "$UPDATENOTIFIERDIR/firefox-trunk-restart-required"
+  fi
+fi
+

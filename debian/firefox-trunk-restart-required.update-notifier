@@ -1,0 +1,9 @@
+Name: Firefox-Trunk restart required
+Name-fr: Relancement de Firefox Trunk requis
+Priority: High
+Terminal: False
+DontShowAfterReboot: True
+Description: Firefox-Trunk has been upgraded (or reinstalled) and must be restarted.
+ Please quit and restart your web browser now.
+Description-fr: Firefox-Trunk a été mis à jour (ou réinstallé) et doit être relancé.
+ Veuillez quitter et redémarrer for navigateur.

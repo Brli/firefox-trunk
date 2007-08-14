@@ -4,4 +4,5 @@ set -e
 
 if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
     update-alternatives --remove x-www-browser /usr/bin/firefox-trunk
+    rm -f /var/lib/update-notifier/user.d/firefox-trunk-restart-required
 fi
