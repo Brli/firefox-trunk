@@ -83,6 +83,9 @@ else
         --disable-system-cairo
 endif
 
+# disabled as of 3.0a7 because of the infamous assert() on shutdown with Gutsy's libcairo-1.4.10 	
+USE_SYSTEM_CAIRO=0 	
+
 UUDECODE = \
 	debsearch.gif \
 	wikipedia.gif \
