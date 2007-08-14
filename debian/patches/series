@@ -1,4 +1,5 @@
 fix_nsinstall_on_double_slash.patch
+trunk-profilename
 trunk-fsh
 ftbfs-with-branding-dir
 ftbfs_toolkit_xre_Makefile_in
