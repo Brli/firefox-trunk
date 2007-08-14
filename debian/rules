@@ -23,7 +23,6 @@ endif
 
 OPTFLAGS += -g
 
-DEB_AUTO_UPDATE_DEBIAN_CONTROL=1
 DEB_AUTO_UPDATE_AUTOCONF=2.13
 
 include /usr/share/cdbs/1/rules/tarball.mk
@@ -31,6 +30,7 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
+DEB_AUTO_UPDATE_DEBIAN_CONTROL=0
 DEB_MOZ_APPLICATION=browser
 
 DEB_CONFIGURE_USER_FLAGS= \
