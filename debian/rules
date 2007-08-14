@@ -41,6 +41,7 @@ DEB_CONFIGURE_USER_FLAGS= \
         --with-system-zlib=/usr \
         --without-system-nspr \
         --without-system-nss \
+        --disable-airbag \
         --disable-composer \
         --disable-debug \
         --disable-elf-dynstr-gc \
