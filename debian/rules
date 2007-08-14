@@ -74,6 +74,9 @@ DEB_CONFIGURE_USER_FLAGS= \
 
 USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.4.0'; a=$$?; if test $$a != 1; then echo 1; fi)
 
+# disabled as of 3.0a7 because of the infamous assert() on shutdown with Gutsy's libcairo-1.4.10 	
+USE_SYSTEM_CAIRO=0 	
+
 # for old cairo versions we cannot use system cairo
 ifeq (1, $(USE_SYSTEM_CAIRO))
    DEB_CONFIGURE_USER_FLAGS += \
@@ -82,9 +85,6 @@ else
    DEB_CONFIGURE_USER_FLAGS += \
         --disable-system-cairo
 endif
-
-# disabled as of 3.0a7 because of the infamous assert() on shutdown with Gutsy's libcairo-1.4.10 	
-USE_SYSTEM_CAIRO=0 	
 
 UUDECODE = \
 	debsearch.gif \
