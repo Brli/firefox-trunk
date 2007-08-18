@@ -1,9 +1,9 @@
 bz386844_java_plugin_crash_in_xsync.patch
 bz390451_master_password_lost.patch
-fix_nsinstall_on_double_slash.patch
+bz392722_fix_nsinstall_on_double_slash.patch
+bz386904_config_rules_install_dist_files.patch
 trunk-profilename
 trunk-fsh
 ftbfs-with-branding-dir
-ftbfs_toolkit_xre_Makefile_in
-config_rules_install_dist_files
+bz386866_ftbfs_toolkit_xre_Makefile_in.patch
 no-have-stdint-h-ftbfs.patch

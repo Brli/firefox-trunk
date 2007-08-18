@@ -4,9 +4,9 @@
 
 Index: mozilla/configure.in
 ===================================================================
---- mozilla.orig/configure.in	2007-07-30 18:35:57.000000000 +0200
-+++ mozilla/configure.in	2007-07-30 21:46:08.000000000 +0200
-@@ -6942,24 +6942,24 @@
+--- mozilla.orig/configure.in	2007-08-18 15:05:44.000000000 +0000
++++ mozilla/configure.in	2007-08-18 15:16:14.000000000 +0000
+@@ -6927,24 +6927,24 @@
     MOZ_CAIRO_CFLAGS='-I$(LIBXUL_DIST)/include/cairo'
  
     MOZ_TREE_CAIRO=1
