@@ -1,13 +1,14 @@
 ---
  browser/app/application.ini                          |    2 +-
+ browser/app/firefox-branding.js                      |   11 ++++++-----
  browser/app/mozilla.in                               |   17 +++++++++++++++++
  browser/branding/unofficial/pref/firefox-branding.js |   11 ++++++-----
- 3 files changed, 24 insertions(+), 6 deletions(-)
+ 4 files changed, 30 insertions(+), 11 deletions(-)
 
 Index: mozilla/browser/app/application.ini
 ===================================================================
---- mozilla.orig/browser/app/application.ini	2007-08-14 00:41:02.000000000 +0000
-+++ mozilla/browser/app/application.ini	2007-08-14 00:41:47.000000000 +0000
+--- mozilla.orig/browser/app/application.ini	2007-07-02 18:20:24.000000000 +0000
++++ mozilla/browser/app/application.ini	2007-08-18 17:48:16.000000000 +0000
 @@ -33,17 +33,17 @@
  ; the provisions above, a recipient may use your version of this file under
  ; the terms of any one of the MPL, the GPL or the LGPL.
@@ -29,8 +30,8 @@ Index: mozilla/browser/app/application.ini
  MaxVersion=@GRE_MILESTONE@
 Index: mozilla/browser/app/mozilla.in
 ===================================================================
---- mozilla.orig/browser/app/mozilla.in	2007-08-14 00:41:09.000000000 +0000
-+++ mozilla/browser/app/mozilla.in	2007-08-14 00:42:39.000000000 +0000
+--- mozilla.orig/browser/app/mozilla.in	2007-08-03 14:46:19.000000000 +0000
++++ mozilla/browser/app/mozilla.in	2007-08-18 17:48:16.000000000 +0000
 @@ -90,16 +90,33 @@
    if [ -x "$moz_libdir/run-mozilla.sh" ]; then
      dist_bin="$moz_libdir"
@@ -67,8 +68,35 @@ Index: mozilla/browser/app/mozilla.in
  
 Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2007-08-14 00:41:19.000000000 +0000
-+++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2007-08-14 00:42:39.000000000 +0000
+--- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2006-11-22 02:21:20.000000000 +0000
++++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2007-08-18 17:48:16.000000000 +0000
+@@ -1,16 +1,17 @@
+-pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
++// pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
++pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
+ // URL user can browse to manually if for some reason all update installation
+ // attempts fail.
+-pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
++pref("app.update.url.manual", "http://www.mozilla.org/products/firefox/");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
++pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
+ 
+ // Release notes URL
+-pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://www.mozilla.org/projects/firefox/%VERSION%/releasenotes/");
+ 
+ // Search codes belong only in builds with official branding
+ pref("browser.search.param.yahoo-fr", "");
+ pref("browser.search.param.yahoo-fr-cjkt", "");
+ pref("browser.search.param.yahoo-f-CN", "");
+Index: mozilla/browser/app/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/app/firefox-branding.js	2007-08-18 18:36:36.000000000 +0000
++++ mozilla/browser/app/firefox-branding.js	2007-08-18 18:37:33.000000000 +0000
 @@ -1,16 +1,17 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
