@@ -1,3 +1,10 @@
+firefox-trunk (3.0~cvs20070818-0ubuntu1) UNRELEASED; urgency=low
+
+  [ Fabien Tassin ]
+  * new cvs snapshot: 3.0~cvs20070818
+
+ -- Alexander Sack <asac@ubuntu.com>  Sat, 18 Aug 2007 14:27:09 +0000 
+
 firefox-trunk (2.99+2cvs20070813-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
