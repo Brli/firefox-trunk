@@ -1,14 +1,83 @@
-firefox-trunk (3.0~cvs20070818-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (3.0a8pre~cvs20070818-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
-  * new cvs snapshot: 3.0~cvs20070818
+  * new cvs snapshot: 3.0a8pre~cvs20070818
+    (bump version from 2.99 to 3.0a8pre, as that's what it really is
+     in mozilla/browser/config/version.txt)
+  * Update debian/patches/trunk-profilename to patch firefox-branding.js
+    in the right place now that we no longer specify a branding.
+  * Update to cvs20070818 and patch clean-up
+    - debian/rules: drop --disable-airbag, add --disable-crashreporter
+    - debian/patches/config_rules_install_dist_files =>
+      debian/patches/bz386904_config_rules_install_dist_files.patch
+    - debian/patches/fix_nsinstall_on_double_slash.patch =>
+      debian/patches/bz392722_fix_nsinstall_on_double_slash.patch
+    - debian/patches/ftbfs_toolkit_xre_Makefile_in =>
+      debian/patches/bz386866_ftbfs_toolkit_xre_Makefile_in.patch
+    - update debian/patches/bz390451_master_password_lost.patch:
+      Fix committed but work-around still in place upstream
+    - remove unused debian/patches/fix_make_install
+    - refresh diverging debian/patches/no-have-stdint-h-ftbfs.patch
+    - update debian/patches/series
 
  -- Alexander Sack <asac@ubuntu.com>  Sat, 18 Aug 2007 14:27:09 +0000 
 
 firefox-trunk (2.99+2cvs20070813-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Fabien Tassin ]
-  * new cvs snapshot: 2.99+2cvs20070813
+  [ Fabien Tassin ] New cvs snapshot: 2.99+2cvs20070813
+  * Fix crash in java plugin in XSync(). See Mozilla Bug #386844.
+    Closes LP Bug #132235
+  * Minefield. Update debian/rules to remove forced unofficial branding
+    that produced Granparadiso branding. Update debian/firefox-trunk.desktop
+    to use the name Minefield.
+  * Really disable system cairo. Commit #47 was broken.
+    Update debian/rules.
+  * Fix update-notifier
+    - rename debian/firefox-restart-required.update-notifier into
+      debian/firefox-trunk-restart-required.update-notifier
+    - update debian/firefox-trunk-restart-required.update-notifier to
+      use Firefox-Trunk as application name
+    - update debian/firefox-trunk.install to reflect rename
+    - update debian/firefox-trunk.{postinst,prerm} to install/remove
+      that update-notifier file.
+  * Re-enable master password previously hidden as preventive measure.
+    Add debian/patches/bz390451_master_password_lost.patch and update
+    debian/patches/series. Fixes Mozilla Bug #390451 (not committed
+    in trunk yet).
+  * Add debian/firefox-trunk.{postinst,prerm} scripts to add a
+    x-www-browser alternative for /usr/bin/firefox-trunk.
+    Priority set to 40, lower than firefox-granparadiso (50) and
+    plain firefox (70).
+  * update debian/rules to force --disable-system-cairo until we figure out
+    what's causing the assert/crash on shutdown. See LP Bug #122735.
+  * Fix cdbs install scripts
+    - update debian/firefox-trunk.install and debian/firefox-trunk.links
+    - Fix a typo in firefox-trunk.links (LP Bug #122737)
+    - update debian/firefox-trunk-dev.install and add
+      debian/firefox-trunk-dev.links 
+  * drop debian/control.in and set DEB_AUTO_UPDATE_DEBIAN_CONTROL=0
+    in debian/rules (below the includes as the value is overwritten
+    otherwise)
+  * update Build-Depends and fix Suggests in debian/control  
+  * Redo debian/patches/trunk-fsh like for GranParadiso:
+    - remove version from $installdir so that we do the right thing.
+    It is useless anyway and it broke the profile migration when -dev
+    was not installed. 
+  * Add debian/patches/trunk-profilename:
+    - change application name from Firefox to Firefox-Trunk
+    - update startup script changing profile name
+    from ~/.mozilla/firefox to ~/.mozilla/firefox-trunk.
+    The startup script will try to initialize that new profile by
+    using existing firefox profile, keeping the later untouched.
+    - update URLs in upstream branding as changing application name
+    produces invalid URLs.
+    - update debian/patches/series  
+  * debian/rules: --disable-airbag as we don't want it and configure
+    fails because we need libcurl 
+  * update debian/patches/fix_nsinstall_on_double_slash.patch to preserve
+    the initial (upstream) multiple trailling slashes pruning used
+    for mkdir()
+  * new cvs snapshot: 2.99+2cvs20070805. Update debian/changelog 
 
  -- Alexander Sack <asac@ubuntu.com>  Mon, 13 Aug 2007 23:25:32 +0200 
 
