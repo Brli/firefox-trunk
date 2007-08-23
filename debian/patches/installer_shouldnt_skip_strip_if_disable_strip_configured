@@ -1,0 +1,27 @@
+---
+ browser/installer/Makefile.in |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+Index: mozilla/browser/installer/Makefile.in
+===================================================================
+--- mozilla.orig/browser/installer/Makefile.in
++++ mozilla/browser/installer/Makefile.in
+@@ -96,14 +96,18 @@
+ MOZ_PKG_MAC_ICON=branding/disk.icns
+ MOZ_PKG_MAC_RSRC=branding/license.r
+ endif
+ 
+ ifndef LIBXUL_SDK
+ INSTALL_SDK = 1
+ endif
+ 
++ifndef ENABLE_STRIP
++PKG_SKIP_STRIP = 1
++endif
++
+ include $(topsrcdir)/toolkit/mozapps/installer/packager.mk
+ 
+ installer: removed-files
+ ifdef INSTALLER_DIR
+ 	$(MAKE) -C $(INSTALLER_DIR)
+ endif
