@@ -1,3 +1,14 @@
+firefox-trunk (3.0a8pre~cvs20070825-0ubuntu1) UNRELEASED; urgency=low
+
+  [ Fabien Tassin ]
+  * new cvs snapshot: 3.0a8pre~cvs20070825
+  * Add debian/patches/installer_shouldnt_skip_strip_if_disable_strip_configured
+    contributed by asac, fixing --disable-strip (was being ignored)
+  * Drop debian/patches/bz390451_master_password_lost.patch now fully integrated
+    upstream. Update debian/patches/series
+
+ -- Alexander Sack <asac@ubuntu.com>  Sat, 25 Aug 2007 16:56:07 +0000 
+
 firefox-trunk (3.0a8pre~cvs20070818-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
