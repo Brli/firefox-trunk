@@ -6,6 +6,8 @@ firefox-trunk (3.0a8pre~cvs20070825-0ubuntu1) UNRELEASED; urgency=low
     contributed by asac, fixing --disable-strip (was being ignored)
   * Drop debian/patches/bz390451_master_password_lost.patch now fully integrated
     upstream. Update debian/patches/series
+  * Update debian/patches/bz392722_fix_nsinstall_on_double_slash.patch to
+    also fix security/coreconf/nsinstall/nsinstall.c
 
  -- Alexander Sack <asac@ubuntu.com>  Sat, 25 Aug 2007 16:56:07 +0000 
 
