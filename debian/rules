@@ -41,6 +41,7 @@ DEB_CONFIGURE_USER_FLAGS= \
         --with-system-zlib=/usr \
         --with-system-nspr \
         --with-system-nss \
+        --with-libxul-sdk=/usr/lib/xulrunner-devel-1.9a8pre \
         --disable-crashreporter \
         --disable-composer \
         --disable-debug \

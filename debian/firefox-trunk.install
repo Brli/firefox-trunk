@@ -1,26 +1,14 @@
-debian/tmp/usr/lib/firefox-*/*.so usr/lib/firefox-trunk
 debian/tmp/usr/lib/firefox-*/components usr/lib/firefox-trunk
-debian/tmp/usr/lib/firefox-*/firefox-trunk-bin usr/lib/firefox-trunk
 debian/tmp/usr/lib/firefox-*/firefox-trunk usr/lib/firefox-trunk
 debian/tmp/usr/lib/firefox-*/run-mozilla.sh usr/lib/firefox-trunk
-debian/tmp/usr/lib/firefox-*/modules usr/share/firefox-trunk
 
 debian/tmp/usr/lib/firefox-*/defaults/autoconfig usr/share/firefox-trunk/defaults
-debian/tmp/usr/lib/firefox-*/defaults/pref usr/share/firefox-trunk/defaults
-debian/tmp/usr/lib/firefox-*/greprefs usr/share/firefox-trunk
-debian/tmp/usr/lib/firefox-*/res usr/share/firefox-trunk
+debian/tmp/usr/lib/firefox-*/defaults/preferences usr/share/firefox-trunk/defaults
+debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-trunk/
 debian/tmp/usr/lib/firefox-*/searchplugins usr/share/firefox-trunk
 debian/tmp/usr/lib/firefox-*/icons usr/share/firefox-trunk
-debian/tmp/usr/lib/firefox-*/chrome/browser* usr/share/firefox-trunk/chrome
-debian/tmp/usr/lib/firefox-*/chrome/comm* usr/share/firefox-trunk/chrome
-debian/tmp/usr/lib/firefox-*/chrome/en-US* usr/share/firefox-trunk/chrome
-debian/tmp/usr/lib/firefox-*/chrome/toolkit* usr/share/firefox-trunk/chrome
-debian/tmp/usr/lib/firefox-*/chrome/pippki* usr/share/firefox-trunk/chrome
-debian/tmp/usr/lib/firefox-*/chrome/reporter* usr/share/firefox-trunk/chrome
-debian/tmp/usr/lib/firefox-*/chrome/classic* usr/share/firefox-trunk/chrome
-debian/tmp/usr/lib/firefox-*/chrome/icons/default/default.xpm usr/share/firefox-trunk/chrome/icons/default/
+debian/tmp/usr/lib/firefox-*/chrome usr/share/firefox-trunk
 
-debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-trunk/
 
 debian/firefox-trunk.desktop usr/share/applications
 debian/firefoxrc etc/firefox-trunk
@@ -39,6 +27,6 @@ debian/firefox-trunk-restart-required.update-notifier usr/share/firefox-trunk
 
 debian/tmp/usr/lib/firefox-*/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} usr/lib/firefox-trunk/extensions
 
-debian/tmp/usr/lib/firefox-*/plugins/*.so usr/lib/firefox-trunk/plugins
+## debian/tmp/usr/lib/firefox-*/plugins/*.so usr/lib/firefox-trunk/plugins
 
 debian/tmp/usr/lib/firefox-trunk/*.ini usr/lib/firefox-trunk

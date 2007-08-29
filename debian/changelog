@@ -1,3 +1,22 @@
+firefox-trunk (3.0a8pre~cvs20070829-0ubuntu1) UNRELEASED; urgency=low
+
+  [ Fabien Tassin ]
+  * new cvs snapshot: 3.0a8pre~cvs20070829
+  * update debian/rules to use system xulrunner by adding:
+    --with-libxul-sdk=/usr/lib/xulrunner-devel-1.9a8pre
+  * update debian/patches/trunk-fsh to use $(MOZ_APP_NAME) while copying
+    xulrunner-stub
+  * add debian/patches/installer_shouldnt_copy_xulrunner.patch to prevent
+    the installer to dump xulrunner files into firefox install dir,
+    update debian/patches/series
+  * fix debian/firefox-trunk-dev.install and debian/firefox-trunk-dev.links
+    to reflect new install scheme
+  * temporary disable debian/firefox-trunk-dev.* as 'make install' is not
+    properly installing those files upstream.
+  * update debian/changelog
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 29 Aug 2007 20:53:27 +0200
+
 firefox-trunk (3.0a8pre~cvs20070825-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]

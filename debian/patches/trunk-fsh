@@ -1,12 +1,13 @@
 ---
- browser/confvars.sh   |    2 +-
- config/autoconf.mk.in |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ browser/app/Makefile.in |    2 +-
+ browser/confvars.sh     |    2 +-
+ config/autoconf.mk.in   |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 Index: mozilla/config/autoconf.mk.in
 ===================================================================
---- mozilla.orig/config/autoconf.mk.in	2007-08-14 00:25:02.000000000 +0000
-+++ mozilla/config/autoconf.mk.in	2007-08-14 00:25:06.000000000 +0000
+--- mozilla.orig/config/autoconf.mk.in
++++ mozilla/config/autoconf.mk.in
 @@ -59,17 +59,17 @@
  exec_prefix	= @exec_prefix@
  bindir		= @bindir@
@@ -28,8 +29,8 @@ Index: mozilla/config/autoconf.mk.in
  else
 Index: mozilla/browser/confvars.sh
 ===================================================================
---- mozilla.orig/browser/confvars.sh	2007-08-14 00:24:59.000000000 +0000
-+++ mozilla/browser/confvars.sh	2007-08-14 00:25:06.000000000 +0000
+--- mozilla.orig/browser/confvars.sh
++++ mozilla/browser/confvars.sh
 @@ -31,17 +31,17 @@
  # use your version of this file under the terms of the MPL, indicate your
  # decision by deleting the provisions above and replace them with the notice
@@ -49,3 +50,26 @@ Index: mozilla/browser/confvars.sh
  # always enabled for form history
  MOZ_MORKREADER=1
  MOZ_SAFE_BROWSING=1
+Index: mozilla/browser/app/Makefile.in
+===================================================================
+--- mozilla.orig/browser/app/Makefile.in
++++ mozilla/browser/app/Makefile.in
+@@ -396,17 +396,17 @@
+ 	cp -RL $(LIBXUL_DIST)/package/mozillaSuite.rsrc $(DIST)/$(APP_NAME).app/Contents/Resources/firefox-bin.rsrc
+ 	echo -n APPLMOZB > $(DIST)/$(APP_NAME).app/Contents/PkgInfo
+ #       remove CVS dirs from packaged app
+ 	find $(DIST)/$(APP_NAME).app -type d -name "CVS" -prune -exec rm -rf {} \;
+ 
+ else
+ ifdef LIBXUL_SDK
+ libs::
+-	cp $(LIBXUL_DIST)/bin/xulrunner-stub$(BIN_SUFFIX) $(DIST)/bin/firefox$(BIN_SUFFIX)
++	cp $(LIBXUL_DIST)/bin/xulrunner-stub$(BIN_SUFFIX) $(DIST)/bin/$(MOZ_APP_NAME)$(BIN_SUFFIX)
+ endif
+ endif
+ 
+ libs::
+ 	$(INSTALL) $(topsrcdir)/LICENSE	$(DIST)/bin
+ 
+ libs:: $(srcdir)/profile/prefs.js
+ 	$(INSTALL) $^ $(DIST)/bin/defaults/profile

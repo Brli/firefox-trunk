@@ -1,10 +1,7 @@
 usr/lib/firefox-trunk/firefox-trunk usr/bin/firefox-trunk
-usr/share/firefox-trunk/modules usr/lib/firefox-trunk/modules
 usr/share/firefox-trunk/chrome usr/lib/firefox-trunk/chrome
 usr/share/firefox-trunk/defaults usr/lib/firefox-trunk/defaults
-usr/share/firefox-trunk/greprefs usr/lib/firefox-trunk/greprefs
 usr/share/firefox-trunk/icons usr/lib/firefox-trunk/icons
-usr/share/firefox-trunk/res usr/lib/firefox-trunk/res
 usr/share/firefox-trunk/searchplugins usr/lib/firefox-trunk/searchplugins
 
 etc/firefox-trunk/pref usr/share/firefox-trunk/defaults/syspref
