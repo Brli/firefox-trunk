@@ -38,18 +38,6 @@ Description: Support for Gnome in Mozilla Firefox (Development Version)
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
  integration features.
 
-Package: firefox-trunk-dbg
-Architecture: any
-Priority: extra
-Section: devel
-Depends: firefox-trunk (= ${Source-Version})
-Description: debugging symbols for firefox (Development Version)
- Firefox is a redesign of the Mozilla browser component, similar to
- Galeon, K-Meleon and Camino, but written using the XUL user interface
- language and designed to be lightweight and cross-platform.
- .
- This package contains the debugging symbols for firefox (Development Version).
-
 Package: firefox-trunk-dev
 Architecture: any
 Section: devel
