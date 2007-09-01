@@ -2,7 +2,7 @@ debian/tmp/usr/lib/firefox-*/components usr/lib/firefox-trunk
 debian/tmp/usr/lib/firefox-*/firefox-trunk usr/lib/firefox-trunk
 debian/tmp/usr/lib/firefox-*/run-mozilla.sh usr/lib/firefox-trunk
 
-debian/tmp/usr/lib/firefox-*/defaults/autoconfig usr/share/firefox-trunk/defaults
+#debian/tmp/usr/lib/firefox-*/defaults/autoconfig usr/share/firefox-trunk/defaults
 debian/tmp/usr/lib/firefox-*/defaults/preferences usr/share/firefox-trunk/defaults
 debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-trunk/
 debian/tmp/usr/lib/firefox-*/searchplugins usr/share/firefox-trunk

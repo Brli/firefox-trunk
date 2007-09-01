@@ -1,7 +1,7 @@
-firefox-trunk (3.0a8pre~cvs20070829-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (3.0~a8~cvs20070829-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
-  * new cvs snapshot: 3.0a8pre~cvs20070829
+  * new cvs snapshot: 3.0a8pre cvs20070829
   * update debian/rules to use system xulrunner by adding:
     --with-libxul-sdk=/usr/lib/xulrunner-devel-1.9a8pre
   * update debian/patches/trunk-fsh to use $(MOZ_APP_NAME) while copying
@@ -17,10 +17,10 @@ firefox-trunk (3.0a8pre~cvs20070829-0ubuntu1) UNRELEASED; urgency=low
 
  -- Alexander Sack <asac@ubuntu.com>  Wed, 29 Aug 2007 20:53:27 +0200
 
-firefox-trunk (3.0a8pre~cvs20070825-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (3.0~a8~cvs20070825-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
-  * new cvs snapshot: 3.0a8pre~cvs20070825
+  * new cvs snapshot: 3.0a8pre cvs20070825
   * Add debian/patches/installer_shouldnt_skip_strip_if_disable_strip_configured
     contributed by asac, fixing --disable-strip (was being ignored)
   * Drop debian/patches/bz390451_master_password_lost.patch now fully integrated
@@ -30,10 +30,10 @@ firefox-trunk (3.0a8pre~cvs20070825-0ubuntu1) UNRELEASED; urgency=low
 
  -- Alexander Sack <asac@ubuntu.com>  Sat, 25 Aug 2007 16:56:07 +0000 
 
-firefox-trunk (3.0a8pre~cvs20070818-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (3.0~a8~cvs20070818-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
-  * new cvs snapshot: 3.0a8pre~cvs20070818
+  * new cvs snapshot: 3.0a8pre cvs20070818
     (bump version from 2.99 to 3.0a8pre, as that's what it really is
      in mozilla/browser/config/version.txt)
   * Update debian/patches/trunk-profilename to patch firefox-branding.js
