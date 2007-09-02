@@ -1,10 +1,7 @@
-bz386844_java_plugin_crash_in_xsync.patch
-bz392722_fix_nsinstall_on_double_slash.patch
 bz386904_config_rules_install_dist_files.patch
 trunk-profilename
 trunk-fsh
 ftbfs-with-branding-dir
-bz386866_ftbfs_toolkit_xre_Makefile_in.patch
 no-have-stdint-h-ftbfs.patch
 installer_shouldnt_skip_strip_if_disable_strip_configured
 installer_shouldnt_copy_xulrunner.patch
