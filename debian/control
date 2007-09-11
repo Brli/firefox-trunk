@@ -27,6 +27,8 @@ Description: tool for inspecting the DOM of pages in Mozilla Firefox (Developmen
  This is a tool that allows you to inspect the DOM for web pages in
  Firefox.  This is of great use to people who are doing Mozilla chrome
  development or web page development.
+ .
+ This extension is provided by XULRunner for use by any XUL application.
 
 Package: firefox-trunk-gnome-support
 Architecture: any

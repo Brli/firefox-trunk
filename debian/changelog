@@ -7,6 +7,8 @@ firefox-trunk (3.0~a8~cvs20070903-0ubuntu1) UNRELEASED; urgency=low
       bz392722_fix_nsinstall_on_double_slash.patch
       bz386866_ftbfs_toolkit_xre_Makefile_in.patch
   * Link venkman from xulrunner-1.9
+  * Update firefox-dom-inspector package to just link the
+    extension from xulrunner-1.9
 
  -- Alexander Sack <asac@ubuntu.com>  Sun,  2 Sep 2007 22:25:42 +0200
 
