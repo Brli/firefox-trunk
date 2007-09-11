@@ -30,6 +30,22 @@ Description: tool for inspecting the DOM of pages in Mozilla Firefox (Developmen
  .
  This extension is provided by XULRunner for use by any XUL application.
 
+Package: firefox-trunk-venkman
+Architecture: all
+Depends: firefox-trunk (>= ${source:Version}), firefox-trunk (<< ${source:Version}.1~)
+Description: Venkman is Mozilla-based JavaScript debugger
+ Venkman is both a graphic and a console JavaScript debugger for Firefox
+ and Mozilla-based products. Features such as breakpoint management, call stack
+ inspection, and variable/object inspection are available from the user
+ interface and from console commands, letting you work in the way you are most
+ accustomed to. The interactive console also allows for execution of arbitrary
+ JavaScript code.
+ Venkman's keyboard shortcuts are the same as leading visual debugging
+ environments, and gdb users should be familiar with Venkman's /break, /step,
+ /next, /finish, /frame, and /where commands.
+ .
+ This extension is provided by XULRunner for use by any XUL application.
+
 Package: firefox-trunk-gnome-support
 Architecture: any
 Section: gnome
