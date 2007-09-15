@@ -1,7 +1,9 @@
-firefox-trunk (3.0~a8~cvs20070903-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (3.0~a8~cvs20070914t1713-0ubuntu1~mt1) gutsy; urgency=low
 
   [ Fabien Tassin ]
-  * new cvs snapshot: 3.0a8pre cvs20070903 using a stripped tarball
+  * new cvs snapshot: 3.0a8pre cvs20070914t1713 using a stripped tarball
+    produced my mozclient
+  * update debian/control to fix xulrunner version (1.9a8pre vs 1.9~a8)
   * drop patches no longer useful:
       bz386844_java_plugin_crash_in_xsync.patch
       bz392722_fix_nsinstall_on_double_slash.patch
