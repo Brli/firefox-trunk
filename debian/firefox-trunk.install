@@ -8,7 +8,7 @@ debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-trunk/
 debian/tmp/usr/lib/firefox-*/searchplugins usr/share/firefox-trunk
 debian/tmp/usr/lib/firefox-*/icons usr/share/firefox-trunk
 debian/tmp/usr/lib/firefox-*/chrome usr/share/firefox-trunk
-
+debian/tmp/usr/lib/firefox-*/browserconfig.properties usr/lib/firefox-trunk
 
 debian/firefox-trunk.desktop usr/share/applications
 debian/firefoxrc etc/firefox-trunk

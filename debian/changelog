@@ -11,6 +11,7 @@ firefox-trunk (3.0~a8~cvs20070914t1713-0ubuntu1~mt1) gutsy; urgency=low
   * Link venkman from xulrunner-1.9
   * Update firefox-dom-inspector package to just link the
     extension from xulrunner-1.9
+  * Update debian/firefox-trunk.install to install browserconfig.properties
 
  -- Alexander Sack <asac@ubuntu.com>  Sun,  2 Sep 2007 22:25:42 +0200
 
