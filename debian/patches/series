@@ -3,6 +3,5 @@ trunk-profilename
 trunk-fsh
 ftbfs-with-branding-dir
 no-have-stdint-h-ftbfs.patch
-installer_shouldnt_skip_strip_if_disable_strip_configured
 installer_shouldnt_copy_xulrunner.patch
 installer_use_stdout_for_missing_files.patch

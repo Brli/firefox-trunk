@@ -17,6 +17,13 @@ firefox-trunk (3.0~a8~cvs20070914t1713-0ubuntu1~mt1) UNRELEASED; urgency=low
     Add debian/patches/installer_use_stdout_for_missing_files.patch
     and update debian/patches/series
 
+  [ Alexander Sack ]
+  * Use --disable-install-strip to prevent packager from stripping symbols:
+    - debian/rules: add --disable-install-strip as configure option.
+    - debian/patches/installer_shouldnt_skip_strip_if_disable_strip_configured,
+      series: drop patch to disable stripping symbols during |make install| in
+      favour of generic upstream solution provided by --disable-install-strip.
+
  -- Alexander Sack <asac@ubuntu.com>  Sun,  2 Sep 2007 22:25:42 +0200
 
 firefox-trunk (3.0~a8~cvs20070829-0ubuntu1) gutsy; urgency=low

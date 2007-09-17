@@ -47,6 +47,7 @@ DEB_CONFIGURE_USER_FLAGS= \
         --disable-debug \
         --disable-elf-dynstr-gc \
         --disable-gtktest \
+        --disable-install-strip \
         --disable-installer \
         --disable-ldap \
         --disable-mailnews \
