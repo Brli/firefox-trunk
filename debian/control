@@ -1,15 +1,16 @@
-Source: firefox-trunk
+Source: firefox-3.0
 Section: web
 Priority: optional
 Maintainer: Alexander Sack <asac@ubuntu.com>
 Build-Depends: cdbs, bzip2, autotools-dev, debhelper (>= 5), quilt, patchutils (>= 0.2.25), autoconf2.13, libx11-dev, libxt-dev, libgtk2.0-dev (>= 2.8), zlib1g-dev, liborbit2-dev, libidl-dev (>= 0.8.0), zip, libxft-dev, libfreetype6-dev, libpng12-dev, libjpeg62-dev, libxrender-dev, libxinerama-dev, libcairo2-dev, libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev, sharutils, m4, binutils (>= 2.17-1) [mips mipsel], libhunspell-dev, libnspr4-dev (>= 4.7.0~cvs20070713), libnss3-dev (>= 3.12.0~alpha1b), xulrunner-1.9-dev (>= 1.9~a8~cvs20070829)
 Standards-Version: 3.7.2.1
 
-Package: firefox-trunk
+Package: firefox-3.0
 Architecture: any
 Depends: fontconfig, psmisc, debianutils (>= 1.16), ${shlibs:Depends}
-Suggests: firefox-trunk-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
+Suggests: firefox-3.0-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
 Provides: www-browser
+Replaces: firefox-trunk
 Description: lightweight web browser based on Mozilla (Development Version)
  Firefox is a redesign of the Mozilla browser component, similar to
  Galeon, K-Meleon and Camino, but written using the XUL user interface
@@ -20,9 +21,10 @@ Description: lightweight web browser based on Mozilla (Development Version)
  This is a build of a random development version (aka trunk). It is ment for preview 
  and not for production use.
 
-Package: firefox-trunk-dom-inspector
+Package: firefox-3.0-dom-inspector
 Architecture: all
-Depends: firefox-trunk (>= ${source:Version}), firefox-trunk (<< ${source:Version}.1~)
+Depends: firefox-3.0 (>= ${source:Version}), firefox-3.0 (<< ${source:Version}.1~)
+Replaces: firefox-trunk-dom-inspector
 Description: tool for inspecting the DOM of pages in Mozilla Firefox (Development Version)
  This is a tool that allows you to inspect the DOM for web pages in
  Firefox.  This is of great use to people who are doing Mozilla chrome
@@ -30,9 +32,10 @@ Description: tool for inspecting the DOM of pages in Mozilla Firefox (Developmen
  .
  This extension is provided by XULRunner for use by any XUL application.
 
-Package: firefox-trunk-venkman
+Package: firefox-3.0-venkman
 Architecture: all
-Depends: firefox-trunk (>= ${source:Version}), firefox-trunk (<< ${source:Version}.1~)
+Depends: firefox-3.0 (>= ${source:Version}), firefox-3.0 (<< ${source:Version}.1~)
+Replaces: firefox-trunk-venkman
 Description: Venkman is Mozilla-based JavaScript debugger
  Venkman is both a graphic and a console JavaScript debugger for Firefox
  and Mozilla-based products. Features such as breakpoint management, call stack
@@ -46,20 +49,22 @@ Description: Venkman is Mozilla-based JavaScript debugger
  .
  This extension is provided by XULRunner for use by any XUL application.
 
-Package: firefox-trunk-gnome-support
+Package: firefox-3.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox-trunk (= ${Source-Version})
+Depends: ${shlibs:Depends}, firefox-3.0 (= ${Source-Version})
 Provides: gnome-www-browser
+Replaces: firefox-trunk-gnome-support
 Description: Support for Gnome in Mozilla Firefox (Development Version)
  This is an extension to Firefox that allows it to use protocol
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
  integration features.
 
-Package: firefox-trunk-dev
+Package: firefox-3.0-dev
 Architecture: any
 Section: devel
-Depends: firefox-trunk (= ${Source-Version})
+Depends: firefox-3.0 (= ${Source-Version})
+Replaces: firefox-trunk-dev
 Description: Development files for Mozilla Firefox (Development Version)
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.

@@ -1,0 +1,11 @@
+## # debian/tmp/usr/lib/pkgconfig/*.pc usr/lib/pkgconfig
+## 
+## debian/tmp/usr/include/firefox-*/*
+## debian/tmp/usr/lib/firefox-3.0-devel-*/
+## debian/tmp/usr/share/idl/firefox-*/
+## 
+## # Missing bin mentionned https://bugzilla.mozilla.org/show_bug.cgi?id=389673#c9
+## build-tree/mozilla/xpcom/tools/registry/regxpcom usr/lib/firefox-3.0
+## build-tree/mozilla/xpcom/typelib/xpidl/xpidl usr/lib/firefox-3.0
+## build-tree/mozilla/xpcom/typelib/xpt/tools/xpt_dump usr/lib/firefox-3.0
+## build-tree/mozilla/xpcom/typelib/xpt/tools/xpt_link usr/lib/firefox-3.0

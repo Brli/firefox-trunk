@@ -1,3 +1,10 @@
+firefox-3.0 (3.0~a8~cvs20070914t1713-0ubuntu1~mt2) gutsy; urgency=low
+
+  [ Fabien Tassin ]
+  * Massive app-name change from firefox-trunk to firefox-3.0
+
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 21 Sep 2007 20:47:20 +0200
+
 firefox-trunk (3.0~a8~cvs20070914t1713-0ubuntu1~mt1) gutsy; urgency=low
 
   RELEASE: 3.0~a8~cvs20070914t1713-0ubuntu1~mt1 to gutsy/PPA.

@@ -1,6 +1,6 @@
 bz386904_config_rules_install_dist_files.patch
-trunk-profilename
-trunk-fsh
+firefox-profilename
+firefox-fsh
 ftbfs-with-branding-dir
 no-have-stdint-h-ftbfs.patch
 installer_shouldnt_copy_xulrunner.patch

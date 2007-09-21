@@ -1,0 +1,32 @@
+debian/tmp/usr/lib/firefox-*/components usr/lib/firefox-3.0
+debian/tmp/usr/lib/firefox-*/firefox-3.0 usr/lib/firefox-3.0
+debian/tmp/usr/lib/firefox-*/run-mozilla.sh usr/lib/firefox-3.0
+
+#debian/tmp/usr/lib/firefox-*/defaults/autoconfig usr/share/firefox-3.0/defaults
+debian/tmp/usr/lib/firefox-*/defaults/preferences usr/share/firefox-3.0/defaults
+debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-3.0/
+debian/tmp/usr/lib/firefox-*/searchplugins usr/share/firefox-3.0
+debian/tmp/usr/lib/firefox-*/icons usr/share/firefox-3.0
+debian/tmp/usr/lib/firefox-*/chrome usr/share/firefox-3.0
+debian/tmp/usr/lib/firefox-*/browserconfig.properties usr/lib/firefox-3.0
+
+debian/firefox-3.0.desktop usr/share/applications
+debian/firefoxrc etc/firefox-3.0
+debian/presubj usr/share/bug/firefox-3.0
+
+debian/firefox.js etc/firefox-3.0/pref
+debian/firefox.cfg usr/lib/firefox-3.0
+
+debian/debsearch.gif usr/share/firefox-3.0/searchplugins
+debian/debsearch.src usr/share/firefox-3.0/searchplugins
+
+debian/wikipedia.gif usr/share/firefox-3.0/searchplugins
+debian/wikipedia.src usr/share/firefox-3.0/searchplugins
+
+debian/firefox-3.0-restart-required.update-notifier usr/share/firefox-3.0
+
+debian/tmp/usr/lib/firefox-*/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} usr/lib/firefox-3.0/extensions
+
+## debian/tmp/usr/lib/firefox-*/plugins/*.so usr/lib/firefox-3.0/plugins
+
+debian/tmp/usr/lib/firefox-3.0/*.ini usr/lib/firefox-3.0

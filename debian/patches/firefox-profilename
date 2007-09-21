@@ -19,7 +19,7 @@ Index: mozilla/browser/app/application.ini
  [App]
  Vendor=Mozilla
 -Name=Firefox
-+Name=Firefox-Trunk
++Name=Firefox-3.0
  Version=@APP_VERSION@
  BuildID=@GRE_BUILDID@
  Copyright=Copyright (c) 1998 - 2007 mozilla.org
