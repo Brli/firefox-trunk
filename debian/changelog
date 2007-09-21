@@ -1,3 +1,10 @@
+firefox-3.0 (3.0~a8-0ubuntu1~mt1) UNRELEASED; urgency=low
+
+  [ Fabien Tassin ]
+  * new release: GranParadiso 3.0 alpha 8
+
+ -- Alexander Sack <asac@ubuntu.com>  Sat, 22 Sep 2007 00:02:50 +0200
+
 firefox-3.0 (3.0~a8~cvs20070914t1713-0ubuntu1~mt2) gutsy; urgency=low
 
   RELEASE: 3.0~a8~cvs20070914t1713-0ubuntu1~mt2 to gutsy/PPA.
