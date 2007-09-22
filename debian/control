@@ -24,7 +24,7 @@ Description: lightweight web browser based on Mozilla (Development Version)
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
-Depends: firefox-3.0 (>= ${source:Version}), firefox-3.0 (<< ${source:Version}.1~)
+Depends: firefox-3.0
 Conflicts: firefox-trunk-dom-inspector (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dom-inspector (<< 3.0~alpha8-0)
 Replaces: firefox-trunk-dom-inspector, firefox-granparadiso-dom-inspector
 Description: tool for inspecting the DOM of pages in Mozilla Firefox (Development Version)
@@ -36,7 +36,7 @@ Description: tool for inspecting the DOM of pages in Mozilla Firefox (Developmen
 
 Package: firefox-3.0-venkman
 Architecture: all
-Depends: firefox-3.0 (>= ${source:Version}), firefox-3.0 (<< ${source:Version}.1~)
+Depends: firefox-3.0
 Conflicts: firefox-trunk-venkman (<< 3.0~a8~cvs20070914t1713-0)
 Replaces: firefox-trunk-venkman
 Description: Venkman is Mozilla-based JavaScript debugger
