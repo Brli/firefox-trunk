@@ -72,7 +72,8 @@ DEB_CONFIGURE_USER_FLAGS= \
         --enable-extensions=default \
         --enable-single-profile \
         --enable-system-myspell \
-        --with-distribution-id=com.ubuntu
+        --with-distribution-id=com.ubuntu \
+        --with-branding=browser/branding/unofficial
 
 USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.4.0'; a=$$?; if test $$a != 1; then echo 1; fi)
 
