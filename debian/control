@@ -10,8 +10,8 @@ Architecture: any
 Depends: fontconfig, psmisc, debianutils (>= 1.16), ${shlibs:Depends}
 Suggests: firefox-3.0-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
 Provides: www-browser
-Replaces: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
-Conflicts: firefox-trunk, firefox-granparadiso
+Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
+Replaces: firefox-trunk, firefox-granparadiso
 Description: lightweight web browser based on Mozilla (Development Version)
  Firefox is a redesign of the Mozilla browser component, similar to
  Galeon, K-Meleon and Camino, but written using the XUL user interface
@@ -25,8 +25,8 @@ Description: lightweight web browser based on Mozilla (Development Version)
 Package: firefox-3.0-dom-inspector
 Architecture: all
 Depends: firefox-3.0 (>= ${source:Version}), firefox-3.0 (<< ${source:Version}.1~)
-Replaces: firefox-trunk-dom-inspector (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dom-inspector (<< 3.0~alpha8-0)
-Conflicts: firefox-trunk-dom-inspector, firefox-granparadiso-dom-inspector
+Conflicts: firefox-trunk-dom-inspector (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dom-inspector (<< 3.0~alpha8-0)
+Replaces: firefox-trunk-dom-inspector, firefox-granparadiso-dom-inspector
 Description: tool for inspecting the DOM of pages in Mozilla Firefox (Development Version)
  This is a tool that allows you to inspect the DOM for web pages in
  Firefox.  This is of great use to people who are doing Mozilla chrome
@@ -37,8 +37,8 @@ Description: tool for inspecting the DOM of pages in Mozilla Firefox (Developmen
 Package: firefox-3.0-venkman
 Architecture: all
 Depends: firefox-3.0 (>= ${source:Version}), firefox-3.0 (<< ${source:Version}.1~)
-Replaces: firefox-trunk-venkman (<< 3.0~a8~cvs20070914t1713-0)
-Conflicts: firefox-trunk-venkman
+Conflicts: firefox-trunk-venkman (<< 3.0~a8~cvs20070914t1713-0)
+Replaces: firefox-trunk-venkman
 Description: Venkman is Mozilla-based JavaScript debugger
  Venkman is both a graphic and a console JavaScript debugger for Firefox
  and Mozilla-based products. Features such as breakpoint management, call stack
@@ -57,8 +57,8 @@ Architecture: any
 Section: gnome
 Depends: ${shlibs:Depends}, firefox-3.0 (= ${Source-Version})
 Provides: gnome-www-browser
-Replaces: firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
-Conflicts: firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
+Conflicts: firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
+Replaces: firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
 Description: Support for Gnome in Mozilla Firefox (Development Version)
  This is an extension to Firefox that allows it to use protocol
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
@@ -68,71 +68,71 @@ Package: firefox-3.0-dev
 Architecture: any
 Section: devel
 Depends: firefox-3.0 (= ${Source-Version})
-Replaces: firefox-trunk-dev (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dev (<< 3.0~alpha8-0)
-Conflicts: firefox-trunk-dev, firefox-granparadiso-dev
+Conflicts: firefox-trunk-dev (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dev (<< 3.0~alpha8-0)
+Replaces: firefox-trunk-dev, firefox-granparadiso-dev
 Description: Development files for Mozilla Firefox (Development Version)
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
 
 Package: firefox-trunk
-Architecture: any
-Depends: firefox-3.0 (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
  This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-trunk-dom-inspector
-Architecture: any
-Depends: firefox-3.0-dom-inspector (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0-dom-inspector
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
  This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-trunk-venkman
-Architecture: any
-Depends: firefox-3.0-venkman (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0-venkman
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
  This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-trunk-gnome-support
-Architecture: any
-Depends: firefox-3.0-gnome-support (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0-gnome-support
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
  This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-trunk-dev
-Architecture: any
-Depends: firefox-3.0-dev (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0-dev
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
  This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-granparadiso
-Architecture: any
-Depends: firefox-3.0 (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
  This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-granparadiso-dom-inspector
-Architecture: any
-Depends: firefox-3.0-dom-inspector (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0-dom-inspector
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
  This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-granparadiso-gnome-support
-Architecture: any
-Depends: firefox-3.0-gnome-support (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0-gnome-support
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
  This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
  It can be safely removed.
 
 Package: firefox-granparadiso-dev
-Architecture: any
-Depends: firefox-3.0-dev (= ${binary:Version})
+Architecture: all
+Depends: firefox-3.0-dev
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
  This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
  It can be safely removed.
