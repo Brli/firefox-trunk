@@ -5,6 +5,7 @@ firefox-3.0 (3.0~alpha8-0ubuntu1~mt1) UNRELEASED; urgency=low
   * Fix debian/rules to detect which xul-dev package is installed
   * Change branding based on Version (use MineField if version
     matches cvs, otherwise use GranParadiso)
+  * Move gnome component into firefox-3.0-gnome-support
 
  -- Alexander Sack <asac@ubuntu.com>  Sat, 22 Sep 2007 00:02:50 +0200
 
