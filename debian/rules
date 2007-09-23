@@ -17,6 +17,13 @@ DEBIAN_XUL_DEV := $(shell echo /usr/lib/xulrunner-devel-1.9*)
 
 DEB_TAR_SRCDIR		:= mozilla
 
+# Change branding based on Version
+ifneq (,$(findstringÂ~cvs,$(DEBIAN_VERSION)))
+	BRANDING =
+else
+	BRANDING = --with-branding=browser/branding/unofficial
+endif
+
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
         OPTFLAGS = -O0
 else
@@ -74,7 +81,7 @@ DEB_CONFIGURE_USER_FLAGS= \
         --enable-single-profile \
         --enable-system-myspell \
         --with-distribution-id=com.ubuntu \
-        --with-branding=browser/branding/unofficial
+	$(BRANDING)
 
 USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.4.0'; a=$$?; if test $$a != 1; then echo 1; fi)
 
