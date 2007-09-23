@@ -20,8 +20,10 @@ DEB_TAR_SRCDIR		:= mozilla
 # Change branding based on Version
 ifneq (,$(findstringÂ~cvs,$(DEBIAN_VERSION)))
 	BRANDING =
+	DESKTOP  = firefox-3.0-minefield.desktop
 else
 	BRANDING = --with-branding=browser/branding/unofficial
+	DESKTOP  = firefox-3.0-granparadiso.desktop
 endif
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -105,12 +107,14 @@ UUDECODE = \
 pre-build::
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
-		done
+		done ; \
+		cp debian/$(DESKTOP) debian/firefox-3.0.desktop
 
 clean::
 	set -e; for i in $(UUDECODE); do \
 		rm -f debian/$$i; \
-		done
+		done ; \
+		rm -f debian/firefox-3.0.desktop
 
 date := $(shell date +%Y%m%d)
 
