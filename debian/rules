@@ -18,8 +18,8 @@ DEBIAN_XUL_DEV := $(shell echo /usr/lib/xulrunner-devel-1.9*)
 DEB_TAR_SRCDIR		:= mozilla
 
 # Change branding based on Version
-ifneq (,$(findstringÂ~cvs,$(DEBIAN_VERSION)))
-	BRANDING =
+ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
+	BRANDING = $(NULL)
 	DESKTOP  = firefox-3.0-minefield.desktop
 else
 	BRANDING = --with-branding=browser/branding/unofficial
