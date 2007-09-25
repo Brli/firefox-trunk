@@ -1,3 +1,11 @@
+firefox-3.0 (3.0~alpha8-0ubuntu1~mt2) UNRELEASED; urgency=low
+
+  [ Fabien Tassin ]
+  * dummify firefox-3.0-dom-inspector and firefox-3.0-venkman
+    now that we ship those two extensions with xulrunner
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 26 Sep 2007 00:26:19 +0200
+
 firefox-3.0 (3.0~alpha8-0ubuntu1~mt1) gutsy; urgency=low
 
   Upstream Release: 3.0~a8 aka MOZILLA_1_9a8_RELEASE

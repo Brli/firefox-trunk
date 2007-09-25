@@ -24,33 +24,17 @@ Description: lightweight web browser based on Mozilla (Development Version)
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
-Depends: firefox-3.0
-Conflicts: firefox-trunk-dom-inspector (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dom-inspector (<< 3.0~alpha8-0)
-Replaces: firefox-trunk-dom-inspector, firefox-granparadiso-dom-inspector
-Description: tool for inspecting the DOM of pages in Mozilla Firefox (Development Version)
- This is a tool that allows you to inspect the DOM for web pages in
- Firefox.  This is of great use to people who are doing Mozilla chrome
- development or web page development.
- .
- This extension is provided by XULRunner for use by any XUL application.
+Depends: xulrunner-1.9-dom-inspector
+Description: dummy upgrade package for firefox-3.0-dom-inspector -> xulrunner-1.9-dom-inspector
+ This is a transitional package so dom-inspector users get xulrunner-1.9-dom-inspector on upgrades.
+ It can be safely removed.
 
 Package: firefox-3.0-venkman
 Architecture: all
-Depends: firefox-3.0
-Conflicts: firefox-trunk-venkman (<< 3.0~a8~cvs20070914t1713-0)
-Replaces: firefox-trunk-venkman
-Description: Venkman is Mozilla-based JavaScript debugger
- Venkman is both a graphic and a console JavaScript debugger for Firefox
- and Mozilla-based products. Features such as breakpoint management, call stack
- inspection, and variable/object inspection are available from the user
- interface and from console commands, letting you work in the way you are most
- accustomed to. The interactive console also allows for execution of arbitrary
- JavaScript code.
- Venkman's keyboard shortcuts are the same as leading visual debugging
- environments, and gdb users should be familiar with Venkman's /break, /step,
- /next, /finish, /frame, and /where commands.
- .
- This extension is provided by XULRunner for use by any XUL application.
+Depends: xulrunner-1.9-venkman
+Description: dummy upgrade package for firefox-3.0-venkman -> xulrunner-1.9-venkman
+ This is a transitional package so venkman users get xulrunner-1.9-venkman on upgrades.
+ It can be safely removed.
 
 Package: firefox-3.0-gnome-support
 Architecture: any

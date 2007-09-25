@@ -104,6 +104,9 @@ UUDECODE = \
 	wikipedia.gif \
 	$(NULL)
 
+binary-install/firefox-3.0::
+	dh_link usr/lib/xulrunner-addons usr/lib/firefox-3.0/extensions
+
 pre-build::
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
