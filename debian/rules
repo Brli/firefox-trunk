@@ -104,6 +104,10 @@ UUDECODE = \
 	wikipedia.gif \
 	$(NULL)
 
+DEBIAN_EXECUTABLES = \
+	firefox.sh \
+	$(NULL)
+
 binary-install/firefox-3.0::
 	dh_link usr/lib/xulrunner-addons usr/lib/firefox-3.0/extensions
 
@@ -111,7 +115,10 @@ pre-build::
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
-		cp debian/$(DESKTOP) debian/firefox-3.0.desktop
+		cp debian/$(DESKTOP) debian/firefox-3.0.desktop; \
+		for i in $(DEBIAN_EXECUTABLES); do \
+			chmod a+x debian/$$i; \
+		done
 
 clean::
 	set -e; for i in $(UUDECODE); do \
