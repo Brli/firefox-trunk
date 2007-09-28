@@ -1,3 +1,11 @@
+firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) UNRELEASED; urgency=low
+
+  [ Fabien Tassin ]
+  * Unset browser.safebrowsing.enabled by default
+    Update debian/firefox.js
+
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 28 Sep 2007 23:31:04 +0200
+
 firefox-3.0 (3.0~alpha8-0ubuntu1~mt2) gutsy; urgency=low
 
   [ Fabien Tassin ]

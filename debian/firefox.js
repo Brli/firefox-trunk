@@ -14,3 +14,6 @@ pref("intl.locale.matchOS", true);
 
 // Disable default browser checking.
 pref("browser.shell.checkDefaultBrowser", false);
+
+// Disable safebrowsing.
+pref("browser.safebrowsing.enabled", false);
