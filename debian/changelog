@@ -4,6 +4,9 @@ firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) UNRELEASED; urgency=low
   * Unset browser.safebrowsing.enabled by default
     Update debian/firefox.js
   * Compile with gcc/g++ 4.2 for all archs.
+  * Add debian/patches/force_safebrowsing_off.patch forcing
+    the default to off so users could decide to turn it if they
+    want to.
 
  -- Alexander Sack <asac@ubuntu.com>  Fri, 28 Sep 2007 23:31:04 +0200
 

@@ -5,3 +5,4 @@ ftbfs-with-branding-dir
 no-have-stdint-h-ftbfs.patch
 installer_shouldnt_copy_xulrunner.patch
 installer_use_stdout_for_missing_files.patch
+force_safebrowsing_off.patch
