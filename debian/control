@@ -19,7 +19,7 @@ Description: lightweight web browser based on Mozilla (Development Version)
  .
  This browser was previously known as Firebird and Phoenix.
  .
- This is a build of a random development version (aka trunk). It is ment for preview 
+ This is a build of a random development version (aka trunk). It is meant for preview 
  and not for production use.
 
 Package: firefox-3.0-dom-inspector

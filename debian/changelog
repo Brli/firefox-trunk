@@ -7,6 +7,7 @@ firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) UNRELEASED; urgency=low
   * Add debian/patches/force_safebrowsing_off.patch forcing
     the default to off so users could decide to turn it if they
     want to.
+  * Fix a typo in debian/control (Fixes LP #146694)
 
  -- Alexander Sack <asac@ubuntu.com>  Fri, 28 Sep 2007 23:31:04 +0200
 
