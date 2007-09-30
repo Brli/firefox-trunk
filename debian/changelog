@@ -8,6 +8,14 @@ firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) UNRELEASED; urgency=low
     the default to off so users could decide to turn it if they
     want to.
   * Fix a typo in debian/control (Fixes LP #146694)
+  * Fix a FTBFS introduced by gcc-4.2 that fixed a visibility bug
+    [GCC bug 26905] triggering WRAP_SYSTEM_INCLUDES in firefox.
+    This WRAP_SYSTEM_INCLUDES triggered code depending on nspr
+    sources that are no longer accessible because of the stripped
+    tarball.
+    - add debian/patches/dont_depend_on_nspr_sources.patch
+    - update debian/patches/series
+    - update debian/changelog
 
  -- Alexander Sack <asac@ubuntu.com>  Fri, 28 Sep 2007 23:31:04 +0200
 
