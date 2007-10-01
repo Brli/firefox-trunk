@@ -16,6 +16,9 @@ firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) UNRELEASED; urgency=low
     - add debian/patches/dont_depend_on_nspr_sources.patch
     - update debian/patches/series
     - update debian/changelog
+  * Clean a possible left over from trunk in update-notifier user
+    directory
+    - update debian/firefox-3.0.postinst
 
  -- Alexander Sack <asac@ubuntu.com>  Fri, 28 Sep 2007 23:31:04 +0200
 

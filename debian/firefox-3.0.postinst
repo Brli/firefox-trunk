@@ -22,3 +22,7 @@ if [ -d $UPDATENOTIFIERDIR ] ; then
   fi
 fi
 
+# Clean a possible left over
+if [ -f $UPDATENOTIFIERDIR/firefox-trunk-restart-required ] ; then
+  rm -f $UPDATENOTIFIERDIR/firefox-trunk-restart-required
+fi
