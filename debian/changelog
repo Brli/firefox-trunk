@@ -1,4 +1,6 @@
-firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) UNRELEASED; urgency=low
+firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) gutsy; urgency=low
+
+  RELEASE: 3.0~alpha8-0ubuntu1~mt3 to gutsy/PPA.
 
   [ Fabien Tassin ]
   * Unset browser.safebrowsing.enabled by default
@@ -20,7 +22,7 @@ firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) UNRELEASED; urgency=low
     directory
     - update debian/firefox-3.0.postinst
 
- -- Alexander Sack <asac@ubuntu.com>  Fri, 28 Sep 2007 23:31:04 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 03 Oct 2007 21:46:15 +0200
 
 firefox-3.0 (3.0~alpha8-0ubuntu1~mt2) gutsy; urgency=low
 
