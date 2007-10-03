@@ -1,3 +1,10 @@
+firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) UNRELEASED; urgency=low
+
+  [ Fabien Tassin ]
+  * update diverged debian/patches/firefox-fsh
+
+ -- Fabien Tassin <fta@sofaraway.org>  Wed, 03 Oct 2007 22:06:02 +0200
+
 firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) gutsy; urgency=low
 
   RELEASE: 3.0~alpha8-0ubuntu1~mt3 to gutsy/PPA.

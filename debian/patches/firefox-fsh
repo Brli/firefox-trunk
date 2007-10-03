@@ -69,7 +69,7 @@ Index: mozilla/browser/app/Makefile.in
  endif
  
  libs::
+ ifeq ($(OS_ARCH),WINNT)
+ 	$(PERL) -pe 's/(?<!\r)\n/\r\n/g;' < $(topsrcdir)/LICENSE > $(DIST)/bin/LICENSE
+ else
  	$(INSTALL) $(topsrcdir)/LICENSE	$(DIST)/bin
- 
- libs:: $(srcdir)/profile/prefs.js
- 	$(INSTALL) $^ $(DIST)/bin/defaults/profile
