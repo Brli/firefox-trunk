@@ -1,3 +1,9 @@
+firefox-3.0 (3.0~alpha8-0ubuntu1) UNRELEASED; urgency=low
+
+  * 
+
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 05 Oct 2007 01:20:17 +0200
+
 firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) gutsy; urgency=low
 
   RELEASE: 3.0~alpha8-0ubuntu1~mt3 to gutsy/PPA.
