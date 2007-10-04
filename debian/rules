@@ -54,8 +54,6 @@ DEB_CONFIGURE_USER_FLAGS= \
         --with-user-appdir=.mozilla \
         --with-system-jpeg=/usr \
         --with-system-zlib=/usr \
-        --with-system-nspr \
-        --with-system-nss \
         --with-libxul-sdk=$(DEBIAN_XUL_DEV) \
         --disable-crashreporter \
         --disable-composer \
