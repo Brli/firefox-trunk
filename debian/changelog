@@ -1,4 +1,6 @@
-firefox-3.0 (3.0~alpha8-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~alpha8-0ubuntu1) gutsy; urgency=low
+
+  RELEASE: 3.0~alpha8-0ubuntu1 to gutsy/universe.
 
   [ Alexander Sack ]
   * drop libnspr4-dev and libnss3-dev build-depends for gutsy upload.
@@ -6,7 +8,7 @@ firefox-3.0 (3.0~alpha8-0ubuntu1) UNRELEASED; urgency=low
   * add nspr_flags_by_pkg_config_hack.patch to use pkg-config to get
     nspr libs and cflags from xulrunner-1.9-dev package.
 
- -- Alexander Sack <asac@ubuntu.com>  Fri, 05 Oct 2007 01:20:17 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 05 Oct 2007 02:38:08 +0200
 
 firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) gutsy; urgency=low
 
