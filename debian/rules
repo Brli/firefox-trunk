@@ -70,6 +70,7 @@ DEB_CONFIGURE_USER_FLAGS= \
         --disable-strip \
         --disable-strip-libs \
         --disable-tests \
+        --disable-mochitest \
         --disable-updater \
         --disable-xprint \
         --enable-application=browser \
