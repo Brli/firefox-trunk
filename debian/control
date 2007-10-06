@@ -7,7 +7,7 @@ Standards-Version: 3.7.2.1
 
 Package: firefox-3.0
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), ${shlibs:Depends}
+Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~a8~cvs20070829), ${shlibs:Depends}
 Suggests: firefox-3.0-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
