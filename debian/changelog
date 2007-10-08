@@ -2,6 +2,8 @@ firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
   * update diverged debian/patches/firefox-fsh
+  * build with or without nss/nspr depending on version like xulrunner-1.9
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Mon, 08 Oct 2007 16:28:50 +0200
 

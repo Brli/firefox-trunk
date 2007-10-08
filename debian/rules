@@ -17,6 +17,17 @@ DEBIAN_XUL_DEV := $(shell echo /usr/lib/xulrunner-devel-1.9*)
 
 DEB_TAR_SRCDIR		:= mozilla
 
+EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
+
+DEV_PACKAGE_INDICATION = $(findstring ~cvs,$(DEBIAN_VERSION))$(findstring ~mt,$(DEBIAN_VERSION))
+
+ifneq (,$(DEV_PACKAGE_INDICATION))
+	EXTRA_SYSTEM_CONFIGURE_FLAGS = \
+		--with-system-nspr \
+		--with-system-nss \
+		$(NULL)
+endif
+
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
 	BRANDING = $(NULL)
@@ -49,6 +60,7 @@ DEB_AUTO_UPDATE_DEBIAN_CONTROL=0
 DEB_MOZ_APPLICATION=browser
 
 DEB_CONFIGURE_USER_FLAGS= \
+	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
 	--disable-debug \
         --with-default-mozilla-five-home=$(LIB_DIR) \
         --with-user-appdir=.mozilla \
