@@ -17,7 +17,7 @@ if [ ! -d $MOZDIR/$APPNAME ] ; then
     FOUND=firefox-trunk
   elif [ -d $MOZDIR/granparadiso ] ; then
     FOUND=granparadiso
-  elif [ -Ãd $MOZDIR/firefox ] ; then
+  elif [ -d $MOZDIR/firefox ] ; then
     FOUND=firefox
   fi
 
