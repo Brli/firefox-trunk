@@ -3,7 +3,25 @@ firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) UNRELEASED; urgency=low
   [ Fabien Tassin ]
   * update diverged debian/patches/firefox-fsh
 
- -- Fabien Tassin <fta@sofaraway.org>  Wed, 03 Oct 2007 22:06:02 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Mon, 08 Oct 2007 16:28:50 +0200
+
+firefox-3.0 (3.0~alpha8-0ubuntu2) gutsy; urgency=low
+
+  * debian/control: add missing Depends: on xulrunner-1.9 (LP: #149916).
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 08 Oct 2007 10:45:06 +0200
+
+firefox-3.0 (3.0~alpha8-0ubuntu1) gutsy; urgency=low
+
+  RELEASE: 3.0~alpha8-0ubuntu1 to gutsy/universe.
+
+  [ Alexander Sack ]
+  * drop libnspr4-dev and libnss3-dev build-depends for gutsy upload.
+  * don't build with system-nspr/-nss for gutsy universe upload.
+  * add nspr_flags_by_pkg_config_hack.patch to use pkg-config to get
+    nspr libs and cflags from xulrunner-1.9-dev package.
+
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 05 Oct 2007 02:38:08 +0200
 
 firefox-3.0 (3.0~alpha8-0ubuntu1~mt3) gutsy; urgency=low
 
