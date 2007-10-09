@@ -1,4 +1,6 @@
-firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) gutsy; urgency=low
+
+  RELEASE: 3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1 to gutsy/ppa
 
   [ Fabien Tassin ]
   * update diverged debian/patches/firefox-fsh
