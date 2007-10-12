@@ -1,3 +1,9 @@
+firefox-3.0 (3.0~alpha9~cvs20071012t0843-0ubuntu1~mt1) UNRELEASED; urgency=low
+
+  * new upstream snapshot: 3.0a9pre cvs20071012t0843
+
+ -- Fabien Tassin <fta@sofaraway.org>  Fri, 12 Oct 2007 22:45:14 +0200
+
 firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) gutsy; urgency=low
 
   RELEASE: 3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1 to gutsy/ppa
