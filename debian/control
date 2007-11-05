@@ -39,7 +39,7 @@ Description: dummy upgrade package for firefox-3.0-venkman -> xulrunner-1.9-venk
 Package: firefox-3.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox-3.0 (= ${Source-Version})
+Depends: ${shlibs:Depends}, firefox-3.0 (= ${Source-Version}), xulrunner-1.9-gnome-support
 Provides: gnome-www-browser
 Conflicts: firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
 Replaces: firefox-trunk-gnome-support, firefox-granparadiso-gnome-support

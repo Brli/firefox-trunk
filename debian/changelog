@@ -1,8 +1,12 @@
-firefox-3.0 (3.0~alpha9~cvs20071012t0843-0ubuntu1~mt1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~alpha9~cvs20071105t0828-0ubuntu1~mt1) UNRELEASED; urgency=low
 
-  * new upstream snapshot: 3.0a9pre cvs20071012t0843
+  * new upstream snapshot: 3.0a9pre cvs20071105t0828
+  * Add a dependency on firefox-3.0-gnome-support to xulrunner-1.9-gnome-support
+    - update debian/control
+  * Fix a typo in rules file (non ascii char)
+    - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Fri, 12 Oct 2007 22:45:14 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Mon, 05 Nov 2007 18:48:33 +0100
 
 firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) gutsy; urgency=low
 
@@ -18,6 +22,7 @@ firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) gutsy; urgency=low
 firefox-3.0 (3.0~alpha8+nobinonly-0ubuntu1) gutsy; urgency=low
 
   RELEASE: 3.0~alpha8+nobinonly-0ubuntu1 to gutsy/universe.
+
   * new orig.tar.gz without binary only files (LP: #121734).
   * debian/firefox.sh: fix typo in firefox.sh profile migration code
     (LP: #150529).
