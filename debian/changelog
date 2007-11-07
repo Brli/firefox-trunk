@@ -5,6 +5,8 @@ firefox-3.0 (3.0~alpha9~cvs20071105t0828-0ubuntu1~mt1) UNRELEASED; urgency=low
     - update debian/control
   * Fix a typo in rules file (non ascii char)
     - update debian/rules
+  * Use --enable-official-branding when we're not building Minefield/CVS/trunk
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Mon, 05 Nov 2007 18:48:33 +0100
 

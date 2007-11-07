@@ -33,7 +33,7 @@ ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
 	BRANDING = $(NULL)
 	DESKTOP  = firefox-3.0-minefield.desktop
 else
-	BRANDING = --with-branding=browser/branding/unofficial
+	BRANDING = --enable-official-branding
 	DESKTOP  = firefox-3.0-granparadiso.desktop
 endif
 
