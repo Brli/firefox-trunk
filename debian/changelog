@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~alpha9~cvs20071105t0828-0ubuntu1~mt1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b1~rc3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * new upstream snapshot: 3.0a9pre cvs20071105t0828
   * Add a dependency on firefox-3.0-gnome-support to xulrunner-1.9-gnome-support
@@ -7,8 +7,10 @@ firefox-3.0 (3.0~alpha9~cvs20071105t0828-0ubuntu1~mt1) UNRELEASED; urgency=low
     - update debian/rules
   * Use --enable-official-branding when we're not building Minefield/CVS/trunk
     - update debian/rules
+  * new upstream snapshot (1.9b1 rc3 from FIREFOX_3_0b1_RC3)
+    - update debian/changelogs 
 
- -- Fabien Tassin <fta@sofaraway.org>  Mon, 05 Nov 2007 18:48:33 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Mon, 12 Nov 2007 18:20:31 +0100
 
 firefox-3.0 (3.0~alpha9~cvs20071003t0648-0ubuntu1~mt1) gutsy; urgency=low
 
