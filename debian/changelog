@@ -9,6 +9,8 @@ firefox-3.0 (3.0~b1~rc3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * new upstream snapshot (1.9b1 rc3 from FIREFOX_3_0b1_RC3)
     - update debian/changelogs 
+  * Update depends/build-depends for xulrunner-1.9 to >= 1.9~b1~rc
+    - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Mon, 12 Nov 2007 18:20:31 +0100
 
