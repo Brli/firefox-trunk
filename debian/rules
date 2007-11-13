@@ -30,11 +30,19 @@ endif
 
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
+        # minefield branding for cvs snapshots
 	BRANDING = $(NULL)
 	DESKTOP  = firefox-3.0-minefield.desktop
 else
-	BRANDING = --enable-official-branding
+ifneq (,$(findstring ~a,$(DEBIAN_VERSION))$(findstring ~b,$(DEBIAN_VERSION)))
+        # codename branding for alpha and beta builds
+	BRANDING = --with-branding=browser/branding/unofficial
 	DESKTOP  = firefox-3.0-granparadiso.desktop
+else
+	# official branding for final and final RCs
+	BRANDING = --with-branding=browser/branding/unofficial
+	DESKTOP  = firefox-3.0.desktop
+endif
 endif
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
