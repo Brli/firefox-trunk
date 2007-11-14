@@ -5,6 +5,8 @@ debian/tmp/usr/lib/firefox-*/components/*.xpt usr/lib/firefox-3.0/components
 debian/tmp/usr/lib/firefox-*/components/libbrowsercomps.so usr/lib/firefox-3.0/components
 debian/tmp/usr/lib/firefox-*/components/libbrowserdirprovider.so usr/lib/firefox-3.0/components
 
+debian/tmp/usr/lib/firefox-*/modules/ usr/lib/firefox-3.0
+
 debian/tmp/usr/lib/firefox-*/firefox-3.0 usr/lib/firefox-3.0
 debian/tmp/usr/lib/firefox-*/run-mozilla.sh usr/lib/firefox-3.0
 

@@ -18,6 +18,8 @@ firefox-3.0 (3.0~b1~rc3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Use --enable-official-branding for final builds
     - update debian/rules
     - add debian/firefox-3.0.desktop
+  * fix places regression by shipping usr/lib/firefox-3.0/modules
+    - update debian/firefox-3.0.install
 
  -- Fabien Tassin <fta@sofaraway.org>  Tue, 13 Nov 2007 16:29:36 +0100
 
