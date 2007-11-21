@@ -1,3 +1,9 @@
+firefox-3.0 (3.0~b2~cvs20071120t1456+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+
+  * new upstream snapshot: 3.0b2pre cvs20071120t1456
+
+ -- Fabien Tassin <fta@sofaraway.org>  Wed, 21 Nov 2007 06:56:46 +0100
+
 firefox-3.0 (3.0~b1~rc3+nobinonly-0ubuntu1) hardy; urgency=low
 
   RELEASE: 3.0~b1~rc3+nobinonly-0ubuntu1 to ubuntu/hardy
