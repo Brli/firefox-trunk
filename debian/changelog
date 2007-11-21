@@ -9,6 +9,22 @@ firefox-3.0 (3.0~b2~cvs20071120t1456+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 21 Nov 2007 06:56:46 +0100
 
+firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+
+  * new upstream snapshot (3.0b1 from FIREFOX_3_0b1_RELEASE)
+    - update debian/changelog
+  * Rename desktop file firefox-3.0-final.desktop so it doesn't
+    get cleaned out
+    - update debian/rules
+    - rename debian/firefox-3.0.desktop to firefox-3.0-final.desktop
+  * Install extensions in /usr/lib/xulrunner-addons/extensions
+    - update debian/firefox-3.0.install
+    - update debian/rules
+  * Fix --with-default-mozilla-five-home, again.
+    - update debian/rules
+
+ -- Fabien Tassin <fta@sofaraway.org>  Tue, 20 Nov 2007 22:51:16 +0100
+
 firefox-3.0 (3.0~b1~rc3+nobinonly-0ubuntu1) hardy; urgency=low
 
   RELEASE: 3.0~b1~rc3+nobinonly-0ubuntu1 to ubuntu/hardy

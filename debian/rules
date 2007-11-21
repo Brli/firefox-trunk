@@ -41,7 +41,7 @@ ifneq (,$(findstring ~a,$(DEBIAN_VERSION))$(findstring ~b,$(DEBIAN_VERSION)))
 else
 	# official branding for final and final RCs
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = firefox-3.0.desktop
+	DESKTOP  = firefox-3.0-final.desktop
 endif
 endif
 
@@ -70,7 +70,7 @@ DEB_MOZ_APPLICATION=browser
 DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
 	--disable-debug \
-        --with-default-mozilla-five-home=$(LIB_DIR) \
+        --with-default-mozilla-five-home=/usr/lib/$(DEBIAN_NAME) \
         --with-user-appdir=.mozilla \
         --with-system-jpeg=/usr \
         --with-system-zlib=/usr \
@@ -132,7 +132,7 @@ DEBIAN_EXECUTABLES = \
 	$(NULL)
 
 binary-install/firefox-3.0::
-	dh_link usr/lib/xulrunner-addons usr/lib/firefox-3.0/extensions
+	dh_link usr/lib/xulrunner-addons/extensions usr/lib/firefox-3.0/extensions
 
 pre-build::
 	set -e; for i in $(UUDECODE); do \
