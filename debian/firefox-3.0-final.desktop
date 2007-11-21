@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=Firefox Web Browser
+Name=Firefox 3 Web Browser
 Comment=Firefox 3.0 Preview
 GenericName=Web Browser
 Exec=firefox-3.0 %u

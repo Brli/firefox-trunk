@@ -34,13 +34,13 @@ ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
 	BRANDING = $(NULL)
 	DESKTOP  = firefox-3.0-minefield.desktop
 else
-ifneq (,$(findstring ~a,$(DEBIAN_VERSION))$(findstring ~b,$(DEBIAN_VERSION)))
-        # codename branding for alpha and beta builds
+ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
+        # codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
 	DESKTOP  = firefox-3.0-granparadiso.desktop
 else
-	# official branding for final and final RCs
-	BRANDING = --with-branding=browser/branding/unofficial
+	# official branding for beta, final and final RCs builds
+	BRANDING = --enable-official-branding
 	DESKTOP  = firefox-3.0-final.desktop
 endif
 endif
