@@ -41,7 +41,7 @@ ifneq (,$(findstring ~a,$(DEBIAN_VERSION))$(findstring ~b,$(DEBIAN_VERSION)))
 else
 	# official branding for final and final RCs
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = firefox-3.0.desktop
+	DESKTOP  = firefox-3.0-final.desktop
 endif
 endif
 

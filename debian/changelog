@@ -2,6 +2,10 @@ firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * new upstream snapshot (3.0b1 from FIREFOX_3_0b1_RELEASE)
     - update debian/changelog
+  * Rename desktop file firefox-3.0-final.desktop so it doesn't
+    get cleaned out
+    - update debian/rules
+    - rename debian/firefox-3.0.desktop to firefox-3.0-final.desktop
 
  -- Fabien Tassin <fta@sofaraway.org>  Tue, 20 Nov 2007 22:51:16 +0100
 
