@@ -1,6 +1,11 @@
 firefox-3.0 (3.0~b2~cvs20071120t1456+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * new upstream snapshot: 3.0b2pre cvs20071120t1456
+  * Drop debian/patches/no-have-stdint-h-ftbfs.patch integrated
+    upstream and bump xulrunner requirements to 1.9~b2~cvs20071119
+    - update debian/control
+    - drop debian/patches/no-have-stdint-h-ftbfs.patch
+    - update debian/patches/series
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 21 Nov 2007 06:56:46 +0100
 
