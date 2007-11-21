@@ -70,7 +70,7 @@ DEB_MOZ_APPLICATION=browser
 DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
 	--disable-debug \
-        --with-default-mozilla-five-home=$(LIB_DIR) \
+        --with-default-mozilla-five-home=/usr/lib/$(DEBIAN_NAME) \
         --with-user-appdir=.mozilla \
         --with-system-jpeg=/usr \
         --with-system-zlib=/usr \

@@ -9,6 +9,8 @@ firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Install extensions in /usr/lib/xulrunner-addons/extensions
     - update debian/firefox-3.0.install
     - update debian/rules
+  * Fix --with-default-mozilla-five-home, again.
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Tue, 20 Nov 2007 22:51:16 +0100
 
