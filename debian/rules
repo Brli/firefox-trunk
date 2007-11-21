@@ -132,7 +132,7 @@ DEBIAN_EXECUTABLES = \
 	$(NULL)
 
 binary-install/firefox-3.0::
-	dh_link usr/lib/xulrunner-addons usr/lib/firefox-3.0/extensions
+	dh_link usr/lib/xulrunner-addons/extensions usr/lib/firefox-3.0/extensions
 
 pre-build::
 	set -e; for i in $(UUDECODE); do \
