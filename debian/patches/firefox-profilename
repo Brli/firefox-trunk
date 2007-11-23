@@ -1,15 +1,17 @@
 ---
- browser/app/application.ini                          |    2 +-
- browser/app/firefox-branding.js                      |   11 ++++++-----
- browser/app/mozilla.in                               |   17 +++++++++++++++++
- browser/branding/unofficial/pref/firefox-branding.js |   11 ++++++-----
- 4 files changed, 30 insertions(+), 11 deletions(-)
+ browser/app/application.ini                              |    4 +--
+ browser/app/firefox-branding.js                          |   10 ++++----
+ browser/app/mozilla.in                                   |   17 +++++++++++++++
+ browser/app/profile/firefox.js                           |    6 ++---
+ browser/branding/unofficial/pref/firefox-branding.js     |   11 +++++----
+ other-licenses/branding/firefox/pref/firefox-branding.js |   10 ++++----
+ 6 files changed, 38 insertions(+), 20 deletions(-)
 
 Index: mozilla/browser/app/application.ini
 ===================================================================
---- mozilla.orig/browser/app/application.ini	2007-07-02 18:20:24.000000000 +0000
-+++ mozilla/browser/app/application.ini	2007-08-18 17:48:16.000000000 +0000
-@@ -33,17 +33,17 @@
+--- mozilla.orig/browser/app/application.ini
++++ mozilla/browser/app/application.ini
+@@ -33,27 +33,27 @@
  ; the provisions above, a recipient may use your version of this file under
  ; the terms of any one of the MPL, the GPL or the LGPL.
  ;
@@ -28,11 +30,22 @@ Index: mozilla/browser/app/application.ini
  [Gecko]
  MinVersion=@GRE_MILESTONE@
  MaxVersion=@GRE_MILESTONE@
+ 
+ [XRE]
+ EnableProfileMigrator=1
+ EnableExtensionManager=1
+ 
+ [Crash Reporter]
+ #if MOZILLA_OFFICIAL
+-Enabled=1
++Enabled=0
+ #endif
+ ServerURL=https://crash-reports.mozilla.com/submit
 Index: mozilla/browser/app/mozilla.in
 ===================================================================
---- mozilla.orig/browser/app/mozilla.in	2007-08-03 14:46:19.000000000 +0000
-+++ mozilla/browser/app/mozilla.in	2007-08-18 17:48:16.000000000 +0000
-@@ -90,16 +90,33 @@
+--- mozilla.orig/browser/app/mozilla.in
++++ mozilla/browser/app/mozilla.in
+@@ -91,16 +91,33 @@
    if [ -x "$moz_libdir/run-mozilla.sh" ]; then
      dist_bin="$moz_libdir"
    else 
@@ -68,8 +81,8 @@ Index: mozilla/browser/app/mozilla.in
  
 Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2006-11-22 02:21:20.000000000 +0000
-+++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2007-08-18 17:48:16.000000000 +0000
+--- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js
++++ mozilla/browser/branding/unofficial/pref/firefox-branding.js
 @@ -1,16 +1,17 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -95,12 +108,11 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
  pref("browser.search.param.yahoo-f-CN", "");
 Index: mozilla/browser/app/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/app/firefox-branding.js	2007-08-18 18:36:36.000000000 +0000
-+++ mozilla/browser/app/firefox-branding.js	2007-08-18 18:37:33.000000000 +0000
-@@ -1,16 +1,17 @@
+--- mozilla.orig/browser/app/firefox-branding.js
++++ mozilla/browser/app/firefox-branding.js
+@@ -1,16 +1,16 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+// pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
  // URL user can browse to manually if for some reason all update installation
@@ -120,3 +132,55 @@ Index: mozilla/browser/app/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
  pref("browser.search.param.yahoo-fr-cjkt", "");
  pref("browser.search.param.yahoo-f-CN", "");
+Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
+===================================================================
+--- mozilla.orig/other-licenses/branding/firefox/pref/firefox-branding.js
++++ mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
+@@ -1,15 +1,15 @@
+-pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
+ // URL user can browse to manually if for some reason all update installation
+ // attempts fail.
+-pref("app.update.url.manual", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/");
++pref("app.update.url.manual", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/releases/");
++pref("app.update.url.details", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/releases/");
+ 
+ // Release notes URL
+-pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
+ 
+ pref("browser.search.param.yahoo-fr", "moz2");
+ pref("browser.search.param.yahoo-fr-cjkt", "moz2");
+ pref("browser.search.param.yahoo-f-CN", "D3_g");
+Index: mozilla/browser/app/profile/firefox.js
+===================================================================
+--- mozilla.orig/browser/app/profile/firefox.js
++++ mozilla/browser/app/profile/firefox.js
+@@ -143,19 +143,19 @@
+ //  extensions.{GUID}.update.interval
+ //  .. etc ..
+ //
+ pref("extensions.update.enabled", true);
+ pref("extensions.update.url", "chrome://mozapps/locale/extensions/extensions.properties");
+ pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
+                                             // Themes every day
+ // Non-symmetric (not shared by extensions) extension-specific [update] preferences
+-pref("extensions.getMoreExtensionsURL", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/%APP%/%VERSION%/extensions/");
+-pref("extensions.getMoreThemesURL", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/%APP%/%VERSION%/themes/");
+-pref("extensions.getMorePluginsURL", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/%APP%/%VERSION%/plugins/");
++pref("extensions.getMoreExtensionsURL", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/extensions/");
++pref("extensions.getMoreThemesURL", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/themes/");
++pref("extensions.getMorePluginsURL", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/plugins/");
+ pref("extensions.dss.enabled", false);          // Dynamic Skin Switching                                               
+ pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
+                                                 // restart.
+ 
+ pref("xpinstall.whitelist.add", "update.mozilla.org");
+ pref("xpinstall.whitelist.add.103", "addons.mozilla.org");
+ 
+ pref("keyword.enabled", true);
