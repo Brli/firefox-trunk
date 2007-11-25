@@ -18,6 +18,16 @@ firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0-final.desktop
   * Fix URLs for addons/themes/plugins
     - update debian/patches/firefox-profilename
+  * Revert hardcoded lib path to the upstream path, move searchplugins to
+    /usr/lib/firefox-addons/searchplugins and plugins to
+    /usr/lib/firefox-addons/plugins.
+    - update debian/patches/firefox-fsh
+    - update debian/rules
+    - divert debian/firefox-3.0.postinst => debian/firefox-3.0.postinst.in
+    - divert debian/firefox.sh => debian/firefox.sh.in
+    - add debian/firefox-3.0.dirs
+    - drop debian/firefox-3.0.links
+    - update debian/firefox-3.0{,-gnome-support}.install
 
  -- Fabien Tassin <fta@sofaraway.org>  Tue, 20 Nov 2007 22:51:16 +0100
 
