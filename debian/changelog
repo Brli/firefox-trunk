@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) hardy; urgency=low
 
   * new upstream snapshot (3.0b1 from FIREFOX_3_0b1_RELEASE)
     - update debian/changelog
@@ -8,8 +8,6 @@ firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - rename debian/firefox-3.0.desktop to firefox-3.0-final.desktop
   * Install extensions in /usr/lib/xulrunner-addons/extensions
     - update debian/firefox-3.0.install
-    - update debian/rules
-  * Fix --with-default-mozilla-five-home, again.
     - update debian/rules
   * Use official branding for beta too as homepage/releasenotes URLs
     are maintained that way. Disable crash reporter.
@@ -28,8 +26,10 @@ firefox-3.0 (3.0~b1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/firefox-3.0.dirs
     - drop debian/firefox-3.0.links
     - update debian/firefox-3.0{,-gnome-support}.install
+  * Drop --with-default-mozilla-five-home, prefer default value
+    - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Tue, 20 Nov 2007 22:51:16 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Tue, 27 Nov 2007 02:27:42 +0100
 
 firefox-3.0 (3.0~b1~rc3+nobinonly-0ubuntu1) hardy; urgency=low
 
