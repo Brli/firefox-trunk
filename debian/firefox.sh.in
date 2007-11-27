@@ -10,6 +10,7 @@
 
 APPNAME=firefox-3.0
 MOZDIR=$HOME/.mozilla
+LIBDIR=@LIBDIR@
 
 if [ ! -d $MOZDIR/$APPNAME ] ; then
   FOUND=""
@@ -31,4 +32,4 @@ if [ ! -d $MOZDIR/$APPNAME ] ; then
   fi
 fi
 
-exec /usr/lib/$APPNAME/$APPNAME "$@"
+exec $LIBDIR/$APPNAME "$@"
