@@ -11,6 +11,8 @@ firefox-3.0 (3.0~b2~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add libpixman-1-dev to build-deps, needed by cairo 1.5
     - update debian/control
   * new upstream snapshot (3.0b2 RC1) from tag FIREFOX_3_0b2_RC1
+  * Update Standards-Version to 3.7.3
+    - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 12 Dec 2007 00:17:35 +0100
 
