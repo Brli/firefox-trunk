@@ -15,8 +15,8 @@ Index: mozilla/configure.in
      CFLAGS=$_SAVE_CFLAGS
  else
 -    NSPR_CFLAGS='`$(DEPTH)/nsprpub/config/nspr-config --prefix=$(LIBXUL_DIST) --includedir=$(LIBXUL_DIST)/include/nspr --cflags`'
-+    NSPR_CFLAGS=`pkg-config mozilla-nspr-1.9 --cflags`
-+    NSPR_LIBS=`pkg-config mozilla-nspr-1.9 --libs`
++    NSPR_CFLAGS=`pkg-config mozilla-nspr --cflags`
++    NSPR_LIBS=`pkg-config mozilla-nspr --libs`
      # explicitly set libs for Visual Age C++ for OS/2
      if test "$OS_ARCH" = "OS2" -a "$VACPP" = "yes"; then
          NSPR_LIBS='$(LIBXUL_DIST)/lib/nspr'$NSPR_VERSION'.lib $(LIBXUL_DIST)/lib/plc'$NSPR_VERSION'.lib $(LIBXUL_DIST)/lib/plds'$NSPR_VERSION'.lib '$_PTHREAD_LDFLAGS''
@@ -32,7 +32,7 @@ Index: mozilla/configure.in
          fi
      else
 -        NSPR_LIBS='`$(DEPTH)/nsprpub/config/nspr-config --prefix=$(LIBXUL_DIST) --libdir=$(LIBXUL_DIST)/lib --libs`'
-+        NSPR_LIBS=`pkg-config mozilla-nspr-1.9 --libs`
++        NSPR_LIBS=`pkg-config mozilla-nspr --libs`
      fi
  fi
  
