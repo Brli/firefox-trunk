@@ -2,12 +2,12 @@ Source: firefox-3.0
 Section: web
 Priority: optional
 Maintainer: Alexander Sack <asac@ubuntu.com>
-Build-Depends: cdbs, bzip2, g++-4.2, gcc-4.2, autotools-dev, debhelper (>= 5), quilt, patchutils (>= 0.2.25), autoconf2.13, libx11-dev, libxt-dev, libgtk2.0-dev (>= 2.8), zlib1g-dev, liborbit2-dev, libidl-dev (>= 0.8.0), zip, libxft-dev, libfreetype6-dev, libpng12-dev, libjpeg62-dev, libxrender-dev, libxinerama-dev, libcairo2-dev, libpixman-1-dev, libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev, sharutils, m4, binutils (>= 2.17-1) [mips mipsel], libhunspell-dev, libdbus-glib-1-dev (>= 0.60), xulrunner-1.9-dev (>= 1.9~b2~cvs20071119)
+Build-Depends: cdbs, bzip2, g++-4.2, gcc-4.2, autotools-dev, debhelper (>= 5), quilt, patchutils (>= 0.2.25), autoconf2.13, libx11-dev, libxt-dev, libgtk2.0-dev (>= 2.8), zlib1g-dev, liborbit2-dev, libidl-dev (>= 0.8.0), zip, libxft-dev, libfreetype6-dev, libpng12-dev, libjpeg62-dev, libxrender-dev, libxinerama-dev, libcairo2-dev, libpixman-1-dev, libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev, sharutils, m4, binutils (>= 2.17-1) [mips mipsel], libhunspell-dev, libdbus-glib-1-dev (>= 0.60), xulrunner-1.9-dev (>= 1.9~b2+nobinonly), libnspr4-dev, libnss3-dev
 Standards-Version: 3.7.3
 
 Package: firefox-3.0
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~b2~cvs20071119), ${shlibs:Depends}
+Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~b2+nobinonly), ${shlibs:Depends}
 Suggests: firefox-3.0-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
