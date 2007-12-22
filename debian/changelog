@@ -26,6 +26,9 @@ firefox-3.0 (3.0~b2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     first xulrunner-1.9 that officially uses system nspr/nss.
   * tighten dependency on xulrunner-1.9 << 1.9~b3~
     - update debian/control
+  * drop DEV_PACKAGE_INDICATION business because xulrunner pkg-config files
+    properly reference system-nss/nspr since 1.9+b2+nobinonly
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 19 Dec 2007 20:23:23 +0100
 
