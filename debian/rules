@@ -21,15 +21,6 @@ DEB_TAR_SRCDIR		:= mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
-DEV_PACKAGE_INDICATION = $(findstring ~cvs,$(DEBIAN_VERSION))$(findstring ~mt,$(DEBIAN_VERSION))
-
-ifneq (,$(DEV_PACKAGE_INDICATION))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS = \
-		--with-system-nspr \
-		--with-system-nss \
-		$(NULL)
-endif
-
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
         # minefield branding for cvs snapshots

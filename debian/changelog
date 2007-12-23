@@ -1,5 +1,6 @@
-firefox-3.0 (3.0~b2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b2+nobinonly-0ubuntu1) hardy; urgency=low
 
+  [ Fabien Tassin ]
   * new upstream snapshot (3.0b2 from FIREFOX_3_0b2_RELEASE)
     - update debian/changelog
   * Drop debian/patches/no-have-stdint-h-ftbfs.patch integrated
@@ -17,6 +18,20 @@ firefox-3.0 (3.0~b2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
   * Drop -1.9 suffix of expected xulrunner-1.9 pkg-config files
     - update debian/patches/nspr_flags_by_pkg_config_hack.patch
+  * Fold Build-Depends line making changes easier to track in diffs
+    - update debian/control
+
+  [ Alexander Sack ]
+  * use system nspr and system nss; add build-depends accordingly
+    - update debian/control
+    - update debian/rules
+  * add versioned depends on xulrunner-1.9 >= 1.9~b2+nobinonly which is the
+    first xulrunner-1.9 that officially uses system nspr/nss.
+  * tighten dependency on xulrunner-1.9 << 1.9~b3~
+    - update debian/control
+  * drop DEV_PACKAGE_INDICATION business because xulrunner pkg-config files
+    properly reference system-nss/nspr since 1.9+b2+nobinonly
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 19 Dec 2007 20:23:23 +0100
 
