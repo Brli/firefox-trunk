@@ -1,6 +1,8 @@
 firefox-3.0 (3.0~b3~cvs20071222t1059+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * new upstream snapshot (3.0b3 pre, CVS 20071222t1059)
+  * Move xulrunner-1.9 dependencies to b3
+    - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 22 Dec 2007 20:17:36 +0100 
 
