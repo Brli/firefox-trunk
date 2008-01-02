@@ -1,3 +1,34 @@
+firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
+
+  * new years upstream snapshot (3.0b3 pre, CVS 20080101t1000) features:
+    - new firefox 3 version (LP: #178066)
+    - file upload dialog has preview for images (LP: #89381)
+    - gnome/gtk theme icons for main navigation and mime-type icons work
+      properly now (LP: #160942)
+    - honours proper plugin/extension locations now (LP: #123118)
+      (see https://wiki.ubuntu.com/XulrunnerGecko)
+    - import bookmarks from ffox 2 properly (LP: #163746)
+    - proper implementation for adding security exceptions (LP: #179706)
+
+  [ Alexander Sack ]
+  * new upstream snapshot (3.0b3 pre, CVS 20080101t1000)
+  * update firefox-profile patch because of changed upstream codebase
+    - update debian/patches/firefox-profilename
+  * firefox-3.0 now has its own extensions directory because latest
+    xulrunner-1.9 supports extensions (and plugins) in three directories:
+    PROFILE, APP (ffox), GRE (xul)
+    - update debian/firefox-3.0.dirs
+    - update debian/rules
+  * exceptional official branding release for cvs version to hardy: add easy to
+    use FORCE_OFFICIAL_BRANDING switch in rules and enable it for this release
+    - update debian/rules
+
+  [ Fabien Tassin ]
+  * Move xulrunner-1.9 dependencies to b3
+    - update debian/control
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 02 Jan 2008 15:43:50 +0100
+
 firefox-3.0 (3.0~b2+nobinonly-0ubuntu1) hardy; urgency=low
 
   [ Fabien Tassin ]
