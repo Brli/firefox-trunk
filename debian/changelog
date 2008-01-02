@@ -8,6 +8,9 @@ firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     PROFILE, APP (ffox), GRE (xul)
     - update debian/firefox-3.0.dirs
     - update debian/rules
+  * exceptional official branding release for cvs version to hardy: add easy to
+    use FORCE_OFFICIAL_BRANDING switch in rules and enable it for this release
+    - update debian/rules
 
   [ Fabien Tassin ]
   * Move xulrunner-1.9 dependencies to b3

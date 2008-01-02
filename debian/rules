@@ -21,6 +21,13 @@ DEB_TAR_SRCDIR		:= mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
+FORCE_OFFICIAL_BRANDING = 1
+
+ifneq (,$(FORCE_OFFICIAL_BRANDING))
+	# official branding for beta, final and final RCs builds
+	BRANDING = --enable-official-branding
+	DESKTOP  = firefox-3.0-final.desktop
+else
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
         # minefield branding for cvs snapshots
@@ -35,6 +42,7 @@ else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
 	DESKTOP  = firefox-3.0-final.desktop
+endif
 endif
 endif
 
