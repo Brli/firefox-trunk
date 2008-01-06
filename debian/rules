@@ -1,23 +1,16 @@
 #!/usr/bin/make -f
 
-MOZ_CVS_ROOT := :pserver:anonymous@cvs-mirror.mozilla.org:/cvsroot
-
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
 DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH  ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEBIAN_NAME := firefox-3.0
+DEBIAN_NAME    := firefox-3.0
 DEBIAN_VERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-DEBIAN_UPSTREAM_VERSION := $(shell echo $(DEBIAN_VERSION) | sed 's/^\(.*\)-[^-]*$$/\1/')
-DEBIAN_REV_CODE := $(shell echo $(DEBIAN_VERSION) | sed 's/^.*-\([0-9]*\)[^-]*$$/0\1/ ; s/^.*\(..\)$$/\1/')
-DEBIAN_DATE ?= $(shell echo $(DEBIAN_VERSION) | sed 's/^.*cvs\([0-9]*\).*$$/\1/')
 DEBIAN_XUL_DEV := $(shell echo /usr/lib/xulrunner-devel-1.9*)
-#DEBIAN_FF3_DIR := $(shell echo debian/tmp/usr/lib/firefox* | sed -e 's,debian/tmp/,,')
-DEBIAN_FF3_DIR = usr/lib/$(DEBIAN_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
-
-DEB_TAR_SRCDIR		:= mozilla
+DEBIAN_FF3_DIR  = usr/lib/$(DEBIAN_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
+DEB_TAR_SRCDIR := mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
@@ -65,8 +58,11 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
 
+ifneq (,$(wildcard /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk))
+  include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
+endif
+
 DEB_AUTO_UPDATE_DEBIAN_CONTROL=0
-DEB_MOZ_APPLICATION=browser
 
 DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
@@ -163,30 +159,6 @@ clean::
 		done ; \
 		rm -f debian/$(DEBIAN_NAME).desktop; \
 		rm -f debian/$(DEBIAN_NAME).postinst debian/firefox.sh
-
-date := $(shell date +%Y%m%d)
-
-mozilla:
-ifeq (HEAD, $(DEBIAN_DATE))
-	set -e; sh -c "cvs -d$(MOZ_CVS_ROOT) co mozilla/client.mk; cd mozilla && make -f client.mk checkout MOZ_CO_PROJECT=$(DEB_MOZ_APPLICATION)"
-else
-	set -e; sh -c "cvs -d$(MOZ_CVS_ROOT) co mozilla/client.mk; cd mozilla && make -f client.mk checkout MOZ_CO_DATE=$(DEBIAN_DATE) MOZ_CO_PROJECT=$(DEB_MOZ_APPLICATION)"
-endif
-	rm -f cvsco*
-
-$(DEB_MOZ_APPLICATION)-snapshot-%.tar.bz2: mozilla
-	set -e; tar cjf $@ $^ || rm -f $@
-	set -e; rm -rf $^
-
-snapshot: $(DEB_MOZ_APPLICATION)-snapshot-$(date).tar.bz2
-
-../$(DEBIAN_NAME)_$(DEBIAN_UPSTREAM_VERSION).orig.tar.gz: $(DEB_MOZ_APPLICATION)-snapshot-$(date).tar.bz2
-	set -e; rm -rf $(DEBIAN_NAME)-$(DEBIAN_UPSTREAM_VERSION); mkdir $(DEBIAN_NAME)-$(DEBIAN_UPSTREAM_VERSION); \
-		cp  $(DEB_MOZ_APPLICATION)-snapshot-$(date).tar.bz2 $(DEBIAN_NAME)-$(DEBIAN_UPSTREAM_VERSION); \
-		tar cvzf $@ $(DEBIAN_NAME)-$(DEB_UPSTREAM_VERSION)/; \
-		rm -rf $(DEBIAN_NAME)-$(DEBIAN_UPSTREAM_VERSION)
-
-neworig: ../$(DEBIAN_NAME)_$(DEBIAN_UPSTREAM_VERSION).orig.tar.gz
 
 CFLAGS =
 CXXFLAGS =

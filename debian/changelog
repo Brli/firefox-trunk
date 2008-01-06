@@ -1,3 +1,10 @@
+firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu2) hardy; urgency=low
+
+  * Add support for mozilla-devscripts and clean-up rules file accordingly
+    - update debian/rules
+
+ -- Fabien Tassin <fta@sofaraway.org>  Sun, 06 Jan 2008 20:40:54 +0100
+
 firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
 
   * new years upstream snapshot (3.0b3 pre, CVS 20080101t1000) features:
