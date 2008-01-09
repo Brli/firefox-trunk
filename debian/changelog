@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b3~cvs20080106t1411+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b3~cvs20080109t1144+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack ]
   * add patch to fix SSL exception page (mozilla bug 411037)
@@ -6,11 +6,14 @@ firefox-3.0 (3.0~b3~cvs20080106t1411+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
 
   [ Fabien Tassin ]
-  * new upstream snapshot (3.0b3 pre, CVS 20080106t1411)
+  * new upstream snapshot (3.0b3 pre, CVS 20080109t1144)
   * Add support for mozilla-devscripts and clean-up rules file accordingly
     - update debian/rules
+  * Drop patches applied upstream
+    - drop debian/patches/bz411037_attXXX.patch
+    - update debian/patches/series
 
- -- Fabien Tassin <fta@sofaraway.org>  Sun, 06 Jan 2008 20:40:54 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Wed, 09 Jan 2008 21:18:23 +0100
 
 firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
 
