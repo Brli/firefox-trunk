@@ -39,14 +39,6 @@ endif
 endif
 endif
 
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-        OPTFLAGS = -O0
-else
-        OPTFLAGS = -O2 -fno-strict-aliasing
-endif
-
-OPTFLAGS += -g
-
 CXX=g++-4.2
 CC=gcc-4.2
 export CXX CC 
@@ -94,7 +86,7 @@ DEB_CONFIGURE_USER_FLAGS= \
         --enable-canvas \
         --enable-default-toolkit=cairo-gtk2 \
         --enable-gnomevfs \
-        --enable-optimize="-pipe -w $(OPTFLAGS)" \
+        --enable-optimize \
         --enable-pango \
         --enable-postscript \
         --enable-svg \
