@@ -64,6 +64,9 @@ endif
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL=0
 
+CFLAGS = -g
+CXXFLAGS = -g
+
 DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
 	--disable-debug \
@@ -103,6 +106,12 @@ DEB_CONFIGURE_USER_FLAGS= \
         --enable-system-myspell \
         --with-distribution-id=com.ubuntu \
 	$(BRANDING)
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+        DEB_CONFIGURE_USER_FLAGS += \
+                --disable-optimize \
+                $(NULL)
+endif
 
 USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.5.4'; a=$$?; if test $$a != 1; then echo 1; fi)
 
@@ -160,5 +169,3 @@ clean::
 		rm -f debian/$(DEBIAN_NAME).desktop; \
 		rm -f debian/$(DEBIAN_NAME).postinst debian/firefox.sh
 
-CFLAGS =
-CXXFLAGS =

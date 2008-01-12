@@ -4,6 +4,9 @@ firefox-3.0 (3.0~b3~cvs20080109t1144+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * add patch to fix SSL exception page (mozilla bug 411037)
     - add debian/patches/bz411037_attXXX.patch
     - update debian/patches/series
+  * use default upstream gcc tweaks for improved performance - especially of
+    the javascript engine
+    - update debian/rules
 
   [ Fabien Tassin ]
   * new upstream snapshot (3.0b3 pre, CVS 20080109t1144)
