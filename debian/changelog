@@ -13,6 +13,8 @@ firefox-3.0 (3.0~b3~cvs20080120t1303+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add conditionnal support for system libpng >= 1.2.24 (patched to
     support APNG)
     - update debian/rules
+  * Update diverged patch:
+    - update debian/patches/ftbfs-with-branding-dir
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 18 Jan 2008 22:33:57 +0100
 
