@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b3~cvs20080118t1550+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b3~cvs20080120t1303+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack ]
   * use default upstream gcc tweaks for improved performance - especially of
