@@ -10,6 +10,9 @@ firefox-3.0 (3.0~b3~cvs20080118t1550+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Clean-up rules file to make more use of $(EXTRA_SYSTEM_CONFIGURE_FLAGS)
     - update debian/rules
+  * Add conditionnal support for system libpng >= 1.2.24 (patched to
+    support APNG)
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 18 Jan 2008 22:33:57 +0100
 
