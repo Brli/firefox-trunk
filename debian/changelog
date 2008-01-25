@@ -15,6 +15,8 @@ firefox-3.0 (3.0~b3~cvs20080125t0332+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Update diverged patch:
     - update debian/patches/ftbfs-with-branding-dir
+  * Add #DEBHELPER# token to prerm script
+    - update debian/firefox-3.0.prerm
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 25 Jan 2008 13:15:54 +0100
 
