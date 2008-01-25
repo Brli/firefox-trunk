@@ -25,7 +25,7 @@ Standards-Version: 3.7.3
 Package: firefox-3.0
 Architecture: any
 Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~b2+nobinonly), ${shlibs:Depends}
-Suggests: firefox-3.0-gnome-support (= ${Source-Version}), latex-xft-fonts, libthai0
+Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
 Replaces: firefox-trunk, firefox-granparadiso
@@ -56,7 +56,7 @@ Description: dummy upgrade package for firefox-3.0-venkman -> xulrunner-1.9-venk
 Package: firefox-3.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox-3.0 (= ${Source-Version}), xulrunner-1.9-gnome-support (>= 1.9~b2~cvs20071119)
+Depends: ${shlibs:Depends}, firefox-3.0 (= ${binary:Version}), xulrunner-1.9-gnome-support (>= 1.9~b2~cvs20071119)
 Provides: gnome-www-browser
 Conflicts: firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
 Replaces: firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
@@ -68,7 +68,7 @@ Description: Support for Gnome in Mozilla Firefox (Development Version)
 Package: firefox-3.0-dev
 Architecture: any
 Section: devel
-Depends: firefox-3.0 (= ${Source-Version})
+Depends: firefox-3.0 (= ${binary:Version})
 Conflicts: firefox-trunk-dev (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dev (<< 3.0~alpha8-0)
 Replaces: firefox-trunk-dev, firefox-granparadiso-dev
 Description: Development files for Mozilla Firefox (Development Version)
