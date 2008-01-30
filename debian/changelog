@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b3~cvs20080125t0332+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b3~cvs20080130t1344+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack ]
   * use default upstream gcc tweaks for improved performance - especially of
@@ -20,7 +20,7 @@ firefox-3.0 (3.0~b3~cvs20080125t0332+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Replace deprecated ${Source-Version} by ${binary:Version}
     - update debian/control
 
- -- Fabien Tassin <fta@sofaraway.org>  Fri, 25 Jan 2008 13:15:54 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Wed, 30 Jan 2008 22:08:16 +0100
 
 firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
 
