@@ -21,6 +21,8 @@ firefox-3.0 (3.0~b3~cvs20080130t1344+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Add a menu file
     - add debian/firefox-3.0.menu
+  * Include mozilla-devscripts file using -include so ifneq could be omitted
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 30 Jan 2008 22:08:16 +0100
 

@@ -49,10 +49,7 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
-
-ifneq (,$(wildcard /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk))
-  include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
-endif
+-include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL=0
 
