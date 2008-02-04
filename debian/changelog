@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b3~cvs20080204t1129+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack ]
   * use default upstream gcc tweaks for improved performance - especially of
@@ -26,7 +26,7 @@ firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Update profilename patch to include Preferences for the Get Add-ons pane
     - update debian/patches/firefox-profilename
 
- -- Fabien Tassin <fta@sofaraway.org>  Fri, 01 Feb 2008 20:23:28 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Mon, 04 Feb 2008 23:11:16 +0100
 
 firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
 
