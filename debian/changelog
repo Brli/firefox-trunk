@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b3~cvs20080204t1129+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b3~rc2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack ]
   * use default upstream gcc tweaks for improved performance - especially of
@@ -49,7 +49,7 @@ firefox-3.0 (3.0~b3~cvs20080204t1129+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Include mozilla-devscripts file using -include so ifneq could be omitted
     - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Mon, 04 Feb 2008 23:11:16 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Tue, 05 Feb 2008 22:16:38 +0100
 
 firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
 
