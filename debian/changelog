@@ -17,6 +17,10 @@ firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * install firefox binary instead of firefox-3.0 (after MOZ_APP_NAME
     tweakage was dropped in on of the previous commits
     - update debian/firefox-3.0.install
+  * reuse firefox.sh.in script to determine on whether the user was a beta
+    user and if thats the case ask the user (by running the profile migrator
+    added above) which profile to use in future
+    - update debian/firefox.sh.in
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly

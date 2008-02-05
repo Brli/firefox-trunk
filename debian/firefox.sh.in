@@ -1,35 +1,59 @@
 #!/bin/sh
 
-# Script written by Fabien Tassin <fta@sofaraway.org> in September 2007
+# Script written by Alexander Sack <asac@jwsdot.com> based on Fabien Tassin's
+# <fta@sofaraway.org> script that forked the beta profile initialy.
+# License: GPLv2 or later
 
-# If there's still no ~/mozilla/firefox-3.0 profile, try to find a previous
-# firefox profile and initialize with that. We'll try to first use
-# 'firefox-trunk' profile, then try 'grandparadiso', then # plain 'firefox'.
-# If nothing is found, we'll go for a fresh run and let firefox create a
-# default profile for us.
+# if there exists a beta profile (first found: $MOZDIR/firefox-3.0,
+# $MOZDIR/firefox-trunk, $MOZDIR/firefox-granparadiso) and there is a standard
+# firefox profile as well, ask the user what to do. In case he decides to
+# import the firefox 2 profile settings, we keep the firefox directory
+# untouched, but rename the beta profile by appending the suffix
+# |.beta-abandoned|. In case the user decides to keep using the firefox 3
+# profile, we will rename the original firefox profile to firefox.beta-replaced
+# and rename the beta profile to be |.mozilla/firefox|.
+#
+# as a third option the user can defer his final decision. This will leave the
+# directories untouched, thus making the user use the old firefox profile by
+# default.
 
-APPNAME=firefox-3.0
+APPNAME=firefox
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
 
-if [ ! -d $MOZDIR/$APPNAME ] ; then
-  FOUND=""
-  if [ -d $MOZDIR/firefox-trunk ] ; then
-    FOUND=firefox-trunk
-  elif [ -d $MOZDIR/granparadiso ] ; then
-    FOUND=granparadiso
-  elif [ -d $MOZDIR/firefox ] ; then
-    FOUND=firefox
-  fi
+FOUND=""
+if [ -d ${MOZDIR}/firefox ] ; then
+  FOUND=firefox
+fi
 
-  if [ "$FOUND" != "" ] ; then
-    echo "*NOTICE* No previous $APPNAME profile found, we'll initialize a profile using a copy of your existing '$FOUND' profile."
-    echo -n "Transfering..."
-    cp -a $MOZDIR/$FOUND $MOZDIR/$APPNAME
-    echo " done."
-  else
-    echo "*NOTICE* No previous firefox profile found, starting with a fresh one"
+FOUND_BETA=""
+for betaname in firefox-3.0 firefox-trunk firefox-granparadiso; do
+  if [ -d ${MOZDIR}/${betaname} ]; then
+    FOUND_BETA=${betaname}
+    break
   fi
+done
+
+if [ "$FOUND" != "" -a "$FOUND_BETA" != "" ] ; then
+  echo -n "Found Beta Participation ..."
+  ${LIBDIR}*/migrate-ffox-3-beta-profile
+  result=$?
+  if [ $result = 1 ]; then
+     mv ${MOZDIR}/${FOUND} ${MOZDIR}/${FOUND}.2-replaced
+     mv $MOZDIR/${FOUND_BETA} ${MOZDIR}/${FOUND}
+     echo " keep beta profile."
+  elif [ $result = 2 ]; then
+     mv ${MOZDIR}/${FOUND_BETA} ${MOZDIR}/${FOUND_BETA}.beta-abandoned
+     echo " use firefox 2 profile."
+  else
+     echo " use firefox 2 profile, but will ask again next time."
+  fi
+  echo " ... will check again next time."
+elif [ "$FOUND_BETA" != "" -a "$FOUND" = "" ]; then
+  # in case we only have a beta profile the user most likely wants to use
+  # that. just doing, no questions asked.
+  mv ${MOZDIR}/${FOUND_BETA} ${MOZDIR}/firefox
+  echo "*NOTICE* No previous firefox profile found, starting with a fresh one"
 fi
 
 exec $LIBDIR/$APPNAME "$@"
