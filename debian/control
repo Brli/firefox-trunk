@@ -30,14 +30,10 @@ Provides: www-browser
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
 Replaces: firefox-trunk, firefox-granparadiso
 Description: lightweight web browser based on Mozilla (Development Version)
- Firefox is a redesign of the Mozilla browser component, similar to
- Galeon, K-Meleon and Camino, but written using the XUL user interface
- language and designed to be lightweight and cross-platform.
+ Firefox 3 is the next major release of the standalone Mozilla browser; it is
+ written in the XUL language and designed to be lightweight and cross-platform.
  .
- This browser was previously known as Firebird and Phoenix.
- .
- This is a build of a random development version (aka trunk). It is meant for preview 
- and not for production use.
+ This browser was previously known as Firefox 2, Firebird and Phoenix.
 
 Package: firefox-3.0-dom-inspector
 Architecture: all

@@ -4,6 +4,31 @@ firefox-3.0 (3.0~b3~cvs20080204t1129+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * use default upstream gcc tweaks for improved performance - especially of
     the javascript engine
     - update debian/rules
+  * add gtk based profile migrator dialog, build it during |pre-build| and clean
+    it in |clean| target of debian/rules; finally, install the binary in firefox
+    pkglibdir.
+    - add debian/migrator/main.c
+    - update debian/rules 
+  * drop version suffix from MOZ_APP and application.ini (going back to
+    upstreams plain |firefox|) and drop patches accordingly
+    - drop debian/patches/firefox-fsh
+    - drop debian/patches/firefox-profilename
+    - update debian/patches/series
+  * install firefox binary instead of firefox-3.0 (after MOZ_APP_NAME
+    tweakage was dropped in on of the previous commits
+    - update debian/firefox-3.0.install
+  * reuse firefox.sh.in script to determine on whether the user was a beta
+    user and if thats the case ask the user (by running the profile migrator
+    added above) which profile to use in future
+    - update debian/firefox.sh.in
+  * fix DEBIAN_FF3_DIR, which diverged from install dir after dropping
+    special application name and profile dir tweaks
+    - update debian/rules
+  * drop development version disclaimer from package description and improve
+    the package description by stripping technical details and referrals to
+    other browser applications that are less known than firefox and thus don't
+    provide any valuable info to normal users.
+    - update debian/control
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
@@ -23,8 +48,6 @@ firefox-3.0 (3.0~b3~cvs20080204t1129+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/firefox-3.0.menu
   * Include mozilla-devscripts file using -include so ifneq could be omitted
     - update debian/rules
-  * Update profilename patch to include Preferences for the Get Add-ons pane
-    - update debian/patches/firefox-profilename
 
  -- Fabien Tassin <fta@sofaraway.org>  Mon, 04 Feb 2008 23:11:16 +0100
 

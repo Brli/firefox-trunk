@@ -7,9 +7,10 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH  ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 DEBIAN_NAME    := firefox-3.0
+DEBIAN_APP_NAME	:= firefox
 DEBIAN_VERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_DEV := $(shell echo /usr/lib/xulrunner-devel-1.9*)
-DEBIAN_FF3_DIR  = usr/lib/$(DEBIAN_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
+DEBIAN_FF3_DIR  = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
 DEB_TAR_SRCDIR := mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
@@ -125,10 +126,14 @@ debian/$(DEBIAN_NAME).postinst: debian/$(DEBIAN_NAME).postinst.in
 debian/firefox.sh: debian/firefox.sh.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < debian/firefox.sh.in > debian/firefox.sh
 
+debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
+	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
+
 binary-install/$(DEBIAN_NAME)::
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
 	dh_install debian/firefox.cfg $(DEBIAN_FF3_DIR)
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
+	dh_install debian/migrator/ffox-3-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
 	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
@@ -138,7 +143,7 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 
-pre-build:: debian/$(DEBIAN_NAME).postinst debian/firefox.sh
+pre-build:: debian/$(DEBIAN_NAME).postinst debian/firefox.sh debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
@@ -153,4 +158,6 @@ clean::
 		done ; \
 		rm -f debian/$(DEBIAN_NAME).desktop; \
 		rm -f debian/$(DEBIAN_NAME).postinst debian/firefox.sh
+	rm -f debian/migrator/ffox-3-beta-profile-migration-dialog
+	rm -f debian/migrator/*~
 
