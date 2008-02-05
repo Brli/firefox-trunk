@@ -14,6 +14,9 @@ firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/firefox-fsh
     - drop debian/patches/firefox-profilename
     - update debian/patches/series
+  * install firefox binary instead of firefox-3.0 (after MOZ_APP_NAME
+    tweakage was dropped in on of the previous commits
+    - update debian/firefox-3.0.install
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
