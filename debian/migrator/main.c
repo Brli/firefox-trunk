@@ -20,6 +20,7 @@
 
 #define GETTEXT_PACKAGE "ubuntu-migrator"
 #define LOCALEDIR "po"
+#define WINDOW_ICON_PATH "/usr/share/pixmaps/firefox-3.0.png"
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
@@ -49,6 +50,8 @@ main(int argc, char** argv)
 
   gtk_init(&argc, &argv);
  
+  gtk_window_set_default_icon_from_file (WINDOW_ICON_PATH, NULL);
+
   /* Create the widgets */
   dialog = gtk_dialog_new_with_buttons ("Firefox 3 - Beta Support",
 					NULL,
