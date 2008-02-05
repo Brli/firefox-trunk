@@ -24,6 +24,11 @@ firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * fix DEBIAN_FF3_DIR, which diverged from install dir after dropping
     special application name and profile dir tweaks
     - update debian/rules
+  * drop development version disclaimer from package description and improve
+    the package description by stripping technical details and referrals to
+    other browser applications that are less known than firefox and thus don't
+    provide any valuable info to normal users.
+    - update debian/control
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
