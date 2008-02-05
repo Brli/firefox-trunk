@@ -127,7 +127,7 @@ debian/firefox.sh: debian/firefox.sh.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < debian/firefox.sh.in > debian/firefox.sh
 
 debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
-	$(CC) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
+	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
 
 binary-install/$(DEBIAN_NAME)::
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
