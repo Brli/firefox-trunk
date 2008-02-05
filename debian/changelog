@@ -4,6 +4,11 @@ firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * use default upstream gcc tweaks for improved performance - especially of
     the javascript engine
     - update debian/rules
+  * add gtk based profile migrator dialog, build it during |pre-build| and clean
+    it in |clean| target of debian/rules; the install the binary in firefox
+    pkglibdir.
+    - add debian/migrator/main.c
+    - update debian/rules 
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
