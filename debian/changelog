@@ -21,6 +21,9 @@ firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     user and if thats the case ask the user (by running the profile migrator
     added above) which profile to use in future
     - update debian/firefox.sh.in
+  * fix DEBIAN_FF3_DIR, which diverged from install dir after dropping
+    special application name and profile dir tweaks
+    - update debian/rules
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
