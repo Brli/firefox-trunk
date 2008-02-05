@@ -36,7 +36,7 @@ done
 
 if [ "$FOUND" != "" -a "$FOUND_BETA" != "" ] ; then
   echo -n "Found Beta Participation ..."
-  ${LIBDIR}*/migrate-ffox-3-beta-profile
+  ${LIBDIR}*/ffox-3-beta-profile-migration-dialog
   result=$?
   if [ $result = 1 ]; then
      mv ${MOZDIR}/${FOUND} ${MOZDIR}/${FOUND}.2-replaced
