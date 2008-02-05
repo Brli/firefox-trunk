@@ -9,6 +9,11 @@ firefox-3.0 (3.0~b3~cvs20080201t1159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     pkglibdir.
     - add debian/migrator/main.c
     - update debian/rules 
+  * drop version suffix from MOZ_APP and application.ini (going back to
+    upstreams plain |firefox|) and drop patches accordingly
+    - drop debian/patches/firefox-fsh
+    - drop debian/patches/firefox-profilename
+    - update debian/patches/series
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
