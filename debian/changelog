@@ -1,6 +1,7 @@
 firefox-3.0 (3.0~b4~cvs20080207t1417+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * ...
+  * Dump xulrunner-1.9 dependencies to b4
+    - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Thu, 07 Feb 2008 23:30:35 +0100
 

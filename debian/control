@@ -18,13 +18,13 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	binutils (>= 2.17-1) [mips mipsel],
 	libhunspell-dev,
 	libdbus-glib-1-dev (>= 0.60),
-	xulrunner-1.9-dev (>= 1.9~b3~), xulrunner-1.9-dev (<< 1.9~b4~),
+	xulrunner-1.9-dev (>= 1.9~b4~), xulrunner-1.9-dev (<< 1.9~b5~),
 	libnspr4-dev, libnss3-dev
 Standards-Version: 3.7.3
 
 Package: firefox-3.0
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~b2+nobinonly), ${shlibs:Depends}
+Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~b4~), ${shlibs:Depends}
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
@@ -52,7 +52,7 @@ Description: dummy upgrade package for firefox-3.0-venkman -> xulrunner-1.9-venk
 Package: firefox-3.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox-3.0 (= ${binary:Version}), xulrunner-1.9-gnome-support (>= 1.9~b2~cvs20071119)
+Depends: ${shlibs:Depends}, firefox-3.0 (= ${binary:Version}), xulrunner-1.9-gnome-support (>= 1.9~b4~)
 Provides: gnome-www-browser
 Conflicts: firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
 Replaces: firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
