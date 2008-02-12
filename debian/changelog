@@ -1,5 +1,6 @@
-firefox-3.0 (3.0~b3~rc2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  * Firefox 3 Beta 3 release (FIREFOX_3_0b3_RELEASE)
   [ Alexander Sack ]
   * use default upstream gcc tweaks for improved performance - especially of
     the javascript engine
@@ -28,6 +29,11 @@ firefox-3.0 (3.0~b3~rc2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     the package description by stripping technical details and referrals to
     other browser applications that are less known than firefox and thus don't
     provide any valuable info to normal users.
+    - update debian/control
+  * bump build dependency for xulrunner-1.9-dev to >= 1.9~b3
+    - update debian/control
+  * bump bin dependency on xulrunner-1.9 and on xulrunner-1.9-gnome-support
+    to >= 1.9~b3
     - update debian/control
 
   [ Fabien Tassin ]
