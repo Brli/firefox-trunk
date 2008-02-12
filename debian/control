@@ -27,13 +27,16 @@ Architecture: any
 Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~b3), ${shlibs:Depends}
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
-Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0)
-Replaces: firefox-trunk, firefox-granparadiso
-Description: lightweight web browser based on Mozilla (Development Version)
+Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (>= 3)
+Replaces: firefox-trunk, firefox-granparadiso, firefox
+Description: lightweight web browser based on Mozilla
  Firefox 3 is the next major release of the standalone Mozilla browser; it is
  written in the XUL language and designed to be lightweight and cross-platform.
  .
  This browser was previously known as Firefox 2, Firebird and Phoenix.
+ .
+ Install this firefox package too, if you want to be automatically upgraded to new major
+ firefox versions in the future.
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
@@ -56,7 +59,7 @@ Depends: ${shlibs:Depends}, firefox-3.0 (= ${binary:Version}), xulrunner-1.9-gno
 Provides: gnome-www-browser
 Conflicts: firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
 Replaces: firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
-Description: Support for Gnome in Mozilla Firefox (Development Version)
+Description: Support for Gnome in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
  integration features.
@@ -67,9 +70,21 @@ Section: devel
 Depends: firefox-3.0 (= ${binary:Version})
 Conflicts: firefox-trunk-dev (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dev (<< 3.0~alpha8-0)
 Replaces: firefox-trunk-dev, firefox-granparadiso-dev
-Description: Development files for Mozilla Firefox (Development Version)
+Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
+
+Package: firefox
+Architecture: all
+Depends: firefox-3.0
+Description: lightweight web browser based on Mozilla (recommended package)
+ Firefox 3 is the next major release of the standalone Mozilla browser; it is
+ written in the XUL language and designed to be lightweight and cross-platform.
+ .
+ This browser was previously known as Firefox 2, Firebird and Phoenix.
+ .
+ Install this package if you want to automatically get upgraded to new major
+ versions of firefox (recommended).
 
 Package: firefox-trunk
 Architecture: all

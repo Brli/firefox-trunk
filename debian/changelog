@@ -35,6 +35,14 @@ firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * bump bin dependency on xulrunner-1.9 and on xulrunner-1.9-gnome-support
     to >= 1.9~b3
     - update debian/control
+  * introduce (empty) firefox meta package that automatically upgrades users
+    to latest major releases of firefox; firefox 2 will be reuploaded as
+    firefox-2 and then be demoted to universe
+    - update debian/control
+  * make firefox-3.0 conflict/replace old firefox 2 package to force upgrade
+    - update debian/control
+  * remove "Development Version" disclaimer from package short descriptions
+    - update debian/control
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
