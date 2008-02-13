@@ -43,6 +43,12 @@ firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
   * remove "Development Version" disclaimer from package short descriptions
     - update debian/control
+  * introduce empty meta packages for firefox, firefox-dom-inspector,
+    firefox-gnome-support and firefox-dev to provide a seamingless upgrade path
+    from previous firefox versions. Add Conficts/Replaces accordingly and make
+    firefox-3.0 Conflicts/Replaces/Provides firefox-libthai which is now fully
+    integrated in the core as pango line breaking feature is used.
+    - update debian/control
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
