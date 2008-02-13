@@ -35,8 +35,8 @@ Description: lightweight web browser based on Mozilla
  .
  This browser was previously known as Firefox 2, Firebird and Phoenix.
  .
- Install this firefox package too, if you want to be automatically upgraded to new major
- firefox versions in the future.
+ Install this firefox package too, if you want to be automatically upgraded to
+ new major firefox versions in the future.
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
@@ -44,15 +44,15 @@ Depends: xulrunner-1.9-dom-inspector
 Conflicts: firefox-dom-inspector (<< 3)
 Replaces: firefox-dom-inspector
 Description: dummy upgrade package for firefox-3.0-dom-inspector -> xulrunner-1.9-dom-inspector
- This is a transitional package so dom-inspector users get xulrunner-1.9-dom-inspector on upgrades.
- It can be safely removed.
+ This is a transitional package so dom-inspector users get
+ xulrunner-1.9-dom-inspector on upgrades. It can be safely removed.
 
 Package: firefox-3.0-venkman
 Architecture: all
 Depends: xulrunner-1.9-venkman
 Description: dummy upgrade package for firefox-3.0-venkman -> xulrunner-1.9-venkman
- This is a transitional package so venkman users get xulrunner-1.9-venkman on upgrades.
- It can be safely removed.
+ This is a transitional package so venkman users get xulrunner-1.9-venkman on
+ upgrades. It can be safely removed.
 
 Package: firefox-3.0-gnome-support
 Architecture: any
@@ -102,76 +102,77 @@ Architecture: all
 Depends: xulrunner-1.9-gnome-support
 Description: meta package pointing to the latest gnome-support package for firefox
  This is a meta package that will always point to the latest gnome-support
- package for firefox. Don't remove this if you want to receive automatic major version
- upgrades for this package in future.
+ package for firefox. Don't remove this if you want to receive automatic major
+ version upgrades for this package in future.
 
 Package: firefox-dev
 Architecture: all
 Depends: firefox-3.0-dev
 Description: meta package pointing to the latest development package for firefox
  This is a meta package that will always point to the latest development (-dev)
- package for firefox. Don't remove this if you want to receive automatic major version
- upgrades for this package in future.
+ package for firefox. Don't remove this if you want to receive automatic major
+ version upgrades for this package in future.
 
 Package: firefox-trunk
 Architecture: all
 Depends: firefox-3.0
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-trunk users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-trunk-dom-inspector
 Architecture: all
 Depends: firefox-3.0-dom-inspector
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-trunk users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-trunk-venkman
 Architecture: all
 Depends: firefox-3.0-venkman
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-trunk users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-trunk-gnome-support
 Architecture: all
 Depends: firefox-3.0-gnome-support
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-trunk users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-trunk-dev
 Architecture: all
 Depends: firefox-3.0-dev
 Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-trunk users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-granparadiso
 Architecture: all
 Depends: firefox-3.0
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-granparadiso users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-granparadiso-dom-inspector
 Architecture: all
 Depends: firefox-3.0-dom-inspector
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-granparadiso users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-granparadiso-gnome-support
 Architecture: all
 Depends: firefox-3.0-gnome-support
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-granparadiso users get firefox-3.0 on
+ upgrades. It can be safely removed.
 
 Package: firefox-granparadiso-dev
 Architecture: all
 Depends: firefox-3.0-dev
 Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on upgrades.
- It can be safely removed.
+ This is a transitional package so firefox-granparadiso users get firefox-3.0 on
+ upgrades. It can be safely removed.
+
