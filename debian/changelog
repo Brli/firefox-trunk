@@ -49,6 +49,8 @@ firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     firefox-3.0 Conflicts/Replaces/Provides firefox-libthai which is now fully
     integrated in the core as pango line breaking feature is used.
     - update debian/control
+  * provide link /usr/bin/firefox => /usr/bin/firefox-4.0
+    - add debian/firefox-3.0.links
 
   [ Fabien Tassin ]
   * Add support for mozilla-devscripts and clean-up rules file accordingly
