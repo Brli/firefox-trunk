@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) hardy; urgency=low
 
   * Firefox 3 Beta 3 release (FIREFOX_3_0b3_RELEASE)
   [ Alexander Sack ]
@@ -9,7 +9,7 @@ firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     it in |clean| target of debian/rules; finally, install the binary in firefox
     pkglibdir.
     - add debian/migrator/main.c
-    - update debian/rules 
+    - update debian/rules
   * drop version suffix from MOZ_APP and application.ini (going back to
     upstreams plain |firefox|) and drop patches accordingly
     - drop debian/patches/firefox-fsh
@@ -74,7 +74,7 @@ firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     directories (during alpha and beta phases)
     - update debian/firefox.sh.in
 
- -- Fabien Tassin <fta@sofaraway.org>  Tue, 05 Feb 2008 22:16:38 +0100
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 13 Feb 2008 16:55:10 +0100
 
 firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
 
