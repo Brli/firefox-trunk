@@ -1,3 +1,81 @@
+firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) hardy; urgency=low
+
+  * Firefox 3 Beta 3 release (FIREFOX_3_0b3_RELEASE)
+  [ Alexander Sack ]
+  * use default upstream gcc tweaks for improved performance - especially of
+    the javascript engine
+    - update debian/rules
+  * add gtk based profile migrator dialog, build it during |pre-build| and clean
+    it in |clean| target of debian/rules; finally, install the binary in firefox
+    pkglibdir.
+    - add debian/migrator/main.c
+    - update debian/rules
+  * drop version suffix from MOZ_APP and application.ini (going back to
+    upstreams plain |firefox|) and drop patches accordingly
+    - drop debian/patches/firefox-fsh
+    - drop debian/patches/firefox-profilename
+    - update debian/patches/series
+  * install firefox binary instead of firefox-3.0 (after MOZ_APP_NAME
+    tweakage was dropped in on of the previous commits
+    - update debian/firefox-3.0.install
+  * reuse firefox.sh.in script to determine on whether the user was a beta
+    user and if thats the case ask the user (by running the profile migrator
+    added above) which profile to use in future
+    - update debian/firefox.sh.in
+  * fix DEBIAN_FF3_DIR, which diverged from install dir after dropping
+    special application name and profile dir tweaks
+    - update debian/rules
+  * drop development version disclaimer from package description and improve
+    the package description by stripping technical details and referrals to
+    other browser applications that are less known than firefox and thus don't
+    provide any valuable info to normal users.
+    - update debian/control
+  * bump build dependency for xulrunner-1.9-dev to >= 1.9~b3
+    - update debian/control
+  * bump bin dependency on xulrunner-1.9 and on xulrunner-1.9-gnome-support
+    to >= 1.9~b3
+    - update debian/control
+  * introduce (empty) firefox meta package that automatically upgrades users
+    to latest major releases of firefox; firefox 2 will be reuploaded as
+    firefox-2 and then be demoted to universe
+    - update debian/control
+  * make firefox-3.0 conflict/replace old firefox 2 package to force upgrade
+    - update debian/control
+  * remove "Development Version" disclaimer from package short descriptions
+    - update debian/control
+  * introduce empty meta packages for firefox, firefox-dom-inspector,
+    firefox-gnome-support and firefox-dev to provide a seamingless upgrade path
+    from previous firefox versions. Add Conficts/Replaces accordingly and make
+    firefox-3.0 Conflicts/Replaces/Provides firefox-libthai which is now fully
+    integrated in the core as pango line breaking feature is used.
+    - update debian/control
+  * provide link /usr/bin/firefox => /usr/bin/firefox-4.0
+    - add debian/firefox-3.0.links
+
+  [ Fabien Tassin ]
+  * Add support for mozilla-devscripts and clean-up rules file accordingly
+    - update debian/rules
+  * Clean-up rules file to make more use of $(EXTRA_SYSTEM_CONFIGURE_FLAGS)
+    - update debian/rules
+  * Update diverged patch:
+    - update debian/patches/ftbfs-with-branding-dir
+  * Add #DEBHELPER# token to prerm script
+    - update debian/firefox-3.0.prerm
+  * Replace deprecated ${Source-Version} by ${binary:Version}
+    - update debian/control
+  * Bump requirement for system cairo to >= 1.5.8 as we now need
+    the newly added cairo_path_extents()
+    - update debian/rules
+  * Add a menu file
+    - add debian/firefox-3.0.menu
+  * Include mozilla-devscripts file using -include so ifneq could be omitted
+    - update debian/rules
+  * Improve migration script to take care of all previously used profile
+    directories (during alpha and beta phases)
+    - update debian/firefox.sh.in
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 13 Feb 2008 16:55:10 +0100
+
 firefox-3.0 (3.0~b3~cvs20080101t1000+nobinonly-0ubuntu1) hardy; urgency=low
 
   * new years upstream snapshot (3.0b3 pre, CVS 20080101t1000) features:
