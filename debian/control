@@ -28,7 +28,7 @@ Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~b3), $
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
-Replaces: firefox-trunk, firefox-granparadiso, firefox, firefox-libthai
+Replaces: firefox-trunk, firefox-granparadiso, firefox (<< 3), firefox-libthai
 Description: lightweight web browser based on Mozilla
  Firefox 3 is the next major release of the standalone Mozilla browser; it is
  written in the XUL language and designed to be lightweight and cross-platform.
@@ -40,7 +40,7 @@ Description: lightweight web browser based on Mozilla
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
-Depends: xulrunner-1.9-dom-inspector
+Depends: xulrunner-1.9-dom-inspector (>= 1.9~b3)
 Conflicts: firefox-dom-inspector (<< 3)
 Replaces: firefox-dom-inspector
 Description: dummy upgrade package for firefox-3.0-dom-inspector -> xulrunner-1.9-dom-inspector
@@ -60,7 +60,7 @@ Section: gnome
 Depends: ${shlibs:Depends}, firefox-3.0 (= ${binary:Version}), xulrunner-1.9-gnome-support (>= 1.9~b3)
 Provides: gnome-www-browser
 Conflicts: firefox-gnome-support (<< 3), firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
-Replaces: firefox-gnome-support, firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
+Replaces: firefox-gnome-support (<< 3), firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
 Description: Support for Gnome in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
@@ -71,7 +71,7 @@ Architecture: any
 Section: devel
 Depends: firefox-3.0 (= ${binary:Version})
 Conflicts: firefox-dev (<< 3), firefox-trunk-dev (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dev (<< 3.0~alpha8-0)
-Replaces: firefox-dev, firefox-trunk-dev, firefox-granparadiso-dev
+Replaces: firefox-dev (<< 3), firefox-trunk-dev, firefox-granparadiso-dev
 Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
@@ -91,7 +91,7 @@ Description: meta package for the popular mozilla web browser
 
 Package: firefox-dom-inspector
 Architecture: all
-Depends: xulrunner-1.9-dom-inspector
+Depends: firefox-3.0-dom-inspector
 Description: meta package for firefox-dom-inspector
  This is a meta package that will point to the latest dom-inspector package
  available. Don't remove this if you want to receive automatic major version
@@ -99,7 +99,7 @@ Description: meta package for firefox-dom-inspector
 
 Package: firefox-gnome-support
 Architecture: all
-Depends: xulrunner-1.9-gnome-support
+Depends: firefox-3.0-gnome-support
 Description: meta package pointing to the latest gnome-support package for firefox
  This is a meta package that will always point to the latest gnome-support
  package for firefox. Don't remove this if you want to receive automatic major
