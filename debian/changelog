@@ -1,3 +1,13 @@
+firefox-3.0 (3.0~b3+nobinonly-0ubuntu2) hardy; urgency=low
+
+  * make aptitude happy by using versioned Replaces on firefox*
+    - update debian/control
+  * make firefox-{dom-inspector,gnome-support} meta packages depend on
+    firefox-3.0-* instead of xulrunner-1.9-* to improve transition behaviour.
+    - update debian/control
+
+ -- Alexander Sack <asac@ubuntu.com>  Thu, 14 Feb 2008 13:40:37 +0100
+
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) hardy; urgency=low
 
   * Firefox 3 Beta 3 release (FIREFOX_3_0b3_RELEASE)
