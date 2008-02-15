@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b4~cvs20080209t1115+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b4~cvs20080215t1220+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Bump xulrunner-1.9 dependencies to b4
     - update debian/control
@@ -8,7 +8,7 @@ firefox-3.0 (3.0~b4~cvs20080209t1115+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Drop extension from desktop launchers icons (LP: #190688)
     - update debian/firefox-3.0-*.desktop
 
- -- Fabien Tassin <fta@sofaraway.org>  Sat, 09 Feb 2008 21:10:37 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Fri, 15 Feb 2008 22:02:42 +0100
 
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu2) hardy; urgency=low
 
