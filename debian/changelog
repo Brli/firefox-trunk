@@ -1,3 +1,13 @@
+firefox-3.0 (3.0~b4~cvs20080209t1115+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+
+  * Bump xulrunner-1.9 dependencies to b4
+    - update debian/control
+  * Refresh diverged patches:
+    - update debian/patches/dont_depend_on_nspr_sources.patch
+    - update debian/patches/force_safebrowsing_off.patch
+
+ -- Fabien Tassin <fta@sofaraway.org>  Sat, 09 Feb 2008 21:10:37 +0100
+
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu2) hardy; urgency=low
 
   * make aptitude happy by using versioned Replaces on firefox*
@@ -11,6 +21,7 @@ firefox-3.0 (3.0~b3+nobinonly-0ubuntu2) hardy; urgency=low
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu1) hardy; urgency=low
 
   * Firefox 3 Beta 3 release (FIREFOX_3_0b3_RELEASE)
+
   [ Alexander Sack ]
   * use default upstream gcc tweaks for improved performance - especially of
     the javascript engine
