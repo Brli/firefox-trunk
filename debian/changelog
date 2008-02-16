@@ -7,6 +7,8 @@ firefox-3.0 (3.0~b4~cvs20080215t1220+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/force_safebrowsing_off.patch
   * Drop extension from desktop launchers icons (LP: #190688)
     - update debian/firefox-3.0-*.desktop
+  * Install new libjemalloc.so
+    - update debian/firefox-3.0.install
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 15 Feb 2008 22:02:42 +0100
 
