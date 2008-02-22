@@ -147,7 +147,7 @@ pre-build:: debian/$(DEBIAN_NAME).postinst debian/firefox.sh debian/migrator/ffo
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
-		cp debian/$(DESKTOP) debian/$(DEBIAN_NAME).desktop; \
+		cp debian/$(DESKTOP) debian/firefox.desktop; \
 		for i in $(DEBIAN_EXECUTABLES); do \
 			chmod a+x debian/$$i; \
 		done

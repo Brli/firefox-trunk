@@ -3,6 +3,8 @@ firefox-3.0 (3.0~b3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
   * introduce transitional dummy package for firefox-libthai => firefox-3.0
     (thai line break is now done by pango) (LP: #193542)
     - update debian/control
+  * ship firefox.desktop again to not break existing launchers (LP: #193902)
+    - update debian/rules
 
  -- Alexander Sack <asac@ubuntu.com>  Wed, 20 Feb 2008 10:20:54 +0100
 
