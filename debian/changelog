@@ -9,6 +9,8 @@ firefox-3.0 (3.0~b4~cvs20080222t1436+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0-*.desktop
   * Install new libjemalloc.so
     - update debian/firefox-3.0.install
+  * Add optional support for system sqlite3 (we need >= 3.5 not in hardy)
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 23 Feb 2008 00:24:36 +0100
 

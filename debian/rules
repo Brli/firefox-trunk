@@ -62,12 +62,18 @@ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 endif
 
 USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.5.8'; a=$$?; if test $$a != 1; then echo 1; fi)
-
 # for old cairo versions we cannot use system cairo
 ifeq (1,$(USE_SYSTEM_CAIRO))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-cairo
 else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-cairo
+endif
+
+USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.5'; a=$$?; if test $$a != 1; then echo 1; fi)
+ifeq (1,$(USE_SYSTEM_SQLITE))
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-sqlite
+else
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-sqlite
 endif
 
 DEB_CONFIGURE_USER_FLAGS= \
