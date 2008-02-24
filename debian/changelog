@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b4~cvs20080222t1436+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b4~cvs20080224t1029+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Bump xulrunner-1.9 dependencies to b4
     - update debian/control
@@ -15,7 +15,7 @@ firefox-3.0 (3.0~b4~cvs20080222t1436+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     Contributed by David Futcher <bobbocanfly@gmail.com>
     - update debian/debsearch.src
 
- -- Fabien Tassin <fta@sofaraway.org>  Sat, 23 Feb 2008 00:24:36 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Sun, 24 Feb 2008 21:38:04 +0100
 
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu2) hardy; urgency=low
 
