@@ -11,6 +11,9 @@ firefox-3.0 (3.0~b4~cvs20080222t1436+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0.install
   * Add optional support for system sqlite3 (we need >= 3.5 not in hardy)
     - update debian/rules
+  * Fix debsearch.src to work with new packages.ubuntu.com codebase (LP: #194681)
+    Contributed by David Futcher <bobbocanfly@gmail.com>
+    - update debian/debsearch.src
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 23 Feb 2008 00:24:36 +0100
 
