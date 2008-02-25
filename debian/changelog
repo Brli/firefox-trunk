@@ -1,3 +1,14 @@
+firefox-3.0 (3.0~b3+nobinonly-0ubuntu4) hardy; urgency=low
+
+  * fix firefox.desktop install (ftbfs)
+    - update debian/firefox-3.0.install
+  * fix StartupWMClass in desktop file
+    - update debian/firefox-3.0-final.desktop
+  * fix Name and Description and Exec in desktop file
+    - update debian/firefox-3.0-final.desktop
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 25 Feb 2008 14:37:43 +0100
+
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu3) hardy; urgency=low
 
   * introduce transitional dummy package for firefox-libthai => firefox-3.0

@@ -1,16 +1,16 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=Firefox 3 Web Browser
-Comment=Firefox 3.0 Preview
+Name=Firefox Web Browser
+Comment=Firefox 3.0
 GenericName=Web Browser
-Exec=firefox-3.0 %u
+Exec=firefox %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
 Icon=firefox-3.0.png
 Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;
-StartupWMClass=Firefox-3.0-bin
+StartupWMClass=Firefox
 StartupNotify=true
 GenericName[it_IT]=Bleed Browser
