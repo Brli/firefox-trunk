@@ -113,6 +113,13 @@ Description: meta package pointing to the latest development package for firefox
  package for firefox. Don't remove this if you want to receive automatic major
  version upgrades for this package in future.
 
+Package: firefox-libthai
+Architecture: all
+Depends: firefox-3.0
+Description: dummy upgrade package for firefox-libthai -> firefox-3.0
+ This is a transitional package so firefox-libthai users get good upgrade path
+ to firefox-3.0. It can be safely removed.
+
 Package: firefox-trunk
 Architecture: all
 Depends: firefox-3.0
