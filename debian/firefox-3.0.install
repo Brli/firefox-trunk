@@ -17,7 +17,7 @@ debian/tmp/usr/lib/firefox-*/icons
 debian/tmp/usr/lib/firefox-*/chrome
 debian/tmp/usr/lib/firefox-*/browserconfig.properties
 
-debian/firefox-3.0.desktop usr/share/applications
+debian/firefox.desktop usr/share/applications
 debian/firefoxrc etc/firefox-3.0
 debian/presubj usr/share/bug/firefox-3.0
 
