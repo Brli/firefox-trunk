@@ -14,6 +14,8 @@ firefox-3.0 (3.0~b4~cvs20080224t1029+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix debsearch.src to work with new packages.ubuntu.com codebase (LP: #194681)
     Contributed by David Futcher <bobbocanfly@gmail.com>
     - update debian/debsearch.src
+  * Bump gtk+ requirement to 2.10 because of the new Print Dialog
+    - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Sun, 24 Feb 2008 21:38:04 +0100
 
