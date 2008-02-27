@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b4~cvs20080224t1029+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b4~cvs20080227t1206+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Bump xulrunner-1.9 dependencies to b4
     - update debian/control
@@ -17,7 +17,7 @@ firefox-3.0 (3.0~b4~cvs20080224t1029+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Bump gtk+ requirement to 2.10 because of the new Print Dialog
     - update debian/control
 
- -- Fabien Tassin <fta@sofaraway.org>  Sun, 24 Feb 2008 21:38:04 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Wed, 27 Feb 2008 20:40:26 +0100
 
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu4) hardy; urgency=low
 
