@@ -16,6 +16,9 @@ firefox-3.0 (3.0~b4~cvs20080227t1206+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/debsearch.src
   * Bump gtk+ requirement to 2.10 because of the new Print Dialog
     - update debian/control
+  * Add Polish translation to deskstop launcher (LP: #196953)
+    Contributed by Tomasz Dominikowski <dominikowski@gmail.com>
+    - update debian/firefox-3.0-final.desktop
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 27 Feb 2008 20:40:26 +0100
 

@@ -14,3 +14,5 @@ MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vn
 StartupWMClass=Firefox
 StartupNotify=true
 GenericName[it_IT]=Bleed Browser
+Name[pl_PL]=Przeglądarka WWW Firefox
+GenericName[pl_PL]=Przeglądarka WWW
