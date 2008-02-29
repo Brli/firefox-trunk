@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b4~cvs20080227t1206+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b4~cvs20080229t0649+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Bump xulrunner-1.9 dependencies to b4
     - update debian/control
@@ -20,7 +20,7 @@ firefox-3.0 (3.0~b4~cvs20080227t1206+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     Contributed by Tomasz Dominikowski <dominikowski@gmail.com>
     - update debian/firefox-3.0-final.desktop
 
- -- Fabien Tassin <fta@sofaraway.org>  Wed, 27 Feb 2008 20:40:26 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Fri, 29 Feb 2008 18:58:54 +0100
 
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu4) hardy; urgency=low
 
