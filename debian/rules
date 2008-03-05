@@ -52,6 +52,9 @@ include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
 -include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
 
+# We don't want build-tree/mozilla/README to be shipped as a doc
+DEB_INSTALL_DOCS_ALL := $(NULL)
+
 CFLAGS = -g
 CXXFLAGS = -g
 

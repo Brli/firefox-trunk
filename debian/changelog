@@ -24,6 +24,9 @@ firefox-3.0 (3.0~b4~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Drop DEB_AUTO_UPDATE_DEBIAN_CONTROL cdbs variable completely. It was
     wrongly set to zero
     - update debian/rules
+  * Stop build-tree/mozilla/README to be shipped as a doc by setting
+    cdbs DEB_INSTALL_DOCS_ALL to $(NULL)
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Tue, 04 Mar 2008 21:17:29 +0100
 
