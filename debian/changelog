@@ -21,6 +21,9 @@ firefox-3.0 (3.0~b4~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0-final.desktop
   * Change $(shell) into $(wildcard) for XUL SDK detection
     - update debian/rules
+  * Drop DEB_AUTO_UPDATE_DEBIAN_CONTROL cdbs variable completely. It was
+    wrongly set to zero
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Tue, 04 Mar 2008 21:17:29 +0100
 
