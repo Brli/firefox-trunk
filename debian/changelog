@@ -1,5 +1,6 @@
 firefox-3.0 (3.0~b4~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to b4
     - update debian/control
   * Refresh diverged patches:
@@ -28,7 +29,13 @@ firefox-3.0 (3.0~b4~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     cdbs DEB_INSTALL_DOCS_ALL to $(NULL)
     - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Tue, 04 Mar 2008 21:17:29 +0100
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * reuse apport hook from firefox 2 package initially developed by Hilario J.
+    Montoliu <hmontoliu@gmail.com> (LP: #199666)
+    - add debian/apport/firefox-3.0.py
+    - update debian/firefox-3.0.install
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 10 Mar 2008 16:51:36 +0100
 
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu4) hardy; urgency=low
 
