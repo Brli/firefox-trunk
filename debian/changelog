@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b4+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b4+nobinonly-0ubuntu1) hardy; urgency=low
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to b4
@@ -35,7 +35,7 @@ firefox-3.0 (3.0~b4+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/apport/firefox-3.0.py
     - update debian/firefox-3.0.install
 
- -- Alexander Sack <asac@ubuntu.com>  Mon, 10 Mar 2008 16:51:36 +0100
+ -- Alexander Sack <asac@ubuntu.com>  Thu, 13 Mar 2008 16:52:36 +0100
 
 firefox-3.0 (3.0~b3+nobinonly-0ubuntu4) hardy; urgency=low
 
