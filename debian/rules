@@ -2,16 +2,16 @@
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
-DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-DEB_BUILD_ARCH  ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEBIAN_NAME    := firefox-3.0
+DEBIAN_NAME	:= firefox-3.0
 DEBIAN_APP_NAME	:= firefox
-DEBIAN_VERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-DEBIAN_XUL_DEV := $(shell echo /usr/lib/xulrunner-devel-1.9*)
-DEBIAN_FF3_DIR  = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
-DEB_TAR_SRCDIR := mozilla
+DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
+DEBIAN_XUL_DEV	:= $(wildcard /usr/lib/xulrunner-devel-1.9*)
+DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
+DEB_TAR_SRCDIR	:= mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
@@ -24,12 +24,12 @@ ifneq (,$(FORCE_OFFICIAL_BRANDING))
 else
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
-        # minefield branding for cvs snapshots
+	# minefield branding for cvs snapshots
 	BRANDING = $(NULL)
 	DESKTOP  = firefox-3.0-minefield.desktop
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
-        # codename branding for alpha builds
+	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
 	DESKTOP  = firefox-3.0-granparadiso.desktop
 else
@@ -52,62 +52,69 @@ include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
 -include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
 
-DEB_AUTO_UPDATE_DEBIAN_CONTROL=0
+# We don't want build-tree/mozilla/README to be shipped as a doc
+DEB_INSTALL_DOCS_ALL := $(NULL)
 
 CFLAGS = -g
 CXXFLAGS = -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-  EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
 endif
 
 USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.5.8'; a=$$?; if test $$a != 1; then echo 1; fi)
-
 # for old cairo versions we cannot use system cairo
 ifeq (1,$(USE_SYSTEM_CAIRO))
-   EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-cairo
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-cairo
 else
-   EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-cairo
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-cairo
+endif
+
+USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.5'; a=$$?; if test $$a != 1; then echo 1; fi)
+ifeq (1,$(USE_SYSTEM_SQLITE))
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-sqlite
+else
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-sqlite
 endif
 
 DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
 	--disable-debug \
-        --with-user-appdir=.mozilla \
-        --with-system-jpeg=/usr \
-        --with-system-zlib=/usr \
-        --with-libxul-sdk=$(DEBIAN_XUL_DEV) \
-        --disable-crashreporter \
-        --disable-composer \
-        --disable-debug \
-        --disable-elf-dynstr-gc \
-        --disable-gtktest \
-        --disable-install-strip \
-        --disable-installer \
-        --disable-ldap \
-        --disable-mailnews \
-        --disable-profilesharing \
-        --disable-strip \
-        --disable-strip-libs \
-        --disable-tests \
-        --disable-mochitest \
-        --disable-updater \
-        --disable-xprint \
-        --enable-application=browser \
-        --enable-canvas \
-        --enable-default-toolkit=cairo-gtk2 \
-        --enable-gnomevfs \
-        --enable-optimize \
-        --enable-pango \
-        --enable-postscript \
-        --enable-svg \
-        --enable-mathml \
-        --enable-xft \
-        --enable-xinerama \
-        --enable-extensions=default \
-        --enable-single-profile \
-        --enable-system-myspell \
-        --with-distribution-id=com.ubuntu \
+	--with-user-appdir=.mozilla \
+	--with-system-jpeg=/usr \
+	--with-system-zlib=/usr \
+	--with-libxul-sdk=$(DEBIAN_XUL_DEV) \
+	--disable-crashreporter \
+	--disable-composer \
+	--disable-debug \
+	--disable-elf-dynstr-gc \
+	--disable-gtktest \
+	--disable-install-strip \
+	--disable-installer \
+	--disable-ldap \
+	--disable-mailnews \
+	--disable-profilesharing \
+	--disable-strip \
+	--disable-strip-libs \
+	--disable-tests \
+	--disable-mochitest \
+	--disable-updater \
+	--disable-xprint \
+	--enable-application=browser \
+	--enable-canvas \
+	--enable-default-toolkit=cairo-gtk2 \
+	--enable-gnomevfs \
+	--enable-optimize \
+	--enable-pango \
+	--enable-postscript \
+	--enable-svg \
+	--enable-mathml \
+	--enable-xft \
+	--enable-xinerama \
+	--enable-extensions=default \
+	--enable-single-profile \
+	--enable-system-myspell \
+	--with-distribution-id=com.ubuntu \
 	$(BRANDING)
 
 UUDECODE = \

@@ -7,11 +7,11 @@ Index: mozilla/config/Makefile.in
 ===================================================================
 --- mozilla.orig/config/Makefile.in
 +++ mozilla/config/Makefile.in
-@@ -111,17 +111,17 @@
- 	$(PERL) $(topsrcdir)/config/preprocessor.pl $(DEFINES) $(ACDEFINES) \
+@@ -121,17 +121,17 @@
  		-DBUILD_STATIC_LIBS=$(BUILD_STATIC_LIBS) \
  		-DMOZ_TREE_CAIRO=$(MOZ_TREE_CAIRO) \
  		-DMOZ_ENABLE_LIBXUL=$(MOZ_ENABLE_LIBXUL) \
+ 		-DMOZ_NATIVE_HUNSPELL=$(MOZ_NATIVE_HUNSPELL) \
  		-DMOZ_NATIVE_ZLIB=$(MOZ_NATIVE_ZLIB) \
  		-DMOZ_NATIVE_PNG=$(MOZ_NATIVE_PNG) \
  		-DMOZ_NATIVE_JPEG=$(MOZ_NATIVE_JPEG) \
@@ -19,13 +19,13 @@ Index: mozilla/config/Makefile.in
 -		$(srcdir)/system-headers | $(PERL) $(topsrcdir)/nsprpub/config/make-system-wrappers.pl system_wrappers
 +		$(srcdir)/system-headers | $(PERL) $(topsrcdir)/config/make-system-wrappers.pl system_wrappers
  	$(INSTALL) system_wrappers $(DIST)/include
+ 
+ GARBAGE_DIRS += system_wrappers
  endif
  
  install::
  	$(SYSINSTALL) $(IFLAGS1) $(DEPTH)/mozilla-config.h $(DESTDIR)$(includedir)
  
- GARBAGE += \
- 	$(FINAL_LINK_COMPS) $(FINAL_LINK_LIBS) $(FINAL_LINK_COMP_NAMES)
 Index: mozilla/config/make-system-wrappers.pl
 ===================================================================
 --- /dev/null
