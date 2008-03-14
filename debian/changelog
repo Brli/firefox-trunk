@@ -14,6 +14,9 @@ firefox-3.0 (3.0~b5~cvs20080314t0150+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Fix ftbfs with bogus install path for .autoreg
     - update debian/rules
+  * Fix restart notification still looking for firefox-3.0
+    and prevent it to be installed if firefox is not running
+    - update debian/firefox-3.0.postinst.in
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
