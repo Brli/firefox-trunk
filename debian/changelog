@@ -8,6 +8,10 @@ firefox-3.0 (3.0~b5~cvs20080313t1324+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/dont_depend_on_nspr_sources.patch
     - update debian/patches/nspr_flags_by_pkg_config_hack.patch
 
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * only display restart notification if firefox process is running
+    - update debian/firefox-3.0-restart-required.update-notifier
+
  -- Fabien Tassin <fta@sofaraway.org>  Thu, 13 Mar 2008 22:07:23 +0100
 
 firefox-3.0 (3.0~b4+nobinonly-0ubuntu1) hardy; urgency=low
