@@ -2,16 +2,16 @@
 
 set -e
 
+UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
+LIBDIR=@LIBDIR@
+
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/x-www-browser \
         x-www-browser /usr/bin/firefox-3.0 40
-    touch /usr/lib/firefox-3*/.autoreg
+    touch $LIBDIR/.autoreg
 fi
 
 echo "Please restart all running instances of Firefox-3.0, or you will experience problems."
-
-UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
-LIBDIR=@LIBDIR@
 
 if [ -d $UPDATENOTIFIERDIR ] ; then
   # pgrep matches application names from /proc/<pid>/status which is

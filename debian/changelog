@@ -1,5 +1,6 @@
 firefox-3.0 (3.0~b5~cvs20080314t0150+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to b5
     - update debian/control
   * Make Depends even stricter for xulrunner-1.9 (LP: #201961)
@@ -7,6 +8,8 @@ firefox-3.0 (3.0~b5~cvs20080314t0150+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh diverged patches:
     - update debian/patches/dont_depend_on_nspr_sources.patch
     - update debian/patches/nspr_flags_by_pkg_config_hack.patch
+  * Use LIBDIR when touching .autoreg instead of /usr/lib/firefox-3*
+    - update debian/firefox-3.0.postinst.in
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
