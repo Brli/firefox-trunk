@@ -10,6 +10,8 @@ firefox-3.0 (3.0~b5~cvs20080314t0150+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/nspr_flags_by_pkg_config_hack.patch
   * Use LIBDIR when touching .autoreg instead of /usr/lib/firefox-3*
     - update debian/firefox-3.0.postinst.in
+  * Rewrite substitution rules to make them more generic
+    - update debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running

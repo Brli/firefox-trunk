@@ -126,12 +126,17 @@ DEBIAN_EXECUTABLES = \
 	firefox.sh \
 	$(NULL)
 
-debian/$(DEBIAN_NAME).postinst: debian/$(DEBIAN_NAME).postinst.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < debian/$(DEBIAN_NAME).postinst.in \
-	> debian/$(DEBIAN_NAME).postinst
+subst_files = \
+	debian/$(DEBIAN_NAME)-gnome-support.postinst \
+	debian/$(DEBIAN_NAME).postinst \
+	debian/firefox.sh \
+	$(NULL)
+
+%: %.in
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < debian/firefox.sh.in > debian/firefox.sh
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
 
 debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
@@ -151,7 +156,7 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 
-pre-build:: debian/$(DEBIAN_NAME).postinst debian/firefox.sh debian/migrator/ffox-3-beta-profile-migration-dialog
+pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
@@ -163,9 +168,9 @@ pre-build:: debian/$(DEBIAN_NAME).postinst debian/firefox.sh debian/migrator/ffo
 clean::
 	set -e; for i in $(UUDECODE); do \
 		rm -f debian/$$i; \
-		done ; \
-		rm -f debian/$(DEBIAN_NAME).desktop; \
-		rm -f debian/$(DEBIAN_NAME).postinst debian/firefox.sh
+		done ; 
+	rm -f debian/$(DEBIAN_NAME).desktop
+	rm -f $(subst_files)
 	rm -f debian/migrator/ffox-3-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 
