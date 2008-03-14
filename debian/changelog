@@ -11,6 +11,11 @@ firefox-3.0 (3.0~b5~cvs20080313t1324+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
     - update debian/firefox-3.0-restart-required.update-notifier
+  * ship $(DEBIAN_FF3_DIR)/.autoreg as a package managed file and touch it
+    in .postinst maintainer scripts
+    - update debian/rules
+    - update debian/firefox-3.0.postinst.in
+    - add debian/firefox-3.0-gnome-support.postinst
 
  -- Fabien Tassin <fta@sofaraway.org>  Thu, 13 Mar 2008 22:07:23 +0100
 

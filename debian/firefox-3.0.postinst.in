@@ -5,6 +5,7 @@ set -e
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/x-www-browser \
         x-www-browser /usr/bin/firefox-3.0 40
+    touch /usr/lib/firefox-3*/.autoreg
 fi
 
 echo "Please restart all running instances of Firefox-3.0, or you will experience problems."
