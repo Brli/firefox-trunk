@@ -27,7 +27,7 @@
 APPNAME=firefox
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
-DROPPED=.abandoned
+DROPPED=abandoned
 
 FOUND=""
 if [ -d $MOZDIR/firefox ] ; then

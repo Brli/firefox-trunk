@@ -22,6 +22,9 @@ firefox-3.0 (3.0~b5~cvs20080314t1431+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Don't build the reporter extension and make a link instead
     as we already ship it with xulrunner-1.9
     - update debian/rules
+  * Fix a typo in the profile migration script creating double dots
+    in abandoned profile names
+    - update debian/firefox.sh.in
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
