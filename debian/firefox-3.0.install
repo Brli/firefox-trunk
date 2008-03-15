@@ -13,7 +13,11 @@ debian/tmp/usr/lib/firefox-*/defaults/preferences
 debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-3.0/
 debian/tmp/usr/lib/firefox-*/searchplugins usr/lib/firefox-addons
 debian/tmp/usr/lib/firefox-*/icons
-debian/tmp/usr/lib/firefox-*/chrome
+debian/tmp/usr/lib/firefox-*/chrome/en-US.*
+debian/tmp/usr/lib/firefox-*/chrome/browser.*
+debian/tmp/usr/lib/firefox-*/chrome/classic.*
+debian/tmp/usr/lib/firefox-*/chrome/icons
+
 debian/tmp/usr/lib/firefox-*/browserconfig.properties
 
 debian/firefox.desktop usr/share/applications
