@@ -17,6 +17,8 @@ firefox-3.0 (3.0~b5~cvs20080314t1431+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix restart notification still looking for firefox-3.0
     and prevent it to be installed if firefox is not running
     - update debian/firefox-3.0.postinst.in
+  * Drop libjemalloc.so now that it is bundled into libxul.so
+    - update debian/firefox-3.0.install
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
