@@ -112,7 +112,7 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--enable-mathml \
 	--enable-xft \
 	--enable-xinerama \
-	--enable-extensions=default \
+	--enable-extensions=default,-reporter \
 	--enable-single-profile \
 	--enable-system-myspell \
 	--with-distribution-id=com.ubuntu \

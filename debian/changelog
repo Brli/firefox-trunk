@@ -19,9 +19,8 @@ firefox-3.0 (3.0~b5~cvs20080314t1431+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0.postinst.in
   * Drop libjemalloc.so now that it is bundled into libxul.so
     - update debian/firefox-3.0.install
-  * Make the reporter extension a link as we already ship it
-    with xulrunner-1.9
-    - update debian/firefox-3.0.install
+  * Don't build the reporter extension and make a link instead
+    as we already ship it with xulrunner-1.9
     - update debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
