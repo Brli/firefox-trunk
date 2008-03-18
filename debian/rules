@@ -87,7 +87,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--with-libxul-sdk=$(DEBIAN_XUL_DEV) \
 	--disable-crashreporter \
 	--disable-composer \
-	--disable-debug \
 	--disable-elf-dynstr-gc \
 	--disable-gtktest \
 	--disable-install-strip \

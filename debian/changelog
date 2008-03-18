@@ -25,6 +25,8 @@ firefox-3.0 (3.0~b5~cvs20080314t1431+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix a typo in the profile migration script creating double dots
     in abandoned profile names
     - update debian/firefox.sh.in
+  * Drop extra --disable-debug passed twice to configure
+    - update debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
