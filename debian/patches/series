@@ -7,3 +7,4 @@ installer_use_stdout_for_missing_files.patch
 force_safebrowsing_off.patch
 dont_depend_on_nspr_sources.patch
 nspr_flags_by_pkg_config_hack.patch
+drop_bz418016.patch
