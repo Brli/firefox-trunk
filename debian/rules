@@ -43,7 +43,8 @@ endif
 
 CXX=g++-4.2
 CC=gcc-4.2
-export CXX CC 
+LDFLAGS=$(NULL)
+export CXX CC LDFLAGS
 
 DEB_AUTO_UPDATE_AUTOCONF=2.13
 

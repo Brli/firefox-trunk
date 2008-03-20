@@ -27,6 +27,8 @@ firefox-3.0 (3.0~b5~cvs20080318t1727+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.sh.in
   * Drop extra --disable-debug passed twice to configure
     - update debian/rules
+  * Set LDFLAGS so dpkg-buildpackage doesn't use -Wl,-Bsymbolic-functions
+    - update debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
