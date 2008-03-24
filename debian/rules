@@ -120,7 +120,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 
 UUDECODE = \
 	debsearch.gif \
-	wikipedia.gif \
 	$(NULL)
 
 DEBIAN_EXECUTABLES = \

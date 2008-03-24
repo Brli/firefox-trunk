@@ -29,6 +29,10 @@ firefox-3.0 (3.0~b5~cvs20080321t1547+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Set LDFLAGS so dpkg-buildpackage doesn't use -Wl,-Bsymbolic-functions
     - update debian/rules
+  * Drop wikipedia search plugin now that upstream ships one (LP: #205010)
+    - drop debian/wikipedia.*
+    - update debian/firefox-3.0.install
+    - update debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
