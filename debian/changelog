@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b5~cvs20080321t1547+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b5~cvs20080324t1000+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to b5
@@ -43,7 +43,7 @@ firefox-3.0 (3.0~b5~cvs20080321t1547+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0.postinst.in
     - add debian/firefox-3.0-gnome-support.postinst
 
- -- Fabien Tassin <fta@sofaraway.org>  Sat, 22 Mar 2008 01:03:34 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Mon, 24 Mar 2008 22:16:20 +0100
 
 firefox-3.0 (3.0~b4+nobinonly-0ubuntu1) hardy; urgency=low
 
