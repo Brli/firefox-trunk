@@ -33,6 +33,9 @@ firefox-3.0 (3.0~b5~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/wikipedia.*
     - update debian/firefox-3.0.install
     - update debian/rules
+  * Import translation for desktop launcher from firefox-2 (LP: #195013)
+    and make it compliant with desktop-file-validate (LP: #194970)
+    - update debian/firefox-3.0-final.desktop
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
