@@ -29,9 +29,10 @@ Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libt
 Provides: www-browser, firefox-libthai
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
 Replaces: firefox-trunk, firefox-granparadiso, firefox (<< 3), firefox-libthai
-Description: lightweight web browser based on Mozilla
- Firefox 3 is the next major release of the standalone Mozilla browser; it is
- written in the XUL language and designed to be lightweight and cross-platform.
+Description: safe and easy web browser from Mozilla
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
  .
  This browser was previously known as Firefox 2, Firebird and Phoenix.
  .
