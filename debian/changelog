@@ -44,6 +44,9 @@ firefox-3.0 (3.0~b5~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     /usr/lib/xulrunner-addons/extensions instead of the deprecated
     /usr/lib/firefox/extensions
     - update debian/apport/firefox-3.0.py
+  * Remove possible leftover /usr/share/apport/package-hooks/firefox-3.0.pyc
+    during prerm
+    - update debian/firefox-3.0.prerm
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
