@@ -47,6 +47,9 @@ firefox-3.0 (3.0~b5~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Remove possible leftover /usr/share/apport/package-hooks/firefox-3.0.pyc
     during prerm
     - update debian/firefox-3.0.prerm
+  * Fix the apport hook to survive when a profile points to an extension
+    that no longer exists, such as old profiles
+    - update debian/apport/firefox-3.0.py
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running

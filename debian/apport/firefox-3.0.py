@@ -43,6 +43,8 @@ def install_ini_parser(extension_path):
     '''parses each extension's install.rdf and returns string:
     extension name, its version and the id.'''
     rdf_file = os.path.join(extension_path, 'install.rdf')
+    if not os.path.exists(extension_path):
+        return '''  %s does not exist (old profile?)''' % extension_path
     refs_dict = {'em:version': '', 'em:id': '', 'em:name': ''}
     parse_err = '%s (Not Parsed)\n' % extension_path 
     dom_doc = minidom.parse(rdf_file)
