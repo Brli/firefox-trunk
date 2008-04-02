@@ -41,6 +41,12 @@ endif
 endif
 endif
 
+# translation flags
+MOZ_TRANSLATION_AUTO_XPI_OUTDIR := debian/lp-export-xpis/
+MOZ_TRANSLATION_AUTO_XPI_SEARCHDIRS := debian/$(DEBIAN_NAME)
+MOZ_TRANSLATION_AUTO_XPI_LOCALE := en-US
+
+# compile flags
 CXX=g++-4.2
 CC=gcc-4.2
 LDFLAGS=$(NULL)
@@ -52,7 +58,8 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
--include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
+include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
+include /usr/share/mozilla-devscripts/lp-locale-export.mk
 
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL := $(NULL)
@@ -157,6 +164,8 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.jar $(DEBIAN_FF3_DIR)/chrome/reporter.jar
 	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.manifest $(DEBIAN_FF3_DIR)/chrome/reporter.manifest
+
+binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate
 
 pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \

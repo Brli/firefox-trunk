@@ -59,6 +59,11 @@ firefox-3.0 (3.0~b5~rc2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
     - update debian/firefox-3.0.postinst.in
     - add debian/firefox-3.0-gnome-support.postinst
+  * hook in lp-export-xpi.mk from mozilla-devscript to export en-US
+    translation templates to debian/lp-export-xpis/; in turn, make
+    mozilla-devscripts a hard build-depends
+    - update debian/rules
+    - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 28 Mar 2008 15:04:25 +0100
 
