@@ -50,6 +50,8 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix the apport hook to survive when a profile points to an extension
     that no longer exists, such as old profiles
     - update debian/apport/firefox-3.0.py
+  * Install missing blocklist.xml
+    - update debian/firefox-3.0.install
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
