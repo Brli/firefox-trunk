@@ -165,7 +165,7 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.jar $(DEBIAN_FF3_DIR)/chrome/reporter.jar
 	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.manifest $(DEBIAN_FF3_DIR)/chrome/reporter.manifest
 
-binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate
+binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 
 pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \

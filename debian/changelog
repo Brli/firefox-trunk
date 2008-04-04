@@ -52,6 +52,8 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/apport/firefox-3.0.py
   * Install missing blocklist.xml
     - update debian/firefox-3.0.install
+  * Hook up mozilla-devscript's compare module to binary-post-install
+    - update debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * only display restart notification if firefox process is running
