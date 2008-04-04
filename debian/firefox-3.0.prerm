@@ -7,4 +7,8 @@ if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
     rm -f /var/lib/update-notifier/user.d/firefox-3.0-restart-required
 fi
 
+if [ -f /usr/share/apport/package-hooks/firefox-3.0.pyc ] ; then
+    rm -f /usr/share/apport/package-hooks/firefox-3.0.pyc
+fi
+
 #DEBHELPER#

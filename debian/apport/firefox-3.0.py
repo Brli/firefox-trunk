@@ -1,6 +1,6 @@
 '''firefox apport hook draft
 
-/usr/share/apport/package-hooks/firefox-2.py
+/usr/share/apport/package-hooks/firefox-3.0.py
 
 Appends to apport's firefox default report: the files pluginreg.dat and
 profiles.ini, and also a summary of all the extensions loaded on each firefox
@@ -32,7 +32,7 @@ def extensions_ini_parser(extensions_ini_file):
         section_global, section_local, my_ext = [], [], ''
         for extension in parser.options(section):
             my_ext = parser.get(section, extension)
-            if '/usr/lib/firefox/extensions' in my_ext:
+            if '/usr/lib/xulrunner-addons/extensions' in my_ext:
                 section_global.append((my_ext))
             else:
                 section_local.append((my_ext))
@@ -43,6 +43,8 @@ def install_ini_parser(extension_path):
     '''parses each extension's install.rdf and returns string:
     extension name, its version and the id.'''
     rdf_file = os.path.join(extension_path, 'install.rdf')
+    if not os.path.exists(extension_path):
+        return '''  %s does not exist (old profile?)''' % extension_path
     refs_dict = {'em:version': '', 'em:id': '', 'em:name': ''}
     parse_err = '%s (Not Parsed)\n' % extension_path 
     dom_doc = minidom.parse(rdf_file)

@@ -10,6 +10,7 @@ DEBIAN_NAME	:= firefox-3.0
 DEBIAN_APP_NAME	:= firefox
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_DEV	:= $(wildcard /usr/lib/xulrunner-devel-1.9*)
+DEBIAN_XUL_DIR	:= usr/lib/$(notdir $(wildcard /usr/lib/xulrunner-1.9*))
 DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
 DEB_TAR_SRCDIR	:= mozilla
 
@@ -40,9 +41,16 @@ endif
 endif
 endif
 
+# translation flags
+MOZ_TRANSLATION_AUTO_XPI_OUTDIR := debian/lp-export-xpis/
+MOZ_TRANSLATION_AUTO_XPI_SEARCHDIRS := debian/$(DEBIAN_NAME)
+MOZ_TRANSLATION_AUTO_XPI_LOCALE := en-US
+
+# compile flags
 CXX=g++-4.2
 CC=gcc-4.2
-export CXX CC 
+LDFLAGS=$(NULL)
+export CXX CC LDFLAGS
 
 DEB_AUTO_UPDATE_AUTOCONF=2.13
 
@@ -50,7 +58,8 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
--include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
+include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
+include /usr/share/mozilla-devscripts/lp-locale-export.mk
 
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL := $(NULL)
@@ -86,7 +95,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--with-libxul-sdk=$(DEBIAN_XUL_DEV) \
 	--disable-crashreporter \
 	--disable-composer \
-	--disable-debug \
 	--disable-elf-dynstr-gc \
 	--disable-gtktest \
 	--disable-install-strip \
@@ -111,7 +119,7 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--enable-mathml \
 	--enable-xft \
 	--enable-xinerama \
-	--enable-extensions=default \
+	--enable-extensions=default,-reporter \
 	--enable-single-profile \
 	--enable-system-myspell \
 	--with-distribution-id=com.ubuntu \
@@ -119,24 +127,29 @@ DEB_CONFIGURE_USER_FLAGS= \
 
 UUDECODE = \
 	debsearch.gif \
-	wikipedia.gif \
 	$(NULL)
 
 DEBIAN_EXECUTABLES = \
 	firefox.sh \
 	$(NULL)
 
-debian/$(DEBIAN_NAME).postinst: debian/$(DEBIAN_NAME).postinst.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < debian/$(DEBIAN_NAME).postinst.in \
-	> debian/$(DEBIAN_NAME).postinst
+subst_files = \
+	debian/$(DEBIAN_NAME)-gnome-support.postinst \
+	debian/$(DEBIAN_NAME).postinst \
+	debian/firefox.sh \
+	$(NULL)
+
+%: %.in
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < debian/firefox.sh.in > debian/firefox.sh
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
 
 debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
 
 binary-install/$(DEBIAN_NAME)::
+	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
 	dh_install debian/firefox.cfg $(DEBIAN_FF3_DIR)
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
@@ -149,8 +162,12 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
 	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
+	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.jar $(DEBIAN_FF3_DIR)/chrome/reporter.jar
+	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.manifest $(DEBIAN_FF3_DIR)/chrome/reporter.manifest
 
-pre-build:: debian/$(DEBIAN_NAME).postinst debian/firefox.sh debian/migrator/ffox-3-beta-profile-migration-dialog
+binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
+
+pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
@@ -162,9 +179,9 @@ pre-build:: debian/$(DEBIAN_NAME).postinst debian/firefox.sh debian/migrator/ffo
 clean::
 	set -e; for i in $(UUDECODE); do \
 		rm -f debian/$$i; \
-		done ; \
-		rm -f debian/$(DEBIAN_NAME).desktop; \
-		rm -f debian/$(DEBIAN_NAME).postinst debian/firefox.sh
+		done ; 
+	rm -f debian/$(DEBIAN_NAME).desktop
+	rm -f $(subst_files)
 	rm -f debian/migrator/ffox-3-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 

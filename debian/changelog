@@ -1,3 +1,82 @@
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low
+
+  [ Fabien Tassin <fta@sofaraway.org> ]
+  * Bump xulrunner-1.9 dependencies to b5
+    - update debian/control
+  * Make Depends even stricter for xulrunner-1.9 (LP: #201961)
+    - update debian/control
+  * Refresh diverged patches:
+    - update debian/patches/dont_depend_on_nspr_sources.patch
+    - update debian/patches/nspr_flags_by_pkg_config_hack.patch
+  * Use LIBDIR when touching .autoreg instead of /usr/lib/firefox-3*
+    - update debian/firefox-3.0.postinst.in
+  * Rewrite substitution rules to make them more generic
+    - update debian/rules
+  * Fix ftbfs with bogus install path for .autoreg
+    - update debian/rules
+  * Fix restart notification still looking for firefox-3.0
+    and prevent it to be installed if firefox is not running
+    - update debian/firefox-3.0.postinst.in
+  * Drop libjemalloc.so now that it is bundled into libxul.so
+    - update debian/firefox-3.0.install
+  * Don't build the reporter extension and make a link instead
+    as we already ship it with xulrunner-1.9
+    - update debian/rules
+  * Fix a typo in the profile migration script creating double dots
+    in abandoned profile names
+    - update debian/firefox.sh.in
+  * Drop extra --disable-debug passed twice to configure
+    - update debian/rules
+  * Set LDFLAGS so dpkg-buildpackage doesn't use -Wl,-Bsymbolic-functions
+    - update debian/rules
+  * Drop wikipedia search plugin now that upstream ships one (LP: #205010)
+    - drop debian/wikipedia.*
+    - update debian/firefox-3.0.install
+    - update debian/rules
+  * Import translation for desktop launcher from firefox-2 (LP: #192333)
+    and make it compliant with desktop-file-validate (LP: #194970)
+    - update debian/firefox-3.0-final.desktop
+  * Change wording in the control file to avoid lightweight (LP: #207199)
+    - update debian/control
+  * Really install the apport hook
+    - update debian/firefox-3.0.install
+  * Fix extension directory in the apport hook to use
+    /usr/lib/xulrunner-addons/extensions instead of the deprecated
+    /usr/lib/firefox/extensions
+    - update debian/apport/firefox-3.0.py
+  * Remove possible leftover /usr/share/apport/package-hooks/firefox-3.0.pyc
+    during prerm
+    - update debian/firefox-3.0.prerm
+  * Fix the apport hook to survive when a profile points to an extension
+    that no longer exists, such as old profiles
+    - update debian/apport/firefox-3.0.py
+  * Install missing blocklist.xml
+    - update debian/firefox-3.0.install
+  * Hook up mozilla-devscript's compare module to binary-post-install
+    - update debian/rules
+
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * only display restart notification if firefox process is running
+    - update debian/firefox-3.0-restart-required.update-notifier
+  * ship $(DEBIAN_FF3_DIR)/.autoreg as a package managed file and touch it
+    in .postinst maintainer scripts
+    - update debian/rules
+    - update debian/firefox-3.0.postinst.in
+    - add debian/firefox-3.0-gnome-support.postinst
+  * hook in lp-export-xpi.mk from mozilla-devscript to export en-US
+    translation templates to debian/lp-export-xpis/; in turn, make
+    mozilla-devscripts a hard build-depends
+    - update debian/rules
+    - update debian/control
+  * fix LP: #185622 - "Firefox 3 doesn't act as the default browser"; we
+    always check for and use /usr/bin/firefox now. Don't use " to delimit
+    the parameters of the preferred browser command used to update gconf
+    protocol-handler.
+    - add debian/patches/lp185622_system_path_default_browser.patch
+    - update debian/patches/series
+
+ -- Fabien Tassin <fta@sofaraway.org>  Fri, 04 Apr 2008 21:26:23 +0200
+
 firefox-3.0 (3.0~b4+nobinonly-0ubuntu1) hardy; urgency=low
 
   [ Fabien Tassin <fta@sofaraway.org> ]
