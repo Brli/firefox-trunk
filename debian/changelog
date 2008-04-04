@@ -73,9 +73,10 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * fix "New plugins only recognized _after_ restarting firefox"; the gecko
     1.9 plugin host doesn't scan plugin directories automatically for
     previously not available mime-types and extensions anymore. This fix
-    calls reloadsPlugins on the scriptable plugin-manager when the browser.js
-    receives a "NewPluginsInstalled" event from the plugin-host
-    implementation.
+    assures that the browser receives a NewPluginInstalled through the
+    tabbrowser.selectedBrowser by registering a special listener before
+    starting the plugin installer wizard. After plugins are properly installed
+    we remove that listener again.
     - add debian/patches/bzXXX_reload_new_plugins.patch
     - update debian/patches/series
 
