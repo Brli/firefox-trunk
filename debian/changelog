@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to b5
@@ -75,7 +75,7 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/series
 
- -- Fabien Tassin <fta@sofaraway.org>  Fri, 28 Mar 2008 15:04:25 +0100
+ -- Fabien Tassin <fta@sofaraway.org>  Fri, 04 Apr 2008 21:26:23 +0200
 
 firefox-3.0 (3.0~b4+nobinonly-0ubuntu1) hardy; urgency=low
 
