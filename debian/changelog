@@ -64,6 +64,12 @@ firefox-3.0 (3.0~b5~rc2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     mozilla-devscripts a hard build-depends
     - update debian/rules
     - update debian/control
+  * fix LP: #185622 - "Firefox 3 doesn't act as the default browser"; we
+    always check for and use /usr/bin/firefox now. Don't use " to delimit
+    the parameters of the preferred browser command used to update gconf
+    protocol-handler.
+    - add debian/patches/lp185622_system_path_default_browser.patch
+    - update debian/patches/series
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 28 Mar 2008 15:04:25 +0100
 
