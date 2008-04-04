@@ -1,0 +1,63 @@
+Index: browser/base/content/browser.js
+===================================================================
+RCS file: /cvsroot/mozilla/browser/base/content/browser.js,v
+retrieving revision 1.1018
+diff -u -p -8 -r1.1018 browser.js
+--- a/browser/base/content/browser.js	2 Apr 2008 12:57:47 -0000	1.1018
++++ b/browser/base/content/browser.js	4 Apr 2008 15:27:00 -0000
+@@ -821,17 +821,17 @@ function prepareForStartup()
+   gNavigatorBundle = document.getElementById("bundle_browser");
+   gProgressMeterPanel = document.getElementById("statusbar-progresspanel");
+   gFindBar = document.getElementById("FindToolbar");
+   gBrowser.addEventListener("DOMUpdatePageReport", gPopupBlockerObserver.onUpdatePageReport, false);
+   // Note: we need to listen to untrusted events, because the pluginfinder XBL
+   // binding can't fire trusted ones (runs with page privileges).
+   gBrowser.addEventListener("PluginNotFound", gMissingPluginInstaller.newMissingPlugin, true, true);
+   gBrowser.addEventListener("PluginBlocklisted", gMissingPluginInstaller.newMissingPlugin, true, true);
+-  gBrowser.addEventListener("NewPluginInstalled", gMissingPluginInstaller.refreshBrowser, false);
++  gBrowser.addEventListener("NewPluginInstalled", gMissingPluginInstaller.refreshBrowserPlugins, false);
+   gBrowser.addEventListener("NewTab", BrowserOpenTab, false);
+   window.addEventListener("AppCommand", HandleAppCommandEvent, true);
+ 
+   var webNavigation;
+   try {
+     // Create the browser instance component.
+     appCore = Components.classes["@mozilla.org/appshell/component/browser/instance;1"]
+                         .createInstance(Components.interfaces.nsIBrowserInstance);
+@@ -5945,28 +5945,34 @@ missingPluginInstaller.prototype.newMiss
+       callback: pluginsMissing
+     }];
+ 
+     notificationBox.appendNotification(messageString, "missing-plugins",
+                                        iconURL, priority, buttons);
+   }
+ }
+ 
+-missingPluginInstaller.prototype.refreshBrowser = function(aEvent) {
++missingPluginInstaller.prototype.refreshBrowserPlugins = function(aEvent) {
+   var browser = aEvent.target;
+   var notificationBox = gBrowser.getNotificationBox(browser);
+   var notification = notificationBox.getNotificationWithValue("missing-plugins");
+ 
+   // clear the plugin list, now that at least one plugin has been installed
+   browser.missingPlugins = null;
+   if (notification) {
+     // reset UI
+     notificationBox.removeNotification(notification);
+   }
+-  // reload the browser to make the new plugin show.
++
++  // reload plugins
++  var pm = Components.classes["@mozilla.org/plugin/manager;1"]
++		.getService(Components.interfaces.nsIPluginManager);
++  pm.reloadPlugins(false);
++
++  // and reload the browser to make the new plugin show.
+   browser.reload();
+ }
+ 
+ function blocklistInfo()
+ {
+   var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
+                             .getService(Components.interfaces.nsIURLFormatter);
+   var url = formatter.formatURLPref("extensions.blocklist.detailsURL");
