@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b5~rc2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to b5
