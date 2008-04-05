@@ -3,8 +3,6 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to b5
     - update debian/control
-  * Make Depends even stricter for xulrunner-1.9 (LP: #201961)
-    - update debian/control
   * Refresh diverged patches:
     - update debian/patches/dont_depend_on_nspr_sources.patch
     - update debian/patches/nspr_flags_by_pkg_config_hack.patch
@@ -82,6 +80,8 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     we remove that listener again.
     - add debian/patches/bzXXX_reload_new_plugins.patch
     - update debian/patches/series
+  * relax dependencies on xulrunner. no upper bounds.
+    - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 04 Apr 2008 21:26:23 +0200
 
