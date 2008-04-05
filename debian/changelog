@@ -1,76 +1,86 @@
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Fabien Tassin <fta@sofaraway.org> ]
-  * Bump xulrunner-1.9 dependencies to b5
-    - update debian/control
-  * Refresh diverged patches:
-    - update debian/patches/dont_depend_on_nspr_sources.patch
-    - update debian/patches/nspr_flags_by_pkg_config_hack.patch
-  * Use LIBDIR when touching .autoreg instead of /usr/lib/firefox-3*
-    - update debian/firefox-3.0.postinst.in
-  * Rewrite substitution rules to make them more generic
+  * Firefox 3.0 Beta 5 package - "ready for prime-time"!
+
+  * Multiple fixes and improvements to debian/rules: "rewrite substitution
+    rules", "bad .autoreg install path makes package ftbfs", "Firefox must not
+    ship reporter extension; its shipped in xulrunner-1.9", "enable
+    mozilla-devscript's in binary-post-install", "--disable-debug passed twice
+    in configure"
     - update debian/rules
-  * Fix ftbfs with bogus install path for .autoreg
-    - update debian/rules
-  * Fix restart notification still looking for firefox-3.0
-    and prevent it to be installed if firefox is not running
-    - update debian/firefox-3.0.postinst.in
-  * Drop libjemalloc.so now that it is bundled into libxul.so
+
+       * Alexander Sack <asac@ubuntu.com>
+       * Fabien Tassin <fta@sofaraway.org>
+
+  * Multiple fixes to the apport hook: "remove .pyc file garbage during prerm",
+    "bad install path", "bad extension directories used to gather data"
+    - update debian/apport/firefox-3.0.py
+    - update debian/firefox-3.0.prerm
     - update debian/firefox-3.0.install
-  * Don't build the reporter extension; its shipped in xulrunner-1.9
+
+       * Alexander Sack <asac@ubuntu.com>
+       * Fabien Tassin <fta@sofaraway.org>
+
+  * Multiple fixes required by libxul linkage with jemalloc: "libjemalloc.so
+    cannot be installed - doesn't exist", "-Wl,-Bsymbolic-functions in LDFLAGS
+    cause crashes at startup"
+    - update debian/firefox-3.0.install
     - update debian/rules
-  * Fix a typo in the profile migration script creating double dots
-    in abandoned profile names
+
+       * Fabien Tassin <fta@sofaraway.org>
+
+  * Fix multiple misc bugs: "migration creates double dots for abandoned
+    profiles", "Wikipedia search plugin shipped upstream",  "blocklist.xml not
+    installed", "use LIBDIR when touching .autoreg in postinst", "Fix restart
+    notification misbehaviour", "Improve package description (LP: #207199)"
     - update debian/firefox.sh.in
-  * Drop extra --disable-debug passed twice to configure
-    - update debian/rules
-  * Set LDFLAGS so dpkg-buildpackage doesn't use -Wl,-Bsymbolic-functions
-    - update debian/rules
-  * Drop wikipedia search plugin now that upstream ships one (LP: #205010)
     - drop debian/wikipedia.*
     - update debian/firefox-3.0.install
     - update debian/rules
-  * Import translation for desktop launcher from firefox-2 (LP: #192333)
-    and make it compliant with desktop-file-validate (LP: #194970)
-    - update debian/firefox-3.0-final.desktop
-  * Change wording in the control file to avoid lightweight (LP: #207199)
-    - update debian/control
-  * Really install the apport hook
-    - update debian/firefox-3.0.install
-  * Fix extension directory in the apport hook to use
-    /usr/lib/xulrunner-addons/extensions instead of the deprecated
-    /usr/lib/firefox/extensions
-    - update debian/apport/firefox-3.0.py
-  * Remove possible leftover /usr/share/apport/package-hooks/firefox-3.0.pyc
-    during prerm
-    - update debian/firefox-3.0.prerm
-  * Fix the apport hook to survive when a profile points to an extension
-    that no longer exists, such as old profiles
-    - update debian/apport/firefox-3.0.py
-  * Install missing blocklist.xml
-    - update debian/firefox-3.0.install
-  * Hook up mozilla-devscript's compare module to binary-post-install
-    - update debian/rules
-
-  [ Alexander Sack <asac@ubuntu.com> ]
-  * only display restart notification if firefox process is running
+    - update debian/firefox-3.0.postinst.in
     - update debian/firefox-3.0-restart-required.update-notifier
-  * ship $(DEBIAN_FF3_DIR)/.autoreg as a package managed file and touch it
-    in .postinst maintainer scripts
+
+       * Alexander Sack <asac@ubuntu.com>
+       * Fabien Tassin <fta@sofaraway.org>
+
+  * Misc package housekeeping changes: "Bump xulrunner-1.9
+    dependencies to b5", "Adjust patches", "desktop files not valid
+    (LP: #194970)", "relax dependencies on xulrunner. no upper bounds":
+    - update debian/control
+    - update debian/patches/dont_depend_on_nspr_sources.patch
+    - update debian/patches/nspr_flags_by_pkg_config_hack.patch
+
+       * Fabien Tassin <fta@sofaraway.org>
+
+  * Multiple Translation related fixes and improvements: "Reuse translations
+    from firefox 2 .desktop file", "include lp-export-xpi.mk from
+    mozilla-devscripts and export en-US.xpi to debian/lp-export-xpis/
+    directory"
+    - update debian/firefox-final.desktop
+    - update debian/rules
+    - update debian/control
+
+       * Alexander Sack <asac@ubuntu.com>
+       * Fabien Tassin <fta@sofaraway.org>
+
+  * Fixing chrome registration issues by properly shipping
+    $(DEBIAN_FF3_DIR)/.autoreg and touching it in postinst maintainer scripts
     - update debian/rules
     - update debian/firefox-3.0.postinst.in
-    - add debian/firefox-3.0-gnome-support.postinst
-  * hook in lp-export-xpi.mk from mozilla-devscript to export en-US
-    translation templates to debian/lp-export-xpis/; in turn, make
-    mozilla-devscripts a hard build-depends
-    - update debian/rules
-    - update debian/control
+    - add debian/firefox-3.0-gnome-support.postinst 
+
+       * Alexander Sack <asac@ubuntu.com>
+       * Fabien Tassin <fta@sofaraway.org>
+
   * fix LP: #185622 - "Firefox 3 doesn't act as the default browser"; we
     always check for and use /usr/bin/firefox now. Don't use " to delimit
     the parameters of the preferred browser command used to update gconf
     protocol-handler.
     - add debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/series
+
+       * Alexander Sack <asac@ubuntu.com>
+
   * fix "New plugins only recognized _after_ restarting firefox"; the gecko
     1.9 plugin host doesn't scan plugin directories automatically for
     previously not available mime-types and extensions anymore. This fix
@@ -80,8 +90,8 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     we remove that listener again.
     - add debian/patches/bzXXX_reload_new_plugins.patch
     - update debian/patches/series
-  * relax dependencies on xulrunner. no upper bounds.
-    - update debian/control
+
+       * Alexander Sack <asac@ubuntu.com>
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 04 Apr 2008 21:26:23 +0200
 
