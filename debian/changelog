@@ -2,6 +2,8 @@ firefox-3.0 (3.0~cvs20080404t1714+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Bump xulrunner-1.9 dependencies to ~c
     - update debian/control
+  * Refresh diverged patches
+    - update debian/patches/bzXXX_reload_new_plugins.patch
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 05 Apr 2008 02:23:34 +0200
 
