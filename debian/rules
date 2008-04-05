@@ -162,8 +162,6 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
 	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
-	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.jar $(DEBIAN_FF3_DIR)/chrome/reporter.jar
-	dh_link $(DEBIAN_XUL_DIR)/chrome/reporter.manifest $(DEBIAN_FF3_DIR)/chrome/reporter.manifest
 
 binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 
