@@ -19,8 +19,7 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0.postinst.in
   * Drop libjemalloc.so now that it is bundled into libxul.so
     - update debian/firefox-3.0.install
-  * Don't build the reporter extension and make a link instead
-    as we already ship it with xulrunner-1.9
+  * Don't build the reporter extension; its shipped in xulrunner-1.9
     - update debian/rules
   * Fix a typo in the profile migration script creating double dots
     in abandoned profile names
