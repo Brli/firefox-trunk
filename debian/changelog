@@ -74,6 +74,15 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     protocol-handler.
     - add debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/series
+  * fix "New plugins only recognized _after_ restarting firefox"; the gecko
+    1.9 plugin host doesn't scan plugin directories automatically for
+    previously not available mime-types and extensions anymore. This fix
+    assures that the browser receives a NewPluginInstalled through the
+    tabbrowser.selectedBrowser by registering a special listener before
+    starting the plugin installer wizard. After plugins are properly installed
+    we remove that listener again.
+    - add debian/patches/bzXXX_reload_new_plugins.patch
+    - update debian/patches/series
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 04 Apr 2008 21:26:23 +0200
 
