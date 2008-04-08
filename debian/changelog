@@ -1,3 +1,9 @@
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+
+  * 
+
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 08 Apr 2008 12:59:51 +0200
+
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low
 
   * Firefox 3.0 Beta 5 package - "ready for prime-time"!
