@@ -1,6 +1,16 @@
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) UNRELEASED; urgency=low
 
-  * 
+  * improve translation support by shipping a crafted install.rdf. We ship a
+    template install.rdf.in in debian/translation-support and replace the
+    em:{version,maxVersion,minVersion} during build. For now those versions
+    are maintained manually because we need maintainer attention on upgrades
+    considering the upstream string freeze. To increase failsafeness, we fail
+    the build if the version appears to be out of sync with the upstream
+    version in the post-install target. The install.rdf is finally added to
+    the zip file in the binary-post-install rule used to produce the
+    en-US.xpi.
+    - add debian/translation-support/install.rdf.in
+    - update debian/rules
 
  -- Alexander Sack <asac@ubuntu.com>  Tue, 08 Apr 2008 12:59:51 +0200
 
