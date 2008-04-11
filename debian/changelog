@@ -4,6 +4,13 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
     app and local extensions/themes separately
     - update debian/apport/firefox-3.0.py
 
+  * fix "update-notifier hint gets installed in postinst even when firefox is
+    not running" - LP: #214620. The fix now uses pgrep -x to test more
+    accurately for the firefox itsself. Thanks to Colin Watson for the idea.
+    We use the same pgrep test in the notifiers DisplayIf: expression as well.
+    - update debian/firefox-3.0-restart-required.update-notifier
+    - update debian/firefox-3.0.postinst.in
+
  -- Alexander Sack <asac@ubuntu.com>  Fri, 11 Apr 2008 03:34:18 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low

@@ -17,7 +17,7 @@ if [ -d $UPDATENOTIFIERDIR ] ; then
   # pgrep matches application names from /proc/<pid>/status which is
   # truncated according to sys/procfs.h definition. Problem is it's
   # platform dependent. Either 15 or 16 chars.
-  if [ `/usr/bin/pgrep -c firefox` -ne 0 ] ;  then
+  if [ `/usr/bin/pgrep -x -c firefox` -ne 0 ] ;  then
     cp -f $LIBDIR/firefox-3.0-restart-required.update-notifier \
         $UPDATENOTIFIERDIR/firefox-3.0-restart-required
   else
