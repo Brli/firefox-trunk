@@ -1,6 +1,8 @@
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
 
-  *
+  * fix extension and theme reporting in apport hook. we now list gre,
+    app and local extensions/themes separately
+    - update debian/apport/firefox-3.0.py
 
  -- Alexander Sack <asac@ubuntu.com>  Fri, 11 Apr 2008 03:34:18 +0200
 
