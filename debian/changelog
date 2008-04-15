@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) UNRELEASED; urgency=low
 
   * fix extension and theme reporting in apport hook. we now list gre,
     app and local extensions/themes separately
