@@ -1,9 +1,9 @@
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) UNRELEASED; urgency=low
 
-  * fix "firefox-3.0 gets removed when dist-upgrade is run when firefox-3.0
-    have not finished builds for a new xulrunner upstream version". We deal
-    with this situation by dropping the Break: field from xulrunner-1.9 and
-    adding upper bounds on xulrunner-1.9 to firefox-3.0 binary.
+  * fix "firefox-3.0 gets removed on dist-upgrade when firefox-3.0 build is
+    not available on mirror". We deal with this situation by dropping the
+    Break: field from xulrunner-1.9 and adding upper bounds on xulrunner-1.9
+    to firefox-3.0 binary.
     - update debian/control
 
   * fix extension and theme reporting in apport hook. we now list gre,
