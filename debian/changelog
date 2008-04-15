@@ -11,7 +11,7 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
     - update debian/firefox-3.0-restart-required.update-notifier
     - update debian/firefox-3.0.postinst.in
 
- -- Alexander Sack <asac@ubuntu.com>  Fri, 11 Apr 2008 03:34:18 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 09:14:21 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low
 
