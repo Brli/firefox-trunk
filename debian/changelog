@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
 
   * fix "firefox-3.0 gets removed on dist-upgrade when firefox-3.0 build is
     not available on mirror". We deal with this situation by dropping the
@@ -17,7 +17,7 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox-3.0-restart-required.update-notifier
     - update debian/firefox-3.0.postinst.in
 
- -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 09:14:21 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 12:12:13 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low
 
