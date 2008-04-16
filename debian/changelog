@@ -12,6 +12,12 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) UNRELEASED; urgency=low
     - add debian/translation-support/install.rdf.in
     - update debian/rules
 
+  * remove unused debian/firefoxrc (aka /etc/firefox-3.0/firefoxrc) file from
+    files shipped. Its not considered by firefox startscript anymore and just
+    causes confusion.
+    - remove debian/firefoxrc
+    - update debian/firefox-3.0.install
+
  -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 13:27:11 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
