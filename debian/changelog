@@ -7,6 +7,43 @@ firefox-3.0 (3.0~cvs20080417t0454+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
  -- Fabien Tassin <fta@sofaraway.org>  Thu, 17 Apr 2008 14:03:39 +0200
 
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+
+  * improve translation support by shipping a crafted install.rdf. We ship a
+    template install.rdf.in in debian/translation-support and replace the
+    em:{version,maxVersion,minVersion} during build. For now those versions
+    are maintained manually because we need maintainer attention on upgrades
+    considering the upstream string freeze. To increase failsafeness, we fail
+    the build if the version appears to be out of sync with the upstream
+    version in the post-install target. The install.rdf is finally added to
+    the zip file in the binary-post-install rule used to produce the
+    en-US.xpi.
+    - add debian/translation-support/install.rdf.in
+    - update debian/rules
+
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 13:27:11 +0200
+
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
+
+  * fix "firefox-3.0 gets removed on dist-upgrade when firefox-3.0 build is
+    not available on mirror". We deal with this situation by dropping the
+    Break: field from xulrunner-1.9 and adding upper bounds on xulrunner-1.9
+    to firefox-3.0 binary.
+    - update debian/control
+
+  * fix extension and theme reporting in apport hook. we now list gre,
+    app and local extensions/themes separately
+    - update debian/apport/firefox-3.0.py
+
+  * fix "update-notifier hint gets installed in postinst even when firefox is
+    not running" - LP: #214620. The fix now uses pgrep -x to test more
+    accurately for the firefox itsself. Thanks to Colin Watson for the idea.
+    We use the same pgrep test in the notifiers DisplayIf: expression as well.
+    - update debian/firefox-3.0-restart-required.update-notifier
+    - update debian/firefox-3.0.postinst.in
+
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 12:12:13 +0200
+
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low
 
   * Firefox 3.0 Beta 5 package - "ready for prime-time"!

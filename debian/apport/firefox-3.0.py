@@ -24,19 +24,21 @@ from xml.dom import minidom
 
 def extensions_ini_parser(extensions_ini_file):
     '''parses profile's extensions.ini file and returns a tuple:
-    ((global extensions, local extensions), (global theme, local theme))'''
+    ((gre extensions, app extensions, local extensions), (gre themes, app themes, local themes))'''
     parser = ConfigParser.ConfigParser()
     parser.read(extensions_ini_file) 
     ext_ini_d = {}
     for section in parser.sections():
-        section_global, section_local, my_ext = [], [], ''
+        section_gre, section_app, section_local, my_ext = [], [], ''
         for extension in parser.options(section):
             my_ext = parser.get(section, extension)
-            if '/usr/lib/xulrunner-addons/extensions' in my_ext:
-                section_global.append((my_ext))
+            if '/usr/lib/xulrunner' in myext:
+                section_gre.append((my_ext))
+            elif '/usr/lib/firefox' in my_ext:
+                section_app.append((my_ext))
             else:
                 section_local.append((my_ext))
-        ext_ini_d[section] = (section_global, section_local)
+        ext_ini_d[section] = (section_gre, section_app, section_local)
     return (ext_ini_d['ExtensionDirs'], ext_ini_d['ThemeDirs'])
 
 def install_ini_parser(extension_path):
@@ -114,15 +116,17 @@ def add_info(report):
         if os.path.exists(extensions_ini):
             # attach each profile's extensions.ini too (not enabled).
             #report['extensions.ini (profile: %s)' % profile_name ] = open(extensions_ini).read()
-            (extensions_dict['global_extensions'], extensions_dict['local_extensions']),\
-            (themes_dict['global_theme'], themes_dict['local_theme']) = extensions_ini_parser(extensions_ini)
+            (extensions_dict['gre_extensions'], extensions_dict['app_extensions'], extensions_dict['local_extensions']),\
+            (themes_dict['gre_theme'], themes_dict['app_theme'], themes_dict['local_theme']) = extensions_ini_parser(extensions_ini)
     
             if is_default == '1': is_default_str = ''' (The Default):'''
             else: is_default_str = ''':'''
             extension_summary += '''Profile "%s"%s\n\n''' % (profile_name, is_default_str)
-            extension_summary += extension_summary_helper(extensions_dict['global_extensions'], 'Global Extensions')
+            extension_summary += extension_summary_helper(extensions_dict['gre_extensions'], 'GRE Extensions')
+            extension_summary += extension_summary_helper(extensions_dict['app_extensions'], 'Application Extensions')
             extension_summary += extension_summary_helper(extensions_dict['local_extensions'], 'Local Extensions')
-            extension_summary += extension_summary_helper(themes_dict['global_theme'], 'Global Theme', 0)
+            extension_summary += extension_summary_helper(themes_dict['gre_theme'], 'GRE Theme', 0)
+            extension_summary += extension_summary_helper(themes_dict['app_theme'], 'Application Theme', 0)
             extension_summary += extension_summary_helper(themes_dict['local_theme'], 'Local Theme', 0)
         buffer = cStringIO.StringIO() # it's needed for propper apport attachments
         print >> buffer, extension_summary
