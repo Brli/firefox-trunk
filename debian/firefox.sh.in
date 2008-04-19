@@ -8,6 +8,8 @@
 #  Fabien Tassin <fta@sofaraway.org>
 # License: GPLv2 or later
 
+## profile migration disabled for now
+
 # if there exists a beta profile (first found: $MOZDIR/firefox-3.0,
 # $MOZDIR/firefox-trunk, $MOZDIR/granparadiso) and there is a standard
 # firefox profile as well, ask the user what to do. In case he decides to
@@ -28,6 +30,8 @@ APPNAME=firefox
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
 DROPPED=abandoned
+
+if [ 0 ] ; then
 
 FOUND=""
 if [ -d $MOZDIR/firefox ] ; then
@@ -76,6 +80,8 @@ elif [ "$FOUND_BETA" != "" -a "$FOUND" = "" ]; then
     fi
   done
   echo "*NOTICE* Profile $FOUND_BETA found and moved as main profile"
+fi
+
 fi
 
 exec $LIBDIR/$APPNAME "$@"

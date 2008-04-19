@@ -10,7 +10,7 @@ debian/tmp/usr/lib/firefox-*/run-mozilla.sh
 
 #debian/tmp/usr/lib/firefox-*/defaults/autoconfig
 debian/tmp/usr/lib/firefox-*/defaults/preferences
-debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-3.0/
+debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-4.0/
 debian/tmp/usr/lib/firefox-*/searchplugins usr/lib/firefox-addons
 debian/tmp/usr/lib/firefox-*/icons
 debian/tmp/usr/lib/firefox-*/chrome
@@ -18,18 +18,19 @@ debian/tmp/usr/lib/firefox-*/browserconfig.properties
 debian/tmp/usr/lib/firefox-*/blocklist.xml
 
 debian/firefox.desktop usr/share/applications
-debian/firefoxrc etc/firefox-3.0
-debian/presubj usr/share/bug/firefox-3.0
+debian/firefoxrc etc/firefox-4.0
+debian/presubj usr/share/bug/firefox-4.0
 
-debian/firefox.js etc/firefox-3.0/pref
+debian/firefox.js etc/firefox-4.0/pref
 
 debian/debsearch.gif usr/lib/firefox-addons/searchplugins
 debian/debsearch.src usr/lib/firefox-addons/searchplugins
 
-debian/tmp/usr/lib/firefox-*/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} usr/lib/xulrunner-addons/extensions
+## debian/tmp/usr/lib/firefox-*/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} usr/lib/xulrunner-addons/extensions
 
 # debian/tmp/usr/lib/firefox-*/plugins/*.so usr/lib/firefox-addons/plugins
 
 debian/tmp/usr/lib/firefox-*/*.ini
 
-debian/apport/firefox-3.0.py usr/share/apport/package-hooks/
+# Don't install the apport hook for now.
+# debian/apport/firefox-4.0.py usr/share/apport/package-hooks/

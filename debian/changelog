@@ -1,3 +1,9 @@
+firefox-4.0 (4.0~a1~hg14385~20080416+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+
+  * ...
+
+ -- Fabien Tassin <fta@sofaraway.org>  Sat, 19 Apr 2008 23:44:46 +0200
+
 firefox-3.0 (3.0~cvs20080417t0454+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Bump xulrunner-1.9 dependencies to ~c

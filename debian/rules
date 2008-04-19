@@ -6,24 +6,24 @@ DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEBIAN_NAME	:= firefox-3.0
+DEBIAN_NAME	:= firefox-4.0
 DEBIAN_APP_NAME	:= firefox
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_DEV	:= $(wildcard /usr/lib/xulrunner-devel-1.9*)
 DEBIAN_XUL_DIR	:= usr/lib/$(notdir $(wildcard /usr/lib/xulrunner-1.9*))
-DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
+DEBIAN_FF4_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
 DEB_TAR_SRCDIR	:= mozilla
 
 # currently not autoparsed from changelog, because we need to fail if
 # maintainer didn't adjust those before release. we can change that once ffox
 # is in hard string freeze
-EM_TRANSLATION_VERSION := 3.0b5
+EM_TRANSLATION_VERSION := 4.0b5
 
 # minVersion used in install.rdf
-EM_TRANSLATION_MIN_VERSION := 3.0b3
+EM_TRANSLATION_MIN_VERSION := 4.0b4
 
-# bump this to 3.0.* once firefox is at hard string freeze
-EM_TRANSLATION_MAX_VERSION := 3.0b5
+# bump this to 4.0.* once firefox is at hard string freeze
+EM_TRANSLATION_MAX_VERSION := 4.0b5
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
@@ -32,22 +32,22 @@ FORCE_OFFICIAL_BRANDING = 1
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-3.0-final.desktop
+	DESKTOP  = firefox-4.0-final.desktop
 else
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
 	# minefield branding for cvs snapshots
 	BRANDING = $(NULL)
-	DESKTOP  = firefox-3.0-minefield.desktop
+	DESKTOP  = firefox-4.0-minefield.desktop
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = firefox-3.0-granparadiso.desktop
+	DESKTOP  = firefox-4.0-granparadiso.desktop
 else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-3.0-final.desktop
+	DESKTOP  = firefox-4.0-final.desktop
 endif
 endif
 endif
@@ -90,7 +90,7 @@ else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-cairo
 endif
 
-USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.5'; a=$$?; if test $$a != 1; then echo 1; fi)
+USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite4 >= 4.5'; a=$$?; if test $$a != 1; then echo 1; fi)
 ifeq (1,$(USE_SYSTEM_SQLITE))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-sqlite
 else
@@ -151,29 +151,30 @@ subst_files = \
 	$(NULL)
 
 %: %.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF4_DIR),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF4_DIR),g' < $< > $@
 
-debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
+debian/migrator/ffox-4-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
 
 binary-install/$(DEBIAN_NAME)::
-	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
-	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
-	dh_install debian/firefox.cfg $(DEBIAN_FF3_DIR)
-	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
-	dh_install debian/migrator/ffox-3-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
-	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
-	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
-	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
-	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/searchplugins
-	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF3_DIR)/defaults/syspref
-	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
-	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
-	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
+	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF4_DIR)/.autoreg
+	dh_install debian/firefox.sh $(DEBIAN_FF4_DIR)
+	dh_install debian/firefox.cfg $(DEBIAN_FF4_DIR)
+	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF4_DIR)
+	dh_install debian/migrator/ffox-4-beta-profile-migration-dialog $(DEBIAN_FF4_DIR)
+	dh_link $(DEBIAN_FF4_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
+	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF4_DIR)/extensions
+	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF4_DIR)/plugins
+	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF4_DIR)/searchplugins
+	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF4_DIR)/defaults/syspref
+	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF4_DIR)/defaults/profile
+	dh_link $(DEBIAN_FF4_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
+	dh_link usr/share/myspell/dicts $(DEBIAN_FF4_DIR)/dictionaries
 
+ifeq(,"disabled")
 binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 	$(shell cat debian/translation-support/install.rdf.in | \
 			sed -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' |  \
@@ -186,8 +187,9 @@ ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(shell echo $(DEBIAN_VERSION) | 
 	echo "ERROR: you need to explicitly adjust the translation version and min/max bounds."
 	exit 110
 endif
+endif
 
-pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
+pre-build:: $(subst_files) debian/migrator/ffox-4-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
@@ -202,6 +204,6 @@ clean::
 		done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files)
-	rm -f debian/migrator/ffox-3-beta-profile-migration-dialog
+	rm -f debian/migrator/ffox-4-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 

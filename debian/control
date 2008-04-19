@@ -1,4 +1,4 @@
-Source: firefox-3.0
+Source: firefox-4.0
 Section: web
 Priority: optional
 Maintainer: Alexander Sack <asac@ubuntu.com>
@@ -23,13 +23,11 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	mozilla-devscripts (>= 0.06~)
 Standards-Version: 3.7.3
 
-Package: firefox-3.0
+Package: firefox-4.0
 Architecture: any
 Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9~c), ${shlibs:Depends}
-Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
-Provides: www-browser, firefox-libthai
-Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
-Replaces: firefox-trunk, firefox-granparadiso, firefox (<< 3), firefox-libthai
+Suggests: firefox-4.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
+Provides: www-browser
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -40,148 +38,20 @@ Description: safe and easy web browser from Mozilla
  Install this firefox package too, if you want to be automatically upgraded to
  new major firefox versions in the future.
 
-Package: firefox-3.0-dom-inspector
-Architecture: all
-Depends: xulrunner-1.9-dom-inspector (>= 1.9~b3)
-Conflicts: firefox-dom-inspector (<< 3)
-Replaces: firefox-dom-inspector
-Description: dummy upgrade package for firefox-3.0-dom-inspector -> xulrunner-1.9-dom-inspector
- This is a transitional package so dom-inspector users get
- xulrunner-1.9-dom-inspector on upgrades. It can be safely removed.
-
-Package: firefox-3.0-venkman
-Architecture: all
-Depends: xulrunner-1.9-venkman
-Description: dummy upgrade package for firefox-3.0-venkman -> xulrunner-1.9-venkman
- This is a transitional package so venkman users get xulrunner-1.9-venkman on
- upgrades. It can be safely removed.
-
-Package: firefox-3.0-gnome-support
+Package: firefox-4.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox-3.0 (= ${binary:Version}), xulrunner-1.9-gnome-support (>= 1.9~b4~)
+Depends: ${shlibs:Depends}, firefox-4.0 (= ${binary:Version}), xulrunner-1.9-gnome-support (>= 1.9~b4~)
 Provides: gnome-www-browser
-Conflicts: firefox-gnome-support (<< 3), firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
-Replaces: firefox-gnome-support (<< 3), firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
 Description: Support for Gnome in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
  integration features.
 
-Package: firefox-3.0-dev
+Package: firefox-4.0-dev
 Architecture: any
 Section: devel
-Depends: firefox-3.0 (= ${binary:Version})
-Conflicts: firefox-dev (<< 3), firefox-trunk-dev (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-dev (<< 3.0~alpha8-0)
-Replaces: firefox-dev (<< 3), firefox-trunk-dev, firefox-granparadiso-dev
+Depends: firefox-4.0 (= ${binary:Version})
 Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
-
-Package: firefox
-Architecture: all
-Depends: firefox-3.0
-Description: meta package for the popular mozilla web browser
- Firefox 3 is the next major release of the standalone Mozilla browser; it is
- written in the XUL language and designed to be lightweight and cross-platform.
- .
- This browser was previously known as Firefox 2, Firebird and Phoenix.
- .
- This is a meta package that will point to the latest firefox package in ubuntu.
- Don't remove this if you want to receive automatic major version upgrades for
- this package in future.
-
-Package: firefox-dom-inspector
-Architecture: all
-Depends: firefox-3.0-dom-inspector
-Description: meta package for firefox-dom-inspector
- This is a meta package that will point to the latest dom-inspector package
- available. Don't remove this if you want to receive automatic major version
- upgrades for this package in future.
-
-Package: firefox-gnome-support
-Architecture: all
-Depends: firefox-3.0-gnome-support
-Description: meta package pointing to the latest gnome-support package for firefox
- This is a meta package that will always point to the latest gnome-support
- package for firefox. Don't remove this if you want to receive automatic major
- version upgrades for this package in future.
-
-Package: firefox-dev
-Architecture: all
-Depends: firefox-3.0-dev
-Description: meta package pointing to the latest development package for firefox
- This is a meta package that will always point to the latest development (-dev)
- package for firefox. Don't remove this if you want to receive automatic major
- version upgrades for this package in future.
-
-Package: firefox-libthai
-Architecture: all
-Depends: firefox-3.0
-Description: dummy upgrade package for firefox-libthai -> firefox-3.0
- This is a transitional package so firefox-libthai users get good upgrade path
- to firefox-3.0. It can be safely removed.
-
-Package: firefox-trunk
-Architecture: all
-Depends: firefox-3.0
-Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-trunk-dom-inspector
-Architecture: all
-Depends: firefox-3.0-dom-inspector
-Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-trunk-venkman
-Architecture: all
-Depends: firefox-3.0-venkman
-Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-trunk-gnome-support
-Architecture: all
-Depends: firefox-3.0-gnome-support
-Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-trunk-dev
-Architecture: all
-Depends: firefox-3.0-dev
-Description: dummy upgrade package for firefox-trunk -> firefox-3.0
- This is a transitional package so firefox-trunk users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-granparadiso
-Architecture: all
-Depends: firefox-3.0
-Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-granparadiso-dom-inspector
-Architecture: all
-Depends: firefox-3.0-dom-inspector
-Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-granparadiso-gnome-support
-Architecture: all
-Depends: firefox-3.0-gnome-support
-Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on
- upgrades. It can be safely removed.
-
-Package: firefox-granparadiso-dev
-Architecture: all
-Depends: firefox-3.0-dev
-Description: dummy upgrade package for firefox-granparadiso -> firefox-3.0
- This is a transitional package so firefox-granparadiso users get firefox-3.0 on
- upgrades. It can be safely removed.
-

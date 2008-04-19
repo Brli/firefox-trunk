@@ -1,15 +1,15 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=Minefield Web Browser
+Name=Minefield 4 Web Browser
 Comment=Browse the Bleeding Edge
 GenericName=Bleed Browser
-Exec=firefox-3.0 %u
+Exec=firefox-4.0 %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=firefox-3.0
+Icon=firefox-4.0
 Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png
-StartupWMClass=Firefox-3.0-bin
+StartupWMClass=Firefox-4.0-bin
 StartupNotify=true
