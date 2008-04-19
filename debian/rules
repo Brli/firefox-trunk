@@ -9,21 +9,10 @@ DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 DEBIAN_NAME	:= firefox-4.0
 DEBIAN_APP_NAME	:= firefox
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-DEBIAN_XUL_DEV	:= $(wildcard /usr/lib/xulrunner-devel-1.9*)
-DEBIAN_XUL_DIR	:= usr/lib/$(notdir $(wildcard /usr/lib/xulrunner-1.9*))
+DEBIAN_XUL_DEV	:= $(wildcard /usr/lib/xulrunner-devel-2.0*)
+DEBIAN_XUL_DIR	:= usr/lib/$(notdir $(wildcard /usr/lib/xulrunner-2.0*))
 DEBIAN_FF4_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
 DEB_TAR_SRCDIR	:= mozilla
-
-# currently not autoparsed from changelog, because we need to fail if
-# maintainer didn't adjust those before release. we can change that once ffox
-# is in hard string freeze
-EM_TRANSLATION_VERSION := 4.0b5
-
-# minVersion used in install.rdf
-EM_TRANSLATION_MIN_VERSION := 4.0b4
-
-# bump this to 4.0.* once firefox is at hard string freeze
-EM_TRANSLATION_MAX_VERSION := 4.0b5
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
@@ -51,11 +40,6 @@ else
 endif
 endif
 endif
-
-# translation flags
-MOZ_TRANSLATION_AUTO_XPI_OUTDIR := debian/lp-export-xpis/
-MOZ_TRANSLATION_AUTO_XPI_SEARCHDIRS := debian/$(DEBIAN_NAME)
-MOZ_TRANSLATION_AUTO_XPI_LOCALE := en-US
 
 # compile flags
 CXX=g++-4.2
@@ -174,20 +158,7 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link $(DEBIAN_FF4_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF4_DIR)/dictionaries
 
-ifeq(,"disabled")
-binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
-	$(shell cat debian/translation-support/install.rdf.in | \
-			sed -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' |  \
-			sed -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' | \
-			sed -e 's/@EM_FIREFOX_MAX_VERSION@/$(EM_TRANSLATION_MAX_VERSION)/' \
-			> debian/install.rdf \
-	)
-	sh -c "cd debian/ && zip lp-export-xpis/en-US.xpi install.rdf"
-ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(shell echo $(DEBIAN_VERSION) | tr -d '~')))
-	echo "ERROR: you need to explicitly adjust the translation version and min/max bounds."
-	exit 110
-endif
-endif
+binary-post-install/$(DEBIAN_NAME):: compare
 
 pre-build:: $(subst_files) debian/migrator/ffox-4-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
