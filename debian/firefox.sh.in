@@ -8,7 +8,31 @@
 #  Fabien Tassin <fta@sofaraway.org>
 # License: GPLv2 or later
 
-## profile migration disabled for now
+## profile migration disabled for now, instead, resurrect the previous code
+
+# If there's still no ~/mozilla/firefox-4.0 profile, try to find a previous
+# firefox profile and initialize with that.
+# If nothing is found, we'll go for a fresh run and let firefox create a
+# default profile for us.
+
+APPNAME=firefox-4.0
+MOZDIR=$HOME/.mozilla
+
+if [ ! -d $MOZDIR/$APPNAME ] ; then
+  FOUND=""
+  if [ -d $MOZDIR/firefox ] ; then
+    FOUND=firefox
+  fi
+
+  if [ "$FOUND" != "" ] ; then
+    echo "*NOTICE* No previous $APPNAME profile found, we'll initialize a profile using a copy of your existing '$FOUND' profile."
+    echo -n "Transfering..."
+    cp -a $MOZDIR/$FOUND $MOZDIR/$APPNAME
+    echo " done."
+  else
+    echo "*NOTICE* No previous firefox profile found, starting with a fresh one"
+  fi
+fi
 
 # if there exists a beta profile (first found: $MOZDIR/firefox-3.0,
 # $MOZDIR/firefox-trunk, $MOZDIR/granparadiso) and there is a standard
@@ -26,7 +50,7 @@
 # in addition, even older profiles are renamed too, by appending |.abandoned|
 # to their name.
 
-APPNAME=firefox
+#APPNAME=firefox
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
 DROPPED=abandoned

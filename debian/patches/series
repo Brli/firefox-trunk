@@ -1,6 +1,6 @@
 bz386904_config_rules_install_dist_files.patch
-#firefox-profilename
-#firefox-fsh
+firefox-profilename
+firefox-fsh
 ftbfs-with-branding-dir
 installer_shouldnt_copy_xulrunner.patch
 installer_use_stdout_for_missing_files.patch

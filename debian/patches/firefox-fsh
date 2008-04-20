@@ -1,0 +1,75 @@
+---
+ browser/app/Makefile.in |    2 +-
+ browser/confvars.sh     |    2 +-
+ config/autoconf.mk.in   |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+Index: mozilla/config/autoconf.mk.in
+===================================================================
+--- mozilla.orig/config/autoconf.mk.in
++++ mozilla/config/autoconf.mk.in
+@@ -59,17 +59,17 @@
+ exec_prefix	= @exec_prefix@
+ bindir		= @bindir@
+ includedir	= @includedir@/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
+ libdir		= @libdir@
+ datadir		= @datadir@
+ mandir		= @mandir@
+ idldir		= $(datadir)/idl/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
+ 
+-installdir	= $(libdir)/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
++installdir	= $(libdir)/$(MOZ_APP_NAME)
+ sdkdir		= $(libdir)/$(MOZ_APP_NAME)-devel-$(MOZ_APP_VERSION)
+ 
+ DIST		= $(DEPTH)/dist
+ LIBXUL_SDK      = @LIBXUL_SDK@
+ 
+ ifdef LIBXUL_SDK
+ LIBXUL_DIST = $(LIBXUL_SDK)
+ else
+Index: mozilla/browser/confvars.sh
+===================================================================
+--- mozilla.orig/browser/confvars.sh
++++ mozilla/browser/confvars.sh
+@@ -31,17 +31,17 @@
+ # use your version of this file under the terms of the MPL, indicate your
+ # decision by deleting the provisions above and replace them with the notice
+ # and other provisions required by the GPL or the LGPL. If you do not delete
+ # the provisions above, a recipient may use your version of this file under
+ # the terms of any one of the MPL, the GPL or the LGPL.
+ #
+ # ***** END LICENSE BLOCK *****
+ 
+-MOZ_APP_NAME=firefox
++MOZ_APP_NAME=firefox-4.0
+ MOZ_UPDATER=1
+ MOZ_PHOENIX=1
+ 
+ MOZ_ENABLE_LIBXUL=1
+ MOZ_PLACES=1
+ # always enabled for form history
+ MOZ_MORKREADER=1
+ MOZ_SAFE_BROWSING=1
+Index: mozilla/browser/app/Makefile.in
+===================================================================
+--- mozilla.orig/browser/app/Makefile.in
++++ mozilla/browser/app/Makefile.in
+@@ -410,17 +410,17 @@
+ 	cp -RL $(LIBXUL_DIST)/package/mozillaSuite.rsrc $(DIST)/$(APP_NAME).app/Contents/Resources/firefox-bin.rsrc
+ 	echo -n APPLMOZB > $(DIST)/$(APP_NAME).app/Contents/PkgInfo
+ #       remove CVS dirs from packaged app
+ 	find $(DIST)/$(APP_NAME).app -type d -name "CVS" -prune -exec rm -rf {} \;
+ 
+ else
+ ifdef LIBXUL_SDK
+ libs::
+-	cp $(LIBXUL_DIST)/bin/xulrunner-stub$(BIN_SUFFIX) $(DIST)/bin/firefox$(BIN_SUFFIX)
++	cp $(LIBXUL_DIST)/bin/xulrunner-stub$(BIN_SUFFIX) $(DIST)/bin/$(MOZ_APP_NAME)$(BIN_SUFFIX)
+ endif
+ endif
+ 
+ libs::
+ ifeq ($(OS_ARCH),WINNT)
+ 	$(PERL) -pe 's/(?<!\r)\n/\r\n/g;' < $(topsrcdir)/LICENSE > $(DIST)/bin/LICENSE
+ else
+ 	$(INSTALL) $(topsrcdir)/LICENSE	$(DIST)/bin

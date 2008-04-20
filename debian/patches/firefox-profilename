@@ -1,0 +1,83 @@
+---
+ browser/app/application.ini                          |    2 +-
+ browser/app/firefox-branding.js                      |   11 ++++++-----
+ browser/branding/unofficial/pref/firefox-branding.js |   11 ++++++-----
+ 3 files changed, 13 insertions(+), 11 deletions(-)
+
+Index: mozilla/browser/app/application.ini
+===================================================================
+--- mozilla.orig/browser/app/application.ini
++++ mozilla/browser/app/application.ini
+@@ -33,17 +33,17 @@
+ ; the provisions above, a recipient may use your version of this file under
+ ; the terms of any one of the MPL, the GPL or the LGPL.
+ ;
+ ; ***** END LICENSE BLOCK *****
+ 
+ #filter substitution
+ [App]
+ Vendor=Mozilla
+-Name=Firefox
++Name=Firefox-4.0
+ Version=@APP_VERSION@
+ BuildID=@GRE_BUILDID@
+ Copyright=Copyright (c) 1998 - 2008 mozilla.org
+ ID={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+ 
+ [Gecko]
+ MinVersion=@GRE_MILESTONE@
+ MaxVersion=@GRE_MILESTONE@
+Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js
++++ mozilla/browser/branding/unofficial/pref/firefox-branding.js
+@@ -1,16 +1,17 @@
+-pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
++// pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
++pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
+ // URL user can browse to manually if for some reason all update installation
+ // attempts fail.
+-pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
++pref("app.update.url.manual", "http://www.mozilla.org/products/firefox/");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
++pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
+ 
+ // Release notes URL
+-pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://www.mozilla.org/projects/firefox/%VERSION%/releasenotes/");
+ 
+ // Search codes belong only in builds with official branding
+ pref("browser.search.param.yahoo-fr", "");
+ pref("browser.search.param.yahoo-fr-cjkt", "");
+ pref("browser.search.param.yahoo-f-CN", "");
+Index: mozilla/browser/app/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/app/firefox-branding.js
++++ mozilla/browser/app/firefox-branding.js
+@@ -1,16 +1,17 @@
+-pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
++// pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
++pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
+ // URL user can browse to manually if for some reason all update installation
+ // attempts fail.
+-pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
++pref("app.update.url.manual", "http://www.mozilla.org/products/firefox/");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
++pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
+ 
+ // Release notes URL
+-pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://www.mozilla.org/projects/firefox/%VERSION%/releasenotes/");
+ 
+ // Search codes belong only in builds with official branding
+ pref("browser.search.param.yahoo-fr", "");
+ pref("browser.search.param.yahoo-fr-cjkt", "");
+ pref("browser.search.param.yahoo-f-CN", "");
