@@ -17,7 +17,7 @@ debian/tmp/usr/lib/firefox-*/chrome
 debian/tmp/usr/lib/firefox-*/browserconfig.properties
 debian/tmp/usr/lib/firefox-*/blocklist.xml
 
-debian/firefox.desktop usr/share/applications
+debian/firefox-4.0.desktop usr/share/applications
 debian/firefoxrc etc/firefox-4.0
 debian/presubj usr/share/bug/firefox-4.0
 

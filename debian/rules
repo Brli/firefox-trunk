@@ -164,7 +164,7 @@ pre-build:: $(subst_files) debian/migrator/ffox-4-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
-		cp debian/$(DESKTOP) debian/firefox.desktop; \
+		cp debian/$(DESKTOP) debian/firefox-4.0.desktop; \
 		for i in $(DEBIAN_EXECUTABLES); do \
 			chmod a+x debian/$$i; \
 		done
