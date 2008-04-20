@@ -88,6 +88,8 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--with-system-jpeg=/usr \
 	--with-system-zlib=/usr \
 	--with-libxul-sdk=$(DEBIAN_XUL_DEV) \
+	--with-system-nspr \
+	--with-system-nss \
 	--disable-crashreporter \
 	--disable-composer \
 	--disable-elf-dynstr-gc \
