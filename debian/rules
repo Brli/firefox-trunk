@@ -16,7 +16,7 @@ DEB_TAR_SRCDIR	:= mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
-FORCE_OFFICIAL_BRANDING = 1
+FORCE_OFFICIAL_BRANDING = 0
 
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
@@ -24,8 +24,8 @@ ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	DESKTOP  = firefox-4.0-final.desktop
 else
 # Change branding based on Version
-ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
-	# minefield branding for cvs snapshots
+ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
+	# minefield branding for hg snapshots
 	BRANDING = $(NULL)
 	DESKTOP  = firefox-4.0-minefield.desktop
 else
