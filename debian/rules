@@ -16,7 +16,7 @@ DEB_TAR_SRCDIR	:= mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
-FORCE_OFFICIAL_BRANDING = 0
+FORCE_OFFICIAL_BRANDING = $(NULL)
 
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
