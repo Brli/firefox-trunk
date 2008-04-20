@@ -1,25 +1,34 @@
 ---
  browser/app/Makefile.in |    2 +-
  browser/confvars.sh     |    2 +-
- config/autoconf.mk.in   |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ config/autoconf.mk.in   |    8 ++++----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
 Index: mozilla/config/autoconf.mk.in
 ===================================================================
 --- mozilla.orig/config/autoconf.mk.in
 +++ mozilla/config/autoconf.mk.in
-@@ -59,17 +59,17 @@
+@@ -53,24 +53,24 @@
+ MOZ_APP_DISPLAYNAME = @MOZ_APP_DISPLAYNAME@
+ MOZ_APP_VERSION = @MOZ_APP_VERSION@
+ 
+ MOZ_PKG_SPECIAL = @MOZ_PKG_SPECIAL@
+ 
+ prefix		= @prefix@
  exec_prefix	= @exec_prefix@
  bindir		= @bindir@
- includedir	= @includedir@/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
+-includedir	= @includedir@/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
++includedir	= @includedir@/firefox-$(MOZ_APP_VERSION)
  libdir		= @libdir@
  datadir		= @datadir@
  mandir		= @mandir@
- idldir		= $(datadir)/idl/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
+-idldir		= $(datadir)/idl/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
++idldir		= $(datadir)/idl/firefox-$(MOZ_APP_VERSION)
  
 -installdir	= $(libdir)/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
-+installdir	= $(libdir)/$(MOZ_APP_NAME)
- sdkdir		= $(libdir)/$(MOZ_APP_NAME)-devel-$(MOZ_APP_VERSION)
+-sdkdir		= $(libdir)/$(MOZ_APP_NAME)-devel-$(MOZ_APP_VERSION)
++installdir	= $(libdir)/firefox-$(MOZ_APP_VERSION)
++sdkdir		= $(libdir)/firefox-devel-$(MOZ_APP_VERSION)
  
  DIST		= $(DEPTH)/dist
  LIBXUL_SDK      = @LIBXUL_SDK@
@@ -27,6 +36,7 @@ Index: mozilla/config/autoconf.mk.in
  ifdef LIBXUL_SDK
  LIBXUL_DIST = $(LIBXUL_SDK)
  else
+ LIBXUL_DIST = $(DIST)
 Index: mozilla/browser/confvars.sh
 ===================================================================
 --- mozilla.orig/browser/confvars.sh
