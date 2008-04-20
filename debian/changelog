@@ -7,7 +7,7 @@ firefox-3.0 (3.0~cvs20080417t0454+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
  -- Fabien Tassin <fta@sofaraway.org>  Thu, 17 Apr 2008 14:03:39 +0200
 
-firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) hardy; urgency=low
 
   * improve translation support by shipping a crafted install.rdf. We ship a
     template install.rdf.in in debian/translation-support and replace the
@@ -21,7 +21,13 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) UNRELEASED; urgency=low
     - add debian/translation-support/install.rdf.in
     - update debian/rules
 
- -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 13:27:11 +0200
+  * remove unused debian/firefoxrc (aka /etc/firefox-3.0/firefoxrc) file from
+    files shipped. Its not considered by firefox startscript anymore and just
+    causes confusion.
+    - remove debian/firefoxrc
+    - update debian/firefox-3.0.install
+
+ -- Alexander Sack <asac@ubuntu.com>  Sun, 20 Apr 2008 15:47:10 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
 
