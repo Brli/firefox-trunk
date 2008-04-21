@@ -2,6 +2,10 @@ firefox-3.0 (3.0~cvs20080421t1157+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Bump xulrunner-1.9 dependencies to ~c
     - update debian/control
+  * Bump EM_TRANSLATION_VERSION and EM_TRANSLATION_MAX_VERSION to 3.0pre
+    so build no longer fails, and clean-up the code to avoid unnecessary
+    complexity
+    - update debian/rules
   * Refresh diverged patches
     - update debian/patches/bzXXX_reload_new_plugins.patch
 

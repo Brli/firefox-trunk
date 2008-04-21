@@ -17,13 +17,13 @@ DEB_TAR_SRCDIR	:= mozilla
 # currently not autoparsed from changelog, because we need to fail if
 # maintainer didn't adjust those before release. we can change that once ffox
 # is in hard string freeze
-EM_TRANSLATION_VERSION := 3.0b5
+EM_TRANSLATION_VERSION := 3.0pre
 
 # minVersion used in install.rdf
 EM_TRANSLATION_MIN_VERSION := 3.0b3
 
 # bump this to 3.0.* once firefox is at hard string freeze
-EM_TRANSLATION_MAX_VERSION := 3.0b5
+EM_TRANSLATION_MAX_VERSION := 3.0pre
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
@@ -175,16 +175,14 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 
 binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
-	$(shell cat debian/translation-support/install.rdf.in | \
-			sed -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' |  \
-			sed -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' | \
-			sed -e 's/@EM_FIREFOX_MAX_VERSION@/$(EM_TRANSLATION_MAX_VERSION)/' \
-			> debian/install.rdf \
-	)
-	sh -c "cd debian/ && zip lp-export-xpis/en-US.xpi install.rdf"
-ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(shell echo $(DEBIAN_VERSION) | tr -d '~')))
-	echo "ERROR: you need to explicitly adjust the translation version and min/max bounds."
-	exit 110
+	sed \
+	-e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
+	-e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
+	-e 's/@EM_FIREFOX_MAX_VERSION@/$(EM_TRANSLATION_MAX_VERSION)/' \
+	< debian/translation-support/install.rdf.in > debian/install.rdf
+	cd debian && zip lp-export-xpis/en-US.xpi install.rdf
+ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(shell echo $(DEBIAN_VERSION) | sed -e 's/~cvs.*/pre/' | tr -d '~')))
+	$(error you need to explicitly adjust the translation version and min/max bounds.)
 endif
 
 pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
@@ -201,7 +199,7 @@ clean::
 		rm -f debian/$$i; \
 		done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
-	rm -f $(subst_files)
+	rm -f $(subst_files) debian/install.rdf
 	rm -f debian/migrator/ffox-3-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 
