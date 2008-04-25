@@ -8,6 +8,9 @@ firefox-3.0 (3.0~cvs20080423t0535+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Refresh diverged patches
     - update debian/patches/bzXXX_reload_new_plugins.patch
+  * Fix 'Categories' field in desktop file by changing GTK into Application
+    to make KDE happy (LP: #220325)
+    - update debian/firefox-3.0-final.desktop
 
  -- Fabien Tassin <fta@sofaraway.org>  Wed, 23 Apr 2008 17:33:26 +0200
 
