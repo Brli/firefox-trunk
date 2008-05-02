@@ -42,10 +42,8 @@ endif
 endif
 
 # compile flags
-CXX=g++-4.2
-CC=gcc-4.2
 LDFLAGS=$(NULL)
-export CXX CC LDFLAGS
+export LDFLAGS
 
 DEB_AUTO_UPDATE_AUTOCONF=2.13
 
