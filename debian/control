@@ -5,7 +5,6 @@ Maintainer: Alexander Sack <asac@ubuntu.com>
 Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	autotools-dev, autoconf2.13,
 	quilt, patchutils (>= 0.2.25),
-	g++-4.2, gcc-4.2,
 	bzip2, zlib1g-dev, zip,
 	libx11-dev, libxt-dev,
 	libgtk2.0-dev (>= 2.10),
