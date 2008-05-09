@@ -1,5 +1,6 @@
 firefox-3.0 (3.0~cvs20080506t1400+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to ~c
     - update debian/control
   * Bump EM_TRANSLATION_VERSION and EM_TRANSLATION_MAX_VERSION to 3.0pre
@@ -13,6 +14,11 @@ firefox-3.0 (3.0~cvs20080506t1400+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0-final.desktop
   * Build with default gcc (hardy: 4.2, intrepid: 4.3)
     - update debian/rules
+    - update debian/control
+
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * Fix LP: #218865 - "ubufox is not suggested or recommended by firefox-3.0";
+    we add ubufox to recommends of firefox-3.0 package.
     - update debian/control
 
  -- Fabien Tassin <fta@sofaraway.org>  Tue, 06 May 2008 23:07:21 +0200
