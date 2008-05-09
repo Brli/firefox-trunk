@@ -1,4 +1,4 @@
-firefox-3.0 (3.0~cvs20080506t1400+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~cvs20080509t1437+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to ~c
@@ -21,7 +21,7 @@ firefox-3.0 (3.0~cvs20080506t1400+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     we add ubufox to recommends of firefox-3.0 package.
     - update debian/control
 
- -- Fabien Tassin <fta@sofaraway.org>  Tue, 06 May 2008 23:07:21 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Sat, 10 May 2008 00:01:12 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) hardy; urgency=low
 
