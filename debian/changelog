@@ -15,6 +15,9 @@ firefox-3.0 (3.0~cvs20080509t1437+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Build with default gcc (hardy: 4.2, intrepid: 4.3)
     - update debian/rules
     - update debian/control
+  * Prevent EULA dialog to popup on first run by setting the browser.EULA.override
+    key to true
+    - update debian/firefox.js
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * Fix LP: #218865 - "ubufox is not suggested or recommended by firefox-3.0";
