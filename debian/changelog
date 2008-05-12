@@ -18,6 +18,8 @@ firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Prevent EULA dialog to popup on first run by setting the browser.EULA.override
     key to true
     - update debian/firefox.js
+  * Drop LDFLAGS workaround now that jemalloc is no longer a static lib
+    - udate debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * Fix LP: #218865 - "ubufox is not suggested or recommended by firefox-3.0";
