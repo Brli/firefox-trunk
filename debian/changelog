@@ -1,7 +1,7 @@
 firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@sofaraway.org> ]
-  * Bump xulrunner-1.9 dependencies to ~c
+  * Bump xulrunner-1.9 dependencies to ~rc
     - update debian/control
   * Bump EM_TRANSLATION_VERSION and EM_TRANSLATION_MAX_VERSION to 3.0rc
     and clean-up the code to avoid unnecessary complexity
