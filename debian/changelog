@@ -20,6 +20,9 @@ firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.js
   * Drop LDFLAGS workaround now that jemalloc is no longer a static lib
     - udate debian/rules
+  * Workaround multiple crashes in Intrepid caused by Intrepid shipping gcc 4.3 
+    with -D_FORTIFY_SOURCE=2 by default
+    - udate debian/rules
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * Fix LP: #218865 - "ubufox is not suggested or recommended by firefox-3.0";
