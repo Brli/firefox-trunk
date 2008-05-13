@@ -1,8 +1,8 @@
-firefox-4.0 (4.0~a1~hg14892~20080502+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~a1~hg15114~20080513+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * First firefox-4.0 snapshot
 
- -- Fabien Tassin <fta@sofaraway.org>  Sat, 03 May 2008 01:51:05 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Tue, 13 May 2008 19:57:00 +0200
 
 firefox-3.0 (3.0~cvs20080417t0454+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
