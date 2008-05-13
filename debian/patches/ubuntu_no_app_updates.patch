@@ -1,0 +1,33 @@
+---
+ browser/app/profile/firefox.js |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: mozilla/browser/app/profile/firefox.js
+===================================================================
+--- mozilla.orig/browser/app/profile/firefox.js
++++ mozilla/browser/app/profile/firefox.js
+@@ -84,22 +84,22 @@
+ pref("extensions.blocklist.detailsURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/blocklist/");
+ 
+ // Dictionary download preference
+ pref("browser.dictionaries.download.url", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/dictionaries/");
+ 
+ // App-specific update preferences
+ 
+ // Whether or not app updates are enabled
+-pref("app.update.enabled", true);
++pref("app.update.enabled", false);
+ 
+ // This preference turns on app.update.mode and allows automatic download and
+ // install to take place. We use a separate boolean toggle for this to make
+ // the UI easier to construct.
+-pref("app.update.auto", true);
++pref("app.update.auto", false);
+ 
+ // Defines how the Application Update Service notifies the user about updates:
+ //
+ // AUM Set to:        Minor Releases:     Major Releases:
+ // 0                  download no prompt  download no prompt
+ // 1                  download no prompt  download no prompt if no incompatibilities
+ // 2                  download no prompt  prompt
+ //
