@@ -27,6 +27,8 @@ firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix LP: #218865 - "ubufox is not suggested or recommended by firefox-3.0";
     we add ubufox to recommends of firefox-3.0 package.
     - update debian/control
+  * Fix apport hook to properly detect global gre extensions
+    - update debian/apport/firefox-3.0.py
 
  -- Fabien Tassin <fta@sofaraway.org>  Mon, 12 May 2008 16:39:50 +0200
 
