@@ -160,7 +160,7 @@ debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 binary-install/$(DEBIAN_NAME)::
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
-	dh_install debian/firefox.cfg $(DEBIAN_FF3_DIR)
+	dh_installdocs -pfirefox-3.0 debian/firefox.cfg
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
 	dh_install debian/migrator/ffox-3-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)

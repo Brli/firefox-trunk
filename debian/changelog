@@ -33,6 +33,9 @@ firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     never be enabled (independent from the pref setting)
     - add debian/patches/ubuntu_no_app_updates.patch
     - update debian/patches/series
+  * install firefox.cfg as an example using dh_installdocs rather than
+    dh_install as it wasn't used at all
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Mon, 12 May 2008 16:39:50 +0200
 
