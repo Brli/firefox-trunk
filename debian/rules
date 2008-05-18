@@ -17,13 +17,11 @@ DEB_TAR_SRCDIR	:= mozilla
 # currently not autoparsed from changelog, because we need to fail if
 # maintainer didn't adjust those before release. we can change that once ffox
 # is in hard string freeze
-EM_TRANSLATION_VERSION := 3.0rc
+EM_TRANSLATION_VERSION := 3.0
 
-# minVersion used in install.rdf
-EM_TRANSLATION_MIN_VERSION := 3.0b3
-
-# bump this to 3.0.* once firefox is at hard string freeze
-EM_TRANSLATION_MAX_VERSION := 3.0rc
+# minVersion and maxVersion used in install.rdf
+EM_TRANSLATION_MIN_VERSION := 3.0
+EM_TRANSLATION_MAX_VERSION := 3.0
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
