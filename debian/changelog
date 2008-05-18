@@ -29,7 +29,8 @@ firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
   * Fix apport hook to properly detect global gre extensions
     - update debian/apport/firefox-3.0.py
-  * disable app.update feature in case where user runs as root
+  * disable app.update feature in code so the auto app update feature will
+    never be enabled (independent from the pref setting)
     - add debian/patches/ubuntu_no_app_updates.patch
     - update debian/patches/series
 
