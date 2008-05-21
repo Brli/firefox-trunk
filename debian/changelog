@@ -1,4 +1,45 @@
-firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) intrepid; urgency=low
+
+  [ Fabien Tassin <fta@sofaraway.org> ]
+  * Bump xulrunner-1.9 dependencies to ~rc
+    - update debian/control
+  * Bump EM_TRANSLATION_VERSION and EM_TRANSLATION_{MIN,MAX}_VERSION to 3.0
+    and clean-up the code to avoid unnecessary complexity
+    - update debian/rules
+  * Refresh diverged patches
+    - update debian/patches/bzXXX_reload_new_plugins.patch
+  * Fix 'Categories' field in desktop file by changing GTK into Application
+    to make KDE happy (LP: #220325)
+    - update debian/firefox-3.0-final.desktop
+  * Build with default gcc (hardy: 4.2, intrepid: 4.3)
+    - update debian/rules
+    - update debian/control
+  * Prevent EULA dialog to popup on first run by setting the browser.EULA.override
+    key to true
+    - update debian/firefox.js
+  * Drop LDFLAGS workaround now that jemalloc is no longer a static lib
+    - udate debian/rules
+  * Workaround multiple crashes in Intrepid caused by Intrepid shipping gcc 4.3 
+    with -D_FORTIFY_SOURCE=2 by default
+    - udate debian/rules
+
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * Fix LP: #218865 - "ubufox is not suggested or recommended by firefox-3.0";
+    we add ubufox to recommends of firefox-3.0 package.
+    - update debian/control
+  * Fix apport hook to properly detect global gre extensions
+    - update debian/apport/firefox-3.0.py
+  * disable app.update feature in code so the auto app update feature will
+    never be enabled (independent from the pref setting)
+    - add debian/patches/ubuntu_no_app_updates.patch
+    - update debian/patches/series
+  * install firefox.cfg as an example using dh_installdocs rather than
+    dh_install as it wasn't used at all
+    - update debian/rules
+
+ -- Fabien Tassin <fta@sofaraway.org>  Wed, 21 May 2008 16:25:00 +0200
+
+firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) hardy; urgency=low
 
   * improve translation support by shipping a crafted install.rdf. We ship a
     template install.rdf.in in debian/translation-support and replace the
@@ -12,7 +53,13 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) UNRELEASED; urgency=low
     - add debian/translation-support/install.rdf.in
     - update debian/rules
 
- -- Alexander Sack <asac@ubuntu.com>  Tue, 15 Apr 2008 13:27:11 +0200
+  * remove unused debian/firefoxrc (aka /etc/firefox-3.0/firefoxrc) file from
+    files shipped. Its not considered by firefox startscript anymore and just
+    causes confusion.
+    - remove debian/firefoxrc
+    - update debian/firefox-3.0.install
+
+ -- Alexander Sack <asac@ubuntu.com>  Sun, 20 Apr 2008 15:47:10 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu2) hardy; urgency=low
 

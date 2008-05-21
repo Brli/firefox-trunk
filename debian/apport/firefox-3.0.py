@@ -29,10 +29,10 @@ def extensions_ini_parser(extensions_ini_file):
     parser.read(extensions_ini_file) 
     ext_ini_d = {}
     for section in parser.sections():
-        section_gre, section_app, section_local, my_ext = [], [], ''
+        section_gre, section_app, section_local, my_ext = [], [], [], ''
         for extension in parser.options(section):
             my_ext = parser.get(section, extension)
-            if '/usr/lib/xulrunner' in myext:
+            if '/usr/lib/xulrunner' in my_ext:
                 section_gre.append((my_ext))
             elif '/usr/lib/firefox' in my_ext:
                 section_app.append((my_ext))

@@ -17,3 +17,6 @@ pref("browser.shell.checkDefaultBrowser", false);
 
 // Disable safebrowsing.
 pref("browser.safebrowsing.enabled", false);
+
+// Prevent EULA dialog to popup on first run
+pref("browser.EULA.override", true);

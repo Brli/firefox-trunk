@@ -1,12 +1,12 @@
 ---
- browser/base/content/browser.js |   28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ browser/base/content/browser.js |   26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
 Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -819,17 +819,17 @@
+@@ -821,17 +821,17 @@
    gNavigatorBundle = document.getElementById("bundle_browser");
    gProgressMeterPanel = document.getElementById("statusbar-progresspanel");
    gFindBar = document.getElementById("FindToolbar");
@@ -25,7 +25,7 @@ Index: mozilla/browser/base/content/browser.js
      // Create the browser instance component.
      appCore = Components.classes["@mozilla.org/appshell/component/browser/instance;1"]
                          .createInstance(Components.interfaces.nsIBrowserInstance);
-@@ -5807,22 +5807,30 @@
+@@ -5853,22 +5853,30 @@
  
  missingPluginInstaller.prototype.installSinglePlugin = function(aEvent){
    var tabbrowser = getBrowser();
@@ -37,16 +37,15 @@ Index: mozilla/browser/base/content/browser.js
 +  gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
 +                                            gMissingPluginInstaller.refreshBrowserAndPlugins,
 +                                            false);
-+ 
++
    if (missingPluginsArray) {
      window.openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
-                       "PFSWindow", "modal,chrome,resizable=yes",
--                      {plugins: missingPluginsArray, browser: tabbrowser.selectedBrowser});
-+                      {plugins: missingPluginsArray, browser: tabbrowser.selectedBrowser });
+                       "PFSWindow", "chrome,centerscreen,resizable=yes",
+                       {plugins: missingPluginsArray, browser: tabbrowser.selectedBrowser});
    }
  
-+  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled", 
-+                                                 gMissingPluginInstaller.refreshBrowserAndPlugins, 
++  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
++                                                 gMissingPluginInstaller.refreshBrowserAndPlugins,
 +                                                 false);
 +
    aEvent.preventDefault();
@@ -57,7 +56,7 @@ Index: mozilla/browser/base/content/browser.js
    // that the target is a plugin
    if (!(aEvent.target instanceof Components.interfaces.nsIObjectLoadingContent))
      return;
-@@ -5905,28 +5913,34 @@
+@@ -5951,28 +5959,34 @@
        callback: pluginsMissing
      }];
  
@@ -94,7 +93,7 @@ Index: mozilla/browser/base/content/browser.js
    var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
                              .getService(Components.interfaces.nsIURLFormatter);
    var url = formatter.formatURLPref("extensions.blocklist.detailsURL");
-@@ -5934,21 +5948,27 @@
+@@ -5980,21 +5994,27 @@
    return true;
  }
  
@@ -108,11 +107,11 @@ Index: mozilla/browser/base/content/browser.js
 +                                              false);
    if (missingPluginsArray) {
      window.openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
-                       "PFSWindow", "modal,chrome,resizable=yes",
+                       "PFSWindow", "chrome,centerscreen,resizable=yes",
                        {plugins: missingPluginsArray, browser: tabbrowser.selectedBrowser});
    }
-+  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled", 
-+                                                 gMissingPluginInstaller.refreshBrowserAndPlugins, 
++  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
++                                                 gMissingPluginInstaller.refreshBrowserAndPlugins,
 +                                                 false);
  }
  

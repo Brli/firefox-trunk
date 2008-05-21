@@ -18,7 +18,6 @@ debian/tmp/usr/lib/firefox-*/browserconfig.properties
 debian/tmp/usr/lib/firefox-*/blocklist.xml
 
 debian/firefox.desktop usr/share/applications
-debian/firefoxrc etc/firefox-3.0
 debian/presubj usr/share/bug/firefox-3.0
 
 debian/firefox.js etc/firefox-3.0/pref
