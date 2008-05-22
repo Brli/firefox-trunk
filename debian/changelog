@@ -1,5 +1,7 @@
 firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) intrepid; urgency=low
 
+  * new upstream release 3.0 RC1 (LP: #233922)
+
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to ~rc
     - update debian/control
