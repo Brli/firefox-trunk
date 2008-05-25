@@ -1,8 +1,8 @@
-Source: firefox-4.0
+Source: firefox-3.1
 Section: web
 Priority: optional
 Maintainer: Ubuntu Mozilla Team <ubuntu-mozillateam@lists.ubuntu.com>
-Vcs-Bzr: https://code.launchpad.net/~mozillateam/firefox/firefox-4.0.head
+Vcs-Bzr: https://code.launchpad.net/~mozillateam/firefox/firefox-3.1.head
 Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	autotools-dev, autoconf2.13,
 	quilt, patchutils (>= 0.2.25),
@@ -23,10 +23,10 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	mozilla-devscripts (>= 0.08~)
 Standards-Version: 3.7.3
 
-Package: firefox-4.0
+Package: firefox-3.1
 Architecture: any
 Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-2.0, ${shlibs:Depends}
-Suggests: firefox-4.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
+Suggests: firefox-3.1-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -38,20 +38,20 @@ Description: safe and easy web browser from Mozilla
  Install this firefox package too, if you want to be automatically upgraded to
  new major firefox versions in the future.
 
-Package: firefox-4.0-gnome-support
+Package: firefox-3.1-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox-4.0 (= ${binary:Version}), xulrunner-2.0-gnome-support
+Depends: ${shlibs:Depends}, firefox-3.1 (= ${binary:Version}), xulrunner-2.0-gnome-support
 Provides: gnome-www-browser
 Description: Support for Gnome in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
  integration features.
 
-Package: firefox-4.0-dev
+Package: firefox-3.1-dev
 Architecture: any
 Section: devel
-Depends: firefox-4.0 (= ${binary:Version})
+Depends: firefox-3.1 (= ${binary:Version})
 Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.

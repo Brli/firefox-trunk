@@ -1,14 +1,16 @@
 [Desktop Entry]
 Version=1.0
-Name=Firefox 4 Web Browser (alpha)
-Comment=Browse the World Wide Web
-GenericName=Web Browser
-Exec=firefox-4.0 %u
+Encoding=UTF-8
+Name=Granparadiso Web Browser
+Comment=Firefox 3.1 Alpha
+GenericName=Preview Browser
+Exec=firefox-3.1 %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=firefox-4.0
-Categories=GTK;Network;
+Icon=firefox-3.1
+Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;
-StartupWMClass=Firefox
+StartupWMClass=Firefox-3.1-bin
 StartupNotify=true
+GenericName[it_IT]=Bleed Browser

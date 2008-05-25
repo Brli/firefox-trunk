@@ -10,12 +10,12 @@
 
 ## profile migration disabled for now, instead, resurrect the previous code
 
-# If there's still no ~/mozilla/firefox-4.0 profile, try to find a previous
+# If there's still no ~/mozilla/firefox-3.1 profile, try to find a previous
 # firefox profile and initialize with that.
 # If nothing is found, we'll go for a fresh run and let firefox create a
 # default profile for us.
 
-APPNAME=firefox-4.0
+APPNAME=firefox-3.1
 MOZDIR=$HOME/.mozilla
 
 if [ ! -d $MOZDIR/$APPNAME ] ; then

@@ -18,7 +18,7 @@ Index: mozilla/browser/app/application.ini
  [App]
  Vendor=Mozilla
 -Name=Firefox
-+Name=Firefox-4.0
++Name=Firefox-3.1
  Version=@APP_VERSION@
  BuildID=@GRE_BUILDID@
  Copyright=Copyright (c) 1998 - 2008 mozilla.org

@@ -6,12 +6,12 @@ DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEBIAN_NAME	:= firefox-4.0
+DEBIAN_NAME	:= firefox-3.1
 DEBIAN_APP_NAME	:= firefox
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_DEV	:= $(wildcard /usr/lib/xulrunner-devel-2.0*)
 DEBIAN_XUL_DIR	:= usr/lib/$(notdir $(wildcard /usr/lib/xulrunner-2.0*))
-DEBIAN_FF4_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
+DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
 DEB_TAR_SRCDIR	:= mozilla
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
@@ -21,22 +21,22 @@ FORCE_OFFICIAL_BRANDING = $(NULL)
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-4.0-final.desktop
+	DESKTOP  = firefox-3.1-final.desktop
 else
 # Change branding based on Version
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for hg snapshots
 	BRANDING = $(NULL)
-	DESKTOP  = firefox-4.0-minefield.desktop
+	DESKTOP  = firefox-3.1-minefield.desktop
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = firefox-4.0-granparadiso.desktop
+	DESKTOP  = firefox-3.1-granparadiso.desktop
 else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-4.0-final.desktop
+	DESKTOP  = firefox-3.1-final.desktop
 endif
 endif
 endif
@@ -135,36 +135,36 @@ subst_files = \
 	$(NULL)
 
 %: %.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF4_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF4_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
 
-debian/migrator/ffox-4-beta-profile-migration-dialog: debian/migrator/main.c
+debian/migrator/ffox-31-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
 
 binary-install/$(DEBIAN_NAME)::
-	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF4_DIR)/.autoreg
-	dh_install debian/firefox.sh $(DEBIAN_FF4_DIR)
-	dh_install debian/firefox.cfg $(DEBIAN_FF4_DIR)
-	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF4_DIR)
-	dh_install debian/migrator/ffox-4-beta-profile-migration-dialog $(DEBIAN_FF4_DIR)
-	dh_link $(DEBIAN_FF4_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
-	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF4_DIR)/extensions
-	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF4_DIR)/plugins
-	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF4_DIR)/searchplugins
-	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF4_DIR)/defaults/syspref
-	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF4_DIR)/defaults/profile
-	dh_link $(DEBIAN_FF4_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
-	dh_link usr/share/myspell/dicts $(DEBIAN_FF4_DIR)/dictionaries
+	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
+	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
+	dh_install debian/firefox.cfg $(DEBIAN_FF3_DIR)
+	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
+	dh_install debian/migrator/ffox-31-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
+	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
+	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
+	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
+	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/searchplugins
+	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF3_DIR)/defaults/syspref
+	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
+	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
+	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 
 binary-post-install/$(DEBIAN_NAME):: compare
 
-pre-build:: $(subst_files) debian/migrator/ffox-4-beta-profile-migration-dialog
+pre-build:: $(subst_files) debian/migrator/ffox-31-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
-		cp debian/$(DESKTOP) debian/firefox-4.0.desktop; \
+		cp debian/$(DESKTOP) debian/firefox-3.1.desktop; \
 		for i in $(DEBIAN_EXECUTABLES); do \
 			chmod a+x debian/$$i; \
 		done
@@ -175,6 +175,6 @@ clean::
 		done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files)
-	rm -f debian/migrator/ffox-4-beta-profile-migration-dialog
+	rm -f debian/migrator/ffox-31-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 
