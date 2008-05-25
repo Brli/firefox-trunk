@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=Minefield 4 Web Browser
+Name=Minefield 3.1 Web Browser
 Comment=Browse the Bleeding Edge
 GenericName=Bleed Browser
 Exec=firefox-3.1 %u
