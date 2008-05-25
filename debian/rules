@@ -17,11 +17,11 @@ DEB_TAR_SRCDIR	:= mozilla
 # currently not autoparsed from changelog, because we need to fail if
 # maintainer didn't adjust those before release. we can change that once ffox
 # is in hard string freeze
-EM_TRANSLATION_VERSION := 3.0
+EM_TRANSLATION_VERSION := 3.1a1
 
 # minVersion and maxVersion used in install.rdf
 EM_TRANSLATION_MIN_VERSION := 3.0
-EM_TRANSLATION_MAX_VERSION := 3.0
+EM_TRANSLATION_MAX_VERSION := 3.1a1
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
@@ -176,7 +176,7 @@ binary-install/$(DEBIAN_NAME)::
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~hg.*/pre/' | tr -d '~')
 
-binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
+binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate
 	sed \
 		-e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
 		-e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
@@ -184,8 +184,10 @@ binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 		< debian/translation-support/install.rdf.in > debian/install.rdf
 	cd debian && zip lp-export-xpis/en-US.xpi install.rdf
 ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
-	$(error EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
+	$(warning EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
 endif
+
+binary-post-install/$(DEBIAN_NAME):: compare
 
 pre-build:: $(subst_files) debian/migrator/ffox-31-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
