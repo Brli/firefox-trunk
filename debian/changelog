@@ -1,4 +1,6 @@
-firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) intrepid; urgency=low
+
+  * new upstream release 3.0 RC1 (LP: #233922)
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Bump xulrunner-1.9 dependencies to ~rc
@@ -37,7 +39,7 @@ firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     dh_install as it wasn't used at all
     - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Mon, 12 May 2008 16:39:50 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Wed, 21 May 2008 16:25:00 +0200
 
 firefox-3.0 (3.0~b5+nobinonly-0ubuntu3) hardy; urgency=low
 
