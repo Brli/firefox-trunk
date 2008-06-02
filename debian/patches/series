@@ -11,3 +11,4 @@ nspr_flags_by_pkg_config_hack.patch
 lp185622_system_path_default_browser.patch
 bzXXX_reload_new_plugins.patch
 ubuntu_no_app_updates.patch
+bz436133_att322801.patch
