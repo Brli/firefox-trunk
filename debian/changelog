@@ -1,8 +1,8 @@
-firefox-3.1 (3.1~a1~hg15201~20080530+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.1 (3.1~a1~hg15258~20080604+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * First firefox-3.1 snapshot
 
- -- Fabien Tassin <fta@sofaraway.org>  Mon, 02 Jun 2008 23:31:32 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Thu, 05 Jun 2008 01:28:08 +0200
 
 firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
