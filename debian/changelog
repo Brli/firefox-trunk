@@ -1,6 +1,8 @@
 firefox-3.1 (3.1~a1~hg15258~20080604+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * First firefox-3.1 snapshot
+  * New upstream snapshot
+  * Update diverged patches:
+    - update debian/patches/nspr_flags_by_pkg_config_hack.patch
 
  -- Fabien Tassin <fta@sofaraway.org>  Thu, 05 Jun 2008 01:28:08 +0200
 

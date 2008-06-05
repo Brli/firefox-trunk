@@ -9,7 +9,7 @@ Index: mozilla/configure.in
 ===================================================================
 --- mozilla.orig/configure.in
 +++ mozilla/configure.in
-@@ -3920,32 +3920,33 @@
+@@ -3996,32 +3996,33 @@
      AC_TRY_COMPILE([#include "prlog.h"],
                  [#ifndef PR_STATIC_ASSERT
                   #error PR_STATIC_ASSERT not defined
@@ -45,7 +45,7 @@ Index: mozilla/configure.in
  dnl = use the one in the source tree (mozilla/security/nss)
  dnl ========================================================
  
-@@ -7732,17 +7733,19 @@
+@@ -7931,17 +7932,19 @@
  AC_SUBST(MOZ_ZLIB_CFLAGS)
  AC_SUBST(MOZ_ZLIB_LIBS)
  AC_SUBST(MOZ_BZ2_CFLAGS)
@@ -65,10 +65,10 @@ Index: mozilla/configure.in
  AC_SUBST(MOZ_NATIVE_NSS)
  
  AC_SUBST(CFLAGS)
-@@ -8075,30 +8078,16 @@
+@@ -8278,30 +8281,16 @@
      fi
-     if test -n "$HAVE_64BIT_OS"; then
-         ac_configure_args="$ac_configure_args --enable-64bit"
+     if test -n "$USE_ARM_KUSER"; then
+         ac_configure_args="$ac_configure_args --with-arm-kuser"
      fi
      AC_OUTPUT_SUBDIRS(nsprpub)
      ac_configure_args="$_SUBDIR_CONFIG_ARGS"
