@@ -1,4 +1,4 @@
-firefox-3.1 (3.1~a1~hg20080606r15288+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.1 (3.1~a1~hg20080607r15293+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream snapshot
   * Update diverged patches:
@@ -7,7 +7,7 @@ firefox-3.1 (3.1~a1~hg20080606r15288+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     more that one xulrunner is installed
     - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Sat, 07 Jun 2008 03:01:31 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Mon, 09 Jun 2008 00:21:54 +0200
 
 firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
