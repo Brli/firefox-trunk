@@ -9,8 +9,9 @@ DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 DEBIAN_NAME	:= firefox-3.1
 DEBIAN_APP_NAME	:= firefox
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-DEBIAN_XUL_DEV	:= $(wildcard /usr/lib/xulrunner-devel-1.9.1*)
-DEBIAN_XUL_DIR	:= usr/lib/$(notdir $(wildcard /usr/lib/xulrunner-1.9.1*))
+DEBIAN_XUL_VER  := $(shell xulrunner-1.9.1 --gre-version)
+DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
+DEBIAN_XUL_DIR	:= usr/lib/xulrunner-$(DEBIAN_XUL_VER)
 DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
 DEB_TAR_SRCDIR	:= mozilla
 
