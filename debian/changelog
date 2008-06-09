@@ -7,6 +7,9 @@ firefox-3.0 (3.0~rc2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     from bugzilla https://bugzilla.mozilla.org/show_bug.cgi?id=436133
     - add debian/patches/bz436133_att322801.patch
     - update debian/patches/series
+  * drop left-over patch that disabled parts of safe-browsing by default.
+    - delete debian/patches/force_safebrowsing_off.patch
+    - update debian/patches/series
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 31 May 2008 13:21:54 +0200
 
