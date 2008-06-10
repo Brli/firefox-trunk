@@ -1,4 +1,4 @@
-firefox-3.0 (3.0+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0+nobinonly-0ubuntu1) intrepid; urgency=low
 
   * New upstream release: 3.0 (LP: #237690)
 
@@ -12,7 +12,7 @@ firefox-3.0 (3.0+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.js
     - update debian/patches/series
 
- -- Alexander Sack <asac@ubuntu.com>  Mon, 09 Jun 2008 13:54:03 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 10 Jun 2008 12:51:01 +0200
 
 firefox-3.0 (3.0~rc1+nobinonly-0ubuntu1) intrepid; urgency=low
 
