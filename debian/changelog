@@ -1,6 +1,6 @@
-firefox-3.0 (3.0+nobinonly-0ubuntu1) intrepid; urgency=low
+firefox-3.0 (3.0+nobinonly-0ubuntu2) intrepid; urgency=low
 
-  * New upstream release: 3.0 (LP: #237690)
+  * New upstream release: 3.0 RC2 (LP: #237690)
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * Fix LP: #236266 - "Build Failure on HPPA architecture" by applying patch
