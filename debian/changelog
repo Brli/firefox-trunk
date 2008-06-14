@@ -1,3 +1,11 @@
+firefox-3.0 (3.0+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+
+  * Add an empty chrome.manifest in all extensions missing that
+    file so it prevents the "failure in Chrome Registration" popup
+    - update debian/rules
+
+ -- Fabien Tassin <fta@sofaraway.org>  Sat, 14 Jun 2008 18:56:49 +0200
+
 firefox-3.0 (3.0+nobinonly-0ubuntu2) intrepid; urgency=low
 
   * New upstream release: 3.0 RC2 (LP: #237690)
