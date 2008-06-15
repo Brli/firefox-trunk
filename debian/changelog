@@ -3,6 +3,9 @@ firefox-3.0 (3.0+nobinonly-0ubuntu3) UNRELEASED; urgency=low
   * Add an empty chrome.manifest in all extensions missing that
     file so it prevents the "failure in Chrome Registration" popup
     - update debian/rules
+  * Don't use wildcards to detect xulrunner paths, it fails when
+    more that one xulrunner is installed
+    - update debian/rules
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 14 Jun 2008 18:56:49 +0200
 
