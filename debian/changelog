@@ -1,5 +1,11 @@
 firefox-3.0 (3.0+nobinonly-0ubuntu3) UNRELEASED; urgency=low
 
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * bump build dependencies for xulrunner 1.9 dev to >= 1.9+nobinonly-0ubuntu3
+    in order to force jemalloc build; bump binary depends accordingly
+    - update debian/control
+
+  [ Fabien Tassin <fta@sofaraway.org> ]
   * Add an empty chrome.manifest in all extensions missing that
     file so it prevents the "failure in Chrome Registration" popup
     - update debian/rules
