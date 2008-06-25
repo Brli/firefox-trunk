@@ -150,7 +150,7 @@ subst_files = \
 
 %: %.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
-	       's,@APPNAME,$(DEBIAN_NAME),g' < $< > $@
+	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
