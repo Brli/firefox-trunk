@@ -6,23 +6,20 @@ DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEBIAN_NAME	:= firefox-3.1
-DEBIAN_APP_NAME	:= firefox
+DEBIAN_NAME	:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+DEBIAN_APP_NAME	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_VER  := $(shell xulrunner-1.9.1 --gre-version)
 DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
 DEBIAN_XUL_DIR	:= usr/lib/xulrunner-$(DEBIAN_XUL_VER)
-DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(shell cat build-tree/mozilla/browser/config/version.txt)
+DEBIAN_FF3_VER	 = $(shell cat build-tree/mozilla/browser/config/version.txt)
+DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
 DEB_TAR_SRCDIR	:= mozilla
 
-# currently not autoparsed from changelog, because we need to fail if
-# maintainer didn't adjust those before release. we can change that once ffox
-# is in hard string freeze
-EM_TRANSLATION_VERSION := 3.1a1
-
 # minVersion and maxVersion used in install.rdf
-EM_TRANSLATION_MIN_VERSION := 3.0
-EM_TRANSLATION_MAX_VERSION := 3.1a1
+EM_TRANSLATION_VERSION     = $(DEBIAN_FF3_VER)
+EM_TRANSLATION_MIN_VERSION = 3.0
+EM_TRANSLATION_MAX_VERSION = $(DEBIAN_FF3_VER)
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
@@ -31,22 +28,22 @@ FORCE_OFFICIAL_BRANDING = $(NULL)
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-3.1-final.desktop
+	DESKTOP  = $(DEBIAN_NAME)-final.desktop
 else
 # Change branding based on Version
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for hg snapshots
 	BRANDING = $(NULL)
-	DESKTOP  = firefox-3.1-minefield.desktop
+	DESKTOP  = $(DEBIAN_NAME)-minefield.desktop
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = firefox-3.1-granparadiso.desktop
+	DESKTOP  = $(DEBIAN_NAME)-granparadiso.desktop
 else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-3.1-final.desktop
+	DESKTOP  = $(DEBIAN_NAME)-final.desktop
 endif
 endif
 endif
@@ -152,7 +149,8 @@ subst_files = \
 	$(NULL)
 
 %: %.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
+	       's,@APPNAME,$(DEBIAN_NAME),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
@@ -164,7 +162,7 @@ binary-install/$(DEBIAN_NAME)::
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest)
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
-	dh_installdocs -pfirefox-3.1 debian/firefox.cfg
+	dh_installdocs -p$(DEBIAN_NAME) debian/firefox.cfg
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
 	dh_install debian/migrator/ffox-31-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
@@ -195,7 +193,7 @@ pre-build:: $(subst_files) debian/migrator/ffox-31-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
-		cp debian/$(DESKTOP) debian/firefox-3.1.desktop; \
+		cp debian/$(DESKTOP) debian/$(DEBIAN_APP_NAME).desktop; \
 		for i in $(DEBIAN_EXECUTABLES); do \
 			chmod a+x debian/$$i; \
 		done
@@ -207,6 +205,5 @@ clean::
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) debian/install.rdf
 	rm -f debian/migrator/ffox-31-beta-profile-migration-dialog
-	rm -f debian/migrator/ffox-3-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 

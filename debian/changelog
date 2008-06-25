@@ -23,6 +23,11 @@ firefox-3.0 (3.0+nobinonly-0ubuntu3) UNRELEASED; urgency=low
   * Don't use wildcards to detect xulrunner paths, it fails when
     more that one xulrunner is installed
     - update debian/rules
+  * Get DEBIAN_NAME and DEBIAN_APP_NAME from changelog and make more use
+    of variables to make the merge with the 3.1 branch easier
+    - update debian/rules
+    - update debian/firefox-3.0.postinst.in
+    - update debian/firefox-3.0.prerm
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 14 Jun 2008 18:56:49 +0200
 
