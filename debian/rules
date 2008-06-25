@@ -6,8 +6,8 @@ DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEBIAN_NAME	:= firefox-3.0
-DEBIAN_APP_NAME	:= firefox
+DEBIAN_NAME	:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+DEBIAN_APP_NAME	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_VER  := $(shell xulrunner-1.9 --gre-version)
 DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
@@ -31,22 +31,22 @@ FORCE_OFFICIAL_BRANDING = 1
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-3.0-final.desktop
+	DESKTOP  = $(DEBIAN_NAME)-final.desktop
 else
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
 	# minefield branding for cvs snapshots
 	BRANDING = $(NULL)
-	DESKTOP  = firefox-3.0-minefield.desktop
+	DESKTOP  = $(DEBIAN_NAME)-minefield.desktop
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = firefox-3.0-granparadiso.desktop
+	DESKTOP  = $(DEBIAN_NAME)-granparadiso.desktop
 else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = firefox-3.0-final.desktop
+	DESKTOP  = $(DEBIAN_NAME)-final.desktop
 endif
 endif
 endif
@@ -150,7 +150,8 @@ subst_files = \
 	$(NULL)
 
 %: %.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
+	       's,@APPNAME,$(DEBIAN_NAME),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
@@ -162,7 +163,7 @@ binary-install/$(DEBIAN_NAME)::
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest)
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
-	dh_installdocs -pfirefox-3.0 debian/firefox.cfg
+	dh_installdocs -p$(DEBIAN_NAME) debian/firefox.cfg
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
 	dh_install debian/migrator/ffox-3-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
@@ -191,7 +192,7 @@ pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
-		cp debian/$(DESKTOP) debian/firefox.desktop; \
+		cp debian/$(DESKTOP) debian/$(DEBIAN_APP_NAME).desktop; \
 		for i in $(DEBIAN_EXECUTABLES); do \
 			chmod a+x debian/$$i; \
 		done

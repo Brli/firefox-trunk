@@ -2,13 +2,15 @@
 
 set -e
 
+APPNAME=firefox-3.0
+
 if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
-    update-alternatives --remove x-www-browser /usr/bin/firefox-3.0
-    rm -f /var/lib/update-notifier/user.d/firefox-3.0-restart-required
+    update-alternatives --remove x-www-browser /usr/bin/$APPNAME
+    rm -f /var/lib/update-notifier/user.d/$APPNAME-restart-required
 fi
 
-if [ -f /usr/share/apport/package-hooks/firefox-3.0.pyc ] ; then
-    rm -f /usr/share/apport/package-hooks/firefox-3.0.pyc
+if [ -f /usr/share/apport/package-hooks/$APPNAME.pyc ] ; then
+    rm -f /usr/share/apport/package-hooks/$APPNAME.pyc
 fi
 
 #DEBHELPER#
