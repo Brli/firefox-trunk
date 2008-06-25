@@ -158,7 +158,9 @@ debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 
 binary-install/$(DEBIAN_NAME)::
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
+ifneq (,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/*))
 	touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest)
+endif
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
 	dh_installdocs -p$(DEBIAN_NAME) debian/firefox.cfg
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
