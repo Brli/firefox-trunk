@@ -162,6 +162,7 @@ debian/migrator/ffox-31-beta-profile-migration-dialog: debian/migrator/main.c
 
 binary-install/$(DEBIAN_NAME)::
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
+	touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest)
 	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
 	dh_installdocs -pfirefox-3.1 debian/firefox.cfg
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
@@ -177,7 +178,7 @@ binary-install/$(DEBIAN_NAME)::
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~hg.*/pre/' | tr -d '~')
 
-binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate
+binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 	sed \
 		-e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
 		-e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
@@ -206,5 +207,6 @@ clean::
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) debian/install.rdf
 	rm -f debian/migrator/ffox-31-beta-profile-migration-dialog
+	rm -f debian/migrator/ffox-3-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 
