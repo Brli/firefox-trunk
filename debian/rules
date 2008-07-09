@@ -74,6 +74,9 @@ DEB_INSTALL_DOCS_ALL := $(NULL)
 CFLAGS = -g
 CXXFLAGS = -g
 
+LDFLAGS=$(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
+export LDFLAGS
+
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
 endif
