@@ -12,6 +12,11 @@ firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     id, release, codename
     - add debian/ubuntu-useragent.js.tmpl
     - update debian/rules
+  * bump maxVersion to 1.9.0.* to ease future upgrades of firefox-3.0/xulrunner-1.9
+    tandem and lower minVersion to 1.9.0.1 in post-install; in turn adjust binary
+    and build depends accordingly.
+    - update debian/rules
+    - update debian/control
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Add an empty chrome.manifest in all extensions missing that

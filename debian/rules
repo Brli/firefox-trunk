@@ -197,6 +197,10 @@ ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
 	$(error EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
 endif
 
+binary-post-install/firefox-3.0::
+	sed -i -e 's/^MaxVersion=.*/MaxVersion=1.9.0.*/' debian/firefox-3.0/$(DEBIAN_FF3_DIR)/application.ini
+	sed -i -e 's/^MinVersion=.*/MinVersion=1.9.0.1/' debian/firefox-3.0/$(DEBIAN_FF3_DIR)/application.ini
+
 pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
