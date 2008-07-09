@@ -7,6 +7,11 @@ firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * bump build dependencies for xulrunner 1.9 dev to >= 1.9+nobinonly-0ubuntu3~
     in order to force jemalloc build; bump binary depends accordingly
     - update debian/control
+  * add useragent config file and install it in $pkglibdir/defaults/preferences;
+    replace @VENDOR@, @VENDOR_SUB@ and @VENDOR_COMMENT@ tokens with lsb_release
+    id, release, codename
+    - add debian/ubuntu-useragent.js.tmpl
+    - update debian/rules
 
   [ Fabien Tassin <fta@sofaraway.org> ]
   * Add an empty chrome.manifest in all extensions missing that

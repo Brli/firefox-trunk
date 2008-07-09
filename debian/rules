@@ -177,6 +177,13 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 
+binary-install/firefox-3.0::
+	cat debian/ubuntu-useragent.js.tmpl | sed \
+		-e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
+		-e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
+		-e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
+	> debian/firefox-3.0/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
+
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~cvs.*/pre/' | tr -d '~')
 
 binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
