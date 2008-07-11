@@ -1,3 +1,38 @@
+firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) intrepid; urgency=low
+
+  * LP: #247494 - new security/stability release (v3.0.1 build1)
+    - see USN-623-1
+
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * bump build dependencies for xulrunner 1.9 dev to >= 1.9+nobinonly-0ubuntu3~
+    in order to force jemalloc build; bump binary depends accordingly
+    - update debian/control
+  * add useragent config file and install it in $pkglibdir/defaults/preferences;
+    replace @VENDOR@, @VENDOR_SUB@ and @VENDOR_COMMENT@ tokens with lsb_release
+    id, release, codename
+    - add debian/ubuntu-useragent.js.tmpl
+    - update debian/rules
+  * bump maxVersion to 1.9.0.* to ease future upgrades of firefox-3.0/xulrunner-1.9
+    tandem and lower minVersion to 1.9.0.1 in post-install; in turn adjust binary
+    and build depends accordingly.
+    - update debian/rules
+    - update debian/control
+
+  [ Fabien Tassin <fta@sofaraway.org> ]
+  * Add an empty chrome.manifest in all extensions missing that
+    file so it prevents the "failure in Chrome Registration" popup
+    - update debian/rules
+  * Don't use wildcards to detect xulrunner paths, it fails when
+    more that one xulrunner is installed
+    - update debian/rules
+  * Get DEBIAN_NAME and DEBIAN_APP_NAME from changelog and make more use
+    of variables to make the merge with the 3.1 branch easier
+    - update debian/rules
+    - update debian/firefox-3.0.postinst.in
+    - update debian/firefox-3.0.prerm
+
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 11 Jul 2008 09:53:58 +0200
+
 firefox-3.0 (3.0+nobinonly-0ubuntu2) intrepid; urgency=low
 
   * New upstream release: 3.0 RC2 (LP: #237690)

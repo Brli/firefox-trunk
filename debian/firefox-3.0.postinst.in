@@ -4,24 +4,25 @@ set -e
 
 UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
 LIBDIR=@LIBDIR@
+APPNAME=@APPNAME@
 
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/x-www-browser \
-        x-www-browser /usr/bin/firefox-3.0 40
+        x-www-browser /usr/bin/$APPNAME 40
     touch $LIBDIR/.autoreg
 fi
 
-echo "Please restart all running instances of Firefox-3.0, or you will experience problems."
+echo "Please restart all running instances of $APPNAME, or you will experience problems."
 
 if [ -d $UPDATENOTIFIERDIR ] ; then
   # pgrep matches application names from /proc/<pid>/status which is
   # truncated according to sys/procfs.h definition. Problem is it's
   # platform dependent. Either 15 or 16 chars.
   if [ `/usr/bin/pgrep -x -c firefox` -ne 0 ] ;  then
-    cp -f $LIBDIR/firefox-3.0-restart-required.update-notifier \
-        $UPDATENOTIFIERDIR/firefox-3.0-restart-required
+    cp -f $LIBDIR/$APPNAME-restart-required.update-notifier \
+        $UPDATENOTIFIERDIR/$APPNAME-restart-required
   else
-    rm -f $UPDATENOTIFIERDIR/firefox-3.0-restart-required
+    rm -f $UPDATENOTIFIERDIR/$APPNAME-restart-required
   fi
 fi
 
