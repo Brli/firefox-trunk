@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) intrepid; urgency=low
 
   * LP: #247494 - new security/stability release (v3.0.1 build1)
     - see USN-623-1
@@ -31,7 +31,7 @@ firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.0.postinst.in
     - update debian/firefox-3.0.prerm
 
- -- Fabien Tassin <fta@sofaraway.org>  Sat, 14 Jun 2008 18:56:49 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Fri, 11 Jul 2008 09:53:58 +0200
 
 firefox-3.0 (3.0+nobinonly-0ubuntu2) intrepid; urgency=low
 
