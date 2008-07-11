@@ -1,6 +1,6 @@
 firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * new security/stability release (v3.0.1 build1)
+  * LP: #247494 - new security/stability release (v3.0.1 build1)
     - see USN-623-1
 
   [ Alexander Sack <asac@ubuntu.com> ]
