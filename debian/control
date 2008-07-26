@@ -19,7 +19,8 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	libdbus-glib-1-dev (>= 0.60),
 	xulrunner-1.9-dev (>= 1.9.0.1)
 	libnspr4-dev, libnss3-dev,
-	mozilla-devscripts (>= 0.06~)
+	mozilla-devscripts (>= 0.06~),
+	lsb-release
 Standards-Version: 3.7.3
 
 Package: firefox-3.0

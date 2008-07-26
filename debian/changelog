@@ -1,3 +1,12 @@
+firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu2) intrepid; urgency=low
+
+  RELEASE 3.0.1+build1+nobinonly-0ubuntu2 to ubuntu/intrepid
+  * Fix: #246775 - "wrong user-agent string in hardy build" by adding proper
+    build-depends
+    - update debian/control
+
+ -- Alexander Sack <asac@ubuntu.com>  Sat, 26 Jul 2008 16:08:26 +0200
+
 firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) intrepid; urgency=low
 
   * LP: #247494 - new security/stability release (v3.0.1 build1)
