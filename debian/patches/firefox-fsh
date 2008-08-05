@@ -33,10 +33,10 @@ Index: mozilla/config/autoconf.mk.in
  DIST		= $(DEPTH)/dist
  LIBXUL_SDK      = @LIBXUL_SDK@
  
+ L10NBASEDIR     = @L10NBASEDIR@
+ 
  ifdef LIBXUL_SDK
  LIBXUL_DIST = $(LIBXUL_SDK)
- else
- LIBXUL_DIST = $(DIST)
 Index: mozilla/browser/confvars.sh
 ===================================================================
 --- mozilla.orig/browser/confvars.sh
@@ -64,7 +64,7 @@ Index: mozilla/browser/app/Makefile.in
 ===================================================================
 --- mozilla.orig/browser/app/Makefile.in
 +++ mozilla/browser/app/Makefile.in
-@@ -410,17 +410,17 @@
+@@ -401,17 +401,17 @@
  	cp -RL $(LIBXUL_DIST)/package/mozillaSuite.rsrc $(DIST)/$(APP_NAME).app/Contents/Resources/firefox-bin.rsrc
  	echo -n APPLMOZB > $(DIST)/$(APP_NAME).app/Contents/PkgInfo
  #       remove CVS dirs from packaged app

@@ -6,10 +6,10 @@ Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -821,17 +821,17 @@
-   gNavigatorBundle = document.getElementById("bundle_browser");
-   gProgressMeterPanel = document.getElementById("statusbar-progresspanel");
-   gFindBar = document.getElementById("FindToolbar");
+@@ -841,17 +841,17 @@
+ 
+ function prepareForStartup()
+ {
    gBrowser.addEventListener("DOMUpdatePageReport", gPopupBlockerObserver.onUpdatePageReport, false);
    // Note: we need to listen to untrusted events, because the pluginfinder XBL
    // binding can't fire trusted ones (runs with page privileges).
@@ -25,28 +25,28 @@ Index: mozilla/browser/base/content/browser.js
      // Create the browser instance component.
      appCore = Components.classes["@mozilla.org/appshell/component/browser/instance;1"]
                          .createInstance(Components.interfaces.nsIBrowserInstance);
-@@ -5853,22 +5853,30 @@
+@@ -5782,22 +5782,30 @@
+ }
  
  missingPluginInstaller.prototype.installSinglePlugin = function(aEvent){
-   var tabbrowser = getBrowser();
    var missingPluginsArray = {};
  
    var pluginInfo = getPluginInfo(aEvent.target);
    missingPluginsArray[pluginInfo.mimetype] = pluginInfo;
  
 +  gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
-+                                            gMissingPluginInstaller.refreshBrowserAndPlugins,
-+                                            false);
++					    gMissingPluginInstaller.refreshBrowserAndPlugins,
++					    false);
 +
    if (missingPluginsArray) {
      window.openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
                        "PFSWindow", "chrome,centerscreen,resizable=yes",
-                       {plugins: missingPluginsArray, browser: tabbrowser.selectedBrowser});
+                       {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
    }
  
 +  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
-+                                                 gMissingPluginInstaller.refreshBrowserAndPlugins,
-+                                                 false);
++						 gMissingPluginInstaller.refreshBrowserAndPlugins,
++						 false);
 +
    aEvent.preventDefault();
  }
@@ -56,7 +56,7 @@ Index: mozilla/browser/base/content/browser.js
    // that the target is a plugin
    if (!(aEvent.target instanceof Components.interfaces.nsIObjectLoadingContent))
      return;
-@@ -5951,28 +5959,34 @@
+@@ -5879,49 +5887,61 @@
        callback: pluginsMissing
      }];
  
@@ -93,26 +93,25 @@ Index: mozilla/browser/base/content/browser.js
    var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
                              .getService(Components.interfaces.nsIURLFormatter);
    var url = formatter.formatURLPref("extensions.blocklist.detailsURL");
-@@ -5980,21 +5994,27 @@
+   gBrowser.loadOneTab(url, null, null, null, false, false);
    return true;
  }
  
  function pluginsMissing()
  {
    // get the urls of missing plugins
-   var tabbrowser = getBrowser();
-   var missingPluginsArray = tabbrowser.selectedBrowser.missingPlugins;
+   var missingPluginsArray = gBrowser.selectedBrowser.missingPlugins;
 +  tabbrowser.selectedBrowser.addEventListener("NewPluginInstalled",
-+                                              gMissingPluginInstaller.refreshBrowserAndPlugins,
-+                                              false);
++					      gMissingPluginInstaller.refreshBrowserAndPlugins,
++					      false);
    if (missingPluginsArray) {
      window.openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
                        "PFSWindow", "chrome,centerscreen,resizable=yes",
-                       {plugins: missingPluginsArray, browser: tabbrowser.selectedBrowser});
+                       {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
    }
 +  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
-+                                                 gMissingPluginInstaller.refreshBrowserAndPlugins,
-+                                                 false);
++						 gMissingPluginInstaller.refreshBrowserAndPlugins,
++						 false);
  }
  
  var gMissingPluginInstaller = new missingPluginInstaller();
