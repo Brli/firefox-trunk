@@ -39,7 +39,7 @@ else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = $(DEBIAN_NAME)-granparadiso.desktop
+	DESKTOP  = $(DEBIAN_NAME)-shiretoko.desktop
 else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding

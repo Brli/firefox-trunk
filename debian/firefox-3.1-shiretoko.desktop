@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=Granparadiso Web Browser
+Name=Shiretoko Web Browser
 Comment=Firefox 3.1 Alpha
 GenericName=Preview Browser
 Exec=firefox-3.1 %u
