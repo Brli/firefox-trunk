@@ -16,21 +16,22 @@
 # default profile for us.
 
 APPNAME=firefox-3.1
+LIBDIR=@LIBDIR@
 MOZDIR=$HOME/.mozilla
 NAME=`basename $0`
 GDB=/usr/bin/gdb
+DROPPED=abandoned
 
 usage () {
-  echo "Usage: $NAME [-h|--help] [-g|--debug] [...]"
+  $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
   echo
-  echo " -g|--debug    start within $GDB"
-  echo " -h|--help     this help screen"
+  echo "        -g or --debug		Start within $GDB (Must be first)"
 }
 
 want_debug=0
 while [ $# -gt 0 ]; do
   case "$1" in
-    -h | --help )
+    -h | --help | -help )
       usage
       exit 0 ;;
     -g | --debug )
@@ -39,10 +40,6 @@ while [ $# -gt 0 ]; do
     -- ) # Stop option prcessing
       shift
       break ;;
-    -* )
-      echo Error: unknown option $1
-      usage
-      exit 1 ;;
     * )
       break ;;
   esac
@@ -79,11 +76,6 @@ fi
 #
 # in addition, even older profiles are renamed too, by appending |.abandoned|
 # to their name.
-
-#APPNAME=firefox
-MOZDIR=$HOME/.mozilla
-LIBDIR=@LIBDIR@
-DROPPED=abandoned
 
 if [ 0 ] ; then
 
