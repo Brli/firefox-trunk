@@ -26,6 +26,8 @@ firefox-3.1 (3.1~a2~hg20080815r16723+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Drop useless patches
     - drop debian/patches/bz436133_att322801.patch
     - update debian/patches/series
+  * Add -d/--debug switch to the launcher script to start firefox inside gdb
+    - update debian/firefox.sh.in
 
  -- Fabien Tassin <fta@sofaraway.org>  Sat, 16 Aug 2008 00:38:11 +0200
 
