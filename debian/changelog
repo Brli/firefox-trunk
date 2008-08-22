@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.2~cvs20080807t1327+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack ]
   * Fix: #246775 - "wrong user-agent string in hardy build" by adding proper
@@ -9,7 +9,7 @@ firefox-3.0 (3.0.2~cvs20080807t1327+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
     - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Sun, 10 Aug 2008 22:33:39 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Fri, 22 Aug 2008 14:59:10 +0200
 
 firefox-3.0 (3.0.1+build1+nobinonly-0ubuntu1) intrepid; urgency=low
 
