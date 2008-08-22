@@ -9,7 +9,7 @@ Index: mozilla/configure.in
 ===================================================================
 --- mozilla.orig/configure.in
 +++ mozilla/configure.in
-@@ -3996,32 +3996,33 @@
+@@ -4032,32 +4032,33 @@
      AC_TRY_COMPILE([#include "prlog.h"],
                  [#ifndef PR_STATIC_ASSERT
                   #error PR_STATIC_ASSERT not defined
@@ -45,7 +45,7 @@ Index: mozilla/configure.in
  dnl = use the one in the source tree (mozilla/security/nss)
  dnl ========================================================
  
-@@ -7931,17 +7932,19 @@
+@@ -7993,17 +7994,19 @@
  AC_SUBST(MOZ_ZLIB_CFLAGS)
  AC_SUBST(MOZ_ZLIB_LIBS)
  AC_SUBST(MOZ_BZ2_CFLAGS)
@@ -65,7 +65,7 @@ Index: mozilla/configure.in
  AC_SUBST(MOZ_NATIVE_NSS)
  
  AC_SUBST(CFLAGS)
-@@ -8278,30 +8281,16 @@
+@@ -8349,24 +8352,10 @@
      fi
      if test -n "$USE_ARM_KUSER"; then
          ac_configure_args="$ac_configure_args --with-arm-kuser"
@@ -88,11 +88,5 @@ Index: mozilla/configure.in
 -    rm -f config/autoconf.mk.bak
 -fi
 -
- # if we're building the LDAP XPCOM component, we need to build 
- # the c-sdk first.  
- #
- if test "$MOZ_LDAP_XPCOM"; then
+ fi # COMPILE_ENVIRONMENT
  
-     # these subdirs may not yet have been created in the build tree.
-     # don't use the "-p" switch to mkdir, since not all platforms have it
-     #
