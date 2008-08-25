@@ -1,8 +1,10 @@
 firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack ]
-  * Fix: #246775 - "wrong user-agent string in hardy build" by adding proper
+  * Fix: LP #246775 - "wrong user-agent string in hardy build" by adding proper
     build-depends
+    - update debian/control
+  * Fix: LP #240880 - Remove "previously known as" paragraph
     - update debian/control
 
   [ Fabien Tassin ]

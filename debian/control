@@ -36,8 +36,6 @@ Description: safe and easy web browser from Mozilla
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
  .
- This browser was previously known as Firefox 2, Firebird and Phoenix.
- .
  Install this firefox package too, if you want to be automatically upgraded to
  new major firefox versions in the future.
 
@@ -85,8 +83,6 @@ Depends: firefox-3.0
 Description: meta package for the popular mozilla web browser
  Firefox 3 is the next major release of the standalone Mozilla browser; it is
  written in the XUL language and designed to be lightweight and cross-platform.
- .
- This browser was previously known as Firefox 2, Firebird and Phoenix.
  .
  This is a meta package that will point to the latest firefox package in ubuntu.
  Don't remove this if you want to receive automatic major version upgrades for
