@@ -34,7 +34,6 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       browser chrome by default; in turn we fix that not all awesome branding
       bits where available by doing a full make install
       DESTDIR=debian/tmp-awesome.
-      - add debian/firefox-3.0-branding.install
       - update debian/rules
 
   [ Fabien Tassin ]

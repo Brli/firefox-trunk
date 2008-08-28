@@ -25,8 +25,8 @@ Standards-Version: 3.7.3
 
 Package: firefox-3.0
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9.0.1), awesome-browser-3.0, ${shlibs:Depends}
-Recommends: ubufox
+Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9.0.1), ${shlibs:Depends}
+Recommends: ubufox, firefox-3.0-branding
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
@@ -40,7 +40,7 @@ Description: safe and easy web browser from Mozilla
  new major firefox versions in the future.
 
 Package: firefox-3.0-branding
-Architecture: all
+Architecture: any
 Depends: firefox-3.0
 Description: Package that ships the firefox branding
  This package ships the firefox branding bits. If you remove this package you
