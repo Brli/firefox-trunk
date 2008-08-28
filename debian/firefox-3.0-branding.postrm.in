@@ -11,7 +11,7 @@ diversions="icons/document.png icons/mozicon128.png \
 	chrome/icons/default/default48.png \
 	chrome/awesome-branding.manifest \
 "
-if [ "$1" = "remove" ] || [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" "lt" "3.0.2~"; then
+if [ "$1" = "remove" ]; then
 
 	for i in $diversions; do
 		dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
@@ -24,7 +24,7 @@ elif [ "$1" = "upgrade" ]; then
 	for i in $diversions; do
 		# if the target doesnt exist at all, we can as well
 		# un-divert
-		if [ ! -e $LIBDIR/$i ]; then
+		if [ ! -e $LIBDIR/$i ] && [ ! -e `dpkg-divert --truename $LIBDIR/$i` ]; then
 			echo "remove divert that disappeared during upgrade to $2"
 			dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
 		fi
