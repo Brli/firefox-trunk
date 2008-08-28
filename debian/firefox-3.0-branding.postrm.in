@@ -24,8 +24,9 @@ elif [ "$1" = "upgrade" ]; then
 	for i in $diversions; do
 		# if the target doesnt exist at all, we can as well
 		# un-divert
-		if [ ! -e $LIBDIR/$i ] && [ ! -e `dpkg-divert --truename $LIBDIR/$i` ]; then
-			echo "remove divert that disappeared during upgrade to $2"
+		realname=`dpkg-divert --truename $LIBDIR/$i`
+		if [ ! -e "$LIBDIR/$i" ] || [ ! -e "$realname" ]; then
+			echo "remove divert $LIBDIR/$i that disappeared during upgrade to $2"
 			dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
 		fi
 	done
