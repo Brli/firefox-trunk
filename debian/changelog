@@ -22,6 +22,10 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     + higher mozilla-devscripts bar to 0.10 to reflect that we need that
       version to properly produce awesome-browser branded original tarballs
       - update debian/control
+    + fix browser/installer meta files to install awesome-browser content and
+      locale bits
+      - add debian/patches/awesome_browser_branding_install.patch
+      - update debian/patches/series
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
