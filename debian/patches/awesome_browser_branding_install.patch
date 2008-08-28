@@ -1,34 +1,7 @@
 ---
- browser/installer/packages-static      |    5 +++++
  browser/installer/unix/packages-static |    6 ++++++
- 2 files changed, 11 insertions(+)
+ 1 file changed, 6 insertions(+)
 
-Index: mozilla/browser/installer/packages-static
-===================================================================
---- mozilla.orig/browser/installer/packages-static
-+++ mozilla/browser/installer/packages-static
-@@ -272,16 +272,21 @@
- bin/chrome/toolkit.manifest
- bin/chrome/icons/default/default16.png
- bin/chrome/icons/default/default32.png
- bin/chrome/icons/default/default48.png
- bin/chrome/reporter.manifest
- bin/chrome/reporter.jar
- bin/defaults/preferences/reporter.js
- 
-+bin/chrome/awesome-branding.jar
-+bin/chrome/awesome-branding.manifest
-+bin/chrome/awesome-branding-en-US.jar
-+bin/chrome/awesome-branding-en-US.manifest
-+
- ; shell icons
- bin/icons/*.xpm
- bin/icons/*.png
- 
- ; [Default Preferences]
- ; All the pref files must be part of base to prevent migration bugs
- bin/defaults/preferences/firefox.js
- bin/defaults/preferences/firefox-branding.js
 Index: mozilla/browser/installer/unix/packages-static
 ===================================================================
 --- mozilla.orig/browser/installer/unix/packages-static
