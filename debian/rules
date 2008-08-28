@@ -182,6 +182,12 @@ common-post-build-arch::
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-awesome/
 	
 binary-install/$(DEBIAN_NAME)::
+	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/icons
+	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/icons
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp-awesome/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp-awesome/$(DEBIAN_FF3_DIR)/chrome $(DEBIAN_FF3_DIR)
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
 	  touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
@@ -201,12 +207,14 @@ binary-install/$(DEBIAN_NAME)::
 	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
 
 binary-install/$(DEBIAN_NAME)-branding::
+	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
+	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons
 	dh_install -p$(DEBIAN_NAME)-branding \
 		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/browser-branding* $(DEBIAN_FF3_DIR)/chrome
 	dh_install -p$(DEBIAN_NAME)-branding \
-		debian/tmp-awesome/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
+		debian/tmp/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
 	dh_install -p$(DEBIAN_NAME)-branding \
-		debian/tmp-awesome/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
+		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
 
 
 binary-install/$(DEBIAN_NAME):: debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
