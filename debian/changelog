@@ -19,6 +19,9 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       awesome-browser-3.0, while firefox meta package Recommends
       firefox-3.0-branding.
       - update debian/control
+    + higher mozilla-devscripts bar to 0.10 to reflect that we need that
+      version to properly produce awesome-browser branded original tarballs
+      - update debian/control
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
