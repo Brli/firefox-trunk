@@ -25,8 +25,13 @@ Standards-Version: 3.7.3
 
 Package: firefox-3.0
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9.0.1), ${shlibs:Depends}
-Recommends: ubufox, firefox-3.0-branding
+Depends: fontconfig,
+	psmisc,
+	debianutils (>= 1.16),
+	xulrunner-1.9 (>= 1.9.0.1),
+	firefox-3.0-branding | awesome-browser-3.0,
+	${shlibs:Depends}
+Recommends: ubufox,
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
@@ -87,6 +92,7 @@ Description: Development files for Mozilla Firefox
 Package: awesome-browser-3.0
 Architecture: all
 Depends: firefox-3.0
+Conflicts: firefox-3.0-branding
 Description: package that ships a unbranded firefox web browser
  The Awesome Browser refers to the unbranded build of firefox 3.0.
  Install the firefox package if you want a branded build.
