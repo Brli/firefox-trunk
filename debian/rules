@@ -147,6 +147,8 @@ DEBIAN_EXECUTABLES = \
 subst_files = \
 	debian/$(DEBIAN_NAME)-gnome-support.postinst \
 	debian/$(DEBIAN_NAME).postinst \
+	debian/$(DEBIAN_NAME)-branding.preinst \
+	debian/$(DEBIAN_NAME)-branding.postrm \
 	debian/firefox.sh \
 	$(NULL)
 

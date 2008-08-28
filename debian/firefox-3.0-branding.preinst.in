@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+LIBDIR=@LIBDIR@
+
+if [ "$1" = "install" ] || [ "$1" = "upgrade" ]; then
+	diversions="icons/document.png mozicon128.png mozicon16.xpm mozicon50.xpm"
+	diversions="$diversions chrome/icons/default/default16.png \
+		chrome/icons/default/default32.png \
+		chrome/icons/default/default48.png"
+
+	for i in $diversions; do
+		dpkg-divert --add $LIBDIR/$i --divert-to $LIBDIR/$i.diverted
+	done
+fi
