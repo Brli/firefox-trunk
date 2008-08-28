@@ -35,6 +35,7 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       bits where available by doing a full make install
       DESTDIR=debian/tmp-awesome.
       - update debian/rules
+      - update debian/firefox-3.0.install
     + dpkg-divert non-chrome branding bits; add firefox-3.0-branding.preinst.in
       and firefox-3.0-branding.postrm.in maintainer script templates and
       register them for substitution in debian/rules
