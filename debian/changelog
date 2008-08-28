@@ -46,7 +46,7 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       awesome branding in a way that the offcial branding will take over. We
       also try to cleanup diverts that have disappeared during upgrade in
       old-postrm of the branding package; this is required to properly cleanup
-      on major firefox version upgrades.
+      during major firefox version upgrades - where pkglibdir changes.
       - add debian/firefox-3.0-branding.postrm.in
       - add debian/firefox-3.0-branding.preinst.in
       - update debian/rules
