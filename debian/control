@@ -46,7 +46,7 @@ Description: safe and easy web browser from Mozilla
 
 Package: firefox-3.0-branding
 Architecture: any
-Depends: firefox-3.0
+Depends: firefox-3.0 (= ${binary:Version})
 Description: Package that ships the firefox branding
  This package ships the firefox branding bits. If you remove this package you
  your user experience will become that of the awesome-browser.
