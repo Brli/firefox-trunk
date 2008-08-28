@@ -47,6 +47,9 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       - add debian/firefox-3.0-branding.postrm.in
       - add debian/firefox-3.0-branding.preinst.in
       - update debian/rules
+    + introduce rules variable APP_NAME_OTHER, which is used as a placeholder
+      for awesome-browser
+      - update debian/rules
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch

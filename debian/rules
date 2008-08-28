@@ -25,7 +25,9 @@ EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
 FORCE_OFFICIAL_BRANDING = 1
 
-DESKTOP  = awesome-browser.desktop
+APP_NAME_OTHER := awesome-browser
+
+DESKTOP  = $(APP_NAME_OTHER).desktop
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
@@ -162,32 +164,32 @@ debian/firefox.sh: debian/firefox.sh.in
 debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
 
-BRANDING_MAKEFILES = ../../browser/branding/awesome-browser/Makefile \
-	../../browser/branding/awesome-browser/locales/Makefile \
-	../../browser/branding/awesome-browser/content/Makefile \
+BRANDING_MAKEFILES = ../../browser/branding/$(APP_NAME_OTHER)/Makefile \
+	../../browser/branding/$(APP_NAME_OTHER)/locales/Makefile \
+	../../browser/branding/$(APP_NAME_OTHER)/content/Makefile \
 	$(NULL)
 
 common-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 	cd build-tree/mozilla/browser/locales/; \
-		$(MAKE) -C ../../browser/branding/awesome-browser/content/; \
-		$(MAKE) -C ../../browser/branding/awesome-browser/locales/
+		$(MAKE) -C ../../browser/branding/$(APP_NAME_OTHER)/content/; \
+		$(MAKE) -C ../../browser/branding/$(APP_NAME_OTHER)/locales/
 
 common-post-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
-		$(MAKE) -C ../../browser/branding/awesome-browser/
+		$(MAKE) -C ../../browser/branding/$(APP_NAME_OTHER)/
 	cd build-tree/mozilla/; \
-		mkdir -p $(CURDIR)/debian/tmp-awesome/; \
-		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-awesome/
+		mkdir -p $(CURDIR)/debian/tmp-$(APP_NAME_OTHER)/; \
+		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(APP_NAME_OTHER)/
 	
 binary-install/$(DEBIAN_NAME)::
 	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/icons
 	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/icons
 	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp-awesome/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
+		debian/tmp-$(APP_NAME_OTHER)/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
 	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp-awesome/$(DEBIAN_FF3_DIR)/chrome $(DEBIAN_FF3_DIR)
+		debian/tmp-$(APP_NAME_OTHER)/$(DEBIAN_FF3_DIR)/chrome $(DEBIAN_FF3_DIR)
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
 	  touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
