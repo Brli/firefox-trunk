@@ -4,14 +4,14 @@ set -e
 
 LIBDIR=@LIBDIR@
 
+diversions="icons/document.png icons/mozicon128.png \
+	icons/mozicon16.xpm icons/mozicon50.xpm \
+	chrome/icons/default/default16.png \
+	chrome/icons/default/default32.png \
+	chrome/icons/default/default48.png \
+	chrome/awesome-branding.manifest \
+"
 if [ "$1" = "remove" ] || [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" "lt" "3.0.2~"; then
-	diversions="icons/document.png icons/mozicon128.png \
-		icons/mozicon16.xpm icons/mozicon50.xpm \
-		chrome/icons/default/default16.png \
-		chrome/icons/default/default32.png \
-		chrome/icons/default/default48.png \
-		chrome/awesome-branding.manifest \
-	"
 
 	for i in $diversions; do
 		dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
@@ -20,4 +20,13 @@ if [ "$1" = "remove" ] || [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" "
 	if [ -e $LIBDIR/.autoreg ]; then
 		touch $LIBDIR/.autoreg
 	fi
+elif [ "$1" = "upgrade" ]; then
+	for i in $diversions; do
+		# if the target doesnt exist at all, we can as well
+		# un-divert
+		if [ ! -e $LIBDIR/$i ]; then
+			echo "remove divert that disappeared during upgrade to $2"
+			dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
+		fi
+	done
 fi
