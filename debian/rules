@@ -25,25 +25,26 @@ EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
 FORCE_OFFICIAL_BRANDING = 1
 
+DESKTOP  = awesome-browser.desktop
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = $(DEBIAN_NAME)-final.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-final.desktop
 else
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
 	# minefield branding for cvs snapshots
 	BRANDING = $(NULL)
-	DESKTOP  = $(DEBIAN_NAME)-minefield.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-minefield.desktop
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = $(DEBIAN_NAME)-granparadiso.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-granparadiso.desktop
 else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = $(DEBIAN_NAME)-final.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-final.desktop
 endif
 endif
 endif
@@ -158,6 +159,21 @@ debian/firefox.sh: debian/firefox.sh.in
 
 debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
+
+BRANDING_MAKEFILES = ../../browser/branding/awesome-browser/Makefile \
+	../../browser/branding/awesome-browser/locales/Makefile \
+	../../browser/branding/awesome-browser/content/Makefile \
+	$(NULL)
+
+binary-install/awesome-browser-3.0::
+	cd build-tree/mozilla/browser/locales/; \
+		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
+	cd build-tree/mozilla/browser/locales/; \
+		$(MAKE) -C ../../browser/branding/awesome-browser/
+	cd build-tree/mozilla/browser/locales/; \
+		mkdir -p $(CURDIR)/awesome-browser-3.0/$(DEBIAN_FF3_DIR); \
+		$(MAKE) -C ../../browser/branding/awesome-browser/ install \
+			mozappdir= DESTDIR=$(CURDIR)/awesome-browser-3.0/$(DEBIAN_FF3_DIR)
 
 binary-install/$(DEBIAN_NAME)::
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg

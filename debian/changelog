@@ -1,11 +1,24 @@
 firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Alexander Sack ]
+  [ Alexander Sack <asac@ubuntu.com> ]
   * Fix: LP #246775 - "wrong user-agent string in hardy build" by adding proper
     build-depends
     - update debian/control
   * Fix: LP #240880 - Remove "previously known as" paragraph
     - update debian/control
+  * awesome browser branding split
+    + we add a new .desktop file to the source and teach the debian/rules
+      code about it
+      - add debian/awesome-browser.desktop
+      - update debian/rules
+    + we magically run config.status on just the Makefiles of our branding
+      in the binary-install/awesome-browser-3.0 target
+      - update debian/rules
+    + we introduce a firefox-3.0-branding package as well as an
+      awesome-browser-3.0 package in control; firefox-3.0 now depends on
+      awesome-browser-3.0, while firefox meta package Recommends
+      firefox-3.0-branding.
+      - update debian/control
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch

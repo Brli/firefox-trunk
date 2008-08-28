@@ -25,7 +25,7 @@ Standards-Version: 3.7.3
 
 Package: firefox-3.0
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9.0.1), ${shlibs:Depends}
+Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9.0.1), awesome-browser-3.0, ${shlibs:Depends}
 Recommends: ubufox
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
@@ -38,6 +38,13 @@ Description: safe and easy web browser from Mozilla
  .
  Install this firefox package too, if you want to be automatically upgraded to
  new major firefox versions in the future.
+
+Package: firefox-3.0-branding
+Architecture: all
+Depends: firefox-3.0
+Description: Package that ships the firefox branding
+ This package ships the firefox branding bits. If you remove this package you
+ your user experience will become that of the awesome-browser.
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
@@ -77,9 +84,22 @@ Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
 
+Package: awesome-browser-3.0
+Architecture: all
+Depends: firefox-3.0
+Description: package that ships a unbranded firefox web browser
+ The Awesome Browser refers to the unbranded build of firefox 3.0.
+ Install the firefox package if you want a branded build.
+ .
+ This is a meta package that will point to the latest awesome-browser package
+ in ubuntu. Don't remove this if you want to receive automatic major version
+ upgrades for this package in future.
+
+
 Package: firefox
 Architecture: all
 Depends: firefox-3.0
+Recommends: firefox-3.0-branding
 Description: meta package for the popular mozilla web browser
  Firefox 3 is the next major release of the standalone Mozilla browser; it is
  written in the XUL language and designed to be lightweight and cross-platform.
