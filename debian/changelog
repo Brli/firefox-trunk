@@ -16,7 +16,7 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       - update debian/rules
     + we introduce a firefox-3.0-branding package as well as an
       awesome-browser-3.0 package in control; awesome-browser-3.0 conflicts
-      firefox-3.0-branding, while firefox-3.0 depends on either
+      firefox-3.0-branding, while firefox-3.0 recommends either
       awesome-browser-3.0 or firefox-3.0-branding itself. In addition, 
       firefox meta package Recommends firefox-3.0-branding now.
       - update debian/control

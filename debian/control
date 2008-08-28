@@ -29,9 +29,9 @@ Depends: fontconfig,
 	psmisc,
 	debianutils (>= 1.16),
 	xulrunner-1.9 (>= 1.9.0.1),
-	firefox-3.0-branding | awesome-browser-3.0,
 	${shlibs:Depends}
 Recommends: ubufox,
+	firefox-3.0-branding | awesome-browser-3.0
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
