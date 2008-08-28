@@ -1,0 +1,5 @@
+debian/tmp/usr/lib/firefox-*/chrome/browser-branding.manifest
+debian/tmp/usr/lib/firefox-*/chrome/browser-branding-en-US.manifest
+debian/tmp/usr/lib/firefox-*/chrome/browser-branding-en-US.jar
+debian/tmp/usr/lib/firefox-*/chrome/browser-branding.jar
+

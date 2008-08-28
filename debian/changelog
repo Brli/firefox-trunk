@@ -29,6 +29,13 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     + patch firefox to ship branding chrome bits in separate jar files.
       - debian/patches/browser_branding.patch
       - debian/patches/series
+    + install firefox branding bits to the firefox-3.0-branding package
+      and remove them from the firefox-3.0 package so that we ship the awesome
+      browser chrome by default; in turn we fix that not all awesome branding
+      bits where available by doing a full make install
+      DESTDIR=debian/tmp-awesome.
+      - add debian/firefox-3.0-branding.install
+      - update debian/rules
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
