@@ -165,16 +165,21 @@ BRANDING_MAKEFILES = ../../browser/branding/awesome-browser/Makefile \
 	../../browser/branding/awesome-browser/content/Makefile \
 	$(NULL)
 
-binary-install/awesome-browser-3.0::
+common-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 	cd build-tree/mozilla/browser/locales/; \
+		$(MAKE) -C ../../browser/branding/awesome-browser/content/; \
+		$(MAKE) -C ../../browser/branding/awesome-browser/locales/
+
+common-install-arch::
+	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/awesome-browser/
 	cd build-tree/mozilla/browser/locales/; \
-		mkdir -p $(CURDIR)/awesome-browser-3.0/$(DEBIAN_FF3_DIR); \
-		$(MAKE) -C ../../browser/branding/awesome-browser/ install \
-			mozappdir= DESTDIR=$(CURDIR)/awesome-browser-3.0/$(DEBIAN_FF3_DIR)
-
+		mkdir -p $(CURDIR)/debian/tmp-awesome/$(DEBIAN_FF3_DIR); \
+		$(MAKE) -C ../../browser/app/ install \
+			mozappdir= DESTDIR=$(CURDIR)/debian/tmp-awesome/$(DEBIAN_FF3_DIR)
+	
 binary-install/$(DEBIAN_NAME)::
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
