@@ -4,13 +4,20 @@ set -e
 
 LIBDIR=@LIBDIR@
 
-if [ "$1" = "remove" ] || [ "$1" = "upgrade" ] && dpkg --compare-versions $2 lt "3.0.2~"; then
-	diversions="icons/document.png mozicon128.png mozicon16.xpm mozicon50.xpm"
-	diversions="$diversions chrome/icons/default/default16.png \
+if [ "$1" = "remove" ] || [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" "lt" "3.0.2~"; then
+	diversions="icons/document.png icons/mozicon128.png \
+		icons/mozicon16.xpm icons/mozicon50.xpm \
+		chrome/icons/default/default16.png \
 		chrome/icons/default/default32.png \
-		chrome/icons/default/default48.png"
+		chrome/icons/default/default48.png \
+		chrome/awesome-branding.manifest \
+	"
 
 	for i in $diversions; do
-		dpkg-divert --remove $LIBDIR/$i
+		dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
 	done
+
+	if [ -e $LIBDIR/.autoreg ]; then
+		touch $LIBDIR/.autoreg
+	fi
 fi

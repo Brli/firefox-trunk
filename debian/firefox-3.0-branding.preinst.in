@@ -5,12 +5,15 @@ set -e
 LIBDIR=@LIBDIR@
 
 if [ "$1" = "install" ] || [ "$1" = "upgrade" ]; then
-	diversions="icons/document.png mozicon128.png mozicon16.xpm mozicon50.xpm"
-	diversions="$diversions chrome/icons/default/default16.png \
+	diversions="icons/document.png icons/mozicon128.png \
+		icons/mozicon16.xpm icons/mozicon50.xpm \
+		chrome/icons/default/default16.png \
 		chrome/icons/default/default32.png \
-		chrome/icons/default/default48.png"
+		chrome/icons/default/default48.png \
+		chrome/awesome-branding.manifest \
+	"
 
 	for i in $diversions; do
-		dpkg-divert --add $LIBDIR/$i --divert-to $LIBDIR/$i.diverted
+		 dpkg-divert --package firefox-3.0-branding --rename --divert $LIBDIR/$i.diverted-branding --add $LIBDIR/$i
 	done
 fi

@@ -38,7 +38,11 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       - update debian/firefox-3.0.install
     + dpkg-divert non-chrome branding bits; add firefox-3.0-branding.preinst.in
       and firefox-3.0-branding.postrm.in maintainer script templates and
-      register them for substitution in debian/rules
+      register them for substitution in debian/rules; for chrome the trick is
+      to not divert the whole branding, but just disable the
+      awesome-browser.manifest when the firefox-3.0-branding package gets
+      installed; doing so disables the locales override and unhooks the
+      awesome branding in a way that the offcial branding will take over.
       - add debian/firefox-3.0-branding.postrm.in
       - add debian/firefox-3.0-branding.preinst.in
       - update debian/rules
