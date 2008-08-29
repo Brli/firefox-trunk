@@ -53,6 +53,10 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     + introduce rules variable APP_NAME_OTHER, which is used as a placeholder
       for awesome-browser
       - update debian/rules
+    + special case when \"Web Browser\" is found
+      to be shortBrandName. In that case we use /usr/bin/awesome-browser as
+      exePath in nsGNOMEShellService (for settin default browser)
+      - update debian/patches/lp185622_system_path_default_browser.patch
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
