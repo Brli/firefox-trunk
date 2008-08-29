@@ -19,6 +19,9 @@ if [ "$1" = "remove" ]; then
 	for i in $diversions; do
 		dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
 	done
+	for i in $absdiversions; do
+		dpkg-divert --package firefox-3.0-branding --rename --remove $i
+	done
 
 	if [ -e $LIBDIR/.autoreg ]; then
 		touch $LIBDIR/.autoreg
