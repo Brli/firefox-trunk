@@ -217,7 +217,9 @@ binary-install/$(DEBIAN_NAME)-branding::
 		debian/tmp/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
 	dh_install -p$(DEBIAN_NAME)-branding \
 		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
-
+	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
+	cp -f debian/$(BRANDED_DESKTOP) \
+		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
 
 binary-install/$(DEBIAN_NAME):: debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
 

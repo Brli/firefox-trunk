@@ -3,6 +3,7 @@
 set -e
 
 LIBDIR=@LIBDIR@
+APPNAME=@APPNAME@
 
 diversions="icons/document.png icons/mozicon128.png \
 	icons/mozicon16.xpm icons/mozicon50.xpm \
@@ -11,6 +12,8 @@ diversions="icons/document.png icons/mozicon128.png \
 	chrome/icons/default/default48.png \
 	chrome/awesome-branding.manifest \
 "
+absdiversions="/usr/share/applications/${APPNAME}.desktop"
+
 if [ "$1" = "remove" ]; then
 
 	for i in $diversions; do
@@ -30,4 +33,14 @@ elif [ "$1" = "upgrade" ]; then
 			dpkg-divert --package firefox-3.0-branding --rename --remove $LIBDIR/$i
 		fi
 	done
+	for i in $absdiversions; then
+		# if the target doesnt exist at all, we can as well
+		# un-divert
+		realname=`dpkg-divert --truename $i`
+		if [ ! -e "$i" ] || [ ! -e "$realname" ]; then
+			echo "remove divert $i that disappeared during upgrade to $2"
+			dpkg-divert --package firefox-3.0-branding --rename --remove $i
+		fi
+	done
+
 fi

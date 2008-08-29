@@ -3,6 +3,7 @@
 set -e
 
 LIBDIR=@LIBDIR@
+APPNAME=@APPNAME@
 
 if [ "$1" = "install" ] || [ "$1" = "upgrade" ]; then
 	diversions="icons/document.png icons/mozicon128.png \
@@ -12,8 +13,12 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ]; then
 		chrome/icons/default/default48.png \
 		chrome/awesome-branding.manifest \
 	"
+	absdiversions="/usr/share/applications/${APPNAME}.desktop"
 
 	for i in $diversions; do
 		 dpkg-divert --package firefox-3.0-branding --rename --divert $LIBDIR/$i.diverted-branding --add $LIBDIR/$i
+	done
+	for i in $absdiversions; do
+		 dpkg-divert --package firefox-3.0-branding --rename --divert $i.diverted-branding --add $i
 	done
 fi
