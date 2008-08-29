@@ -3,7 +3,7 @@
 set -e
 
 LIBDIR=@LIBDIR@
-APPNAME=@APPNAME@
+APPNAME=firefox
 
 if [ "$1" = "install" ] || [ "$1" = "upgrade" ]; then
 	diversions="icons/document.png icons/mozicon128.png \

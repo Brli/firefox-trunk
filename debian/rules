@@ -205,6 +205,7 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF3_DIR)/defaults/syspref
 	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
 	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
+	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(APP_NAME_OTHER)-3.0.png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
 
@@ -218,7 +219,7 @@ binary-install/$(DEBIAN_NAME)-branding::
 	dh_install -p$(DEBIAN_NAME)-branding \
 		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
 	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
-	cp -f debian/$(BRANDED_DESKTOP) \
+	cp -f debian/$(DESKTOP_BRANDED) \
 		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
 
 binary-install/$(DEBIAN_NAME):: debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
