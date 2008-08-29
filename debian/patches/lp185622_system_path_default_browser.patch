@@ -1,6 +1,7 @@
 ---
  browser/components/shell/src/nsGNOMEShellService.cpp |   34 +++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+ browser/components/shell/src/nsGNOMEShellService.h   |    1 
+ 2 files changed, 33 insertions(+), 2 deletions(-)
 
 Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
 ===================================================================
@@ -120,3 +121,20 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  
      if (appProtocols[i].essential || aClaimAllTypes) {
        gconf->SetAppForProtocol(nsDependentCString(appProtocols[i].name),
+Index: mozilla/browser/components/shell/src/nsGNOMEShellService.h
+===================================================================
+--- mozilla.orig/browser/components/shell/src/nsGNOMEShellService.h
++++ mozilla/browser/components/shell/src/nsGNOMEShellService.h
+@@ -53,11 +53,12 @@
+ private:
+   ~nsGNOMEShellService() {}
+ 
+   NS_HIDDEN_(PRBool) KeyMatchesAppName(const char *aKeyValue) const;
+ 
+   PRPackedBool mCheckedThisSession;
+   PRPackedBool mUseLocaleFilenames;
+   nsCString    mAppPath;
++  nsCString    mSystemAppPath;
+ };
+ 
+ #endif // nsgnomeshellservice_h____
