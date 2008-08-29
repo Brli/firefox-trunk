@@ -57,6 +57,9 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       to be shortBrandName. In that case we use /usr/bin/awesome-browser as
       exePath in nsGNOMEShellService (for settin default browser)
       - update debian/patches/lp185622_system_path_default_browser.patch
+    + ship /usr/bin/awesome-browser and /usr/bin/awesome-browser-3.0 links in
+      firefox-3.0 package
+      - update debian/firefox-3.0.links
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
