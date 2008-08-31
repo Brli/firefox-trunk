@@ -10,6 +10,10 @@ firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
     - update debian/rules
+  * Fix buffer overflow in realpath() at runtime and drop -U_FORTIFY_SOURCE
+    from CPPFLAGS (LP: #263014)
+    - add debian/patches/bz412610_att335369_realpath_overflow.patch
+    - update debian/patches/series
 
  -- Fabien Tassin <fta@sofaraway.org>  Fri, 22 Aug 2008 14:59:10 +0200
 
