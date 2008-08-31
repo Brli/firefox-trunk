@@ -53,12 +53,6 @@ MOZ_TRANSLATION_AUTO_XPI_OUTDIR := debian/lp-export-xpis/
 MOZ_TRANSLATION_AUTO_XPI_SEARCHDIRS := debian/$(DEBIAN_NAME)
 MOZ_TRANSLATION_AUTO_XPI_LOCALE := en-US
 
-# workaround multiple crashes in Intrepid caused by Intrepid shipping gcc 4.3
-# with -D_FORTIFY_SOURCE=2 by default
-CPPFLAGS=-U_FORTIFY_SOURCE
-export CPPFLAGS
-$(warning export CPPFLAGS=$(CPPFLAGS))
-
 DEB_AUTO_UPDATE_AUTOCONF=2.13
 
 include /usr/share/cdbs/1/rules/tarball.mk
