@@ -1,4 +1,4 @@
-firefox-3.1 (3.1~a2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.1 (3.1~b1~hg20080902r18581+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream snapshot
   * Unset FORCE_OFFICIAL_BRANDING to return to minefield branding
@@ -34,7 +34,7 @@ firefox-3.1 (3.1~a2+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     to avoid a dead-lock in jemalloc when running under fakeroot
     - update debian/rules
 
- -- Fabien Tassin <fta@sofaraway.org>  Sun, 31 Aug 2008 04:03:53 +0200
+ -- Fabien Tassin <fta@sofaraway.org>  Tue, 02 Sep 2008 15:18:00 +0200
 
 firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
