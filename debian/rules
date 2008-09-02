@@ -176,6 +176,9 @@ common-build-arch::
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/
 
 common-post-build-arch::
+	cd build-tree/mozilla/; \
+		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/; \
+		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/
 	cd build-tree/mozilla/; \
@@ -224,11 +227,11 @@ binary-install/$(DEBIAN_NAME)-branding::
 	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
 	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons
 	dh_install -p$(DEBIAN_NAME)-branding \
-		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/browser-branding* $(DEBIAN_FF3_DIR)/chrome
+		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/browser-branding* $(DEBIAN_FF3_DIR)/chrome
 	dh_install -p$(DEBIAN_NAME)-branding \
-		debian/tmp/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
+		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
 	dh_install -p$(DEBIAN_NAME)-branding \
-		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
+		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
 	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
 	cp -f debian/$(DESKTOP_BRANDED) \
 		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
