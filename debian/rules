@@ -25,25 +25,29 @@ EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
 FORCE_OFFICIAL_BRANDING = 1
 
+BRANDING_NAME_OTHER := awesome-browser
+DEBIAN_NAME_OTHER := webbrowser-3.0
+
+DESKTOP  = $(DEBIAN_NAME_OTHER).desktop
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = $(DEBIAN_NAME)-final.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-final.desktop
 else
 # Change branding based on Version
 ifneq (,$(findstring ~cvs,$(DEBIAN_VERSION)))
 	# minefield branding for cvs snapshots
 	BRANDING = $(NULL)
-	DESKTOP  = $(DEBIAN_NAME)-minefield.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-minefield.desktop
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha builds
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP  = $(DEBIAN_NAME)-granparadiso.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-granparadiso.desktop
 else
 	# official branding for beta, final and final RCs builds
 	BRANDING = --enable-official-branding
-	DESKTOP  = $(DEBIAN_NAME)-final.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-final.desktop
 endif
 endif
 endif
@@ -52,12 +56,6 @@ endif
 MOZ_TRANSLATION_AUTO_XPI_OUTDIR := debian/lp-export-xpis/
 MOZ_TRANSLATION_AUTO_XPI_SEARCHDIRS := debian/$(DEBIAN_NAME)
 MOZ_TRANSLATION_AUTO_XPI_LOCALE := en-US
-
-# workaround multiple crashes in Intrepid caused by Intrepid shipping gcc 4.3
-# with -D_FORTIFY_SOURCE=2 by default
-CPPFLAGS=-U_FORTIFY_SOURCE
-export CPPFLAGS
-$(warning export CPPFLAGS=$(CPPFLAGS))
 
 DEB_AUTO_UPDATE_AUTOCONF=2.13
 
@@ -159,7 +157,36 @@ debian/firefox.sh: debian/firefox.sh.in
 debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
 
+BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
+	../../browser/branding/$(BRANDING_NAME_OTHER)/locales/Makefile \
+	../../browser/branding/$(BRANDING_NAME_OTHER)/content/Makefile \
+	$(NULL)
+
+common-build-arch::
+	cd build-tree/mozilla/browser/locales/; \
+		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
+	cd build-tree/mozilla/browser/locales/; \
+		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
+		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/
+
+common-post-build-arch::
+	cd build-tree/mozilla/; \
+		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/; \
+		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/
+	cd build-tree/mozilla/browser/locales/; \
+		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/
+	cd build-tree/mozilla/; \
+		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
+		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
+	
 binary-install/$(DEBIAN_NAME)::
+	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/icons
+	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/icons
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/classic.* \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/en-US.* \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/browser.* \
+			$(DEBIAN_FF3_DIR)/chrome
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
 	  touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
@@ -175,14 +202,42 @@ binary-install/$(DEBIAN_NAME)::
 	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF3_DIR)/defaults/syspref
 	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
 	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
+	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
+	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
 
-binary-install/firefox-3.0::
-	cat debian/ubuntu-useragent.js.tmpl | sed \
+binary-install/$(DEBIAN_NAME_OTHER)-branding::
+	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
+	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
+	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
+	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
+	cp -f debian/$(DESKTOP) \
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+
+binary-install/$(DEBIAN_NAME)-branding::
+	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
+	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons
+	dh_install -p$(DEBIAN_NAME)-branding \
+		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/browser-branding* $(DEBIAN_FF3_DIR)/chrome
+	dh_install -p$(DEBIAN_NAME)-branding \
+		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
+	dh_install -p$(DEBIAN_NAME)-branding \
+		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
+	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
+	cp -f debian/$(DESKTOP_BRANDED) \
+		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+
+binary-install/$(DEBIAN_NAME):: debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
+
+debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js: debian/ubuntu-useragent.js.tmpl
+	sed \
 		-e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
 		-e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 		-e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
-	> debian/firefox-3.0/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
+		< $< > $@
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~cvs.*/pre/' | tr -d '~')
 
@@ -197,9 +252,11 @@ ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
 	$(error EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
 endif
 
-binary-post-install/firefox-3.0::
-	sed -i -e 's/^MaxVersion=.*/MaxVersion=1.9.0.*/' debian/firefox-3.0/$(DEBIAN_FF3_DIR)/application.ini
-	sed -i -e 's/^MinVersion=.*/MinVersion=1.9.0.1/' debian/firefox-3.0/$(DEBIAN_FF3_DIR)/application.ini
+binary-post-install/$(DEBIAN_NAME)::
+	sed -i \
+		-e 's/^MaxVersion=.*/MaxVersion=1.9.0.*/' \
+		-e 's/^MinVersion=.*/MinVersion=1.9.0.1/' \
+		debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/application.ini
 
 pre-build:: $(subst_files) debian/migrator/ffox-3-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
