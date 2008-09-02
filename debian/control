@@ -19,14 +19,19 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	libdbus-glib-1-dev (>= 0.60),
 	xulrunner-1.9-dev (>= 1.9.0.1)
 	libnspr4-dev, libnss3-dev,
-	mozilla-devscripts (>= 0.06~),
+	mozilla-devscripts (>= 0.10~),
 	lsb-release
 Standards-Version: 3.7.3
 
 Package: firefox-3.0
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9 (>= 1.9.0.1), ${shlibs:Depends}
-Recommends: ubufox
+Depends: fontconfig,
+	psmisc,
+	debianutils (>= 1.16),
+	xulrunner-1.9 (>= 1.9.0.1),
+	${shlibs:Depends},
+	firefox-3.0-branding | webbrowser-3.0-branding
+Recommends: ubufox,
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
 Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
@@ -38,6 +43,15 @@ Description: safe and easy web browser from Mozilla
  .
  Install this firefox package too, if you want to be automatically upgraded to
  new major firefox versions in the future.
+
+Package: firefox-3.0-branding
+Architecture: any
+Depends: firefox-3.0 (= ${binary:Version})
+Replaces: firefox-3.0
+Conflicts: webbrowser-3.0-branding
+Description: Package that ships the firefox branding
+ This package ships the firefox branding bits. If you remove this package you
+ your user experience will become that of the webbrowser.
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
@@ -77,9 +91,35 @@ Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
 
+Package: webbrowser-3.0-branding
+Architecture: any
+Depends: firefox-3.0 (= ${binary:Version})
+Replaces: firefox-3.0
+Conflicts: firefox-3.0-branding
+Description: package that ships a unbranded firefox web browser
+ The Awesome Browser refers to the unbranded build of firefox 3.0.
+ Install the firefox package if you want a branded build.
+ .
+ This is a meta package that will point to the latest webbrowser package
+ in your distribution. Don't remove this if you want to receive automatic major
+ version upgrades for this package in future.
+
+
+Package: webbrowser
+Architecture: all
+Depends: firefox-3.0, webbrowser-3.0-branding
+Description: meta package for the unbranded webbrowser
+ Webbrowser 3 is an unbranded version of the popular Firefox webbrowser; it is
+ written in the XUL language and designed to be lightweight and cross-platform.
+ .
+ This is a meta package that will point to the latest webbrowser package in your
+ distribution.
+ Don't remove this if you want to receive automatic major version upgrades for
+ this package in future.
+
 Package: firefox
 Architecture: all
-Depends: firefox-3.0
+Depends: firefox-3.0, firefox-3.0-branding
 Description: meta package for the popular mozilla web browser
  Firefox 3 is the next major release of the standalone Mozilla browser; it is
  written in the XUL language and designed to be lightweight and cross-platform.

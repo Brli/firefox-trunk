@@ -1,11 +1,70 @@
 firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Alexander Sack ]
+  [ Alexander Sack <asac@ubuntu.com> ]
   * Fix: LP #246775 - "wrong user-agent string in hardy build" by adding proper
     build-depends
     - update debian/control
   * Fix: LP #240880 - Remove "previously known as" paragraph
     - update debian/control
+  * webbrowser-3.0-branding split using the awesome branding
+    + we add a new .desktop file to the source and teach the debian/rules
+      code about it
+      - add debian/webbrowser-3.0.desktop
+      - update debian/rules
+    + we magically run config.status on just the Makefiles of our branding
+      in the binary-install/webbrowser-3.0-branding target
+      - update debian/rules
+    + we introduce a firefox-3.0-branding package as well as an
+      webbrowser-3.0-branding package in control; webbrowser-3.0-branding
+      conflicts firefox-3.0-branding, while firefox-3.0 depends on
+      firefox-3.0-branding | webbrowser-3.0-branding; we update the firefox
+      meta package to depend on the firefox-3.0-branding; we add a new
+      metapackage "webbrowser" that tracks the stable webbrowser branch, just
+      like firefox, but with the difference that it depends on 
+      webbrower-3.0-branding package
+      - update debian/control
+    + higher mozilla-devscripts bar to 0.10 to reflect that we need that
+      version to properly produce awesome-browser branded original tarballs
+      - update debian/control
+    + patch browser/installer packages-static file to install awesome-browser
+      content and locale bits
+      - add debian/patches/awesome_browser_branding_install.patch
+      - update debian/patches/series
+    + patch firefox to ship branding chrome bits in separate jar files.
+      - debian/patches/browser_branding.patch
+      - debian/patches/series
+    + install firefox branding bits to the firefox-3.0-branding package
+      and remove them from the firefox-3.0 package so that we ship the awesome
+      browser chrome by default; in turn we fix that not all awesome branding
+      bits were available by doing a full make install
+      DESTDIR=debian/tmp-awesome.
+      - update debian/rules
+      - update debian/firefox-3.0.install
+    + dpkg-divert non-chrome branding bits; add firefox-3.0-branding.preinst.in
+      and firefox-3.0-branding.postrm.in maintainer script templates and
+      register them for substitution in debian/rules; for chrome the trick is
+      to not divert the whole branding, but just disable the
+      awesome-browser.manifest when the firefox-3.0-branding package gets
+      installed; doing so disables the locales override and unhooks the
+      awesome branding in a way that the offcial branding will take over. We
+      also try to cleanup diverts that have disappeared during upgrade in
+      old-postrm of the branding package; this is required to properly cleanup
+      during major firefox version upgrades - where pkglibdir changes.
+      - add debian/firefox-3.0-branding.postrm.in
+      - add debian/firefox-3.0-branding.preinst.in
+      - update debian/rules
+    + introduce rules variable APP_NAME_OTHER, which is used as a placeholder
+      for awesome-browser
+      - update debian/rules
+    + special case when \"Web Browser\" is found
+      to be shortBrandName. In that case we use /usr/bin/webbrowser as
+      exePath in nsGNOMEShellService (for settin default browser)
+      - update debian/patches/lp185622_system_path_default_browser.patch
+    + ship /usr/bin/webbrowser and /usr/bin/webbrowser-3.0 links in
+      firefox-3.0 package
+      - update debian/firefox-3.0.links
+    + ship awesome branding in webbrowser-3.0-branding package
+      - update debian/rules
 
   [ Fabien Tassin ]
   * Drop more firefox-3.0 references to ease merge with the 3.1 branch
