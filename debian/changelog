@@ -6,7 +6,7 @@ firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
   * Fix: LP #240880 - Remove "previously known as" paragraph
     - update debian/control
-  * webbrowser-3.0-branding split using the awesome branding
+  * webbrowser-3.0-branding split using the awesome branding (LP: #263938)
     + we add a new .desktop file to the source and teach the debian/rules
       code about it
       - add debian/webbrowser-3.0.desktop
