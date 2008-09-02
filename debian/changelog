@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.2~cvs20080821t0507+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * Fix: LP #246775 - "wrong user-agent string in hardy build" by adding proper
