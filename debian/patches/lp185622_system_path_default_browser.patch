@@ -6,11 +6,11 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
 ===================================================================
 --- mozilla.orig/browser/components/shell/src/nsGNOMEShellService.cpp
 +++ mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
-@@ -62,16 +62,18 @@
- #endif
- 
+@@ -64,16 +64,18 @@
  #include <glib.h>
  #include <glib-object.h>
+ #include <gtk/gtkversion.h>
+ #include <gdk/gdk.h>
  #include <gdk-pixbuf/gdk-pixbuf.h>
  #include <limits.h>
  #include <stdlib.h>
@@ -25,7 +25,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  
  struct MimeTypeAssociation
  {
-@@ -135,17 +137,16 @@
+@@ -137,17 +139,16 @@
    return appPath->GetNativePath(mAppPath);
  }
  
@@ -43,7 +43,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
        return PR_FALSE;
      }
  
-@@ -153,19 +154,25 @@
+@@ -155,19 +156,25 @@
      g_free(nativePath);
    } else {
      commandPath = g_find_program_in_path(aKeyValue);
@@ -69,7 +69,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  {
    *aIsDefaultBrowser = PR_FALSE;
    if (aStartupCheck)
-@@ -211,18 +218,23 @@
+@@ -213,18 +220,23 @@
  #ifdef DEBUG
    if (aForAllUsers)
      NS_WARNING("Setting the default browser for all users is not yet supported");
@@ -81,7 +81,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
 +
 +#ifdef SYSTEM_PATH_BUILD
 +  nsCAutoString appKeyValue(NS_LITERAL_CSTRING("/usr/bin/" MOZ_APP_NAME));
-+#else 
++#else
    nsCAutoString appKeyValue(mAppPath);
 -  appKeyValue.Append(" \"%s\"");
 +#endif
