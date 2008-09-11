@@ -30,7 +30,7 @@ Depends: fontconfig,
 	debianutils (>= 1.16),
 	xulrunner-1.9 (>= 1.9.0.1),
 	${shlibs:Depends},
-	firefox-3.0-branding | webbrowser-3.0-branding
+	firefox-3.0-branding | abrowser-3.0-branding
 Recommends: ubufox,
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
@@ -48,10 +48,10 @@ Package: firefox-3.0-branding
 Architecture: any
 Depends: firefox-3.0 (= ${binary:Version})
 Replaces: firefox-3.0
-Conflicts: webbrowser-3.0-branding
+Conflicts: abrowser-3.0-branding
 Description: Package that ships the firefox branding
  This package ships the firefox branding bits. If you remove this package you
- your user experience will become that of the webbrowser.
+ your user experience will become that of the abrowser.
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
@@ -91,28 +91,28 @@ Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
 
-Package: webbrowser-3.0-branding
+Package: abrowser-3.0-branding
 Architecture: any
 Depends: firefox-3.0 (= ${binary:Version})
 Replaces: firefox-3.0
 Conflicts: firefox-3.0-branding
-Description: package that ships a unbranded firefox web browser
- The Awesome Browser refers to the unbranded build of firefox 3.0.
+Description: package that ships the abrowser branding
+ The ABrowser refers to the unbranded build of firefox 3.0.
  Install the firefox package if you want a branded build.
  .
- This is a meta package that will point to the latest webbrowser package
+ This is a meta package that will point to the latest abrowser package
  in your distribution. Don't remove this if you want to receive automatic major
  version upgrades for this package in future.
 
 
-Package: webbrowser
+Package: abrowser
 Architecture: all
-Depends: firefox-3.0, webbrowser-3.0-branding
-Description: meta package for the unbranded webbrowser
- Webbrowser 3 is an unbranded version of the popular Firefox webbrowser; it is
+Depends: firefox-3.0, abrowser-3.0-branding
+Description: meta package for the unbranded abrowser
+ ABrowser 3 is an unbranded version of the popular Firefox webbrowser; it is
  written in the XUL language and designed to be lightweight and cross-platform.
  .
- This is a meta package that will point to the latest webbrowser package in your
+ This is a meta package that will point to the latest abrowser package in your
  distribution.
  Don't remove this if you want to receive automatic major version upgrades for
  this package in future.
