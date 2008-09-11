@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=Web Browser
+Name=A Browser
 Name[ca]=Navegador web
 Name[cs]=Webový prohlížeč
 Name[es]=Navegador web
@@ -65,7 +65,7 @@ Exec=webbrowser %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=webbrowser-3.0
+Icon=abrowser-3.0
 Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;
 StartupWMClass=Firefox

@@ -3,6 +3,13 @@ firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu2) UNRELEASED; urgency=low
   * new patch that adds canonical affiliate code to en-US amazon searchplugin
     - add debian/patches/ubuntu_codes_amazon.patch
     - update debian/patches/series
+  * rename the webbrowser and webbrowser-3.0-branding package to abrowser and
+    abrowser-3.0-branding; in turn we rename the desktop file and the links
+    to the binaries
+    - rename debian/webbrowser-3.0.desktop
+    - update debian/control
+    - update debian/rules
+    - update debian/firefox-3.0.links
 
  -- Alexander Sack <asac@ubuntu.com>  Mon, 08 Sep 2008 12:40:49 +0200
 
