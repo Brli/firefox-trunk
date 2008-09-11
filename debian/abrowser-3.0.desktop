@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=A Browser
+Name=A-Browser
 Name[ca]=Navegador web
 Name[cs]=Webový prohlížeč
 Name[es]=Navegador web
@@ -61,7 +61,7 @@ GenericName[pt]=Navegador Web
 GenericName[pt_BR]=Navegador Web
 GenericName[sk]=Internetový prehliadač
 GenericName[sv]=Webbläsare
-Exec=webbrowser %u
+Exec=abrowser %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
