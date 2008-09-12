@@ -29,14 +29,14 @@ Index: mozilla/browser/branding/unofficial/locales/jar.mn
 -@AB_CD@.jar:
 +browser-branding-@AB_CD@.jar:
  % locale branding @AB_CD@ %locale/branding/
- # Gran Paradiso branding only exists in en-US
+ # Unofficial branding only exists in en-US
    locale/branding/brand.dtd        (en-US/brand.dtd)
  * locale/branding/brand.properties (en-US/brand.properties)
 Index: mozilla/browser/installer/unix/packages-static
 ===================================================================
 --- mozilla.orig/browser/installer/unix/packages-static
 +++ mozilla/browser/installer/unix/packages-static
-@@ -273,16 +273,21 @@
+@@ -267,16 +267,21 @@
  bin/chrome/toolkit.manifest
  bin/chrome/icons/default/default16.png
  bin/chrome/icons/default/default32.png
