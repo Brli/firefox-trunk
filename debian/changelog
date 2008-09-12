@@ -43,8 +43,10 @@ firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
   * Add a -g/--debug switch to the launcher script to start firefox inside gdb.
     Note that it must be specified first on the command line.
     - update debian/firefox.sh.in
+  * Make the branding patch also work for non official branding.
+    - update debian/patches/browser_branding.patch
 
- -- Fabien Tassin <fta@ubuntu.com>  Fri, 12 Sep 2008 17:15:49 +0200
+ -- Fabien Tassin <fta@ubuntu.com>  Fri, 12 Sep 2008 21:52:45 +0200
 
 firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu2) intrepid; urgency=low
 
