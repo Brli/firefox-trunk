@@ -1,0 +1,85 @@
+---
+ browser/branding/unofficial/content/jar.mn     |    2 +-
+ browser/branding/unofficial/locales/jar.mn     |    2 +-
+ browser/installer/unix/packages-static         |    5 +++++
+ other-licenses/branding/firefox/content/jar.mn |    2 +-
+ other-licenses/branding/firefox/locales/jar.mn |    2 +-
+ 5 files changed, 9 insertions(+), 4 deletions(-)
+
+Index: mozilla/browser/branding/unofficial/content/jar.mn
+===================================================================
+--- mozilla.orig/browser/branding/unofficial/content/jar.mn
++++ mozilla/browser/branding/unofficial/content/jar.mn
+@@ -1,7 +1,7 @@
+-browser.jar:
++browser-browser.jar:
+ % content branding %content/branding/ xpcnativewrappers=yes
+   content/branding/about.png                     (about.png)
+   content/branding/aboutCredits.png              (aboutCredits.png)
+   content/branding/aboutFooter.png               (aboutFooter.png)
+   content/branding/icon48.png                    (icon48.png)
+   content/branding/icon64.png                    (icon64.png)
+Index: mozilla/browser/branding/unofficial/locales/jar.mn
+===================================================================
+--- mozilla.orig/browser/branding/unofficial/locales/jar.mn
++++ mozilla/browser/branding/unofficial/locales/jar.mn
+@@ -1,7 +1,7 @@
+ #filter substitution
+ 
+-@AB_CD@.jar:
++browser-branding-@AB_CD@.jar:
+ % locale branding @AB_CD@ %locale/branding/
+ # Gran Paradiso branding only exists in en-US
+   locale/branding/brand.dtd        (en-US/brand.dtd)
+ * locale/branding/brand.properties (en-US/brand.properties)
+Index: mozilla/browser/installer/unix/packages-static
+===================================================================
+--- mozilla.orig/browser/installer/unix/packages-static
++++ mozilla/browser/installer/unix/packages-static
+@@ -273,16 +273,21 @@
+ bin/chrome/toolkit.manifest
+ bin/chrome/icons/default/default16.png
+ bin/chrome/icons/default/default32.png
+ bin/chrome/icons/default/default48.png
+ bin/chrome/reporter.manifest
+ bin/chrome/reporter.jar
+ bin/@PREF_DIR@/reporter.js
+ 
++bin/chrome/browser-branding.jar
++bin/chrome/browser-branding.manifest
++bin/chrome/browser-branding-en-US.jar
++bin/chrome/browser-branding-en-US.manifest
++
+ bin/chrome/awesome-branding.jar
+ bin/chrome/awesome-branding.manifest
+ bin/chrome/awesome-branding-en-US.jar
+ bin/chrome/awesome-branding-en-US.manifest
+ 
+ 
+ ; shell icons
+ bin/icons/*.xpm
+Index: mozilla/other-licenses/branding/firefox/content/jar.mn
+===================================================================
+--- mozilla.orig/other-licenses/branding/firefox/content/jar.mn
++++ mozilla/other-licenses/branding/firefox/content/jar.mn
+@@ -1,7 +1,7 @@
+-browser.jar:
++browser-branding.jar:
+ % content branding %content/branding/ xpcnativewrappers=yes
+   content/branding/about.png                     (about.png)
+   content/branding/aboutCredits.png              (aboutCredits.png)
+   content/branding/aboutFooter.png               (aboutFooter.png)
+   content/branding/icon48.png                    (icon48.png)
+   content/branding/icon64.png                    (icon64.png)
+Index: mozilla/other-licenses/branding/firefox/locales/jar.mn
+===================================================================
+--- mozilla.orig/other-licenses/branding/firefox/locales/jar.mn
++++ mozilla/other-licenses/branding/firefox/locales/jar.mn
+@@ -1,6 +1,6 @@
+ #filter substitution
+ 
+-@AB_CD@.jar:
++browser-branding-@AB_CD@.jar:
+ % locale branding @AB_CD@ %locale/branding/
+   locale/branding/brand.dtd        (%brand.dtd)
+ * locale/branding/brand.properties (%brand.properties)

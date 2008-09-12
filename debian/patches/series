@@ -11,3 +11,6 @@ lp185622_system_path_default_browser.patch
 bzXXX_reload_new_plugins.patch
 ubuntu_no_app_updates.patch
 bz412610_att335369_realpath_overflow.patch
+awesome_browser_branding_install.patch
+browser_branding.patch
+ubuntu_codes_amazon.patch

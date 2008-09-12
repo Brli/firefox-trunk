@@ -21,19 +21,33 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	libdbus-glib-1-dev (>= 0.60),
 	xulrunner-1.9.1-dev
 	libnspr4-dev, libnss3-dev,
-	mozilla-devscripts (>= 0.08~),
+	mozilla-devscripts (>= 0.10~),
 	lsb-release
 Standards-Version: 3.7.3
 
 Package: firefox-3.1
 Architecture: any
-Depends: fontconfig, psmisc, debianutils (>= 1.16), xulrunner-1.9.1, ${shlibs:Depends}
+Depends: fontconfig,
+	psmisc,
+	debianutils (>= 1.16),
+	xulrunner-1.9.1,
+	${shlibs:Depends},
+	firefox-3.1-branding | abrowser-3.1-branding
 Suggests: firefox-3.1-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
+
+Package: firefox-3.1-branding
+Architecture: any
+Depends: firefox-3.1 (= ${binary:Version})
+Replaces: firefox-3.1
+Conflicts: abrowser-3.1-branding
+Description: Package that ships the firefox branding
+ This package ships the firefox branding bits. If you remove this package you
+ your user experience will become that of the abrowser.
 
 Package: firefox-3.1-gnome-support
 Architecture: any
@@ -52,3 +66,28 @@ Depends: firefox-3.1 (= ${binary:Version})
 Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static libraries 
  needed to develop applications using Mozilla Firefox.
+
+Package: abrowser-3.1-branding
+Architecture: any
+Depends: firefox-3.1 (= ${binary:Version})
+Replaces: firefox-3.1
+Conflicts: firefox-3.1-branding
+Description: package that ships the abrowser branding
+ The ABrowser refers to the unbranded build of firefox 3.1.
+ Install the firefox package if you want a branded build.
+ .
+ This is a meta package that will point to the latest abrowser package
+ in your distribution. Don't remove this if you want to receive automatic major
+ version upgrades for this package in future.
+
+Package: abrowser-3.1
+Architecture: all
+Depends: firefox-3.1, abrowser-3.1-branding
+Description: meta package for the unbranded abrowser
+ ABrowser 3.1 is an unbranded version of the popular Firefox webbrowser; it is
+ written in the XUL language and designed to be lightweight and cross-platform.
+ .
+ This is a meta package that will point to the latest abrowser package in your
+ distribution.
+ Don't remove this if you want to receive automatic major version upgrades for
+ this package in future.
