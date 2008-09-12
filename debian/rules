@@ -217,7 +217,7 @@ binary-install/$(DEBIAN_NAME_OTHER)-branding::
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_NAME).desktop
 
 binary-install/$(DEBIAN_NAME)-branding::
 	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
@@ -230,7 +230,7 @@ binary-install/$(DEBIAN_NAME)-branding::
 		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
 	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
 	cp -f debian/$(DESKTOP_BRANDED) \
-		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_NAME).desktop
 
 binary-install/$(DEBIAN_NAME):: debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
 
