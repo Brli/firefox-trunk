@@ -1,14 +1,5 @@
 firefox-3.1 (3.1~b1~hg20080916r19311+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot
-  * Unset FORCE_OFFICIAL_BRANDING to return to minefield branding
-    - update debian/rules
-  * Drop system nspr/nss
-    - update debian/rules
-  * Update requirement for system sqlite3 to >= 3.6.0
-    - update debian/rules
-  * Add libasound2-dev to Build-Depends for the new HTML5 <video> tag
-    - update debian/control
   * Change appname and use a dedicated profile
     - update debian/firefox.sh.in
     - add debian/patches/firefox-profilename
@@ -16,6 +7,18 @@ firefox-3.1 (3.1~b1~hg20080916r19311+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Use Shiretoko, codename for 3.1 instead of Granparadiso
     - rename debian/firefox-3.1-granparadiso.desktop => firefox-3.1-shiretoko.desktop
     - update debian/rules
+  * Unset FORCE_OFFICIAL_BRANDING to return to minefield branding for
+    intermediate snapshots and Shiretoko branding for milestones
+    - update debian/rules
+  * Set MALLOC_OPTIONS=O before calling xulrunner during build. This is needed
+    to avoid a dead-lock in jemalloc when running under fakeroot
+    - update debian/rules
+  * Drop system nspr/nss
+    - update debian/rules
+  * Update requirement for system sqlite3 to >= 3.6.0
+    - update debian/rules
+  * Add libasound2-dev to Build-Depends for the new HTML5 <video> tag
+    - update debian/control
   * Drop dom-inspector, venkman and legacy firefox-{,trunk,granparadiso}
     packages
     - update debian/control
@@ -29,14 +32,8 @@ firefox-3.1 (3.1~b1~hg20080916r19311+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Drop useless patches
     - drop debian/patches/bz436133_att322801.patch
     - update debian/patches/series
-  * Add a -d/--debug switch to the launcher script to start firefox inside gdb.
-    Note that it must be specified first on the command line.
-    - update debian/firefox.sh.in
-  * Set MALLOC_OPTIONS=O before calling xulrunner during build. This is needed
-    to avoid a dead-lock in jemalloc when running under fakeroot
-    - update debian/rules
 
- -- Fabien Tassin <fta@ubuntu.com>  Tue, 16 Sep 2008 20:36:40 +0200
+ -- Fabien Tassin <fta@ubuntu.com>  Wed, 17 Sep 2008 23:57:55 +0200
 
 firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
 
