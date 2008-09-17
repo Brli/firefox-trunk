@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Add a -g/--debug switch to the launcher script to start firefox inside gdb.
@@ -16,7 +16,7 @@ firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
     approaches and unused now.
     - update debian/rules
 
- -- Fabien Tassin <fta@ubuntu.com>  Fri, 12 Sep 2008 21:52:45 +0200
+ -- Fabien Tassin <fta@ubuntu.com>  Wed, 17 Sep 2008 17:30:08 +0200
 
 firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu2) intrepid; urgency=low
 
