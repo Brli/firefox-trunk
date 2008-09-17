@@ -8,6 +8,8 @@ DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 DEBIAN_NAME	:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
 DEBIAN_APP_NAME	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
+DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/.*-//g')
+DEBIAN_META_NAME := $(shell grep '^Package: $(DEBIAN_APP_NAME)$$' $(CURDIR)/debian/control | sed -e 's/^Package: //')
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_VER  := $(shell MALLOC_OPTIONS=O xulrunner-1.9.1 --gre-version)
 DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
@@ -216,8 +218,13 @@ binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
+ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_NAME).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+else
+	cp -f debian/$(DESKTOP) \
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER).desktop
+endif
 
 binary-install/$(DEBIAN_NAME)-branding::
 	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
@@ -229,8 +236,13 @@ binary-install/$(DEBIAN_NAME)-branding::
 	dh_install -p$(DEBIAN_NAME)-branding \
 		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
 	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
+ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP_BRANDED) \
-		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_NAME).desktop
+		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+else
+	cp -f debian/$(DESKTOP_BRANDED) \
+		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER).desktop
+endif
 
 binary-install/$(DEBIAN_NAME):: debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
 
@@ -258,7 +270,6 @@ pre-build:: $(subst_files) debian/migrator/ffox-31-beta-profile-migration-dialog
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
-		cp debian/$(DESKTOP) debian/$(DEBIAN_NAME).desktop; \
 		for i in $(DEBIAN_EXECUTABLES); do \
 			chmod a+x debian/$$i; \
 		done
