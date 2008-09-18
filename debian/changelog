@@ -15,6 +15,9 @@ firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     pre-build:: which is a left over from previous branding split
     approaches and unused now.
     - update debian/rules
+  * Use APPNAME=`basename $0` in firefox start script; fix bug that would
+    trick abrowser into restarting itself through the "firefox" command.
+    - debian/firefox.sh.in
 
  -- Fabien Tassin <fta@ubuntu.com>  Wed, 17 Sep 2008 17:30:08 +0200
 

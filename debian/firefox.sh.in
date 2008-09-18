@@ -8,7 +8,7 @@
 #  Fabien Tassin <fta@sofaraway.org>
 # License: GPLv2 or later
 
-APPNAME=firefox
+APPNAME=`basename $0`
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
 NAME=`basename $0`
