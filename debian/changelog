@@ -18,6 +18,12 @@ firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Use APPNAME=`basename $0` in firefox start script; fix bug that would
     trick abrowser into restarting itself through the "firefox" command.
     - debian/firefox.sh.in
+  * (work-in-progress) Fix LP: #269656 - AN IRRELEVANT LICENSE IS PRESENTED TO
+    YOU FREE-OF-CHARGE ON STARTUP; we implement the "Know Your Rights..."
+    approach based on the mocked-up's published by mozilla
+    http://blog.lizardwrangler.com/2008/09/17/mock-ups-available-for-notices-previously-was-eula/
+    - add debian/patches/lp269656_know_your_rights.patch
+    - update debian/patches/series
 
  -- Fabien Tassin <fta@ubuntu.com>  Wed, 17 Sep 2008 17:30:08 +0200
 
