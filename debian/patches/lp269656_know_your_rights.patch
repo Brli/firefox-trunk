@@ -1,18 +1,17 @@
 ---
- browser/base/content/aboutRights.xhtml   |  187 +++++++++++++++++++++++++++++++
- browser/base/jar.mn                      |    1 
- browser/components/Makefile.in           |    1 
- browser/components/aboutRights.js        |   63 ++++++++++
- browser/components/nsBrowserGlue.js      |  115 ++++++++++++++-----
- browser/installer/unix/packages-static   |    1 
- toolkit/content/widgets/notification.xml |    4 
- 7 files changed, 345 insertions(+), 27 deletions(-)
+ browser/base/content/aboutRights.xhtml |  192 +++++++++++++++++++++++++++++++++
+ browser/base/jar.mn                    |    1 
+ browser/components/Makefile.in         |    1 
+ browser/components/aboutRights.js      |   63 ++++++++++
+ browser/components/nsBrowserGlue.js    |  115 +++++++++++++++----
+ browser/installer/unix/packages-static |    1 
+ 6 files changed, 346 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/base/content/aboutRights.xhtml
 ===================================================================
 --- /dev/null
 +++ mozilla/browser/base/content/aboutRights.xhtml
-@@ -0,0 +1,187 @@
+@@ -0,0 +1,192 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +
 +# <!--
@@ -58,11 +57,10 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +<html xmlns="http://www.w3.org/1999/xhtml">
 +<head>
 +<title>Free software and Mozilla services</title>
++<link rel="stylesheet" href="chrome://global/skin/about.css" type="text/css" media="all" />
 +</head>
 +<body>
-+
-+<h1>Free software and Mozilla services</h1>
-+
++<div style="font-size: xx-large">Free software and Mozilla services</div>
 +<p>
 +Mozilla Firefox is free and open source software, built by a community of
 +thousands from all over the world. There are a few things you should know:
@@ -87,111 +85,117 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +    Firefox also incorporates website information services ("Services"), such as
 +    safe-browsing features; however, we cannot guarantee the Services are 100%
 +    accurate or error-free. See the details below including instructions to
-+    disable these features.
-+  </li>
-+</ul>
++    disable these features:
 +
-+<h3>
-+  <a href="about:rights#hiddenpart" onclick="return showhidden()">
++<div id="part2" style="-moz-border-radius: 3pt;">
++  <a href="about:rights#hiddenpart" onclick="return showhidden()" style="font-size: large">
 +    Mozilla Firefox Website Services Agreement
 +  </a>
-+</h3>
++<div id="hiddenpart" style="padding: 0em; margin: 0em">
++  <script type="text/javascript">
++    h = document.getElementById('hiddenpart');
++    p2 = document.getElementById('part2');
++    h.style.display = 'none';
++    p2.style.border="none 1pt lightgrey";
++    p2.style.background="none";
++    p2.style.padding="0.5em 1em 0.5em 1em";
++    p2.style.margin="0.25em 0em 0em -1em";
 +
-+<div id="hiddenpart" style="padding-left:2em">
-+<p style="border: dotted 3pt grey; padding: 0em 1em 0em 1em; -moz-border-radius: 6pt">
-+<script type="text/javascript">
-+h = document.getElementById('hiddenpart');
-+h.style.display = 'none';
-+
-+switchElem = document.getElementById("switch");
-+function showhidden() {
-+    if (h.style.display == 'none') {
++    switchElem = document.getElementById("switch");
++    function showhidden() {
++      if (h.style.display == 'none') {
++        p2.style.border = "dotted 1pt lightgrey";
++	p2.style.background = "#fafafa";
 +        h.style.display = 'block';
-+    }
-+    else {
++      }
++      else {
++        p2.style.border ="none 1pt lightgrey";
++	p2.style.background = "none";
 +        h.style.display = 'none';
++      }
++      return false;
 +    }
-+    return false;
-+}
-+</script>
++  </script>
 +
-+<p>
-+  Mozilla Firefox utilizes website information services ("Services"), such as
-+  safe-browsing features, which are provided by the Mozilla Corporation
-+  ("Mozilla") and made available to you subject to the terms below. If you do
-+  not agree to these terms please disable the feature by clicking Edit ->
-+  Preferences -> Security and uncheck the options for "Tell me if the site I'm
-+  visiting is a suspected attack site" and "Tell me if the site I'm visiting
-+  is a suspected forgery."
-+</p>
++  <p>
++    Mozilla Firefox utilizes website information services ("Services"), such as
++    safe-browsing features, which are provided by the Mozilla Corporation
++    ("Mozilla") and made available to you subject to the terms below. If you do
++    not agree to these terms please disable the feature by clicking Edit ->
++    Preferences -> Security and uncheck the options for "Tell me if the site I'm
++    visiting is a suspected attack site" and "Tell me if the site I'm visiting
++    is a suspected forgery."
++  </p>
 +
-+<p>
-+  <b>Use Of Services.</b> Mozilla permits you to use the Services via Firefox subject
-+  to these terms. Mozilla may discontinue or change the Services at its
-+  discretion.
-+</p>
++  <p>
++    <i>Use Of Services.</i> Mozilla permits you to use the Services via Firefox subject
++    to these terms. Mozilla may discontinue or change the Services at its
++    discretion.
++  </p>
 +
-+<p>
-+  <b>Proprietary Rights.</b> Mozilla and its licensors, reserve all intellectual
-+  property rights in the Services, except for the rights expressly granted in
-+  this Agreement. Nothing in this Agreement shall be construed to limit any
-+  rights granted under open source licenses applicable to Firefox and to
-+  corresponding source code versions of Firefox.
-+</p>
++  <p>
++    <i>Proprietary Rights.</i> Mozilla and its licensors, reserve all intellectual
++    property rights in the Services, except for the rights expressly granted in
++    this Agreement. Nothing in this Agreement shall be construed to limit any
++    rights granted under open source licenses applicable to Firefox and to
++    corresponding source code versions of Firefox.
++  </p>
 +
-+<p>
-+  <b>Website Information Services.</b> Mozilla and its contributors, licensors and
-+  partners work to provide the most accurate and up-to-date phishing and
-+  malware information. However, they cannot guarantee that this information is
-+  comprehensive and error-free: some risky sites may not be identified, and
-+  some safe sites may be identified in error.
-+</p>
++  <p>
++    <i>Website Information Services.</i> Mozilla and its contributors, licensors and
++    partners work to provide the most accurate and up-to-date phishing and
++    malware information. However, they cannot guarantee that this information is
++    comprehensive and error-free: some risky sites may not be identified, and
++    some safe sites may be identified in error.
++  </p>
 +
-+<p>
-+  <b>Disclaimer of Warranty.</b> The Services are provided "as is" with all faults.
-+  To the extent permitted by law, Mozilla and Mozilla's distributors, and
-+  licensors hereby disclaim all warranties, whether express or implied,
-+  including without limitation warranties that the Services are free of
-+  defects, merchantable, fit for a particular purpose and non-infringing. You
-+  bear the entire risk as to selecting the Services for your purposes and as
-+  to the quality and performance of the Services. This limitation will apply
-+  notwithstanding the failure of essential purpose of any remedy. Some
-+  jurisdictions do not allow the exclusion or limitation of implied
-+  warranties, so this disclaimer may not apply to you.
-+</p>
++  <p>
++    <i>Disclaimer of Warranty.</i> The Services are provided "as is" with all faults.
++    To the extent permitted by law, Mozilla and Mozilla's distributors, and
++    licensors hereby disclaim all warranties, whether express or implied,
++    including without limitation warranties that the Services are free of
++    defects, merchantable, fit for a particular purpose and non-infringing. You
++    bear the entire risk as to selecting the Services for your purposes and as
++    to the quality and performance of the Services. This limitation will apply
++    notwithstanding the failure of essential purpose of any remedy. Some
++    jurisdictions do not allow the exclusion or limitation of implied
++    warranties, so this disclaimer may not apply to you.
++  </p>
 +
-+<p>
-+  <b>Limitation Of Liability.</b> Except as required by law, Mozilla and its
-+  distributors, directors, licensors, contributors and agents (collectively,
-+  the "Mozilla Group") will not be liable for any indirect, special,
-+  incidental, consequential or exemplary damages arising out of or in any way
-+  relating to this Agreement or the use of or inability to use Firefox or the
-+  Services, including without limitation damages for loss of goodwill, work
-+  stoppage, lost profits, loss of data, and computer failure or malfunction,
-+  even if advised of the possibility of such damages and regardless of the
-+  theory (contract, tort or otherwise) upon which such claim is based. The
-+  Mozilla Group's collective liability under this Agreement will not exceed
-+  $500 (five hundred dollars). Some jurisdictions do not allow the exclusion
-+  or limitation of incidental, consequential or special damages, so this
-+  exclusion and limitation may not apply to you.
-+</p>
++  <p>
++    <i>Limitation Of Liability.</i> Except as required by law, Mozilla and its
++    distributors, directors, licensors, contributors and agents (collectively,
++    the "Mozilla Group") will not be liable for any indirect, special,
++    incidental, consequential or exemplary damages arising out of or in any way
++    relating to this Agreement or the use of or inability to use Firefox or the
++    Services, including without limitation damages for loss of goodwill, work
++    stoppage, lost profits, loss of data, and computer failure or malfunction,
++    even if advised of the possibility of such damages and regardless of the
++    theory (contract, tort or otherwise) upon which such claim is based. The
++    Mozilla Group's collective liability under this Agreement will not exceed
++    $500 (five hundred dollars). Some jurisdictions do not allow the exclusion
++    or limitation of incidental, consequential or special damages, so this
++    exclusion and limitation may not apply to you.
++  </p>
 +
-+<p>
-+  <b>Miscellaneous.</b> (a) This Agreement constitutes the entire Agreement between
-+  Mozilla and you concerning the subject matter hereof, and it may only be
-+  modified by a written amendment signed by an authorized executive of
-+  Mozilla. (b) Except to the extent applicable law, if any, provides
-+  otherwise, this Agreement will be governed by the laws of the state of
-+  California, U.S.A., excluding its conflict of law provisions. (c) This
-+  Agreement will not be governed by the United Nations Convention on Contracts
-+  for the International Sale of Goods. (d) If any part of this Agreement is
-+  held invalid or unenforceable, that part will be construed to reflect the
-+  parties' original intent, and the remaining portions will remain in full
-+  force and effect. (e) Except as required by law, the controlling language of
-+  this Agreement is English.
-+</p>
-+</p>
++  <p>
++    <i>Miscellaneous.</i> (a) This Agreement constitutes the entire Agreement between
++    Mozilla and you concerning the subject matter hereof, and it may only be
++    modified by a written amendment signed by an authorized executive of
++    Mozilla. (b) Except to the extent applicable law, if any, provides
++    otherwise, this Agreement will be governed by the laws of the state of
++    California, U.S.A., excluding its conflict of law provisions. (c) This
++    Agreement will not be governed by the United Nations Convention on Contracts
++    for the International Sale of Goods. (d) If any part of this Agreement is
++    held invalid or unenforceable, that part will be construed to reflect the
++    parties' original intent, and the remaining portions will remain in full
++    force and effect. (e) Except as required by law, the controlling language of
++    this Agreement is English.
++  </p>
 +</div>
++</div>
++  </li>
++</ul>
 +
 +</p>
 +
@@ -504,4 +508,3 @@ Index: mozilla/browser/installer/unix/packages-static
  bin/components/nsSafebrowsingApplication.js
  bin/components/nsUrlClassifierListManager.js
  bin/components/nsUrlClassifierLib.js
-
