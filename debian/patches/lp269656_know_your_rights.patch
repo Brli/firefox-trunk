@@ -2,10 +2,10 @@
  browser/base/content/aboutRights.xhtml |  192 +++++++++++++++++++++++++++++++++
  browser/base/jar.mn                    |    1 
  browser/components/Makefile.in         |    1 
- browser/components/aboutRights.js      |   63 ++++++++++
+ browser/components/aboutRights.js      |   67 +++++++++++
  browser/components/nsBrowserGlue.js    |  115 +++++++++++++++----
  browser/installer/unix/packages-static |    1 
- 6 files changed, 346 insertions(+), 27 deletions(-)
+ 6 files changed, 350 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/base/content/aboutRights.xhtml
 ===================================================================
@@ -252,7 +252,7 @@ Index: mozilla/browser/components/aboutRights.js
 ===================================================================
 --- /dev/null
 +++ mozilla/browser/components/aboutRights.js
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,67 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1
 + *
@@ -296,14 +296,18 @@ Index: mozilla/browser/components/aboutRights.js
 +
 +AboutRightsHandler.prototype = {
 +    newChannel : function(aURI) {
-+        if(!(aURI.spec == "about:rights")) return;
 +        var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
++        var secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].
++               getService(Ci.nsIScriptSecurityManager);
 +        var channel = ios.newChannel("chrome://browser/content/aboutRights.xhtml", null, null);
 +        channel.originalURI = aURI;
++        var principal = secMan.getCodebasePrincipal(aURI);
++        channel.owner = principal;
 +        return channel;
 +    },
 +    getURIFlags: function(aURI) {
-+        return Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT;
++        return (Ci.nsIAboutModule.ALLOW_SCRIPT |
++                Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT);
 +    },
 +
 +    classDescription: "About Rights Page",
