@@ -1,17 +1,17 @@
 ---
- browser/base/content/aboutRights.xhtml |  192 +++++++++++++++++++++++++++++++++
+ browser/base/content/aboutRights.xhtml |  179 +++++++++++++++++++++++++++++++++
  browser/base/jar.mn                    |    1 
  browser/components/Makefile.in         |    1 
- browser/components/aboutRights.js      |   67 +++++++++++
- browser/components/nsBrowserGlue.js    |  115 +++++++++++++++----
+ browser/components/aboutRights.js      |   67 ++++++++++++
+ browser/components/nsBrowserGlue.js    |  115 ++++++++++++++++-----
  browser/installer/unix/packages-static |    1 
- 6 files changed, 350 insertions(+), 27 deletions(-)
+ 6 files changed, 337 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/base/content/aboutRights.xhtml
 ===================================================================
 --- /dev/null
 +++ mozilla/browser/base/content/aboutRights.xhtml
-@@ -0,0 +1,192 @@
+@@ -0,0 +1,179 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +
 +# <!--
@@ -56,40 +56,44 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +
 +<html xmlns="http://www.w3.org/1999/xhtml">
 +<head>
-+<title>Free software and Mozilla services</title>
++<title>ABOUT: YOUR RIGHTS</title>
 +<link rel="stylesheet" href="chrome://global/skin/about.css" type="text/css" media="all" />
 +</head>
 +<body>
-+<div style="font-size: xx-large">Free software and Mozilla services</div>
++<div style="font-size: x-large">ABOUT: YOUR RIGHTS</div>
 +<p>
-+Mozilla Firefox is free and open source software, built by a community of
-+thousands from all over the world. There are a few things you should know:
++Mozilla Firefox is free and open source software, built by a community of thousands from
++all over the world. There are a few things you should know:
 +
-+<ul>
-+  <li>
++  <p>
 +    Firefox is made available to you under the terms of the
 +    <a href="http://www.mozilla.org/MPL/MPL-1.1.html">Mozilla Public
-+    License</a>. This means you may
-+    use, copy and distribute Firefox to others. You are also welcome to
-+    modify the source code of Firefox as you want to meet your needs. You may
-+    also distribute your modified versions, provided you meet the requirements
-+    specified in the MPL.
-+  </li>
++    License</a>. This means you may use, copy and distribute Firefox to
++    others. You are also welcome to modify the source code of Firefox as
++    you want to meet your needs. The Mozilla Public License also gives you
++    the right to distribute your modified versions.  
++  </p>
 +
-+  <li>
-+    Mozilla does not grant you any rights to the Mozilla and Firefox trademarks
-+    or logos.
-+  </li>
++  <p>
++   Mozilla does not grant you any rights to the Mozilla and Firefox trademarks
++   or logos. Additional information on Trademarks may be found
++   <a href="http://www.mozilla.org/foundation/trademarks/policy.html">here</a>.
++  </p>
 +
-+  <li>
-+    Firefox also incorporates website information services ("Services"), such as
-+    safe-browsing features; however, we cannot guarantee the Services are 100%
-+    accurate or error-free. See the details below including instructions to
-+    disable these features:
++  <p>
++    Mozilla’s privacy policy for Firefox may be found
++    <a href="http://www.mozilla.com/en-US/legal/privacy/firefox-en.html">here</a>.
++  </p>
++
++  <p>
++    Firefox also uses web site information services, such as the SafeBrowsing
++    service; however, we cannot guarantee they are 100% accurate or error-free.
++    More details, including information on how to disable the services, can be
++    found in the service terms. 
 +
 +<div id="part2" style="-moz-border-radius: 3pt;">
 +  <a href="about:rights#hiddenpart" onclick="return showhidden()" style="font-size: large">
-+    Mozilla Firefox Website Services Agreement
++    MOZILLA FIREFOX WEB SITE SERVICES
 +  </a>
 +<div id="hiddenpart" style="padding: 0em; margin: 0em">
 +  <script type="text/javascript">
@@ -118,89 +122,72 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +  </script>
 +
 +  <p>
-+    Mozilla Firefox utilizes website information services ("Services"), such as
-+    safe-browsing features, which are provided by the Mozilla Corporation
-+    ("Mozilla") and made available to you subject to the terms below. If you do
-+    not agree to these terms please disable the feature by clicking Edit ->
-+    Preferences -> Security and uncheck the options for "Tell me if the site I'm
-+    visiting is a suspected attack site" and "Tell me if the site I'm visiting
-+    is a suspected forgery."
-+  </p>
++    Mozilla Firefox uses web site information services ("Services"), such as the
++    SafeBrowsing service, that are available for your use with this binary version
++    of Firefox as described below. If you do not want to use the Services or the
++    terms below are unacceptable, you may disable the SafeBrowsing service by clicking
++    Edit -> Preferences -> Security and uncheck the options for "Tell me if the site
++    I'm visiting is a suspected attack site" and "Tell me if the site I'm visiting is
++    a suspected forgery."
++ </p>
 +
-+  <p>
-+    <i>Use Of Services.</i> Mozilla permits you to use the Services via Firefox subject
-+    to these terms. Mozilla may discontinue or change the Services at its
-+    discretion.
-+  </p>
++ <ol>
++   <p><li>
++     Mozilla and its contributors, licensors and partners work to provide the most
++     accurate and up-to-date phishing and malware information. However, they cannot
++     guarantee that this information is comprehensive and error-free: some risky sites
++      may not be identified and some safe sites may be identified in error
++   </li></p>
 +
-+  <p>
-+    <i>Proprietary Rights.</i> Mozilla and its licensors, reserve all intellectual
-+    property rights in the Services, except for the rights expressly granted in
-+    this Agreement. Nothing in this Agreement shall be construed to limit any
-+    rights granted under open source licenses applicable to Firefox and to
-+    corresponding source code versions of Firefox.
-+  </p>
++   <p><li>
++     Mozilla may discontinue or change the Services at its discretion.  
++   </li></p>
 +
-+  <p>
-+    <i>Website Information Services.</i> Mozilla and its contributors, licensors and
-+    partners work to provide the most accurate and up-to-date phishing and
-+    malware information. However, they cannot guarantee that this information is
-+    comprehensive and error-free: some risky sites may not be identified, and
-+    some safe sites may be identified in error.
-+  </p>
++   <p><li>
++     You are welcome to use these Services with the accompanying version of
++     Firefox, and you have all the rights necessary to do so.  Mozilla and
++     its licensors reserve all other rights in the Services.  These terms are
++     not intended to limit any rights granted under open source licenses applicable
++     to Firefox and to corresponding source code versions of Firefox.
++   </li></p>
 +
-+  <p>
-+    <i>Disclaimer of Warranty.</i> The Services are provided "as is" with all faults.
-+    To the extent permitted by law, Mozilla and Mozilla's distributors, and
-+    licensors hereby disclaim all warranties, whether express or implied,
-+    including without limitation warranties that the Services are free of
-+    defects, merchantable, fit for a particular purpose and non-infringing. You
-+    bear the entire risk as to selecting the Services for your purposes and as
-+    to the quality and performance of the Services. This limitation will apply
-+    notwithstanding the failure of essential purpose of any remedy. Some
-+    jurisdictions do not allow the exclusion or limitation of implied
-+    warranties, so this disclaimer may not apply to you.
-+  </p>
++   <p><li><b>
++     The Services are provided "as-is."  Mozilla, its contributors, licensors, and
++     distributors, disclaim all warranties, whether express or implied, including without
++     limitation, warranties that the Services are merchantable and fit for your particular
++     purposes.  You bear the entire risk as to selecting the Services for your purposes
++     and as to the quality and performance of the Services. Some jurisdictions do not allow
++     the exclusion or limitation of implied warranties, so this disclaimer may not apply to
++     you.
++   </b></li></p>
 +
-+  <p>
-+    <i>Limitation Of Liability.</i> Except as required by law, Mozilla and its
-+    distributors, directors, licensors, contributors and agents (collectively,
-+    the "Mozilla Group") will not be liable for any indirect, special,
-+    incidental, consequential or exemplary damages arising out of or in any way
-+    relating to this Agreement or the use of or inability to use Firefox or the
-+    Services, including without limitation damages for loss of goodwill, work
-+    stoppage, lost profits, loss of data, and computer failure or malfunction,
-+    even if advised of the possibility of such damages and regardless of the
-+    theory (contract, tort or otherwise) upon which such claim is based. The
-+    Mozilla Group's collective liability under this Agreement will not exceed
-+    $500 (five hundred dollars). Some jurisdictions do not allow the exclusion
-+    or limitation of incidental, consequential or special damages, so this
-+    exclusion and limitation may not apply to you.
-+  </p>
++   <p><li><b>
++     The Services are provided "as-is."  Mozilla, its contributors, licensors, and
++     distributors, disclaim all warranties, whether express or implied, including without
++     limitation, warranties that the Services are merchantable and fit for your particular
++     purposes.  You bear the entire risk as to selecting the Services for your purposes
++     and as to the quality and performance of the Services. Some jurisdictions do not
++     allow the exclusion or limitation of implied warranties, so this disclaimer may not
++     apply to you.
++   </b></li></p>
 +
-+  <p>
-+    <i>Miscellaneous.</i> (a) This Agreement constitutes the entire Agreement between
-+    Mozilla and you concerning the subject matter hereof, and it may only be
-+    modified by a written amendment signed by an authorized executive of
-+    Mozilla. (b) Except to the extent applicable law, if any, provides
-+    otherwise, this Agreement will be governed by the laws of the state of
-+    California, U.S.A., excluding its conflict of law provisions. (c) This
-+    Agreement will not be governed by the United Nations Convention on Contracts
-+    for the International Sale of Goods. (d) If any part of this Agreement is
-+    held invalid or unenforceable, that part will be construed to reflect the
-+    parties' original intent, and the remaining portions will remain in full
-+    force and effect. (e) Except as required by law, the controlling language of
-+    this Agreement is English.
-+  </p>
++   <p><li>
++     Mozilla may update these terms as necessary from time to time. These terms may not
++     be modified or cancelled without Mozilla’s written agreement. 
++   </li></p>
++
++   <p><li>
++     These terms are governed by the laws of the state of California, U.S.A., excluding
++     its conflict of law provisions. If any portion of these terms is held to be invalid
++     or unenforceable, the remaining portions will remain in full force and effect. In
++     the event of a conflict between a translated version of these terms and the English
++     language version, the English language version shall control.
++   </li></p>
++ </ol>
 +</div>
 +</div>
-+  </li>
-+</ul>
-+
 +</p>
-+
-+<div id="vscrollbarfix" style="position: absolute; top: 0; bottom: -0.1px; width: 1em; z-index: -1;">
-+</div>
++</p>
 +</body>
 +</html>
 +
@@ -374,7 +361,7 @@ Index: mozilla/browser/components/nsBrowserGlue.js
 +}
 +
 +function doRightsDisplay(e) {
-+    var FIREFOX_WELCOME_TEXT = "Mozilla Firefox is free and open software from the non-profit Mozilla Foundation.";
++    var FIREFOX_WELCOME_TEXT = "Mozilla Firefox is free and open source software from the non-profit Mozilla Foundation.";
 +    var YOURRIGHTS_TEXT = "Know Your Rights...";
 +    var YOURRIGHTS_ACCESSKEY = "K";
 +    var buttons = [{ label: YOURRIGHTS_TEXT, accessKey: YOURRIGHTS_ACCESSKEY, callback: openYourRights }];
