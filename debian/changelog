@@ -24,6 +24,8 @@ firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     http://blog.lizardwrangler.com/2008/09/17/mock-ups-available-for-notices-previously-was-eula/
     - add debian/patches/lp269656_know_your_rights.patch
     - update debian/patches/series
+  * abrowser Provides: firefox to ease transition of rdepends
+    - update debian/control
 
  -- Fabien Tassin <fta@ubuntu.com>  Wed, 17 Sep 2008 17:30:08 +0200
 

@@ -108,6 +108,7 @@ Description: package that ships the abrowser branding
 Package: abrowser
 Architecture: all
 Depends: firefox-3.0, abrowser-3.0-branding
+Provides: firefox
 Description: meta package for the unbranded abrowser
  ABrowser 3 is an unbranded version of the popular Firefox webbrowser; it is
  written in the XUL language and designed to be lightweight and cross-platform.
