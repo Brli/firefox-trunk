@@ -1,5 +1,8 @@
 firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  Security/Stability update (v3.0.2 build6)
+    - see USN-645-1
+
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Add a -g/--debug switch to the launcher script to start firefox inside gdb.
     Note that it must be specified first on the command line.
