@@ -56,7 +56,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +
 +<html xmlns="http://www.w3.org/1999/xhtml">
 +<head>
-+<title>ABOUT: YOUR RIGHTS</title>
++<title>About: Your Rights</title>
 +<link rel="stylesheet" href="chrome://global/skin/about.css" type="text/css" media="all" />
 +</head>
 +<body>
