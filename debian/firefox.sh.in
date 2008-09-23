@@ -8,6 +8,35 @@
 #  Fabien Tassin <fta@sofaraway.org>
 # License: GPLv2 or later
 
+APPNAME=`basename $0`
+MOZDIR=$HOME/.mozilla
+LIBDIR=@LIBDIR@
+NAME=`basename $0`
+GDB=/usr/bin/gdb
+DROPPED=abandoned
+
+usage () {
+  $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
+  echo
+  echo "        -g or --debug		Start within $GDB (Must be first)"
+}
+
+want_debug=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h | --help | -help )
+      usage
+      exit 0 ;;
+    -g | --debug )
+      want_debug=1
+      shift ;;
+    -- ) # Stop option prcessing
+      shift
+      break ;;
+    * )
+      break ;;
+  esac
+done
 # if there exists a beta profile (first found: $MOZDIR/firefox-3.0,
 # $MOZDIR/firefox-trunk, $MOZDIR/granparadiso) and there is a standard
 # firefox profile as well, ask the user what to do. In case he decides to
@@ -23,11 +52,6 @@
 #
 # in addition, even older profiles are renamed too, by appending |.abandoned|
 # to their name.
-
-APPNAME=firefox
-MOZDIR=$HOME/.mozilla
-LIBDIR=@LIBDIR@
-DROPPED=abandoned
 
 FOUND=""
 if [ -d $MOZDIR/firefox ] ; then
@@ -78,4 +102,17 @@ elif [ "$FOUND_BETA" != "" -a "$FOUND" = "" ]; then
   echo "*NOTICE* Profile $FOUND_BETA found and moved as main profile"
 fi
 
-exec $LIBDIR/$APPNAME "$@"
+if [ $want_debug -eq 1 ] ; then
+  if [ ! -x $GDB ] ; then
+    echo "Sorry, can't find usable $GDB. Please install it."
+    exit 1
+  fi
+  tmpfile=`mktemp /tmp/mozargs.XXXXXX` || { echo "Cannot create temporary file" >&2; exit 1; }
+  trap " [ -f \"$tmpfile\" ] && /bin/rm -f -- \"$tmpfile\"" 0 1 2 3 13 15
+  echo "set args ${1+"$@"}" > $tmpfile
+  echo "$GDB $LIBDIR/$APPNAME -x $tmpfile"
+  $GDB "$LIBDIR/$APPNAME" -x $tmpfile
+  exit $?
+else
+  exec $LIBDIR/$APPNAME "$@"
+fi
