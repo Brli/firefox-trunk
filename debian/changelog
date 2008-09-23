@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) intrepid; urgency=low
 
   Security/Stability update (v3.0.2 build6)
     - see USN-645-1
@@ -30,7 +30,7 @@ firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * abrowser Provides: firefox to ease transition of rdepends
     - update debian/control
 
- -- Fabien Tassin <fta@ubuntu.com>  Wed, 17 Sep 2008 17:30:08 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 23 Sep 2008 17:44:47 +0200
 
 firefox-3.0 (3.0.2+build3+nobinonly-0ubuntu2) intrepid; urgency=low
 
