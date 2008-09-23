@@ -60,7 +60,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +<link rel="stylesheet" href="chrome://global/skin/about.css" type="text/css" media="all" />
 +</head>
 +<body>
-+<div style="font-size: x-large">ABOUT: YOUR RIGHTS</div>
++<div style="font-size: x-large">About: Your Rights</div>
 +<p>
 +Mozilla Firefox is free and open source software, built by a community of thousands from
 +all over the world. There are a few things you should know:
@@ -93,7 +93,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +
 +<div id="part2" style="-moz-border-radius: 3pt;">
 +  <a href="about:rights#hiddenpart" onclick="return showhidden()" style="font-size: large">
-+    MOZILLA FIREFOX WEB SITE SERVICES
++    Mozilla Firefox Web Site Services
 +  </a>
 +<div id="hiddenpart" style="padding: 0em; margin: 0em">
 +  <script type="text/javascript">
@@ -126,7 +126,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +    SafeBrowsing service, that are available for your use with this binary version
 +    of Firefox as described below. If you do not want to use the Services or the
 +    terms below are unacceptable, you may disable the SafeBrowsing service by clicking
-+    Edit -> Preferences -> Security and uncheck the options for "Tell me if the site
++    <b>Edit -> Preferences -> Security</b> and uncheck the options for "Tell me if the site
 +    I'm visiting is a suspected attack site" and "Tell me if the site I'm visiting is
 +    a suspected forgery."
 + </p>
