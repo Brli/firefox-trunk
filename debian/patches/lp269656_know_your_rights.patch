@@ -1,17 +1,17 @@
 ---
- browser/base/content/aboutRights.xhtml |  179 +++++++++++++++++++++++++++++++++
+ browser/base/content/aboutRights.xhtml |  182 +++++++++++++++++++++++++++++++++
  browser/base/jar.mn                    |    1 
  browser/components/Makefile.in         |    1 
  browser/components/aboutRights.js      |   67 ++++++++++++
- browser/components/nsBrowserGlue.js    |  115 ++++++++++++++++-----
+ browser/components/nsBrowserGlue.js    |  115 +++++++++++++++-----
  browser/installer/unix/packages-static |    1 
- 6 files changed, 337 insertions(+), 27 deletions(-)
+ 6 files changed, 340 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/base/content/aboutRights.xhtml
 ===================================================================
 --- /dev/null
 +++ mozilla/browser/base/content/aboutRights.xhtml
-@@ -0,0 +1,179 @@
+@@ -0,0 +1,182 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +
 +# <!--
@@ -65,31 +65,33 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +Mozilla Firefox is free and open source software, built by a community of thousands from
 +all over the world. There are a few things you should know:
 +
-+  <p>
++
++<ul>
++  <li>
 +    Firefox is made available to you under the terms of the
 +    <a href="http://www.mozilla.org/MPL/MPL-1.1.html">Mozilla Public
 +    License</a>. This means you may use, copy and distribute Firefox to
 +    others. You are also welcome to modify the source code of Firefox as
 +    you want to meet your needs. The Mozilla Public License also gives you
 +    the right to distribute your modified versions.  
-+  </p>
++  </li>
 +
-+  <p>
++  <li>
 +   Mozilla does not grant you any rights to the Mozilla and Firefox trademarks
 +   or logos. Additional information on Trademarks may be found
 +   <a href="http://www.mozilla.org/foundation/trademarks/policy.html">here</a>.
-+  </p>
++  </li>
 +
-+  <p>
++  <li>
 +    Mozilla’s privacy policy for Firefox may be found
 +    <a href="http://www.mozilla.com/en-US/legal/privacy/firefox-en.html">here</a>.
-+  </p>
++  </li>
 +
-+  <p>
++  <li>
 +    Firefox also uses web site information services, such as the SafeBrowsing
 +    service; however, we cannot guarantee they are 100% accurate or error-free.
 +    More details, including information on how to disable the services, can be
-+    found in the service terms. 
++    found in the <a href="about:rights#hiddenpart" onclick="return showhidden()">service terms</a>. 
 +
 +<div id="part2" style="-moz-border-radius: 3pt;">
 +  <a href="about:rights#hiddenpart" onclick="return showhidden()" style="font-size: large">
@@ -186,7 +188,8 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 + </ol>
 +</div>
 +</div>
-+</p>
++</li>
++</ul>
 +</p>
 +</body>
 +</html>
