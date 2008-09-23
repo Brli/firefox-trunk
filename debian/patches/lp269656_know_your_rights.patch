@@ -73,7 +73,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +    License</a>. This means you may use, copy and distribute Firefox to
 +    others. You are also welcome to modify the source code of Firefox as
 +    you want to meet your needs. The Mozilla Public License also gives you
-+    the right to distribute your modified versions.  
++    the right to distribute your modified versions.
 +  </li>
 +
 +  <li>
@@ -91,7 +91,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +    Firefox also uses web site information services, such as the SafeBrowsing
 +    service; however, we cannot guarantee they are 100% accurate or error-free.
 +    More details, including information on how to disable the services, can be
-+    found in the <a href="about:rights#hiddenpart" onclick="return showhidden()">service terms</a>. 
++    found in the <a href="about:rights#hiddenpart" onclick="return showhidden()">service terms</a>.
 +
 +<div id="part2" style="-moz-border-radius: 3pt;">
 +  <a href="about:rights#hiddenpart" onclick="return showhidden()" style="font-size: large">
@@ -142,7 +142,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +   </li></p>
 +
 +   <p><li>
-+     Mozilla may discontinue or change the Services at its discretion.  
++     Mozilla may discontinue or change the Services at its discretion.
 +   </li></p>
 +
 +   <p><li>
@@ -174,7 +174,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +
 +   <p><li>
 +     Mozilla may update these terms as necessary from time to time. These terms may not
-+     be modified or cancelled without Mozilla’s written agreement. 
++     be modified or cancelled without Mozilla’s written agreement.
 +   </li></p>
 +
 +   <p><li>
@@ -197,16 +197,16 @@ Index: mozilla/browser/base/jar.mn
 ===================================================================
 --- mozilla.orig/browser/base/jar.mn
 +++ mozilla/browser/base/jar.mn
-@@ -12,16 +12,17 @@
- %  style chrome://global/content/customizeToolbar.xul chrome://browser/skin/
+@@ -13,16 +13,17 @@
  *       content/browser/aboutDialog.xul               (content/aboutDialog.xul)
  *       content/browser/aboutDialog.js                (content/aboutDialog.js)
          content/browser/aboutDialog.css               (content/aboutDialog.css)
  *       content/browser/aboutRobots.xhtml             (content/aboutRobots.xhtml)
          content/browser/aboutRobots-icon.png          (content/aboutRobots-icon.png)
+         content/browser/aboutRobots-icon-rtl.png      (content/aboutRobots-icon-rtl.png)
          content/browser/aboutRobots-widget-left.png   (content/aboutRobots-widget-left.png)
          content/browser/aboutRobots-widget-right.png  (content/aboutRobots-widget-right.png)
-+*       content/browser/aboutRights.xhtml                     (content/aboutRights.xhtml)
++*       content/browser/aboutRights.xhtml             (content/aboutRights.xhtml)
  *       content/browser/browser.css                   (content/browser.css)
  *       content/browser/browser.js                    (content/browser.js)
  *       content/browser/browser.xul                   (content/browser.xul)
@@ -483,7 +483,7 @@ Index: mozilla/browser/installer/unix/packages-static
 ===================================================================
 --- mozilla.orig/browser/installer/unix/packages-static
 +++ mozilla/browser/installer/unix/packages-static
-@@ -240,16 +240,17 @@
+@@ -237,16 +237,17 @@
  bin/components/nsDefaultCLH.js
  bin/components/nsContentPrefService.js
  bin/components/nsContentDispatchChooser.js
