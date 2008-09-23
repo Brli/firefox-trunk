@@ -1,0 +1,503 @@
+---
+ browser/base/content/aboutRights.xhtml |  181 +++++++++++++++++++++++++++++++++
+ browser/base/jar.mn                    |    1 
+ browser/components/Makefile.in         |    1 
+ browser/components/aboutRights.js      |   67 ++++++++++++
+ browser/components/nsBrowserGlue.js    |  115 ++++++++++++++++----
+ browser/installer/unix/packages-static |    1 
+ 6 files changed, 339 insertions(+), 27 deletions(-)
+
+Index: mozilla/browser/base/content/aboutRights.xhtml
+===================================================================
+--- /dev/null
++++ mozilla/browser/base/content/aboutRights.xhtml
+@@ -0,0 +1,181 @@
++<?xml version="1.0" encoding="UTF-8"?>
++
++# <!--
++# ***** BEGIN LICENSE BLOCK *****
++# Version: MPL 1.1/GPL 2.0/LGPL 2.1
++#
++# The contents of this file are subject to the Mozilla Public License
++# Version
++# 1.1 (the "License"); you may not use this file except in compliance with
++# the License. You may obtain a copy of the License at
++# http://www.mozilla.org/MPL/
++#
++# Software distributed under the License is distributed on an "AS IS"
++# basis,
++# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++# for the specific language governing rights and limitations under the
++# License.
++#
++# The Original Code is aboutRights.xhtml
++#
++# The Initial Developer of the Original Code is
++# Mozilla Foundation
++# Portions created by the Initial Developer are Copyright (C) 1998
++# the Initial Developer. All Rights Reserved.
++#
++# Contributor(s):
++#   Alexander Sack <asac@canonical.com>
++#
++# Alternatively, the contents of this file may be used under the terms of
++# either the GNU General Public License Version 2 or later (the "GPL"), or
++# the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++# in which case the provisions of the GPL or the LGPL are applicable instead
++# of those above. If you wish to allow use of your version of this file only
++# under the terms of either the GPL or the LGPL, and not to allow others to
++# use your version of this file under the terms of the MPL, indicate your
++# decision by deleting the provisions above and replace them with the notice
++# and other provisions required by the GPL or the LGPL. If you do not delete
++# the provisions above, a recipient may use your version of this file under
++# the terms of any one of the MPL, the GPL or the LGPL.
++#
++# ***** END LICENSE BLOCK ***** -->
++
++<html xmlns="http://www.w3.org/1999/xhtml">
++<head>
++<title>about:rights</title>
++<link rel="stylesheet" href="chrome://global/skin/about.css" type="text/css" media="all" />
++</head>
++<body>
++<div style="font-size: x-large">About: Your Rights</div>
++<p>
++Mozilla Firefox is free and open source software, built by a community of thousands from
++all over the world. There are a few things you should know:
++
++
++<ul>
++  <li>
++    Firefox is made available to you under the terms of the
++    <a href="http://www.mozilla.org/MPL/MPL-1.1.html">Mozilla Public
++    License</a>. This means you may use, copy and distribute Firefox to
++    others. You are also welcome to modify the source code of Firefox as
++    you want to meet your needs. The Mozilla Public License also gives you
++    the right to distribute your modified versions.  
++  </li>
++
++  <li>
++   Mozilla does not grant you any rights to the Mozilla and Firefox trademarks
++   or logos. Additional information on Trademarks may be found
++   <a href="http://www.mozilla.org/foundation/trademarks/policy.html">here</a>.
++  </li>
++
++  <li>
++    Mozilla’s privacy policy for Firefox may be found
++    <a href="http://www.mozilla.com/en-US/legal/privacy/firefox-en.html">here</a>.
++  </li>
++
++  <li>
++    Firefox also uses web site information services, such as the SafeBrowsing
++    service; however, we cannot guarantee they are 100% accurate or error-free.
++    More details, including information on how to disable the services, can be
++    found in the <a href="about:rights#hiddenpart" onclick="return showhidden()">service terms</a>. 
++
++<div id="part2" style="-moz-border-radius: 3pt;">
++  <a href="about:rights#hiddenpart" onclick="return showhidden()" style="font-size: large">
++    Mozilla Firefox Web Site Services
++  </a>
++<div id="hiddenpart" style="padding: 0em; margin: 0em">
++  <script type="text/javascript">
++    h = document.getElementById('hiddenpart');
++    p2 = document.getElementById('part2');
++    h.style.display = 'none';
++    p2.style.border="none 1pt lightgrey";
++    p2.style.background="none";
++    p2.style.padding="0.5em 1em 0.5em 1em";
++    p2.style.margin="0.25em 0em 0em -1em";
++
++    switchElem = document.getElementById("switch");
++    function showhidden() {
++      if (h.style.display == 'none') {
++        p2.style.border = "dotted 1pt lightgrey";
++	p2.style.background = "#fafafa";
++        h.style.display = 'block';
++      }
++      else {
++        p2.style.border ="none 1pt lightgrey";
++	p2.style.background = "none";
++        h.style.display = 'none';
++      }
++      return false;
++    }
++  </script>
++
++  <p>
++    Mozilla Firefox uses web site information services ("Services"), such as the
++    SafeBrowsing service, that are available for your use with this binary version
++    of Firefox as described below. If you do not want to use the Services or the
++    terms below are unacceptable, you may disable the SafeBrowsing service by clicking
++    <b>Edit -> Preferences -> Security</b> and uncheck the options for "Tell me if the site
++    I'm visiting is a suspected attack site" and "Tell me if the site I'm visiting is
++    a suspected forgery."
++ </p>
++
++ <ol>
++   <p><li>
++     Mozilla and its contributors, licensors and partners work to provide the most
++     accurate and up-to-date phishing and malware information. However, they cannot
++     guarantee that this information is comprehensive and error-free: some risky sites
++      may not be identified and some safe sites may be identified in error
++   </li></p>
++
++   <p><li>
++     Mozilla may discontinue or change the Services at its discretion.  
++   </li></p>
++
++   <p><li>
++     You are welcome to use these Services with the accompanying version of
++     Firefox, and you have all the rights necessary to do so.  Mozilla and
++     its licensors reserve all other rights in the Services.  These terms are
++     not intended to limit any rights granted under open source licenses applicable
++     to Firefox and to corresponding source code versions of Firefox.
++   </li></p>
++
++   <p><li><b>
++     The Services are provided "as-is."  Mozilla, its contributors, licensors, and
++     distributors, disclaim all warranties, whether express or implied, including without
++     limitation, warranties that the Services are merchantable and fit for your particular
++     purposes.  You bear the entire risk as to selecting the Services for your purposes
++     and as to the quality and performance of the Services. Some jurisdictions do not allow
++     the exclusion or limitation of implied warranties, so this disclaimer may not apply to
++     you.
++   </b></li></p>
++
++   <p><li><b>
++     Except as required by law, Mozilla, its contributors, licensors, and distributors will
++     not be liable for any indirect, special, incidental, consequential, punitive, or
++     exemplary damages arising out of or in any way relating to the use of Firefox and the
++     Services. The collective liability under these terms will not exceed $500 (five hundred
++     dollars). Some jurisdictions do not allow the exclusion or limitation of certain damages,
++     so this exclusion and limitation may not apply to you.
++   </b></li></p>
++
++   <p><li>
++     Mozilla may update these terms as necessary from time to time. These terms may not
++     be modified or cancelled without Mozilla’s written agreement. 
++   </li></p>
++
++   <p><li>
++     These terms are governed by the laws of the state of California, U.S.A., excluding
++     its conflict of law provisions. If any portion of these terms is held to be invalid
++     or unenforceable, the remaining portions will remain in full force and effect. In
++     the event of a conflict between a translated version of these terms and the English
++     language version, the English language version shall control.
++   </li></p>
++ </ol>
++</div>
++</div>
++</li>
++</ul>
++</p>
++</body>
++</html>
++
+Index: mozilla/browser/base/jar.mn
+===================================================================
+--- mozilla.orig/browser/base/jar.mn
++++ mozilla/browser/base/jar.mn
+@@ -12,16 +12,17 @@
+ %  style chrome://global/content/customizeToolbar.xul chrome://browser/skin/
+ *       content/browser/aboutDialog.xul               (content/aboutDialog.xul)
+ *       content/browser/aboutDialog.js                (content/aboutDialog.js)
+         content/browser/aboutDialog.css               (content/aboutDialog.css)
+ *       content/browser/aboutRobots.xhtml             (content/aboutRobots.xhtml)
+         content/browser/aboutRobots-icon.png          (content/aboutRobots-icon.png)
+         content/browser/aboutRobots-widget-left.png   (content/aboutRobots-widget-left.png)
+         content/browser/aboutRobots-widget-right.png  (content/aboutRobots-widget-right.png)
++*       content/browser/aboutRights.xhtml                     (content/aboutRights.xhtml)
+ *       content/browser/browser.css                   (content/browser.css)
+ *       content/browser/browser.js                    (content/browser.js)
+ *       content/browser/browser.xul                   (content/browser.xul)
+ *       content/browser/credits.xhtml                 (content/credits.xhtml)
+ *       content/browser/EULA.js                       (content/EULA.js)
+ *       content/browser/EULA.xhtml                    (content/EULA.xhtml)
+ *       content/browser/EULA.xul                      (content/EULA.xul)
+ *       content/browser/metaData.js                   (content/metaData.js)
+Index: mozilla/browser/components/Makefile.in
+===================================================================
+--- mozilla.orig/browser/components/Makefile.in
++++ mozilla/browser/components/Makefile.in
+@@ -48,16 +48,17 @@
+ XPIDLSRCS = \
+ 	nsIBrowserHandler.idl \
+ 	nsIBrowserGlue.idl \
+ 	$(NULL)
+ 
+ EXTRA_PP_COMPONENTS = \
+ 	nsBrowserContentHandler.js \
+ 	nsBrowserGlue.js \
++	aboutRights.js \
+ 	aboutRobots.js \
+ 	$(NULL)
+ 
+ EXTRA_JS_MODULES = distribution.js
+ 
+ DIRS = \
+ 	dirprovider \
+ 	microsummaries \
+Index: mozilla/browser/components/aboutRights.js
+===================================================================
+--- /dev/null
++++ mozilla/browser/components/aboutRights.js
+@@ -0,0 +1,67 @@
++/* ***** BEGIN LICENSE BLOCK *****
++ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the "License"); you may not use this file except in compliance with
++ * the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * Software distributed under the License is distributed on an "AS IS" basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * The Original Code is http://developer.mozilla.org/En/Code_snippets:JS_XPCOM
++ *
++ * The Initial Developer of the Original Code is Mozilla Foundation.
++ * Portions created by the Initial Developer are Copyright (C) 2008
++ * the Initial Developer. All Rights Reserved.
++ *
++ * Contributor(s):
++ *   Alexander Sack <asac@canonical.com>
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either the GNU General Public License Version 2 or later (the "GPL"), or
++ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++ * in which case the provisions of the GPL or the LGPL are applicable instead
++ * of those above. If you wish to allow use of your version of this file only
++ * under the terms of either the GPL or the LGPL, and not to allow others to
++ * use your version of this file under the terms of the MPL, indicate your
++ * decision by deleting the provisions above and replace them with the notice
++ * and other provisions required by the GPL or the LGPL. If you do not delete
++ * the provisions above, a recipient may use your version of this file under
++ * the terms of any one of the MPL, the GPL or the LGPL.
++ *
++ * ***** END LICENSE BLOCK ***** */
++
++Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
++const Cc = Components.classes;
++const Ci = Components.interfaces;
++function AboutRightsHandler() { }
++
++AboutRightsHandler.prototype = {
++    newChannel : function(aURI) {
++        var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
++        var secMan = Cc["@mozilla.org/scriptsecuritymanager;1"].
++               getService(Ci.nsIScriptSecurityManager);
++        var channel = ios.newChannel("chrome://browser/content/aboutRights.xhtml", null, null);
++        channel.originalURI = aURI;
++        var principal = secMan.getCodebasePrincipal(aURI);
++        channel.owner = principal;
++        return channel;
++    },
++    getURIFlags: function(aURI) {
++        return (Ci.nsIAboutModule.ALLOW_SCRIPT |
++                Ci.nsIAboutModule.URI_SAFE_FOR_UNTRUSTED_CONTENT);
++    },
++
++    classDescription: "About Rights Page",
++    classID: Components.ID("a9de133c-6c09-4a6b-b376-88ad56c0a351"),
++    contractID: "@mozilla.org/network/protocol/about;1?what=rights",
++    QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
++}
++
++function NSGetModule(aCompMgr, aFileSpec) {
++  return XPCOMUtils.generateModule([AboutRightsHandler]);
++}
++
+Index: mozilla/browser/components/nsBrowserGlue.js
+===================================================================
+--- mozilla.orig/browser/components/nsBrowserGlue.js
++++ mozilla/browser/components/nsBrowserGlue.js
+@@ -67,16 +67,103 @@
+ };
+ 
+ // Constructor
+ 
+ function BrowserGlue() {
+   this._init();
+ }
+ 
++// this returns the most recent non-popup browser window
++function getMostRecentBrowserWindow() {
++  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
++      .getService(Components.interfaces.nsIWindowMediator);
++
++  var win = wm.getMostRecentWindow("navigator:browser", true);
++
++  // if we're lucky, this isn't a popup, and we can just return this
++  if (win && win.document.documentElement.getAttribute("chromehidden")) {
++      var windowList = wm.getEnumerator("navigator:browser", true);
++      // this is oldest to newest, so this gets a bit ugly
++      while (windowList.hasMoreElements()) {
++	  var nextWin = windowList.getNext();
++	  if (!nextWin.document.documentElement.getAttribute("chromehidden"))
++	      win = nextWin;
++      }
++  }
++  return win;
++}
++
++function getMostRecentBrowser () {
++    var browserWindow = getMostRecentBrowserWindow();
++    var browser = browserWindow.getBrowser();
++    return browser;
++}
++
++function openYourRights () {
++    var YOUR_RIGHTS_LOCATION = "about:rights";
++    var YOUR_RIGHTS_URI = Components.classes["@mozilla.org/network/io-service;1"]
++	.getService(Components.interfaces.nsIIOService)
++	.newURI(YOUR_RIGHTS_LOCATION, null, null);
++
++    var browserDOMWindow = getMostRecentBrowserWindow().browserDOMWindow;
++
++    browserDOMWindow.openURI (YOUR_RIGHTS_URI,
++			   null,
++			   Components.interfaces.nsIBrowserDOMWindow.OPEN_DEFAULTWINDOW,
++			   null);
++}
++
++function doRightsDisplay(e) {
++    var FIREFOX_WELCOME_TEXT = "Mozilla Firefox is free and open source software from the non-profit Mozilla Foundation.";
++    var YOURRIGHTS_TEXT = "Know Your Rights...";
++    var YOURRIGHTS_ACCESSKEY = "K";
++    var buttons = [{ label: YOURRIGHTS_TEXT, accessKey: YOURRIGHTS_ACCESSKEY, callback: openYourRights }];
++
++    var rbrowser = e.target // getMostRecentBrowser();
++    var browser = rbrowser;  //rbrowser.getBrowserForDocument(e.target).getTabBrowser();
++    var notificationBox = browser.getNotificationBox();
++    var notification = notificationBox.getNotificationWithValue("your-rights");
++    if (notification)
++      notificationBox.removeNotification(notification);
++
++    notification = notificationBox.appendNotification(FIREFOX_WELCOME_TEXT,
++				   'your-rights',"",
++				   notificationBox.PRIORITY_INFO_HIGH,
++				   buttons);
++    notification.persistence++;
++
++    browser.removeEventListener ("load", doRightsDisplay, false);
++
++    var rightsCurrent = "0.0";
++    try { rightsCurrent = prefs.getCharPref("xxx.legal.rights.current"); } catch (e) {}
++
++    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
++	.getService(Components.interfaces.nsIPrefBranch);
++    prefs.setCharPref("xxx.legal.rights.seen", rightsCurrent);
++}
++
++function scheduleRightsNotification () {
++
++    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
++	.getService(Components.interfaces.nsIPrefBranch);
++
++    var rightsSeen = null;
++    var rightsCurrent = "0.0";
++    try { rightsSeen = prefs.getCharPref("xxx.legal.rights.seen"); } catch (e) {}
++    try { rightsCurrent = prefs.getCharPref("xxx.legal.rights.current"); } catch (e) {}
++
++    if(rightsSeen != null && rightsSeen == rightsCurrent) {
++	return;
++    }
++    var browser = getMostRecentBrowser();
++    browser.addEventListener("load", doRightsDisplay, false);
++}
++
++
+ BrowserGlue.prototype = {
+   _saveSession: false,
+ 
+   _setPrefToSaveSession: function()
+   {
+     var prefBranch = Cc["@mozilla.org/preferences-service;1"].
+                      getService(Ci.nsIPrefBranch);
+     prefBranch.setBoolPref("browser.sessionstore.resume_session_once", true);
+@@ -94,16 +181,17 @@
+         break;
+       case "prefservice:after-app-defaults":
+         this._onAppDefaults();
+         break;
+       case "final-ui-startup":
+         this._onProfileStartup();
+         break;
+       case "sessionstore-windows-restored":
++        scheduleRightsNotification ();
+         this._onBrowserStartup();
+         break;
+       case "browser:purge-session-history":
+         // reset the console service's error buffer
+         const cs = Cc["@mozilla.org/consoleservice;1"].
+                    getService(Ci.nsIConsoleService);
+         cs.logStringMessage(null); // clear the console (in case it's open)
+         cs.reset();
+@@ -170,43 +258,16 @@
+     // other customizations are applied in _onProfileStartup()
+     var distro = new DistributionCustomizer();
+     distro.applyPrefDefaults();
+   },
+ 
+   // profile startup handler (contains profile initialization routines)
+   _onProfileStartup: function() 
+   {
+-    // Check to see if the EULA must be shown on startup
+-
+-    var prefBranch = Cc["@mozilla.org/preferences-service;1"].
+-                     getService(Ci.nsIPrefBranch);
+-    var mustDisplayEULA = false;
+-    try {
+-      mustDisplayEULA = !prefBranch.getBoolPref("browser.EULA.override");
+-    } catch (e) {
+-      // Pref might not exist
+-    }
+-
+-    // Make sure it hasn't already been accepted
+-    if (mustDisplayEULA) {
+-      try {
+-        var EULAVersion = prefBranch.getIntPref("browser.EULA.version");
+-        mustDisplayEULA = !prefBranch.getBoolPref("browser.EULA." + EULAVersion + ".accepted");
+-      } catch(ex) {
+-      }
+-    }
+-
+-    if (mustDisplayEULA) {
+-      var ww2 = Cc["@mozilla.org/embedcomp/window-watcher;1"].
+-                getService(Ci.nsIWindowWatcher);
+-      ww2.openWindow(null, "chrome://browser/content/EULA.xul", 
+-                     "_blank", "chrome,centerscreen,modal,resizable=yes", null);
+-    }
+-
+     this.Sanitizer.onStartup();
+     // check if we're in safe mode
+     var app = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).
+               QueryInterface(Ci.nsIXULRuntime);
+     if (app.inSafeMode) {
+       var ww = Cc["@mozilla.org/embedcomp/window-watcher;1"].
+                getService(Ci.nsIWindowWatcher);
+       ww.openWindow(null, "chrome://browser/content/safeMode.xul", 
+Index: mozilla/browser/installer/unix/packages-static
+===================================================================
+--- mozilla.orig/browser/installer/unix/packages-static
++++ mozilla/browser/installer/unix/packages-static
+@@ -240,16 +240,17 @@
+ bin/components/nsDefaultCLH.js
+ bin/components/nsContentPrefService.js
+ bin/components/nsContentDispatchChooser.js
+ bin/components/nsHandlerService.js
+ bin/components/nsWebHandlerApp.js
+ bin/components/libdbusservice.so
+ bin/components/aboutRobots.js
+ bin/components/nsBadCertHandler.js
++bin/components/aboutRights.js
+ 
+ ; Modules
+ bin/modules/*
+ 
+ ; Safe Browsing
+ bin/components/nsSafebrowsingApplication.js
+ bin/components/nsUrlClassifierListManager.js
+ bin/components/nsUrlClassifierLib.js

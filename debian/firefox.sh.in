@@ -15,9 +15,9 @@
 # If nothing is found, we'll go for a fresh run and let firefox create a
 # default profile for us.
 
-APPNAME=firefox-3.1
-LIBDIR=@LIBDIR@
+APPNAME=`basename $0`
 MOZDIR=$HOME/.mozilla
+LIBDIR=@LIBDIR@
 NAME=`basename $0`
 GDB=/usr/bin/gdb
 DROPPED=abandoned
