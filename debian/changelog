@@ -1,3 +1,9 @@
+firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+
+  * 
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 24 Sep 2008 11:50:41 +0200
+
 firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) intrepid; urgency=low
 
   Security/Stability update (v3.0.2 build6)
