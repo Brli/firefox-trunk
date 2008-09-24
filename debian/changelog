@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu2) intrepid; urgency=low
 
   * fix LP: #273907 - abrowser does not start: :$pkglibdir/abrowser link
     missing; we introduce the proper link in the firefox-3.0 package
@@ -13,7 +13,7 @@ firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu2) UNRELEASED; urgency=low
     - add debian/patches/bz421977_att334578.patch
     - update debian/patches/series
 
- -- Alexander Sack <asac@ubuntu.com>  Wed, 24 Sep 2008 11:50:41 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 24 Sep 2008 18:48:23 +0200
 
 firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) intrepid; urgency=low
 
