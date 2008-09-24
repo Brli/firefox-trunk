@@ -29,6 +29,7 @@ FORCE_OFFICIAL_BRANDING = 1
 
 BRANDING_NAME_OTHER := awesome-browser
 DEBIAN_NAME_OTHER := abrowser-3.0
+DEBIAN_APP_NAME_OTHER := abrowser
 
 DESKTOP  = $(DEBIAN_NAME_OTHER).desktop
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
@@ -198,6 +199,7 @@ binary-install/$(DEBIAN_NAME)::
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
 	dh_install debian/migrator/ffox-3-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
 	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
 	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/searchplugins
