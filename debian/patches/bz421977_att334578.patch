@@ -1,0 +1,268 @@
+diff --git a/browser/components/shell/src/nsGNOMEShellService.cpp b/browser/components/shell/src/nsGNOMEShellService.cpp
+--- a/browser/components/shell/src/nsGNOMEShellService.cpp
++++ b/browser/components/shell/src/nsGNOMEShellService.cpp
+@@ -63,6 +63,8 @@
+ 
+ #include <glib.h>
+ #include <glib-object.h>
++#include <gtk/gtkversion.h>
++#include <gdk/gdk.h>
+ #include <gdk-pixbuf/gdk-pixbuf.h>
+ #include <limits.h>
+ #include <stdlib.h>
+@@ -446,58 +448,8 @@
+   return rv;
+ }
+ 
+-// In: pointer to two characters CC
+-// Out: parsed color number
+-static PRUint8
+-HexToNum(char ch)
+-{
+-  if ('0' <= ch && '9' >= ch)
+-    return ch - '0';
+-
+-  if ('A' <= ch && 'F' >= ch)
+-    return ch - 'A';
+-
+-  if ('a' <= ch && 'f' >= ch)
+-    return ch - 'a';
+-
+-  return 0;
+-}
+-  
+-
+-// In: 3 or 6-character RRGGBB hex string
+-// Out: component colors
+-static PRBool
+-HexToRGB(const nsCString& aColorSpec,
+-         PRUint8 &aRed,
+-         PRUint8 &aGreen,
+-         PRUint8 &aBlue)
+-{
+-  const char *buf = aColorSpec.get();
+-
+-  if (aColorSpec.Length() == 6) {
+-    aRed =    HexToNum(buf[0]) >> 4 |
+-              HexToNum(buf[1]);
+-    aGreen =  HexToNum(buf[2]) >> 4 |
+-              HexToNum(buf[3]);
+-    aBlue =   HexToNum(buf[4]) >> 4 |
+-              HexToNum(buf[5]);
+-    return PR_TRUE;
+-  }
+-
+-  if (aColorSpec.Length() == 3) {
+-    aRed = HexToNum(buf[0]);
+-    aGreen = HexToNum(buf[1]);
+-    aBlue = HexToNum(buf[2]);
+-
+-    aRed |= aRed >> 4;
+-    aGreen |= aGreen >> 4;
+-    aBlue |= aBlue >> 4;
+-
+-    return PR_TRUE;
+-  }
+-
+-  return PR_FALSE;
+-}
++#define COLOR_16_TO_8_BIT(_c) ((_c) >> 8)
++#define COLOR_8_TO_16_BIT(_c) ((_c) << 8)
+ 
+ NS_IMETHODIMP
+ nsGNOMEShellService::GetDesktopBackgroundColor(PRUint32 *aColor)
+@@ -512,22 +464,34 @@
+     return NS_OK;
+   }
+ 
+-  // Chop off the leading '#' character
+-  background.Cut(0, 1);
++  GdkColor color;
++  gboolean success = gdk_color_parse(background.get(), &color);
+ 
+-  PRUint8 red, green, blue;
+-  if (!HexToRGB(background, red, green, blue))
+-      return NS_ERROR_FAILURE;
++  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+ 
+-  // The result must be in RGB order with the high 8 bits zero.
+-  *aColor = (red << 16 | green << 8  | blue);
++  *aColor = COLOR_16_TO_8_BIT(color.red) << 16 |
++            COLOR_16_TO_8_BIT(color.green) << 8 |
++            COLOR_16_TO_8_BIT(color.blue);
+   return NS_OK;
+ }
+ 
+ static void
+-ColorToHex(PRUint32 aColor, nsCString& aResult)
++ColorToCString(PRUint32 aColor, nsCString& aResult)
+ {
+-  char *buf = aResult.BeginWriting(7);
++#if GTK_CHECK_VERSION(2,12,0)
++  GdkColor color;
++  color.red = COLOR_8_TO_16_BIT(aColor >> 16);
++  color.green = COLOR_8_TO_16_BIT((aColor >> 8) & 0xff);
++  color.blue = COLOR_8_TO_16_BIT(aColor & 0xff);
++
++  gchar *colorString = gdk_color_to_string(&color);
++  aResult.Assign(colorString);
++  g_free(colorString);
++
++#else // GTK 2.12.0
++
++  // The #rrrrggggbbbb format is used to match gdk_color_to_string()
++  char *buf = aResult.BeginWriting(13);
+   if (!buf)
+     return;
+ 
+@@ -535,7 +499,8 @@
+   PRUint8 green = (aColor >> 8) & 0xff;
+   PRUint8 blue = aColor & 0xff;
+ 
+-  PR_snprintf(buf, 8, "#%02x%02x%02x", red, green, blue);
++  PR_snprintf(buf, 14, "#%02x00%02x00%02x00", red, green, blue);
++#endif // GTK 2.12.0
+ }
+ 
+ NS_IMETHODIMP
+@@ -544,7 +509,7 @@
+   nsCOMPtr<nsIGConfService> gconf = do_GetService(NS_GCONFSERVICE_CONTRACTID);
+ 
+   nsCString colorString;
+-  ColorToHex(aColor, colorString);
++  ColorToCString(aColor, colorString);
+ 
+   gconf->SetString(NS_LITERAL_CSTRING(kDesktopColorKey), colorString);
+ 
+diff --git a/browser/components/shell/test/Makefile.in b/browser/components/shell/test/Makefile.in
+--- a/browser/components/shell/test/Makefile.in
++++ b/browser/components/shell/test/Makefile.in
+@@ -42,6 +42,9 @@
+ 
+ include $(DEPTH)/config/autoconf.mk
+ 
++MODULE		= test_browser_shell
++XPCSHELL_TESTS	= unit
++
+ include $(topsrcdir)/config/rules.mk
+ 
+ _BROWSER_TEST_FILES = browser_420786.js \
+diff --git a/browser/components/shell/test/unit/test_421977.js b/browser/components/shell/test/unit/test_421977.js
+new file mode 100644
+--- /dev/null
++++ b/browser/components/shell/test/unit/test_421977.js
+@@ -0,0 +1,114 @@
++const Cc = Components.classes;
++const Ci = Components.interfaces;
++const Cr = Components.results;
++
++const GCONF_BG_COLOR_KEY = "/desktop/gnome/background/primary_color";
++
++var gShell;
++var gGConf;
++
++/**
++ * Converts from a rgb numerical color valule (r << 16 | g << 8 | b)
++ * into a hex string in #RRGGBB format.
++ */
++function colorToHex(aColor) {
++  const rMask = 4294901760;
++  const gMask = 65280;
++  const bMask = 255;
++
++  var r = (aColor & rMask) >> 16;
++  var g = (aColor & gMask) >> 8;
++  var b = (aColor & bMask);
++
++  return "#" + [r, g, b].map(function(aInt)
++                              aInt.toString(16).replace(/^(.)$/, "0$1"))
++                             .join("").toUpperCase();
++}
++
++/**
++ * Converts a color string in #RRGGBB format to a rgb numerical color value
++ *  (r << 16 | g << 8 | b).
++ */
++function hexToColor(aString) {
++  return parseInt(aString.substring(1,3), 16) << 16 |
++         parseInt(aString.substring(3,5), 16) << 8 |
++         parseInt(aString.substring(5,7), 16);
++}
++
++/**
++ * Checks that setting the GConf background key to aGConfColor will
++ * result in the Shell component returning a background color equals
++ * to aExpectedShellColor in #RRGGBB format.
++ */
++function checkGConfToShellColor(aGConfColor, aExpectedShellColor) {
++
++  gGConf.setString(GCONF_BG_COLOR_KEY, aGConfColor);
++  var shellColor = colorToHex(gShell.desktopBackgroundColor);
++
++  do_check_eq(shellColor, aExpectedShellColor);
++}
++
++/**
++ * Checks that setting the background color (in #RRGGBB format) using the Shell
++ * component will result in having a GConf key for the background color set to
++ * aExpectedGConfColor.
++ */
++function checkShellToGConfColor(aShellColor, aExpectedGConfColor) {
++
++  gShell.desktopBackgroundColor = hexToColor(aShellColor);
++  var gconfColor = gGConf.getString(GCONF_BG_COLOR_KEY);
++
++  do_check_eq(gconfColor, aExpectedGConfColor);
++}
++
++function run_test() {
++
++  // This test is Linux specific for now
++  if (!("@mozilla.org/gnome-gconf-service;1" in Cc))
++    return;
++
++  gGConf = Cc["@mozilla.org/gnome-gconf-service;1"].
++           getService(Ci.nsIGConfService);
++
++  gShell = Cc["@mozilla.org/browser/shell-service;1"].
++           getService(Ci.nsIShellService);
++
++  // Save the original background color so that we can restore it
++  // after the test.
++  var origGConfColor = gGConf.getString(GCONF_BG_COLOR_KEY);
++
++  try {
++
++    checkGConfToShellColor("#000", "#000000");
++    checkGConfToShellColor("#00f", "#0000FF");
++    checkGConfToShellColor("#b2f", "#BB22FF");
++    checkGConfToShellColor("#fff", "#FFFFFF");
++
++    checkGConfToShellColor("#000000", "#000000");
++    checkGConfToShellColor("#0000ff", "#0000FF");
++    checkGConfToShellColor("#b002f0", "#B002F0");
++    checkGConfToShellColor("#ffffff", "#FFFFFF");
++
++    checkGConfToShellColor("#000000000", "#000000");
++    checkGConfToShellColor("#00f00f00f", "#000000");
++    checkGConfToShellColor("#aaabbbccc", "#AABBCC");
++    checkGConfToShellColor("#fffffffff", "#FFFFFF");
++
++    checkGConfToShellColor("#000000000000", "#000000");
++    checkGConfToShellColor("#000f000f000f", "#000000");
++    checkGConfToShellColor("#00ff00ff00ff", "#000000");
++    checkGConfToShellColor("#aaaabbbbcccc", "#AABBCC");
++    checkGConfToShellColor("#111122223333", "#112233");
++    checkGConfToShellColor("#ffffffffffff", "#FFFFFF");
++
++    checkShellToGConfColor("#000000", "#000000000000");
++    checkShellToGConfColor("#0000FF", "#00000000ff00");
++    checkShellToGConfColor("#FFFFFF", "#ff00ff00ff00");
++    checkShellToGConfColor("#0A0B0C", "#0a000b000c00");
++    checkShellToGConfColor("#A0B0C0", "#a000b000c000");
++    checkShellToGConfColor("#AABBCC", "#aa00bb00cc00");
++
++  } finally {
++    gGConf.setString(GCONF_BG_COLOR_KEY, origGConfColor);
++  }
++}

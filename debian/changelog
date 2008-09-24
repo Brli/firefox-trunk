@@ -1,3 +1,20 @@
+firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu2) intrepid; urgency=low
+
+  * fix LP: #273907 - abrowser does not start: :$pkglibdir/abrowser link
+    missing; we introduce the proper link in the firefox-3.0 package
+    - update debian/rules
+  * fix LP: #269795 - abrowser shouldn't display the EULA; we fix this by
+    using brand.properties to determine whether we have official branding or
+    not. In turn the about:rights notification only gets displayed when
+    official build is running.
+    - update debian/patches/lp269656_know_your_rights.patch
+  * fix LP: #206191 - Firefox 3 "set as Desktop background" does not work
+    properly; we cherry-pick latest upstream patch from bugzilla
+    - add debian/patches/bz421977_att334578.patch
+    - update debian/patches/series
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 24 Sep 2008 18:48:23 +0200
+
 firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) intrepid; urgency=low
 
   Security/Stability update (v3.0.2 build6)
