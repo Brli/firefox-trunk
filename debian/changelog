@@ -1,8 +1,8 @@
 firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  Security/Stability update (v3.0.3 build1)
+  new regression fix release (v3.0.3 build1)
     - see USN-645-3
-  * fix LP: #270429: [MASTER] passwords lost from 3.0.1 to 3.0.2
+  * fixes LP: #270429: [MASTER] passwords lost from 3.0.1 to 3.0.2
 
  -- Alexander Sack <asac@ubuntu.com>  Wed, 24 Sep 2008 18:48:23 +0200
 
