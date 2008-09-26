@@ -201,7 +201,11 @@ binary-install/$(DEBIAN_NAME)::
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
 	dh_install debian/migrator/ffox-3-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
+ifneq (,$(DEBIAN_META_NAME))
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)
+else
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
+endif
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
 	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
 	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/searchplugins

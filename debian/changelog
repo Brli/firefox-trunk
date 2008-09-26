@@ -2,6 +2,9 @@ firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu2) UNRELEASED; urgency=low
 
   * Remove a hardcoded 3.0 to make the merge in the 3.1 branch smoother
     - update debian/rules
+  * Fix abrowser symlink in libdir which must be versioned unless control
+    ships a meta package
+    - update debian/rules
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 26 Sep 2008 19:23:41 +0200
 
