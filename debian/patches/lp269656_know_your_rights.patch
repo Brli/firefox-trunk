@@ -3,9 +3,9 @@
  browser/base/jar.mn                    |    1 
  browser/components/Makefile.in         |    1 
  browser/components/aboutRights.js      |   67 ++++++++++++
- browser/components/nsBrowserGlue.js    |  115 ++++++++++++++++----
+ browser/components/nsBrowserGlue.js    |  130 ++++++++++++++++++-----
  browser/installer/unix/packages-static |    1 
- 6 files changed, 339 insertions(+), 27 deletions(-)
+ 6 files changed, 354 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/base/content/aboutRights.xhtml
 ===================================================================
@@ -88,7 +88,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +  </li>
 +
 +  <li>
-+    Firefox also uses web site information services, such as the SafeBrowsing
++    Firefox also offers optional web site information services, such as the SafeBrowsing
 +    service; however, we cannot guarantee they are 100% accurate or error-free.
 +    More details, including information on how to disable the services, can be
 +    found in the <a href="about:rights#hiddenpart" onclick="return showhidden()">service terms</a>.
@@ -313,7 +313,7 @@ Index: mozilla/browser/components/nsBrowserGlue.js
 ===================================================================
 --- mozilla.orig/browser/components/nsBrowserGlue.js
 +++ mozilla/browser/components/nsBrowserGlue.js
-@@ -67,16 +67,103 @@
+@@ -67,16 +67,118 @@
  };
  
  // Constructor
@@ -363,7 +363,13 @@ Index: mozilla/browser/components/nsBrowserGlue.js
 +}
 +
 +function doRightsDisplay(e) {
-+    var FIREFOX_WELCOME_TEXT = "Mozilla Firefox is free and open source software from the non-profit Mozilla Foundation.";
++    var bundleService = Cc["@mozilla.org/intl/stringbundle;1"].
++                        getService(Ci.nsIStringBundleService);
++    var brandBundle = bundleService.createBundle("chrome://branding/locale/brand.properties");
++    var appFullName = brandBundle.GetStringFromName("brandFullName");
++    appFullName = appFullName != null ? appFullName : "Browser Without Brand";
++
++    var FIREFOX_WELCOME_TEXT = appFullName + " is free and open source software from the non-profit Mozilla Foundation.";
 +    var YOURRIGHTS_TEXT = "Know Your Rights...";
 +    var YOURRIGHTS_ACCESSKEY = "K";
 +    var buttons = [{ label: YOURRIGHTS_TEXT, accessKey: YOURRIGHTS_ACCESSKEY, callback: openYourRights }];
@@ -401,7 +407,16 @@ Index: mozilla/browser/components/nsBrowserGlue.js
 +    try { rightsSeen = prefs.getCharPref("xxx.legal.rights.seen"); } catch (e) {}
 +    try { rightsCurrent = prefs.getCharPref("xxx.legal.rights.current"); } catch (e) {}
 +
-+    if(rightsSeen != null && rightsSeen == rightsCurrent) {
++    var bundleService = Cc["@mozilla.org/intl/stringbundle;1"].
++                        getService(Ci.nsIStringBundleService);
++    var brandBundle = bundleService.createBundle("chrome://branding/locale/brand.properties");
++
++    var appFullName = brandBundle.GetStringFromName("brandFullName");
++
++    // do not display notification if a) user already saw a notification for the current
++    // rights page version _or_ b) this is a not official build (e.g. no Mozilla application)
++    if(rightsSeen != null && rightsSeen == rightsCurrent ||
++       appFullName == null || appFullName.indexOf("Mozilla") < 0) {
 +	return;
 +    }
 +    var browser = getMostRecentBrowser();
@@ -417,7 +432,7 @@ Index: mozilla/browser/components/nsBrowserGlue.js
      var prefBranch = Cc["@mozilla.org/preferences-service;1"].
                       getService(Ci.nsIPrefBranch);
      prefBranch.setBoolPref("browser.sessionstore.resume_session_once", true);
-@@ -94,16 +181,17 @@
+@@ -94,16 +196,17 @@
          break;
        case "prefservice:after-app-defaults":
          this._onAppDefaults();
@@ -435,7 +450,7 @@ Index: mozilla/browser/components/nsBrowserGlue.js
                     getService(Ci.nsIConsoleService);
          cs.logStringMessage(null); // clear the console (in case it's open)
          cs.reset();
-@@ -170,43 +258,16 @@
+@@ -170,43 +273,16 @@
      // other customizations are applied in _onProfileStartup()
      var distro = new DistributionCustomizer();
      distro.applyPrefDefaults();
