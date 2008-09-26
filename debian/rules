@@ -9,6 +9,9 @@ DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 DEBIAN_NAME	:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
 DEBIAN_APP_NAME	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
 DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/.*-//g')
+DEBIAN_APP_NAME_OTHER := abrowser
+DEBIAN_NAME_OTHER := $(DEBIAN_APP_NAME_OTHER)-$(DEBIAN_APP_NAME_VER)
+BRANDING_NAME_OTHER := awesome-browser
 DEBIAN_META_NAME := $(shell grep '^Package: $(DEBIAN_APP_NAME)$$' $(CURDIR)/debian/control | sed -e 's/^Package: //')
 DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_XUL_VER  := $(shell xulrunner-1.9 --gre-version)
@@ -26,10 +29,6 @@ EM_TRANSLATION_MAX_VERSION = 3.0.*
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
 FORCE_OFFICIAL_BRANDING = 1
-
-BRANDING_NAME_OTHER := awesome-browser
-DEBIAN_NAME_OTHER := abrowser-$(DEBIAN_APP_NAME_VER)
-DEBIAN_APP_NAME_OTHER := abrowser
 
 DESKTOP  = $(DEBIAN_NAME_OTHER).desktop
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
