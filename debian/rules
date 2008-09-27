@@ -226,10 +226,10 @@ binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
 ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME_OTHER).desktop
 else
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME_OTHER)-$(DEBIAN_APP_NAME_VER).desktop
 endif
 
 

@@ -5,6 +5,9 @@ firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu2) UNRELEASED; urgency=low
   * Fix abrowser symlink in libdir which must be versioned unless control
     ships a meta package
     - update debian/rules
+  * Fix the desktop file for abrowser to call it abrowser-3.0 instead
+    of firefox-3.0
+    - update debian/rules
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 26 Sep 2008 19:23:41 +0200
 
