@@ -43,6 +43,13 @@ firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu2) UNRELEASED; urgency=low
   * Fix abrowser symlink in libdir which must be versioned unless control
     ships a meta package
     - update debian/rules
+  * Fix the desktop file for abrowser to call it abrowser-3.0 instead
+    of firefox-3.0, and move the desktop icons to the branding packages
+    - update debian/rules
+  * Add a ubuntu-abrowser.js file dedicated to abrowser and set useragent
+    to Firefox/version
+    - add debian/ubuntu-abrowser.js.tmpl
+    - update debian/rules
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 26 Sep 2008 19:23:41 +0200
 

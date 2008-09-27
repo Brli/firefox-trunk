@@ -213,8 +213,6 @@ endif
 	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/searchplugins
 	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF3_DIR)/defaults/syspref
 	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
-	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
-	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
 
@@ -225,13 +223,15 @@ binary-install/$(DEBIAN_NAME_OTHER)-branding::
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
+	dh_link -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
+	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/preferences/
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
 ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME_OTHER).desktop
 else
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME_OTHER)-$(DEBIAN_APP_NAME_VER).desktop
 endif
 
 binary-install/$(DEBIAN_NAME)-branding::
@@ -243,6 +243,7 @@ binary-install/$(DEBIAN_NAME)-branding::
 		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
 	dh_install -p$(DEBIAN_NAME)-branding \
 		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
+	dh_link -p$(DEBIAN_NAME)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
 ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP_BRANDED) \
@@ -259,6 +260,13 @@ debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
 		-e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
 		-e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 		-e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
+		< $< > $@
+
+binary-install/$(DEBIAN_NAME_OTHER)-branding:: debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
+
+debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js: debian/ubuntu-abrowser.js.tmpl
+	sed \
+		-e 's/@APP_VERSION@/$(DEBIAN_FF3_VER)/' \
 		< $< > $@
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~hg.*/pre/' | tr -d '~')
