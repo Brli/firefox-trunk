@@ -222,6 +222,7 @@ binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
 	dh_link -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
+	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/preferences/
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
 ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP) \
@@ -257,6 +258,13 @@ debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
 		-e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
 		-e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 		-e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
+		< $< > $@
+
+binary-install/$(DEBIAN_NAME_OTHER)-branding:: debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
+
+debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js: debian/ubuntu-abrowser.js.tmpl
+	sed \
+		-e 's/@APP_VERSION@/$(DEBIAN_FF3_VER)/' \
 		< $< > $@
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~cvs.*/pre/' | tr -d '~')
