@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+firefox-3.0 (3.0.3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Remove a hardcoded 3.0 to make the merge in the 3.1 branch smoother
     - update debian/rules
@@ -14,7 +14,7 @@ firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu2) UNRELEASED; urgency=low
     - add debian/ubuntu-abrowser.js.tmpl
     - update debian/rules
 
- -- Fabien Tassin <fta@ubuntu.com>  Wed, 01 Oct 2008 14:56:48 +0200
+ -- Fabien Tassin <fta@ubuntu.com>  Wed, 01 Oct 2008 23:42:14 +0200
 
 firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu1) intrepid; urgency=low
 
