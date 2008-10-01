@@ -1,10 +1,10 @@
 ---
  browser/app/application.ini                               |    2 +-
  browser/app/firefox-branding.js                           |   10 +++++-----
- browser/branding/awesome-browser/pref/firefox-branding.js |   12 ++++++------
+ browser/branding/awesome-browser/pref/firefox-branding.js |   10 +++++-----
  browser/branding/unofficial/pref/firefox-branding.js      |   10 +++++-----
  other-licenses/branding/firefox/pref/firefox-branding.js  |   10 +++++-----
- 5 files changed, 22 insertions(+), 22 deletions(-)
+ 5 files changed, 21 insertions(+), 21 deletions(-)
 
 Index: mozilla/browser/app/application.ini
 ===================================================================
@@ -85,7 +85,7 @@ Index: mozilla/browser/branding/awesome-browser/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/browser/branding/awesome-browser/pref/firefox-branding.js
 +++ mozilla/browser/branding/awesome-browser/pref/firefox-branding.js
-@@ -1,17 +1,17 @@
+@@ -1,16 +1,16 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
@@ -107,8 +107,6 @@ Index: mozilla/browser/branding/awesome-browser/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
  pref("browser.search.param.yahoo-fr-cjkt", "");
  pref("browser.search.param.yahoo-f-CN", "");
--pref("general.useragent.extra.firefox", "Firefox/3.0.1");
-+pref("general.useragent.extra.firefox", "Firefox/%VERSION%");
 Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/other-licenses/branding/firefox/pref/firefox-branding.js
