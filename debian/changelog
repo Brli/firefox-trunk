@@ -19,6 +19,10 @@ firefox-3.0 (3.0.3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/ubuntu-abrowser.js.tmpl
     - update debian/rules
 
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * add ubuntu code to preferences for yahoo searchplugin
+    - update debian/firefox.js
+
  -- Fabien Tassin <fta@ubuntu.com>  Wed, 01 Oct 2008 23:42:14 +0200
 
 firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu1) intrepid; urgency=low
