@@ -22,6 +22,9 @@ firefox-3.0 (3.0.3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   [ Alexander Sack <asac@ubuntu.com> ]
   * add ubuntu code to preferences for yahoo searchplugin
     - update debian/firefox.js
+  * fix gnome integration systempath patch in such a way that it properly
+    refers to "abrowser" and not awesome-browser
+    - update debian/patches/lp185622_system_path_default_browser.patch
 
  -- Fabien Tassin <fta@ubuntu.com>  Wed, 01 Oct 2008 23:42:14 +0200
 
