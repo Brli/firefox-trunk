@@ -5,8 +5,9 @@ firefox-3.0 (3.0.3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     LP: #275410.
 
   [ Fabien Tassin <fta@ubuntu.com> ]
-  * Remove a hardcoded 3.0 to make the merge in the 3.1 branch smoother
+  * Remove some hardcoded 3.0 to make the merge in the 3.1 branch smoother
     - update debian/rules
+    - update debian/firefox.sh.in
   * Fix abrowser symlink in libdir which must be versioned unless control
     ships a meta package. Add versioned symlinks in libdir for firefox and
     abrowser now that the launcher script uses $0
