@@ -13,7 +13,7 @@ Index: mozilla/browser/branding/unofficial/content/jar.mn
 +++ mozilla/browser/branding/unofficial/content/jar.mn
 @@ -1,7 +1,7 @@
 -browser.jar:
-+browser-browser.jar:
++browser-branding.jar:
  % content branding %content/branding/ xpcnativewrappers=yes
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
