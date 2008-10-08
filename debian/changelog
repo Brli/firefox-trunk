@@ -1,5 +1,10 @@
 firefox-3.0 (3.0.3+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Steve Langasek <steve.langasek@ubuntu.com> ]
+  * Fix the wrapper script to handle all possible invocations.
+    LP: #275410.
+
+  [ Fabien Tassin <fta@ubuntu.com> ]
   * Remove a hardcoded 3.0 to make the merge in the 3.1 branch smoother
     - update debian/rules
   * Fix abrowser symlink in libdir which must be versioned unless control

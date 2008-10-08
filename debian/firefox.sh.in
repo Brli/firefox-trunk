@@ -6,14 +6,31 @@
 # Authors:
 #  Alexander Sack <asac@jwsdot.com>
 #  Fabien Tassin <fta@sofaraway.org>
+#  Steve Langasek <steve.langasek@canonical.com>
 # License: GPLv2 or later
 
-APPNAME=`basename $0`
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
-NAME=`basename $0`
 GDB=/usr/bin/gdb
 DROPPED=abandoned
+
+NAME="$0"
+NAME="${NAME%%-3.0}"
+APPNAME="$(basename "$NAME")"
+
+while [ ! -f "$LIBDIR/$APPNAME" ] && [ -L "$NAME" ]; do
+	TARGET="$(readlink "$NAME")"
+	if [ "x$TARGET" = "x$(basename "$TARGET")" ]; then
+		TARGET="$(dirname "$NAME")/$TARGET"
+	fi
+	TARGET=${TARGET%%-3.0}
+	NAME="$TARGET"
+	APPNAME="$(basename "$NAME")"
+	if [ "x$APPNAME" = "xfirefox.sh" ]; then
+		APPNAME=firefox
+		break
+	fi
+done
 
 usage () {
   $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
