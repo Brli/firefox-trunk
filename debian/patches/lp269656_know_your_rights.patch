@@ -1,20 +1,20 @@
 ---
- browser/base/content/aboutRights.xhtml |  181 +++++++++++++++++++++++++++++++++
+ browser/base/content/aboutRights.xhtml |  143 +++++++++++++++++++++++++++++++++
  browser/base/jar.mn                    |    1 
  browser/components/Makefile.in         |    1 
- browser/components/aboutRights.js      |   67 ++++++++++++
- browser/components/nsBrowserGlue.js    |  130 ++++++++++++++++++-----
+ browser/components/aboutRights.js      |   67 +++++++++++++++
+ browser/components/nsBrowserGlue.js    |  130 +++++++++++++++++++++++-------
  browser/installer/unix/packages-static |    1 
- 6 files changed, 354 insertions(+), 27 deletions(-)
+ 6 files changed, 316 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/base/content/aboutRights.xhtml
 ===================================================================
 --- /dev/null
 +++ mozilla/browser/base/content/aboutRights.xhtml
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,143 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +
-+# <!--
++<!--
 +# ***** BEGIN LICENSE BLOCK *****
 +# Version: MPL 1.1/GPL 2.0/LGPL 2.1
 +#
@@ -60,63 +60,48 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +<link rel="stylesheet" href="chrome://global/skin/about.css" type="text/css" media="all" />
 +</head>
 +<body>
-+<div style="font-size: x-large">About: Your Rights</div>
++<div id="aboutPageContainer">
++<h1>About: Your Rights</h1>
 +<p>
-+Mozilla Firefox is free and open source software, built by a community of thousands from
-+all over the world. There are a few things you should know:
++Mozilla Firefox is free and open source software, built by a community of
++thousands from all over the world. There are a few things you should know:
 +
 +
 +<ul>
 +  <li>
 +    Firefox is made available to you under the terms of the
-+    <a href="http://www.mozilla.org/MPL/MPL-1.1.html">Mozilla Public
-+    License</a>. This means you may use, copy and distribute Firefox to
-+    others. You are also welcome to modify the source code of Firefox as
-+    you want to meet your needs. The Mozilla Public License also gives you
-+    the right to distribute your modified versions.  
++    <a href="http://www.mozilla.org/MPL/MPL-1.1.html" alt="Mozilla Public License version 1.1">Mozilla Public License</a>. This means you may use, copy and distribute Firefox to others. You are also welcome to modify the source code of Firefox as you want to meet your needs. The Mozilla Public License also gives you the right to distribute your modified versions.
 +  </li>
 +
 +  <li>
 +   Mozilla does not grant you any rights to the Mozilla and Firefox trademarks
 +   or logos. Additional information on Trademarks may be found
-+   <a href="http://www.mozilla.org/foundation/trademarks/policy.html">here</a>.
++   <a href="http://www.mozilla.org/foundation/trademarks/policy.html" alt="Mozilla Trademark Policy">here</a>.
 +  </li>
 +
 +  <li>
 +    Mozilla’s privacy policy for Firefox may be found
-+    <a href="http://www.mozilla.com/en-US/legal/privacy/firefox-en.html">here</a>.
++    <a href="http://www.mozilla.com/en-US/legal/privacy/firefox-en.html" alt="Firefox Privacy Policy">here</a>.
 +  </li>
 +
 +  <li>
-+    Firefox also offers optional web site information services, such as the SafeBrowsing
-+    service; however, we cannot guarantee they are 100% accurate or error-free.
-+    More details, including information on how to disable the services, can be
-+    found in the <a href="about:rights#hiddenpart" onclick="return showhidden()">service terms</a>. 
++    Firefox also offers optional web site information services, such as the SafeBrowsing service; however, we cannot guarantee they are 100% accurate or error-free. More details, including information on how to disable the services, can be found in the <a href="about:rights#hiddenpart" alt="Mozilla Firefox Web Site Services" onclick="return showhidden()">service terms</a>.
 +
 +<div id="part2" style="-moz-border-radius: 3pt;">
-+  <a href="about:rights#hiddenpart" onclick="return showhidden()" style="font-size: large">
-+    Mozilla Firefox Web Site Services
-+  </a>
 +<div id="hiddenpart" style="padding: 0em; margin: 0em">
++  <h3>Mozilla Firefox Web Site Services</h3>
 +  <script type="text/javascript">
 +    h = document.getElementById('hiddenpart');
 +    p2 = document.getElementById('part2');
 +    h.style.display = 'none';
-+    p2.style.border="none 1pt lightgrey";
 +    p2.style.background="none";
-+    p2.style.padding="0.5em 1em 0.5em 1em";
-+    p2.style.margin="0.25em 0em 0em -1em";
 +
 +    switchElem = document.getElementById("switch");
 +    function showhidden() {
 +      if (h.style.display == 'none') {
-+        p2.style.border = "dotted 1pt lightgrey";
-+	p2.style.background = "#fafafa";
 +        h.style.display = 'block';
 +      }
 +      else {
-+        p2.style.border ="none 1pt lightgrey";
-+	p2.style.background = "none";
 +        h.style.display = 'none';
 +      }
 +      return false;
@@ -125,64 +110,40 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +
 +  <p>
 +    Mozilla Firefox uses web site information services ("Services"), such as the
-+    SafeBrowsing service, that are available for your use with this binary version
-+    of Firefox as described below. If you do not want to use the Services or the
-+    terms below are unacceptable, you may disable the SafeBrowsing service by clicking
-+    <b>Edit -> Preferences -> Security</b> and uncheck the options for "Tell me if the site
-+    I'm visiting is a suspected attack site" and "Tell me if the site I'm visiting is
-+    a suspected forgery."
++    SafeBrowsing service, that are available for your use with this binary version of Firefox as described below. If you do not want to use the Services or the terms below are unacceptable, you may disable the SafeBrowsing service by clicking <b>Edit -> Preferences -> Security</b> and uncheck the options for "Tell me if the site I'm visiting is a suspected attack site" and "Tell me if the site I'm visiting is a suspected forgery."
 + </p>
 +
 + <ol>
 +   <p><li>
-+     Mozilla and its contributors, licensors and partners work to provide the most
-+     accurate and up-to-date phishing and malware information. However, they cannot
-+     guarantee that this information is comprehensive and error-free: some risky sites
-+      may not be identified and some safe sites may be identified in error
++     Mozilla and its contributors, licensors and partners work to provide the most accurate and up-to-date phishing and malware information. However, they cannot guarantee that this information is comprehensive and error-free: some risky sites may not be identified and some safe sites may be identified in error.
 +   </li></p>
 +
 +   <p><li>
-+     Mozilla may discontinue or change the Services at its discretion.  
++     Mozilla may discontinue or change the Services at its discretion.
 +   </li></p>
 +
 +   <p><li>
 +     You are welcome to use these Services with the accompanying version of
 +     Firefox, and you have all the rights necessary to do so.  Mozilla and
 +     its licensors reserve all other rights in the Services.  These terms are
-+     not intended to limit any rights granted under open source licenses applicable
-+     to Firefox and to corresponding source code versions of Firefox.
++     not intended to limit any rights granted under open source licenses applicable to Firefox and to corresponding source code versions of Firefox.
 +   </li></p>
 +
 +   <p><li><b>
-+     The Services are provided "as-is."  Mozilla, its contributors, licensors, and
-+     distributors, disclaim all warranties, whether express or implied, including without
-+     limitation, warranties that the Services are merchantable and fit for your particular
-+     purposes.  You bear the entire risk as to selecting the Services for your purposes
-+     and as to the quality and performance of the Services. Some jurisdictions do not allow
-+     the exclusion or limitation of implied warranties, so this disclaimer may not apply to
++     The Services are provided "as-is."  Mozilla, its contributors, licensors, and distributors, disclaim all warranties, whether express or implied, including without limitation, warranties that the Services are merchantable and fit for your particular purposes.  You bear the entire risk as to selecting the Services for your purposes and as to the quality and performance of the Services. Some jurisdictions do not allow the exclusion or limitation of implied warranties, so this disclaimer may not apply to
 +     you.
 +   </b></li></p>
 +
 +   <p><li><b>
-+     Except as required by law, Mozilla, its contributors, licensors, and distributors will
-+     not be liable for any indirect, special, incidental, consequential, punitive, or
-+     exemplary damages arising out of or in any way relating to the use of Firefox and the
-+     Services. The collective liability under these terms will not exceed $500 (five hundred
-+     dollars). Some jurisdictions do not allow the exclusion or limitation of certain damages,
-+     so this exclusion and limitation may not apply to you.
++     The Services are provided "as-is."  Mozilla, its contributors, licensors, and distributors, disclaim all warranties, whether express or implied, including without limitation, warranties that the Services are merchantable and fit for your particular purposes.  You bear the entire risk as to selecting the Services for your purposes and as to the quality and performance of the Services. Some jurisdictions do not allow the exclusion or limitation of implied warranties, so this disclaimer may not apply to you.
 +   </b></li></p>
 +
 +   <p><li>
-+     Mozilla may update these terms as necessary from time to time. These terms may not
-+     be modified or cancelled without Mozilla’s written agreement. 
++     Mozilla may update these terms as necessary from time to time. These terms may not be modified or cancelled without Mozilla’s written agreement.
 +   </li></p>
 +
 +   <p><li>
-+     These terms are governed by the laws of the state of California, U.S.A., excluding
-+     its conflict of law provisions. If any portion of these terms is held to be invalid
-+     or unenforceable, the remaining portions will remain in full force and effect. In
-+     the event of a conflict between a translated version of these terms and the English
-+     language version, the English language version shall control.
++     These terms are governed by the laws of the state of California, U.S.A., excluding its conflict of law provisions. If any portion of these terms is held to be invalid or unenforceable, the remaining portions will remain in full force and effect. In the event of a conflict between a translated version of these terms and the English language version, the English language version shall control.
 +   </li></p>
 + </ol>
 +</div>
@@ -190,6 +151,7 @@ Index: mozilla/browser/base/content/aboutRights.xhtml
 +</li>
 +</ul>
 +</p>
++</div>
 +</body>
 +</html>
 +
