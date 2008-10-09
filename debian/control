@@ -30,7 +30,7 @@ Depends: fontconfig,
 	debianutils (>= 1.16),
 	xulrunner-1.9 (>= 1.9.0.1),
 	${shlibs:Depends},
-	firefox-3.0-branding | abrowser-3.0-branding
+	firefox-3.0-branding (>= 3.0.3+nobinonly-0ubuntu1~) | abrowser-3.0-branding (>= 3.0.3+nobinonly-0ubuntu1~)
 Recommends: ubufox,
 Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, firefox-libthai
