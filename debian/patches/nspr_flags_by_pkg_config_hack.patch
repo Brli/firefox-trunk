@@ -2,14 +2,14 @@
  configure.in                   |   21 +++-----------
 
 ---
- configure.in |   21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+ configure.in |   19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
 Index: mozilla/configure.in
 ===================================================================
 --- mozilla.orig/configure.in
 +++ mozilla/configure.in
-@@ -4056,32 +4056,33 @@
+@@ -4017,29 +4017,30 @@
      AC_TRY_COMPILE([#include "prlog.h"],
                  [#ifndef PR_STATIC_ASSERT
                   #error PR_STATIC_ASSERT not defined
@@ -21,10 +21,7 @@ Index: mozilla/configure.in
 -    NSPR_CFLAGS='`$(DEPTH)/nsprpub/config/nspr-config --prefix='${LIBXUL_DIST}' --includedir='${LIBXUL_DIST}'/include/nspr --cflags`'
 +    NSPR_CFLAGS=`pkg-config mozilla-nspr --cflags`
 +    NSPR_LIBS=`pkg-config mozilla-nspr --libs`
-     # explicitly set libs for Visual Age C++ for OS/2
-     if test "$OS_ARCH" = "OS2" -a "$VACPP" = "yes"; then
-         NSPR_LIBS="${LIBXUL_DIST}/lib/nspr${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plc${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plds${NSPR_VERSION}.lib ${_PTHREAD_LDFLAGS}"
-     elif test "$OS_ARCH" = "WINCE"; then
+     if test "$OS_ARCH" = "WINCE"; then
          NSPR_CFLAGS="-I${LIBXUL_DIST}/include/nspr"
          NSPR_LIBS="${LIBXUL_DIST}/lib/nspr${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plc${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plds${NSPR_VERSION}.lib "
      elif test "$OS_ARCH" = "WINNT"; then
@@ -45,7 +42,7 @@ Index: mozilla/configure.in
  dnl = use the one in the source tree (mozilla/security/nss)
  dnl ========================================================
  
-@@ -7998,17 +7999,19 @@
+@@ -7925,17 +7926,19 @@
  AC_SUBST(MOZ_ZLIB_CFLAGS)
  AC_SUBST(MOZ_ZLIB_LIBS)
  AC_SUBST(MOZ_BZ2_CFLAGS)
@@ -65,7 +62,7 @@ Index: mozilla/configure.in
  AC_SUBST(MOZ_NATIVE_NSS)
  
  AC_SUBST(CFLAGS)
-@@ -8354,24 +8357,10 @@
+@@ -8273,22 +8276,10 @@
      fi
      if test -n "$USE_ARM_KUSER"; then
          ac_configure_args="$ac_configure_args --with-arm-kuser"
@@ -77,11 +74,9 @@ Index: mozilla/configure.in
 -if test -z "$MOZ_NATIVE_NSPR"; then
 -    # Hack to deal with the fact that we use NSPR_CFLAGS everywhere
 -    AC_MSG_WARN([Recreating autoconf.mk with updated nspr-config output])
--    if test ! "$VACPP" && test "$OS_ARCH" != "WINNT" && test "$OS_ARCH" != "WINCE"; then
+-    if test "$OS_ARCH" != "WINNT" && test "$OS_ARCH" != "WINCE"; then
 -       NSPR_LIBS=`./nsprpub/config/nspr-config --prefix=$LIBXUL_DIST --exec-prefix=$MOZ_BUILD_ROOT/dist --libdir=$LIBXUL_DIST/lib --libs`
 -       $PERL -pi.bak -e "s '^NSPR_LIBS\\s*=.*'NSPR_LIBS = $NSPR_LIBS'" config/autoconf.mk
--    fi
--    if test "$OS_ARCH" != "WINNT" && test "$OS_ARCH" != "WINCE" ; then
 -       NSPR_CFLAGS=`./nsprpub/config/nspr-config --prefix=$LIBXUL_DIST --exec-prefix=$MOZ_BUILD_ROOT/dist --includedir=$LIBXUL_DIST/include/nspr --cflags`
 -       $PERL -pi.bak -e "s '^NSPR_CFLAGS\\s*=.*'NSPR_CFLAGS = $NSPR_CFLAGS'" config/autoconf.mk
 -    fi
