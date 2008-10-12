@@ -12,11 +12,14 @@
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
 APPVER=@APPVER@
+META_NAME=@META_NAME@
 GDB=/usr/bin/gdb
 DROPPED=abandoned
 
 NAME="$0"
-NAME="${NAME%%-$APPVER}"
+if [ "x$META_NAME" != "x" ] ; then
+  NAME="${NAME%%-$APPVER}"
+fi
 APPNAME="$(basename "$NAME")"
 
 while [ ! -f "$LIBDIR/$APPNAME" ] && [ -L "$NAME" ]; do
@@ -24,7 +27,9 @@ while [ ! -f "$LIBDIR/$APPNAME" ] && [ -L "$NAME" ]; do
 	if [ "x$TARGET" = "x$(basename "$TARGET")" ]; then
 		TARGET="$(dirname "$NAME")/$TARGET"
 	fi
-	TARGET=${TARGET%%-$APPVER}
+	if [ "x$META_NAME" != "x" ] ; then
+	  TARGET=${TARGET%%-$APPVER}
+	fi
 	NAME="$TARGET"
 	APPNAME="$(basename "$NAME")"
 	if [ "x$APPNAME" = "xfirefox.sh" ]; then
