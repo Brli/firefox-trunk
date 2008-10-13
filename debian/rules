@@ -6,17 +6,23 @@ DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-DEBIAN_NAME	:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
-DEBIAN_APP_NAME	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
+DEBIAN_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+
+DEBIAN_APP_NAME		:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
 DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/.*-//g')
-DEBIAN_META_NAME := $(shell grep '^Package: $(DEBIAN_APP_NAME)$$' $(CURDIR)/debian/control | sed -e 's/^Package: //')
-DEBIAN_VERSION	:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-DEBIAN_XUL_VER  := $(shell xulrunner-1.9 --gre-version)
-DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
-DEBIAN_XUL_DIR	:= usr/lib/xulrunner-$(DEBIAN_XUL_VER)
-DEBIAN_FF3_VER	 = $(shell cat build-tree/mozilla/browser/config/version.txt)
-DEBIAN_FF3_DIR	 = usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
-DEB_TAR_SRCDIR	:= mozilla
+DEBIAN_APP_NAME_OTHER	:= abrowser
+
+DEBIAN_NAME_OTHER	:= $(DEBIAN_APP_NAME_OTHER)-$(DEBIAN_APP_NAME_VER)
+BRANDING_NAME_OTHER	:= awesome-browser
+DEBIAN_META_NAME	:= $(shell grep '^Package: $(DEBIAN_APP_NAME)$$' $(CURDIR)/debian/control | sed -e 's/^Package: //')
+
+DEBIAN_VERSION		:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
+DEBIAN_XUL_VER		:= $(shell xulrunner-1.9 --gre-version)
+DEBIAN_XUL_DEV		:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
+DEBIAN_XUL_DIR		:= usr/lib/xulrunner-$(DEBIAN_XUL_VER)
+DEBIAN_FF3_VER		 = $(shell cat build-tree/mozilla/browser/config/version.txt)
+DEBIAN_FF3_DIR		 = usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
+DEB_TAR_SRCDIR		:= mozilla
 
 # minVersion and maxVersion used in install.rdf
 EM_TRANSLATION_VERSION     = $(DEBIAN_FF3_VER)
@@ -26,10 +32,6 @@ EM_TRANSLATION_MAX_VERSION = 3.0.*
 EXTRA_SYSTEM_CONFIGURE_FLAGS = $(NULL)
 
 FORCE_OFFICIAL_BRANDING = 1
-
-BRANDING_NAME_OTHER := awesome-browser
-DEBIAN_NAME_OTHER := abrowser-3.0
-DEBIAN_APP_NAME_OTHER := abrowser
 
 DESKTOP  = $(DEBIAN_NAME_OTHER).desktop
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
@@ -155,7 +157,9 @@ subst_files = \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
+	    -e 's,@META_NAME@,$(DEBIAN_META_NAME),g' \
+	    -e 's,@APPVER@,$(DEBIAN_APP_NAME_VER),g' < $< > $@
 
 debian/migrator/ffox-3-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
@@ -199,14 +203,18 @@ binary-install/$(DEBIAN_NAME)::
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
 	dh_install debian/migrator/ffox-3-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
+ifneq (,$(DEBIAN_META_NAME))
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER)
+else
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
+endif
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
 	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
 	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/searchplugins
 	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF3_DIR)/defaults/syspref
 	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
-	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
-	dh_link $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
 
@@ -217,15 +225,16 @@ binary-install/$(DEBIAN_NAME_OTHER)-branding::
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
+	dh_link -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
+	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/preferences/
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
 ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME_OTHER).desktop
 else
 	cp -f debian/$(DESKTOP) \
-		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER).desktop
+		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_APP_NAME_OTHER)-$(DEBIAN_APP_NAME_VER).desktop
 endif
-
 
 binary-install/$(DEBIAN_NAME)-branding::
 	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
@@ -236,6 +245,7 @@ binary-install/$(DEBIAN_NAME)-branding::
 		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
 	dh_install -p$(DEBIAN_NAME)-branding \
 		debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
+	dh_link -p$(DEBIAN_NAME)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
 ifneq (,$(DEBIAN_META_NAME))
 	cp -f debian/$(DESKTOP_BRANDED) \
@@ -252,6 +262,13 @@ debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
 		-e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
 		-e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 		-e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
+		< $< > $@
+
+binary-install/$(DEBIAN_NAME_OTHER)-branding:: debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
+
+debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js: debian/ubuntu-abrowser.js.tmpl
+	sed \
+		-e 's/@APP_VERSION@/$(DEBIAN_FF3_VER)/' \
 		< $< > $@
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~cvs.*/pre/' | tr -d '~')

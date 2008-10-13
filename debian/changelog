@@ -1,3 +1,58 @@
+firefox-3.0 (3.0.3+nobinonly-0ubuntu1) intrepid; urgency=low
+
+  [ Steve Langasek <steve.langasek@ubuntu.com> ]
+  * Fix the wrapper script to handle all possible invocations.
+    LP: #275410.
+
+  [ Fabien Tassin <fta@ubuntu.com> ]
+  * Remove some hardcoded 3.0 to make the merge in the 3.1 branch smoother
+    - update debian/rules
+    - update debian/firefox.sh.in
+  * Fix abrowser symlink in libdir which must be versioned unless control
+    ships a meta package. Add versioned symlinks in libdir for firefox and
+    abrowser now that the launcher script uses $0
+    - update debian/rules
+  * Fix the desktop file for abrowser to call it abrowser-3.0 instead
+    of firefox-3.0, and move the desktop icons to the branding packages
+    - update debian/rules
+  * Add a ubuntu-abrowser.js file dedicated to abrowser and set useragent
+    to Firefox/version
+    - add debian/ubuntu-abrowser.js.tmpl
+    - update debian/rules
+  * Fix typo in branding patch for unofficial branding
+    - update debian/patches/browser_branding.patch
+
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * add ubuntu code to preferences for yahoo searchplugin
+    - update debian/firefox.js
+  * fix gnome integration systempath patch in such a way that it properly
+    refers to "abrowser" and not awesome-browser
+    - update debian/patches/lp185622_system_path_default_browser.patch
+  * update aboutRights.xhtml to v1
+    - update debian/patches/lp269656_know_your_rights.patch
+  * resurrecting ubuntu default bookmarks
+    - update debian/patches/browser_branding.patch
+    - update debian/patches/series
+  * add explicit minimum version to firefox-3.0 depend on firefox-3.0-branding
+    and abrowser-3.0-branding (>= 3.0.3+nobinonly-0ubuntu1), to reflect
+    that the desktop launcher icon has been moved from firefox-3.0 to
+    -branding
+    - update debian/control
+
+ -- Fabien Tassin <fta@ubuntu.com>  Mon, 13 Oct 2008 16:05:14 +0200
+
+firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu1) intrepid; urgency=low
+
+  new regression fix release (v3.0.3 build1)
+    - see USN-645-3
+  * fixes LP: #270429: [MASTER] passwords lost from 3.0.1 to 3.0.2
+  * improve about:rights wording slightly to read "... offers optional
+    web site ..." while previously it read "... uses web sitweb sitee ...";
+    thanks to PJ for the initial suggestion
+    - update debian/patches/lp269656_know_your_rights.patch
+
+ -- Alexander Sack <asac@ubuntu.com>  Thu, 25 Sep 2008 12:01:59 +0200
+
 firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu2) intrepid; urgency=low
 
   * fix LP: #273907 - abrowser does not start: :$pkglibdir/abrowser link

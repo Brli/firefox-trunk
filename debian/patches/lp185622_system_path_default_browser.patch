@@ -48,7 +48,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
 +                                      getter_Copies(brandShortName));
 +
 +  if (brandShortName.Equals(NS_LITERAL_STRING("Web Browser"))) {
-+    mSystemAppPath.Assign (NS_LITERAL_CSTRING("/usr/bin/" "awesome-browser"));
++    mSystemAppPath.Assign (NS_LITERAL_CSTRING("/usr/bin/" "abrowser"));
 +  } else {
 +    mSystemAppPath.Assign (NS_LITERAL_CSTRING("/usr/bin/" MOZ_APP_NAME));
 +  }

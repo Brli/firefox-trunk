@@ -6,14 +6,37 @@
 # Authors:
 #  Alexander Sack <asac@jwsdot.com>
 #  Fabien Tassin <fta@sofaraway.org>
+#  Steve Langasek <steve.langasek@canonical.com>
 # License: GPLv2 or later
 
-APPNAME=`basename $0`
 MOZDIR=$HOME/.mozilla
 LIBDIR=@LIBDIR@
-NAME=`basename $0`
+APPVER=@APPVER@
+META_NAME=@META_NAME@
 GDB=/usr/bin/gdb
 DROPPED=abandoned
+
+NAME="$0"
+if [ "x$META_NAME" != "x" ] ; then
+  NAME="${NAME%%-$APPVER}"
+fi
+APPNAME="$(basename "$NAME")"
+
+while [ ! -f "$LIBDIR/$APPNAME" ] && [ -L "$NAME" ]; do
+  TARGET="$(readlink "$NAME")"
+  if [ "x$TARGET" = "x$(basename "$TARGET")" ]; then
+    TARGET="$(dirname "$NAME")/$TARGET"
+  fi
+  if [ "x$META_NAME" != "x" ] ; then
+    TARGET=${TARGET%%-$APPVER}
+  fi
+  NAME="$TARGET"
+  APPNAME="$(basename "$NAME")"
+  if [ "x$APPNAME" = "xfirefox.sh" ]; then
+    APPNAME=firefox
+    break
+  fi
+done
 
 usage () {
   $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
@@ -37,6 +60,7 @@ while [ $# -gt 0 ]; do
       break ;;
   esac
 done
+
 # if there exists a beta profile (first found: $MOZDIR/firefox-3.0,
 # $MOZDIR/firefox-trunk, $MOZDIR/granparadiso) and there is a standard
 # firefox profile as well, ask the user what to do. In case he decides to
