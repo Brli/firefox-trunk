@@ -17,3 +17,7 @@ pref("browser.shell.checkDefaultBrowser", false);
 
 // Prevent EULA dialog to popup on first run
 pref("browser.EULA.override", true);
+
+// identify ubuntu @ yahoo searchplugin
+pref("browser.search.param.yahoo-fr", "ubuntu");
+

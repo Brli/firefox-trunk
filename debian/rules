@@ -159,7 +159,9 @@ subst_files = \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' < $< > $@
 
 debian/firefox.sh: debian/firefox.sh.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' < $< > $@
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
+	    -e 's,@META_NAME@,$(DEBIAN_META_NAME),g' \
+	    -e 's,@APPVER@,$(DEBIAN_APP_NAME_VER),g' < $< > $@
 
 debian/migrator/ffox-31-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)

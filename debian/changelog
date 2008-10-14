@@ -35,10 +35,16 @@ firefox-3.1 (3.1~b2~hg20081014r20486+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
  -- Fabien Tassin <fta@ubuntu.com>  Tue, 14 Oct 2008 22:29:03 +0200
 
-firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+firefox-3.0 (3.0.3+nobinonly-0ubuntu1) intrepid; urgency=low
 
-  * Remove a hardcoded 3.0 to make the merge in the 3.1 branch smoother
+  [ Steve Langasek <steve.langasek@ubuntu.com> ]
+  * Fix the wrapper script to handle all possible invocations.
+    LP: #275410.
+
+  [ Fabien Tassin <fta@ubuntu.com> ]
+  * Remove some hardcoded 3.0 to make the merge in the 3.1 branch smoother
     - update debian/rules
+    - update debian/firefox.sh.in
   * Fix abrowser symlink in libdir which must be versioned unless control
     ships a meta package. Add versioned symlinks in libdir for firefox and
     abrowser now that the launcher script uses $0
@@ -50,8 +56,27 @@ firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu2) UNRELEASED; urgency=low
     to Firefox/version
     - add debian/ubuntu-abrowser.js.tmpl
     - update debian/rules
+  * Fix typo in branding patch for unofficial branding
+    - update debian/patches/browser_branding.patch
 
- -- Fabien Tassin <fta@ubuntu.com>  Wed, 01 Oct 2008 14:56:48 +0200
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * add ubuntu code to preferences for yahoo searchplugin
+    - update debian/firefox.js
+  * fix gnome integration systempath patch in such a way that it properly
+    refers to "abrowser" and not awesome-browser
+    - update debian/patches/lp185622_system_path_default_browser.patch
+  * update aboutRights.xhtml to v1
+    - update debian/patches/lp269656_know_your_rights.patch
+  * resurrecting ubuntu default bookmarks
+    - update debian/patches/browser_branding.patch
+    - update debian/patches/series
+  * add explicit minimum version to firefox-3.0 depend on firefox-3.0-branding
+    and abrowser-3.0-branding (>= 3.0.3+nobinonly-0ubuntu1), to reflect
+    that the desktop launcher icon has been moved from firefox-3.0 to
+    -branding
+    - update debian/control
+
+ -- Fabien Tassin <fta@ubuntu.com>  Mon, 13 Oct 2008 16:05:14 +0200
 
 firefox-3.0 (3.0.3+build1+nobinonly-0ubuntu1) intrepid; urgency=low
 

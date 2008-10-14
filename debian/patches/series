@@ -6,7 +6,6 @@ installer_shouldnt_copy_xulrunner.patch
 installer_use_stdout_for_missing_files.patch
 dont_depend_on_nspr_sources.patch
 nspr_flags_by_pkg_config_hack.patch
-#drop_bz418016.patch
 lp185622_system_path_default_browser.patch
 bzXXX_reload_new_plugins.patch
 ubuntu_no_app_updates.patch
@@ -15,3 +14,4 @@ awesome_browser_branding_install.patch
 browser_branding.patch
 ubuntu_codes_amazon.patch
 lp269656_know_your_rights.patch
+ubuntu_bookmarks.html
