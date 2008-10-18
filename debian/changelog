@@ -1,3 +1,10 @@
+firefox-3.0 (3.0.3+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+
+  * Fix missing comma in Build-Depends breaking older dpkg-dev
+    - update debian/control
+
+ -- Fabien Tassin <fta@ubuntu.com>  Sat, 18 Oct 2008 02:47:31 +0200
+
 firefox-3.0 (3.0.3+nobinonly-0ubuntu1) intrepid; urgency=low
 
   [ Steve Langasek <steve.langasek@ubuntu.com> ]
