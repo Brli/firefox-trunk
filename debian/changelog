@@ -1,9 +1,17 @@
-firefox-3.0 (3.0.3+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+firefox-3.0 (3.0.3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
 
   * Fix missing comma in Build-Depends breaking older dpkg-dev
     - update debian/control
 
  -- Fabien Tassin <fta@ubuntu.com>  Sat, 18 Oct 2008 02:47:31 +0200
+
+firefox-3.0 (3.0.3+nobinonly-0ubuntu2) intrepid; urgency=low
+
+  * fix LP: #282875: about:rights does not display; the latest update
+    of the know your right page contained illegal xml.
+    - update debian/patches/lp269656_know_your_rights.patch
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 20 Oct 2008 17:37:05 +0200
 
 firefox-3.0 (3.0.3+nobinonly-0ubuntu1) intrepid; urgency=low
 
