@@ -3,9 +3,9 @@
  browser/base/jar.mn                    |    1 
  browser/components/Makefile.in         |    1 
  browser/components/aboutRights.js      |   67 +++++++++++++++
- browser/components/nsBrowserGlue.js    |  130 +++++++++++++++++++++++-------
+ browser/components/nsBrowserGlue.js    |  127 +++++++++++++++++++++++------
  browser/installer/unix/packages-static |    1 
- 6 files changed, 316 insertions(+), 27 deletions(-)
+ 6 files changed, 315 insertions(+), 25 deletions(-)
 
 Index: mozilla/browser/base/content/aboutRights.xhtml
 ===================================================================
@@ -275,7 +275,7 @@ Index: mozilla/browser/components/nsBrowserGlue.js
 ===================================================================
 --- mozilla.orig/browser/components/nsBrowserGlue.js
 +++ mozilla/browser/components/nsBrowserGlue.js
-@@ -67,16 +67,118 @@
+@@ -67,16 +67,117 @@
  };
  
  // Constructor
@@ -385,16 +385,15 @@ Index: mozilla/browser/components/nsBrowserGlue.js
 +    browser.addEventListener("load", doRightsDisplay, false);
 +}
 +
-+
  BrowserGlue.prototype = {
-   _saveSession: false,
- 
-   _setPrefToSaveSession: function()
-   {
-     var prefBranch = Cc["@mozilla.org/preferences-service;1"].
+   __prefs: null,
+   get _prefs() {
+     if (!this.__prefs)
+       this.__prefs = Cc["@mozilla.org/preferences-service;1"].
                       getService(Ci.nsIPrefBranch);
-     prefBranch.setBoolPref("browser.sessionstore.resume_session_once", true);
-@@ -94,16 +196,17 @@
+     return this.__prefs;
+   },
+@@ -100,16 +201,17 @@
          break;
        case "prefservice:after-app-defaults":
          this._onAppDefaults();
@@ -412,7 +411,7 @@ Index: mozilla/browser/components/nsBrowserGlue.js
                     getService(Ci.nsIConsoleService);
          cs.logStringMessage(null); // clear the console (in case it's open)
          cs.reset();
-@@ -170,43 +273,16 @@
+@@ -176,41 +278,16 @@
      // other customizations are applied in _onProfileStartup()
      var distro = new DistributionCustomizer();
      distro.applyPrefDefaults();
@@ -423,11 +422,9 @@ Index: mozilla/browser/components/nsBrowserGlue.js
    {
 -    // Check to see if the EULA must be shown on startup
 -
--    var prefBranch = Cc["@mozilla.org/preferences-service;1"].
--                     getService(Ci.nsIPrefBranch);
 -    var mustDisplayEULA = false;
 -    try {
--      mustDisplayEULA = !prefBranch.getBoolPref("browser.EULA.override");
+-      mustDisplayEULA = !this._prefs.getBoolPref("browser.EULA.override");
 -    } catch (e) {
 -      // Pref might not exist
 -    }
@@ -435,8 +432,8 @@ Index: mozilla/browser/components/nsBrowserGlue.js
 -    // Make sure it hasn't already been accepted
 -    if (mustDisplayEULA) {
 -      try {
--        var EULAVersion = prefBranch.getIntPref("browser.EULA.version");
--        mustDisplayEULA = !prefBranch.getBoolPref("browser.EULA." + EULAVersion + ".accepted");
+-        var EULAVersion = this._prefs.getIntPref("browser.EULA.version");
+-        mustDisplayEULA = !this._prefs.getBoolPref("browser.EULA." + EULAVersion + ".accepted");
 -      } catch(ex) {
 -      }
 -    }
