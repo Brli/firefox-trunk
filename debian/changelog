@@ -1,4 +1,4 @@
-firefox-3.0 (3.0.3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+firefox-3.0 (3.0.4+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Fix missing comma in Build-Depends breaking older dpkg-dev
     - update debian/control
