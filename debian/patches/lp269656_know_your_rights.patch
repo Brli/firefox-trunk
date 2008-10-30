@@ -197,8 +197,8 @@ Index: mozilla/browser/components/Makefile.in
  EXTRA_JS_MODULES = distribution.js
  
  DIRS = \
+ 	certerror \
  	dirprovider \
- 	microsummaries \
 Index: mozilla/browser/components/aboutRights.js
 ===================================================================
 --- /dev/null
@@ -457,14 +457,14 @@ Index: mozilla/browser/installer/unix/packages-static
 ===================================================================
 --- mozilla.orig/browser/installer/unix/packages-static
 +++ mozilla/browser/installer/unix/packages-static
-@@ -239,16 +239,17 @@
- bin/components/nsDefaultCLH.js
+@@ -241,16 +241,17 @@
  bin/components/nsContentPrefService.js
  bin/components/nsContentDispatchChooser.js
  bin/components/nsHandlerService.js
  bin/components/nsWebHandlerApp.js
  bin/components/libdbusservice.so
  bin/components/aboutRobots.js
+ bin/components/aboutCertError.js
  bin/components/nsBadCertHandler.js
 +bin/components/aboutRights.js
  

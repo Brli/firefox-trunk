@@ -30,6 +30,7 @@ firefox-3.1 (3.1~b2~hg20081030r21113+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/browser_branding.patch
   * Drop patches applied upstream
+    - drop debian/patches/installer_use_stdout_for_missing_files.patch
     - drop debian/patches/bz412610_att335369_realpath_overflow.patch
     - drop debian/patches/bz436133_att322801.patch
     - drop debian/patches/bz421977_att334578.patch
