@@ -62,7 +62,7 @@ Index: mozilla/configure.in
  AC_SUBST(MOZ_NATIVE_NSS)
  
  AC_SUBST(CFLAGS)
-@@ -8263,28 +8266,16 @@
+@@ -8265,28 +8268,16 @@
      fi
      if test -n "$USE_ARM_KUSER"; then
          ac_configure_args="$ac_configure_args --with-arm-kuser"
@@ -87,7 +87,7 @@ Index: mozilla/configure.in
  dist=$MOZ_BUILD_ROOT/dist
  ac_configure_args="$_SUBDIR_CONFIG_ARGS"
  ac_configure_args="$ac_configure_args --enable-threadsafe"
- ac_configure_args="$ac_configure_args --with-nspr-cflags='$NSPR_CFLAGS'"
- ac_configure_args="$ac_configure_args --with-nspr-libs='$NSPR_LIBS'"
- ac_configure_args="$ac_configure_args --includedir=$dist/include"
- ac_configure_args="$ac_configure_args --bindir=$dist/bin"
+ if test -z "$MOZ_NATIVE_NSPR"; then
+     ac_configure_args="$ac_configure_args --with-nspr-cflags='$NSPR_CFLAGS'"
+     ac_configure_args="$ac_configure_args --with-nspr-libs='$NSPR_LIBS'"
+ fi

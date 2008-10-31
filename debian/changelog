@@ -23,13 +23,14 @@ firefox-3.1 (3.1~b2~hg20081031r21155+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     packages
     - update debian/control
   * Update diverged patches:
-    - update debian/patches/lp269656_know_your_rights.patch
     - update debian/patches/nspr_flags_by_pkg_config_hack.patch
     - update debian/patches/bzXXX_reload_new_plugins.patch
     - update debian/patches/firefox-fsh
     - update debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/browser_branding.patch
   * Drop patches applied upstream
+    - drop debian/patches/lp269656_know_your_rights.patch
+      (See https://bugzilla.mozilla.org/show_bug.cgi?id=456439)
     - drop debian/patches/installer_use_stdout_for_missing_files.patch
     - drop debian/patches/bz412610_att335369_realpath_overflow.patch
     - drop debian/patches/bz436133_att322801.patch
