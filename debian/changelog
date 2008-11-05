@@ -1,4 +1,4 @@
-firefox-3.1 (3.1~b2~hg20081103r21233+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.1 (3.1~b2~hg20081106r21355+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Change appname and use a dedicated profile
     - update debian/firefox.sh.in
@@ -37,7 +37,7 @@ firefox-3.1 (3.1~b2~hg20081103r21233+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/bz421977_att334578.patch
     - update debian/patches/series
 
- -- Fabien Tassin <fta@ubuntu.com>  Mon, 03 Nov 2008 21:17:37 +0100
+ -- Fabien Tassin <fta@ubuntu.com>  Wed, 05 Nov 2008 23:25:08 +0100
 
 firefox-3.0 (3.0.3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
 
