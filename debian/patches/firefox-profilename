@@ -33,11 +33,14 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js
 +++ mozilla/browser/branding/unofficial/pref/firefox-branding.js
-@@ -1,16 +1,16 @@
+@@ -1,19 +1,19 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
+ // The time interval between checks for a new version (in seconds)
+ // nightly=8 hours, official=24 hours
+ pref("app.update.interval", 28800);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
@@ -59,11 +62,14 @@ Index: mozilla/browser/app/firefox-branding.js
 ===================================================================
 --- mozilla.orig/browser/app/firefox-branding.js
 +++ mozilla/browser/app/firefox-branding.js
-@@ -1,16 +1,16 @@
+@@ -1,19 +1,19 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
+ // The time interval between checks for a new version (in seconds)
+ // nightly=8 hours, official=24 hours
+ pref("app.update.interval", 28800);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
@@ -111,11 +117,14 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/other-licenses/branding/firefox/pref/firefox-branding.js
 +++ mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
-@@ -1,17 +1,17 @@
+@@ -1,18 +1,18 @@
 -pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
+ // Interval: Time between checks for a new version (in seconds)
+ // nightly=6 hours, official=24 hours
+ pref("app.update.interval", 86400);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/");
@@ -132,5 +141,3 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "moz2");
  pref("browser.search.param.yahoo-fr-cjkt", "moz2");
  pref("browser.search.param.yahoo-f-CN", "D3_g");
- 
- pref("browser.EULA.override", false); // false = Do show EULA on first start
