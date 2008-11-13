@@ -60,6 +60,14 @@ Description: Support for Gnome in Mozilla Firefox
  handlers from Gnome-VFS, such as smb or sftp, and other Gnome
  integration features.
 
+Package: firefox-3.1-dbg
+Architecture: any
+Section: devel
+Priority: optional
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: firefox-3.1 debug symbols
+ Debug symbols for Firefox 3.1.
+
 Package: firefox-3.1-dev
 Architecture: any
 Section: devel
