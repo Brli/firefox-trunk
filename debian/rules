@@ -195,6 +195,7 @@ common-post-build-arch::
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 	
 binary-install/$(DEBIAN_NAME)::
+	dh_installdirs $(DEBIAN_FF3_DIR)/distribution/
 	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/icons
 	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/icons
 	dh_install -p$(DEBIAN_NAME) \
@@ -225,6 +226,7 @@ endif
 	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
+	dh_install debian/distribution.ini $(DEBIAN_FF3_DIR)/distribution/
 
 binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
