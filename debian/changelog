@@ -1,3 +1,11 @@
+firefox-3.0 (3.0.4+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+
+  * ship $MOZ_APP_DIR/distribution/distribution.ini
+    - add debian/distribution.ini
+    - update debian/rules
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 24 Nov 2008 12:20:31 +0100
+
 firefox-3.0 (3.0.4+nobinonly-0ubuntu1) jaunty; urgency=low
 
   * new security/stability update FIREFOX_3_0_4_RELEASE (v3.0.4)
