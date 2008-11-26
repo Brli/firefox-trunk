@@ -41,25 +41,13 @@ ifneq (,$(FORCE_OFFICIAL_BRANDING))
 else
 # Change branding based on Version
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
-ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
-	# hg snapshot but beta, use codename branding
-	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP_BRANDED  = $(DEBIAN_NAME)-shiretoko.desktop
-else
-	# minefield branding for hg snapshots
+	# minefield branding for snapshots
 	BRANDING = $(NULL)
 	DESKTOP_BRANDED  = $(DEBIAN_NAME)-minefield.desktop
-endif
 else
-ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
-	# codename branding for alpha builds
+	# codename branding for milestones
 	BRANDING = --with-branding=browser/branding/unofficial
 	DESKTOP_BRANDED  = $(DEBIAN_NAME)-shiretoko.desktop
-else
-	# official branding for beta, final and final RCs builds
-	BRANDING = --enable-official-branding
-	DESKTOP_BRANDED  = $(DEBIAN_NAME)-final.desktop
-endif
 endif
 endif
 
