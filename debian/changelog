@@ -1,3 +1,11 @@
+firefox-3.0 (3.0.4+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+
+  [ Nick Ellery <nick.ellery@ubuntu.com> ]
+  * fix LP: #270477 - firefox-3.0-branding has errors in it's package description
+    - update debian/control
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 26 Nov 2008 21:56:44 +0100
+
 firefox-3.0 (3.0.4+nobinonly-0ubuntu2) jaunty; urgency=low
 
   * ship $MOZ_APP_DIR/distribution/distribution.ini

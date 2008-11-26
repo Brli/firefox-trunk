@@ -50,8 +50,8 @@ Depends: firefox-3.0 (= ${binary:Version})
 Replaces: firefox-3.0
 Conflicts: abrowser-3.0-branding
 Description: Package that ships the firefox branding
- This package ships the firefox branding bits. If you remove this package you
- your user experience will become that of the abrowser.
+ This package ships the Firefox branding bits. If you remove this package your 
+ user experience will become that of the abrowser.
 
 Package: firefox-3.0-dom-inspector
 Architecture: all
