@@ -50,12 +50,32 @@ firefox-3.1 (3.1~b2+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
  -- Fabien Tassin <fta@ubuntu.com>  Wed, 26 Nov 2008 17:47:03 +0100
 
-firefox-3.0 (3.0.3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
+firefox-3.0 (3.0.4+nobinonly-0ubuntu3) UNRELEASED; urgency=low
 
+  [ Nick Ellery <nick.ellery@ubuntu.com> ]
+  * fix LP: #270477 - firefox-3.0-branding has errors in it's package description
+    - update debian/control
+
+ -- Alexander Sack <asac@ubuntu.com>  Wed, 26 Nov 2008 21:56:44 +0100
+
+firefox-3.0 (3.0.4+nobinonly-0ubuntu2) jaunty; urgency=low
+
+  * ship $MOZ_APP_DIR/distribution/distribution.ini
+    - add debian/distribution.ini
+    - update debian/rules
+
+ -- Alexander Sack <asac@ubuntu.com>  Mon, 24 Nov 2008 12:40:07 +0100
+
+firefox-3.0 (3.0.4+nobinonly-0ubuntu1) jaunty; urgency=low
+
+  * new security/stability update FIREFOX_3_0_4_RELEASE (v3.0.4)
+    - see USN-667-1
+
+  [ Fabien Tassin <fta@ubuntu.com> ]
   * Fix missing comma in Build-Depends breaking older dpkg-dev
     - update debian/control
 
- -- Fabien Tassin <fta@ubuntu.com>  Sat, 18 Oct 2008 02:47:31 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Sun, 16 Nov 2008 17:12:57 +0100
 
 firefox-3.0 (3.0.3+nobinonly-0ubuntu2) intrepid; urgency=low
 
