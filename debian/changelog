@@ -1,4 +1,4 @@
-firefox-3.1 (3.1~b2~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.1 (3.1~b2~rc1+1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Alexander Sack <asac@ubuntu.com> ]
   * ship $MOZ_APP_DIR/distribution/distribution.ini
@@ -46,7 +46,7 @@ firefox-3.1 (3.1~b2~rc1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/bz421977_att334578.patch
     - update debian/patches/series
 
- -- Fabien Tassin <fta@ubuntu.com>  Wed, 26 Nov 2008 02:36:50 +0100
+ -- Fabien Tassin <fta@ubuntu.com>  Wed, 26 Nov 2008 17:47:03 +0100
 
 firefox-3.0 (3.0.3+nobinonly-0ubuntu3) UNRELEASED; urgency=low
 
