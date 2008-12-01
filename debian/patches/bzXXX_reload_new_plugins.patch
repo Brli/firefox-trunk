@@ -1,31 +1,12 @@
 ---
- browser/base/content/browser.js |   25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ browser/base/content/browser.js |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -834,17 +834,17 @@
- 
- function prepareForStartup() {
-   gBrowser.addEventListener("DOMUpdatePageReport", gPopupBlockerObserver.onUpdatePageReport, false);
-   // Note: we need to listen to untrusted events, because the pluginfinder XBL
-   // binding can't fire trusted ones (runs with page privileges).
-   gBrowser.addEventListener("PluginNotFound", gMissingPluginInstaller.newMissingPlugin, true, true);
-   gBrowser.addEventListener("PluginBlocklisted", gMissingPluginInstaller.newMissingPlugin, true, true);
-   gBrowser.addEventListener("PluginDisabled", gMissingPluginInstaller.newDisabledPlugin, true, true);
--  gBrowser.addEventListener("NewPluginInstalled", gMissingPluginInstaller.refreshBrowser, false);
-+  gBrowser.addEventListener("NewPluginInstalled", gMissingPluginInstaller.refreshBrowserAndPlugins, false);
-   gBrowser.addEventListener("NewTab", BrowserOpenTab, false);
-   window.addEventListener("AppCommand", HandleAppCommandEvent, true);
- 
-   var webNavigation;
-   try {
-     // Create the browser instance component.
-     appCore = Components.classes["@mozilla.org/appshell/component/browser/instance;1"]
-                         .createInstance(Components.interfaces.nsIBrowserInstance);
-@@ -5563,22 +5563,30 @@
+@@ -5780,22 +5780,30 @@
  }
  
  missingPluginInstaller.prototype.installSinglePlugin = function(aEvent){
@@ -35,7 +16,7 @@ Index: mozilla/browser/base/content/browser.js
    missingPluginsArray[pluginInfo.mimetype] = pluginInfo;
  
 +  gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
-+                                            gMissingPluginInstaller.refreshBrowserAndPlugins,
++                                            gMissingPluginInstaller.refreshBrowser,
 +                                            false);
 +
    if (missingPluginsArray) {
@@ -45,7 +26,7 @@ Index: mozilla/browser/base/content/browser.js
    }
  
 +  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
-+                                                 gMissingPluginInstaller.refreshBrowserAndPlugins,
++                                                 gMissingPluginInstaller.refreshBrowser,
 +                                                 false);
 +
    aEvent.stopPropagation();
@@ -56,20 +37,7 @@ Index: mozilla/browser/base/content/browser.js
    aEvent.stopPropagation();
  }
  
-@@ -5668,49 +5676,62 @@
-   if (!(aEvent.target instanceof Components.interfaces.nsIObjectLoadingContent))
-     return;
- 
-   aEvent.target.addEventListener("click",
-                                  gMissingPluginInstaller.managePlugins,
-                                  true);
- }
- 
--missingPluginInstaller.prototype.refreshBrowser = function(aEvent) {
-+missingPluginInstaller.prototype.refreshBrowserAndPlugins = function(aEvent) {
-   var browser = aEvent.target;
-   var notificationBox = gBrowser.getNotificationBox(browser);
-   var notification = notificationBox.getNotificationWithValue("missing-plugins");
+@@ -5897,37 +5905,50 @@
  
    // clear the plugin list, now that at least one plugin has been installed
    browser.missingPlugins = null;
@@ -102,7 +70,7 @@ Index: mozilla/browser/base/content/browser.js
    // get the urls of missing plugins
    var missingPluginsArray = gBrowser.selectedBrowser.missingPlugins;
 +  tabbrowser.selectedBrowser.addEventListener("NewPluginInstalled",
-+                                              gMissingPluginInstaller.refreshBrowserAndPlugins,
++                                              gMissingPluginInstaller.refreshBrowser,
 +                                              false);
    if (missingPluginsArray) {
      window.openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
@@ -110,7 +78,7 @@ Index: mozilla/browser/base/content/browser.js
                        {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
    }
 +  tabbrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
-+                                                 gMissingPluginInstaller.refreshBrowserAndPlugins,
++                                                 gMissingPluginInstaller.refreshBrowser,
 +                                                 false);
  }
  
