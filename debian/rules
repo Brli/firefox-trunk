@@ -65,7 +65,7 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
-include /usr/share/mozilla-devscripts/$(DEBIAN_NAME).mk
+include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 include /usr/share/mozilla-devscripts/lp-locale-export.mk
 
 # We don't want build-tree/mozilla/README to be shipped as a doc
