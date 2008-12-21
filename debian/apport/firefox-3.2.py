@@ -1,6 +1,6 @@
 '''firefox apport hook draft
 
-/usr/share/apport/package-hooks/firefox-3.1.py
+/usr/share/apport/package-hooks/firefox-3.2.py
 
 Appends to apport's firefox default report: the files pluginreg.dat and
 profiles.ini, and also a summary of all the extensions loaded on each firefox
@@ -85,7 +85,7 @@ def extension_summary_helper(extension_list, section_name, alt_output = 1):
     return str
 
 def add_info(report):
-    config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-3.1')
+    config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-3.2')
     
     # append pluginreg.dat file:
     pluginreg_dat = os.path.join(config_dir,'pluginreg.dat')

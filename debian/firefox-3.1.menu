@@ -1,3 +1,0 @@
-?package(firefox-3.1):needs="x11" section="Applications/Network/Web Browsing" \
-  title="Firefox 4 Browser" command="/usr/bin/firefox-3.1" hints="Web browsers" \
-  icon="/usr/share/pixmaps/firefox-3.1.png"

@@ -11,7 +11,7 @@
 
 ## profile migration disabled for now, instead, resurrect the previous code
 
-# If there's still no ~/mozilla/firefox-3.1 profile, try to find a previous
+# If there's still no ~/mozilla/firefox-3.2 profile, try to find a previous
 # firefox profile and initialize with that.
 # If nothing is found, we'll go for a fresh run and let firefox create a
 # default profile for us.
@@ -70,7 +70,9 @@ done
 
 if [ ! -d $MOZDIR/$APPNAME ] ; then
   FOUND=""
-  if [ -d $MOZDIR/firefox ] ; then
+  if [ -d $MOZDIR/firefox-3.1 ] ; then
+    FOUND=firefox-3.1
+  elif [ -d $MOZDIR/firefox ] ; then
     FOUND=firefox
   fi
 
