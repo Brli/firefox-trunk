@@ -24,6 +24,9 @@ DEBIAN_FF3_VER		 = $(shell cat build-tree/mozilla/browser/config/version.txt)
 DEBIAN_FF3_DIR		 = usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
 DEB_TAR_SRCDIR		:= mozilla
 
+MOZCLIENT_PROJECTNAME	:= $(DEBIAN_NAME)
+MOZCLIENT_PROJECTDIR	:= $(CURDIR)/debian/mozclient
+
 # minVersion and maxVersion used in install.rdf
 EM_TRANSLATION_VERSION     = $(DEBIAN_FF3_VER)
 EM_TRANSLATION_MIN_VERSION = 3.0
