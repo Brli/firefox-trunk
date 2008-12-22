@@ -14,6 +14,12 @@ firefox-3.2 (3.2~a1~hg20081221r22990+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       - debian/firefox-3.1.menu => debian/firefox-3.2.menu
       - debian/mozclient/firefox-3.1.conf => debian/mozclient/firefox-3.2.conf
       - debian/mozclient/firefox-3.1.mk => debian/mozclient/firefox-3.2.mk
+      - debian/firefox-3.1-dev.install => debian/firefox-3.2-dev.install
+      - debian/firefox-3.1-dev.links => debian/firefox-3.2-dev.links
+      - debian/firefox-3.1-gnome-support.install => debian/firefox-3.2-gnome-support.install
+      - debian/firefox-3.1.dirs => debian/firefox-3.2.dirs
+      - debian/firefox-3.1.postinst.in => debian/firefox-3.2.postinst.in
+      - debian/firefox-3.1.prerm => debian/firefox-3.2.prerm
     * Updated:
       - debian/control
       - debian/firefox.sh.in
