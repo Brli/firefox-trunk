@@ -21,10 +21,10 @@ firefox-3.1 (3.1~b3~hg20081221r22451+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.1-restart-required.update-notifier
   * Fix patch series after the rename of patch bz460917_*
     - update debian/patches/series
-  * Temporarily disable ubuntu bookmarks patch, it needs some work
-    - update debian/patches/series
   * Update diverged patches:
     - update debian/patches/ubuntu_no_app_updates.patch
+    - update and rename debian/patches/ubuntu_bookmarks.html =>
+      debian/patches/ubuntu_bookmarks.patch & d/p/series
 
  -- Fabien Tassin <fta@ubuntu.com>  Mon, 22 Dec 2008 01:20:53 +0100
 
