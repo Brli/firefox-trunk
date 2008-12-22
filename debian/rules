@@ -38,11 +38,16 @@ FORCE_OFFICIAL_BRANDING = $(NULL)
 
 DESKTOP  = $(DEBIAN_NAME_OTHER).desktop
 ifneq (,$(FORCE_OFFICIAL_BRANDING))
-	# official branding for beta, final and final RCs builds
+	# official branding for final and final RCs builds
 	BRANDING = --enable-official-branding
 	DESKTOP_BRANDED  = $(DEBIAN_NAME)-final.desktop
 else
 # Change branding based on Version
+ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
+	# codename branding for beta
+	BRANDING = --with-branding=browser/branding/unofficial
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-shiretoko.desktop
+else
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for snapshots
 	BRANDING = $(NULL)
@@ -51,6 +56,7 @@ else
 	# codename branding for milestones
 	BRANDING = --with-branding=browser/branding/unofficial
 	DESKTOP_BRANDED  = $(DEBIAN_NAME)-shiretoko.desktop
+endif
 endif
 endif
 
