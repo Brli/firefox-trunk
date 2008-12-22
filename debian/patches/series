@@ -11,4 +11,4 @@ ubuntu_no_app_updates.patch
 awesome_browser_branding_install.patch
 browser_branding.patch
 ubuntu_codes_amazon.patch
-ubuntu_bookmarks.html
+# ubuntu_bookmarks.html
