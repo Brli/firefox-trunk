@@ -10,6 +10,12 @@ firefox-3.1 (3.1~b3~hg20081221r22451+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/bz460917_att350845_reload_new_plugins.patch
 
   [ Fabien Tassin ]
+  * Rework the dedicated profile patch to use the feature provided by upstream
+    - update debian/patches/firefox-profilename
+    - drop debian/patches/firefox-fsh
+    - update debian/patches/series
+    - udpate debian/firefox-3.1.install
+    - update debian/rules
   * Move mozclient project files from mozilla-descripts to this package
     and update the upstream branch now that it has moved to 3.2
     - add debian/mozclient/firefox-3.1.conf
