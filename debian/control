@@ -33,7 +33,7 @@ Depends: fontconfig,
 	xulrunner-1.9.1,
 	${shlibs:Depends},
 	firefox-3.1-branding | abrowser-3.1-branding
-Recommends: ubufox,
+Recommends: ubufox
 Suggests: firefox-3.1-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Description: safe and easy web browser from Mozilla

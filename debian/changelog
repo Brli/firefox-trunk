@@ -25,6 +25,8 @@ firefox-3.1 (3.1~b3~hg20081221r22451+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
   * Revert to codename branding for betas
     - update debian/rules
+  * Fix typo in control file
+    - update debian/control
   * Update diverged patches:
     - update debian/patches/ubuntu_no_app_updates.patch
     - update and rename debian/patches/ubuntu_bookmarks.html =>
