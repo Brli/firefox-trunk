@@ -214,6 +214,7 @@ ifneq (,$(DEBIAN_META_NAME))
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER)
 else
+	mv debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/firefox debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
 endif
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
@@ -307,4 +308,4 @@ clean::
 	rm -f $(subst_files) debian/install.rdf
 	rm -f debian/migrator/ffox-31-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
-
+	rm -rf debian/tmp-*
