@@ -307,4 +307,4 @@ clean::
 	rm -f $(subst_files) debian/install.rdf
 	rm -f debian/migrator/ffox-31-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
-
+	rm -rf debian/tmp-*
