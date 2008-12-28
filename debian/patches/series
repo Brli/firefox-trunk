@@ -1,6 +1,5 @@
 firefox-profilename
 bz386904_config_rules_install_dist_files.patch
-ftbfs-with-branding-dir
 installer_shouldnt_copy_xulrunner.patch
 dont_depend_on_nspr_sources.patch
 nspr_flags_by_pkg_config_hack.patch
