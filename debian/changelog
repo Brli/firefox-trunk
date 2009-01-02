@@ -24,6 +24,8 @@ firefox-3.2 (3.2~a1~hg20090102r23257+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       - debian/control
       - debian/firefox.sh.in
       - debian/patches/firefox-fsh
+    * Update diverged patches:
+      - update debian/patches/firefox-profilename
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 02 Jan 2009 17:05:00 +0100
 
