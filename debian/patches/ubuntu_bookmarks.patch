@@ -12,7 +12,7 @@ Index: mozilla/browser/locales/generic/profile/bookmarks.html.in
  <DD>@bookmarks_toolbarfolder_description@
      <DL><p>
          <DT><A HREF="http://www.mozilla.com/@AB_CD@/firefox/central/" ID="rdf:#$GvPhC3">@getting_started@</A>
-         <DT><A HREF="http://@AB_CD@.fxfeeds.mozilla.com/@AB_CD@/firefox/livebookmarks/" FEEDURL="http://@AB_CD@.fxfeeds.mozilla.com/@AB_CD@/firefox/headlines.xml" ID="rdf:#$HvPhC3">@latest_headlines@</A>
+         <DT><A HREF="http://fxfeeds.mozilla.com/@AB_CD@/firefox/livebookmarks/" FEEDURL="http://fxfeeds.mozilla.com/@AB_CD@/firefox/headlines.xml" ID="rdf:#$HvPhC3">@latest_headlines@</A>
      </DL><p>
      <HR>
 +    <DT><H3 ADD_DATE="1181129907" LAST_MODIFIED="1180687506" ID="rdf:#$jYrW.3">Ubuntu and Free Software links</H3>
