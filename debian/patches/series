@@ -1,4 +1,5 @@
 firefox-profilename
+firefox-fsh
 bz386904_config_rules_install_dist_files.patch
 installer_shouldnt_copy_xulrunner.patch
 dont_depend_on_nspr_sources.patch
