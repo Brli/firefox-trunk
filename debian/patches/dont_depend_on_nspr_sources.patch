@@ -7,7 +7,8 @@ Index: mozilla/config/Makefile.in
 ===================================================================
 --- mozilla.orig/config/Makefile.in
 +++ mozilla/config/Makefile.in
-@@ -122,17 +122,17 @@
+@@ -123,17 +123,17 @@
+ 		-DBUILD_STATIC_LIBS=$(BUILD_STATIC_LIBS) \
  		-DMOZ_TREE_CAIRO=$(MOZ_TREE_CAIRO) \
  		-DMOZ_ENABLE_LIBXUL=$(MOZ_ENABLE_LIBXUL) \
  		-DMOZ_NATIVE_HUNSPELL=$(MOZ_NATIVE_HUNSPELL) \
@@ -15,7 +16,6 @@ Index: mozilla/config/Makefile.in
  		-DMOZ_NATIVE_ZLIB=$(MOZ_NATIVE_ZLIB) \
  		-DMOZ_NATIVE_PNG=$(MOZ_NATIVE_PNG) \
  		-DMOZ_NATIVE_JPEG=$(MOZ_NATIVE_JPEG) \
- 		-DMOZ_NATIVE_LCMS=$(MOZ_NATIVE_LCMS) \
 -		$(srcdir)/system-headers | $(PERL) $(topsrcdir)/nsprpub/config/make-system-wrappers.pl system_wrappers
 +		$(srcdir)/system-headers | $(PERL) $(topsrcdir)/config/make-system-wrappers.pl system_wrappers
  	$(INSTALL) system_wrappers $(DIST)/include

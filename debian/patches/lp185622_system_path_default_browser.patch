@@ -10,7 +10,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
 @@ -64,16 +64,18 @@
  #include <glib.h>
  #include <glib-object.h>
- #include <gtk/gtkversion.h>
+ #include <gtk/gtk.h>
  #include <gdk/gdk.h>
  #include <gdk-pixbuf/gdk-pixbuf.h>
  #include <limits.h>
