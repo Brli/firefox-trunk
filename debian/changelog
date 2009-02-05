@@ -29,11 +29,11 @@ firefox-3.2 (3.2~a1~hg20090204r24643+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
     - drop debian/patches/installer_shouldnt_copy_xulrunner.patch
     - update debian/patches/series
-    * Update diverged patches:
-      - update debian/patches/firefox-profilename
-      - update debian/patches/ubuntu_bookmarks.patch
-      - update debian/patches/lp185622_system_path_default_browser.patch
-      - update debian/patches/dont_depend_on_nspr_sources.patch
+  * Update diverged patches:
+    - update debian/patches/firefox-profilename
+    - update debian/patches/ubuntu_bookmarks.patch
+    - update debian/patches/lp185622_system_path_default_browser.patch
+    - update debian/patches/dont_depend_on_nspr_sources.patch
 
  -- Fabien Tassin <fta@ubuntu.com>  Wed, 04 Feb 2009 23:53:52 +0100
 
