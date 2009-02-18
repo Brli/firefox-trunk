@@ -33,7 +33,7 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js
 +++ mozilla/browser/branding/unofficial/pref/firefox-branding.js
-@@ -1,19 +1,19 @@
+@@ -1,22 +1,22 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
@@ -41,6 +41,9 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
  // The time interval between checks for a new version (in seconds)
  // nightly=8 hours, official=24 hours
  pref("app.update.interval", 28800);
+ // The time interval between the downloading of mar file chunks in the
+ // background (in seconds)
+ pref("app.update.download.backgroundInterval", 60);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
@@ -62,7 +65,7 @@ Index: mozilla/browser/app/firefox-branding.js
 ===================================================================
 --- mozilla.orig/browser/app/firefox-branding.js
 +++ mozilla/browser/app/firefox-branding.js
-@@ -1,19 +1,19 @@
+@@ -1,22 +1,22 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
@@ -70,6 +73,9 @@ Index: mozilla/browser/app/firefox-branding.js
  // The time interval between checks for a new version (in seconds)
  // nightly=8 hours, official=24 hours
  pref("app.update.interval", 28800);
+ // The time interval between the downloading of mar file chunks in the
+ // background (in seconds)
+ pref("app.update.download.backgroundInterval", 60);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
@@ -117,7 +123,7 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/other-licenses/branding/firefox/pref/firefox-branding.js
 +++ mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
-@@ -1,18 +1,18 @@
+@@ -1,21 +1,21 @@
 -pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
@@ -125,6 +131,9 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
  // Interval: Time between checks for a new version (in seconds)
  // nightly=6 hours, official=24 hours
  pref("app.update.interval", 86400);
+ // The time interval between the downloading of mar file chunks in the
+ // background (in seconds)
+ pref("app.update.download.backgroundInterval", 600);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/");
