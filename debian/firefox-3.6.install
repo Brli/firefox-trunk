@@ -5,19 +5,19 @@ debian/tmp/usr/lib/firefox-*/components/libbrowserdirprovider.so
 
 debian/tmp/usr/lib/firefox-*/modules/
 
-debian/tmp/usr/lib/firefox-*/firefox-3.2
+debian/tmp/usr/lib/firefox-*/firefox-3.6
 debian/tmp/usr/lib/firefox-*/run-mozilla.sh
 
 #debian/tmp/usr/lib/firefox-*/defaults/autoconfig
 debian/tmp/usr/lib/firefox-*/defaults/preferences
-debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-3.2/
+debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-3.6/
 #debian/tmp/usr/lib/firefox-*/searchplugins usr/lib/firefox-addons
 debian/tmp/usr/lib/firefox-*/browserconfig.properties
 debian/tmp/usr/lib/firefox-*/blocklist.xml
 
-debian/presubj usr/share/bug/firefox-3.2
+debian/presubj usr/share/bug/firefox-3.6
 
-debian/firefox.js etc/firefox-3.2/pref
+debian/firefox.js etc/firefox-3.6/pref
 
 #debian/debsearch.gif usr/lib/firefox-addons/searchplugins
 #debian/debsearch.src usr/lib/firefox-addons/searchplugins
@@ -29,4 +29,4 @@ debian/firefox.js etc/firefox-3.2/pref
 debian/tmp/usr/lib/firefox-*/*.ini
 
 # Don't install the apport hook for now.
-# debian/apport/firefox-3.2.py usr/share/apport/package-hooks/
+# debian/apport/firefox-3.6.py usr/share/apport/package-hooks/

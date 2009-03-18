@@ -1,25 +1,25 @@
-firefox-3.2 (3.2~a1~hg20090312r26106+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.6 (3.6~a1~hg20090317r26255+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * Mass update from 3.1 to 3.2:
+  * Mass update from 3.1 to 3.6:
     * Renamed and updated
-      - debian/abrowser-3.1.desktop => debian/abrowser-3.2.desktop
-      - debian/apport/firefox-3.1.py => debian/apport/firefox-3.2.py
-      - debian/firefox-3.1-final.desktop => debian/firefox-3.2-final.desktop
-      - debian/firefox-3.1-gnome-support.postinst.in => debian/firefox-3.2-gnome-support.postinst.in
-      - debian/firefox-3.1-minefield.desktop => debian/firefox-3.2-minefield.desktop
-      - debian/firefox-3.1-restart-required.update-notifier => debian/firefox-3.2-restart-required.update-notifier
-      - debian/firefox-3.1-shiretoko.desktop => debian/firefox-3.2-shiretoko.desktop
-      - debian/firefox-3.1.install => debian/firefox-3.2.install
-      - debian/firefox-3.1.links => debian/firefox-3.2.links
-      - debian/firefox-3.1.menu => debian/firefox-3.2.menu
-      - debian/mozclient/firefox-3.1.conf => debian/mozclient/firefox-3.2.conf
-      - debian/mozclient/firefox-3.1.mk => debian/mozclient/firefox-3.2.mk
-      - debian/firefox-3.1-dev.install => debian/firefox-3.2-dev.install
-      - debian/firefox-3.1-dev.links => debian/firefox-3.2-dev.links
-      - debian/firefox-3.1-gnome-support.install => debian/firefox-3.2-gnome-support.install
-      - debian/firefox-3.1.dirs => debian/firefox-3.2.dirs
-      - debian/firefox-3.1.postinst.in => debian/firefox-3.2.postinst.in
-      - debian/firefox-3.1.prerm => debian/firefox-3.2.prerm
+      - debian/abrowser-3.1.desktop => debian/abrowser-3.6.desktop
+      - debian/apport/firefox-3.1.py => debian/apport/firefox-3.6.py
+      - debian/firefox-3.1-final.desktop => debian/firefox-3.6-final.desktop
+      - debian/firefox-3.1-gnome-support.postinst.in => debian/firefox-3.6-gnome-support.postinst.in
+      - debian/firefox-3.1-minefield.desktop => debian/firefox-3.6-minefield.desktop
+      - debian/firefox-3.1-restart-required.update-notifier => debian/firefox-3.6-restart-required.update-notifier
+      - debian/firefox-3.1-shiretoko.desktop => debian/firefox-3.6-shiretoko.desktop
+      - debian/firefox-3.1.install => debian/firefox-3.6.install
+      - debian/firefox-3.1.links => debian/firefox-3.6.links
+      - debian/firefox-3.1.menu => debian/firefox-3.6.menu
+      - debian/mozclient/firefox-3.1.conf => debian/mozclient/firefox-3.6.conf
+      - debian/mozclient/firefox-3.1.mk => debian/mozclient/firefox-3.6.mk
+      - debian/firefox-3.1-dev.install => debian/firefox-3.6-dev.install
+      - debian/firefox-3.1-dev.links => debian/firefox-3.6-dev.links
+      - debian/firefox-3.1-gnome-support.install => debian/firefox-3.6-gnome-support.install
+      - debian/firefox-3.1.dirs => debian/firefox-3.6.dirs
+      - debian/firefox-3.1.postinst.in => debian/firefox-3.6.postinst.in
+      - debian/firefox-3.1.prerm => debian/firefox-3.6.prerm
     * Updated:
       - debian/control
       - debian/firefox.sh.in
@@ -38,7 +38,7 @@ firefox-3.2 (3.2~a1~hg20090312r26106+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/dont_depend_on_nspr_sources.patch
 
- -- Fabien Tassin <fta@ubuntu.com>  Thu, 12 Mar 2009 19:00:39 +0100
+ -- Fabien Tassin <fta@ubuntu.com>  Tue, 17 Mar 2009 19:00:22 +0100
 
 firefox-3.1 (3.1~b3~hg20081221r22451+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
