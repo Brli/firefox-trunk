@@ -32,6 +32,9 @@ firefox-3.6 (3.6~a1~hg20090317r26255+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add libstartup-notification0-dev to build-deps as it now seems to be
     mandatory on lpia
     - update debian/control
+  * Update MOZCLIENT_GETDATE to make it use pushlog so it is not confused by merges with
+    dates in the past
+    - update debian/mozclient/xulrunner-1.9.2.conf
   * Update diverged patches:
     - update debian/patches/firefox-profilename
     - update debian/patches/ubuntu_bookmarks.patch
