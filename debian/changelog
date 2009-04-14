@@ -1,5 +1,9 @@
 firefox-3.6 (3.6~a1~hg20090330r26723+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  [ H. Montoliu <hmontoliu@ubuntu.com> ]
+  * fix LP: #361052 - firefox apport hook fails to retrieve pluginreg.dat file
+
+  [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.1 to 3.6:
     * Renamed and updated
       - debian/abrowser-3.1.desktop => debian/abrowser-3.6.desktop

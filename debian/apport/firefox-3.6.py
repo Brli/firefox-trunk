@@ -88,10 +88,6 @@ def add_info(report):
     config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-3.6')
     
     # append pluginreg.dat file:
-    pluginreg_dat = os.path.join(config_dir,'pluginreg.dat')
-    if os.path.exists(pluginreg_dat):
-        report['pluginreg.dat'] = open(pluginreg_dat).read()
-    
     # append profiles.ini file & parse it:
     profiles_ini = os.path.join(config_dir,'profiles.ini') 
     if os.path.exists(profiles_ini):
@@ -109,10 +105,18 @@ def add_info(report):
                 profiles_d[profile_parser.get(section, 'Name')] = (os.path.join(config_dir, profile_parser.get(section, 'Path')), is_default)
     
     # summarize the extensions loaded on each profile (either global and local):
+    # also append the pluginreg.dat file of the default profile (maybe in a
+    # future append each profile's pluginreg.dat file)
     extensions_dict, themes_dict, extension_summary = {}, {}, ''
     for profile_name in profiles_d.keys():
         profile_path, is_default = profiles_d[profile_name]
         extensions_ini = os.path.join(profile_path, 'extensions.ini')
+        pluginreg_dat = os.path.join(profile_path, 'pluginreg.dat')
+        if os.path.exists(pluginreg_dat):
+            if is_default == '1':
+                report['default_profile_pluginreg.dat'] = open(pluginreg_dat).read()
+            else:
+                report['profile_%s_pluginreg.dat' % profile_name] = open(pluginreg_dat).read()
         if os.path.exists(extensions_ini):
             # attach each profile's extensions.ini too (not enabled).
             #report['extensions.ini (profile: %s)' % profile_name ] = open(extensions_ini).read()
