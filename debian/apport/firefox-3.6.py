@@ -18,13 +18,13 @@ the full text of the license.
 
 import os
 import ConfigParser
-import glob
 import cStringIO
 from xml.dom import minidom
 
 def extensions_ini_parser(extensions_ini_file):
     '''parses profile's extensions.ini file and returns a tuple:
-    ((gre extensions, app extensions, local extensions), (gre themes, app themes, local themes))'''
+    ((gre extensions, app extensions, local extensions), (gre themes, app
+    themes, local themes))'''
     parser = ConfigParser.ConfigParser()
     parser.read(extensions_ini_file) 
     ext_ini_d = {}
@@ -73,24 +73,20 @@ def install_ini_parser(extension_path):
 
 def extension_summary_helper(extension_list, section_name, alt_output = 1):
     '''does some output proccessing for extensionSummary'''
-    str = ''
+    summary = ''
     if len(extension_list) > 0:
-        str += '''  %s:\n''' % section_name
+        summary += '''  %s:\n''' % section_name
         for extension in extension_list:
-            str += '''    %s\n''' % install_ini_parser(extension)
+            summary += '''    %s\n''' % install_ini_parser(extension)
     else:
         if alt_output == 1: # if 0, don't output anything
-            str += '''  No %s in this Profile.\n''' % section_name 
-    str += '''\n'''
-    return str
+            summary += '''  No %s in this Profile.\n''' % section_name 
+    summary += '''\n'''
+    return summary
 
 def add_info(report):
+    '''adds hooked info into the apport report.'''
     config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-3.6')
-    
-    # append pluginreg.dat file:
-    pluginreg_dat = os.path.join(config_dir,'pluginreg.dat')
-    if os.path.exists(pluginreg_dat):
-        report['pluginreg.dat'] = open(pluginreg_dat).read()
     
     # append profiles.ini file & parse it:
     profiles_ini = os.path.join(config_dir,'profiles.ini') 
@@ -109,17 +105,25 @@ def add_info(report):
                 profiles_d[profile_parser.get(section, 'Name')] = (os.path.join(config_dir, profile_parser.get(section, 'Path')), is_default)
     
     # summarize the extensions loaded on each profile (either global and local):
+    # also append the pluginreg.dat file of the default profile (maybe in a
+    # future append each profile's pluginreg.dat file)
     extensions_dict, themes_dict, extension_summary = {}, {}, ''
     for profile_name in profiles_d.keys():
         profile_path, is_default = profiles_d[profile_name]
         extensions_ini = os.path.join(profile_path, 'extensions.ini')
+        pluginreg_dat = os.path.join(profile_path, 'pluginreg.dat')
+        if os.path.exists(pluginreg_dat):
+            if is_default == '1':
+                report['default_profile_pluginreg.dat'] = open(pluginreg_dat).read()
+            else:
+                report['profile_%s_pluginreg.dat' % profile_name] = open(pluginreg_dat).read()
         if os.path.exists(extensions_ini):
             # attach each profile's extensions.ini too (not enabled).
             #report['extensions.ini (profile: %s)' % profile_name ] = open(extensions_ini).read()
-            (extensions_dict['gre_extensions'], extensions_dict['app_extensions'], extensions_dict['local_extensions']),\
+            (extensions_dict['gre_extensions'], extensions_dict['app_extensions'], extensions_dict['local_extensions']), \
             (themes_dict['gre_theme'], themes_dict['app_theme'], themes_dict['local_theme']) = extensions_ini_parser(extensions_ini)
-    
-            if is_default == '1': is_default_str = ''' (The Default):'''
+            if is_default == '1': 
+                is_default_str = ''' (The Default):'''
             else: is_default_str = ''':'''
             extension_summary += '''Profile "%s"%s\n\n''' % (profile_name, is_default_str)
             extension_summary += extension_summary_helper(extensions_dict['gre_extensions'], 'GRE Extensions')
@@ -128,10 +132,10 @@ def add_info(report):
             extension_summary += extension_summary_helper(themes_dict['gre_theme'], 'GRE Theme', 0)
             extension_summary += extension_summary_helper(themes_dict['app_theme'], 'Application Theme', 0)
             extension_summary += extension_summary_helper(themes_dict['local_theme'], 'Local Theme', 0)
-        buffer = cStringIO.StringIO() # it's needed for propper apport attachments
-        print >> buffer, extension_summary
-        buffer.seek(0)
-    report['ExtensionSummary'] = buffer.read()
+        wbuffer = cStringIO.StringIO() # it's needed for propper apport attachments
+        print >> wbuffer, extension_summary
+        wbuffer.seek(0)
+    report['ExtensionSummary'] = wbuffer.read()
     # debug (comment on production)
     # return report
 
@@ -139,5 +143,6 @@ def add_info(report):
 # (uncomment the 'return report' at add_report())
 if __name__ == "__main__":
     D = {}  
-    report = add_info(D)
-    for key in report.keys(): print '''%s:\n''' % key, report[key]
+    REPORT = add_info(D)
+    for KEY in REPORT.keys(): 
+        print '''-------------------%s: ------------------\n''' % KEY, REPORT[KEY]
