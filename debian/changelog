@@ -1,4 +1,4 @@
-firefox-3.6 (3.6~a1~hg20090330r26723+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.6 (3.6~a1~hg20090429r27900+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ H. Montoliu <hmontoliu@ubuntu.com> ]
   * fix LP: #361052 - firefox apport hook fails to retrieve pluginreg.dat file
