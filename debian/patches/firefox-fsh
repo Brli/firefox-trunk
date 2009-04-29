@@ -8,7 +8,7 @@ Index: mozilla/config/autoconf.mk.in
 ===================================================================
 --- mozilla.orig/config/autoconf.mk.in
 +++ mozilla/config/autoconf.mk.in
-@@ -50,24 +50,24 @@
+@@ -52,24 +52,24 @@
  MOZ_APP_DISPLAYNAME = @MOZ_APP_DISPLAYNAME@
  MOZ_APP_VERSION = @MOZ_APP_VERSION@
  
@@ -33,9 +33,9 @@ Index: mozilla/config/autoconf.mk.in
  DIST		= $(DEPTH)/dist
  LIBXUL_SDK      = @LIBXUL_SDK@
  
- L10NBASEDIR     = @L10NBASEDIR@
+ MOZ_FS_LAYOUT = @MOZ_FS_LAYOUT@
  
- LIBXUL_DIST	= @LIBXUL_DIST@
+ L10NBASEDIR     = @L10NBASEDIR@
  
 Index: mozilla/browser/confvars.sh
 ===================================================================
@@ -64,8 +64,8 @@ Index: mozilla/browser/app/Makefile.in
 ===================================================================
 --- mozilla.orig/browser/app/Makefile.in
 +++ mozilla/browser/app/Makefile.in
-@@ -394,17 +394,17 @@
- 	cp -RL $(LIBXUL_DIST)/package/mozillaSuite.rsrc $(DIST)/$(APP_NAME).app/Contents/Resources/firefox-bin.rsrc
+@@ -405,17 +405,17 @@
+ 	cp -RL $(DIST)/branding/document.icns $(DIST)/$(APP_NAME).app/Contents/Resources/document.icns
  	echo -n APPLMOZB > $(DIST)/$(APP_NAME).app/Contents/PkgInfo
  #       remove CVS dirs from packaged app
  	find $(DIST)/$(APP_NAME).app -type d -name "CVS" -prune -exec rm -rf {} \;
@@ -73,8 +73,8 @@ Index: mozilla/browser/app/Makefile.in
  else
  ifdef LIBXUL_SDK
  libs::
--	cp $(LIBXUL_DIST)/bin/xulrunner-stub$(BIN_SUFFIX) $(DIST)/bin/firefox$(BIN_SUFFIX)
-+	cp $(LIBXUL_DIST)/bin/xulrunner-stub$(BIN_SUFFIX) $(DIST)/bin/$(MOZ_APP_NAME)$(BIN_SUFFIX)
+-	cp $(LIBXUL_DIST)/bin/$(XULRUNNER_STUB_NAME)$(BIN_SUFFIX) $(DIST)/bin/firefox$(BIN_SUFFIX)
++	cp $(LIBXUL_DIST)/bin/$(XULRUNNER_STUB_NAME)$(BIN_SUFFIX) $(DIST)/bin/$(MOZ_APP_NAME)$(BIN_SUFFIX)
  endif
  endif
  
@@ -82,4 +82,4 @@ Index: mozilla/browser/app/Makefile.in
  ifeq ($(OS_ARCH),WINNT)
  	$(PERL) -pe 's/(?<!\r)\n/\r\n/g;' < $(topsrcdir)/LICENSE > $(DIST)/bin/LICENSE
  else
- 	$(INSTALL) $(topsrcdir)/LICENSE	$(DIST)/bin
+ 	$(INSTALL) $(IFLAGS1) $(topsrcdir)/LICENSE $(DIST)/bin
