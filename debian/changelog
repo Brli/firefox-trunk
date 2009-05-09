@@ -1,4 +1,4 @@
-firefox-3.6 (3.6~a1~hg20090429r27900+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.6 (3.6~a1~hg20090508r28130+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ H. Montoliu <hmontoliu@ubuntu.com> ]
   * fix LP: #361052 - firefox apport hook fails to retrieve pluginreg.dat file
@@ -45,6 +45,10 @@ firefox-3.6 (3.6~a1~hg20090429r27900+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/ubuntu_bookmarks.patch
     - update debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/dont_depend_on_nspr_sources.patch
+
+  [ Alexander Sack <asac@ubuntu.com> ]
+  * add libnotify-dev to build-depends
+    - update debian/control
 
  -- Fabien Tassin <fta@ubuntu.com>  Mon, 30 Mar 2009 19:00:40 +0200
 
