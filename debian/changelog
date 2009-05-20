@@ -41,6 +41,7 @@ firefox-3.6 (3.6~a1~hg20090520r28667+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     dates in the past
     - update debian/mozclient/firefox-3.6.conf
   * Update diverged patches:
+    - update debian/patches/browser_branding.patch
     - update debian/patches/firefox-profilename
     - update debian/patches/ubuntu_bookmarks.patch
     - update debian/patches/lp185622_system_path_default_browser.patch

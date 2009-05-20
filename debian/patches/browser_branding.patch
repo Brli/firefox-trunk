@@ -37,7 +37,7 @@ Index: mozilla/browser/installer/unix/packages-static
 ===================================================================
 --- mozilla.orig/browser/installer/unix/packages-static
 +++ mozilla/browser/installer/unix/packages-static
-@@ -267,16 +267,21 @@
+@@ -272,16 +272,21 @@
  bin/chrome/toolkit.manifest
  bin/chrome/icons/default/default16.png
  bin/chrome/icons/default/default32.png
@@ -88,13 +88,13 @@ Index: mozilla/browser/base/jar.mn
 ===================================================================
 --- mozilla.orig/browser/base/jar.mn
 +++ mozilla/browser/base/jar.mn
-@@ -58,24 +58,26 @@
+@@ -55,19 +55,21 @@
+ #ifdef XP_MACOSX
+ *       content/browser/macBrowserOverlay.xul         (content/macBrowserOverlay.xul)
+ *       content/browser/downloadManagerOverlay.xul    (content/downloadManagerOverlay.xul)
  *       content/browser/extensionsManagerOverlay.xul  (content/extensionsManagerOverlay.xul)
  *       content/browser/jsConsoleOverlay.xul          (content/jsConsoleOverlay.xul)
  *       content/browser/softwareUpdateOverlay.xul  (content/softwareUpdateOverlay.xul)
- #endif
- #ifdef TOOLBAR_CUSTOMIZATION_SHEET
- *       content/browser/customizeToolbarSheet.js          (content/customizeToolbarSheet.js)
  #endif
  *       content/browser/viewSourceOverlay.xul         (content/viewSourceOverlay.xul)
 +# the following files are browser-specific overrides
@@ -113,8 +113,3 @@ Index: mozilla/browser/base/jar.mn
 -# the following files are browser-specific overrides
 -*       content/browser/license.html                  (/toolkit/content/license.html)
 -% override chrome://global/content/license.html chrome://browser/content/license.html
- 
- #ifdef TOOLBAR_CUSTOMIZATION_SHEET
- toolkit.jar:
- *+      content/global/customizeToolbar.xul           (content/customizeToolbarSheet.xul)
- #endif
