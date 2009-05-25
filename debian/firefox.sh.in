@@ -75,7 +75,9 @@ fi
 
 if [ ! -d $MOZDIR/$APPNAME ] ; then
   FOUND=""
-  if [ -d $MOZDIR/firefox-3.1 ] ; then
+  if [ -d $MOZDIR/firefox-3.5 ] ; then
+    FOUND=firefox-3.5
+  elif [ -d $MOZDIR/firefox-3.1 ] ; then
     FOUND=firefox-3.1
   elif [ -d $MOZDIR/firefox ] ; then
     FOUND=firefox
