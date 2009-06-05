@@ -123,7 +123,7 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/other-licenses/branding/firefox/pref/firefox-branding.js
 +++ mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
-@@ -1,21 +1,21 @@
+@@ -1,20 +1,20 @@
 -pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
@@ -147,6 +147,5 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
 -pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/%VERSION%/releasenotes/");
 +pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
  
- pref("browser.search.param.yahoo-fr", "moz2");
- pref("browser.search.param.yahoo-fr-cjkt", "moz2");
- pref("browser.search.param.yahoo-f-CN", "D3_g");
+ pref("browser.search.param.yahoo-fr", "moz35");
+ pref("browser.search.param.yahoo-fr-cjkt", "moz35");
