@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE default-apps SYSTEM "gnome-da-list.dtd">
+<default-apps>
+  <web-browsers>
+    <web-browser>
+      <name>Minefield</name>
+      <executable>firefox-3.6</executable>
+      <command>firefox-3.6 %s</command>
+      <icon-name>firefox-3.6</icon-name>
+      <run-in-terminal>false</run-in-terminal>
+      <netscape-remote>true</netscape-remote>
+      <tab-command>firefox-3.6 -new-tab "%s"</tab-command>
+      <win-command>firefox-3.6 -new-window "%s"</win-command>
+    </web-browser>
+  </web-browsers>
+</default-apps>
+
