@@ -43,6 +43,14 @@ firefox-3.6 (3.6~a1~hg20090626r29602+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add firefox 3.6 to the list of Preferred Applications in Gnome
     - add debian/firefox-3.6.xml
     - update debian/firefox-3.6-gnome-support.install
+  * Fix profile migrator broken when using abrowser-3.6
+    - update debian/firefox.sh.in
+  * Bump Standards-Version to 3.8.1
+    - update debian/control
+  * Add ${misc:Depends} to all non-transitional packages, make firefox-3.6-dbg
+    depend on firefox-3.6 with the exact same version and add
+    firefox-3.6-gnome-support-dbg
+    - update debian/control
   * Update diverged patches:
     - update debian/patches/browser_branding.patch
     - update debian/patches/firefox-profilename
