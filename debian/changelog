@@ -1,4 +1,4 @@
-firefox-3.6 (3.6~a1~hg20090605r28963+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.6 (3.6~a1~hg20090626r29602+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ H. Montoliu <hmontoliu@ubuntu.com> ]
   * fix LP: #361052 - firefox apport hook fails to retrieve pluginreg.dat file
@@ -54,7 +54,7 @@ firefox-3.6 (3.6~a1~hg20090605r28963+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * add libnotify-dev to build-depends
     - update debian/control
 
- -- Fabien Tassin <fta@ubuntu.com>  Fri, 05 Jun 2009 19:10:11 +0200
+ -- Fabien Tassin <fta@ubuntu.com>  Fri, 26 Jun 2009 18:06:06 +0200
 
 firefox-3.1 (3.1~b3~hg20081221r22451+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
