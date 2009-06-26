@@ -68,12 +68,13 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-if [ ! -d $MOZDIR/$APPNAME ]  && [ -d $MOZDIR/firefox-3.2 ] ; then
-  echo "*NOTICE* Moving your firefox-3.2 profile to $APPNAME"
-  mv $MOZDIR/firefox-3.2 $MOZDIR/$APPNAME
+PROFILENAME=`echo $APPNAME | sed -e 's/abrowser/firefox/'`
+if [ ! -d $MOZDIR/$PROFILENAME ]  && [ -d $MOZDIR/firefox-3.2 ] ; then
+  echo "*NOTICE* Moving your firefox-3.2 profile to $PROFILENAME"
+  mv $MOZDIR/firefox-3.2 $MOZDIR/$PROFILENAME
 fi
 
-if [ ! -d $MOZDIR/$APPNAME ] ; then
+if [ ! -d $MOZDIR/$PROFILENAME ] ; then
   FOUND=""
   if [ -d $MOZDIR/firefox-3.5 ] ; then
     FOUND=firefox-3.5
@@ -84,9 +85,9 @@ if [ ! -d $MOZDIR/$APPNAME ] ; then
   fi
 
   if [ "$FOUND" != "" ] ; then
-    echo "*NOTICE* No previous $APPNAME profile found, we'll initialize a profile using a copy of your existing '$FOUND' profile."
+    echo "*NOTICE* No previous $PROFILENAME profile found, we'll initialize a profile using a copy of your existing '$FOUND' profile."
     echo -n "Transfering..."
-    cp -a $MOZDIR/$FOUND $MOZDIR/$APPNAME
+    cp -a $MOZDIR/$FOUND $MOZDIR/$PROFILENAME
     echo " done."
   else
     echo "*NOTICE* No previous firefox profile found, starting with a fresh one"
