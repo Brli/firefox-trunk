@@ -32,6 +32,7 @@ Architecture: any
 Depends: fontconfig,
 	psmisc,
 	debianutils (>= 1.16),
+	${misc:Depends},
 	xulrunner-1.9.2,
 	${shlibs:Depends},
 	firefox-3.6-branding | abrowser-3.6-branding
@@ -47,7 +48,7 @@ Description: safe and easy web browser from Mozilla
 
 Package: firefox-3.6-branding
 Architecture: any
-Depends: firefox-3.6 (= ${binary:Version})
+Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
 Replaces: firefox-3.6, firefox-3.2-branding
 Conflicts: abrowser-3.6-branding, firefox-3.2-branding (<< 3.2)
 Description: Package that ships the firefox branding
@@ -57,7 +58,7 @@ Description: Package that ships the firefox branding
 Package: firefox-3.6-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, firefox-3.6 (= ${binary:Version}), xulrunner-1.9.2-gnome-support
+Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.6 (= ${binary:Version}), xulrunner-1.9.2-gnome-support
 Provides: gnome-www-browser
 Conflicts: firefox-3.2-gnome-support (<< 3.2)
 Replaces: firefox-3.2-gnome-support
@@ -79,7 +80,7 @@ Description: firefox-3.6 debug symbols
 Package: firefox-3.6-dev
 Architecture: any
 Section: devel
-Depends: firefox-3.6 (= ${binary:Version})
+Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
 Conflicts: firefox-3.2-dev (<< 3.2)
 Replaces: firefox-3.2-dev
 Description: Development files for Mozilla Firefox
@@ -88,7 +89,7 @@ Description: Development files for Mozilla Firefox
 
 Package: abrowser-3.6-branding
 Architecture: any
-Depends: firefox-3.6 (= ${binary:Version})
+Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
 Replaces: firefox-3.6, abrowser-3.2-branding
 Conflicts: firefox-3.6-branding, abrowser-3.2-branding (<< 3.2)
 Description: package that ships the abrowser branding
@@ -101,7 +102,7 @@ Description: package that ships the abrowser branding
 
 Package: abrowser-3.6
 Architecture: all
-Depends: firefox-3.6, abrowser-3.6-branding
+Depends: firefox-3.6, abrowser-3.6-branding, ${misc:Depends}
 Conflicts: abrowser-3.2 (<< 3.2)
 Replaces: abrowser-3.2
 Description: meta package for the unbranded abrowser
