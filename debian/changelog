@@ -50,8 +50,8 @@ firefox-3.6 (3.6~a1~hg20090626r29602+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Bump Standards-Version to 3.8.1
     - update debian/control
   * Add ${misc:Depends} to all non-transitional packages, make firefox-3.6-dbg
-    depend on firefox-3.6 with the exact same version and add
-    firefox-3.6-gnome-support-dbg
+    depend on firefox-3.6 with the exact same version, move -dbg packges to
+    priority extra and add firefox-3.6-gnome-support-dbg
     - update debian/control
   * Update diverged patches:
     - update debian/patches/browser_branding.patch

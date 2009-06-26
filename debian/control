@@ -70,7 +70,7 @@ Description: Support for GNOME in Mozilla Firefox
 Package: firefox-3.6-dbg
 Architecture: any
 Section: debug
-Priority: optional
+Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.6 (= ${binary:Version})
 Conflicts: firefox-3.2-dbg (<< 3.2)
 Replaces: firefox-3.2-dbg
@@ -80,7 +80,7 @@ Description: firefox-3.6 debug symbols
 Package: firefox-3.6-gnome-support-dbg
 Architecture: any
 Section: debug
-Priority: optional
+Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.6-gnome-support (= ${binary:Version}), firefox-3.6-dbg (= ${binary:Version})
 Conflicts: firefox-3.2-dbg (<< 3.2)
 Replaces: firefox-3.2-dbg
