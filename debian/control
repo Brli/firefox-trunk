@@ -62,9 +62,9 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.6 (= ${binary:Version}), 
 Provides: gnome-www-browser
 Conflicts: firefox-3.2-gnome-support (<< 3.2)
 Replaces: firefox-3.2-gnome-support
-Description: Support for Gnome in Mozilla Firefox
+Description: Support for GNOME in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
- handlers from Gnome-VFS, such as smb or sftp, and other Gnome
+ handlers from GnomeVFS, such as smb or sftp, and other GNOME
  integration features.
 
 Package: firefox-3.6-dbg
@@ -106,7 +106,7 @@ Description: package that ships the abrowser branding
  The ABrowser refers to the unbranded build of firefox 3.6.
  Install the firefox package if you want a branded build.
  .
- This is a meta package that will point to the latest abrowser package
+ This is a metapackage that will point to the latest abrowser package
  in your distribution. Don't remove this if you want to receive automatic major
  version upgrades for this package in future.
 
@@ -115,11 +115,11 @@ Architecture: all
 Depends: firefox-3.6, abrowser-3.6-branding, ${misc:Depends}
 Conflicts: abrowser-3.2 (<< 3.2)
 Replaces: abrowser-3.2
-Description: meta package for the unbranded abrowser
+Description: metapackage for the unbranded abrowser
  ABrowser 3.6 is an unbranded version of the popular Firefox webbrowser; it is
  written in the XUL language and designed to be lightweight and cross-platform.
  .
- This is a meta package that will point to the latest abrowser package in your
+ This is a metapackage that will point to the latest abrowser package in your
  distribution.
  Don't remove this if you want to receive automatic major version upgrades for
  this package in future.
