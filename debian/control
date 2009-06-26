@@ -52,7 +52,7 @@ Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
 Replaces: firefox-3.6, firefox-3.2-branding
 Conflicts: abrowser-3.6-branding, firefox-3.2-branding (<< 3.2)
 Description: Package that ships the firefox branding
- This package ships the Firefox branding bits. If you remove this package your 
+ This package ships the Firefox branding bits. If you remove this package your
  user experience will become that of the abrowser.
 
 Package: firefox-3.6-gnome-support
@@ -94,8 +94,8 @@ Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
 Conflicts: firefox-3.2-dev (<< 3.2)
 Replaces: firefox-3.2-dev
 Description: Development files for Mozilla Firefox
- This package contains the development headers, idl files and static libraries 
- needed to develop applications using Mozilla Firefox.
+ This package contains the development headers, idl files and static
+ libraries needed to develop applications using Mozilla Firefox.
 
 Package: abrowser-3.6-branding
 Architecture: any
@@ -107,8 +107,8 @@ Description: package that ships the abrowser branding
  Install the firefox package if you want a branded build.
  .
  This is a metapackage that will point to the latest abrowser package
- in your distribution. Don't remove this if you want to receive automatic major
- version upgrades for this package in future.
+ in your distribution. Don't remove this if you want to receive automatic
+ major version upgrades for this package in future.
 
 Package: abrowser-3.6
 Architecture: all
@@ -116,13 +116,14 @@ Depends: firefox-3.6, abrowser-3.6-branding, ${misc:Depends}
 Conflicts: abrowser-3.2 (<< 3.2)
 Replaces: abrowser-3.2
 Description: metapackage for the unbranded abrowser
- ABrowser 3.6 is an unbranded version of the popular Firefox webbrowser; it is
- written in the XUL language and designed to be lightweight and cross-platform.
+ ABrowser 3.6 is an unbranded version of the popular Firefox webbrowser;
+ it is written in the XUL language and designed to be lightweight and
+ cross-platform.
  .
- This is a metapackage that will point to the latest abrowser package in your
- distribution.
- Don't remove this if you want to receive automatic major version upgrades for
- this package in future.
+ This is a metapackage that will point to the latest abrowser package in
+ your distribution.
+ Don't remove this if you want to receive automatic major version upgrades
+ for this package in future.
 
 Package: firefox-3.2
 Architecture: all
