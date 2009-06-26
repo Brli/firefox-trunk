@@ -25,3 +25,7 @@ if [ -d $UPDATENOTIFIERDIR ] ; then
     rm -f $UPDATENOTIFIERDIR/$APPNAME-restart-required
   fi
 fi
+
+if [ -x /usr/bin/update-menus ] ; then
+  /usr/bin/update-menus
+fi

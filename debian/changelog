@@ -45,6 +45,8 @@ firefox-3.6 (3.6~a1~hg20090626r29602+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.6-gnome-support.install
   * Fix profile migrator broken when using abrowser-3.6
     - update debian/firefox.sh.in
+  * Call update-menus
+    - update debian/firefox-3.5.postinst.in
   * Bump Standards-Version to 3.8.1
     - update debian/control
   * Add ${misc:Depends} to all non-transitional packages, make firefox-3.6-dbg
