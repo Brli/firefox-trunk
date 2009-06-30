@@ -2,28 +2,14 @@
  configure.in                   |   21 +++-----------
 
 ---
- configure.in |   19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ configure.in |   18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
 Index: mozilla/configure.in
 ===================================================================
 --- mozilla.orig/configure.in
 +++ mozilla/configure.in
-@@ -4018,29 +4018,30 @@
-     AC_TRY_COMPILE([#include "prlog.h"],
-                 [#ifndef PR_STATIC_ASSERT
-                  #error PR_STATIC_ASSERT not defined
-                  #endif],
-                 [MOZ_NATIVE_NSPR=1],
-                 AC_MSG_ERROR([system NSPR does not support PR_STATIC_ASSERT]))
-     CFLAGS=$_SAVE_CFLAGS
- else
--    NSPR_CFLAGS='`$(DEPTH)/nsprpub/config/nspr-config --prefix='${LIBXUL_DIST}' --includedir='${LIBXUL_DIST}'/include/nspr --cflags`'
-+    NSPR_CFLAGS=`pkg-config mozilla-nspr --cflags`
-+    NSPR_LIBS=`pkg-config mozilla-nspr --libs`
-     if test "$OS_ARCH" = "WINCE"; then
-         NSPR_CFLAGS="-I${LIBXUL_DIST}/include/nspr"
-         NSPR_LIBS="${LIBXUL_DIST}/lib/nspr${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plc${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plds${NSPR_VERSION}.lib "
+@@ -4230,18 +4230,18 @@
      elif test "$OS_ARCH" = "WINNT"; then
          NSPR_CFLAGS="-I${LIBXUL_DIST}/include/nspr"
          if test -n "$GNU_CC"; then
@@ -32,7 +18,9 @@ Index: mozilla/configure.in
              NSPR_LIBS="${LIBXUL_DIST}/lib/nspr${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plc${NSPR_VERSION}.lib ${LIBXUL_DIST}/lib/plds${NSPR_VERSION}.lib "
          fi
      else
--        NSPR_LIBS='`$(DEPTH)/nsprpub/config/nspr-config --prefix='${LIBXUL_DIST}' --libdir='${LIBXUL_DIST}'/lib --libs`'
+-        NSPR_CFLAGS='`$(LIBXUL_DIST)/bin/nspr-config --prefix='${LIBXUL_DIST}' --includedir='${LIBXUL_DIST}'/include/nspr --cflags`'
+-        NSPR_LIBS='`$(LIBXUL_DIST)/bin/nspr-config --prefix='${LIBXUL_DIST}' --libdir='${LIBXUL_DIST}'/lib --libs`'
++        NSPR_CFLAGS=`pkg-config mozilla-nspr --cflags`
 +        NSPR_LIBS=`pkg-config mozilla-nspr --libs`
      fi
  fi
@@ -42,7 +30,7 @@ Index: mozilla/configure.in
  dnl = use the one in the source tree (mozilla/security/nss)
  dnl ========================================================
  
-@@ -7916,17 +7917,19 @@
+@@ -8186,17 +8186,19 @@
  AC_SUBST(MOZ_ZLIB_CFLAGS)
  AC_SUBST(MOZ_ZLIB_LIBS)
  AC_SUBST(MOZ_BZ2_CFLAGS)
@@ -60,9 +48,9 @@ Index: mozilla/configure.in
  AC_SUBST(NSS_LIBS)
  AC_SUBST(NSS_DEP_LIBS)
  AC_SUBST(MOZ_NATIVE_NSS)
+ AC_SUBST(NSS_DISABLE_DBM)
  
- AC_SUBST(CFLAGS)
-@@ -8265,28 +8268,16 @@
+@@ -8529,28 +8531,16 @@
      fi
      if test -n "$USE_ARM_KUSER"; then
          ac_configure_args="$ac_configure_args --with-arm-kuser"
