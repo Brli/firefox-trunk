@@ -67,6 +67,9 @@ firefox-3.6 (3.6~a1~hg20090630r29849+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   [ Alexander Sack <asac@ubuntu.com> ]
   * add libnotify-dev to build-depends
     - update debian/control
+  * fix LP: #398121 - firefox-3.5-gnome-support failed to install/upgrade; we
+    make the postinst script more failsafe
+    - update debian/firefox-3.6-gnome-support.postinst.in
 
  -- Fabien Tassin <fta@ubuntu.com>  Tue, 30 Jun 2009 18:12:48 +0200
 
