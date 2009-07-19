@@ -46,11 +46,14 @@ firefox-3.6 (3.6~a1~hg20090630r29849+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix profile migrator broken when using abrowser-3.6
     - update debian/firefox.sh.in
   * Call update-menus
-    - update debian/firefox-3.5.postinst.in
+    - update debian/firefox-3.6.postinst.in
   * Fix startup page, release notes and first run bogus URLs when
     using non official brandings. Also fix bogus addons URLs due
     to our change of appname
     - update debian/patches/firefox-profilename
+  * Fix postinst to also consider firefox-3.6 for the update-notifier
+    restart notification
+    - update debian/firefox-3.6.postinst.in
   * Bump Standards-Version to 3.8.1
     - update debian/control
   * Add ${misc:Depends} to all non-transitional packages, make firefox-3.6-dbg
