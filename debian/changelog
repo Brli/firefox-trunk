@@ -47,6 +47,9 @@ firefox-3.6 (3.6~a1~hg20090630r29849+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.sh.in
   * Call update-menus
     - update debian/firefox-3.6.postinst.in
+  * Fix bogus prerm rule removing the wrong alternative
+    - update renamed debian/firefox-3.6.prerm -> debian/firefox-3.6.prerm.in
+    - update debian/rules
   * Fix startup page, release notes and first run bogus URLs when
     using non official brandings. Also fix bogus addons URLs due
     to our change of appname
