@@ -1,8 +1,8 @@
 ---
  browser/app/application.ini                               |    2 -
- browser/app/firefox-branding.js                           |   10 +++----
  browser/app/profile/firefox.js                            |   18 +++++++-------
  browser/branding/awesome-browser/pref/firefox-branding.js |   10 +++----
+ browser/branding/nightly/pref/firefox-branding.js         |   10 +++----
  browser/branding/unofficial/pref/firefox-branding.js      |   10 +++----
  other-licenses/branding/firefox/pref/firefox-branding.js  |   10 +++----
  6 files changed, 30 insertions(+), 30 deletions(-)
@@ -57,38 +57,6 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
  // Release notes URL
 -pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
 +pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
- 
- // Search codes belong only in builds with official branding
- pref("browser.search.param.yahoo-fr", "");
- pref("browser.search.param.yahoo-fr-cjkt", "");
- pref("browser.search.param.yahoo-f-CN", "");
-Index: mozilla/browser/app/firefox-branding.js
-===================================================================
---- mozilla.orig/browser/app/firefox-branding.js
-+++ mozilla/browser/app/firefox-branding.js
-@@ -1,22 +1,22 @@
--pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
--pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
- // The time interval between checks for a new version (in seconds)
- // nightly=8 hours, official=24 hours
- pref("app.update.interval", 28800);
- // The time interval between the downloading of mar file chunks in the
- // background (in seconds)
- pref("app.update.download.backgroundInterval", 60);
- // URL user can browse to manually if for some reason all update installation
- // attempts fail.
--pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
-+pref("app.update.url.manual", "http://www.mozilla.org/products/firefox/");
- // A default value for the "More information about this update" link
- // supplied in the "An update is available" page of the update wizard. 
--pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
-+pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
- 
- // Release notes URL
--pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
-+pref("app.releaseNotesURL", "http://www.mozilla.org/projects/firefox/%VERSION%/releasenotes/");
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
@@ -205,7 +173,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("xpinstall.whitelist.add.103", "addons.mozilla.org");
  
  pref("keyword.enabled", true);
-@@ -817,17 +817,17 @@
+@@ -834,17 +834,17 @@
  
  // replace newlines with spaces when pasting into <input type="text"> fields
  pref("editor.singleLine.pasteNewlines", 2);
@@ -224,3 +192,35 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("browser.privatebrowsing.autostart", false);
  
  // Whether we should skip prompting before starting the private browsing mode
+Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js
++++ mozilla/browser/branding/nightly/pref/firefox-branding.js
+@@ -1,22 +1,22 @@
+-pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
+ // The time interval between checks for a new version (in seconds)
+ // nightly=8 hours, official=24 hours
+ pref("app.update.interval", 28800);
+ // The time interval between the downloading of mar file chunks in the
+ // background (in seconds)
+ pref("app.update.download.backgroundInterval", 60);
+ // URL user can browse to manually if for some reason all update installation
+ // attempts fail.
+-pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
++pref("app.update.url.manual", "http://www.mozilla.org/products/firefox/");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
++pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
+ 
+ // Release notes URL
+-pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
+ 
+ // Search codes belong only in builds with official branding
+ pref("browser.search.param.yahoo-fr", "");
+ pref("browser.search.param.yahoo-fr-cjkt", "");
+ pref("browser.search.param.yahoo-f-CN", "");

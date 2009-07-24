@@ -1,11 +1,12 @@
 ---
- browser/base/jar.mn                            |    8 +++++---
+ browser/branding/nightly/content/jar.mn        |    2 +-
+ browser/branding/nightly/locales/jar.mn        |    2 +-
  browser/branding/unofficial/content/jar.mn     |    2 +-
  browser/branding/unofficial/locales/jar.mn     |    2 +-
  browser/installer/unix/packages-static         |    5 +++++
  other-licenses/branding/firefox/content/jar.mn |    2 +-
  other-licenses/branding/firefox/locales/jar.mn |    2 +-
- 6 files changed, 14 insertions(+), 7 deletions(-)
+ 7 files changed, 11 insertions(+), 6 deletions(-)
 
 Index: mozilla/browser/branding/unofficial/content/jar.mn
 ===================================================================
@@ -24,20 +25,19 @@ Index: mozilla/browser/branding/unofficial/locales/jar.mn
 ===================================================================
 --- mozilla.orig/browser/branding/unofficial/locales/jar.mn
 +++ mozilla/browser/branding/unofficial/locales/jar.mn
-@@ -1,7 +1,7 @@
+@@ -1,6 +1,6 @@
  #filter substitution
  
 -@AB_CD@.jar:
 +browser-branding-@AB_CD@.jar:
  % locale branding @AB_CD@ %locale/branding/
- # Unofficial branding only exists in en-US
-   locale/branding/brand.dtd        (en-US/brand.dtd)
- * locale/branding/brand.properties (en-US/brand.properties)
+   locale/branding/brand.dtd        (%brand.dtd)
+ * locale/branding/brand.properties (%brand.properties)
 Index: mozilla/browser/installer/unix/packages-static
 ===================================================================
 --- mozilla.orig/browser/installer/unix/packages-static
 +++ mozilla/browser/installer/unix/packages-static
-@@ -272,16 +272,21 @@
+@@ -273,16 +273,21 @@
  bin/chrome/toolkit.manifest
  bin/chrome/icons/default/default16.png
  bin/chrome/icons/default/default32.png
@@ -84,32 +84,28 @@ Index: mozilla/other-licenses/branding/firefox/locales/jar.mn
  % locale branding @AB_CD@ %locale/branding/
    locale/branding/brand.dtd        (%brand.dtd)
  * locale/branding/brand.properties (%brand.properties)
-Index: mozilla/browser/base/jar.mn
+Index: mozilla/browser/branding/nightly/content/jar.mn
 ===================================================================
---- mozilla.orig/browser/base/jar.mn
-+++ mozilla/browser/base/jar.mn
-@@ -55,19 +55,21 @@
- #ifdef XP_MACOSX
- *       content/browser/macBrowserOverlay.xul         (content/macBrowserOverlay.xul)
- *       content/browser/downloadManagerOverlay.xul    (content/downloadManagerOverlay.xul)
- *       content/browser/extensionsManagerOverlay.xul  (content/extensionsManagerOverlay.xul)
- *       content/browser/jsConsoleOverlay.xul          (content/jsConsoleOverlay.xul)
- *       content/browser/softwareUpdateOverlay.xul  (content/softwareUpdateOverlay.xul)
- #endif
- *       content/browser/viewSourceOverlay.xul         (content/viewSourceOverlay.xul)
-+# the following files are browser-specific overrides
-+*       content/browser/license.html                  (/toolkit/content/license.html)
-+% override chrome://global/content/license.html chrome://browser/content/license.html
-+
- #ifdef MOZ_USE_GENERIC_BRANDING
+--- mozilla.orig/browser/branding/nightly/content/jar.mn
++++ mozilla/browser/branding/nightly/content/jar.mn
+@@ -1,7 +1,7 @@
+-browser.jar:
 +browser-branding.jar:
  % content branding %content/branding/ xpcnativewrappers=yes
-   content/branding/about.png                     (branding/about.png)
-   content/branding/aboutCredits.png              (branding/aboutCredits.png)
-   content/branding/aboutFooter.png               (branding/aboutFooter.png)
-   content/branding/icon48.png                    (branding/icon48.png)
-   content/branding/icon64.png                    (branding/icon64.png)
- #endif
--# the following files are browser-specific overrides
--*       content/browser/license.html                  (/toolkit/content/license.html)
--% override chrome://global/content/license.html chrome://browser/content/license.html
+   content/branding/about.png                     (about.png)
+   content/branding/aboutCredits.png              (aboutCredits.png)
+   content/branding/aboutFooter.png               (aboutFooter.png)
+   content/branding/icon48.png                    (icon48.png)
+   content/branding/icon64.png                    (icon64.png)
+Index: mozilla/browser/branding/nightly/locales/jar.mn
+===================================================================
+--- mozilla.orig/browser/branding/nightly/locales/jar.mn
++++ mozilla/browser/branding/nightly/locales/jar.mn
+@@ -1,6 +1,6 @@
+ #filter substitution
+ 
+-@AB_CD@.jar:
++browser-branding-@AB_CD@.jar:
+ % locale branding @AB_CD@ %locale/branding/
+   locale/branding/brand.dtd        (%brand.dtd)
+ * locale/branding/brand.properties (%brand.properties)
