@@ -102,6 +102,10 @@ else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-sqlite
 endif
 
+# required for various features
+BUILD_OFFICIAL = 1
+export BUILD_OFFICIAL
+
 DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
 	--disable-debug \

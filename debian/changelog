@@ -78,6 +78,8 @@ firefox-3.6 (3.6~a1~hg20090724r30641+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.6-gnome-support.postinst.in
   * add libiw-dev to build-depends to fix build failure
     - update debian/control
+  * set BUILD_OFFICIAL = 1 to enable all official build features
+    - update debian/rules
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 24 Jul 2009 17:07:07 +0200
 
