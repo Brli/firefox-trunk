@@ -80,6 +80,9 @@ firefox-3.6 (3.6~a1~hg20090724r30641+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
   * set BUILD_OFFICIAL = 1 to enable all official build features
     - update debian/rules
+  * fix LP: #404827 - Firefox doesn't warn about Attack Sites!?; add
+    --enable-safe-browsing to configure flags
+    - update debian/rules
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 24 Jul 2009 17:07:07 +0200
 

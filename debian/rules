@@ -143,6 +143,7 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--enable-xft \
 	--enable-xinerama \
 	--enable-extensions=default,-reporter \
+	--enable-safe-browsing \
 	--enable-single-profile \
 	--enable-system-myspell \
 	--with-distribution-id=com.ubuntu \
