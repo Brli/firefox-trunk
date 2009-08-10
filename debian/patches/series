@@ -10,3 +10,4 @@ awesome_browser_branding_install.patch
 browser_branding.patch
 ubuntu_codes_amazon.patch
 ubuntu_bookmarks.patch
+bzXXX_moz_app_name_inconsistencies.patch

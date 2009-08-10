@@ -1,0 +1,27 @@
+---
+ browser/installer/unix/packages-static |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: mozilla/browser/installer/unix/packages-static
+===================================================================
+--- mozilla.orig/browser/installer/unix/packages-static
++++ mozilla/browser/installer/unix/packages-static
+@@ -41,17 +41,17 @@
+ bin/libxpcom_core.so
+ bin/components/libxpinstall.so
+ bin/components/libjar50.so
+ #endif
+ 
+ [browser]
+ ; [Base Browser Files]
+ bin/@MOZ_APP_NAME@-bin
+-bin/@MOZ_APP_NAME@
++bin/firefox
+ bin/application.ini
+ bin/platform.ini
+ bin/mozilla-xremote-client
+ bin/run-mozilla.sh
+ bin/plugins/libnullplugin.so
+ bin/libsqlite3.so
+ bin/README.txt
+ bin/blocklist.xml

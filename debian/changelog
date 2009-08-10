@@ -1,4 +1,4 @@
-firefox-3.6 (3.6~a1~hg20090724r30641+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ H. Montoliu <hmontoliu@ubuntu.com> ]
   * fix LP: #361052 - firefox apport hook fails to retrieve pluginreg.dat file
@@ -89,6 +89,11 @@ firefox-3.6 (3.6~a1~hg20090724r30641+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
     - update debian/firefox-3.6.install
     - update debian/patches/firefox-fsh
+  * fix packages-unix and browser/app/Makefile.in disagreeing on the binary
+    name; we use fixed firefox now everywhere to fix build failures introduced
+    by previous commmit
+    - add debian/patches/bzXXX_moz_app_name_inconsistencies.patch
+    - update debian/patches/series
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 24 Jul 2009 17:07:07 +0200
 
