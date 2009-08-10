@@ -5,7 +5,6 @@ debian/tmp/usr/lib/firefox-*/components/libbrowserdirprovider.so
 
 debian/tmp/usr/lib/firefox-*/modules/
 
-debian/tmp/usr/lib/firefox-*/firefox-3.6
 debian/tmp/usr/lib/firefox-*/run-mozilla.sh
 
 #debian/tmp/usr/lib/firefox-*/defaults/autoconfig

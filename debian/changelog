@@ -83,6 +83,12 @@ firefox-3.6 (3.6~a1~hg20090724r30641+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * fix LP: #404827 - Firefox doesn't warn about Attack Sites!?; add
     --enable-safe-browsing to configure flags
     - update debian/rules
+  * fix restart issues by installing proper versioned binary (without firefox-fsh
+    patch changing the dist binary name); in turn drop unversioned firefox link
+    from .install; dropping versioned binary part from firefox-fsh accordingly
+    - update debian/rules
+    - update debian/firefox-3.6.install
+    - update debian/patches/firefox-fsh
 
  -- Fabien Tassin <fta@ubuntu.com>  Fri, 24 Jul 2009 17:07:07 +0200
 

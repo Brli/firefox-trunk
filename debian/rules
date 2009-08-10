@@ -220,8 +220,10 @@ ifneq (,$(DEBIAN_META_NAME))
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER)
+	dh_install debian/tmp/$(DEBIAN_FF3_DIR)/$(DEBIAN_META_NAME) $(DEBIAN_FF3_DIR)/
 else
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
+	install -m 755 debian/tmp/$(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME) debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER)
 endif
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
 	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
