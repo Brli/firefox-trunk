@@ -11,7 +11,7 @@
 
 ## profile migration disabled for now, instead, resurrect the previous code
 
-# If there's still no ~/mozilla/firefox-3.6 profile, try to find a previous
+# If there's still no ~/mozilla/firefox-3.7 profile, try to find a previous
 # firefox profile and initialize with that.
 # If nothing is found, we'll go for a fresh run and let firefox create a
 # default profile for us.
@@ -69,17 +69,10 @@ while [ $# -gt 0 ]; do
 done
 
 PROFILENAME=`echo $APPNAME | sed -e 's/abrowser/firefox/'`
-if [ ! -d $MOZDIR/$PROFILENAME ]  && [ -d $MOZDIR/firefox-3.2 ] ; then
-  echo "*NOTICE* Moving your firefox-3.2 profile to $PROFILENAME"
-  mv $MOZDIR/firefox-3.2 $MOZDIR/$PROFILENAME
-fi
-
 if [ ! -d $MOZDIR/$PROFILENAME ] ; then
   FOUND=""
-  if [ -d $MOZDIR/firefox-3.5 ] ; then
-    FOUND=firefox-3.5
-  elif [ -d $MOZDIR/firefox-3.1 ] ; then
-    FOUND=firefox-3.1
+  if [ -d $MOZDIR/firefox-3.6 ] ; then
+    FOUND=firefox-3.6
   elif [ -d $MOZDIR/firefox ] ; then
     FOUND=firefox
   fi

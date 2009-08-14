@@ -1,7 +1,7 @@
 # -*- mode: makefile; coding: utf-8 -*-
 
-# Copyright (c) 2008 Fabien Tassin <fta@sofaraway.org>
-# Description: Project firefox 3.6
+# Copyright (c) 2008-2009 Fabien Tassin <fta@sofaraway.org>
+# Description: Project firefox 3.7
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-13.6 USA.
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-13.7 USA.
 
 include /usr/share/mozilla-devscripts/mozclient.mk
 
@@ -24,17 +24,17 @@ COMPARE_FILTER_PRE_IN := sed \
 	$(NULL)
 
 COMPARE_FILTER_PRE_OUT := sed \
-	-e 's,^usr/lib/firefox-3.6[^/]*/,,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/,,' \
         $(NULL)
 
 COMPARE_FILTER_IN    := sed \
-	-e 's,^usr/lib/firefox-3.6[^/]*/searchplugins,usr/lib/firefox-addons/searchplugins,' \
-	-e 's,^usr/lib/firefox-3.6[^/]*/extensions/inspector@mozilla.org/.*,,' \
-	-e 's,^usr/lib/firefox-3.6[^/]*/extensions,usr/lib/xulrunner-addons/extensions,' \
-	-e 's,^usr/lib/firefox-3.6[^/]*/defaults/profile,etc/firefox-3.6/profile,' \
-	-e 's,^usr/lib/firefox-3.6[^/]*/\(old-homepage-default.properties\|README.txt\|removed-files\),,' \
-	-e 's,^usr/lib/firefox-3.6[^/]*/.autoreg,,' \
-	-e 's,^etc/firefox-3.6[^/]*/.autoreg,,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/searchplugins,usr/lib/firefox-addons/searchplugins,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/extensions/inspector@mozilla.org/.*,,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/extensions,usr/lib/xulrunner-addons/extensions,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/defaults/profile,etc/firefox-3.7/profile,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/\(old-homepage-default.properties\|README.txt\|removed-files\),,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/.autoreg,,' \
+	-e 's,^etc/firefox-3.7[^/]*/.autoreg,,' \
 	$(NULL)
 
 COMPARE_FILTER_OUT   := sed \
@@ -43,10 +43,10 @@ COMPARE_FILTER_OUT   := sed \
 	-e 's,^usr/share/doc/.*,,' \
 	-e 's,^usr/share/menu/.*,,' \
 	-e 's,^usr/share/applications/.*,,' \
-	-e 's,^usr/share/bug/firefox-3.6/presubj,,' \
-	-e 's,^etc/firefox-3.6/\(firefoxrc\|pref/firefox.js\),,' \
+	-e 's,^usr/share/bug/firefox-3.7/presubj,,' \
+	-e 's,^etc/firefox-3.7/\(firefoxrc\|pref/firefox.js\),,' \
 	-e 's,^usr/lib/firefox-addons/searchplugins/\(debsearch\|wikipedia\).\(gif\|src\),,' \
-	-e 's,^usr/lib/firefox-3.6[^/]*/\(firefox-3.6-restart-required.update-notifier\|firefox.cfg\|firefox.sh\|ffox-4-beta-profile-migration-dialog\),,' \
+	-e 's,^usr/lib/firefox-3.7[^/]*/\(firefox-3.7-restart-required.update-notifier\|firefox.cfg\|firefox.sh\|ffox-4-beta-profile-migration-dialog\),,' \
 	$(NULL)
 
 include /usr/share/mozilla-devscripts/compare.mk

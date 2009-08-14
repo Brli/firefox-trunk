@@ -3,7 +3,7 @@
 set -e
 
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
-    for dir in `ls -d /usr/lib/firefox-3.6* || true`; do
+    for dir in `ls -d /usr/lib/firefox-3.7* || true`; do
         if test -d $dir -a -e $dir/.autoreg; then
             touch $dir/.autoreg
         fi

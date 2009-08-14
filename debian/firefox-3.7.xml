@@ -4,13 +4,13 @@
   <web-browsers>
     <web-browser>
       <name>Minefield</name>
-      <executable>firefox-3.6</executable>
-      <command>firefox-3.6 %s</command>
-      <icon-name>firefox-3.6</icon-name>
+      <executable>firefox-3.7</executable>
+      <command>firefox-3.7 %s</command>
+      <icon-name>firefox-3.7</icon-name>
       <run-in-terminal>false</run-in-terminal>
       <netscape-remote>true</netscape-remote>
-      <tab-command>firefox-3.6 -new-tab "%s"</tab-command>
-      <win-command>firefox-3.6 -new-window "%s"</win-command>
+      <tab-command>firefox-3.7 -new-tab "%s"</tab-command>
+      <win-command>firefox-3.7 -new-window "%s"</win-command>
     </web-browser>
   </web-browsers>
 </default-apps>

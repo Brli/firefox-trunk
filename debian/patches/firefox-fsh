@@ -51,7 +51,7 @@ Index: mozilla/browser/confvars.sh
  # ***** END LICENSE BLOCK *****
  
 -MOZ_APP_NAME=firefox
-+MOZ_APP_NAME=firefox-3.6
++MOZ_APP_NAME=firefox-3.7
  MOZ_UPDATER=1
  MOZ_PHOENIX=1
  

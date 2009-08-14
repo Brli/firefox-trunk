@@ -1,8 +1,8 @@
-Source: firefox-3.6
+Source: firefox-3.7
 Section: web
 Priority: optional
 Maintainer: Ubuntu Mozilla Team <ubuntu-mozillateam@lists.ubuntu.com>
-Vcs-Bzr: https://code.launchpad.net/~mozillateam/firefox/firefox-3.6.head
+Vcs-Bzr: https://code.launchpad.net/~mozillateam/firefox/firefox-3.7.head
 Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	autotools-dev, autoconf2.13,
 	quilt, patchutils (>= 0.2.25),
@@ -28,7 +28,7 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	libnotify-dev (>= 0.4)
 Standards-Version: 3.8.1
 
-Package: firefox-3.6
+Package: firefox-3.7
 Architecture: any
 Depends: fontconfig,
 	psmisc,
@@ -36,88 +36,74 @@ Depends: fontconfig,
 	${misc:Depends},
 	xulrunner-1.9.2,
 	${shlibs:Depends},
-	firefox-3.6-branding | abrowser-3.6-branding
+	firefox-3.7-branding | abrowser-3.7-branding
 Recommends: ubufox
-Suggests: firefox-3.6-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
+Suggests: firefox-3.7-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
-Conflicts: firefox-3.2 (<< 3.2)
-Replaces: firefox-3.2
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
 
-Package: firefox-3.6-branding
+Package: firefox-3.7-branding
 Architecture: any
-Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
-Replaces: firefox-3.6, firefox-3.2-branding
-Conflicts: abrowser-3.6-branding, firefox-3.2-branding (<< 3.2)
+Depends: firefox-3.7 (= ${binary:Version}), ${misc:Depends}
+Conflicts: abrowser-3.7-branding
 Description: Package that ships the firefox branding
  This package ships the Firefox branding bits. If you remove this package your
  user experience will become that of the abrowser.
 
-Package: firefox-3.6-gnome-support
+Package: firefox-3.7-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.6 (= ${binary:Version}), xulrunner-1.9.2-gnome-support
+Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.7 (= ${binary:Version}), xulrunner-1.9.2-gnome-support
 Provides: gnome-www-browser
-Conflicts: firefox-3.2-gnome-support (<< 3.2)
-Replaces: firefox-3.2-gnome-support
 Description: Support for GNOME in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
  integration features.
 
-Package: firefox-3.6-dbg
+Package: firefox-3.7-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.6 (= ${binary:Version})
-Conflicts: firefox-3.2-dbg (<< 3.2)
-Replaces: firefox-3.2-dbg
-Description: firefox-3.6 debug symbols
- Debug symbols for Firefox 3.6.
+Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.7 (= ${binary:Version})
+Description: firefox-3.7 debug symbols
+ Debug symbols for Firefox 3.7.
 
-Package: firefox-3.6-gnome-support-dbg
+Package: firefox-3.7-gnome-support-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.6-gnome-support (= ${binary:Version}), firefox-3.6-dbg (= ${binary:Version})
-Conflicts: firefox-3.2-dbg (<< 3.2)
-Replaces: firefox-3.2-dbg
-Description: firefox-3.6 debug symbols
- Debug symbols for the GNOME support files of Firefox 3.6.
+Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-3.7-gnome-support (= ${binary:Version}), firefox-3.7-dbg (= ${binary:Version})
+Description: firefox-3.7 debug symbols
+ Debug symbols for the GNOME support files of Firefox 3.7.
 
-Package: firefox-3.6-dev
+Package: firefox-3.7-dev
 Architecture: any
 Section: devel
-Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
-Conflicts: firefox-3.2-dev (<< 3.2)
-Replaces: firefox-3.2-dev
+Depends: firefox-3.7 (= ${binary:Version}), ${misc:Depends}
 Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static
  libraries needed to develop applications using Mozilla Firefox.
 
-Package: abrowser-3.6-branding
+Package: abrowser-3.7-branding
 Architecture: any
-Depends: firefox-3.6 (= ${binary:Version}), ${misc:Depends}
-Replaces: firefox-3.6, abrowser-3.2-branding
-Conflicts: firefox-3.6-branding, abrowser-3.2-branding (<< 3.2)
+Depends: firefox-3.7 (= ${binary:Version}), ${misc:Depends}
+Conflicts: firefox-3.7-branding
 Description: package that ships the abrowser branding
- The ABrowser refers to the unbranded build of firefox 3.6.
+ The ABrowser refers to the unbranded build of firefox 3.7.
  Install the firefox package if you want a branded build.
  .
  This is a metapackage that will point to the latest abrowser package
  in your distribution. Don't remove this if you want to receive automatic
  major version upgrades for this package in future.
 
-Package: abrowser-3.6
+Package: abrowser-3.7
 Architecture: all
-Depends: firefox-3.6, abrowser-3.6-branding, ${misc:Depends}
-Conflicts: abrowser-3.2 (<< 3.2)
-Replaces: abrowser-3.2
+Depends: firefox-3.7, abrowser-3.7-branding, ${misc:Depends}
 Description: metapackage for the unbranded abrowser
- ABrowser 3.6 is an unbranded version of the popular Firefox webbrowser;
+ ABrowser 3.7 is an unbranded version of the popular Firefox webbrowser;
  it is written in the XUL language and designed to be lightweight and
  cross-platform.
  .
@@ -125,52 +111,3 @@ Description: metapackage for the unbranded abrowser
  your distribution.
  Don't remove this if you want to receive automatic major version upgrades
  for this package in future.
-
-Package: firefox-3.2
-Architecture: all
-Depends: firefox-3.6
-Description: dummy upgrade package for firefox-3.2 -> firefox-3.6
- This is a transitional package so firefox-3.2 users get firefox-3.6 on
- upgrades. It can be safely removed.
-
-Package: firefox-3.2-gnome-support
-Architecture: all
-Depends: firefox-3.6-gnome-support
-Description: dummy upgrade package for firefox-3.2 -> firefox-3.6
- This is a transitional package so firefox-3.2 users get firefox-3.6 on
- upgrades. It can be safely removed.
-
-Package: firefox-3.2-dev
-Architecture: all
-Depends: firefox-3.6-dev
-Description: dummy upgrade package for firefox-3.2 -> firefox-3.6
- This is a transitional package so firefox-3.2 users get firefox-3.6 on
- upgrades. It can be safely removed.
-
-Package: firefox-3.2-branding
-Architecture: all
-Depends: firefox-3.6-branding
-Description: dummy upgrade package for firefox-3.2 -> firefox-3.6
- This is a transitional package so firefox-3.2 users get firefox-3.6 on
- upgrades. It can be safely removed.
-
-Package: firefox-3.2-dbg
-Architecture: all
-Depends: firefox-3.6-dbg
-Description: dummy upgrade package for firefox-3.2 -> firefox-3.6
- This is a transitional package so firefox-3.2 users get firefox-3.6 on
- upgrades. It can be safely removed.
-
-Package: abrowser-3.2-branding
-Architecture: all
-Depends: abrowser-3.6-branding
-Description: dummy upgrade package for firefox-3.2 -> firefox-3.6
- This is a transitional package so firefox-3.2 users get firefox-3.6 on
- upgrades. It can be safely removed.
-
-Package: abrowser-3.2
-Architecture: all
-Depends: abrowser-3.6
-Description: dummy upgrade package for firefox-3.2 -> firefox-3.6
- This is a transitional package so firefox-3.2 users get firefox-3.6 on
- upgrades. It can be safely removed.

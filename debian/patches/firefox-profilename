@@ -21,7 +21,7 @@ Index: mozilla/browser/app/application.ini
  [App]
  Vendor=Mozilla
 -Name=Firefox
-+Name=Firefox-3.6
++Name=Firefox-3.7
  Version=@APP_VERSION@
  BuildID=@GRE_BUILDID@
  #ifdef MOZ_SOURCE_REPO
