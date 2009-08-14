@@ -29,6 +29,9 @@ firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       - debian/control
       - debian/firefox.sh.in
       - debian/patches/firefox-fsh
+  * Update the location of the upsteam branch now that 3.6/Namoroka has its own
+    branch, and trunk moved on to 3.7
+    - update debian/mozclient/firefox-3.6.conf
   * Drop upstreamed patch now that it has landed and add --with-system-libxul
     to configure.
     - update debian/rules
