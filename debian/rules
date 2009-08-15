@@ -17,7 +17,7 @@ BRANDING_NAME_OTHER	:= awesome-browser
 DEBIAN_META_NAME	:= $(shell grep '^Package: $(DEBIAN_APP_NAME)$$' $(CURDIR)/debian/control | sed -e 's/^Package: //')
 
 DEBIAN_VERSION		:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-DEBIAN_XUL_VER		:= $(shell MALLOC_OPTIONS=O xulrunner-1.9.2 --gre-version)
+DEBIAN_XUL_VER		:= $(shell MALLOC_OPTIONS=O xulrunner-1.9.3 --gre-version)
 DEBIAN_XUL_DEV		:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
 DEBIAN_XUL_DIR		:= usr/lib/xulrunner-$(DEBIAN_XUL_VER)
 DEBIAN_FF3_VER		 = $(shell cat build-tree/mozilla/browser/config/version.txt)
