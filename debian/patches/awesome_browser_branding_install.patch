@@ -6,20 +6,20 @@ Index: mozilla/browser/installer/unix/packages-static
 ===================================================================
 --- mozilla.orig/browser/installer/unix/packages-static
 +++ mozilla/browser/installer/unix/packages-static
-@@ -273,16 +273,22 @@
+@@ -272,16 +272,22 @@
+ bin/chrome/comm.manifest
+ bin/chrome/toolkit.jar
  bin/chrome/toolkit.manifest
  bin/chrome/icons/default/default16.png
  bin/chrome/icons/default/default32.png
  bin/chrome/icons/default/default48.png
- bin/chrome/reporter.manifest
- bin/chrome/reporter.jar
  bin/@PREF_DIR@/reporter.js
  
++; ubuntu awesome browser branding
 +bin/chrome/awesome-branding.jar
 +bin/chrome/awesome-branding.manifest
 +bin/chrome/awesome-branding-en-US.jar
 +bin/chrome/awesome-branding-en-US.manifest
-+
 +
  ; shell icons
  bin/icons/*.xpm
