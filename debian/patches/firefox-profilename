@@ -169,11 +169,11 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
                                                  // restart.
  
- pref("xpinstall.whitelist.add", "update.mozilla.org");
- pref("xpinstall.whitelist.add.103", "addons.mozilla.org");
+ pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.name", "chrome://browser/locale/browser.properties");
+ pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.description", "chrome://browser/locale/browser.properties");
  
- pref("keyword.enabled", true);
-@@ -834,17 +834,17 @@
+ pref("xpinstall.whitelist.add", "update.mozilla.org");
+@@ -831,17 +831,17 @@
  
  // replace newlines with spaces when pasting into <input type="text"> fields
  pref("editor.singleLine.pasteNewlines", 2);
