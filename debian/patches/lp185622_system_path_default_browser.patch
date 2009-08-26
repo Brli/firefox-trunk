@@ -1,13 +1,13 @@
 ---
- browser/components/shell/src/nsGNOMEShellService.cpp |   34 +++++++++++++++++--
+ browser/components/shell/src/nsGNOMEShellService.cpp |   33 +++++++++++++++++--
  browser/components/shell/src/nsGNOMEShellService.h   |    1 
- 2 files changed, 33 insertions(+), 2 deletions(-)
+ 2 files changed, 32 insertions(+), 2 deletions(-)
 
 Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
 ===================================================================
 --- mozilla.orig/browser/components/shell/src/nsGNOMEShellService.cpp
 +++ mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
-@@ -64,16 +64,18 @@
+@@ -63,16 +63,18 @@
  #include <glib.h>
  #include <glib-object.h>
  #include <gtk/gtk.h>
@@ -26,7 +26,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  
  struct MimeTypeAssociation
  {
-@@ -129,25 +131,42 @@
+@@ -130,25 +132,42 @@
    nsCOMPtr<nsILocalFile> appPath;
    rv = dirSvc->Get(NS_XPCOM_CURRENT_PROCESS_DIR, NS_GET_IID(nsILocalFile),
                     getter_AddRefs(appPath));
@@ -70,7 +70,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
        return PR_FALSE;
      }
  
-@@ -155,19 +174,25 @@
+@@ -156,19 +175,25 @@
      g_free(nativePath);
    } else {
      commandPath = g_find_program_in_path(aKeyValue);
@@ -96,7 +96,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  {
    *aIsDefaultBrowser = PR_FALSE;
    if (aStartupCheck)
-@@ -213,18 +238,23 @@
+@@ -214,18 +239,22 @@
  #ifdef DEBUG
    if (aForAllUsers)
      NS_WARNING("Setting the default browser for all users is not yet supported");
@@ -104,8 +104,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  
    nsCOMPtr<nsIGConfService> gconf = do_GetService(NS_GCONFSERVICE_CONTRACTID);
  
-   nsCAutoString schemeList;
-+
+   nsCAutoString schemeList; /* For GnomeVFS fallback */
 +#ifdef SYSTEM_PATH_BUILD
 +  nsCAutoString appKeyValue(mSystemAppPath);
 +#else
@@ -116,11 +115,11 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
    unsigned int i;
  
    for (i = 0; i < NS_ARRAY_LENGTH(appProtocols); ++i) {
+     /* For GnomeVFS fallback */
      schemeList.Append(nsDependentCString(appProtocols[i].name));
      schemeList.Append(',');
  
      if (appProtocols[i].essential || aClaimAllTypes) {
-       gconf->SetAppForProtocol(nsDependentCString(appProtocols[i].name),
 Index: mozilla/browser/components/shell/src/nsGNOMEShellService.h
 ===================================================================
 --- mozilla.orig/browser/components/shell/src/nsGNOMEShellService.h
