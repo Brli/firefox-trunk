@@ -1,8 +1,8 @@
-firefox-3.7 (3.7~a1~hg20090826r31978+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a1~hg20090829r32079+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Mass update from 3.6 to 3.7
 
- -- Fabien Tassin <fta@ubuntu.com>  Wed, 26 Aug 2009 17:12:03 +0200
+ -- Fabien Tassin <fta@ubuntu.com>  Sat, 29 Aug 2009 17:11:16 +0200
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
