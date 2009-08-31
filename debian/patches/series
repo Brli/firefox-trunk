@@ -11,3 +11,4 @@ browser_branding.patch
 ubuntu_codes_amazon.patch
 ubuntu_bookmarks.patch
 bzXXX_moz_app_name_inconsistencies.patch
+bz513067_att397610_fix_installer.patch
