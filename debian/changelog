@@ -103,8 +103,12 @@ firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     by previous commmit
     - add debian/patches/bzXXX_moz_app_name_inconsistencies.patch
     - update debian/patches/series
+  * fix LP: #422365 - apport hook fails because profiles_d is not initialized
+    in add_info if no profiles.ini exist; we ensure that profiles_d gets instantiated
+    as an empty map even if no profiles.ini exist.
+    - update debian/apport/firefox-3.6.py
 
- -- Fabien Tassin <fta@ubuntu.com>  Fri, 24 Jul 2009 17:07:07 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Tue, 01 Sep 2009 23:48:23 +0200
 
 firefox-3.1 (3.1~b3~hg20081221r22451+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

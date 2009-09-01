@@ -87,13 +87,12 @@ def extension_summary_helper(extension_list, section_name, alt_output = 1):
 def add_info(report):
     '''adds hooked info into the apport report.'''
     config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-3.7')
-    
+    profiles_d = {}
     # append profiles.ini file & parse it:
     profiles_ini = os.path.join(config_dir,'profiles.ini') 
     if os.path.exists(profiles_ini):
         report['profiles.ini'] = open(profiles_ini).read() 
         # parse profiles.ini: 
-        profiles_d = {} # { profile_name : [ profile_path, is_default ] }
         profile_parser = ConfigParser.ConfigParser()
         profile_parser.read(profiles_ini)
         for section in profile_parser.sections():
