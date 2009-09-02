@@ -1,0 +1,146 @@
+diff --git a/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp b/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp
+--- a/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp
++++ b/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp
+@@ -33,16 +33,17 @@
+  * the provisions above, a recipient may use your version of this file under
+  * the terms of any one of the MPL, the GPL or the LGPL.
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+ #include "nsIDirectoryService.h"
+ 
+ #include "nsIFile.h"
++#include "nsIPrefLocalizedString.h"
+ #include "nsISimpleEnumerator.h"
+ #include "nsIPrefService.h"
+ #include "nsIPrefBranch.h"
+ 
+ #include "nsArrayEnumerator.h"
+ #include "nsEnumeratorUtils.h"
+ #include "nsBrowserDirectoryServiceDefs.h"
+ #include "nsAppDirectoryServiceDefs.h"
+@@ -51,16 +52,18 @@
+ #include "nsComponentManagerUtils.h"
+ #include "nsCOMArray.h"
+ #include "nsDirectoryServiceUtils.h"
+ #include "nsIGenericFactory.h"
+ #include "nsServiceManagerUtils.h"
+ #include "nsStringAPI.h"
+ #include "nsXULAppAPI.h"
+ 
++#include <stdio.h>
++
+ class nsBrowserDirectoryProvider :
+   public nsIDirectoryServiceProvider2
+ {
+ public:
+   NS_DECL_ISUPPORTS
+   NS_DECL_NSIDIRECTORYSERVICEPROVIDER
+   NS_DECL_NSIDIRECTORYSERVICEPROVIDER2
+ 
+@@ -234,47 +237,64 @@ AppendDistroSearchDirs(nsIProperties* aD
+   if (NS_FAILED(rv) || !exists)
+     return;
+ 
+   nsCOMPtr<nsIFile> commonPlugins;
+   rv = searchPlugins->Clone(getter_AddRefs(commonPlugins));
+   if (NS_SUCCEEDED(rv)) {
+     commonPlugins->AppendNative(NS_LITERAL_CSTRING("common"));
+     rv = commonPlugins->Exists(&exists);
+-    if (NS_SUCCEEDED(rv) && exists)
+-        array.AppendObject(commonPlugins);
++    if (NS_FAILED(rv) || !exists)
++        commonPlugins = nsnull;
+   }
+ 
++  if (NS_FAILED(rv))
++    return;
++
+   nsCOMPtr<nsIPrefBranch> prefs(do_GetService(NS_PREFSERVICE_CONTRACTID));
++  nsCString localeC;
++  nsCOMPtr<nsIFile> localePlugins;
++  rv = searchPlugins->Clone(getter_AddRefs(localePlugins));
++
++  if (NS_FAILED(rv))
++    return;
++
++  nsCOMPtr<nsIPrefLocalizedString> prefValue;
+   if (prefs) {
++    rv = prefs->GetComplexValue("general.useragent.locale",
++                                NS_GET_IID(nsIPrefLocalizedString),
++                                getter_AddRefs(prefValue));
++    if (NS_SUCCEEDED(rv) && prefValue) {
++      nsString data;
++      prefValue->ToString(getter_Copies(data));
++      localeC = ToNewCString(NS_ConvertUTF16toUTF8(data));
++    } else {
++      localePlugins->AppendNative(NS_LITERAL_CSTRING("locale"));
++      if (NS_FAILED (rv))
++        rv = prefs->GetCharPref("general.useragent.locale", getter_Copies(localeC));
++      }
++  }
+ 
+-    nsCOMPtr<nsIFile> localePlugins;
+-    rv = searchPlugins->Clone(getter_AddRefs(localePlugins));
+-    if (NS_FAILED(rv))
+-      return;
+-
+-    localePlugins->AppendNative(NS_LITERAL_CSTRING("locale"));
+-
+-    nsCString locale;
+-    rv = prefs->GetCharPref("general.useragent.locale", getter_Copies(locale));
++  if (NS_SUCCEEDED(rv)) {
++    nsCOMPtr<nsIFile> curLocalePlugins;
++    rv = localePlugins->Clone(getter_AddRefs(curLocalePlugins));
+     if (NS_SUCCEEDED(rv)) {
+ 
+-      nsCOMPtr<nsIFile> curLocalePlugins;
+-      rv = localePlugins->Clone(getter_AddRefs(curLocalePlugins));
+-      if (NS_SUCCEEDED(rv)) {
+-
+-        curLocalePlugins->AppendNative(locale);
+-        rv = curLocalePlugins->Exists(&exists);
+-        if (NS_SUCCEEDED(rv) && exists) {
+-          array.AppendObject(curLocalePlugins);
+-          return; // all done
+-        }
++      curLocalePlugins->AppendNative(localeC);
++      rv = curLocalePlugins->Exists(&exists);
++      if (NS_SUCCEEDED(rv) && exists) {
++        array.AppendObject(curLocalePlugins);
++        if (commonPlugins)
++          array.AppendObject(commonPlugins);
++        return; // all done
+       }
+     }
++  }
+ 
++  if (prefs) {
+     // we didn't append the locale dir - try the default one
+     nsCString defLocale;
+     rv = prefs->GetCharPref("distribution.searchplugins.defaultLocale",
+                             getter_Copies(defLocale));
+     if (NS_SUCCEEDED(rv)) {
+ 
+       nsCOMPtr<nsIFile> defLocalePlugins;
+       rv = localePlugins->Clone(getter_AddRefs(defLocalePlugins));
+@@ -282,16 +302,19 @@ AppendDistroSearchDirs(nsIProperties* aD
+ 
+         defLocalePlugins->AppendNative(defLocale);
+         rv = defLocalePlugins->Exists(&exists);
+         if (NS_SUCCEEDED(rv) && exists)
+           array.AppendObject(defLocalePlugins);
+       }
+     }
+   }
++
++  if (commonPlugins)
++    array.AppendObject(commonPlugins);
+ }
+ 
+ NS_IMETHODIMP
+ nsBrowserDirectoryProvider::GetFiles(const char *aKey,
+                                      nsISimpleEnumerator* *aResult)
+ {
+   nsresult rv;
+ 

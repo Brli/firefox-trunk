@@ -118,6 +118,11 @@ firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     firefox, we need to make firefox-3.6 replace all the older firefox binary packages:
     firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0
     - update debian/control
+  * fix localized search engine upstream code to properly deal with general.useragent.locale
+    being a complex pref; also change plugin dir order to allow locale specific searchplugins
+    to overlay the ones shipped in "searchplugins/common"
+    - add debian/patches/fix_complex_locale_distro_searchplugins.patch
+    - update debian/patches/series
 
  -- Alexander Sack <asac@ubuntu.com>  Tue, 01 Sep 2009 23:48:23 +0200
 
