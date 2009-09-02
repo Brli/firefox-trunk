@@ -107,6 +107,9 @@ firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     in add_info if no profiles.ini exist; we ensure that profiles_d gets instantiated
     as an empty map even if no profiles.ini exist.
     - update debian/apport/firefox-3.6.py
+  * hook firefox-addons/searchplugins as the distribution/searchplugins
+    directory to support localized distro search engines.
+    - update debian/rules
 
  -- Alexander Sack <asac@ubuntu.com>  Tue, 01 Sep 2009 23:48:23 +0200
 

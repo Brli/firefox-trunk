@@ -233,6 +233,7 @@ endif
 	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
 	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
 	dh_install debian/distribution.ini $(DEBIAN_FF3_DIR)/distribution/
+	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/distribution/searchplugins
 
 binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
