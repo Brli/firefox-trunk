@@ -110,6 +110,14 @@ firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * hook firefox-addons/searchplugins as the distribution/searchplugins
     directory to support localized distro search engines.
     - update debian/rules
+  * in case localized search engines are available the main searchplugins
+    directory is not scanned anymore; to fix this we provide a compatibility
+    link /usr/lib/firefox-addons/searchplugins/common => /usr/lib/firefox-addons/searchplugins
+    - update debian/firefox-3.5.links
+  * until we move searchplugins to a separate package provided only by the current default
+    firefox, we need to make firefox-3.6 replace all the older firefox binary packages:
+    firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0
+    - update debian/control
 
  -- Alexander Sack <asac@ubuntu.com>  Tue, 01 Sep 2009 23:48:23 +0200
 

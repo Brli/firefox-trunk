@@ -40,6 +40,7 @@ Depends: fontconfig,
 Recommends: ubufox
 Suggests: firefox-3.7-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
+Replaces: firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
