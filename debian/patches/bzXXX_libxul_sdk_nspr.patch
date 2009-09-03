@@ -1,0 +1,22 @@
+diff --git a/configure.in b/configure.in
+--- a/configure.in
++++ b/configure.in
+@@ -8442,17 +8442,17 @@ if test -z "$MOZ_NATIVE_NSPR"; then
+     fi
+     if test -n "$USE_ARM_KUSER"; then
+         ac_configure_args="$ac_configure_args --with-arm-kuser"
+     fi
+     AC_OUTPUT_SUBDIRS(nsprpub)
+     ac_configure_args="$_SUBDIR_CONFIG_ARGS"
+ fi
+ 
+-if test -z "$MOZ_NATIVE_NSPR"; then
++if test -z "$MOZ_NATIVE_NSPR" -o -z "$LIBXUL_SDK"; then
+     # Hack to deal with the fact that we use NSPR_CFLAGS everywhere
+     AC_MSG_WARN([Recreating autoconf.mk with updated nspr-config output])
+     if test "$OS_ARCH" != "WINNT" && test "$OS_ARCH" != "WINCE"; then
+        NSPR_LIBS=`./nsprpub/config/nspr-config --prefix=$LIBXUL_DIST --exec-prefix=$MOZ_BUILD_ROOT/dist --libdir=$LIBXUL_DIST/lib --libs`
+        $PERL -pi.bak -e "s '^NSPR_LIBS\\s*=.*'NSPR_LIBS = $NSPR_LIBS'" config/autoconf.mk
+        NSPR_CFLAGS=`./nsprpub/config/nspr-config --prefix=$LIBXUL_DIST --exec-prefix=$MOZ_BUILD_ROOT/dist --includedir=$LIBXUL_DIST/include/nspr --cflags`
+        $PERL -pi.bak -e "s '^NSPR_CFLAGS\\s*=.*'NSPR_CFLAGS = $NSPR_CFLAGS'" config/autoconf.mk
+     fi

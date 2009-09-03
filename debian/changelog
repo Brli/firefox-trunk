@@ -123,6 +123,12 @@ firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     to overlay the ones shipped in "searchplugins/common"
     - add debian/patches/fix_complex_locale_distro_searchplugins.patch
     - update debian/patches/series
+  * fix LP: #423610 - daily build failures after landing of mozilla-nss.pc droppage
+    (bug 422829); we drop our previously used nspr pkgconfig patch and fix
+    configure.in to not require in-source nspr if libxul-sdk is used
+    - delete debian/patches/nspr_flags_by_pkg_config_hack.patch
+    - add debian/patches/bzXXX_libxul_sdk_nspr.patch
+    - update debian/patches/series
 
  -- Alexander Sack <asac@ubuntu.com>  Tue, 01 Sep 2009 23:48:23 +0200
 

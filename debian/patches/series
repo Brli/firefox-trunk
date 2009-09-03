@@ -2,7 +2,6 @@ firefox-profilename
 firefox-fsh
 bz386904_config_rules_install_dist_files.patch
 dont_depend_on_nspr_sources.patch
-nspr_flags_by_pkg_config_hack.patch
 lp185622_system_path_default_browser.patch
 bz460917_att350845_reload_new_plugins.patch
 ubuntu_no_app_updates.patch
@@ -12,3 +11,4 @@ ubuntu_codes_amazon.patch
 ubuntu_bookmarks.patch
 bzXXX_moz_app_name_inconsistencies.patch
 fix_complex_locale_distro_searchplugins.patch
+bzXXX_libxul_sdk_nspr.patch
