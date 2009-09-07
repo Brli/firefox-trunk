@@ -11,7 +11,7 @@ diff --git a/configure.in b/configure.in
  fi
  
 -if test -z "$MOZ_NATIVE_NSPR"; then
-+if test -z "$MOZ_NATIVE_NSPR" -o -z "$LIBXUL_SDK"; then
++if test -z "$MOZ_NATIVE_NSPR" -a -z "$LIBXUL_SDK"; then
      # Hack to deal with the fact that we use NSPR_CFLAGS everywhere
      AC_MSG_WARN([Recreating autoconf.mk with updated nspr-config output])
      if test "$OS_ARCH" != "WINNT" && test "$OS_ARCH" != "WINCE"; then
