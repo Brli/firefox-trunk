@@ -1,27 +1,27 @@
 ---
- browser/installer/unix/packages-static |    2 +-
+ browser/installer/package-manifest.in |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: mozilla/browser/installer/unix/packages-static
+Index: mozilla/browser/installer/package-manifest.in
 ===================================================================
---- mozilla.orig/browser/installer/unix/packages-static
-+++ mozilla/browser/installer/unix/packages-static
-@@ -41,17 +41,17 @@
- bin/libxpcom_core.so
- bin/components/libxpinstall.so
- bin/components/libjar50.so
- #endif
+--- mozilla.orig/browser/installer/package-manifest.in
++++ mozilla/browser/installer/package-manifest.in
+@@ -70,17 +70,17 @@
  
  [browser]
  ; [Base Browser Files]
- bin/@MOZ_APP_NAME@-bin
--bin/@MOZ_APP_NAME@
-+bin/firefox
- bin/application.ini
- bin/platform.ini
- bin/mozilla-xremote-client
- bin/run-mozilla.sh
- bin/plugins/libnullplugin.so
- bin/libsqlite3.so
- bin/README.txt
- bin/blocklist.xml
+ #ifdef XP_WIN32
+ @BINPATH@/@MOZ_APP_NAME@.exe
+ #else
+ @BINPATH@/@MOZ_APP_NAME@-bin
+ #ifndef XP_MACOSX
+-@BINPATH@/@MOZ_APP_NAME@
++@BINPATH@/firefox
+ #endif
+ #endif
+ @BINPATH@/application.ini
+ @BINPATH@/platform.ini
+ #ifdef XP_MACOSX
+ @BINPATH@/plugins/DefaultPlugin.plugin/
+ #elifdef XP_UNIX
+ @BINPATH@/plugins/libnullplugin.so

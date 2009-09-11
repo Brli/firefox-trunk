@@ -7,7 +7,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
 ===================================================================
 --- mozilla.orig/browser/components/shell/src/nsGNOMEShellService.cpp
 +++ mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
-@@ -63,16 +63,18 @@
+@@ -62,16 +62,18 @@
  #include <glib.h>
  #include <glib-object.h>
  #include <gtk/gtk.h>
@@ -26,7 +26,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  
  struct MimeTypeAssociation
  {
-@@ -130,25 +132,42 @@
+@@ -127,25 +129,42 @@
    nsCOMPtr<nsILocalFile> appPath;
    rv = dirSvc->Get(NS_XPCOM_CURRENT_PROCESS_DIR, NS_GET_IID(nsILocalFile),
                     getter_AddRefs(appPath));
@@ -70,7 +70,7 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
        return PR_FALSE;
      }
  
-@@ -156,19 +175,25 @@
+@@ -153,19 +172,25 @@
      g_free(nativePath);
    } else {
      commandPath = g_find_program_in_path(aKeyValue);
@@ -96,7 +96,8 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  {
    *aIsDefaultBrowser = PR_FALSE;
    if (aStartupCheck)
-@@ -214,18 +239,22 @@
+@@ -210,18 +235,22 @@
+ {
  #ifdef DEBUG
    if (aForAllUsers)
      NS_WARNING("Setting the default browser for all users is not yet supported");
@@ -104,7 +105,6 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  
    nsCOMPtr<nsIGConfService> gconf = do_GetService(NS_GCONFSERVICE_CONTRACTID);
  
-   nsCAutoString schemeList; /* For GnomeVFS fallback */
 +#ifdef SYSTEM_PATH_BUILD
 +  nsCAutoString appKeyValue(mSystemAppPath);
 +#else
@@ -115,11 +115,11 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
    unsigned int i;
  
    for (i = 0; i < NS_ARRAY_LENGTH(appProtocols); ++i) {
-     /* For GnomeVFS fallback */
-     schemeList.Append(nsDependentCString(appProtocols[i].name));
-     schemeList.Append(',');
- 
      if (appProtocols[i].essential || aClaimAllTypes) {
+       gconf->SetAppForProtocol(nsDependentCString(appProtocols[i].name),
+                                appKeyValue);
+     }
+   }
 Index: mozilla/browser/components/shell/src/nsGNOMEShellService.h
 ===================================================================
 --- mozilla.orig/browser/components/shell/src/nsGNOMEShellService.h
