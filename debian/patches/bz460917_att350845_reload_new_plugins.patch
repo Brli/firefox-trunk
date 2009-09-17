@@ -6,7 +6,7 @@ Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -5780,22 +5780,30 @@
+@@ -5881,22 +5881,30 @@
  }
  
  missingPluginInstaller.prototype.installSinglePlugin = function(aEvent){
@@ -37,7 +37,7 @@ Index: mozilla/browser/base/content/browser.js
    aEvent.stopPropagation();
  }
  
-@@ -5897,37 +5905,50 @@
+@@ -5999,37 +6007,50 @@
  
    // clear the plugin list, now that at least one plugin has been installed
    browser.missingPlugins = null;
@@ -61,7 +61,7 @@ Index: mozilla/browser/base/content/browser.js
    var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
                              .getService(Components.interfaces.nsIURLFormatter);
    var url = formatter.formatURLPref("extensions.blocklist.detailsURL");
-   gBrowser.loadOneTab(url, null, null, null, false, false);
+   gBrowser.loadOneTab(url, {inBackground: false});
    return true;
  }
  
