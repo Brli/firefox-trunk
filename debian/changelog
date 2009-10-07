@@ -1,11 +1,11 @@
-firefox-3.7 (3.7~a1~hg20091006r33504+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a1~hg20091007r33630+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * Mass update from 3.6 to 3.7
   * Drop libnkgnomevfs.so from firefox-3.7-gnome-support, it's already
     shippped in xulrunner-1.9.3-gnome-support (see bmo #512671)
     - update debian/firefox-3.7-gnome-support.install
 
- -- Micah Gersten <launchpad@micahscomputing.com>  Tue, 06 Oct 2009 16:13:14 -0500
+ -- Fabien Tassin <fta@ubuntu.com>  Wed, 07 Oct 2009 17:33:45 +0200
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
