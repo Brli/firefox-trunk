@@ -6,86 +6,86 @@ Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -5892,22 +5892,30 @@
- }
+@@ -5864,22 +5864,30 @@
+ var gMissingPluginInstaller = {
  
- missingPluginInstaller.prototype.installSinglePlugin = function(aEvent){
-   var missingPluginsArray = {};
+   installSinglePlugin: function (aEvent) {
+     var missingPluginsArray = {};
  
-   var pluginInfo = getPluginInfo(aEvent.target);
-   missingPluginsArray[pluginInfo.mimetype] = pluginInfo;
+     var pluginInfo = getPluginInfo(aEvent.target);
+     missingPluginsArray[pluginInfo.mimetype] = pluginInfo;
  
-+  gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
-+                                            gMissingPluginInstaller.refreshBrowser,
-+                                            false);
-+
-   if (missingPluginsArray) {
-     window.openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
-                       "PFSWindow", "chrome,centerscreen,resizable=yes",
-                       {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
-   }
- 
-+  gBrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
-+                                               gMissingPluginInstaller.refreshBrowser,
-+                                               false);
-+
-   aEvent.stopPropagation();
- }
- 
- missingPluginInstaller.prototype.managePlugins = function(aEvent){
-   BrowserOpenAddonsMgr("plugins");
-   aEvent.stopPropagation();
- }
- 
-@@ -5967,21 +5975,27 @@
-     var url = formatURL("plugins.update.url", true);
-     gBrowser.loadOneTab(url, {inBackground: false});
-     return true;
-   }
- 
-   function showPluginsMissing() {
-     // get the urls of missing plugins
-     var missingPluginsArray = gBrowser.selectedBrowser.missingPlugins;
 +    gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
 +                                              gMissingPluginInstaller.refreshBrowser,
 +                                              false);
++
      if (missingPluginsArray) {
-       window.openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
-                         "PFSWindow", "chrome,centerscreen,resizable=yes",
-                         {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
+       openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
+                  "PFSWindow", "chrome,centerscreen,resizable=yes",
+                  {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
      }
+ 
 +    gBrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
 +                                                 gMissingPluginInstaller.refreshBrowser,
 +                                                 false);
-   }
- 
-   if (aEvent.type == "PluginBlocklisted") {
-     if (blockedNotification || missingNotification)
-       return;
- 
-     let iconURL = "chrome://mozapps/skin/plugins/pluginBlocked-16.png";
-     let messageString = gNavigatorBundle.getString("blockedpluginsMessage.title");
-@@ -6060,16 +6074,23 @@
- 
-   // clear the plugin list, now that at least one plugin has been installed
-   browser.missingPlugins = null;
-   if (notification) {
-     // reset UI
-     notificationBox.removeNotification(notification);
-   }
-   // reload the browser to make the new plugin show.
 +
-+  // reload plugins
-+  var pm = Components.classes["@mozilla.org/plugin/manager;1"]
-+               .getService(Components.interfaces.nsIPluginManager);
-+  pm.reloadPlugins(false);
-+
-+  // ... and reload the browser to activate new plugins available
-   browser.reload();
- }
+     aEvent.stopPropagation();
+   },
  
- var gMissingPluginInstaller = new missingPluginInstaller();
+   managePlugins: function (aEvent) {
+     BrowserOpenAddonsMgr("plugins");
+     aEvent.stopPropagation();
+   },
+ 
+@@ -5939,21 +5947,27 @@
+       var url = formatURL("plugins.update.url", true);
+       gBrowser.loadOneTab(url, {inBackground: false});
+       return true;
+     }
+ 
+     function showPluginsMissing() {
+       // get the urls of missing plugins
+       var missingPluginsArray = gBrowser.selectedBrowser.missingPlugins;
++      gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
++                                                gMissingPluginInstaller.refreshBrowser,
++                                                false);
+       if (missingPluginsArray) {
+         openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
+                    "PFSWindow", "chrome,centerscreen,resizable=yes",
+                    {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
+       }
++      gBrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
++                                                   gMissingPluginInstaller.refreshBrowser,
++                                                   false);
+     }
+ 
+     if (aEvent.type == "PluginBlocklisted") {
+       if (blockedNotification || missingNotification)
+         return;
+ 
+       let iconURL = "chrome://mozapps/skin/plugins/pluginBlocked-16.png";
+       let messageString = gNavigatorBundle.getString("blockedpluginsMessage.title");
+@@ -6032,16 +6046,23 @@
+ 
+     // clear the plugin list, now that at least one plugin has been installed
+     browser.missingPlugins = null;
+     if (notification) {
+       // reset UI
+       notificationBox.removeNotification(notification);
+     }
+     // reload the browser to make the new plugin show.
++
++    // reload plugins
++    var pm = Components.classes["@mozilla.org/plugin/manager;1"]
++                 .getService(Components.interfaces.nsIPluginManager);
++    pm.reloadPlugins(false);
++  
++    // ... and reload the browser to activate new plugins available
+     browser.reload();
+   }
+ };
  
  function convertFromUnicode(charset, str)
  {
    try {
+     var unicodeConverter = Components
