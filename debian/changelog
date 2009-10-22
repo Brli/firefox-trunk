@@ -1,5 +1,6 @@
-firefox-3.7 (3.7~a1~hg20091008r33669+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a1~hg20091022r34092+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Fabien Tassin ]
   * Mass update from 3.6 to 3.7
   * Drop libnkgnomevfs.so from firefox-3.7-gnome-support, it's already
     shippped in xulrunner-1.9.3-gnome-support (see bmo #512671)
@@ -8,7 +9,7 @@ firefox-3.7 (3.7~a1~hg20091008r33669+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/moz-rev.sh
     - update debian/mozclient/firefox-3.7.conf
 
- -- Fabien Tassin <fta@ubuntu.com>  Sat, 17 Oct 2009 21:43:24 +0200
+ -- Alexander Sack <asac@ubuntu.com>  Thu, 22 Oct 2009 23:29:52 +0200
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
