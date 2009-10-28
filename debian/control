@@ -25,6 +25,7 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	mozilla-devscripts (>= 0.10~),
 	lsb-release,
 	libiw-dev,
+	mesa-common-dev,
 	libnotify-dev (>= 0.4)
 Standards-Version: 3.8.1
 
