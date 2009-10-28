@@ -6,11 +6,11 @@ Index: mozilla/browser/installer/package-manifest.in
 ===================================================================
 --- mozilla.orig/browser/installer/package-manifest.in
 +++ mozilla/browser/installer/package-manifest.in
-@@ -70,17 +70,17 @@
+@@ -66,17 +66,17 @@
  
  [browser]
  ; [Base Browser Files]
- #ifdef XP_WIN32
+ #ifndef XP_UNIX
  @BINPATH@/@MOZ_APP_NAME@.exe
  #else
  @BINPATH@/@MOZ_APP_NAME@-bin
