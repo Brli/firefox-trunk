@@ -10,7 +10,8 @@ firefox-3.7 (3.7~a1~hg20091027r34228+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/mozclient/firefox-3.7.conf
 
   [ Micah Gersten ]
-  * Add mesa-common-dev to build-depends after landing of configure test aka (bmo: 517566) which is for WebGL aka (bmo: 516213)
+  * Add mesa-common-dev to build-depends after landing of configure test aka
+    (bmo: 517566) which is for WebGL aka (bmo: 516213)
     - update debian/control 
 
  -- Micah Gersten <launchpad@micahscomputing.com>  Wed, 28 Oct 2009 12:26:58 -0500
