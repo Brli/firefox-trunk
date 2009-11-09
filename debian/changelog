@@ -13,8 +13,12 @@ firefox-3.7 (3.7~a1~hg20091108r34671+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add mesa-common-dev to build-depends after landing of configure test aka
     (bmo: 517566) which is for WebGL aka (bmo: 516213)
     - update debian/control 
+  * Refresh patch/install files after landing of (bmo: 507073) aka
+    Don't build nsBrowserDirectoryProvider as a separate library
+    - update debian/firefox-3.7.install
+    - update debian/patches/bz515232_att399338_distro_locale_searchplugins.patch
 
- -- Micah Gersten <launchpad@micahscomputing.com>  Sun, 08 Nov 2009 19:20:58 -0600
+ -- Micah Gersten <launchpad@micahscomputing.com>  Mon, 09 Nov 2009 00:45:57 -0600
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

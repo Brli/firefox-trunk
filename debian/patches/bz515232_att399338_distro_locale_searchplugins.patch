@@ -1,6 +1,6 @@
-diff --git a/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp b/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp
---- a/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp
-+++ b/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp
+diff --git a/browser/components/dirprovider/DirectoryProvider.cpp b/browser/components/dirprovider/DirectoryProvider.cpp
+--- a/browser/components/dirprovider/DirectoryProvider.cpp
++++ b/browser/components/dirprovider/DirectoryProvider.cpp
 @@ -30,16 +30,17 @@
   * use your version of this file under the terms of the MPL, indicate your
   * decision by deleting the provisions above and replace them with the notice
@@ -12,14 +12,14 @@ diff --git a/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp b/bro
  
 +#include "nsIChromeRegistry.h"
  #include "nsIDirectoryService.h"
+ #include "DirectoryProvider.h"
  
  #include "nsIFile.h"
  #include "nsISimpleEnumerator.h"
  #include "nsIPrefService.h"
  #include "nsIPrefBranch.h"
  
- #include "nsArrayEnumerator.h"
-@@ -234,47 +235,51 @@ AppendDistroSearchDirs(nsIProperties* aD
+@@ -198,47 +199,51 @@ AppendDistroSearchDirs(nsIProperties* aD
    if (NS_FAILED(rv) || !exists)
      return;
  
@@ -98,7 +98,7 @@ diff --git a/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp b/bro
  
        nsCOMPtr<nsIFile> defLocalePlugins;
        rv = localePlugins->Clone(getter_AddRefs(defLocalePlugins));
-@@ -282,16 +287,19 @@ AppendDistroSearchDirs(nsIProperties* aD
+@@ -246,16 +251,19 @@ AppendDistroSearchDirs(nsIProperties* aD
  
          defLocalePlugins->AppendNative(defLocale);
          rv = defLocalePlugins->Exists(&exists);
@@ -113,8 +113,8 @@ diff --git a/browser/components/dirprovider/nsBrowserDirectoryProvider.cpp b/bro
  }
  
  NS_IMETHODIMP
- nsBrowserDirectoryProvider::GetFiles(const char *aKey,
-                                      nsISimpleEnumerator* *aResult)
+ DirectoryProvider::GetFiles(const char *aKey, nsISimpleEnumerator* *aResult)
  {
    nsresult rv;
  
+   if (!strcmp(aKey, NS_APP_SEARCH_DIR_LIST)) {
