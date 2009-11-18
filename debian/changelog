@@ -1,4 +1,4 @@
-firefox-3.7 (3.7~a1~hg20091108r34671+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a1~hg20091117r34940+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
   * Mass update from 3.6 to 3.7
@@ -18,7 +18,7 @@ firefox-3.7 (3.7~a1~hg20091108r34671+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.7.install
     - update debian/patches/bz515232_att399338_distro_locale_searchplugins.patch
 
- -- Micah Gersten <launchpad@micahscomputing.com>  Mon, 09 Nov 2009 00:45:57 -0600
+ -- Micah Gersten <launchpad@micahscomputing.com>  Tue, 17 Nov 2009 23:22:44 -0600
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
