@@ -4,8 +4,8 @@
  browser/branding/awesome-browser/pref/firefox-branding.js |   10 +++++-----
  browser/branding/nightly/pref/firefox-branding.js         |   10 +++++-----
  browser/branding/unofficial/pref/firefox-branding.js      |   10 +++++-----
- other-licenses/branding/firefox/pref/firefox-branding.js  |   10 +++++-----
- 6 files changed, 28 insertions(+), 28 deletions(-)
+ other-licenses/branding/firefox/pref/firefox-branding.js  |    8 ++++----
+ 6 files changed, 27 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/app/application.ini
 ===================================================================
@@ -105,8 +105,7 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
  pref("app.update.download.backgroundInterval", 600);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
--pref("app.update.url.manual", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/");
-+pref("app.update.url.manual", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/");
+ pref("app.update.url.manual", "http://www.firefox.com");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
 -pref("app.update.url.details", "http://%LOCALE%.www.mozilla.com/%LOCALE%/%APP%/releases/");
