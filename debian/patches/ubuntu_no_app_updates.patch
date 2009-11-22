@@ -7,16 +7,16 @@ Index: mozilla/browser/components/preferences/advanced.js
 ===================================================================
 --- mozilla.orig/browser/components/preferences/advanced.js
 +++ mozilla/browser/components/preferences/advanced.js
-@@ -382,50 +382,48 @@
+@@ -403,50 +403,48 @@
    {
      var aus = 
          Components.classes["@mozilla.org/updates/update-service;1"].
-         getService(Components.interfaces.nsIApplicationUpdateService);
+         getService(Components.interfaces.nsIApplicationUpdateService2);
  
      var enabledPref = document.getElementById("app.update.enabled");
      var enableAppUpdate = document.getElementById("enableAppUpdate");
  
--    enableAppUpdate.disabled = !aus.canUpdate || enabledPref.locked;
+-    enableAppUpdate.disabled = !aus.canCheckForUpdates || enabledPref.locked;
 +    enableAppUpdate.disabled = true;
    },
  
