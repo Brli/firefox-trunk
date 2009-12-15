@@ -18,7 +18,22 @@ firefox-3.7 (3.7~a1~hg20091203r35439+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.7.install
     - update debian/patches/bz515232_att399338_distro_locale_searchplugins.patch
 
- -- Micah Gersten <micahg@ubuntu.com>  Thu, 03 Dec 2009 23:40:01 -0600
+  [ Jamie Strandboge ]
+  * add AppArmor profile (disabled by default)
+    - debian/firefox-3.6.dirs: add etc/apparmor.d/disable
+    - add debian/firefox-3.6.preinst.in: disable the profile on new installs,
+      installs where the last modified profile is disabled and upgrades to
+      this version
+    - debian/firefox-3.6.postinst.in: reload profile
+    - add debian/firefox-3.5.postrm.in: cleanup force-complain and disable
+      directories
+    - add debian/usr.bin.firefox.apparmor.in
+    - add debian/README.Debian.in with note about AppArmor
+    - debian/apport/firefox-3.6.py: add AppArmor information if the profile is
+      not disabled
+    - debian/rules: install profile and update subst_files
+
+ -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 15 Dec 2009 11:40:48 -0600
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

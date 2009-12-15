@@ -160,7 +160,11 @@ DEBIAN_EXECUTABLES = \
 subst_files = \
 	debian/$(DEBIAN_NAME)-gnome-support.postinst \
 	debian/$(DEBIAN_NAME).postinst \
+	debian/$(DEBIAN_NAME).postrm \
 	debian/$(DEBIAN_NAME).prerm \
+	debian/$(DEBIAN_NAME).preinst \
+	debian/usr.bin.firefox.apparmor \
+	debian/README.Debian \
 	debian/firefox.sh \
 	$(NULL)
 
@@ -234,6 +238,7 @@ endif
 	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
 	dh_install debian/distribution.ini $(DEBIAN_FF3_DIR)/distribution/
 	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/distribution/searchplugins
+	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
 
 binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \

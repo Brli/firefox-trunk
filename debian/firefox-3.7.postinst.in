@@ -10,6 +10,12 @@ if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/x-www-browser \
         x-www-browser /usr/bin/$APPNAME 40
     touch $LIBDIR/.autoreg
+
+    # Reload AppArmor profile
+    APP_PROFILE="/etc/apparmor.d/usr.bin.$APPNAME"
+    if [ -f "$APP_PROFILE" ] && aa-status --enabled 2>/dev/null; then
+        apparmor_parser -r -T -W "$APP_PROFILE" || true
+    fi
 fi
 
 echo "Please restart all running instances of $APPNAME, or you will experience problems."

@@ -84,6 +84,36 @@ def extension_summary_helper(extension_list, section_name, alt_output = 1):
     summary += '''\n'''
     return summary
 
+def recent_kernlog(pattern):
+    '''Extract recent messages from kern.log or message which match a regex.
+       pattern should be a "re" object.  '''
+    lines = ''
+    if os.path.exists('/var/log/kern.log'):
+        file = '/var/log/kern.log'
+    elif os.path.exists('/var/log/messages'):
+        file = '/var/log/messages'
+    else:
+        return lines
+
+    for line in open(file):
+        if pattern.search(line):
+            lines += line
+    return lines
+
+def recent_auditlog(pattern):
+    '''Extract recent messages from kern.log or message which match a regex.
+       pattern should be a "re" object.  '''
+    lines = ''
+    if os.path.exists('/var/log/audit/audit.log'):
+        file = '/var/log/audit/audit.log'
+    else:
+        return lines
+
+    for line in open(file):
+        if pattern.search(line):
+            lines += line
+    return lines
+
 def add_info(report):
     '''adds hooked info into the apport report.'''
     config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-3.7')
@@ -135,6 +165,30 @@ def add_info(report):
         print >> wbuffer, extension_summary
         wbuffer.seek(0)
     report['ExtensionSummary'] = wbuffer.read()
+
+    # Get apparmor stuff if the profile isn't disabled. copied from
+    # source_apparmor.py until apport runs hooks via attach_related_packages
+    apparmor_disable_dir = "/etc/apparmor.d/disable"
+    add_apparmor = True
+    if os.path.isdir(apparmor_disable_dir):
+        for f in os.listdir(apparmor_disable_dir):
+            if f.startswith("usr.bin.firefox"):
+                add_apparmor = False
+                break
+    if add_apparmor:
+        attach_related_packages(report, ['apparmor', 'libapparmor1',
+            'libapparmor-perl', 'apparmor-utils', 'auditd', 'libaudit0'])
+
+        attach_file(report, '/proc/version_signature', 'ProcVersionSignature')
+        attach_file(report, '/proc/cmdline', 'ProcCmdline')
+
+        sec_re = re.compile('audit\(|apparmor|selinux|security', re.IGNORECASE)
+        report['KernLog'] = recent_kernlog(sec_re)
+
+        if os.path.exists("/var/log/audit"):
+            # this needs to be run as root
+            report['AuditLog'] = recent_auditlog(sec_re)
+
     # debug (comment on production)
     # return report
 
