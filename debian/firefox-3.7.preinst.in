@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -e
+
+APP_DIR="/etc/apparmor.d"
+APP_PROFILE="usr.bin.@APPNAME@"
+APP_CONFFILE="$APP_DIR/$APP_PROFILE"
+APP_DISABLE="$APP_DIR/disable/$APP_PROFILE"
+
+disable_profile() {
+    # Create a symlink to the yet-to-be-unpacked profile
+    if [ ! -e "$APP_CONFFILE" ]; then
+        mkdir -p `dirname $APP_DISABLE` 2>/dev/null || true
+        ln -sf $APP_CONFFILE $APP_DISABLE
+    fi
+}
+
+if [ "$1" = "install" ]; then
+    # Disable AppArmor profile on install, unless the last profile they
+    # modified is enabled.
+    base=`echo $APP_PROFILE | cut -d '-' -f 1`
+    last_modified=`ls -rt $APP_DIR/$base-*[0-9] 2>/dev/null | tail -n1`
+    if [ -s "$last_modified" ]; then
+        if [ -e "$APP_DIR/disable/`basename $last_modified`" ]; then
+            disable_profile
+        fi
+    else
+	# Fresh install and no other firefox profiles exist, so disable.
+        disable_profile
+    fi
+elif [ "$1" = "upgrade" ]; then
+    # Disable AppArmor on upgrade from earlier than when we first shipped the
+    # profile if the user does not already have a profile defined, and on older
+    # distributions where the profile won't work without modification.
+    if dpkg --compare-versions "$2" lt "3.7~a1~hg20091203r35439+nobinonly-0ubuntu1" || \
+       echo "$2" | egrep -q '(9.04|8.10|8.04|hardy|intrepid|jaunty)' ; then
+        disable_profile
+    fi
+fi
+
