@@ -1,4 +1,4 @@
-firefox-3.7 (3.7~a1~hg20091203r35439+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a1~hg20091220r36496+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin ]
   * Mass update from 3.6 to 3.7
@@ -33,7 +33,7 @@ firefox-3.7 (3.7~a1~hg20091203r35439+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       not disabled
     - debian/rules: install profile and update subst_files
 
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 15 Dec 2009 11:40:48 -0600
+ -- Micah Gersten <micahg@ubuntu.com>  Mon, 21 Dec 2009 19:21:52 -0600
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
