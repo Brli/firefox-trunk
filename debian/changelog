@@ -17,6 +17,10 @@ firefox-3.7 (3.7~a1~hg20091220r36496+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     Don't build nsBrowserDirectoryProvider as a separate library
     - update debian/firefox-3.7.install
     - update debian/patches/bz515232_att399338_distro_locale_searchplugins.patch
+  * Drop unnecessary patch to block updates since we disable updates in
+    debian/rules
+    - drop debian/patches/ubuntu_no_app_updates.patch
+    - update debian/patches/series
 
   [ Jamie Strandboge ]
   * add AppArmor profile (disabled by default)
@@ -33,7 +37,7 @@ firefox-3.7 (3.7~a1~hg20091220r36496+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       not disabled
     - debian/rules: install profile and update subst_files
 
- -- Micah Gersten <micahg@ubuntu.com>  Mon, 21 Dec 2009 19:21:52 -0600
+ -- Micah Gersten <micahg@ubuntu.com>  Mon, 21 Dec 2009 19:23:09 -0600
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

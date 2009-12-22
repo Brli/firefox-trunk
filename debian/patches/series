@@ -4,7 +4,6 @@ bz386904_config_rules_install_dist_files.patch
 dont_depend_on_nspr_sources.patch
 lp185622_system_path_default_browser.patch
 bz460917_att350845_reload_new_plugins.patch
-ubuntu_no_app_updates.patch
 awesome_browser_branding_install.patch
 browser_branding.patch
 ubuntu_codes_amazon.patch
