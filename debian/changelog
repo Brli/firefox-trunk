@@ -37,7 +37,11 @@ firefox-3.7 (3.7~a1~hg20091220r36496+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       not disabled
     - debian/rules: install profile and update subst_files
 
- -- Micah Gersten <micahg@ubuntu.com>  Mon, 21 Dec 2009 19:23:09 -0600
+  [ Benjamin Drung <bdrung@ubuntu.com> ]
+  * Add metadata for mozilla-devscripts
+    - update debian/control
+
+ -- Benjamin Drung <bdrung@ubuntu.com>  Wed, 30 Dec 2009 00:26:23 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

@@ -42,6 +42,7 @@ Recommends: ubufox
 Suggests: firefox-3.7-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Replaces: firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -104,6 +105,7 @@ Description: package that ships the abrowser branding
 Package: abrowser-3.7
 Architecture: all
 Depends: firefox-3.7, abrowser-3.7-branding, ${misc:Depends}
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: metapackage for the unbranded abrowser
  ABrowser 3.7 is an unbranded version of the popular Firefox webbrowser;
  it is written in the XUL language and designed to be lightweight and
