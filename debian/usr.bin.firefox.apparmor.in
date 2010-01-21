@@ -60,6 +60,8 @@
   # These are needed when a new user starts firefox and firefox.sh is used
   /usr/lib/firefox-3.*/** ixr,
   /usr/bin/basename ixr,
+  /usr/bin/dirname ixr,
+  /usr/bin/pwd ixr,
   /sbin/killall5 ixr,
   /bin/which ixr,
   @{PROC}/ r,
@@ -198,6 +200,7 @@
   /usr/lib/jvm/java-6-openjdk/jre/bin/java Uxr,
   /etc/java-*-sun/** r,
   /usr/lib/jvm/java-*-sun-1.*/jre/bin/java Uxr,
+  /usr/lib/j2*-ibm/jre/bin/java Uxr,
 
   # for mailto:
   #include <abstractions/ubuntu-email>
