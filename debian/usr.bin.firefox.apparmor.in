@@ -3,14 +3,7 @@
 
 #include <tunables/global>
 
-# We want to confine the binaries that match:
-#  /usr/lib/@APPNAME@b6/@APPNAME@
-#  /usr/lib/@APPNAME@.1/firefox
-#  /usr/lib/@APPNAME@.1/@APPNAME@
-# but not:
-#  /usr/lib/@APPNAME@b6/firefox.sh
-#  /usr/lib/@APPNAME@.1/firefox.sh
-/usr/lib/@APPNAME@*/firefox{,*[^s][^h]} {
+@LIBDIR@/firefox-bin {
   #include <abstractions/audio>
   #include <abstractions/base>
   #include <abstractions/cups-client>
