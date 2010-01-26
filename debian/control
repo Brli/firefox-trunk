@@ -33,6 +33,7 @@ Package: firefox-3.7
 Architecture: any
 Depends: fontconfig,
 	psmisc,
+	lsb-release,
 	debianutils (>= 1.16),
 	${misc:Depends},
 	xulrunner-1.9.3,

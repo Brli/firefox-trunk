@@ -13,8 +13,11 @@ if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
 
     # Reload AppArmor profile
     APP_PROFILE="/etc/apparmor.d/usr.bin.$APPNAME"
-    if [ -f "$APP_PROFILE" ] && aa-status --enabled 2>/dev/null; then
-        apparmor_parser -r -T -W "$APP_PROFILE" || true
+    DISABLE_APP_PROFILE="/etc/apparmor.d/disable/usr.bin.$APPNAME"
+    if [ ! -f "$DISABLE_APP_PROFILE" ] &&
+       [ -f "$APP_PROFILE" ] &&
+       aa-status --enabled 2>/dev/null; then
+        apparmor_parser -r "$APP_PROFILE" || true
     fi
 fi
 

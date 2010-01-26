@@ -24,18 +24,21 @@ firefox-3.7 (3.7~a1~hg20091220r36496+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Jamie Strandboge ]
   * add AppArmor profile (disabled by default)
-    - debian/firefox-3.6.dirs: add etc/apparmor.d/disable
-    - add debian/firefox-3.6.preinst.in: disable the profile on new installs,
-      installs where the last modified profile is disabled and upgrades to
-      this version
-    - debian/firefox-3.6.postinst.in: reload profile
-    - add debian/firefox-3.5.postrm.in: cleanup force-complain and disable
+    - debian/firefox-3.7.dirs: add etc/apparmor.d/disable
+    - add debian/firefox-3.7.preinst.in: disable the profile on new installs,
+      installs on Ubuntu 9.04 and earlier (requires abstractions only found
+      in 9.10 and higher), installs where the last modified profile is
+      disabled and upgrades to this version
+    - debian/firefox-3.7.postinst.in: reload profile
+    - add debian/firefox-3.7.postrm.in: cleanup force-complain and disable
       directories
     - add debian/usr.bin.firefox.apparmor.in
     - add debian/README.Debian.in with note about AppArmor
-    - debian/apport/firefox-3.6.py: add AppArmor information if the profile is
+    - debian/apport/firefox-3.7.py: add AppArmor information if the profile is
       not disabled
     - debian/rules: install profile and update subst_files
+    - debian/control: have firefox-3.7 Depends on lsb-release (needed in
+      preinst)
 
   [ Benjamin Drung <bdrung@ubuntu.com> ]
   * Add metadata for mozilla-devscripts
