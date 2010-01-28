@@ -53,6 +53,7 @@ Package: firefox-3.7-branding
 Architecture: any
 Depends: firefox-3.7 (= ${binary:Version}), ${misc:Depends}
 Conflicts: abrowser-3.7-branding
+Replaces: kubuntu-firefox-installer
 Description: Package that ships the firefox branding
  This package ships the Firefox branding bits. If you remove this package your
  user experience will become that of the abrowser.
