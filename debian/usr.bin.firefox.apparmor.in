@@ -41,27 +41,28 @@
   /usr/bin/apport-bug Ux,
 
   # firefox specific
-  /etc/firefox-3.*/ r,
-  /etc/firefox-3.*/** r,
+  /etc/firefox*/ r,
+  /etc/firefox*/** r,
   /etc/xulrunner-1.9*/ r,
   /etc/xulrunner-1.9*/** r,
   /etc/gre.d/ r,
   /etc/gre.d/* r,
 
   # noisy
-  deny /usr/lib/firefox-3.*/** w,
+  deny @LIBDIR@/** w,
   deny /usr/lib/firefox-addons/** w,
   deny /usr/lib/xulrunner-addons/** w,
   deny /usr/lib/xulrunner-*/components/*.tmp w,
   deny /.suspended r,
 
   # These are needed when a new user starts firefox and firefox.sh is used
-  /usr/lib/firefox-3.*/** ixr,
+  @LIBDIR@/** ixr,
   /usr/bin/basename ixr,
   /usr/bin/dirname ixr,
   /usr/bin/pwd ixr,
   /sbin/killall5 ixr,
   /bin/which ixr,
+  /usr/bin/tr ixr,
   @{PROC}/ r,
   @{PROC}/[0-9]*/cmdline r,
   @{PROC}/[0-9]*/stat r,
@@ -123,10 +124,11 @@
   # Allow 'x' for downloaded extensions, but inherit policy for safety
   @{HOME}/.mozilla/**/extensions/** mixr,
 
-  deny /usr/lib/firefox-3.*/update.test w,
+  deny @LIBDIR@/update.test w,
   deny /usr/lib/mozilla/extensions/**/ w,
   deny /usr/lib/xulrunner-addons/extensions/**/ w,
   deny /usr/share/mozilla/extensions/**/ w,
+  deny /usr/share/mozilla/ w,
 
   #
   # Plugins/helpers
