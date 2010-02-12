@@ -6,10 +6,10 @@ Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -5864,22 +5864,30 @@
- var gMissingPluginInstaller = {
- 
+@@ -6006,22 +6006,30 @@
    installSinglePlugin: function (aEvent) {
+     if (!aEvent.isTrusted)
+         return;
      var missingPluginsArray = {};
  
      var pluginInfo = getPluginInfo(aEvent.target);
@@ -33,11 +33,11 @@ Index: mozilla/browser/base/content/browser.js
    },
  
    managePlugins: function (aEvent) {
+     if (!aEvent.isTrusted)
+         return;
      BrowserOpenAddonsMgr("plugins");
      aEvent.stopPropagation();
-   },
- 
-@@ -5939,21 +5947,27 @@
+@@ -6089,21 +6097,27 @@
        var url = formatURL("plugins.update.url", true);
        gBrowser.loadOneTab(url, {inBackground: false});
        return true;
@@ -65,7 +65,7 @@ Index: mozilla/browser/base/content/browser.js
  
        let iconURL = "chrome://mozapps/skin/plugins/pluginBlocked-16.png";
        let messageString = gNavigatorBundle.getString("blockedpluginsMessage.title");
-@@ -6032,16 +6046,23 @@
+@@ -6309,16 +6323,23 @@
  
      // clear the plugin list, now that at least one plugin has been installed
      browser.missingPlugins = null;
