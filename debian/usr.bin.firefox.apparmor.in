@@ -39,6 +39,7 @@
   /etc/mailcap r,
   /usr/bin/dbus-launch ixr,
   /usr/bin/apport-bug Ux,
+  /usr/bin/scim ix,
 
   # firefox specific
   /etc/firefox*/ r,
