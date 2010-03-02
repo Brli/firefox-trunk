@@ -1,12 +1,14 @@
 ---
- browser/installer/package-manifest.in |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ browser/installer/package-manifest.in |    4 ++--
+ 1 file changed, 1 insertions(+), 1 deletions(-)
 
 Index: mozilla/browser/installer/package-manifest.in
 ===================================================================
 --- mozilla.orig/browser/installer/package-manifest.in
 +++ mozilla/browser/installer/package-manifest.in
-@@ -66,17 +66,17 @@
+@@ -67,18 +67,18 @@
+ #endif
+ #endif
  
  [browser]
  ; [Base Browser Files]
@@ -14,10 +16,8 @@ Index: mozilla/browser/installer/package-manifest.in
  @BINPATH@/@MOZ_APP_NAME@.exe
  #else
  @BINPATH@/@MOZ_APP_NAME@-bin
- #ifndef XP_MACOSX
 -@BINPATH@/@MOZ_APP_NAME@
 +@BINPATH@/firefox
- #endif
  #endif
  @BINPATH@/application.ini
  @BINPATH@/platform.ini
@@ -25,3 +25,4 @@ Index: mozilla/browser/installer/package-manifest.in
  @BINPATH@/plugins/DefaultPlugin.plugin/
  #elifdef XP_UNIX
  @BINPATH@/plugins/libnullplugin.so
+ #elifdef XP_WIN32
