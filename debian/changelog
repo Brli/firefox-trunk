@@ -1,6 +1,6 @@
-firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a3~hg20100301r38798+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Fabien Tassin ]
+  [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
   * Drop libnkgnomevfs.so from firefox-3.7-gnome-support, it's already
     shippped in xulrunner-1.9.3-gnome-support (see bmo #512671)
@@ -9,7 +9,7 @@ firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/moz-rev.sh
     - update debian/mozclient/firefox-3.7.conf
 
-  [ Micah Gersten ]
+  [ Micah Gersten <micahg@ubuntu.com> ]
   * Add mesa-common-dev to build-depends after landing of configure test aka
     (bmo: 517566) which is for WebGL aka (bmo: 516213)
     - update debian/control 
@@ -22,7 +22,7 @@ firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/ubuntu_no_app_updates.patch
     - update debian/patches/series
 
-  [ Jamie Strandboge ]
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
     - debian/firefox-3.7.dirs: add etc/apparmor.d/disable
     - add debian/firefox-3.7.preinst.in: disable the profile on new installs,
@@ -44,7 +44,7 @@ firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Fri, 12 Feb 2010 00:08:49 -0600
+ -- Micah Gersten <micahg@ubuntu.com>  Mon, 01 Mar 2010 21:52:34 -0600
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
