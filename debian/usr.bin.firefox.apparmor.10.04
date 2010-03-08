@@ -1,0 +1,218 @@
+# vim:syntax=apparmor
+# Author: Jamie Strandboge <jamie@canonical.com>
+
+#include <tunables/global>
+
+# We want to confine the binaries that match:
+#  @LIBDIR@/@APPNAME@
+#  @LIBDIR@/firefox
+# but not:
+#  @LIBDIR@/firefox.sh
+@LIBDIR@/firefox{,*[^s][^h]} {
+  #include <abstractions/audio>
+  #include <abstractions/base>
+  #include <abstractions/cups-client>
+  #include <abstractions/dbus>
+  #include <abstractions/fonts>
+  #include <abstractions/freedesktop.org>
+  #include <abstractions/gnome>
+  #include <abstractions/kde>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+  #include <abstractions/X>
+
+  # for networking
+  network inet stream,
+  network inet6 stream,
+  @{PROC}/[0-9]*/net/if_inet6 r,
+  @{PROC}/[0-9]*/net/ipv6_route r,
+
+  # should maybe be in abstractions
+  /etc/ r,
+  /etc/mime.types r,
+  /etc/mailcap r,
+  /etc/wildmidi/wildmidi.cfg r,
+  /etc/xdg/xubuntu/applications/defaults.list r,
+  /usr/bin/dbus-launch ixr,
+  /usr/bin/scim Ux,
+  /usr/bin/scim-bridge Ux,
+  /usr/bin/apport-bug Ux,
+  /usr/local/lib{,32,64}/*.so* mr,
+
+  # firefox specific
+  /etc/firefox*/ r,
+  /etc/firefox*/** r,
+  /etc/xulrunner-1.9*/ r,
+  /etc/xulrunner-1.9*/** r,
+  /etc/gre.d/ r,
+  /etc/gre.d/* r,
+
+  # noisy
+  deny @LIBDIR@/** w,
+  deny /usr/lib/firefox-addons/** w,
+  deny /usr/lib/xulrunner-addons/** w,
+  deny /usr/lib/xulrunner-*/components/*.tmp w,
+  deny /.suspended r,
+
+  # These are needed when a new user starts firefox and firefox.sh is used
+  @LIBDIR@/** ixr,
+  /usr/bin/basename ixr,
+  /usr/bin/dirname ixr,
+  /usr/bin/pwd ixr,
+  /sbin/killall5 ixr,
+  /bin/which ixr,
+  /usr/bin/tr ixr,
+  @{PROC}/ r,
+  @{PROC}/[0-9]*/cmdline r,
+  @{PROC}/[0-9]*/stat r,
+  @{PROC}/[0-9]*/status r,
+  @{PROC}/filesystems r,
+
+  /etc/mtab r,
+  /etc/fstab r,
+
+  # allow access to documentation and other files the user may want to look
+  # at in /usr
+  /usr/ r,
+  /usr/** r,
+
+  # so browsing directories works
+  / r,
+  /**/ r,
+
+  # allow read and write to all user's files, except explicitly denied ones
+  @{HOME}/ r,
+  @{HOME}/** r,
+  owner @{HOME}/** w,
+  owner @{HOME}/Desktop/** r,
+
+  # removable media and filesystems
+  /media/** r,
+  /mnt/** r,
+  /srv/** r,
+  owner /media/** w,
+  owner /mnt/** w,
+  owner /srv/** w,
+
+  #include <abstractions/private-files>
+  audit deny @{HOME}/.ssh/** mrwkl,
+  audit deny @{HOME}/.gnome2_private/** mrwkl,
+
+  # comment this out if using gpg plugin/addons
+  audit deny @{HOME}/.gnupg/** mrwkl,
+
+  # per-user firefox configuration
+  owner @{HOME}/.mozilla/ rw,
+  owner @{HOME}/.mozilla/** rw,
+  owner @{HOME}/.mozilla/**/*.sqlite* k,
+  owner @{HOME}/.mozilla/**/.parentlock k,
+  owner @{HOME}/.mozilla/plugins/** rm,
+  owner @{HOME}/.mozilla/**/plugins/** rm,
+
+  #
+  # Extensions
+  # /usr/share/.../extensions/... is already covered by '/usr/** r', above.
+  # Allow 'x' for downloaded extensions, but inherit policy for safety
+  owner @{HOME}/.mozilla/**/extensions/** mixr,
+
+  deny @LIBDIR@/update.test w,
+  deny /usr/lib/mozilla/extensions/**/ w,
+  deny /usr/lib/xulrunner-addons/extensions/**/ w,
+  deny /usr/share/mozilla/extensions/**/ w,
+  deny /usr/share/mozilla/ w,
+
+  #
+  # Plugins/helpers
+  #
+  @{PROC}/[0-9]*/fd/ r,
+  /usr/lib/** rm,
+  /bin/bash ixr,
+  /bin/dash ixr,
+  /bin/grep ixr,
+  /bin/sed ixr,
+  /bin/ps Uxr,
+  /bin/uname Uxr,
+  /usr/bin/m4 ixr,
+  /usr/bin/mkfifo Uxr,
+  /usr/lib/nspluginwrapper/i386/linux/npviewer Uxr,
+  /usr/bin/pulseaudio ixr,
+  /var/lib/ r,
+  /var/lib/** mr,
+
+  # for maximum plugin/helper compatibility
+  #/usr/bin/* Uxr,
+  #/usr/lib/*/** ixr,
+
+  #
+  # For stricter access, comment out the 'maximum plugin/helper compatibility'
+  # lines above and uncomment these
+  #
+
+  # for PDFs
+  owner @{HOME}/.adobe/** rw,
+  /opt/Adobe/Reader9/bin/acroread Uxr,
+  /usr/bin/evince PUxr,
+  /usr/bin/okular Uxr,
+
+  # Image viewers
+  /usr/bin/eog Uxr,
+  /usr/bin/gimp* Uxr,
+
+  # Openoffice.org
+  /usr/bin/ooffice Uxr,
+  /usr/bin/oocalc Uxr,
+  /usr/bin/oodraw Uxr,
+  /usr/bin/ooimpress Uxr,
+  /usr/bin/oowriter Uxr,
+  /usr/lib/openoffice/program/soffice Uxr,
+
+  # Multimedia
+  #include <abstractions/ubuntu-media-players>
+  owner @{HOME}/.macromedia/** rw,
+  /opt/real/RealPlayer/mozilla/nphelix.so rm,
+
+  # Bittorrent clients
+  #include <abstractions/ubuntu-bittorrent-clients>
+
+  # Archivers
+  /usr/bin/ark Uxr,
+  /usr/bin/file-roller Uxr,
+  /usr/bin/xarchiver Uxr,
+
+  # Text editors (It's All Text [https://addons.mozilla.org/en-US/firefox/addon/4125])
+  /usr/bin/emacsclient.emacs-snapshot Uxr,
+  /usr/bin/emacsclient.emacs22 Uxr,
+  /usr/bin/gedit Uxr,
+  /usr/bin/vim.gnome Uxr,
+
+  # Mozplugger
+  /etc/mozpluggerrc r,
+  /usr/bin/mozplugger-helper Uxr,
+
+  # Java
+  owner @{HOME}/.icedteaplugin/** rw,
+  owner @{HOME}/.java/** rwk,
+  /usr/lib/jvm/java-6-openjdk/jre/bin/java Uxr,
+  /etc/java-*-sun/** r,
+  /usr/lib/jvm/java-*-sun-1.*/jre/bin/java Uxr,
+  /usr/lib/j2*-ibm/jre/bin/java Uxr,
+
+  # for mailto:
+  #include <abstractions/ubuntu-email>
+  #include <abstractions/ubuntu-console-email>
+
+  # Terminals for using console applications. These abstractions should ideally
+  # have 'ix' to restrct access to what only firefox is allowed to do
+  #include <abstractions/ubuntu-gnome-terminal>
+
+  # By default, we won't support launching a terminal program in Xterm or
+  # KDE's konsole. It opens up too many unnecessary files for most users.
+  # People who need this functionality can uncomment the following:
+  ##include <abstractions/ubuntu-xterm>
+  ##include <abstractions/ubuntu-konsole>
+
+  # Miscellaneous (to be abstracted)
+  /usr/bin/nautilus Uxr,
+  /usr/bin/thunar Uxr,
+  /usr/bin/liferea-add-feed Uxr,
+}
