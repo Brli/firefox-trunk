@@ -6,10 +6,10 @@ Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -6006,22 +6006,30 @@
+@@ -5945,19 +5945,27 @@
+ 
+   // Callback for user clicking on a missing (unsupported) plugin.
    installSinglePlugin: function (aEvent) {
-     if (!aEvent.isTrusted)
-         return;
      var missingPluginsArray = {};
  
      var pluginInfo = getPluginInfo(aEvent.target);
@@ -19,25 +19,22 @@ Index: mozilla/browser/base/content/browser.js
 +                                              gMissingPluginInstaller.refreshBrowser,
 +                                              false);
 +
-     if (missingPluginsArray) {
-       openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
-                  "PFSWindow", "chrome,centerscreen,resizable=yes",
-                  {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
-     }
- 
+     openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
+                "PFSWindow", "chrome,centerscreen,resizable=yes",
+                {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
++
 +    gBrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
 +                                                 gMissingPluginInstaller.refreshBrowser,
 +                                                 false);
-+
-     aEvent.stopPropagation();
    },
  
+   // Callback for user clicking on a disabled plugin
    managePlugins: function (aEvent) {
-     if (!aEvent.isTrusted)
-         return;
      BrowserOpenAddonsMgr("plugins");
-     aEvent.stopPropagation();
-@@ -6089,21 +6097,27 @@
+   },
+ 
+   // Callback for user clicking "submit a report" link
+@@ -6035,21 +6043,27 @@
        var url = formatURL("plugins.update.url", true);
        gBrowser.loadOneTab(url, {inBackground: false});
        return true;
@@ -65,7 +62,7 @@ Index: mozilla/browser/base/content/browser.js
  
        let iconURL = "chrome://mozapps/skin/plugins/pluginBlocked-16.png";
        let messageString = gNavigatorBundle.getString("blockedpluginsMessage.title");
-@@ -6309,16 +6323,23 @@
+@@ -6360,16 +6374,23 @@
  
      // clear the plugin list, now that at least one plugin has been installed
      browser.missingPlugins = null;
