@@ -24,6 +24,8 @@ firefox-3.7 (3.7~a4~hg20100323r39729+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     debian/rules
     - drop debian/patches/ubuntu_no_app_updates.patch
     - update debian/patches/series
+  * Rebase patch
+    - update bzXXX_moz_app_name_inconsistencies.patch
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -47,7 +49,7 @@ firefox-3.7 (3.7~a4~hg20100323r39729+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Tue, 23 Mar 2010 23:21:25 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Tue, 23 Mar 2010 23:31:51 -0500
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
