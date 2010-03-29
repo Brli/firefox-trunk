@@ -186,6 +186,8 @@
   /usr/bin/emacsclient.emacs22 Uxr,
   /usr/bin/gedit Uxr,
   /usr/bin/vim.gnome Uxr,
+  /usr/bin/leafpad Uxr,
+  /usr/bin/mousepad Uxr,
 
   # Mozplugger
   /etc/mozpluggerrc r,

@@ -178,6 +178,8 @@
   /usr/bin/transmission Uxr,
   /usr/bin/liferea-add-feed Uxr,
   /usr/bin/azureus Uxr,
+  /usr/bin/leafpad Uxr,
+  /usr/bin/mousepad Uxr,
 
   # Adobe Acrobat Reader
   /opt/Adobe/Reader9/bin/acroread Uxr,
