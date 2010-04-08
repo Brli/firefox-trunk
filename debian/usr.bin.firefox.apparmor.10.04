@@ -40,6 +40,7 @@
   /usr/bin/apport-bug Ux,
   /usr/local/lib{,32,64}/*.so* mr,
   /usr/lib/gstreamer0.10/gstreamer-0.10/gst-plugin-scanner ix,
+  /usr/bin/apturl Uxr,
 
   # firefox specific
   /etc/firefox*/ r,
