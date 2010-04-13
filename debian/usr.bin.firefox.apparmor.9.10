@@ -48,6 +48,7 @@
   # firefox specific
   /etc/firefox*/ r,
   /etc/firefox*/** r,
+  /etc/xul-ext/** r,
   /etc/xulrunner-1.9*/ r,
   /etc/xulrunner-1.9*/** r,
   /etc/gre.d/ r,
