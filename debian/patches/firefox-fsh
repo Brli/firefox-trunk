@@ -1,16 +1,15 @@
 ---
- browser/app/Makefile.in |    2 +-
- browser/confvars.sh     |    2 +-
- config/autoconf.mk.in   |    8 ++++----
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ browser/confvars.sh   |    2 +-
+ config/autoconf.mk.in |    8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
 Index: mozilla/config/autoconf.mk.in
 ===================================================================
 --- mozilla.orig/config/autoconf.mk.in
 +++ mozilla/config/autoconf.mk.in
-@@ -52,24 +52,24 @@
- MOZ_APP_DISPLAYNAME = @MOZ_APP_DISPLAYNAME@
+@@ -53,24 +53,24 @@
  MOZ_APP_VERSION = @MOZ_APP_VERSION@
+ MOZ_APP_UA_EXTRA = @MOZ_APP_UA_EXTRA@
  
  MOZ_PKG_SPECIAL = @MOZ_PKG_SPECIAL@
  
@@ -57,7 +56,6 @@ Index: mozilla/browser/confvars.sh
  
  MOZ_ENABLE_LIBXUL=1
  MOZ_STATIC_BUILD_UNSUPPORTED=1
- MOZ_PLACES=1
  # always enabled for form history
  MOZ_MORKREADER=1
-
+ MOZ_SAFE_BROWSING=1

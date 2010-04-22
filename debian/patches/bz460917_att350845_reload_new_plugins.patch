@@ -1,12 +1,28 @@
 ---
- browser/base/content/browser.js |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ browser/base/content/browser.js |   20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
 Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -5945,19 +5945,27 @@
+@@ -5959,30 +5959,42 @@
+     // clear the plugin list, now that at least one plugin has been installed
+     browser.missingPlugins = null;
+ 
+     var notificationBox = gBrowser.getNotificationBox(browser);
+     var notification = notificationBox.getNotificationWithValue("missing-plugins");
+     if (notification)
+       notificationBox.removeNotification(notification);
+ 
+-    // reload the browser to make the new plugin show.
++    // reload plugins
++    var pm = Components.classes["@mozilla.org/plugin/manager;1"]
++                 .getService(Components.interfaces.nsIPluginManager);
++    pm.reloadPlugins(false);
++    // ... and reload the browser to activate new plugins available
+     browser.reload();
+   },
  
    // Callback for user clicking on a missing (unsupported) plugin.
    installSinglePlugin: function (aEvent) {
@@ -34,7 +50,7 @@ Index: mozilla/browser/base/content/browser.js
    },
  
    // Callback for user clicking "submit a report" link
-@@ -6035,21 +6043,27 @@
+@@ -6038,21 +6050,27 @@
        var url = formatURL("plugins.update.url", true);
        gBrowser.loadOneTab(url, {inBackground: false});
        return true;
@@ -56,33 +72,9 @@ Index: mozilla/browser/base/content/browser.js
 +                                                   false);
      }
  
-     if (aEvent.type == "PluginBlocklisted") {
-       if (blockedNotification || missingNotification)
-         return;
- 
-       let iconURL = "chrome://mozapps/skin/plugins/pluginBlocked-16.png";
-       let messageString = gNavigatorBundle.getString("blockedpluginsMessage.title");
-@@ -6360,16 +6374,23 @@
- 
-     // clear the plugin list, now that at least one plugin has been installed
-     browser.missingPlugins = null;
-     if (notification) {
-       // reset UI
-       notificationBox.removeNotification(notification);
-     }
-     // reload the browser to make the new plugin show.
-+
-+    // reload plugins
-+    var pm = Components.classes["@mozilla.org/plugin/manager;1"]
-+                 .getService(Components.interfaces.nsIPluginManager);
-+    pm.reloadPlugins(false);
-+  
-+    // ... and reload the browser to activate new plugins available
-     browser.reload();
-   }
- };
- 
- function convertFromUnicode(charset, str)
- {
-   try {
-     var unicodeConverter = Components
+     let notifications = {
+       PluginBlocklisted : {
+                             barID   : "blocked-plugins",
+                             iconURL : "chrome://mozapps/skin/plugins/pluginBlocked-16.png",
+                             message : gNavigatorBundle.getString("blockedpluginsMessage.title"),
+                             buttons : [{

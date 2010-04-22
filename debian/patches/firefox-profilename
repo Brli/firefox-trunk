@@ -34,7 +34,7 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js
 +++ mozilla/browser/branding/unofficial/pref/firefox-branding.js
-@@ -1,22 +1,22 @@
+@@ -1,23 +1,23 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
@@ -60,7 +60,8 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
- pref("browser.search.param.yahoo-fr-cjkt", "");
+ pref("browser.search.param.yahoo-fr-cjkt", ""); // now unused
+ pref("browser.search.param.yahoo-fr-ja", "");
  pref("browser.search.param.yahoo-f-CN", "");
 Index: mozilla/browser/branding/awesome-browser/pref/firefox-branding.js
 ===================================================================
@@ -92,7 +93,7 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/other-licenses/branding/firefox/pref/firefox-branding.js
 +++ mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
-@@ -1,20 +1,20 @@
+@@ -1,21 +1,21 @@
 -pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
@@ -116,7 +117,8 @@ Index: mozilla/other-licenses/branding/firefox/pref/firefox-branding.js
 +pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
  
  pref("browser.search.param.yahoo-fr", "moz35");
- pref("browser.search.param.yahoo-fr-cjkt", "moz35");
+ pref("browser.search.param.yahoo-fr-cjkt", "moz35"); // now unused
+ pref("browser.search.param.yahoo-fr-ja", "mozff");
 Index: mozilla/browser/app/profile/firefox.js
 ===================================================================
 --- mozilla.orig/browser/app/profile/firefox.js
@@ -181,7 +183,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.description", "chrome://browser/locale/browser.properties");
  
  pref("xpinstall.whitelist.add", "addons.mozilla.org");
-@@ -274,17 +274,17 @@
+@@ -276,17 +276,17 @@
  pref("browser.download.manager.focusWhenStarting", false);
  pref("browser.download.manager.flashCount", 2);
  pref("browser.download.manager.addToRecentDocs", true);
@@ -200,7 +202,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("browser.search.log", false);
  
  // Ordering of Search Engines in the Engine list. 
-@@ -701,18 +701,18 @@
+@@ -699,18 +699,18 @@
  // HTML report pages
  pref("browser.safebrowsing.provider.0.reportGenericURL", "http://{moz:locale}.phish-generic.mozilla.com/?hl={moz:locale}");
  pref("browser.safebrowsing.provider.0.reportErrorURL", "http://{moz:locale}.phish-error.mozilla.com/?hl={moz:locale}");
@@ -221,10 +223,10 @@ Index: mozilla/browser/app/profile/firefox.js
  // The number of random entries to send with a gethash request.
  pref("urlclassifier.gethashnoise", 4);
  
-@@ -837,17 +837,17 @@
+@@ -842,17 +842,17 @@
  
- // replace newlines with spaces when pasting into <input type="text"> fields
- pref("editor.singleLine.pasteNewlines", 2);
+ // Whether or not to update background tabs to the current zoom level.
+ pref("browser.zoom.updateBackgroundTabs", true);
  
  // The breakpad report server to link to in about:crashes
  pref("breakpad.reportURL", "http://crash-stats.mozilla.com/report/index/");
@@ -244,7 +246,7 @@ Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
 ===================================================================
 --- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js
 +++ mozilla/browser/branding/nightly/pref/firefox-branding.js
-@@ -1,22 +1,22 @@
+@@ -1,23 +1,23 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
@@ -270,5 +272,6 @@ Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
- pref("browser.search.param.yahoo-fr-cjkt", "");
+ pref("browser.search.param.yahoo-fr-cjkt", ""); // now unused
+ pref("browser.search.param.yahoo-fr-ja", "");
  pref("browser.search.param.yahoo-f-CN", "");
