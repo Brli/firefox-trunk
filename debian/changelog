@@ -1,4 +1,4 @@
-firefox-3.7 (3.7~a4~hg20100323r39729+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a5~hg20100422r41159+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -51,7 +51,7 @@ firefox-3.7 (3.7~a4~hg20100323r39729+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Wed, 24 Mar 2010 17:55:33 -0500
+ -- Fabien Tassin <fta@ubuntu.com>  Thu, 22 Apr 2010 14:24:34 +0200
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
