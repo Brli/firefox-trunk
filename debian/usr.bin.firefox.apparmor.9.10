@@ -188,6 +188,7 @@
 
   # Adobe Acrobat Reader
   /opt/Adobe/Reader9/bin/acroread Uxr,
+  /opt/Adobe/Reader9/** r,
 
   # totem
   /usr/lib/totem/** ixr,

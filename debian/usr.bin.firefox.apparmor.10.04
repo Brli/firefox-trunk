@@ -158,6 +158,7 @@
   # for PDFs
   owner @{HOME}/.adobe/** rw,
   /opt/Adobe/Reader9/bin/acroread Uxr,
+  /opt/Adobe/Reader9/** r,
   /usr/bin/evince PUxr,
   /usr/bin/okular Uxr,
 
