@@ -143,6 +143,9 @@
   /var/lib/ r,
   /var/lib/** mr,
 
+  # Needed for container to work in xul builds
+  /usr/lib/xulrunner-*/plugin-container ixr,
+
   # for maximum plugin/helper compatibility
   #/usr/bin/* Uxr,
   #/usr/lib/*/** ixr,
