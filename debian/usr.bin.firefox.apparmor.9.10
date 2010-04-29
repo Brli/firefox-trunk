@@ -60,6 +60,8 @@
   deny /usr/lib/xulrunner-addons/** w,
   deny /usr/lib/xulrunner-*/components/*.tmp w,
   deny /.suspended r,
+  deny /boot/initrd.img* r,
+  deny /boot/vmlinuz* r,
 
   # These are needed when a new user starts firefox and firefox.sh is used
   @LIBDIR@/** ixr,
