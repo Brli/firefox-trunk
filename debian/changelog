@@ -26,6 +26,7 @@ firefox-3.7 (3.7~a5~hg20100429r41513+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
   * Rebase patch
     - update bzXXX_moz_app_name_inconsistencies.patch
+    - update debian/patches/ubuntu_bookmarks.patch
   * Bump system sqlite to 3.6.23 after upstream landing of (bmo: 551260)
     - update debian/rules
 
@@ -51,7 +52,7 @@ firefox-3.7 (3.7~a5~hg20100429r41513+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Thu, 29 Apr 2010 11:28:24 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Thu, 29 Apr 2010 11:39:12 -0500
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

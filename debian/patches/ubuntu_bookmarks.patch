@@ -6,15 +6,15 @@ Index: mozilla/browser/locales/generic/profile/bookmarks.html.in
 ===================================================================
 --- mozilla.orig/browser/locales/generic/profile/bookmarks.html.in
 +++ mozilla/browser/locales/generic/profile/bookmarks.html.in
-@@ -12,16 +12,25 @@
-     <HR>
+@@ -9,16 +9,25 @@
+ 
+ <DL><p>
      <DT><H3 PERSONAL_TOOLBAR_FOLDER="true" ID="rdf:#$FvPhC3">@bookmarks_toolbarfolder@</H3>
  <DD>@bookmarks_toolbarfolder_description@
      <DL><p>
          <DT><A HREF="http://www.mozilla.com/@AB_CD@/firefox/central/" ID="rdf:#$GvPhC3">@getting_started@</A>
          <DT><A HREF="http://fxfeeds.mozilla.com/@AB_CD@/firefox/livebookmarks/" FEEDURL="http://fxfeeds.mozilla.com/@AB_CD@/firefox/headlines.xml" ID="rdf:#$HvPhC3">@latest_headlines@</A>
      </DL><p>
-     <HR>
 +    <DT><H3 ADD_DATE="1181129907" LAST_MODIFIED="1180687506" ID="rdf:#$jYrW.3">Ubuntu and Free Software links</H3>
 +<DD>Information and resources about Ubuntu, Debian and Free Software in general
 +    <DL><p>
