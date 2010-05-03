@@ -268,6 +268,7 @@
 
     /usr/bin/env ix,
     /usr/lib/jvm/java-6-openjdk/jre/bin/java ix,
+    /usr/lib/jvm/java-6-openjdk/jre/lib/i386/client/classes.jsa m,
 
     # Why would java need this?
     deny /usr/bin/gconftool-2 x,
@@ -309,6 +310,7 @@
 
     /usr/bin/env ix,
     /usr/lib/jvm/java-*-sun-1.*/jre/bin/java ix,
+    /usr/lib/jvm/java-*-sun-1.*/jre/lib/i386/client/classes.jsa m,
     /usr/lib/j2*-ibm/jre/bin/java ix,
 
     # noisy, can't write here anyway
