@@ -138,6 +138,7 @@
   /bin/sed ixr,
   /bin/ps Uxr,
   /bin/uname Uxr,
+  /usr/bin/gnome-codec-install Uxr,
   /usr/bin/m4 ixr,
   /usr/bin/mkfifo Uxr,
   /usr/lib/nspluginwrapper/i386/linux/npviewer Uxr,
