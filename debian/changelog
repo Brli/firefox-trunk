@@ -32,6 +32,10 @@ firefox-3.7 (3.7~a5~hg20100521r42520+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Update patch after landing of (bmo: 554007) aka 
     New add-ons manager UI (preferences)
     - update debian/patches/firefox-profilename
+  * Add test for minimum system NSPR of 4.8.4.99 after landing of (bmo: 560582)
+    aka compilation errors with PR_STATIC_ASSERT when building mozilla-central
+    with system NSPR
+    - update debian/rules
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -55,7 +59,7 @@ firefox-3.7 (3.7~a5~hg20100521r42520+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Sat, 22 May 2010 21:44:28 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Sun, 23 May 2010 01:07:31 -0500
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
