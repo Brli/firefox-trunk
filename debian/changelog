@@ -29,6 +29,9 @@ firefox-3.7 (3.7~a5~hg20100521r42520+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/ubuntu_bookmarks.patch
   * Bump system sqlite to 3.6.23 after upstream landing of (bmo: 551260)
     - update debian/rules
+  * Update patch after landing of (bmo: 554007) aka 
+    New add-ons manager UI (preferences)
+    - update debian/patches/firefox-profilename
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -52,7 +55,7 @@ firefox-3.7 (3.7~a5~hg20100521r42520+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Fri, 21 May 2010 08:03:30 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Sat, 22 May 2010 21:44:28 -0500
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

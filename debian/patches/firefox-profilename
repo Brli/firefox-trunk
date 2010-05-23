@@ -1,11 +1,11 @@
 ---
- browser/app/application.ini                               |    2 -
- browser/app/profile/firefox.js                            |   22 +++++++-------
- browser/branding/awesome-browser/pref/firefox-branding.js |   10 +++---
- browser/branding/nightly/pref/firefox-branding.js         |   10 +++---
- browser/branding/unofficial/pref/firefox-branding.js      |   10 +++---
- other-licenses/branding/firefox/pref/firefox-branding.js  |    8 ++---
- 6 files changed, 31 insertions(+), 31 deletions(-)
+ browser/app/application.ini                               |    2 +-
+ browser/app/profile/firefox.js                            |   14 +++++++-------
+ browser/branding/awesome-browser/pref/firefox-branding.js |   10 +++++-----
+ browser/branding/nightly/pref/firefox-branding.js         |   10 +++++-----
+ browser/branding/unofficial/pref/firefox-branding.js      |   10 +++++-----
+ other-licenses/branding/firefox/pref/firefox-branding.js  |    8 ++++----
+ 6 files changed, 27 insertions(+), 27 deletions(-)
 
 Index: mozilla/browser/app/application.ini
 ===================================================================
@@ -123,26 +123,17 @@ Index: mozilla/browser/app/profile/firefox.js
 ===================================================================
 --- mozilla.orig/browser/app/profile/firefox.js
 +++ mozilla/browser/app/profile/firefox.js
-@@ -65,34 +65,34 @@
- pref("extensions.ignoreMTimeChanges", false);
+@@ -52,29 +52,29 @@
+ 
+ pref("browser.chromeURL","chrome://browser/content/");
+ pref("browser.hiddenWindowChromeURL", "chrome://browser/content/hiddenWindow.xul");
+ 
  // Enables some extra Extension System Logging (can reduce performance)
  pref("extensions.logging.enabled", false);
- // Hides the install button in the add-ons mgr
- pref("extensions.hideInstallButton", true);
  
- // Preferences for the Get Add-ons pane
- pref("extensions.getAddons.showPane", true);
--pref("extensions.getAddons.browseAddons", "https://addons.mozilla.org/%LOCALE%/%APP%");
-+pref("extensions.getAddons.browseAddons", "https://addons.mozilla.org/%LOCALE%/firefox");
- pref("extensions.getAddons.maxResults", 5);
--pref("extensions.getAddons.recommended.browseURL", "https://addons.mozilla.org/%LOCALE%/%APP%/recommended");
--pref("extensions.getAddons.recommended.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/list/featured/all/10/%OS%/%VERSION%");
--pref("extensions.getAddons.search.browseURL", "https://addons.mozilla.org/%LOCALE%/%APP%/search?q=%TERMS%");
--pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/search/%TERMS%/all/10/%OS%/%VERSION%");
-+pref("extensions.getAddons.recommended.browseURL", "https://addons.mozilla.org/%LOCALE%/firefox/recommended");
-+pref("extensions.getAddons.recommended.url", "https://services.addons.mozilla.org/%LOCALE%/firefox/api/%API_VERSION%/list/featured/all/10/%OS%/%VERSION%");
-+pref("extensions.getAddons.search.browseURL", "https://addons.mozilla.org/%LOCALE%/firefox/search?q=%TERMS%");
-+pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/firefox/api/%API_VERSION%/search/%TERMS%/all/10/%OS%/%VERSION%");
+ // Preferences for AMO integration
+-pref("extensions.webservice.discoverURL", "https://services.addons.mozilla.org/%LOCALE%/%APP%/discovery/%VERSION%/%OS%");
++pref("extensions.webservice.discoverURL", "https://services.addons.mozilla.org/%LOCALE%/firefox/discovery/%VERSION%/%OS%");
  
  // Blocklist preferences
  pref("extensions.blocklist.enabled", true);
@@ -164,7 +155,7 @@ Index: mozilla/browser/app/profile/firefox.js
  
  // App-specific update preferences
  
-@@ -160,17 +160,17 @@
+@@ -142,17 +142,17 @@
  //  extensions.{GUID}.update.url
  //  .. etc ..
  //
@@ -183,7 +174,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.description", "chrome://browser/locale/browser.properties");
  
  pref("xpinstall.whitelist.add", "addons.mozilla.org");
-@@ -276,17 +276,17 @@
+@@ -258,17 +258,17 @@
  pref("browser.download.manager.focusWhenStarting", false);
  pref("browser.download.manager.flashCount", 2);
  pref("browser.download.manager.addToRecentDocs", true);
@@ -202,7 +193,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("browser.search.log", false);
  
  // Ordering of Search Engines in the Engine list. 
-@@ -699,18 +699,18 @@
+@@ -678,18 +678,18 @@
  // HTML report pages
  pref("browser.safebrowsing.provider.0.reportGenericURL", "http://{moz:locale}.phish-generic.mozilla.com/?hl={moz:locale}");
  pref("browser.safebrowsing.provider.0.reportErrorURL", "http://{moz:locale}.phish-error.mozilla.com/?hl={moz:locale}");
@@ -223,7 +214,7 @@ Index: mozilla/browser/app/profile/firefox.js
  // The number of random entries to send with a gethash request.
  pref("urlclassifier.gethashnoise", 4);
  
-@@ -842,17 +842,17 @@
+@@ -821,17 +821,17 @@
  
  // Whether or not to update background tabs to the current zoom level.
  pref("browser.zoom.updateBackgroundTabs", true);
