@@ -36,6 +36,9 @@ firefox-3.7 (3.7~a5~hg20100525r42790+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     aka compilation errors with PR_STATIC_ASSERT when building mozilla-central
     with system NSPR
     - update debian/rules
+  * Don't install browserconfig.properties since it was moved to a jar
+    (bmo: 524201) aka Move browserconfig.properties to a jar
+    - update debian/firefox-3.7.install
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -59,7 +62,7 @@ firefox-3.7 (3.7~a5~hg20100525r42790+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Tue, 25 May 2010 12:20:07 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Tue, 25 May 2010 17:04:21 -0500
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
