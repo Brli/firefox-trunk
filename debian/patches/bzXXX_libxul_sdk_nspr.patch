@@ -1,10 +1,15 @@
-diff --git a/configure.in b/configure.in
---- a/configure.in
-+++ b/configure.in
-@@ -8442,17 +8442,17 @@ if test -z "$MOZ_NATIVE_NSPR"; then
+---
+ configure.in |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: mozilla/configure.in
+===================================================================
+--- mozilla.orig/configure.in
++++ mozilla/configure.in
+@@ -9006,17 +9006,17 @@
      fi
-     if test -n "$USE_ARM_KUSER"; then
-         ac_configure_args="$ac_configure_args --with-arm-kuser"
+     if test -n "$MOZ_THUMB2"; then
+         ac_configure_args="$ac_configure_args --enable-thumb2"
      fi
      AC_OUTPUT_SUBDIRS(nsprpub)
      ac_configure_args="$_SUBDIR_CONFIG_ARGS"
