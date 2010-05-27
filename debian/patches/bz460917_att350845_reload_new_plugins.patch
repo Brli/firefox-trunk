@@ -6,7 +6,7 @@ Index: mozilla/browser/base/content/browser.js
 ===================================================================
 --- mozilla.orig/browser/base/content/browser.js
 +++ mozilla/browser/base/content/browser.js
-@@ -5959,30 +5959,42 @@
+@@ -5991,30 +5991,42 @@
      // clear the plugin list, now that at least one plugin has been installed
      browser.missingPlugins = null;
  
@@ -50,7 +50,7 @@ Index: mozilla/browser/base/content/browser.js
    },
  
    // Callback for user clicking "submit a report" link
-@@ -6038,21 +6050,27 @@
+@@ -6070,20 +6082,26 @@
        var url = formatURL("plugins.update.url", true);
        gBrowser.loadOneTab(url, {inBackground: false});
        return true;
@@ -75,6 +75,5 @@ Index: mozilla/browser/base/content/browser.js
      let notifications = {
        PluginBlocklisted : {
                              barID   : "blocked-plugins",
-                             iconURL : "chrome://mozapps/skin/plugins/pluginBlocked-16.png",
+                             iconURL : "chrome://mozapps/skin/plugins/notifyPluginBlocked.png",
                              message : gNavigatorBundle.getString("blockedpluginsMessage.title"),
-                             buttons : [{
