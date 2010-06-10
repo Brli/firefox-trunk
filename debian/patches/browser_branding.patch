@@ -15,7 +15,7 @@ Index: mozilla/browser/branding/unofficial/content/jar.mn
 @@ -1,7 +1,7 @@
 -browser.jar:
 +browser-branding.jar:
- % content branding %content/branding/ xpcnativewrappers=yes
+ % content branding %content/branding/
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
    content/branding/aboutFooter.png               (aboutFooter.png)
@@ -25,7 +25,7 @@ Index: mozilla/browser/branding/unofficial/locales/jar.mn
 ===================================================================
 --- mozilla.orig/browser/branding/unofficial/locales/jar.mn
 +++ mozilla/browser/branding/unofficial/locales/jar.mn
-@@ -1,7 +1,7 @@
+@@ -1,8 +1,8 @@
  #filter substitution
  
 -@AB_CD@.jar:
@@ -34,11 +34,12 @@ Index: mozilla/browser/branding/unofficial/locales/jar.mn
  # Unofficial branding only exists in en-US
    locale/branding/brand.dtd        (en-US/brand.dtd)
  * locale/branding/brand.properties (en-US/brand.properties)
+ * locale/branding/browserconfig.properties (browserconfig.properties)
 Index: mozilla/browser/installer/package-manifest.in
 ===================================================================
 --- mozilla.orig/browser/installer/package-manifest.in
 +++ mozilla/browser/installer/package-manifest.in
-@@ -358,16 +358,22 @@
+@@ -353,16 +353,22 @@
  @BINPATH@/chrome/browser.manifest
  @BINPATH@/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/install.rdf
  @BINPATH@/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/icon.png
@@ -68,7 +69,7 @@ Index: mozilla/other-licenses/branding/firefox/content/jar.mn
 @@ -1,7 +1,7 @@
 -browser.jar:
 +browser-branding.jar:
- % content branding %content/branding/ xpcnativewrappers=yes
+ % content branding %content/branding/
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
    content/branding/aboutFooter.png               (aboutFooter.png)
@@ -78,7 +79,7 @@ Index: mozilla/other-licenses/branding/firefox/locales/jar.mn
 ===================================================================
 --- mozilla.orig/other-licenses/branding/firefox/locales/jar.mn
 +++ mozilla/other-licenses/branding/firefox/locales/jar.mn
-@@ -1,6 +1,6 @@
+@@ -1,7 +1,7 @@
  #filter substitution
  
 -@AB_CD@.jar:
@@ -86,6 +87,7 @@ Index: mozilla/other-licenses/branding/firefox/locales/jar.mn
  % locale branding @AB_CD@ %locale/branding/
    locale/branding/brand.dtd        (%brand.dtd)
  * locale/branding/brand.properties (%brand.properties)
+ * locale/branding/browserconfig.properties (browserconfig.properties)
 Index: mozilla/browser/branding/nightly/content/jar.mn
 ===================================================================
 --- mozilla.orig/browser/branding/nightly/content/jar.mn
@@ -93,7 +95,7 @@ Index: mozilla/browser/branding/nightly/content/jar.mn
 @@ -1,7 +1,7 @@
 -browser.jar:
 +browser-branding.jar:
- % content branding %content/branding/ xpcnativewrappers=yes
+ % content branding %content/branding/
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
    content/branding/aboutFooter.png               (aboutFooter.png)
@@ -103,7 +105,7 @@ Index: mozilla/browser/branding/nightly/locales/jar.mn
 ===================================================================
 --- mozilla.orig/browser/branding/nightly/locales/jar.mn
 +++ mozilla/browser/branding/nightly/locales/jar.mn
-@@ -1,7 +1,7 @@
+@@ -1,8 +1,8 @@
  #filter substitution
  
 -@AB_CD@.jar:
@@ -112,3 +114,4 @@ Index: mozilla/browser/branding/nightly/locales/jar.mn
  # Nightly branding only exists in en-US
    locale/branding/brand.dtd        (en-US/brand.dtd)
  * locale/branding/brand.properties (en-US/brand.properties)
+ * locale/branding/browserconfig.properties (browserconfig.properties)
