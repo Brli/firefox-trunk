@@ -29,7 +29,7 @@ firefox-3.7 (3.7~a6~hg20100617r43709+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/ubuntu_bookmarks.patch
     - update debian/patches/bzXXX_libxul_sdk_nspr.patch
     - update debian/patches/browser_branding.patch
-    - debian/patches/bz460917_att350845_reload_new_plugins.patch
+    - update debian/patches/bz460917_att350845_reload_new_plugins.patch
   * Bump system sqlite to 3.6.23 after upstream landing of (bmo: 551260)
     - update debian/rules
   * Update patch after landing of (bmo: 554007) aka 
@@ -65,7 +65,7 @@ firefox-3.7 (3.7~a6~hg20100617r43709+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Thu, 17 Jun 2010 21:45:30 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Thu, 17 Jun 2010 21:53:51 -0500
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
