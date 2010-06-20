@@ -1,4 +1,4 @@
-firefox-3.7 (3.7~a6~hg20100617r43709+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a6~hg20100620r43871+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -26,7 +26,6 @@ firefox-3.7 (3.7~a6~hg20100617r43709+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
   * Rebase patch
     - update bzXXX_moz_app_name_inconsistencies.patch
-    - update debian/patches/ubuntu_bookmarks.patch
     - update debian/patches/bzXXX_libxul_sdk_nspr.patch
     - update debian/patches/browser_branding.patch
     - update debian/patches/bz460917_att350845_reload_new_plugins.patch
@@ -65,7 +64,11 @@ firefox-3.7 (3.7~a6~hg20100617r43709+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Thu, 17 Jun 2010 21:53:51 -0500
+  [ Draycen DeCator <ddecator@gmail.com> ]
+  * Refresh diverged patch
+    - update debian/patches/ubuntu_bookmarks.patch
+
+ -- Draycen DeCator <ddecator@gmail.com>  Sun, 20 Jun 2010 01:37:36 -0400
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
