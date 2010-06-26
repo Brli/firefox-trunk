@@ -1,4 +1,4 @@
-firefox-3.7 (3.7~a6~hg20100620r43871+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-3.7 (3.7~a6~hg20100626r46261+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -68,7 +68,7 @@ firefox-3.7 (3.7~a6~hg20100620r43871+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh diverged patch
     - update debian/patches/ubuntu_bookmarks.patch
 
- -- Draycen DeCator <ddecator@gmail.com>  Sun, 20 Jun 2010 01:37:36 -0400
+ -- Draycen DeCator <ddecator@gmail.com>  Fri, 25 Jun 2010 21:43:18 -0400
 
 firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
