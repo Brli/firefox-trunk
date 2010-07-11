@@ -1,17 +1,5 @@
 firefox-4.0 (4.0~b2~hg20100629r46391+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Draycen DeCator <ddecator@gmail.com> ]
-  * Mass update from 3.7 to 4.0
-  * Rebase patches
-    - update debian/patches/awesome_browser_branding_install.patch
-    - update debian/patches/browser_branding.patch
-  * Add installation of .manifest files
-    - update debian/firefox-4.0.install
-
- -- Draycen DeCator <ddecator@gmail.com>  Sun, 04 Jul 2010 03:25:50 -0400
-
-firefox-3.7 (3.7~a6~hg20100626r46261+nobinonly-0ubuntu1) UNRELEASED; urgency=low
-
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
   * Drop libnkgnomevfs.so from firefox-3.7-gnome-support, it's already
@@ -67,60 +55,6 @@ firefox-3.7 (3.7~a6~hg20100626r46261+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/README.Debian.in with note about AppArmor
     - debian/apport/firefox-3.7.py: add AppArmor information if the profile is
       not disabled
-    - debian/rules: install profile and update subst_files
-    - debian/control: have firefox-3.7 Depends on lsb-release (needed in
-      preinst)
-
-  [ Benjamin Drung <bdrung@ubuntu.com> ]
-  * Add metadata for mozilla-devscripts
-    - update debian/control
-
-  [ Draycen DeCator <ddecator@gmail.com> ]
-  * Refresh diverged patches
-    - update debian/patches/ubuntu_bookmarks.patch
-    - update debian/patches/browser_branding.patch
-    - update debian/patches/awesome_browser_branding_install.patch
-
- -- Draycen DeCator <ddecator@gmail.com>  Fri, 25 Jun 2010 21:43:18 -0400
-
-firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
-
-  [ Fabien Tassin ]
-  * Mass update from 3.6 to 3.7
-  * Drop libnkgnomevfs.so from firefox-3.7-gnome-support, it's already
-    shippped in xulrunner-1.9.3-gnome-support (see bmo #512671)
-    - update debian/firefox-3.7-gnome-support.install
-  * Target the 'default' branch instead of tip
-    - add debian/moz-rev.sh
-    - update debian/mozclient/firefox-3.7.conf
-
-  [ Micah Gersten ]
-  * Add mesa-common-dev to build-depends after landing of configure test aka
-    (bmo: 517566) which is for WebGL aka (bmo: 516213)
-    - update debian/control 
-  * Refresh patch/install files after landing of (bmo: 507073) aka
-    Don't build nsBrowserDirectoryProvider as a separate library
-    - update debian/firefox-3.7.install
-    - update debian/patches/bz515232_att399338_distro_locale_searchplugins.patch
-  * Drop unnecessary patch to block updates since we disable updates in
-    debian/rules
-    - drop debian/patches/ubuntu_no_app_updates.patch
-    - update debian/patches/series
-
-  [ Jamie Strandboge ]
-  * add AppArmor profile (disabled by default)
-    - debian/firefox-3.7.dirs: add etc/apparmor.d/disable
-    - add debian/firefox-3.7.preinst.in: disable the profile on new installs,
-      installs on Ubuntu 9.04 and earlier (requires abstractions only found
-      in 9.10 and higher), installs where the last modified profile is
-      disabled and upgrades to this version
-    - debian/firefox-3.7.postinst.in: reload profile
-    - add debian/firefox-3.7.postrm.in: cleanup force-complain and disable
-      directories
-    - add debian/usr.bin.firefox.apparmor.in
-    - add debian/README.Debian.in with note about AppArmor
-    - debian/apport/firefox-3.7.py: add AppArmor information if the profile is
-      not disabled
     - debian/rules:
       + add DISTRIB, DISTRIB_VERSION_MAJOR and DISTRIB_VERSION_MINOR
       + ship 9.10 profile for Karmic and under and 10.04 profile for Lucid
@@ -133,7 +67,16 @@ firefox-3.7 (3.7~a2~hg20100212r38093+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add metadata for mozilla-devscripts
     - update debian/control
 
- -- Micah Gersten <micahg@ubuntu.com>  Fri, 12 Feb 2010 00:08:49 -0600
+  [ Draycen DeCator <ddecator@gmail.com> ]
+  * Mass update from 3.7 to 4.0
+  * Refresh diverged patches
+    - update debian/patches/ubuntu_bookmarks.patch
+    - update debian/patches/browser_branding.patch
+    - update debian/patches/awesome_browser_branding_install.patch
+  * Add installation of .manifest files
+    - update debian/firefox-4.0.install
+
+ -- Draycen DeCator <ddecator@gmail.com>  Sun, 04 Jul 2010 03:25:50 -0400
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
