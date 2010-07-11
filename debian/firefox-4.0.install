@@ -1,5 +1,6 @@
 debian/tmp/usr/lib/firefox-*/components/*.js
 debian/tmp/usr/lib/firefox-*/components/*.xpt
+debian/tmp/usr/lib/firefox-*/components/*.manifest
 debian/tmp/usr/lib/firefox-*/components/libbrowsercomps.so
 
 debian/tmp/usr/lib/firefox-*/modules/
