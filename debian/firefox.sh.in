@@ -71,6 +71,8 @@ done
 PROFILENAME=`echo $APPNAME | sed -e 's/abrowser/firefox/'`
 if [ ! -d $MOZDIR/$PROFILENAME ] ; then
   FOUND=""
+  if [ -d $MOZDIR/firefox-3.7 ] ; then
+    FOUND=firefox-3.7
   if [ -d $MOZDIR/firefox-3.6 ] ; then
     FOUND=firefox-3.6
   elif [ -d $MOZDIR/firefox ] ; then
