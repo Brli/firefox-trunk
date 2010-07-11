@@ -43,6 +43,7 @@ Recommends: ubufox
 Suggests: firefox-4.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser
 Replaces: firefox-3.7, firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0
+Conflicts: firefox-3.7
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -52,7 +53,7 @@ Description: safe and easy web browser from Mozilla
 Package: firefox-4.0-branding
 Architecture: any
 Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
-Conflicts: abrowser-4.0-branding
+Conflicts: abrowser-4.0-branding, firefox-3.7-branding
 Replaces: firefox-3.7-branding, kubuntu-firefox-installer
 Description: Package that ships the firefox branding
  This package ships the Firefox branding bits. If you remove this package your
@@ -64,6 +65,7 @@ Section: gnome
 Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version}), xulrunner-2.0-gnome-support
 Provides: gnome-www-browser
 Replaces: firefox-3.7-gnome-support
+Conflicts: firefox-3.7-gnome-support
 Description: Support for GNOME in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
@@ -75,6 +77,7 @@ Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version})
 Replaces: firefox-3.7-dbg
+Conflicts: firefox-3.7-dbg
 Description: firefox-4.0 debug symbols
  Debug symbols for Firefox 4.0.
 
@@ -84,6 +87,7 @@ Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0-gnome-support (= ${binary:Version}), firefox-4.0-dbg (= ${binary:Version})
 Replaces: firefox-3.7-gnome-support-dbg
+Conflicts: firefox-3.7-gnome-support-dbg
 Description: firefox-4.0 debug symbols
  Debug symbols for the GNOME support files of Firefox 4.0.
 
@@ -92,6 +96,7 @@ Architecture: any
 Section: devel
 Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
 Replaces: firefox-3.7-dev
+Conflicts: firefox-3.7-dev
 Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static
  libraries needed to develop applications using Mozilla Firefox.
@@ -99,7 +104,7 @@ Description: Development files for Mozilla Firefox
 Package: abrowser-4.0-branding
 Architecture: any
 Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
-Conflicts: firefox-4.0-branding
+Conflicts: firefox-4.0-branding, abrowser-3.7-branding
 Replaces: abrowser-3.7-branding
 Description: package that ships the abrowser branding
  The ABrowser refers to the unbranded build of firefox 4.0.
@@ -114,6 +119,7 @@ Architecture: all
 Depends: firefox-4.0, abrowser-4.0-branding, ${misc:Depends}
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Replaces: abrowser-3.7
+Conflicts: abrowser-3.7
 Description: metapackage for the unbranded abrowser
  ABrowser 4.0 is an unbranded version of the popular Firefox webbrowser;
  it is written in the XUL language and designed to be lightweight and
