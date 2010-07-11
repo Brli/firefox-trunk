@@ -1,7 +1,7 @@
 # -*- mode: makefile; coding: utf-8 -*-
 
 # Copyright (c) 2008-2009 Fabien Tassin <fta@sofaraway.org>
-# Description: Project firefox 3.7
+# Description: Project firefox 4.0
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -24,17 +24,17 @@ COMPARE_FILTER_PRE_IN := sed \
 	$(NULL)
 
 COMPARE_FILTER_PRE_OUT := sed \
-	-e 's,^usr/lib/firefox-3.7[^/]*/,,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/,,' \
         $(NULL)
 
 COMPARE_FILTER_IN    := sed \
-	-e 's,^usr/lib/firefox-3.7[^/]*/searchplugins,usr/lib/firefox-addons/searchplugins,' \
-	-e 's,^usr/lib/firefox-3.7[^/]*/extensions/inspector@mozilla.org/.*,,' \
-	-e 's,^usr/lib/firefox-3.7[^/]*/extensions,usr/lib/xulrunner-addons/extensions,' \
-	-e 's,^usr/lib/firefox-3.7[^/]*/defaults/profile,etc/firefox-3.7/profile,' \
-	-e 's,^usr/lib/firefox-3.7[^/]*/\(old-homepage-default.properties\|README.txt\|removed-files\),,' \
-	-e 's,^usr/lib/firefox-3.7[^/]*/.autoreg,,' \
-	-e 's,^etc/firefox-3.7[^/]*/.autoreg,,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/searchplugins,usr/lib/firefox-addons/searchplugins,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/extensions/inspector@mozilla.org/.*,,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/extensions,usr/lib/xulrunner-addons/extensions,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/defaults/profile,etc/firefox-4.0/profile,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/\(old-homepage-default.properties\|README.txt\|removed-files\),,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/.autoreg,,' \
+	-e 's,^etc/firefox-4.0[^/]*/.autoreg,,' \
 	$(NULL)
 
 COMPARE_FILTER_OUT   := sed \
@@ -43,10 +43,10 @@ COMPARE_FILTER_OUT   := sed \
 	-e 's,^usr/share/doc/.*,,' \
 	-e 's,^usr/share/menu/.*,,' \
 	-e 's,^usr/share/applications/.*,,' \
-	-e 's,^usr/share/bug/firefox-3.7/presubj,,' \
-	-e 's,^etc/firefox-3.7/\(firefoxrc\|pref/firefox.js\),,' \
+	-e 's,^usr/share/bug/firefox-4.0/presubj,,' \
+	-e 's,^etc/firefox-4.0/\(firefoxrc\|pref/firefox.js\),,' \
 	-e 's,^usr/lib/firefox-addons/searchplugins/\(debsearch\|wikipedia\).\(gif\|src\),,' \
-	-e 's,^usr/lib/firefox-3.7[^/]*/\(firefox-3.7-restart-required.update-notifier\|firefox.cfg\|firefox.sh\|ffox-4-beta-profile-migration-dialog\),,' \
+	-e 's,^usr/lib/firefox-4.0[^/]*/\(firefox-4.0-restart-required.update-notifier\|firefox.cfg\|firefox.sh\|ffox-4-beta-profile-migration-dialog\),,' \
 	$(NULL)
 
 include /usr/share/mozilla-devscripts/compare.mk

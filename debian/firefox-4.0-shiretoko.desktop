@@ -1,13 +1,13 @@
 [Desktop Entry]
 Version=1.0
-Name=Firefox 3.7 Web Browser (alpha)
-Comment=Browse the World Wide Web
-GenericName=Web Browser
-Exec=firefox-3.7 %u
+Name=Shiretoko Web Browser
+Comment=Firefox 4.0 Beta
+GenericName=Preview Browser
+Exec=firefox-4.0 %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=firefox-3.7
+Icon=firefox-4.0
 Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;
 StartupWMClass=Firefox

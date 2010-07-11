@@ -1,6 +1,6 @@
 '''firefox apport hook draft
 
-/usr/share/apport/package-hooks/firefox-3.7.py
+/usr/share/apport/package-hooks/firefox-4.0.py
 
 Appends to apport's firefox default report: the files pluginreg.dat and
 profiles.ini, and also a summary of all the extensions loaded on each firefox
@@ -116,7 +116,7 @@ def recent_auditlog(pattern):
 
 def add_info(report):
     '''adds hooked info into the apport report.'''
-    config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-3.7')
+    config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-4.0')
     profiles_d = {}
     # append profiles.ini file & parse it:
     profiles_ini = os.path.join(config_dir,'profiles.ini') 

@@ -46,8 +46,8 @@
   /etc/firefox*/ r,
   /etc/firefox*/** r,
   /etc/xul-ext/** r,
-  /etc/xulrunner-1.9*/ r,
-  /etc/xulrunner-1.9*/** r,
+  /etc/xulrunner-2.0*/ r,
+  /etc/xulrunner-2.0*/** r,
   /etc/gre.d/ r,
   /etc/gre.d/* r,
 

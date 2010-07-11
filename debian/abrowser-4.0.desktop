@@ -1,13 +1,13 @@
 [Desktop Entry]
 Version=1.0
-Name=A Web Browser 3.7
+Name=A Web Browser 4.0
 Comment=Browse the World Wide Web
-GenericName=Web Browser 3.7
-Exec=abrowser-3.7 %u
+GenericName=Web Browser 4.0
+Exec=abrowser-4.0 %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=abrowser-3.7
+Icon=abrowser-4.0
 Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;
 StartupWMClass=Firefox
