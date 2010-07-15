@@ -29,11 +29,6 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	libnotify-dev (>= 0.4)
 Standards-Version: 3.8.1
 
-Package: firefox-3.7
-Architecture: any
-Depends: firefox-4.0
-Description: Transitional package from 3.7 to 4.0
-
 Package: firefox-4.0
 Architecture: any
 Depends: fontconfig,
@@ -55,11 +50,6 @@ Description: safe and easy web browser from Mozilla
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
 
-Package: firefox-3.7-branding
-Architecture: any
-Depends: firefox-4.0-branding
-Description: Transitional package from 3.7 to 4.0
-
 Package: firefox-4.0-branding
 Architecture: any
 Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
@@ -68,11 +58,6 @@ Replaces: firefox-3.7-branding, kubuntu-firefox-installer
 Description: Package that ships the firefox branding
  This package ships the Firefox branding bits. If you remove this package your
  user experience will become that of the abrowser.
-
-Package: firefox-3.7-gnome-support
-Architecture: any
-Depends: firefox-4.0-gnome-support
-Description: Transitional package from 3.7 to 4.0
 
 Package: firefox-4.0-gnome-support
 Architecture: any
@@ -86,11 +71,6 @@ Description: Support for GNOME in Mozilla Firefox
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
  integration features.
 
-Package: firefox-3.7-dbg
-Architecture: any
-Depends: firefox-4.0-dbg
-Description: Transitional package from 3.7 to 4.0
-
 Package: firefox-4.0-dbg
 Architecture: any
 Section: debug
@@ -100,11 +80,6 @@ Replaces: firefox-3.7-dbg
 Conflicts: firefox-3.7-dbg (<< 4.0~)
 Description: firefox-4.0 debug symbols
  Debug symbols for Firefox 4.0.
-
-Package: firefox-3.7-gnome-support-dbg
-Architecture: any
-Depends: firefox-4.0-gnome-support-dbg
-Description: Transitional package from 3.7 to 4.0
 
 Package: firefox-4.0-gnome-support-dbg
 Architecture: any
@@ -116,11 +91,6 @@ Conflicts: firefox-3.7-gnome-support-dbg (<< 4.0~)
 Description: firefox-4.0 debug symbols
  Debug symbols for the GNOME support files of Firefox 4.0.
 
-Package: firefox-3.7-dev
-Architecture: any
-Depends: firefox-4.0-dev
-Description: Transitional package from 3.7 to 4.0
-
 Package: firefox-4.0-dev
 Architecture: any
 Section: devel
@@ -130,29 +100,6 @@ Conflicts: firefox-3.7-dev (<< 4.0~)
 Description: Development files for Mozilla Firefox
  This package contains the development headers, idl files and static
  libraries needed to develop applications using Mozilla Firefox.
-
-Package: abrowser-3.7-branding
-Architecture: any
-Depends: abrowser-4.0-branding
-Description: Transitional package from 3.7 to 4.0
-
-Package: abrowser-4.0-branding
-Architecture: any
-Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
-Conflicts: firefox-4.0-branding, abrowser-3.7-branding (<< 4.0~)
-Replaces: abrowser-3.7-branding
-Description: package that ships the abrowser branding
- The ABrowser refers to the unbranded build of firefox 4.0.
- Install the firefox package if you want a branded build.
- .
- This is a metapackage that will point to the latest abrowser package
- in your distribution. Don't remove this if you want to receive automatic
- major version upgrades for this package in future.
-
-Package: abrowser-3.7
-Architecture: all
-Depends: abrowser-4.0
-Description: Transitional package from 3.7 to 4.0
 
 Package: abrowser-4.0
 Architecture: all
@@ -169,3 +116,56 @@ Description: metapackage for the unbranded abrowser
  your distribution.
  Don't remove this if you want to receive automatic major version upgrades
  for this package in future.
+
+Package: abrowser-4.0-branding
+Architecture: any
+Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
+Conflicts: firefox-4.0-branding, abrowser-3.7-branding (<< 4.0~)
+Replaces: abrowser-3.7-branding
+Description: package that ships the abrowser branding
+ The ABrowser refers to the unbranded build of firefox 4.0.
+ Install the firefox package if you want a branded build.
+ .
+ This is a metapackage that will point to the latest abrowser package
+ in your distribution. Don't remove this if you want to receive automatic
+ major version upgrades for this package in future.
+
+Package: firefox-3.7
+Architecture: any
+Depends: firefox-4.0
+Description: Transitional package from 3.7 to 4.0
+
+Package: firefox-3.7-branding
+Architecture: any
+Depends: firefox-4.0-branding
+Description: Transitional package from 3.7 to 4.0
+
+Package: firefox-3.7-gnome-support
+Architecture: any
+Depends: firefox-4.0-gnome-support
+Description: Transitional package from 3.7 to 4.0
+
+Package: firefox-3.7-dbg
+Architecture: any
+Depends: firefox-4.0-dbg
+Description: Transitional package from 3.7 to 4.0
+
+Package: firefox-3.7-gnome-support-dbg
+Architecture: any
+Depends: firefox-4.0-gnome-support-dbg
+Description: Transitional package from 3.7 to 4.0
+
+Package: firefox-3.7-dev
+Architecture: any
+Depends: firefox-4.0-dev
+Description: Transitional package from 3.7 to 4.0
+
+Package: abrowser-3.7
+Architecture: all
+Depends: abrowser-4.0
+Description: Transitional package from 3.7 to 4.0
+
+Package: abrowser-3.7-branding
+Architecture: any
+Depends: abrowser-4.0-branding
+Description: Transitional package from 3.7 to 4.0
