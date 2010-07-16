@@ -71,6 +71,16 @@ Description: Support for GNOME in Mozilla Firefox
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
  integration features.
 
+Package: firefox-4.0-mozsymbols
+Architecture: any
+Section: debug
+Priority: extra
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: firefox debug symbols for mozilla
+ package containing the firefox symbols in a format expected by mozilla's
+ breakpad. eventually this package should go away and the symbol upload be
+ implemented in soyuz (or other builders that build this package)
+
 Package: firefox-4.0-dbg
 Architecture: any
 Section: debug

@@ -11,3 +11,4 @@ ubuntu_bookmarks.patch
 bzXXX_moz_app_name_inconsistencies.patch
 bz515232_att399338_distro_locale_searchplugins.patch
 bzXXX_libxul_sdk_nspr.patch
+ftbfs_crashreporter.patch

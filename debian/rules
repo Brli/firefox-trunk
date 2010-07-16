@@ -128,7 +128,7 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--with-libxul-sdk=$(DEBIAN_XUL_DEV) \
 	--with-system-libxul \
 	--with-system-nss \
-	--disable-crashreporter \
+	--enable-crashreporter \
 	--disable-composer \
 	--disable-elf-dynstr-gc \
 	--disable-gtktest \
@@ -259,6 +259,10 @@ endif
 	dh_install debian/distribution.ini $(DEBIAN_FF3_DIR)/distribution/
 	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/distribution/searchplugins
 	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
+	# create build symbols
+	cd build-tree/mozilla/; \
+		$(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)
+	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols.zip $(DEBIAN_FF3_DIR)/
 
 binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
