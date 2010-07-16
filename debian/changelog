@@ -40,6 +40,8 @@ firefox-4.0 (4.0~b2~hg20100629r46391+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Don't install browserconfig.properties since it was moved to a jar
     (bmo: 524201) aka Move browserconfig.properties to a jar
     - update debian/firefox-3.7.install
+  * Add build depends on libcurl4-openssl-dev for building the crash reporter
+    - update debian/control
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -91,7 +93,7 @@ firefox-4.0 (4.0~b2~hg20100629r46391+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 15 Jul 2010 11:39:43 +0100
+ -- Micah Gersten <micahg@ubuntu.com>  Fri, 16 Jul 2010 11:13:42 -0500
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
