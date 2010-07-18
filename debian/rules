@@ -52,7 +52,7 @@ else
 ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
 	# codename branding for beta
 	BRANDING = --with-branding=browser/branding/unofficial
-	DESKTOP_BRANDED  = $(DEBIAN_NAME)-minefield.desktop
+	DESKTOP_BRANDED  = $(DEBIAN_NAME)-mozilla-developer-preview.desktop
 else
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for snapshots

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=Shiretoko Web Browser
+Name=Mozilla Developer Preview Web Browser
 Comment=Firefox 4.0 Beta
 GenericName=Preview Browser
 Exec=firefox-4.0 %u
