@@ -1,11 +1,11 @@
 ---
- browser/app/application.ini                               |    2 +-
- browser/app/profile/firefox.js                            |   14 +++++++-------
- browser/branding/awesome-browser/pref/firefox-branding.js |   10 +++++-----
- browser/branding/nightly/pref/firefox-branding.js         |   10 +++++-----
- browser/branding/unofficial/pref/firefox-branding.js      |   10 +++++-----
- other-licenses/branding/firefox/pref/firefox-branding.js  |    8 ++++----
- 6 files changed, 27 insertions(+), 27 deletions(-)
+ browser/app/application.ini                               |    2 -
+ browser/app/profile/firefox.js                            |   16 +++++++-------
+ browser/branding/awesome-browser/pref/firefox-branding.js |   10 ++++----
+ browser/branding/nightly/pref/firefox-branding.js         |   10 ++++----
+ browser/branding/unofficial/pref/firefox-branding.js      |   10 ++++----
+ other-licenses/branding/firefox/pref/firefox-branding.js  |    8 +++----
+ 6 files changed, 28 insertions(+), 28 deletions(-)
 
 Index: mozilla/browser/app/application.ini
 ===================================================================
@@ -123,13 +123,17 @@ Index: mozilla/browser/app/profile/firefox.js
 ===================================================================
 --- mozilla.orig/browser/app/profile/firefox.js
 +++ mozilla/browser/app/profile/firefox.js
-@@ -52,29 +52,29 @@
- 
+@@ -53,32 +53,32 @@
  pref("browser.chromeURL","chrome://browser/content/");
  pref("browser.hiddenWindowChromeURL", "chrome://browser/content/hiddenWindow.xul");
  
  // Enables some extra Extension System Logging (can reduce performance)
  pref("extensions.logging.enabled", false);
+ 
+ // Preferences for the Get Add-ons pane
+ pref("extensions.getAddons.maxResults", 15);
+-pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/search/%TERMS%/all/%MAX_RESULTS%/%OS%/%VERSION%");
++pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/firefox/api/%API_VERSION%/search/%TERMS%/all/%MAX_RESULTS%/%OS%/%VERSION%");
  
  // Preferences for AMO integration
 -pref("extensions.webservice.discoverURL", "https://services.addons.mozilla.org/%LOCALE%/%APP%/discovery/%VERSION%/%OS%");
@@ -155,7 +159,7 @@ Index: mozilla/browser/app/profile/firefox.js
  
  // App-specific update preferences
  
-@@ -142,17 +142,17 @@
+@@ -146,17 +146,17 @@
  //  extensions.{GUID}.update.url
  //  .. etc ..
  //
@@ -174,7 +178,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.description", "chrome://browser/locale/browser.properties");
  
  pref("xpinstall.whitelist.add", "addons.mozilla.org");
-@@ -258,17 +258,17 @@
+@@ -262,17 +262,17 @@
  pref("browser.download.manager.focusWhenStarting", false);
  pref("browser.download.manager.flashCount", 2);
  pref("browser.download.manager.addToRecentDocs", true);
