@@ -6,7 +6,7 @@ Index: mozilla/configure.in
 ===================================================================
 --- mozilla.orig/configure.in
 +++ mozilla/configure.in
-@@ -9106,17 +9106,17 @@
+@@ -9151,17 +9151,17 @@
      fi
      if test -n "$USE_ARM_KUSER"; then
          ac_configure_args="$ac_configure_args --with-arm-kuser"
@@ -19,7 +19,7 @@ Index: mozilla/configure.in
 +if test -z "$MOZ_NATIVE_NSPR" -a -z "$LIBXUL_SDK"; then
      # Hack to deal with the fact that we use NSPR_CFLAGS everywhere
      AC_MSG_WARN([Recreating autoconf.mk with updated nspr-config output])
-     if test "$OS_ARCH" != "WINNT" && test "$OS_ARCH" != "WINCE"; then
+     if test "$OS_ARCH" != "WINNT" -a "$OS_ARCH" != "WINCE"; then
         NSPR_LIBS=`./nsprpub/config/nspr-config --prefix=$LIBXUL_DIST --exec-prefix=$MOZ_BUILD_ROOT/dist --libdir=$LIBXUL_DIST/lib --libs`
         $PERL -pi.bak -e "s '^NSPR_LIBS\\s*=.*'NSPR_LIBS = $NSPR_LIBS'" config/autoconf.mk
         NSPR_CFLAGS=`./nsprpub/config/nspr-config --prefix=$LIBXUL_DIST --exec-prefix=$MOZ_BUILD_ROOT/dist --includedir=$LIBXUL_DIST/include/nspr --cflags`
