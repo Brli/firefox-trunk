@@ -1,4 +1,4 @@
-firefox-4.0 (4.0~b2~hg20100717r47845+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b2~hg20100720r47965+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -96,7 +96,7 @@ firefox-4.0 (4.0~b2~hg20100717r47845+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 19 Jul 2010 16:26:48 +0200
+ -- Micah Gersten <micahg@ubuntu.com>  Tue, 20 Jul 2010 21:39:57 -0500
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
