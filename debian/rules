@@ -108,7 +108,7 @@ else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-cairo
 endif
 
-USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.6.23'; a=$$?; if test $$a != 1; then echo 1; fi)
+USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.0'; a=$$?; if test $$a != 1; then echo 1; fi)
 ifeq (1,$(USE_SYSTEM_SQLITE))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-sqlite
 else
