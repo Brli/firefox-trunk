@@ -115,6 +115,10 @@ def recent_auditlog(pattern):
     return lines
 
 def add_info(report):
+    if not apport.packaging.is_distro_package(report['Package'].split()[0]):
+        report['ThirdParty'] = 'True'
+        report['CrashDB'] = 'ubuntu-mozilla-ppa-bugs'
+
     '''adds hooked info into the apport report.'''
     config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-4.0')
     profiles_d = {}
