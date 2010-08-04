@@ -109,6 +109,8 @@ firefox-4.0 (4.0~b3~hg20100801r48660+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Drop the mips specific binutils build-depend - we don't even build on
     this arch
     - update debian/control
+  * Build-depend on hardening-wrapper
+    - update debian/control
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -118,7 +120,7 @@ firefox-4.0 (4.0~b3~hg20100801r48660+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Aug 2010 16:58:22 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Aug 2010 17:13:51 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
