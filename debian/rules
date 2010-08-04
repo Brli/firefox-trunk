@@ -93,6 +93,16 @@ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
 endif
 
+# enable crash reporter only on i386, amd64 and armel
+ENABLE_BREAKPAD ?= 1
+ifeq (,$(findstring i386,$(DEB_BUILD_ARCH)))
+ifeq (,$(findstring amd64,$(DEB_BUILD_ARCH)))
+ifeq (,$(findstring armel,$(DEB_BUILD_ARCH)))
+  ENABLE_BREAKPAD=0
+endif
+endif
+endif
+
 USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
 ifeq (1,$(USE_SYSTEM_NSPR))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --with-system-nspr
@@ -115,6 +125,13 @@ else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-sqlite
 endif
 
+ifeq (1, $(ENABLE_BREAKPAD))
+  export MOZILLA_OFFICIAL = 1
+  EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-crashreporter
+else
+  EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-crashreporter
+endif
+
 # required for various features
 BUILD_OFFICIAL = 1
 export BUILD_OFFICIAL
@@ -128,7 +145,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--with-libxul-sdk=$(DEBIAN_XUL_DEV) \
 	--with-system-libxul \
 	--with-system-nss \
-	--enable-crashreporter \
 	--disable-composer \
 	--disable-elf-dynstr-gc \
 	--disable-gtktest \
@@ -178,11 +194,15 @@ subst_files = \
 	debian/usr.bin.firefox.apparmor \
 	debian/README.Debian \
 	debian/firefox.sh \
+	debian/apport/$(DEBIAN_NAME) \
 	$(NULL)
 
 %: %.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' < $< > $@
+
+debian/apport/$(DEBIAN_NAME).in:
+	cp $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/apport/$(DEBIAN_NAME).in
 
 makebuilddir:: debian/usr.bin.firefox.apparmor.in
 debian/usr.bin.firefox.apparmor.in:
@@ -259,10 +279,13 @@ endif
 	dh_install debian/distribution.ini $(DEBIAN_FF3_DIR)/distribution/
 	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/distribution/searchplugins
 	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
+ifeq (1, $(ENABLE_BREAKPAD))
 	# create build symbols
 	cd build-tree/mozilla/; \
 		$(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)
+	dh_install -p$(DEBIAN_NAME) debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
 	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols.zip $(DEBIAN_FF3_DIR)/
+endif
 
 binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
