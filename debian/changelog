@@ -103,7 +103,9 @@ firefox-4.0 (4.0~b3~hg20100801r48660+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Blacklist Firefox in Apport on architectures where we use the Mozilla
     crash reporter
     - add debian/apport/blacklist
-    - update debian/rules 
+    - update debian/rules
+  * Fix the StartupWMClass for abrowser
+    - update debian/abrowser-4.0.desktop 
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -111,9 +113,9 @@ firefox-4.0 (4.0~b3~hg20100801r48660+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/ftbfs_crashreporter.patch   
     - update debian/patches/series
     - update debian/control
-    - update debian/rules
+    - update debian/rules 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Aug 2010 15:11:33 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Aug 2010 15:16:02 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
