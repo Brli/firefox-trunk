@@ -134,6 +134,9 @@ firefox-4.0 (4.0~b3~hg20100801r48660+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     post-patches rather than pre-build. This avoids the need for having to 
     build the profile migrator when unpacking the source tarball
     - update debian/rules
+  * Fix some Lintian warnings
+    - add debian/README.source
+    - update debian/control
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -143,7 +146,7 @@ firefox-4.0 (4.0~b3~hg20100801r48660+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Aug 2010 17:29:34 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Aug 2010 17:43:39 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
