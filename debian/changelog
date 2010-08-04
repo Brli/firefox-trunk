@@ -137,6 +137,14 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix some Lintian warnings
     - add debian/README.source
     - update debian/control
+  * Drop the DEBIAN_META_NAME stuff - we don't need this now we are always
+    using unversioned sources for the official in-archive version. This
+    simplifies the wrapper script a little
+    - update debian/rules
+    - update debian/firefox.sh.in
+  * Don't handle launching in GDB in our wrapper script, run-mozilla.sh
+    already does all this. Just make sure that we pass the right arguments
+    - update debian/firefox.sh.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
