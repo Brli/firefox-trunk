@@ -42,7 +42,7 @@ Depends: fontconfig,
 	firefox-4.0-branding | abrowser-4.0-branding
 Recommends: ubufox
 Suggests: firefox-4.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
-Provides: www-browser
+Provides: www-browser, iceweasel
 Replaces: firefox-3.7, firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0
 Conflicts: firefox-3.7 (<< 4.0~)
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
