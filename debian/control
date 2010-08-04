@@ -73,7 +73,7 @@ Description: Support for GNOME in Mozilla Firefox
  integration features.
 
 Package: firefox-4.0-mozsymbols
-Architecture: any
+Architecture: amd64 i386 armel
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}
