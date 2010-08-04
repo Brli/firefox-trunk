@@ -73,6 +73,12 @@ MOZ_TRANSLATION_AUTO_XPI_LOCALE := en-US
 
 DEB_AUTO_UPDATE_AUTOCONF=2.13
 
+# We need to do this before including patchsys-quilt.mk
+# because we don't want the pre-build target to depend on this, but
+# we want to ensure that appropriate patches are disabled before the
+# apply-patches target is called
+post-patches:: debian/disable-patches-for-release
+
 include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
@@ -88,6 +94,8 @@ CXXFLAGS = -g
 
 LDFLAGS=$(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 export LDFLAGS
+
+export DEB_BUILD_HARDENING=1
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
@@ -197,25 +205,26 @@ subst_files = \
 	debian/apport/$(DEBIAN_NAME) \
 	$(NULL)
 
-%: %.in
+%:: %.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
-	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' < $< > $@
+	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
+	    -e 's,@APPVER@,$(DEBIAN_APP_NAME_VER),g' < $< > $@
 
 debian/apport/$(DEBIAN_NAME).in:
 	cp $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/apport/$(DEBIAN_NAME).in
 
-makebuilddir:: debian/usr.bin.firefox.apparmor.in
+debian/disable-patches-for-release:
+	if [ -f "$(CURDIR)/debian/patches/series-disable-patches.$(DISTRIB_VERSION_MAJOR).$(DISTRIB_VERSION_MINOR)" ] ; then \
+		/bin/sh $(CURDIR)/debian/disable-patches.sh $(CURDIR)/debian/patches/series-disable-patches.$(DISTRIB_VERSION_MAJOR).$(DISTRIB_VERSION_MINOR) $(CURDIR) ; \
+	fi
+	touch $@
+
 debian/usr.bin.firefox.apparmor.in:
 	if [ "$(DISTRIB_VERSION_MAJOR)" -ge "10" ]; then \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.10.04 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
 	else \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.9.10 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
 	fi
-
-debian/firefox.sh: debian/firefox.sh.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
-	    -e 's,@META_NAME@,$(DEBIAN_META_NAME),g' \
-	    -e 's,@APPVER@,$(DEBIAN_APP_NAME_VER),g' < $< > $@
 
 debian/migrator/ffox-32-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
@@ -224,6 +233,8 @@ BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
 	../../browser/branding/$(BRANDING_NAME_OTHER)/locales/Makefile \
 	../../browser/branding/$(BRANDING_NAME_OTHER)/content/Makefile \
 	$(NULL)
+
+post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 
 common-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
@@ -353,7 +364,7 @@ ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
 	$(warning EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
 endif
 
-pre-build:: $(subst_files) debian/migrator/ffox-32-beta-profile-migration-dialog
+pre-build:: debian/usr.bin.firefox.apparmor.in $(subst_files)
 	set -e; for i in $(UUDECODE); do \
 		uudecode -o debian/$$i debian/$$i.uu; \
 		done ; \
@@ -366,8 +377,13 @@ clean::
 		rm -f debian/$$i; \
 		done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
-	rm -f $(subst_files) debian/install.rdf
+	rm -f $(subst_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
 	rm -f debian/migrator/ffox-32-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 	rm -rf debian/tmp-*
+	rm -f debian/stamp-autotools-files-moz
 	rm -f debian/usr.bin.firefox.apparmor.in
+	if [ -f "$(CURDIR)/debian/patches/series.orig" ] ; then \
+		mv -f $(CURDIR)/debian/patches/series.orig $(CURDIR)/debian/patches/series ; \
+	fi
+	rm -f debian/disable-patches-for-release
