@@ -152,6 +152,8 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - remove debian/firefox-4.0-dev.install
     - remove debian/firefox-4.0-dev.links
+  * Enable the Network Manager integration
+    - update debian/firefox.js
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -161,7 +163,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Aug 2010 12:11:10 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Aug 2010 12:43:24 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

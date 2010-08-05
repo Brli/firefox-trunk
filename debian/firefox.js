@@ -18,6 +18,9 @@ pref("browser.shell.checkDefaultBrowser", false);
 // Prevent EULA dialog to popup on first run
 pref("browser.EULA.override", true);
 
-// identify ubuntu @ yahoo searchplugin
-pref("browser.search.param.yahoo-fr", "ubuntu");
+// identify default locale to use if no /usr/lib/firefox-addons/searchplugins/LOCALE
+// exists for the current used LOCALE
+pref("distribution.searchplugins.defaultLocale", "en-US");
 
+// Enable the NetworkManager integration
+pref("toolkit.networkmanager.disable", false);
