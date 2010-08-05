@@ -15,7 +15,7 @@ debian/tmp/usr/lib/firefox-*/blocklist.xml
 
 debian/presubj usr/share/bug/firefox-4.0
 
-debian/tmp/usr/lib/firefox-*/crashreporter
+#debian/tmp/usr/lib/firefox-*/crashreporter
 
 debian/firefox.js etc/firefox-4.0/pref
 
