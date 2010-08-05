@@ -102,16 +102,6 @@ Conflicts: firefox-3.7-gnome-support-dbg (<< 4.0~)
 Description: firefox-4.0 debug symbols
  Debug symbols for the GNOME support files of Firefox 4.0.
 
-Package: firefox-4.0-dev
-Architecture: any
-Section: devel
-Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
-Replaces: firefox-3.7-dev
-Conflicts: firefox-3.7-dev (<< 4.0~)
-Description: Development files for Mozilla Firefox
- This package contains the development headers, idl files and static
- libraries needed to develop applications using Mozilla Firefox.
-
 Package: abrowser-4.0
 Architecture: all
 Depends: firefox-4.0, abrowser-4.0-branding, ${misc:Depends}
@@ -164,11 +154,6 @@ Description: Transitional package from 3.7 to 4.0
 Package: firefox-3.7-gnome-support-dbg
 Architecture: any
 Depends: firefox-4.0-gnome-support-dbg, ${misc:Depends}
-Description: Transitional package from 3.7 to 4.0
-
-Package: firefox-3.7-dev
-Architecture: any
-Depends: firefox-4.0-dev, ${misc:Depends}
 Description: Transitional package from 3.7 to 4.0
 
 Package: abrowser-3.7

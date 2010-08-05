@@ -145,6 +145,13 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Don't handle launching in GDB in our wrapper script, run-mozilla.sh
     already does all this. Just make sure that we pass the right arguments
     - update debian/firefox.sh.in
+  * Drop the empty firefox-4.0-dev and firefox-*-dev transitional packages. We
+    didn't install anything in to firefox-4.0-dev, and we can reintroduce it in
+    the future if anything in the archive depends on the browser specific
+    interfaces
+    - update debian/control
+    - remove debian/firefox-4.0-dev.install
+    - remove debian/firefox-4.0-dev.links
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -152,9 +159,9 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/ftbfs_crashreporter.patch   
     - update debian/patches/series
     - update debian/control
-    - update debian/rules 
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Aug 2010 17:49:27 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Aug 2010 12:11:10 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
