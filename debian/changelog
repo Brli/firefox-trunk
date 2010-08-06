@@ -197,6 +197,10 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     of the setting of DEB_MIN_SYSDEPS
     - update debian/rules
     - update debian/apport/blacklist
+  * Build-depend on yasm
+    - update debian/control
+  * Bump minimum NSS version to 3.12.7
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -206,7 +210,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 18:06:56 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 18:16:21 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

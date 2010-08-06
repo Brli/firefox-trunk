@@ -171,7 +171,7 @@ else
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
-	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.6'; a=$$?; if test $$a != 1; then echo 1; fi)
+	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.7'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
 ifeq (1,$(USE_SYSTEM_NSS))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --with-system-nss

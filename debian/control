@@ -26,7 +26,8 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	lsb-release,
 	libiw-dev,
 	mesa-common-dev,
-	libnotify-dev (>= 0.4)
+	libnotify-dev (>= 0.4),
+        yasm
 Standards-Version: 3.8.1
 
 Package: firefox-4.0
