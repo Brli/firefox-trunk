@@ -177,7 +177,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     + copy some patches from xulrunner
       - add debian/patches/add_syspref_dir.patch
       - add debian/patches/bz467738_att351145_lockPref_everywhere.patch
-      - add debian/patches/bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
+      - add debian/patches/lp548866_bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
       - add debian/patches/bzXXX_plugin_for_mimetype_pref.patch
       - update debian/patches/series
   * Add WANT_UNIT_TESTS flag to toggle the unit tests on/off
@@ -202,7 +202,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 17:41:35 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 17:56:18 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
