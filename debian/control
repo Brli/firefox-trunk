@@ -36,7 +36,6 @@ Depends: fontconfig,
 	lsb-release,
 	debianutils (>= 1.16),
 	${misc:Depends},
-	xulrunner-2.0,
 	${shlibs:Depends},
 	firefox-4.0-branding | abrowser-4.0-branding
 Recommends: ubufox
