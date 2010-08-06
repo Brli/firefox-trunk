@@ -189,6 +189,10 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     will be especially true when we move away from versioned branches and
     start distributing -trunk and -next branches instead
     - update debian/rules
+  * Drop bzXXX_moz_app_name_inconsistencies.patch, as it breaks all
+    DEB_MIN_SYSDEPS builds where MOZ_APP_NAME != firefox
+    - remove debian/patches/bzXXX_moz_app_name_inconsistencies.patch
+    - update debian/patches/series
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -198,7 +202,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 16:00:28 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 17:41:35 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
