@@ -70,6 +70,12 @@ endif
 endif
 endif
 
+ifneq (1, $(DEB_MIN_SYSDEPS))
+	BINREAL := $(DEBIAN_NAME)
+else
+	BINREAL := $(DEBIAN_NAME)-bin
+endif
+
 # translation flags
 MOZ_TRANSLATION_AUTO_XPI_OUTDIR := debian/lp-export-xpis/
 MOZ_TRANSLATION_AUTO_XPI_SEARCHDIRS := debian/$(DEBIAN_NAME)
@@ -255,7 +261,8 @@ subst_files = \
 %:: %.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
-	    -e 's,@APPVER@,$(DEBIAN_APP_NAME_VER),g' < $< > $@
+	    -e 's,@APPVER@,$(DEBIAN_APP_NAME_VER),g' \
+	    -e 's,@BINREAL@,$(BINREAL),g' < $< > $@
 
 debian/apport/$(DEBIAN_NAME).in:
 	cp $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/apport/$(DEBIAN_NAME).in
