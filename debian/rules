@@ -23,8 +23,6 @@ DEBIAN_FF3_VER		 = $(shell cat build-tree/mozilla/browser/config/version.txt)
 DEBIAN_FF3_DIR		 = usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
 DEB_TAR_SRCDIR		:= mozilla
 
-MOZ_APP_NAME		:= $(shell cat build-tree/mozilla/browser/confvars.sh | grep MOZ_APP_NAME | sed -e 's/MOZ_APP_NAME=//')
-
 WANT_UNIT_TESTS		?= 1
 DEB_MIN_SYSDEPS		?= 1
 
@@ -337,11 +335,11 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 	$(foreach i,$(wildcard debian/tmp/usr/lib/firefox-*/components/*.so), \
 		dh_install -p$(DEBIAN_NAME) $(i);) true
 	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/usr/lib/firefox-*/$(MOZ_APP_NAME)-bin $(DEBIAN_FF3_DIR)
+		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)
 ifneq (, $(DEBIAN_APP_NAME_VER))
-	dh_link $(DEBIAN_FF3_DIR)/$(MOZ_APP_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
 else
-	dh_link $(DEBIAN_FF3_DIR)/$(MOZ_APP_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)-bin
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)-bin
 endif
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/defaults/autoconfig
@@ -367,15 +365,11 @@ endif
 	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
 	dh_install debian/migrator/ffox-32-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
-	dh_install debian/tmp/$(DEBIAN_FF3_DIR)/$(MOZ_APP_NAME) $(DEBIAN_FF3_DIR)
+	dh_install debian/tmp/$(DEBIAN_FF3_DIR)/$(DEBIAN_NAME) $(DEBIAN_FF3_DIR)
 ifneq (, $(DEBIAN_APP_NAME_VER))
-	dh_link $(DEBIAN_FF3_DIR)/$(MOZ_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
 else
-	dh_link $(DEBIAN_FF3_DIR)/$(MOZ_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)
-endif
-ifneq ($(DEBIAN_NAME),$(MOZ_APP_NAME))
-	dh_link $(DEBIAN_FF3_DIR)/$(MOZ_APP_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)
-	dh_link $(DEBIAN_FF3_DIR)/$(MOZ_APP_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin
+	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)
 endif
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
 	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
