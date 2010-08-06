@@ -20,7 +20,6 @@ Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
 	libcurl4-openssl-dev,
 	libhunspell-dev,
 	libdbus-glib-1-dev (>= 0.60),
-	xulrunner-2.0-dev,
 	libnspr4-dev, libnss3-dev,
 	mozilla-devscripts (>= 0.10~),
 	hardening-wrapper,
@@ -43,8 +42,8 @@ Depends: fontconfig,
 Recommends: ubufox
 Suggests: firefox-4.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
 Provides: www-browser, iceweasel
-Replaces: firefox-3.7, firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0
-Conflicts: firefox-3.7 (<< 4.0~)
+Replaces: firefox-3.7, firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0, firefox-4.0-gnome-support
+Conflicts: firefox-3.7 (<< 4.0~), firefox-4.0-gnome-support (<= 4.0~b3~hg20100804r48791+nobinonly-0ubuntu1)
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -63,7 +62,7 @@ Description: Package that ships the firefox branding
 Package: firefox-4.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version}), xulrunner-2.0-gnome-support
+Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version})
 Provides: gnome-www-browser
 Replaces: firefox-3.7-gnome-support
 Conflicts: firefox-3.7-gnome-support (<< 4.0~)

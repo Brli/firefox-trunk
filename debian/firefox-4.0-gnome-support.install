@@ -1,1 +1,3 @@
+debian/tmp/usr/lib/firefox-*/components/libnkgnomevfs.so
+debian/tmp/usr/lib/firefox-*/components/libmozgnome.so
 debian/firefox*.xml usr/share/gnome-control-center/default-apps

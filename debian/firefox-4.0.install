@@ -1,21 +1,16 @@
 debian/tmp/usr/lib/firefox-*/components/*.js
 debian/tmp/usr/lib/firefox-*/components/*.xpt
 debian/tmp/usr/lib/firefox-*/components/*.manifest
-debian/tmp/usr/lib/firefox-*/components/libbrowsercomps.so
 
 debian/tmp/usr/lib/firefox-*/modules/
 
 debian/tmp/usr/lib/firefox-*/run-mozilla.sh
 
-#debian/tmp/usr/lib/firefox-*/defaults/autoconfig
-debian/tmp/usr/lib/firefox-*/defaults/preferences
 debian/tmp/usr/lib/firefox-*/defaults/profile etc/firefox-4.0/
 #debian/tmp/usr/lib/firefox-*/searchplugins usr/lib/firefox-addons
 debian/tmp/usr/lib/firefox-*/blocklist.xml
 
 debian/presubj usr/share/bug/firefox-4.0
-
-#debian/tmp/usr/lib/firefox-*/crashreporter
 
 debian/firefox.js etc/firefox-4.0/pref
 

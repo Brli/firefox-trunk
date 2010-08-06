@@ -23,6 +23,9 @@ DEBIAN_FF3_VER		 = $(shell cat build-tree/mozilla/browser/config/version.txt)
 DEBIAN_FF3_DIR		 = usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
 DEB_TAR_SRCDIR		:= mozilla
 
+WANT_UNIT_TESTS		?= 1
+DEB_MIN_SYSDEPS		?= 1
+
 MOZCLIENT_PROJECTNAME	:= $(DEBIAN_NAME)
 MOZCLIENT_PROJECTDIR	:= $(CURDIR)/debian/mozclient
 
@@ -100,24 +103,49 @@ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
 endif
 
-# enable crash reporter only on i386, amd64 and armel
+# enable IPC and the crash reporter only on i386, amd64 and armel
+ENABLE_IPC ?= 1
 ENABLE_BREAKPAD ?= 1
 ifeq (,$(findstring i386,$(DEB_BUILD_ARCH)))
 ifeq (,$(findstring amd64,$(DEB_BUILD_ARCH)))
 ifeq (,$(findstring armel,$(DEB_BUILD_ARCH)))
+  ENABLE_IPC=0
   ENABLE_BREAKPAD=0
 endif
 endif
 endif
 
-USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
+ifeq (1,$(ENABLE_IPC))
+  EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-ipc
+else
+  EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-ipc
+endif
+
+$(info WANT_UNIT_TESTS=$(WANT_UNIT_TESTS))
+ifeq (1,$(WANT_UNIT_TESTS))
+  EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-tests --enable-mochitest
+# Uncomment when the IPC test-suite works
+#ifeq (1,$(ENABLE_IPC))
+#  EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-ipdl-tests
+#else
+#  EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-ipdl-tests
+#endif
+else
+  EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-tests --disable-mochitest --disable-ipdl-tests
+endif
+
+ifneq (1, $(DEB_MIN_SYSDEPS))
+	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
+endif
 ifeq (1,$(USE_SYSTEM_NSPR))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --with-system-nspr
 else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --without-system-nspr
 endif
 
-USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
+ifneq (1, $(DEB_MIN_SYSDEPS))
+	USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
+endif
 # for old cairo versions we cannot use system cairo
 ifeq (1,$(USE_SYSTEM_CAIRO))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-cairo
@@ -125,11 +153,33 @@ else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-cairo
 endif
 
-USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.0'; a=$$?; if test $$a != 1; then echo 1; fi)
+ifneq (1, $(DEB_MIN_SYSDEPS))
+	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.0'; a=$$?; if test $$a != 1; then echo 1; fi)
+endif
 ifeq (1,$(USE_SYSTEM_SQLITE))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-sqlite
 else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-sqlite
+endif
+
+ifneq (1, $(DEB_MIN_SYSDEPS))
+	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.6'; a=$$?; if test $$a != 1; then echo 1; fi)
+endif
+ifeq (1,$(USE_SYSTEM_NSS))
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --with-system-nss
+else
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --without-system-nss
+endif
+
+ifneq (1, $(DEB_MIN_SYSDEPS))
+	system_jpeg_configure_flags    := --with-system-jpeg=/usr
+	system_zlib_configure_flags    := --with-system-zlib=/usr
+	system_myspell_configure_flags := --disable-system-myspell
+	system_xul_configure_flags     := --with-libxul-sdk=$(DEBIAN_XUL_DEV) --with-system-libxul
+else
+	system_jpeg_configure_flags    := --without-system-jpeg
+	system_zlib_configure_flags    := --without-system-zlib
+	system_myspell_configure_flags := --enable-system-myspell
 endif
 
 ifeq (1, $(ENABLE_BREAKPAD))
@@ -147,11 +197,10 @@ DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
 	--disable-debug \
 	--with-user-appdir=.mozilla \
-	--with-system-jpeg=/usr \
-	--with-system-zlib=/usr \
-	--with-libxul-sdk=$(DEBIAN_XUL_DEV) \
-	--with-system-libxul \
-	--with-system-nss \
+	$(system_jpeg_configure_flags) \
+	$(system_zlib_configure_flags) \
+	$(system_xul_configure_flags) \
+	$(system_myspell_configure_flags) \
 	--disable-composer \
 	--disable-elf-dynstr-gc \
 	--disable-gtktest \
@@ -162,8 +211,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--disable-profilesharing \
 	--disable-strip \
 	--disable-strip-libs \
-	--disable-tests \
-	--disable-mochitest \
 	--disable-updater \
 	--disable-xprint \
 	--enable-application=browser \
@@ -180,7 +227,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--enable-extensions=default,-reporter \
 	--enable-safe-browsing \
 	--enable-single-profile \
-	--enable-system-myspell \
 	--with-distribution-id=com.ubuntu \
 	$(BRANDING)
 
@@ -233,6 +279,15 @@ BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
 	../../browser/branding/$(BRANDING_NAME_OTHER)/content/Makefile \
 	$(NULL)
 
+ifeq (1, $(DEB_MIN_SYSDEPS))
+post-patches:: debian/stamp-autotools-files-moz
+debian/stamp-autotools-files-moz:
+	# Number of processors: $(PROCESSORS) [$(shell grep 'model name' /proc/cpuinfo | head -1)]
+	if [ "Z$(DEB_AUTO_UPDATE_AUTOCONF)" != Z ] || [ ! -e $(DEB_SRCDIR)/js/src/configure ]; \
+	then cd $(DEB_SRCDIR)/js/src && `which autoconf$(DEB_AUTO_UPDATE_AUTOCONF) || which autoconf`; fi
+	touch $@
+endif
+
 post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 
 common-build-arch::
@@ -261,6 +316,37 @@ binary-install/$(DEBIAN_NAME)::
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/en-US.* \
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/browser.* \
 			$(DEBIAN_FF3_DIR)/chrome
+ifeq (1, $(DEB_MIN_SYSDEPS))
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/pippki.* \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/toolkit.* \
+			$(DEBIAN_FF3_DIR)/chrome
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/*.so \
+			$(DEBIAN_FF3_DIR)
+
+	$(foreach i,$(wildcard debian/tmp/usr/lib/firefox-*/components/*.so), \
+		dh_install -p$(DEBIAN_NAME) $(i);) true
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/firefox-bin $(DEBIAN_FF3_DIR)
+	dh_link $(DEBIAN_FF3_DIR)/firefox-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)-bin
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/defaults/autoconfig
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/defaults/pref
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/greprefs
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/greprefs.js
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/res
+
+else
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/components/libbrowsercomps.so
+	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/defaults/preferences
+endif
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
 	  touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
@@ -275,6 +361,8 @@ binary-install/$(DEBIAN_NAME)::
 ifneq ($(DEBIAN_NAME),$(DEBIAN_APP_NAME))
 	dh_link $(DEBIAN_FF3_DIR)/firefox $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER)
 	dh_link $(DEBIAN_FF3_DIR)/firefox $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)-$(DEBIAN_APP_NAME_VER)
+	dh_link $(DEBIAN_FF3_DIR)/firefox-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME)-$(DEBIAN_APP_NAME_VER)-bin
+	dh_link $(DEBIAN_FF3_DIR)/firefox-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)-$(DEBIAN_APP_NAME_VER)-bin
 endif
 	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
 	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
@@ -292,6 +380,9 @@ ifeq (1, $(ENABLE_BREAKPAD))
 		$(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)
 	dh_install -p$(DEBIAN_NAME) debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
 	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols.zip $(DEBIAN_FF3_DIR)/
+ifeq (1, $(DEB_MIN_SYSDEPS))
+	dh_install -p$(DEBIAN_NAME) debian/tmp/usr/lib/firefox-*/crashreporter $(DEBIAN_FF3_DIR)/
+endif
 endif
 
 binary-install/$(DEBIAN_NAME_OTHER)-branding::
@@ -302,10 +393,14 @@ binary-install/$(DEBIAN_NAME_OTHER)-branding::
 	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
 	dh_link -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
-	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/preferences/
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
 	cp -f debian/$(DESKTOP) \
 		debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
+ifeq (1, $(DEB_MIN_SYSDEPS))
+	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/pref/
+else
+	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/preferences/
+endif
 
 binary-install/$(DEBIAN_NAME)-branding::
 	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
@@ -321,23 +416,39 @@ binary-install/$(DEBIAN_NAME)-branding::
 	cp -f debian/$(DESKTOP_BRANDED) \
 		debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_NAME).desktop
 
-binary-install/$(DEBIAN_NAME):: debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
+ifeq (1, $(DEB_MIN_SYSDEPS))
+pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-useragent.js
+else
+pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
+endif
 
-debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js: debian/ubuntu-useragent.js.tmpl
+binary-install/$(DEBIAN_NAME):: $(pref_target)
+
+$(pref_target): debian/ubuntu-useragent.js.tmpl
 	sed \
 		-e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
 		-e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 		-e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
 		< $< > $@
 
-binary-install/$(DEBIAN_NAME_OTHER)-branding:: debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
+ifeq (1, $(DEB_MIN_SYSDEPS))
+abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-abrowser.js
+else
+abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
+endif
 
-debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js: debian/ubuntu-abrowser.js.tmpl
+binary-install/$(DEBIAN_NAME_OTHER)-branding:: $(abrowser_pref_target)
+
+$(abrowser_pref_target): debian/ubuntu-abrowser.js.tmpl
 	sed \
 		-e 's/@APP_VERSION@/$(DEBIAN_FF3_VER)/' \
 		< $< > $@
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~hg.*/pre/' | tr -d '~')
+
+ifeq (1, $(DEB_MIN_SYSDEPS))
+GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
+endif
 
 binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 	sed \
@@ -348,6 +459,22 @@ binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 	cd debian && zip lp-export-xpis/en-US.xpi install.rdf
 ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
 	$(warning EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
+endif
+	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/$(file);) true
+
+ifeq (1, $(DEB_MIN_SYSDEPS))
+# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
+# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
+binary-predeb/$(DEBIAN_NAME)::
+	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/;) true
+
+	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
+		LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR):$$LD_LIBRARY_PATH \
+		build-tree/mozilla/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/$(lib);)
+
+# ... and remove them from the -gnome-support package accordingly
+binary-predeb/$(DEBIAN_NAME)-gnome-support::
+	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME)-gnome-support/usr/lib/firefox-*/components/$(file);) true
 endif
 
 pre-build:: debian/usr.bin.firefox.apparmor.in $(subst_files)

@@ -154,6 +154,34 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - remove debian/firefox-4.0-dev.links
   * Enable the Network Manager integration
     - update debian/firefox.js
+  * Implement DEB_MIN_SYSDEPS approach that does not use system xulrunner
+    and only a minimal set of system dependencies.
+    + drop patches not required anymore:
+      - delete debian/patches/dont_depend_on_nspr_sources.patch
+      - update debian/patches/series
+    + move .install lines that depend on whether MIN_SYS_DEPS is used or not
+      to debian/rules in ifneq (,$(MIN_SYS_DEPS)) blocks 
+      - update debian/rules
+      - update debian/firefox-4.0.install
+    + ship gnome support .so's inside of the main package, but keep dependencies in
+      the (now empty) gnome-support package; to achieve this, we first install
+      the gnome support files in the -gnome-support package and move them to the
+      main package _after_ shlib depends where generated
+      - update debian/rules
+    + do not build-depend on xulrunner dev package anymore; local xulrunner builds
+      with DEB_MIN_SYSDEPS=0 should still work though
+      - update debian/control
+    + make firefox-4.0 conflict firefox-4.0-gnome-support as it shipps the gnome
+      files directly now
+      - update debian/control
+    + copy some patches from xulrunner
+      - add debian/patches/add_syspref_dir.patch
+      - add debian/patches/bz467738_att351145_lockPref_everywhere.patch
+      - add debian/patches/bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
+      - add debian/patches/bzXXX_plugin_for_mimetype_pref.patch
+      - update debian/patches/series
+  * Add WANT_UNIT_TESTS flag to toggle the unit tests on/off
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -163,7 +191,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Aug 2010 12:43:24 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 13:01:22 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

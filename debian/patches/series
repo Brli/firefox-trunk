@@ -1,7 +1,6 @@
 firefox-profilename
 firefox-fsh
 bz386904_config_rules_install_dist_files.patch
-dont_depend_on_nspr_sources.patch
 lp185622_system_path_default_browser.patch
 bz460917_att350845_reload_new_plugins.patch
 awesome_browser_branding_install.patch
@@ -11,4 +10,8 @@ ubuntu_bookmarks.patch
 bzXXX_moz_app_name_inconsistencies.patch
 bz515232_att399338_distro_locale_searchplugins.patch
 bzXXX_libxul_sdk_nspr.patch
+add_syspref_dir.patch
+bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
+bzXXX_plugin_for_mimetype_pref.patch
+bz467738_att351145_lockPref_everywhere.patch
 ftbfs_crashreporter.patch
