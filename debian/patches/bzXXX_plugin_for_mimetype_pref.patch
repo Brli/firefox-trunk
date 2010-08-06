@@ -10,23 +10,12 @@ would make the flashplyer installed in that location the preferred one to use.
 In case the path is not valid, we just go ahead and search for the first match
 given the mime-type.
 
----
- modules/plugin/base/src/nsPluginHost.cpp |   33 +++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-Index: mozilla/modules/plugin/base/src/nsPluginHost.cpp
-===================================================================
---- mozilla.orig/modules/plugin/base/src/nsPluginHost.cpp
-+++ mozilla/modules/plugin/base/src/nsPluginHost.cpp
-@@ -3929,18 +3929,51 @@
-   nsPluginTag *plugins = nsnull;
-   PRInt32     variants, cnt;
- 
-   LoadPlugins();
- 
+--- a/modules/plugin/base/src/nsPluginHost.cpp
++++ b/modules/plugin/base/src/nsPluginHost.cpp
+@@ -1625,6 +1625,40 @@ nsPluginHost::FindPluginForType(const ch
    // if we have a mimetype passed in, search the mPlugins
    // linked list for a match
-   if (nsnull != aMimeType) {
+   if (aMimeType) {
 +    nsresult res;
 +    nsCOMPtr<nsIPrefBranch> prefB (do_QueryInterface(mPrefService));
 +
@@ -38,7 +27,7 @@ Index: mozilla/modules/plugin/base/src/nsPluginHost.cpp
 +
 +    if(!NS_SUCCEEDED(res)) preferredPluginPath = NULL;
 +
-     plugins = mPlugins;
++    plugins = mPlugins;
 +    if(preferredPluginPath) {
 +       while (nsnull != plugins) {
 +         if (0 == PL_strcasecmp(plugins->mFileName.get(), preferredPluginPath) ||
@@ -58,15 +47,9 @@ Index: mozilla/modules/plugin/base/src/nsPluginHost.cpp
 +         plugins = plugins->mNext;
 +       }
 +    }
- 
++
 +    // if there is no pref for this mime-type, or if the plugin named in pref
 +    // isn't found, we pick the first that matches for this mime-type
-+    plugins = mPlugins;
-     while (nsnull != plugins) {
-       variants = plugins->mVariants;
-       for (cnt = 0; cnt < variants; cnt++) {
-         if ((!aCheckEnabled || plugins->IsEnabled()) &&
-             plugins->mMimeTypeArray[cnt] &&
-             (0 == PL_strcasecmp(plugins->mMimeTypeArray[cnt], aMimeType))) {
-           return plugins;
-         }
+     plugins = mPlugins;
+ 
+     while (plugins) {

@@ -1,6 +1,6 @@
---- xulrunner-1.9~rc2.orig/modules/libpref/src/prefread.cpp
-+++ xulrunner-1.9~rc2/modules/libpref/src/prefread.cpp
-@@ -75,6 +75,7 @@
+--- a/modules/libpref/src/prefread.cpp
++++ b/modules/libpref/src/prefread.cpp
+@@ -75,6 +75,7 @@ enum {
  #define BITS_PER_HEX_DIGIT      4
  
  static const char kUserPref[] = "user_pref";
@@ -8,7 +8,7 @@
  static const char kPref[] = "pref";
  static const char kTrue[] = "true";
  static const char kFalse[] = "false";
-@@ -161,7 +162,7 @@
+@@ -161,7 +162,7 @@ pref_DoCallback(PrefParseState *ps)
      default:
          break;
      }
@@ -17,7 +17,7 @@
      return PR_TRUE;
  }
  
-@@ -220,6 +221,7 @@
+@@ -220,6 +221,7 @@ PREF_ParseBuf(PrefParseState *ps, const
                  ps->vb    = NULL;
                  ps->vtype = PREF_INVALID;
                  ps->fdefault = PR_FALSE;
@@ -25,7 +25,7 @@
              }
              switch (c) {
              case '/':       /* begin comment block or line? */
-@@ -230,7 +232,9 @@
+@@ -230,7 +232,9 @@ PREF_ParseBuf(PrefParseState *ps, const
                  break;
              case 'u':       /* indicating user_pref */
              case 'p':       /* indicating pref */
@@ -36,7 +36,7 @@
                  ps->sindex = 1;
                  ps->nextstate = PREF_PARSE_UNTIL_OPEN_PAREN;
                  state = PREF_PARSE_MATCH_STRING;
-@@ -274,7 +278,8 @@
+@@ -274,7 +278,8 @@ PREF_ParseBuf(PrefParseState *ps, const
          /* name parsing */
          case PREF_PARSE_UNTIL_NAME:
              if (c == '\"' || c == '\'') {
@@ -46,9 +46,9 @@
                  ps->quotechar = c;
                  ps->nextstate = PREF_PARSE_UNTIL_COMMA; /* return here when done */
                  state = PREF_PARSE_QUOTED_STRING;
---- xulrunner-1.9~rc2.orig/modules/libpref/src/prefread.h
-+++ xulrunner-1.9~rc2/modules/libpref/src/prefread.h
-@@ -62,7 +62,8 @@
+--- a/modules/libpref/src/prefread.h
++++ b/modules/libpref/src/prefread.h
+@@ -62,7 +62,8 @@ typedef void (*PrefReader)(void       *c
                             const char *pref,
                             PrefValue   val,
                             PrefType    type,
@@ -58,7 +58,7 @@
  
  /* structure fields are private */
  typedef struct PrefParseState {
-@@ -83,6 +84,7 @@
+@@ -83,6 +84,7 @@ typedef struct PrefParseState {
      char       *vb;         /* value buffer (ptr into lb)    */
      PrefType    vtype;      /* PREF_STRING,INT,BOOL          */
      PRBool      fdefault;   /* PR_TRUE if (default) pref     */
@@ -66,9 +66,9 @@
  } PrefParseState;
  
  /**
---- xulrunner-1.9~rc2.orig/modules/libpref/src/prefapi.cpp
-+++ xulrunner-1.9~rc2/modules/libpref/src/prefapi.cpp
-@@ -957,7 +957,10 @@
+--- a/modules/libpref/src/prefapi.cpp
++++ b/modules/libpref/src/prefapi.cpp
+@@ -942,7 +942,10 @@ void PREF_ReaderCallback(void       *clo
                           const char *pref,
                           PrefValue   value,
                           PrefType    type,
@@ -80,9 +80,9 @@
 +    if (isLocked)
 +        PREF_LockPref(pref, PR_TRUE);
  }
---- xulrunner-1.9~rc2.orig/modules/libpref/src/prefapi.h
-+++ xulrunner-1.9~rc2/modules/libpref/src/prefapi.h
-@@ -207,7 +207,8 @@
+--- a/modules/libpref/src/prefapi.h
++++ b/modules/libpref/src/prefapi.h
+@@ -207,7 +207,8 @@ void PREF_ReaderCallback( void *closure,
                            const char *pref,
                            PrefValue   value,
                            PrefType    type,
@@ -90,5 +90,5 @@
 +                          PRBool      isDefault,
 +                          PRBool      isLocked);
  
- NSPR_END_EXTERN_C
+ PR_END_EXTERN_C
  #endif
