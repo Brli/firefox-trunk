@@ -48,6 +48,8 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-3.7.install
   * Add build depends on libcurl4-openssl-dev for building the crash reporter
     - update debian/control
+  * Install plugin-container if DEB_MIN_SYSDEPS is 1
+    - update debian/rules
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -203,7 +205,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 06 Aug 2010 18:35:11 +0100
+ -- Micah Gersten <micahg@ubuntu.com>  Sun, 08 Aug 2010 01:25:50 -0500
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

@@ -342,6 +342,8 @@ else
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_APP_NAME_OTHER)-bin
 endif
 	dh_install -p$(DEBIAN_NAME) \
+		debian/tmp/usr/lib/firefox-*/plugin-container
+	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/defaults/autoconfig
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/defaults/pref
