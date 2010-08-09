@@ -245,6 +245,17 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     debian/rules target
     - rename debian/apport/blacklist => debian/apport/firefox.in
     - update debian/rules
+  * Move a lot of unconditional debhelper calls from debian/rules to
+    the packaging files now that we are autogenerating them
+    - update debian/rules
+    - add debian/abrowser-branding.install.in
+    - add debian/abrowser-branding.links.in
+    - add debian/firefox-branding.install.in
+    - add debian/firefox-branding.links.in
+    - update debian/firefox.dirs.in
+    - add debian/firefox.docs.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable

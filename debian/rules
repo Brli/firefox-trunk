@@ -96,6 +96,18 @@ else
 	BINREAL := $(DEBIAN_NAME)-bin
 endif
 
+ifeq (1, $(DEB_MIN_SYSDEPS))
+	pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-useragent.js
+else
+	pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
+endif
+
+ifeq (1, $(DEB_MIN_SYSDEPS))
+	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-abrowser.js
+else
+	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
+endif
+
 DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
 
 # We need to do this before including patchsys-quilt.mk
@@ -267,6 +279,7 @@ pkg_files = \
 	debian/$(DEBIAN_NAME)-gnome-support.install \
 	debian/$(DEBIAN_NAME)-gnome-support.postinst \
 	debian/$(DEBIAN_NAME).dirs \
+	debian/$(DEBIAN_NAME).docs \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
 	debian/$(DEBIAN_NAME).menu \
@@ -274,6 +287,10 @@ pkg_files = \
 	debian/$(DEBIAN_NAME).postrm \
 	debian/$(DEBIAN_NAME).preinst \
 	debian/$(DEBIAN_NAME).prerm \
+	debian/$(DEBIAN_NAME_OTHER)-branding.install \
+	debian/$(DEBIAN_NAME_OTHER)-branding.links \
+	debian/$(DEBIAN_NAME)-branding.install \
+	debian/$(DEBIAN_NAME)-branding.links \
 	$(NULL)
 
 %:: %.in
@@ -340,14 +357,6 @@ common-post-build-arch::
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 	
 binary-install/$(DEBIAN_NAME)::
-	dh_installdirs $(DEBIAN_FF3_DIR)/distribution/
-	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/icons
-	rm -rf debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/icons
-	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/classic.* \
-		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/en-US.* \
-		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/browser.* \
-			$(DEBIAN_FF3_DIR)/chrome
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/pippki.* \
@@ -357,11 +366,10 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/*.so \
 			$(DEBIAN_FF3_DIR)
 
-	$(foreach i,$(wildcard debian/tmp/usr/lib/firefox-*/components/*.so), \
-		dh_install -p$(DEBIAN_NAME) $(i);) true
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)
-	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
+	dh_link -p$(DEBIAN_NAME) \
+		$(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
 ifeq (1,$(ENABLE_IPC))
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/plugin-container
@@ -377,30 +385,13 @@ endif
 
 else
 	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/usr/lib/firefox-*/components/libbrowsercomps.so
-	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/defaults/preferences
 endif
 	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
 		touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
 	fi
-	dh_install debian/firefox.sh $(DEBIAN_FF3_DIR)
-	dh_installdocs -p$(DEBIAN_NAME) debian/firefox.cfg
-	dh_install debian/$(DEBIAN_NAME)-restart-required.update-notifier $(DEBIAN_FF3_DIR)
-	dh_install debian/migrator/ffox-32-beta-profile-migration-dialog $(DEBIAN_FF3_DIR)
-	dh_link $(DEBIAN_FF3_DIR)/firefox.sh usr/bin/$(DEBIAN_NAME)
-	dh_install debian/tmp/$(DEBIAN_FF3_DIR)/$(DEBIAN_NAME) $(DEBIAN_FF3_DIR)
-	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME) $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)
-	dh_link usr/lib/firefox-addons/extensions $(DEBIAN_FF3_DIR)/extensions
-	dh_link usr/lib/firefox-addons/plugins $(DEBIAN_FF3_DIR)/plugins
-	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/searchplugins
-	dh_link etc/$(DEBIAN_NAME)/pref $(DEBIAN_FF3_DIR)/defaults/syspref
-	dh_link etc/$(DEBIAN_NAME)/profile $(DEBIAN_FF3_DIR)/defaults/profile
-	dh_link usr/share/myspell/dicts $(DEBIAN_FF3_DIR)/dictionaries
-	rm -f debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/chrome/browser-branding*
-	dh_install debian/distribution.ini $(DEBIAN_FF3_DIR)/distribution/
-	dh_link usr/lib/firefox-addons/searchplugins $(DEBIAN_FF3_DIR)/distribution/searchplugins
+
 	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
 ifeq (1, $(ENABLE_BREAKPAD))
 	# create build symbols
@@ -413,14 +404,9 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 endif
 endif
 
+binary-install/$(DEBIAN_NAME):: $(pref_target)
+
 binary-install/$(DEBIAN_NAME_OTHER)-branding::
-	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
-	        debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
-	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
-	        debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
-	dh_install -p$(DEBIAN_NAME_OTHER)-branding \
-	        debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/awesome-* $(DEBIAN_FF3_DIR)/chrome/
-	dh_link -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME_OTHER).png
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
 	cp -f debian/$(DESKTOP) \
 	        debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
@@ -430,27 +416,12 @@ else
 	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/preferences/
 endif
 
+binary-install/$(DEBIAN_NAME_OTHER)-branding:: $(abrowser_pref_target)
+
 binary-install/$(DEBIAN_NAME)-branding::
-	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons
-	rm -rf debian/$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons
-	dh_install -p$(DEBIAN_NAME)-branding \
-	        debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/browser-branding* $(DEBIAN_FF3_DIR)/chrome
-	dh_install -p$(DEBIAN_NAME)-branding \
-	        debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/icons $(DEBIAN_FF3_DIR)
-	dh_install -p$(DEBIAN_NAME)-branding \
-	        debian/tmp-$(DEBIAN_NAME)-branding/$(DEBIAN_FF3_DIR)/chrome/icons $(DEBIAN_FF3_DIR)/chrome
-	dh_link -p$(DEBIAN_NAME)-branding $(DEBIAN_FF3_DIR)/icons/mozicon128.png usr/share/pixmaps/$(DEBIAN_NAME).png
 	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
 	cp -f debian/$(DESKTOP_BRANDED) \
 	        debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_NAME).desktop
-
-ifeq (1, $(DEB_MIN_SYSDEPS))
-	pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-useragent.js
-else
-	pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
-endif
-
-binary-install/$(DEBIAN_NAME):: $(pref_target)
 
 $(pref_target): debian/ubuntu-useragent.js.tmpl
 	sed \
@@ -458,14 +429,6 @@ $(pref_target): debian/ubuntu-useragent.js.tmpl
 	        -e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 	        -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
 	        < $< > $@
-
-ifeq (1, $(DEB_MIN_SYSDEPS))
-	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-abrowser.js
-else
-	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
-endif
-
-binary-install/$(DEBIAN_NAME_OTHER)-branding:: $(abrowser_pref_target)
 
 $(abrowser_pref_target): debian/ubuntu-abrowser.js.tmpl
 	sed \

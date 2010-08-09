@@ -1,18 +1,22 @@
 debian/tmp/@LIBDIR@/components/*.js
 debian/tmp/@LIBDIR@/components/*.xpt
 debian/tmp/@LIBDIR@/components/*.manifest
-
+debian/tmp/@LIBDIR@/components/*.so
+debian/tmp/@LIBDIR@/chrome/en-US.*
+debian/tmp/@LIBDIR@/chrome/browser.*
 debian/tmp/@LIBDIR@/modules/
-
 debian/tmp/@LIBDIR@/run-mozilla.sh
-
+debian/tmp/@LIBDIR@/@APPNAME@
 debian/tmp/@LIBDIR@/defaults/profile etc/@APPNAME/
 #debian/tmp/@LIBDIR@/searchplugins usr/lib/firefox-addons
 debian/tmp/@LIBDIR@/blocklist.xml
 
 debian/presubj usr/share/bug/@APPNAME@
-
 debian/firefox.js etc/@APPNAME@/pref
+debian/firefox.sh @LIBDIR@
+debian/@APPNAME@-restart-required.update-notifier @LIBDIR@
+debian/migrator/ffox-32-beta-profile-migration-dialog @LIBDIR@
+debian/distribution.ini @LIBDIR@/distribution
 
 #debian/debsearch.gif usr/lib/firefox-addons/searchplugins
 #debian/debsearch.src usr/lib/firefox-addons/searchplugins

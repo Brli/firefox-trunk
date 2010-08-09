@@ -1,0 +1,3 @@
+debian/tmp-@APPNAME@-branding/@LIBDIR@/icons @LIBDIR@
+debian/tmp-@APPNAME@-branding/@LIBDIR@/chrome/icons @LIBDIR@/chrome
+debian/tmp-@APPNAME@-branding/@LIBDIR@/chrome/browser-branding* @LIBDIR@/chrome
