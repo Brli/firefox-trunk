@@ -265,6 +265,9 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh favicon's in the default bookmark collection, so they display
     the latest Ubuntu branding on a fresh profile
     - update debian/patches/ubuntu_bookmarks.patch
+  * Update the search URL for Google
+    - add debian/patches/ubuntu_codes_google.patch
+    - update debian/patches/series
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -274,7 +277,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 09 Aug 2010 16:22:22 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 09 Aug 2010 16:24:59 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
