@@ -196,6 +196,53 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
   * Bump minimum NSS version to 3.12.7
     - update debian/rules
+  * Indentation and layout fixes in debian/rules - purely cosmetic
+  * Auto-generate versioned debhelper files at build time. This will
+    make it easier to maintain branches for different versions (because
+    we'll avoid having different filenames for each version, which makes
+    merging really difficult).
+    - rename debian/abrowser-4.0.desktop => debian/abrowser.desktop.in
+    - rename debian/apport/firefox-4.0.py => debian/apport/firefox.py.in
+    - rename debian/firefox-4.0-final.desktop => debian/firefox-final.desktop.in
+    - rename debian/firefox-4.0-gnome-support.install => 
+       debian/firefox-gnome-support.install.in
+    - rename debian/firefox-4.0-gnome-support.postinst.in => 
+       debian/firefox-gnome-support.postinst.in
+    - rename debian/firefox-4.0-minefield.desktop => 
+       debian/firefox-minefield.desktop.in
+    - rename debian/firefox-4.0-mozilla-developer-preview.desktop => 
+       debian/firefox-mozilla-developer-preview.desktop.in
+    - rename debian/firefox-4.0-restart-required.update-notifier => 
+       debian/firefox-restart-required.update-notifier.in
+    - rename debian/firefox-4.0.dirs => debian/firefox.dirs.in
+    - rename debian/firefox-4.0.install => debian/firefox.install.in
+    - rename debian/firefox-4.0.links => debian/firefox.links.in
+    - rename debian/firefox-4.0.menu => debian/firefox.menu.in
+    - rename debian/firefox-4.0.postinst.in => debian/firefox.postinst.in
+    - rename debian/firefox-4.0.postrm.in => debian/firefox.postrm.in
+    - rename debian/firefox-4.0.preinst.in => debian/firefox.preinst.in
+    - rename debian/firefox-4.0.prerm.in => debian/firefox.prerm.in
+    - rename debian/firefox-4.0.xml => debian/firefox.xml.in
+    - updated debian/rules
+  * Fix DEBIAN_NAME_OTHER containing a superfluous hyphen when
+    the source package is unversioned. This allows us to drop some
+    other logic
+    - update debian/rules
+  * Use substitutions in packaging files now we auto-generate them
+    - update debian/abrowser.desktop.in
+    - update debian/firefox-final.desktop.in
+    - update debian/firefox-gnome-support.install.in
+    - update debian/firefox-minefield.desktop.in
+    - update debian/firefox-mozilla-developer-preview.desktop.in
+    - update debian/firefox-restart-required.update-notifier.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/firefox.menu.in
+    - update debian/firefox.xml.in
+  * Simplify generating the Apport blacklist file to remove a superfluous 
+    debian/rules target
+    - rename debian/apport/blacklist => debian/apport/firefox.in
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable

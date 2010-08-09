@@ -1,14 +1,14 @@
 [Desktop Entry]
 Version=1.0
-Name=Firefox 4.0 Web Browser (alpha)
+Name=A Web Browser 4.0
 Comment=Browse the World Wide Web
-GenericName=Web Browser
-Exec=firefox-4.0 %u
+GenericName=Web Browser 4.0
+Exec=@APPNAME_OTHER@ %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=firefox-4.0
+Icon=@APPNAME_OTHER@
 Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;
-StartupWMClass=Firefox
+StartupWMClass=Web Browser
 StartupNotify=true

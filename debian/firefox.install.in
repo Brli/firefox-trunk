@@ -1,0 +1,27 @@
+debian/tmp/@LIBDIR@/components/*.js
+debian/tmp/@LIBDIR@/components/*.xpt
+debian/tmp/@LIBDIR@/components/*.manifest
+
+debian/tmp/@LIBDIR@/modules/
+
+debian/tmp/@LIBDIR@/run-mozilla.sh
+
+debian/tmp/@LIBDIR@/defaults/profile etc/@APPNAME/
+#debian/tmp/@LIBDIR@/searchplugins usr/lib/firefox-addons
+debian/tmp/@LIBDIR@/blocklist.xml
+
+debian/presubj usr/share/bug/@APPNAME@
+
+debian/firefox.js etc/@APPNAME@/pref
+
+#debian/debsearch.gif usr/lib/firefox-addons/searchplugins
+#debian/debsearch.src usr/lib/firefox-addons/searchplugins
+
+## debian/tmp/@LIBDIR@/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} usr/lib/xulrunner-addons/extensions
+
+# debian/tmp/@LIBDIR@/plugins/*.so usr/lib/firefox-addons/plugins
+
+debian/tmp/@LIBDIR@/*.ini
+
+# Don't install the apport hook for now.
+# debian/apport/@APPNAME@.py usr/share/apport/package-hooks/
