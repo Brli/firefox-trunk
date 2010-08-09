@@ -256,6 +256,10 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/firefox.docs.in
     - update debian/firefox.install.in
     - update debian/firefox.links.in
+  * Fix abrowser branding - After changing the branding in 
+    common-post-build-arch, ensure that the firefox icons in dist/bin/icons 
+    are replaced with the abrowser icons
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -265,7 +269,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Micah Gersten <micahg@ubuntu.com>  Mon, 09 Aug 2010 06:19:47 -0500
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 09 Aug 2010 15:57:55 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
