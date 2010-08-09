@@ -50,6 +50,8 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
   * Install plugin-container if DEB_MIN_SYSDEPS is 1
     - update debian/rules
+  * Only install plugin-container if IPC is enabled
+    - update debian/rules
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -252,7 +254,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Micah Gersten <micahg@ubuntu.com>  Sun, 08 Aug 2010 01:25:50 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Mon, 09 Aug 2010 06:19:47 -0500
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

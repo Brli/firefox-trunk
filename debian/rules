@@ -362,8 +362,10 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)
 	dh_link $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
+ifeq (1,$(ENABLE_IPC))
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/plugin-container
+endif
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/defaults/autoconfig
 	dh_install -p$(DEBIAN_NAME) \
