@@ -1,3 +1,3 @@
 ?package(@APPNAME@):needs="x11" section="Applications/Network/Web Browsing" \
-  title="@VISIBLE_NAME@ Browser" command="/usr/bin/@APPNAME@" hints="Web browsers" \
+  title="@PRESENTATION_NAME@ Browser" command="/usr/bin/@APPNAME@" hints="Web browsers" \
   icon="/usr/share/pixmaps/@APPNAME@.png"

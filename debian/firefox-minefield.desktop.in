@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=Minefield 4.0 Web Browser
+Name=@PRESENTATION_NAME@ Web Browser
 Comment=Browse the Bleeding Edge
-GenericName=Bleed Browser
+GenericName=@PRESENTATION_NAME@ Web Browser
 Exec=@APPNAME@ %u
 Terminal=false
 X-MultipleArgs=false
@@ -11,5 +11,5 @@ Type=Application
 Icon=@APPNAME@
 Categories=Application;Network;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png
-StartupWMClass=Minefield
+StartupWMClass=@STARTUP_WM_CLASS@
 StartupNotify=true

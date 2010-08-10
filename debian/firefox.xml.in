@@ -3,7 +3,7 @@
 <default-apps>
   <web-browsers>
     <web-browser>
-      <name>Minefield</name>
+      <name>@PRESENTATION_NAME@</name>
       <executable>@APPNAME@</executable>
       <command>@APPNAME@ %s</command>
       <icon-name>@APPNAME@</icon-name>

@@ -1,10 +1,10 @@
-Name: @VISIBLE_NAME@ restart required
-Name-fr: Relancement de @VISIBLE_NAME@ requis
+Name: @PRESENTATION_NAME@ restart required
+Name-fr: Relancement de @PRESENTATION_NAME@ requis
 Priority: High
 Terminal: False
 DontShowAfterReboot: True
 DisplayIf: pgrep -x @APPNAME@ -U $(id -u) > /dev/null
-Description: @VISIBLE_NAME@ has been upgraded (or reinstalled) and must be restarted.
+Description: @PRESENTATION_NAME@ has been upgraded (or reinstalled) and must be restarted.
  Please quit and restart your web browser now.
-Description-fr: @VISIBLE_NAME@ a été mis à jour (ou réinstallé) et doit être relancé.
+Description-fr: @PRESENTATION_NAME@ a été mis à jour (ou réinstallé) et doit être relancé.
  Veuillez quitter et redémarrer for navigateur.
