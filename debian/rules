@@ -351,7 +351,7 @@ common-post-build-arch::
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/
 	cd build-tree/mozilla/browser/locales/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/
+		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
 		$(MAKE) -C ../../browser/app/
 	cd build-tree/mozilla/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
