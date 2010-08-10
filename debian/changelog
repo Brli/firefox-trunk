@@ -272,6 +272,8 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     based on the same patch applied to our system cairo package.
     - add debian/patches/lp512615_cairo_lcd_filter.patch
     - update debian/patches/series
+  * Fix LP: #615889 - Add Ubuntu One bookmark to Firefox fresh install  
+    - update debian/patches/ubuntu_bookmarks.patch
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -281,7 +283,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 09 Aug 2010 16:45:12 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 10 Aug 2010 16:35:38 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
