@@ -3,7 +3,7 @@
 set -e
 
 UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
-LIBDIR=@LIBDIR@
+LIBDIR=/@LIBDIR@
 APPNAME=@APPNAME@
 
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
