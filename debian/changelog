@@ -295,15 +295,17 @@ firefox-4.0 (4.0~b4~hg20100810r49254+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Don't forget the leading slash when substituting @LIBDIR@, else
     launching fails
     - update debian/rules
-  * Rework the browser branding split after landing of single-chrome-manifest
-    aka (bmo: 579178). Install a single chrome/localized.manifest in to each
-    -branding package. For this to work, we can only have a single branding
-    chrome package installed at a time in dist/bin when running "make install",
-    else we end up with both branding chrome packages in the merged chrome manifest.
+  * Rework the browser branding split after landing of (bmo: 579178) aka
+    single-chrome-manifest. Install a chrome/localized.manifest and 
+    chrome/nonlocalized.manifest in to each *-branding package. For this to 
+    work, we can only have a single branding chrome package present at a 
+    time in dist/bin when running "make install", else we end up with 
+    both branding chrome packages in the merged manifest files.
     This implies that the alternative branding chrome files should have the 
     same name now, else we will always have missing files listed in
-    browser/installer/package.manifest. This rework also reduces the number of
-    times we run "make install" by 1, and saves some disk space during the build
+    browser/installer/package.manifest when we run "make install". 
+    This rework also reduces the number of times we run "make install" 
+    by 1, and saves some disk space during the build
     - update debian/rules
     - remove debian/patches/awesome_browser_branding_install.patch
     - add debian/patches/awesome_branding_chrome_rename.patch
@@ -311,6 +313,9 @@ firefox-4.0 (4.0~b4~hg20100810r49254+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
     - update debian/abrowser-branding.install.in
     - update debian/firefox-branding.install.in
+  * Install top-level chrome.manifest after landing of (bmo: 579178) aka
+    single-chrome-manifest
+    - update debian/firefox.install.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -320,7 +325,7 @@ firefox-4.0 (4.0~b4~hg20100810r49254+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Aug 2010 15:49:56 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Aug 2010 19:21:47 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
