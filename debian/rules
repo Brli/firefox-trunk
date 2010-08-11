@@ -362,7 +362,7 @@ common-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 
-common-post-build-arch::
+common-install-arch::
 	rm -f build-tree/mozilla/dist/bin/chrome/browser-branding*
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
