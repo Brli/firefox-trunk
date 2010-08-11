@@ -8,7 +8,7 @@ debian/tmp/@LIBDIR@/modules/
 debian/tmp/@LIBDIR@/run-mozilla.sh
 debian/tmp/@LIBDIR@/@APPNAME@
 debian/tmp/@LIBDIR@/chrome.manifest
-debian/tmp/@LIBDIR@/defaults/profile etc/@APPNAME/
+debian/tmp/@LIBDIR@/defaults/profile etc/@APPNAME@/
 #debian/tmp/@LIBDIR@/searchplugins usr/lib/firefox-addons
 debian/tmp/@LIBDIR@/blocklist.xml
 
