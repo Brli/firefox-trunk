@@ -1,0 +1,27 @@
+--- a/browser/branding/awesome-browser/content/jar.mn
++++ b/browser/branding/awesome-browser/content/jar.mn
+@@ -1,9 +1,9 @@
+-awesome-branding.jar:
++browser-branding.jar:
+ % content branding %content/branding/ xpcnativewrappers=yes
+   content/branding/about.png                     (about.png)
+   content/branding/aboutCredits.png              (aboutCredits.png)
+   content/branding/aboutFooter.png               (aboutFooter.png)
+   content/branding/icon48.png                    (icon48.png)
+   content/branding/icon64.png                    (icon64.png)
+-% override chrome://branding/locale/brand.dtd chrome://awesome-branding/locale/brand.dtd
+-% override chrome://branding/locale/brand.properties chrome://awesome-branding/locale/brand.properties
++% override chrome://branding/locale/brand.dtd chrome://browser-branding/locale/brand.dtd
++% override chrome://branding/locale/brand.properties chrome://browser-branding/locale/brand.properties
+--- a/browser/branding/awesome-browser/locales/jar.mn
++++ b/browser/branding/awesome-browser/locales/jar.mn
+@@ -1,7 +1,7 @@
+ #filter substitution
+ 
+-awesome-branding-@AB_CD@.jar:
+-% locale awesome-branding @AB_CD@ %locale/branding/
++browser-branding-@AB_CD@.jar:
++% locale browser-branding @AB_CD@ %locale/branding/
+ # Web Browser branding only exists in en-US
+   locale/branding/brand.dtd        (en-US/brand.dtd)
+ * locale/branding/brand.properties (en-US/brand.properties)

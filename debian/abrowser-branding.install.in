@@ -1,3 +1,4 @@
 debian/tmp-@APPNAME_OTHER@-branding/@LIBDIR@/icons @LIBDIR@
 debian/tmp-@APPNAME_OTHER@-branding/@LIBDIR@/chrome/icons @LIBDIR@/chrome
-debian/tmp-@APPNAME_OTHER@-branding/@LIBDIR@/chrome/awesome-* @LIBDIR@/chrome/
+debian/tmp-@APPNAME_OTHER@-branding/@LIBDIR@/chrome/browser-branding* @LIBDIR@/chrome/
+debian/tmp-@APPNAME_OTHER@-branding/@LIBDIR@/chrome/*.manifest @LIBDIR@/chrome

@@ -361,15 +361,12 @@ post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 common-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
-	cd build-tree/mozilla/browser/locales/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/
 
 common-post-build-arch::
-	cd build-tree/mozilla/; \
-		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/; \
-		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME)-branding/
+	rm -f build-tree/mozilla/dist/bin/chrome/browser-branding*
 	cd build-tree/mozilla/browser/locales/; \
+		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
+		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
 		$(MAKE) -C ../../browser/app/
 	cd build-tree/mozilla/; \
@@ -379,11 +376,11 @@ common-post-build-arch::
 binary-install/$(DEBIAN_NAME)::
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/pippki.* \
-		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/chrome/toolkit.* \
+		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/pippki.* \
+		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/toolkit.* \
 			$(DEBIAN_FF3_DIR)/chrome
 	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp-$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/*.so \
+		debian/tmp/$(DEBIAN_FF3_DIR)/*.so \
 			$(DEBIAN_FF3_DIR)
 
 	dh_install -p$(DEBIAN_NAME) \

@@ -8,24 +8,17 @@
  other-licenses/branding/firefox/locales/jar.mn |    2 +-
  7 files changed, 12 insertions(+), 6 deletions(-)
 
-Index: mozilla/browser/branding/unofficial/content/jar.mn
-===================================================================
---- mozilla.orig/browser/branding/unofficial/content/jar.mn
-+++ mozilla/browser/branding/unofficial/content/jar.mn
-@@ -1,7 +1,7 @@
+--- a/browser/branding/unofficial/content/jar.mn
++++ b/browser/branding/unofficial/content/jar.mn
+@@ -1,4 +1,4 @@
 -browser.jar:
 +browser-branding.jar:
  % content branding %content/branding/
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
-   content/branding/aboutFooter.png               (aboutFooter.png)
-   content/branding/icon48.png                    (icon48.png)
-   content/branding/icon64.png                    (icon64.png)
-Index: mozilla/browser/branding/unofficial/locales/jar.mn
-===================================================================
---- mozilla.orig/browser/branding/unofficial/locales/jar.mn
-+++ mozilla/browser/branding/unofficial/locales/jar.mn
-@@ -1,8 +1,8 @@
+--- a/browser/branding/unofficial/locales/jar.mn
++++ b/browser/branding/unofficial/locales/jar.mn
+@@ -1,6 +1,6 @@
  #filter substitution
  
 -@AB_CD@.jar:
@@ -33,53 +26,17 @@ Index: mozilla/browser/branding/unofficial/locales/jar.mn
  % locale branding @AB_CD@ %locale/branding/
  # Unofficial branding only exists in en-US
    locale/branding/brand.dtd        (en-US/brand.dtd)
- * locale/branding/brand.properties (en-US/brand.properties)
- * locale/branding/browserconfig.properties (browserconfig.properties)
-Index: mozilla/browser/installer/package-manifest.in
-===================================================================
---- mozilla.orig/browser/installer/package-manifest.in
-+++ mozilla/browser/installer/package-manifest.in
-@@ -406,16 +406,22 @@
- @BINPATH@/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/preview.png
- #if MOZ_UPDATE_CHANNEL == beta
- @BINPATH@/extensions/testpilot@labs.mozilla.com/*
- #endif
- @BINPATH@/chrome/toolkit.jar
- @BINPATH@/chrome/toolkit.manifest
- @BINPATH@/@PREF_DIR@/reporter.js
- #ifdef XP_UNIX
-+; ubuntu official branding
-+@BINPATH@/chrome/browser-branding.jar
-+@BINPATH@/chrome/browser-branding.manifest
-+@BINPATH@/chrome/browser-branding-en-US.jar
-+@BINPATH@/chrome/browser-branding-en-US.manifest
-+
- ; ubuntu awesome browser branding
- @BINPATH@/chrome/awesome-branding.jar
- @BINPATH@/chrome/awesome-branding.manifest
- @BINPATH@/chrome/awesome-branding-en-US.jar
- @BINPATH@/chrome/awesome-branding-en-US.manifest
- 
- #ifndef XP_MACOSX
- @BINPATH@/chrome/icons/default/default16.png
-Index: mozilla/other-licenses/branding/firefox/content/jar.mn
-===================================================================
---- mozilla.orig/other-licenses/branding/firefox/content/jar.mn
-+++ mozilla/other-licenses/branding/firefox/content/jar.mn
-@@ -1,7 +1,7 @@
+--- a/other-licenses/branding/firefox/content/jar.mn
++++ b/other-licenses/branding/firefox/content/jar.mn
+@@ -1,4 +1,4 @@
 -browser.jar:
 +browser-branding.jar:
  % content branding %content/branding/
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
-   content/branding/aboutFooter.png               (aboutFooter.png)
-   content/branding/icon48.png                    (icon48.png)
-   content/branding/icon64.png                    (icon64.png)
-Index: mozilla/other-licenses/branding/firefox/locales/jar.mn
-===================================================================
---- mozilla.orig/other-licenses/branding/firefox/locales/jar.mn
-+++ mozilla/other-licenses/branding/firefox/locales/jar.mn
-@@ -1,7 +1,7 @@
+--- a/other-licenses/branding/firefox/locales/jar.mn
++++ b/other-licenses/branding/firefox/locales/jar.mn
+@@ -1,6 +1,6 @@
  #filter substitution
  
 -@AB_CD@.jar:
@@ -87,25 +44,17 @@ Index: mozilla/other-licenses/branding/firefox/locales/jar.mn
  % locale branding @AB_CD@ %locale/branding/
    locale/branding/brand.dtd        (%brand.dtd)
  * locale/branding/brand.properties (%brand.properties)
- * locale/branding/browserconfig.properties (browserconfig.properties)
-Index: mozilla/browser/branding/nightly/content/jar.mn
-===================================================================
---- mozilla.orig/browser/branding/nightly/content/jar.mn
-+++ mozilla/browser/branding/nightly/content/jar.mn
-@@ -1,7 +1,7 @@
+--- a/browser/branding/nightly/content/jar.mn
++++ b/browser/branding/nightly/content/jar.mn
+@@ -1,4 +1,4 @@
 -browser.jar:
 +browser-branding.jar:
  % content branding %content/branding/
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
-   content/branding/aboutFooter.png               (aboutFooter.png)
-   content/branding/icon48.png                    (icon48.png)
-   content/branding/icon64.png                    (icon64.png)
-Index: mozilla/browser/branding/nightly/locales/jar.mn
-===================================================================
---- mozilla.orig/browser/branding/nightly/locales/jar.mn
-+++ mozilla/browser/branding/nightly/locales/jar.mn
-@@ -1,8 +1,8 @@
+--- a/browser/branding/nightly/locales/jar.mn
++++ b/browser/branding/nightly/locales/jar.mn
+@@ -1,6 +1,6 @@
  #filter substitution
  
 -@AB_CD@.jar:
@@ -113,5 +62,17 @@ Index: mozilla/browser/branding/nightly/locales/jar.mn
  % locale branding @AB_CD@ %locale/branding/
  # Nightly branding only exists in en-US
    locale/branding/brand.dtd        (en-US/brand.dtd)
- * locale/branding/brand.properties (en-US/brand.properties)
- * locale/branding/browserconfig.properties (browserconfig.properties)
+--- a/browser/installer/package-manifest.in
++++ b/browser/installer/package-manifest.in
+@@ -413,6 +413,11 @@
+ @BINPATH@/chrome/toolkit.manifest
+ @BINPATH@/@PREF_DIR@/reporter.js
+ #ifdef XP_UNIX
++@BINPATH@/chrome/browser-branding.jar
++@BINPATH@/chrome/browser-branding.manifest
++@BINPATH@/chrome/browser-branding-en-US.jar
++@BINPATH@/chrome/browser-branding-en-US.manifest
++
+ #ifndef XP_MACOSX
+ @BINPATH@/chrome/icons/default/default16.png
+ @BINPATH@/chrome/icons/default/default32.png
