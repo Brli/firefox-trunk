@@ -315,7 +315,7 @@ pkg_files = \
 	$(NULL)
 
 %:: %.in
-	sed -e 's,@LIBDIR@,$(DEBIAN_FF3_DIR),g' \
+	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' < $< > $@
 
 $(pkg_files)::

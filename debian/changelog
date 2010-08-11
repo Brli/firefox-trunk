@@ -292,6 +292,9 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     the official branding for non-nightly and non-beta builds. It also
     disables the crash reporter in application.ini
     - update debian/rules
+  * Don't forget the leading slash when substituting @LIBDIR@, else
+    launching fails
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -301,7 +304,7 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 10 Aug 2010 23:11:07 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Aug 2010 10:44:36 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
