@@ -197,7 +197,7 @@ else
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
-	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.0'; a=$$?; if test $$a != 1; then echo 1; fi)
+	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.0.1'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
 ifeq (1,$(USE_SYSTEM_SQLITE))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-sqlite

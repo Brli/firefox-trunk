@@ -30,8 +30,8 @@ firefox-4.0 (4.0~b3~hg20100804r48791+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/bz460917_att350845_reload_new_plugins.patch
     - update debian/patches/browser_branding.patch
     - update debian/patches/awesome_browser_branding_install.patch
-  * Bump system sqlite to 3.7.0 after upstream landing of (bmo: 581000) aka
-    Upgrade to SQLite 3.7.0
+  * Bump minimum system sqlite to 3.7.0.1 after upstream landing of 
+    (bmo: 581000) aka Upgrade to SQLite 3.7.0.1
     - update debian/rules
   * Update patch after landing of (bmo: 554007) aka 
     New add-ons manager UI (preferences)
