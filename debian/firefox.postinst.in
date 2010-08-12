@@ -9,7 +9,6 @@ APPNAME=@APPNAME@
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/x-www-browser \
         x-www-browser /usr/bin/$APPNAME 40
-    touch $LIBDIR/.autoreg
 
     # Reload AppArmor profile
     APP_PROFILE="/etc/apparmor.d/usr.bin.$APPNAME"

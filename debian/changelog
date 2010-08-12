@@ -327,6 +327,12 @@ firefox-4.0 (4.0~b4~hg20100810r49254+nobinonly-0ubuntu1) UNRELEASED; urgency=low
        debian/patches/awesome_branding_updates.patch
     - update debian/patches/awesome_branding_updates.patch
     - update debian/patches/series
+  * Don't install $LIBDIR/.autoreg and drop the maintainer script hooks
+    to touch this too. This doesn't do anything with the changes to
+    XPCOM component registration in Firefox 4
+    - update debian/rules
+    - update debian/firefox.postinst.in
+    - update debian/firefox-gnome-support.postinst.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -336,7 +342,7 @@ firefox-4.0 (4.0~b4~hg20100810r49254+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 12 Aug 2010 14:55:58 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 12 Aug 2010 15:02:07 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

@@ -5,11 +5,5 @@ set -e
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/gnome-www-browser \
         gnome-www-browser /usr/bin/$APPNAME 40
-
-    for dir in `ls -d /usr/lib/firefox-4.0* || true`; do
-        if test -d $dir -a -e $dir/.autoreg; then
-            touch $dir/.autoreg
-        fi
-    done
 fi
 

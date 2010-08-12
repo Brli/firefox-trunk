@@ -404,7 +404,6 @@ else
 	dh_install -p$(DEBIAN_NAME) \
 		debian/tmp/usr/lib/firefox-*/defaults/preferences
 endif
-	touch debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/.autoreg
 	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
 		touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
 	fi
