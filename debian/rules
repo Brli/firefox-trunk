@@ -414,7 +414,7 @@ ifeq (1, $(ENABLE_BREAKPAD))
 	cd build-tree/mozilla/; \
 	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)
 	dh_install -p$(DEBIAN_NAME) debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
-	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols.zip $(DEBIAN_FF3_DIR)/
+	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols-full.zip $(DEBIAN_FF3_DIR)/
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	dh_install -p$(DEBIAN_NAME) debian/tmp/usr/lib/firefox-*/crashreporter $(DEBIAN_FF3_DIR)/
 endif

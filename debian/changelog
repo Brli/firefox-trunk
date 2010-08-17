@@ -333,6 +333,9 @@ firefox-4.0 (4.0~b4~hg20100810r49254+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
     - update debian/firefox.postinst.in
     - update debian/firefox-gnome-support.postinst.in
+  * Retain the correct zip file for the breakpad symbols - FF4.0 seems
+    to create 2 packages, and we want the larger of the 2
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -342,7 +345,7 @@ firefox-4.0 (4.0~b4~hg20100810r49254+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 12 Aug 2010 15:02:07 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 17 Aug 2010 18:17:23 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
