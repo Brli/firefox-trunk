@@ -339,6 +339,9 @@ firefox-4.0 (4.0~b5~hg20100818r50769+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches after landing of (bmo: 556644) aka Enable omnijar
     for desktop Firefox by default
     - update debian/patches/firefox-fsh
+  * Fix LP: #605336 - "Report Broken Web Site" option missing - don't
+    disable the reporter extension when building with DEB_MIN_SYSDEPS=1
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -348,7 +351,7 @@ firefox-4.0 (4.0~b5~hg20100818r50769+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 Aug 2010 12:45:04 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 Aug 2010 16:50:32 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

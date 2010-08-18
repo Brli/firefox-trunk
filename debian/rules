@@ -215,6 +215,12 @@ else
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-extensions=default,-reporter
+else
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-extensions=default
+endif
+
+ifneq (1, $(DEB_MIN_SYSDEPS))
 	system_jpeg_configure_flags     := --with-system-jpeg=/usr
 	system_zlib_configure_flags     := --with-system-zlib=/usr
 	system_myspell_configure_flags  := --disable-system-myspell
@@ -270,7 +276,6 @@ DEB_CONFIGURE_USER_FLAGS= \
 	--enable-mathml \
 	--enable-xft \
 	--enable-xinerama \
-	--enable-extensions=default,-reporter \
 	--enable-safe-browsing \
 	--enable-single-profile \
 	--with-distribution-id=com.ubuntu \
