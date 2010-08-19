@@ -338,10 +338,12 @@ debian/disable-patches-for-release:
 	touch $@
 
 debian/usr.bin.firefox.apparmor.in:
-	if [ "$(DISTRIB_VERSION_MAJOR)" -ge "10" ]; then \
-	        cp $(CURDIR)/debian/usr.bin.firefox.apparmor.10.04 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
+	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1010' ]; then \
+		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.10.10 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
+	elif [ "$(DISTRIB_VERSION_MAJOR)" -ge "10" ]; then \
+		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.10.04 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
 	else \
-	        cp $(CURDIR)/debian/usr.bin.firefox.apparmor.9.10 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
+		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.9.10 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
 	fi
 
 debian/migrator/ffox-32-beta-profile-migration-dialog: debian/migrator/main.c

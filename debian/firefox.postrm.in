@@ -4,6 +4,9 @@ set -e
 
 if [ "$1" = "purge" ]; then
     APP_PROFILE="usr.bin.@APPNAME@"
-    rm -f /etc/apparmor.d/force-complain/$APP_PROFILE >/dev/null 2>&1 || true
-    rm -f /etc/apparmor.d/disable/$APP_PROFILE >/dev/null 2>&1 || true
+    rm -f /etc/apparmor.d/force-complain/$APP_PROFILE || true
+    rm -f /etc/apparmor.d/disable/$APP_PROFILE || true
+    rm -f /etc/apparmor.d/local/$APP_PROFILE || true
+    rm -f "/etc/apparmor.d/abstractions/ubuntu-browsers.d/@APPNAME@" || true
+    rmdir /etc/apparmor.d/local 2>/dev/null || true
 fi
