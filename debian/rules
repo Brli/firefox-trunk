@@ -143,7 +143,8 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/autotools.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
-include /usr/share/mozilla-devscripts/lp-locale-export.mk
+# FIXME: We need to do this another way in the new world
+#include /usr/share/mozilla-devscripts/lp-locale-export.mk
 
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL := $(NULL)
@@ -417,7 +418,7 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 endif
 endif
 
-# FIXME: Need to put the preference file in the staging folder before calling make install
+# FIXME: Need to put the preference file in the staging folder before calling make install, so it isn't missed from omni.jar
 #binary-install/$(DEBIAN_NAME)-core:: $(pref_target)
 
 binary-install/$(DEBIAN_NAME_OTHER)::
@@ -425,7 +426,7 @@ binary-install/$(DEBIAN_NAME_OTHER)::
 	cp -f debian/$(DESKTOP) \
 	        debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
 
-# FIXME: Need to put the preference file in the staging folder before calling make install
+# FIXME: Need to put the preference file in the staging folder before calling make install, so it isn't missed from omni.jar
 #binary-install/$(DEBIAN_NAME_OTHER):: $(abrowser_pref_target)
 
 binary-install/$(DEBIAN_NAME)::
@@ -451,23 +452,24 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 	GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 endif
 
-binary-post-install/$(DEBIAN_NAME)-core:: auto-locale-xpi.mk/translate compare
-	sed \
-	        -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
-	        -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
-	        -e 's/@EM_FIREFOX_MAX_VERSION@/$(EM_TRANSLATION_MAX_VERSION)/' \
-	        < debian/translation-support/install.rdf.in > debian/install.rdf
-	cd debian && zip lp-export-xpis/en-US.xpi install.rdf
-ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
-	$(warning EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
-endif
+#binary-post-install/$(DEBIAN_NAME)-core:: auto-locale-xpi.mk/translate compare
+binary-post-install/$(DEBIAN_NAME)-core:: compare
+#	sed \
+#	        -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
+#	        -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
+#	        -e 's/@EM_FIREFOX_MAX_VERSION@/$(EM_TRANSLATION_MAX_VERSION)/' \
+#	        < debian/translation-support/install.rdf.in > debian/install.rdf
+#	cd debian && zip lp-export-xpis/en-US.xpi install.rdf
+#ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
+#	$(warning EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
+#endif
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)-core/usr/lib/firefox-*/components/$(file);) true
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 # install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 binary-predeb/$(DEBIAN_NAME)-core::
-	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/;) true
+	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)-core/usr/lib/firefox-*/components/;) true
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core/$(DEBIAN_FF3_DIR):$$LD_LIBRARY_PATH \
