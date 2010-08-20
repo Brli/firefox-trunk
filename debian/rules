@@ -476,6 +476,9 @@ binary-predeb/$(DEBIAN_NAME)-core::
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME)-gnome-support/usr/lib/firefox-*/components/$(file);) true
+
+binary-predeb/$(DEBIAN_NAME_OTHER)-gnome-support::
+	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME_OTHER)-gnome-support/usr/lib/firefox-*/components/$(file);) true
 endif
 
 pre-build:: debian/usr.bin.firefox.apparmor.in $(pkg_files) $(subst_files)
