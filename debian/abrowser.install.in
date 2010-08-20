@@ -1,0 +1,2 @@
+debian/tmp-@APPNAME_OTHER@-branding/@LIBDIR@/icons @LIBDIR@
+debian/tmp-@APPNAME_OTHER@-branding/@LIBDIR@/omni.jar @LIBDIR@

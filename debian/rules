@@ -30,6 +30,7 @@ ifneq (,$(filter $(DISTRIB),Ubuntu))
 endif
 
 WANT_UNIT_TESTS		?= 1
+# FIXME: DEB_MIN_SYSDEPS=0 will fail completely now. We need logic to handle both jar and omni format to be able to use this
 DEB_MIN_SYSDEPS		?= 1
 ENABLE_IPC		?= 1
 ENABLE_BREAKPAD		?= 1
@@ -116,6 +117,7 @@ else
 	BINREAL := $(DEBIAN_NAME)-bin
 endif
 
+# FIXME: Doesn't work with omni format
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-useragent.js
 else
@@ -123,9 +125,9 @@ else
 endif
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
-	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-abrowser.js
+	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-abrowser.js
 else
-	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)-branding/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
+	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
 endif
 
 DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
@@ -304,19 +306,23 @@ pkg_files = \
 	debian/$(DEBIAN_NAME).xml \
 	debian/$(DEBIAN_NAME)-gnome-support.install \
 	debian/$(DEBIAN_NAME)-gnome-support.postinst \
-	debian/$(DEBIAN_NAME).dirs \
-	debian/$(DEBIAN_NAME).docs \
+	debian/$(DEBIAN_NAME)-gnome-support.prerm \
+	debian/$(DEBIAN_NAME_OTHER)-gnome-support.install \
+	debian/$(DEBIAN_NAME_OTHER)-gnome-support.postinst \
+	debian/$(DEBIAN_NAME_OTHER)-gnome-support.prerm \
+	debian/$(DEBIAN_NAME)-core.dirs \
+	debian/$(DEBIAN_NAME)-core.docs \
+	debian/$(DEBIAN_NAME)-core.install \
+	debian/$(DEBIAN_NAME)-core.links \
+	debian/$(DEBIAN_NAME).menu \
+	debian/$(DEBIAN_NAME)-core.postinst \
+	debian/$(DEBIAN_NAME)-core.postrm \
+	debian/$(DEBIAN_NAME)-core.preinst \
+	debian/$(DEBIAN_NAME)-core.prerm \
+	debian/$(DEBIAN_NAME_OTHER).install \
+	debian/$(DEBIAN_NAME_OTHER).links \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
-	debian/$(DEBIAN_NAME).menu \
-	debian/$(DEBIAN_NAME).postinst \
-	debian/$(DEBIAN_NAME).postrm \
-	debian/$(DEBIAN_NAME).preinst \
-	debian/$(DEBIAN_NAME).prerm \
-	debian/$(DEBIAN_NAME_OTHER)-branding.install \
-	debian/$(DEBIAN_NAME_OTHER)-branding.links \
-	debian/$(DEBIAN_NAME)-branding.install \
-	debian/$(DEBIAN_NAME)-branding.links \
 	$(NULL)
 
 %:: %.in
@@ -380,71 +386,52 @@ common-install-arch::
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 	
-binary-install/$(DEBIAN_NAME)::
+binary-install/$(DEBIAN_NAME)-core::
 ifeq (1, $(DEB_MIN_SYSDEPS))
-	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/pippki.* \
-		debian/tmp/$(DEBIAN_FF3_DIR)/chrome/toolkit.* \
-			$(DEBIAN_FF3_DIR)/chrome
-	dh_install -p$(DEBIAN_NAME) \
+	dh_install -p$(DEBIAN_NAME)-core \
 		debian/tmp/$(DEBIAN_FF3_DIR)/*.so \
 			$(DEBIAN_FF3_DIR)
 
-	dh_install -p$(DEBIAN_NAME) \
+	dh_install -p$(DEBIAN_NAME)-core \
 		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)
-	dh_link -p$(DEBIAN_NAME) \
+	dh_link -p$(DEBIAN_NAME)-core \
 		$(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
 ifeq (1,$(ENABLE_IPC))
-	dh_install -p$(DEBIAN_NAME) \
+	dh_install -p$(DEBIAN_NAME)-core \
 		debian/tmp/usr/lib/firefox-*/plugin-container
 endif
-	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/usr/lib/firefox-*/defaults/autoconfig
-	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/usr/lib/firefox-*/defaults/pref
-	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/usr/lib/firefox-*/greprefs.js
-	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/usr/lib/firefox-*/res
-
-else
-	dh_install -p$(DEBIAN_NAME) \
-		debian/tmp/usr/lib/firefox-*/defaults/preferences
 endif
-	if [ -d debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions ] ; then \
-		touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
+	if [ -d debian/$(DEBIAN_NAME)-core/usr/lib/xulrunner-addons/extensions ] ; then \
+		touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)-core/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
 	fi
 
-	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
+	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)-core/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
 ifeq (1, $(ENABLE_BREAKPAD))
 	# create build symbols
 	cd build-tree/mozilla/; \
 	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)
-	dh_install -p$(DEBIAN_NAME) debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
+	dh_install -p$(DEBIAN_NAME)-core debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
 	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols-full.zip $(DEBIAN_FF3_DIR)/
 ifeq (1, $(DEB_MIN_SYSDEPS))
-	dh_install -p$(DEBIAN_NAME) debian/tmp/usr/lib/firefox-*/crashreporter $(DEBIAN_FF3_DIR)/
+	dh_install -p$(DEBIAN_NAME)-core debian/tmp/usr/lib/firefox-*/crashreporter $(DEBIAN_FF3_DIR)/
 endif
 endif
 
-binary-install/$(DEBIAN_NAME):: $(pref_target)
+# FIXME: Need to put the preference file in the staging folder before calling make install
+#binary-install/$(DEBIAN_NAME)-core:: $(pref_target)
 
-binary-install/$(DEBIAN_NAME_OTHER)-branding::
-	mkdir -p debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/
+binary-install/$(DEBIAN_NAME_OTHER)::
+	mkdir -p debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/
 	cp -f debian/$(DESKTOP) \
-	        debian/$(DEBIAN_NAME_OTHER)-branding/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
-ifeq (1, $(DEB_MIN_SYSDEPS))
-	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/pref/
-else
-	dh_installdirs -p$(DEBIAN_NAME_OTHER)-branding $(DEBIAN_FF3_DIR)/defaults/preferences/
-endif
+	        debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
 
-binary-install/$(DEBIAN_NAME_OTHER)-branding:: $(abrowser_pref_target)
+# FIXME: Need to put the preference file in the staging folder before calling make install
+#binary-install/$(DEBIAN_NAME_OTHER):: $(abrowser_pref_target)
 
-binary-install/$(DEBIAN_NAME)-branding::
-	mkdir -p debian/$(DEBIAN_NAME)-branding/usr/share/applications/
+binary-install/$(DEBIAN_NAME)::
+	mkdir -p debian/$(DEBIAN_NAME)/usr/share/applications/
 	cp -f debian/$(DESKTOP_BRANDED) \
-	        debian/$(DEBIAN_NAME)-branding/usr/share/applications/$(DEBIAN_NAME).desktop
+	        debian/$(DEBIAN_NAME)/usr/share/applications/$(DEBIAN_NAME).desktop
 
 $(pref_target): debian/ubuntu-useragent.js.tmpl
 	sed \
@@ -464,7 +451,7 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 	GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 endif
 
-binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
+binary-post-install/$(DEBIAN_NAME)-core:: auto-locale-xpi.mk/translate compare
 	sed \
 	        -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
 	        -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
@@ -474,17 +461,17 @@ binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
 ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
 	$(warning EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
 endif
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/$(file);) true
+	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)-core/usr/lib/firefox-*/components/$(file);) true
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 # install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
-binary-predeb/$(DEBIAN_NAME)::
+binary-predeb/$(DEBIAN_NAME)-core::
 	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/;) true
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
-	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR):$$LD_LIBRARY_PATH \
-	        build-tree/mozilla/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/$(lib);)
+	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core/$(DEBIAN_FF3_DIR):$$LD_LIBRARY_PATH \
+	        build-tree/mozilla/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(DEBIAN_FF3_DIR)/$(lib);)
 
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::

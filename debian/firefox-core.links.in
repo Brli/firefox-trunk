@@ -1,0 +1,8 @@
+## /usr/bin/firefox-4.0 /usr/bin/firefox
+@LIBDIR@/@APPNAME@ @LIBDIR@/@APPNAME_OTHER@
+usr/lib/firefox-addons/searchplugins usr/lib/firefox-addons/searchplugins/common
+usr/lib/firefox-addons/extensions @LIBDIR@/extensions
+usr/lib/firefox-addons/plugins @LIBDIR@/plugins
+usr/lib/firefox-addons/searchplugins @LIBDIR@/searchplugins
+usr/lib/firefox-addons/searchplugins @LIBDIR@/distribution/searchplugins
+usr/share/myspell/dicts @LIBDIR@/dictionaries

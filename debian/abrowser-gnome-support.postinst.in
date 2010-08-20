@@ -2,7 +2,7 @@
 
 set -e
 
-APPNAME=@APPNAME@
+APPNAME=@APPNAME_OTHER@
 
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
     update-alternatives --install /usr/bin/gnome-www-browser \

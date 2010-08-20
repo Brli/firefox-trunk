@@ -9,10 +9,10 @@ ubuntu_codes_amazon.patch
 ubuntu_bookmarks.patch
 bz515232_att399338_distro_locale_searchplugins.patch
 bzXXX_libxul_sdk_nspr.patch
-add_syspref_dir.patch
+#add_syspref_dir.patch
 lp548866_bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
 lp512615_cairo_lcd_filter.patch
 ubuntu_codes_google.patch
 bzXXX_plugin_for_mimetype_pref.patch
-bz467738_att351145_lockPref_everywhere.patch
+#bz467738_att351145_lockPref_everywhere.patch
 ftbfs_crashreporter.patch

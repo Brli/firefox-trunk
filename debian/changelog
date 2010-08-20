@@ -343,6 +343,48 @@ firefox-4.0 (4.0~b5~hg20100818r50769+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix LP: #605336 - "Report Broken Web Site" option missing - don't
     disable the reporter extension when building with DEB_MIN_SYSDEPS=1
     - update debian/rules
+  * Completely rework packaging layout after langing of (bmo: 556644) aka Enable 
+    omnijar for desktop Firefox by default. We rename firefox-branding and
+    abrowser-branding to just firefox and abrowser. Each of these now depend
+    on firefox-core (which used to be firefox). firefox and abrowser each
+    ship a set of icons, desktop file, symlink in /usr/bin and an omni.jar 
+    file with alternative branding. firefox-core ships all of the non-branded
+    and common components shared between the variants that aren't compressed in 
+    omni.jar. We also introduce an abrowser-gnome-support which does the same
+    as firefox-gnome-support but registers /usr/bin/abrowser as an alternative
+    for gnome-www-browser
+    - added debian/TODO
+    - added debian/abrowser-gnome-support.install.in
+    - added debian/abrowser-gnome-support.postinst.in
+    - renamed debian/abrowser-branding.install.in => debian/abrowser.install.in
+    - renamed debian/abrowser-branding.links.in => debian/abrowser.links.in
+    - renamed debian/firefox.dirs.in => debian/firefox-core.dirs.in
+    - renamed debian/firefox.docs.in => debian/firefox-core.docs.in
+    - renamed debian/firefox.install.in => debian/firefox-core.install.in
+    - renamed debian/firefox.links.in => debian/firefox-core.links.in
+    - renamed debian/firefox.postinst.in => debian/firefox-core.postinst.in
+    - renamed debian/firefox.postrm.in => debian/firefox-core.postrm.in
+    - renamed debian/firefox.preinst.in => debian/firefox-core.preinst.in
+    - renamed debian/firefox.prerm.in => debian/firefox-core.prerm.in
+    - renamed debian/firefox-branding.install.in => debian/firefox.install.in
+    - renamed debian/firefox-branding.links.in => debian/firefox.links.in
+    - update debian/abrowser.install.in
+    - update debian/abrowser.links.in
+    - update debian/control
+    - update debian/firefox-core.install.in
+    - update debian/firefox-core.links.in
+    - update debian/firefox-gnome-support.postinst.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/rules
+  * Unregister the gnome-www-browser alternatives on uninstall
+    - add debian/firefox-gnome-support.prerm.in
+    - add debian/abrowser-gnome-support.prerm.in
+    - update debian/rules
+  * There is currently no support for system-wide preferences with omnijar,
+    so we disable add_syspref_dir.patch and 
+    bz467738_att351145_lockPref_everywhere.patch for now
+    - update debian/patches/series
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable

@@ -1,4 +1,0 @@
-debian/tmp/@LIBDIR@/icons @LIBDIR@
-debian/tmp/@LIBDIR@/chrome/icons @LIBDIR@/chrome
-debian/tmp/@LIBDIR@/chrome/browser-branding* @LIBDIR@/chrome
-debian/tmp/@LIBDIR@/chrome/*.manifest @LIBDIR@/chrome

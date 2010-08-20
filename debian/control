@@ -32,32 +32,52 @@ Standards-Version: 3.8.1
 
 Package: firefox-4.0
 Architecture: any
-Depends: fontconfig,
-	psmisc,
-	lsb-release,
-	debianutils (>= 1.16),
+Depends: firefox-4.0-core (= ${binary:Version}),
 	${misc:Depends},
-	${shlibs:Depends},
-	firefox-4.0-branding | abrowser-4.0-branding
-Recommends: ubufox
-Suggests: firefox-4.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
+	${shlibs:Depends}
 Provides: www-browser, iceweasel
-Replaces: firefox-3.7, firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0, firefox-4.0-gnome-support
-Conflicts: firefox-3.7 (<< 4.0~), firefox-4.0-gnome-support (<= 4.0~b3~hg20100804r48791+nobinonly-0ubuntu1)
+Conflicts: firefox-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1), abrowser-4.0
+Replaces: firefox-4.0-branding, kubuntu-firefox-installer
+Suggests: firefox-4.0-gnome-support (= ${binary:Version})
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
 
-Package: firefox-4.0-branding
+Package: abrowser-4.0
 Architecture: any
-Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
-Conflicts: abrowser-4.0-branding, firefox-3.7-branding (<< 4.0~)
-Replaces: firefox-3.7-branding, kubuntu-firefox-installer
-Description: Package that ships the firefox branding
- This package ships the Firefox branding bits. If you remove this package your
- user experience will become that of the abrowser.
+Depends: firefox-4.0-core (= ${binary:Version}), 
+	${misc:Depends},
+	${shlibs:Depends}
+Conflicts: firefox-4.0, abrowser-3.7-branding (<< 4.0~), abrowser-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1)
+Replaces: abrowser-3.7-branding, abrowser-4.0-branding
+Suggests: abrowser-4.0-gnome-support (= ${binary:Version})
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+Description: Unbranded web browser based on Mozilla
+ ABrowser 4.0 is an unbranded version of the popular Firefox webbrowser;
+ it is written in the XUL language and designed to be lightweight and
+ cross-platform.
+
+Package: firefox-4.0-core
+Architecture: any
+Depends: fontconfig,
+	psmisc,
+	lsb-release,
+	debianutils (>= 1.16),
+	${misc:Depends},
+	${shlibs:Depends}
+Recommends: ubufox
+Suggests: latex-xft-fonts, libthai0
+Replaces: firefox-3.7, firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0, firefox-4.0-gnome-support, firefox-4.0
+Conflicts: firefox-3.7 (<< 4.0~), firefox-4.0-gnome-support (<= 4.0~b3~hg20100804r48791+nobinonly-0ubuntu1), firefox-4.0 (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1)
+Description: safe and easy web browser from Mozilla
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+ .
+ This package contains the common components shared between the
+ abrowser-4.0 and firefox-4.0 packages
 
 Package: firefox-4.0-gnome-support
 Architecture: any
@@ -65,11 +85,33 @@ Section: gnome
 Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version})
 Provides: gnome-www-browser
 Replaces: firefox-3.7-gnome-support
-Conflicts: firefox-3.7-gnome-support (<< 4.0~)
+Conflicts: abrowser-4.0-gnome-support, firefox-3.7-gnome-support (<< 4.0~)
 Description: Support for GNOME in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
  integration features.
+
+Package: abrowser-4.0-gnome-support
+Architecture: any
+Section: gnome
+Depends: ${shlibs:Depends}, ${misc:Depends}, abrowser-4.0 (= ${binary:Version})
+Provides: gnome-www-browser
+Replaces: firefox-3.7-gnome-support
+Conflicts: firefox-4.0-gnome-support, firefox-3.7-gnome-support (<< 4.0~)
+Description: Support for GNOME in ABrowser
+ This is an extension to ABrowser that allows it to use protocol
+ handlers from GnomeVFS, such as smb or sftp, and other GNOME
+ integration features.
+
+Package: firefox-4.0-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version}) | abrowser-4.0 (= ${binary:Version})
+Replaces: firefox-3.7-dbg
+Conflicts: firefox-3.7-dbg (<< 4.0~)
+Description: firefox-4.0 debug symbols
+ Debug symbols for Firefox 4.0.
 
 Package: firefox-4.0-mozsymbols
 Architecture: amd64 i386 armel
@@ -81,63 +123,33 @@ Description: firefox debug symbols for mozilla
  breakpad. eventually this package should go away and the symbol upload be
  implemented in soyuz (or other builders that build this package)
 
-Package: firefox-4.0-dbg
+# Transitional packages below here
+
+Package: firefox-4.0-branding
 Architecture: any
-Section: debug
-Priority: extra
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version})
-Replaces: firefox-3.7-dbg
-Conflicts: firefox-3.7-dbg (<< 4.0~)
-Description: firefox-4.0 debug symbols
- Debug symbols for Firefox 4.0.
+Depends: firefox-4.0, ${misc:Depends}
+Description: Transitional package to pull in firefox-4.0
 
 Package: firefox-4.0-gnome-support-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0-gnome-support (= ${binary:Version}), firefox-4.0-dbg (= ${binary:Version})
-Replaces: firefox-3.7-gnome-support-dbg
-Conflicts: firefox-3.7-gnome-support-dbg (<< 4.0~)
-Description: firefox-4.0 debug symbols
- Debug symbols for the GNOME support files of Firefox 4.0.
-
-Package: abrowser-4.0
-Architecture: all
-Depends: firefox-4.0, abrowser-4.0-branding, ${misc:Depends}
-XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-Replaces: abrowser-3.7
-Conflicts: abrowser-3.7 (<< 4.0~)
-Description: metapackage for the unbranded abrowser
- ABrowser 4.0 is an unbranded version of the popular Firefox webbrowser;
- it is written in the XUL language and designed to be lightweight and
- cross-platform.
- .
- This is a metapackage that will point to the latest abrowser package in
- your distribution.
- Don't remove this if you want to receive automatic major version upgrades
- for this package in future.
+Depends: ${misc:Depends}, firefox-4.0-dbg (= ${binary:Version})
+Description: Transitional package to pull in firefox-4.0-dbg
 
 Package: abrowser-4.0-branding
-Architecture: any
-Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
-Conflicts: firefox-4.0-branding, abrowser-3.7-branding (<< 4.0~)
-Replaces: abrowser-3.7-branding
-Description: package that ships the abrowser branding
- The ABrowser refers to the unbranded build of firefox 4.0.
- Install the firefox package if you want a branded build.
- .
- This is a metapackage that will point to the latest abrowser package
- in your distribution. Don't remove this if you want to receive automatic
- major version upgrades for this package in future.
+Architecture: all
+Depends: abrowser-4.0, ${misc:Depends}
+Description: Transitional package to pull in abrowser-4.0
 
 Package: firefox-3.7
 Architecture: any
-Depends: firefox-4.0, ${misc:Depends}
+Depends: firefox-4.0-core, ${misc:Depends}
 Description: Transitional package from 3.7 to 4.0
 
 Package: firefox-3.7-branding
 Architecture: any
-Depends: firefox-4.0-branding, ${misc:Depends}
+Depends: firefox-4.0, ${misc:Depends}
 Description: Transitional package from 3.7 to 4.0
 
 Package: firefox-3.7-gnome-support
@@ -152,7 +164,7 @@ Description: Transitional package from 3.7 to 4.0
 
 Package: firefox-3.7-gnome-support-dbg
 Architecture: any
-Depends: firefox-4.0-gnome-support-dbg, ${misc:Depends}
+Depends: firefox-4.0-dbg, ${misc:Depends}
 Description: Transitional package from 3.7 to 4.0
 
 Package: abrowser-3.7
@@ -162,5 +174,5 @@ Description: Transitional package from 3.7 to 4.0
 
 Package: abrowser-3.7-branding
 Architecture: any
-Depends: abrowser-4.0-branding, ${misc:Depends}
+Depends: abrowser-4.0, ${misc:Depends}
 Description: Transitional package from 3.7 to 4.0
