@@ -1,0 +1,12 @@
+--- a/toolkit/mozapps/installer/packager.mk
++++ b/toolkit/mozapps/installer/packager.mk
+@@ -505,6 +505,9 @@ make-package: stage-package $(PACKAGE_XU
+ # dist/sdk/lib -> prefix/lib/appname-devel-version/lib
+ # prefix/lib/appname-devel-version/* symlinks to the above directories
+ install:: stage-package
++ifdef MOZ_OMNIJAR
++	cd $(DIST)/$(STAGEPATH)$(MOZ_PKG_DIR)$(_BINPATH) && $(PACK_OMNIJAR)
++endif
+ ifneq (,$(filter WINNT WINCE,$(OS_ARCH)))
+ 	$(error "make install" is not supported on this platform. Use "make package" instead.)
+ endif
