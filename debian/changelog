@@ -1,4 +1,4 @@
-firefox-4.0 (4.0~b5~hg20100818r50769+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b5~hg20100820r50998+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -392,9 +392,9 @@ firefox-4.0 (4.0~b5~hg20100818r50769+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/ftbfs_crashreporter.patch   
     - update debian/patches/series
     - update debian/control
-    - update debian/rules
+    - update debian/rules 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 Aug 2010 16:50:32 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 20 Aug 2010 17:32:15 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
