@@ -68,9 +68,9 @@
  @BINPATH@/chrome/toolkit.manifest
  @BINPATH@/@PREF_DIR@/reporter.js
  #ifdef XP_UNIX
-+@BINPATH@/chrome/browser-branding.jar
++@BINPATH@/chrome/browser-branding@JAREXT@
 +@BINPATH@/chrome/browser-branding.manifest
-+@BINPATH@/chrome/browser-branding-en-US.jar
++@BINPATH@/chrome/browser-branding-en-US@JAREXT@
 +@BINPATH@/chrome/browser-branding-en-US.manifest
 +
  #ifndef XP_MACOSX
