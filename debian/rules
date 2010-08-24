@@ -131,6 +131,7 @@ else
 endif
 
 DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
+DEB_DH_STRIP_ARGS		:= --dbg-package=$(DEBIAN_NAME)-dbg
 
 # We need to do this before including patchsys-quilt.mk
 # because we don't want the pre-build target to depend on this, but
