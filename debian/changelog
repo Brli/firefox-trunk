@@ -389,6 +389,10 @@ firefox-4.0 (4.0~b5~hg20100820r50998+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Ensure that omni.jar is created when running "make install"
     - add debian/patches/bz588410_fix_make_install_with_omnijar.patch
     - update debian/patches/series
+  * Add DEB_HOST_GNU_CPU to MOZ_SYMBOLS_EXTRA_BUILDID to avoid the 
+    possibility of filename collisions on the server if our builds 
+    happen to run at the same time
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -398,7 +402,7 @@ firefox-4.0 (4.0~b5~hg20100820r50998+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 20 Aug 2010 20:02:23 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 25 Aug 2010 18:37:39 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
