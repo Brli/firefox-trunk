@@ -1,11 +1,11 @@
 ---
  browser/app/application.ini                               |    2 -
- browser/app/profile/firefox.js                            |   16 +++++++-------
- browser/branding/awesome-browser/pref/firefox-branding.js |   10 ++++----
- browser/branding/nightly/pref/firefox-branding.js         |   10 ++++----
- browser/branding/unofficial/pref/firefox-branding.js      |   10 ++++----
- other-licenses/branding/firefox/pref/firefox-branding.js  |    8 +++----
- 6 files changed, 28 insertions(+), 28 deletions(-)
+ browser/app/profile/firefox.js                            |   18 +++++++-------
+ browser/branding/awesome-browser/pref/firefox-branding.js |   10 +++----
+ browser/branding/nightly/pref/firefox-branding.js         |   10 +++----
+ browser/branding/unofficial/pref/firefox-branding.js      |   10 +++----
+ other-licenses/branding/firefox/pref/firefox-branding.js  |    8 +++---
+ 6 files changed, 29 insertions(+), 29 deletions(-)
 
 Index: mozilla/browser/app/application.ini
 ===================================================================
@@ -123,16 +123,18 @@ Index: mozilla/browser/app/profile/firefox.js
 ===================================================================
 --- mozilla.orig/browser/app/profile/firefox.js
 +++ mozilla/browser/app/profile/firefox.js
-@@ -53,32 +53,32 @@
- pref("browser.chromeURL","chrome://browser/content/");
+@@ -54,33 +54,33 @@
  pref("browser.hiddenWindowChromeURL", "chrome://browser/content/hiddenWindow.xul");
  
  // Enables some extra Extension System Logging (can reduce performance)
  pref("extensions.logging.enabled", false);
  
- // Preferences for the Get Add-ons pane
+ // Preferences for the Addon Repository
+ pref("extensions.getAddons.cache.enabled", true);
  pref("extensions.getAddons.maxResults", 15);
+-pref("extensions.getAddons.get.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/search/guid:%IDS%");
 -pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/search/%TERMS%/all/%MAX_RESULTS%/%OS%/%VERSION%");
++pref("extensions.getAddons.get.url", "https://services.addons.mozilla.org/%LOCALE%/firefox/api/%API_VERSION%/search/guid:%IDS%");
 +pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/firefox/api/%API_VERSION%/search/%TERMS%/all/%MAX_RESULTS%/%OS%/%VERSION%");
  
  // Preferences for AMO integration
@@ -159,7 +161,7 @@ Index: mozilla/browser/app/profile/firefox.js
  
  // App-specific update preferences
  
-@@ -146,17 +146,17 @@
+@@ -166,17 +166,17 @@
  //  extensions.{GUID}.update.url
  //  .. etc ..
  //
@@ -178,7 +180,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("extensions.{972ce4c6-7e08-4474-a285-3208198ce6fd}.description", "chrome://browser/locale/browser.properties");
  
  pref("xpinstall.whitelist.add", "addons.mozilla.org");
-@@ -262,17 +262,17 @@
+@@ -284,17 +284,17 @@
  pref("browser.download.manager.focusWhenStarting", false);
  pref("browser.download.manager.flashCount", 2);
  pref("browser.download.manager.addToRecentDocs", true);
@@ -197,7 +199,7 @@ Index: mozilla/browser/app/profile/firefox.js
  pref("browser.search.log", false);
  
  // Ordering of Search Engines in the Engine list. 
-@@ -678,18 +678,18 @@
+@@ -701,18 +701,18 @@
  // HTML report pages
  pref("browser.safebrowsing.provider.0.reportGenericURL", "http://{moz:locale}.phish-generic.mozilla.com/?hl={moz:locale}");
  pref("browser.safebrowsing.provider.0.reportErrorURL", "http://{moz:locale}.phish-error.mozilla.com/?hl={moz:locale}");
@@ -218,7 +220,7 @@ Index: mozilla/browser/app/profile/firefox.js
  // The number of random entries to send with a gethash request.
  pref("urlclassifier.gethashnoise", 4);
  
-@@ -821,17 +821,17 @@
+@@ -844,17 +844,17 @@
  
  // Whether or not to update background tabs to the current zoom level.
  pref("browser.zoom.updateBackgroundTabs", true);

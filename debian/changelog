@@ -39,6 +39,9 @@ firefox-4.0 (4.0~b5~hg20100827r51544+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Update patch after landing of (bmo: 558287) aka Add support for searching 
     add-ons on AMO via the search bar
     - update debian/patches/firefox-profilename
+  * Update patch after landing of (bmo: 551274) aka Update nsAddonRepository for
+    API version 1.5
+    - update debian/patches/firefox-profilename
   * Add test for minimum system NSPR of 4.8.4.99 after landing of (bmo: 560582)
     aka compilation errors with PR_STATIC_ASSERT when building mozilla-central
     with system NSPR
@@ -402,7 +405,7 @@ firefox-4.0 (4.0~b5~hg20100827r51544+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Micah Gersten <micahg@ubuntu.com>  Thu, 26 Aug 2010 22:45:08 -0500
+ -- Micah Gersten <micahg@ubuntu.com>  Thu, 26 Aug 2010 23:10:34 -0500
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
