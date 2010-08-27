@@ -150,6 +150,8 @@ fi
 
 fi
 
+unset UBUNTU_MENUPROXY
+
 if [ -x $LIBDIR/$APPNAME-bin ] ; then
 	# This is an all-in-one build
 	exec $LIBDIR/$APPNAME $script_args "$@"

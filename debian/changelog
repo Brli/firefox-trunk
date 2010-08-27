@@ -396,6 +396,10 @@ firefox-4.0 (4.0~b5~hg20100827r51544+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     possibility of filename collisions on the server if our builds 
     happen to run at the same time
     - update debian/rules
+  * appmenu-gtk causes Firefox to crash constantly. Just unset 
+    UBUNTU_MENUPROXY so we can actually browse a single page without 
+    crashing multiple times first
+    - update debian/firefox.sh.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -405,7 +409,7 @@ firefox-4.0 (4.0~b5~hg20100827r51544+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Micah Gersten <micahg@ubuntu.com>  Thu, 26 Aug 2010 23:10:34 -0500
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 27 Aug 2010 22:38:21 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
