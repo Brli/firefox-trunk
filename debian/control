@@ -36,8 +36,10 @@ Depends: firefox-4.0-core (= ${binary:Version}),
 	${misc:Depends},
 	${shlibs:Depends}
 Provides: www-browser, iceweasel
-Conflicts: firefox-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1), abrowser-4.0
-Replaces: firefox-4.0-branding, kubuntu-firefox-installer
+Conflicts: firefox-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1), 
+	abrowser-4.0
+Replaces: firefox-4.0-branding, 
+	kubuntu-firefox-installer
 Suggests: firefox-4.0-gnome-support (= ${binary:Version})
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: safe and easy web browser from Mozilla
@@ -50,8 +52,11 @@ Architecture: any
 Depends: firefox-4.0-core (= ${binary:Version}), 
 	${misc:Depends},
 	${shlibs:Depends}
-Conflicts: firefox-4.0, abrowser-3.7-branding (<< 4.0~), abrowser-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1)
-Replaces: abrowser-3.7-branding, abrowser-4.0-branding
+Conflicts: firefox-4.0, 
+	abrowser-3.7-branding (<< 4.0~), 
+	abrowser-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1)
+Replaces: abrowser-3.7-branding, 
+	abrowser-4.0-branding
 Suggests: abrowser-4.0-gnome-support (= ${binary:Version})
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: Unbranded web browser based on Mozilla
@@ -69,8 +74,17 @@ Depends: fontconfig,
 	${shlibs:Depends}
 Recommends: ubufox
 Suggests: latex-xft-fonts, libthai0
-Replaces: firefox-3.7, firefox-3.6, firefox-3.5, firefox-3.2, firefox-3.1, firefox-3.0, firefox-4.0-gnome-support, firefox-4.0
-Conflicts: firefox-3.7 (<< 4.0~), firefox-4.0-gnome-support (<= 4.0~b3~hg20100804r48791+nobinonly-0ubuntu1), firefox-4.0 (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1)
+Replaces: firefox-4.0, 
+	firefox-3.7, 
+	firefox-3.6, 
+	firefox-3.5, 
+	firefox-3.2, 
+	firefox-3.1, 
+	firefox-3.0, 
+	firefox-4.0-gnome-support
+Conflicts: firefox-3.7 (<< 4.0~), 
+	firefox-4.0-gnome-support (<= 4.0~b3~hg20100804r48791+nobinonly-0ubuntu1), 
+	firefox-4.0 (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1)
 Description: safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -82,10 +96,13 @@ Description: safe and easy web browser from Mozilla
 Package: firefox-4.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version})
+Depends: ${shlibs:Depends}, 
+	${misc:Depends}, 
+	firefox-4.0 (= ${binary:Version})
 Provides: gnome-www-browser
 Replaces: firefox-3.7-gnome-support
-Conflicts: abrowser-4.0-gnome-support, firefox-3.7-gnome-support (<< 4.0~)
+Conflicts: abrowser-4.0-gnome-support, 
+	firefox-3.7-gnome-support (<< 4.0~)
 Description: Support for GNOME in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
@@ -94,10 +111,11 @@ Description: Support for GNOME in Mozilla Firefox
 Package: abrowser-4.0-gnome-support
 Architecture: any
 Section: gnome
-Depends: ${shlibs:Depends}, ${misc:Depends}, abrowser-4.0 (= ${binary:Version})
+Depends: ${shlibs:Depends}, 
+	${misc:Depends}, 
+	abrowser-4.0 (= ${binary:Version})
 Provides: gnome-www-browser
-Replaces: firefox-3.7-gnome-support
-Conflicts: firefox-4.0-gnome-support, firefox-3.7-gnome-support (<< 4.0~)
+Conflicts: firefox-4.0-gnome-support
 Description: Support for GNOME in ABrowser
  This is an extension to ABrowser that allows it to use protocol
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
@@ -107,7 +125,9 @@ Package: firefox-4.0-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, ${misc:Depends}, firefox-4.0 (= ${binary:Version}) | abrowser-4.0 (= ${binary:Version})
+Depends: ${shlibs:Depends}, 
+	${misc:Depends}, 
+	firefox-4.0 (= ${binary:Version}) | abrowser-4.0 (= ${binary:Version})
 Replaces: firefox-3.7-dbg
 Conflicts: firefox-3.7-dbg (<< 4.0~)
 Description: firefox-4.0 debug symbols
@@ -117,7 +137,8 @@ Package: firefox-4.0-mozsymbols
 Architecture: amd64 i386 armel
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, 
+	${misc:Depends}
 Description: firefox debug symbols for mozilla
  package containing the firefox symbols in a format expected by mozilla's
  breakpad. eventually this package should go away and the symbol upload be

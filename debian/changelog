@@ -400,10 +400,8 @@ firefox-4.0 (4.0~b5~hg20100827r51544+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     UBUNTU_MENUPROXY so we can actually browse a single page without 
     crashing multiple times first
     - update debian/firefox.sh.in
-  * Fix LP: #623509 - Firefox is creating empty crash reports due to 
-    kernel ptrace hardening
-    - add debian/patches/bz591331_att469858_breakpad_allow_ptrace.patch
-    - update debian/patches/series
+  * Clean up the files in /etc/firefox-4.0 on upgrade
+    - update debian/firefox-core.preinst.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -413,7 +411,7 @@ firefox-4.0 (4.0~b5~hg20100827r51544+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 31 Aug 2010 15:38:00 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 03 Sep 2010 18:34:41 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

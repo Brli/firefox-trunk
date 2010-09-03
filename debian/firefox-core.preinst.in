@@ -6,6 +6,28 @@ APP_DIR="/etc/apparmor.d"
 APP_PROFILE="usr.bin.@APPNAME@"
 APP_CONFFILE="$APP_DIR/$APP_PROFILE"
 APP_DISABLE="$APP_DIR/disable/$APP_PROFILE"
+APP_NAME=@APPNAME@
+
+# Remove a no-longer used conffile
+rm_conffile() {
+    local PKGNAME="$1"
+    local CONFFILE="$2"
+
+    [ -e "$CONFFILE" ] || return 0
+
+    local md5sum="$(md5sum $CONFFILE | sed -e 's/ .*//')"
+    local old_md5sum="$(dpkg-query -W -f='${Conffiles}' $PKGNAME | \
+            sed -n -e "\' $CONFFILE ' { s/ obsolete$//; s/.* //; p }")"
+	# The quotes above confuse gedit, which considers the rest of the script to be inside quotes, so balance that out'
+    if [ "$md5sum" != "$old_md5sum" ]; then
+        echo "Obsolete conffile $CONFFILE has been modified by you."
+        echo "Saving as $CONFFILE.dpkg-bak ..."
+        mv -f "$CONFFILE" "$CONFFILE".dpkg-bak
+    else
+        echo "Removing obsolete conffile $CONFFILE ..."
+        rm -f "$CONFFILE"
+    fi
+}
 
 disable_profile() {
     # Create a symlink to the yet-to-be-unpacked profile
@@ -44,3 +66,21 @@ else
     fi
 fi
 
+# These conffiles used to belong to the package we replaced. However, that
+# package may no longer exist on the system anymore if the user was previously using abrowser,
+# so we deal with cleaning up the conffiles here. I'm not totally sure what order everything
+# happens in. I think if we conflict and replace the old package, it will get removed (or the new
+# version unpacked) first, before we arrive here. This means that dpkg-query will still show 
+# these conffiles as existing on the system (but obsolete), until we upgrade once more.
+case "$1" in
+install|upgrade)
+    if dpkg --compare-versions "$2" le "4.0~b6~hg20100903r51944+nobinonly-0ubuntu1"; then
+        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/pref/firefox.js"
+        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/bookmarks.html"
+        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/localstore.rdf"
+        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/mimeTypes.rdf"
+        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/prefs.js"
+        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/chrome/userChrome-example.css"
+        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/chrome/userContent-example.css"
+    fi
+esac
