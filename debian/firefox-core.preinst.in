@@ -74,13 +74,13 @@ fi
 # these conffiles as existing on the system (but obsolete), until we upgrade once more.
 case "$1" in
 install|upgrade)
-    if dpkg --compare-versions "$2" le "4.0~b6~hg20100903r51944+nobinonly-0ubuntu1"; then
-        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/pref/firefox.js"
-        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/bookmarks.html"
-        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/localstore.rdf"
-        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/mimeTypes.rdf"
-        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/prefs.js"
-        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/chrome/userChrome-example.css"
-        rm_conffile $(APP_NAME) "/etc/$(APP_NAME)/profile/chrome/userContent-example.css"
+    if dpkg --compare-versions "$2" le "4.0~b6~hg20100904r51993+nobinonly-0ubuntu1"; then
+        rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/pref/firefox.js"
+        rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/bookmarks.html"
+        rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/localstore.rdf"
+        rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/mimeTypes.rdf"
+        rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/prefs.js"
+        rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/chrome/userChrome-example.css"
+        rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/chrome/userContent-example.css"
     fi
 esac
