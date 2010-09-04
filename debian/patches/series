@@ -3,7 +3,6 @@ firefox-fsh
 bz386904_config_rules_install_dist_files.patch
 lp185622_system_path_default_browser.patch
 bz460917_att350845_reload_new_plugins.patch
-browser_branding.patch
 awesome_branding_updates.patch
 ubuntu_codes_amazon.patch
 ubuntu_bookmarks.patch

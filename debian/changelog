@@ -402,6 +402,13 @@ firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.sh.in
   * Clean up the files in /etc/firefox-4.0 on upgrade
     - update debian/firefox-core.preinst.in
+  * Drop the patch which splits the branding in to a separate chrome package,
+    as we don't need this with the new packaging. Also modify the 
+    awesome-browser branding to install the branding in to the browser chrome
+    - remove debian/patches/browser_branding.patch
+    - update debian/patches/series
+    - update debian/patches/awesome_branding_updates.patch
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -411,7 +418,7 @@ firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 03 Sep 2010 18:34:41 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 04 Sep 2010 08:14:42 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

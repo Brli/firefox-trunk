@@ -380,12 +380,13 @@ common-build-arch::
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 
 common-install-arch::
-	rm -rf build-tree/mozilla/dist/bin/chrome/browser-branding*
+	rm -rf build-tree/mozilla/dist/bin/chrome/browser*
+	rm -rf build-tree/mozilla/dist/bin/chrome/en-US*
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
-		$(MAKE) -C ../../browser/app/
+		$(MAKE) -C ../../browser/
 	cd build-tree/mozilla/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/

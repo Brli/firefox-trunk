@@ -2,7 +2,7 @@
 +++ b/browser/branding/awesome-browser/content/jar.mn
 @@ -1,9 +1,7 @@
 -awesome-branding.jar:
-+browser-branding.jar:
++browser.jar:
  % content branding %content/branding/ xpcnativewrappers=yes
    content/branding/about.png                     (about.png)
    content/branding/aboutCredits.png              (aboutCredits.png)
@@ -18,7 +18,7 @@
  
 -awesome-branding-@AB_CD@.jar:
 -% locale awesome-branding @AB_CD@ %locale/branding/
-+browser-branding-@AB_CD@.jar:
++@AB_CD@.jar:
 +% locale branding @AB_CD@ %locale/branding/
  # Web Browser branding only exists in en-US
    locale/branding/brand.dtd        (en-US/brand.dtd)
