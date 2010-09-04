@@ -409,6 +409,18 @@ firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
     - update debian/patches/awesome_branding_updates.patch
     - update debian/rules
+  * Install a branding-specific ubuntu.js preference file in to each
+    omni.jar. We achieve this by dropping it in to dist/bin/defaults after
+    each build, and adding the new file to the package-manifest so that it
+    is picked up during stage-package.
+    - remove debian/firefox.js
+    - add debian/patches/install_ubuntu_prefs.patch
+    - update debian/patches/series
+    - update debian/rules
+    - rename debian/ubuntu-abrowser.js.tmpl => debian/ubuntu-abrowser.js.in
+    - rename debian/ubuntu-useragent.js.tmpl => debian/ubuntu-firefox.js.in
+    - update debian/ubuntu-abrowser.js.in
+    - update debian/ubuntu-firefox.js.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -418,7 +430,7 @@ firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 04 Sep 2010 08:14:42 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 04 Sep 2010 22:35:30 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

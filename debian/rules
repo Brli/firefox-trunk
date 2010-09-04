@@ -119,19 +119,6 @@ else
 	BINREAL := $(DEBIAN_NAME)-bin
 endif
 
-# FIXME: Doesn't work with omni format
-ifeq (1, $(DEB_MIN_SYSDEPS))
-	pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-useragent.js
-else
-	pref_target = debian/$(DEBIAN_NAME)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-useragent.js
-endif
-
-ifeq (1, $(DEB_MIN_SYSDEPS))
-	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)/$(DEBIAN_FF3_DIR)/defaults/pref/ubuntu-abrowser.js
-else
-	abrowser_pref_target = debian/$(DEBIAN_NAME_OTHER)/$(DEBIAN_FF3_DIR)/defaults/preferences/ubuntu-abrowser.js
-endif
-
 DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
 DEB_DH_STRIP_ARGS		:= --dbg-package=$(DEBIAN_NAME)-dbg
 
@@ -299,6 +286,8 @@ subst_files = \
 	debian/usr.bin.firefox.apparmor \
 	debian/README.Debian \
 	debian/firefox.sh \
+	debian/ubuntu-firefox.js \
+	debian/ubuntu-abrowser.js \
 	$(NULL)
 
 pkg_files = \
@@ -331,7 +320,11 @@ pkg_files = \
 
 %:: %.in
 	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
-	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' < $< > $@
+	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
+	    -e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
+	    -e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
+	    -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
+	    -e 's/@APP_VERSION@/$(DEBIAN_FF3_VER)/' < $< > $@
 
 $(pkg_files)::
 	sed -e 's,@LIBDIR@,$(DEBIAN_FF3_DIR),g' \
@@ -378,10 +371,20 @@ post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 common-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
+ifeq (1,$(DEB_MIN_SYSDEPS))
+	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/pref/ubuntu.js
+else
+	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/preferences/ubuntu.js
+endif
 
 common-install-arch::
 	rm -rf build-tree/mozilla/dist/bin/chrome/browser*
 	rm -rf build-tree/mozilla/dist/bin/chrome/en-US*
+ifeq (1,$(DEB_MIN_SYSDEPS))
+	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/pref/ubuntu.js
+else
+	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/preferences/ubuntu.js
+endif
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
@@ -422,33 +425,15 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 endif
 endif
 
-# FIXME: Need to put the preference file in the staging folder before calling make install, so it isn't missed from omni.jar
-#binary-install/$(DEBIAN_NAME)-core:: $(pref_target)
-
 binary-install/$(DEBIAN_NAME_OTHER)::
 	mkdir -p debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/
 	cp -f debian/$(DESKTOP) \
 	        debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
 
-# FIXME: Need to put the preference file in the staging folder before calling make install, so it isn't missed from omni.jar
-#binary-install/$(DEBIAN_NAME_OTHER):: $(abrowser_pref_target)
-
 binary-install/$(DEBIAN_NAME)::
 	mkdir -p debian/$(DEBIAN_NAME)/usr/share/applications/
 	cp -f debian/$(DESKTOP_BRANDED) \
 	        debian/$(DEBIAN_NAME)/usr/share/applications/$(DEBIAN_NAME).desktop
-
-$(pref_target): debian/ubuntu-useragent.js.tmpl
-	sed \
-	        -e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
-	        -e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
-	        -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
-	        < $< > $@
-
-$(abrowser_pref_target): debian/ubuntu-abrowser.js.tmpl
-	sed \
-	        -e 's/@APP_VERSION@/$(DEBIAN_FF3_VER)/' \
-	        < $< > $@
 
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~hg.*/pre/' | tr -d '~')
 
