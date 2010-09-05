@@ -421,6 +421,9 @@ firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - rename debian/ubuntu-useragent.js.tmpl => debian/ubuntu-firefox.js.in
     - update debian/ubuntu-abrowser.js.in
     - update debian/ubuntu-firefox.js.in
+  * Refresh patches after landing of (bmo: 581076) aka No "See all results" 
+    link present when searching for add-ons and not all are displayed
+    - update debian/patches/firefox-profilename.patch
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -430,7 +433,7 @@ firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 04 Sep 2010 22:35:30 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 05 Sep 2010 10:33:46 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
