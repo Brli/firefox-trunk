@@ -378,8 +378,7 @@ else
 endif
 
 common-install-arch::
-	rm -rf build-tree/mozilla/dist/bin/chrome/browser*
-	rm -rf build-tree/mozilla/dist/bin/chrome/en-US*
+	rm -rf build-tree/mozilla/dist/bin/chrome/browser-branding*
 ifeq (1,$(DEB_MIN_SYSDEPS))
 	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/pref/ubuntu.js
 else
@@ -389,7 +388,7 @@ endif
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
-		$(MAKE) -C ../../browser/
+		$(MAKE) -C ../../browser/app/
 	cd build-tree/mozilla/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/

@@ -402,13 +402,6 @@ firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.sh.in
   * Clean up the files in /etc/firefox-4.0 on upgrade
     - update debian/firefox-core.preinst.in
-  * Drop the patch which splits the branding in to a separate chrome package,
-    as we don't need this with the new packaging. Also modify the 
-    awesome-browser branding to install the branding in to the browser chrome
-    - remove debian/patches/browser_branding.patch
-    - update debian/patches/series
-    - update debian/patches/awesome_branding_updates.patch
-    - update debian/rules
   * Install a branding-specific ubuntu.js preference file in to each
     omni.jar. We achieve this by dropping it in to dist/bin/defaults after
     each build, and adding the new file to the package-manifest so that it
