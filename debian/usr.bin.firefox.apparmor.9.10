@@ -294,7 +294,9 @@
     network inet6 stream,
     @{PROC}/[0-9]*/net/if_inet6 r,
     @{PROC}/[0-9]*/net/ipv6_route r,
+    @{PROC}/loadavg r,
 
+    /etc/debian_version r,
     /etc/java-*/ r,
     /etc/java-*/** r,
     /etc/lsb-release r,
@@ -322,6 +324,7 @@
 
     owner @{HOME}/ r,
     owner @{HOME}/** rwk,
+    owner @{HOME}/.fontconfig/*.cache* m,
 
     # These are seriously unfortunate, but required due to LP: #535247
     /etc/passwd m,
