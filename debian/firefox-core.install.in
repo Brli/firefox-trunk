@@ -1,5 +1,6 @@
 debian/tmp/@LIBDIR@/components/*.manifest
 debian/tmp/@LIBDIR@/components/*.so
+debian/tmp/@LIBDIR@/components/components.list
 debian/tmp/@LIBDIR@/run-mozilla.sh
 debian/tmp/@LIBDIR@/@APPNAME@
 debian/tmp/@LIBDIR@/chrome.manifest
