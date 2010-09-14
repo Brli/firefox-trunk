@@ -1,4 +1,4 @@
-firefox-4.0 (4.0~b6~hg20100903r51944+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
