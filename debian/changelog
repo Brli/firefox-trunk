@@ -417,8 +417,6 @@ firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches after landing of (bmo: 581076) aka No "See all results" 
     link present when searching for add-ons and not all are displayed
     - update debian/patches/firefox-profilename.patch
-  * Fix LP: #637434 - components.list is not installed
-    - update debian/firefox-core.install.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
