@@ -56,7 +56,7 @@
 
   # noisy
   deny @LIBDIR@/** w,
-  deny /usr/lib/firefox-addons/** w,
+  deny /usr/lib/@APPNAME@-addons/** w,
   deny /usr/lib/xulrunner-addons/** w,
   deny /usr/lib/xulrunner-*/components/*.tmp w,
   deny /.suspended r,

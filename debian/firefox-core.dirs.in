@@ -1,5 +1,3 @@
-@LIBDIR@/distribution
-usr/lib/firefox-addons/extensions
-usr/lib/firefox-addons/plugins
-usr/lib/firefox-addons/searchplugins
+usr/lib/@APPNAME@-addons/extensions
+usr/lib/@APPNAME@-addons/plugins
 etc/apparmor.d/disable

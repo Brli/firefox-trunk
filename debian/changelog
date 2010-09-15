@@ -446,6 +446,21 @@ firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Namespace the environment variables affecting the build by prefixing them
     all with "DEB_"
     - update debian/rules
+  * Don't rely on /usr/lib/firefox-addons provided by the default Firefox.
+    Instead, provide our own /usr/lib/firefox-4.0-addons. This makes it
+    possible to ship Firefox 4.0 localizations without cluttering the
+    addons-manager of the default Firefox install. In addition to this, we
+    no longer depend on the default Firefox install for search plugins.
+    In future, /usr/lib/firefox-*-addons shall only be for components that
+    are directly tied with a specific browser install (eg, language packs).
+    Everything else should go in /usr/lib/mozilla, and we will enforce 
+    this next cycle
+    - update debian/firefox-core.dirs.in
+    - update debian/firefox-core.install.in
+    - update debian/firefox-core.links.in
+    - update debian/usr.bin.firefox.apparmor.10.04
+    - update debian/usr.bin.firefox.apparmor.10.10
+    - update debian/usr.bin.firefox.apparmor.9.10
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -453,9 +468,9 @@ firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/ftbfs_crashreporter.patch   
     - update debian/patches/series
     - update debian/control
-    - update debian/rules
+    - update debian/rules 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 Sep 2010 14:47:36 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 Sep 2010 15:25:09 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
