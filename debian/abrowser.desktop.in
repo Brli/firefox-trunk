@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
-Name=A Web Browser 4.0
+Name=@PRESENTATION_NAME_OTHER@
 Comment=Browse the World Wide Web
-GenericName=Web Browser 4.0
+GenericName=Web Browser
 Exec=@APPNAME_OTHER@ %u
 Terminal=false
 X-MultipleArgs=false

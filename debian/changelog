@@ -417,6 +417,11 @@ firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches after landing of (bmo: 581076) aka No "See all results" 
     link present when searching for add-ons and not all are displayed
     - update debian/patches/firefox-profilename.patch
+  * Add an abrowser.xml in abrowser-gnome-support for the default apps
+    - add debian/patches/abrowser.desktop.in
+    - update debian/rules
+    - update debian/abrowser-gnome-support.install.in
+    - update debian/abrowser.desktop.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -424,9 +429,9 @@ firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/ftbfs_crashreporter.patch   
     - update debian/patches/series
     - update debian/control
-    - update debian/rules 
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 14 Sep 2010 14:16:28 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 Sep 2010 09:57:12 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
