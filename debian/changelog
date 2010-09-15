@@ -429,6 +429,23 @@ firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches after landing of (bmo: 579547) aka New About window 
     for Firefox 4
     - update debian/patches/browser_branding.patch
+  * Rename firefox-minefield.desktop.in to firefox-nightly.desktop.in to
+    be more consistent with the firefox-unofficial desktop file
+  * Add translations to desktop files where those are known already, and just
+    make the branding name substitutable at build time
+    - update debian/firefox-final.desktop.in
+    - update debian/firefox-nightly.desktop.in
+    - update debian/firefox-unofficial.desktop.in
+  * Add a beta desktop file for official branding which has the beta milestone
+    version in the name (no translations yet). Adjust the branding logic a 
+    little to match what upstream appears to do ("nightly" for nightlies, 
+    "unofficial" for alphas, and official for beta's. Still provide a means 
+    to override this though and disable the official branding)
+    - add debian/firefox-beta.desktop.in
+    - update debian/rules
+  * Namespace the environment variables affecting the build by prefixing them
+    all with "DEB_"
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -436,9 +453,9 @@ firefox-4.0 (4.0~b7~hg20100914r53786+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/ftbfs_crashreporter.patch   
     - update debian/patches/series
     - update debian/control
-    - update debian/rules 
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 Sep 2010 12:27:03 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 Sep 2010 14:47:36 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

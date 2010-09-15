@@ -1,14 +1,14 @@
 [Desktop Entry]
 Version=1.0
-Name=A Web Browser 4.0
+Name=@BRAND_NAME@ Beta @DEBIAN_MILESTONE_VER@ Web Browser
 Comment=Browse the World Wide Web
 GenericName=Web Browser
-Exec=@APPNAME_OTHER@ %u
+Exec=@APPNAME@ %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=@APPNAME_OTHER@
-Categories=Application;Network;
+Icon=@APPNAME@
+Categories=Application;Internet;Network;WebBrowser;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;
-StartupWMClass=Web Browser
+StartupWMClass=@STARTUP_WM_CLASS@
 StartupNotify=true

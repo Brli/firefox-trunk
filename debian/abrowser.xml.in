@@ -3,7 +3,7 @@
 <default-apps>
   <web-browsers>
     <web-browser>
-      <name>@PRESENTATION_NAME_OTHER@</name>
+      <name>Web Browser</name>
       <executable>@APPNAME_OTHER@</executable>
       <command>@APPNAME_OTHER@ %s</command>
       <icon-name>@APPNAME_OTHER@</icon-name>

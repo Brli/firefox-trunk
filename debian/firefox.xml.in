@@ -3,7 +3,7 @@
 <default-apps>
   <web-browsers>
     <web-browser>
-      <name>@PRESENTATION_NAME@</name>
+      <name>@BRAND_NAME@</name>
       <executable>@APPNAME@</executable>
       <command>@APPNAME@ %s</command>
       <icon-name>@APPNAME@</icon-name>

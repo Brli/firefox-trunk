@@ -20,6 +20,7 @@ BRANDING_NAME_OTHER	:= awesome-browser
 DEBIAN_VERSION		:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 DEBIAN_FF3_VER		= $(shell cat build-tree/mozilla/browser/config/version.txt)
 DEBIAN_FF3_DIR		= usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
+DEBIAN_MILESTONE_VER	= $(shell echo $(DEBIAN_FF3_VER) | sed -e 's/pre//; s/\([0-9\.]*\)\([ab]\)\([0-9]*\)/\3/')
 DEB_TAR_SRCDIR		:= mozilla
 
 MOZCLIENT_PROJECTNAME	:= $(DEBIAN_NAME)
@@ -31,13 +32,12 @@ ifneq (,$(filter $(DISTRIB),Ubuntu))
 	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
 endif
 
-WANT_UNIT_TESTS		?= 1
+DEB_WANT_UNIT_TESTS	?= 1
 # FIXME: DEB_MIN_SYSDEPS=0 will fail completely now. We need logic to handle both jar and omni format to be able to use this
 DEB_MIN_SYSDEPS		?= 1
-ENABLE_IPC		?= 1
-ENABLE_BREAKPAD		?= 1
-FORCE_OFFICIAL_BRANDING	?= 0
-BUILD_UNOFFICIAL	?= 0
+DEB_ENABLE_IPC		?= 1
+DEB_ENABLE_BREAKPAD	?= 1
+DEB_BUILD_UNOFFICIAL	?= 0
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS	= $(NULL)
 
@@ -63,57 +63,54 @@ endif
 ifeq (,$(findstring i386,$(DEB_BUILD_ARCH)))
 ifeq (,$(findstring amd64,$(DEB_BUILD_ARCH)))
 ifeq (,$(findstring armel,$(DEB_BUILD_ARCH)))
-	ENABLE_IPC	= 0
-	ENABLE_BREAKPAD	= 0
+	DEB_ENABLE_IPC		= 0
+	DEB_ENABLE_BREAKPAD	= 0
 endif
 endif
 endif
 
-ifneq (0, $(FORCE_OFFICIAL_BRANDING))
-	# official branding for final and final RCs builds
-	BRANDING		= --enable-official-branding
-	DESKTOP_BRANDED		= $(DEBIAN_NAME)-final.desktop
-	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
-				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	PRESENTATION_NAME	= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
-else
 # Change branding based on Version
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for snapshots
 	BRANDING 		= $(NULL)
-	DESKTOP_BRANDED  	= $(DEBIAN_NAME)-minefield.desktop
+	DESKTOP_BRANDED  	= $(DEBIAN_NAME)-nightly.desktop
 	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/browser/branding/nightly/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	PRESENTATION_NAME	= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
+	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
 else
-ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
-	# codename branding for beta
-	BRANDING		= --with-branding=browser/branding/unofficial
-	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-unofficial.desktop
-	PRESENTATION_NAME	= $(shell cat build-tree/mozilla/browser/branding/unofficial/locales/en-US/brand.properties \
-				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(PRESENTATION_NAME)
-else
-ifneq (0, $(BUILD_UNOFFICIAL))
+ifneq (0, $(DEB_BUILD_UNOFFICIAL))
 	# build with unofficial branding
 	BRANDING		= --with-branding=browser/branding/unofficial
 	DESKTOP_BRANDED		= $(DEBIAN_NAME)-unofficial.desktop
-	PRESENTATION_NAME	= $(shell cat build-tree/mozilla/browser/branding/unofficial/locales/en-US/brand.properties \
+	BRAND_NAME		= $(shell cat build-tree/mozilla/browser/branding/unofficial/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(PRESENTATION_NAME)
+	STARTUP_WM_CLASS	= $(BRAND_NAME)
+else
+ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
+	# codename branding for alpha
+	BRANDING		= --with-branding=browser/branding/unofficial
+	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-unofficial.desktop
+	BRAND_NAME		= $(shell cat build-tree/mozilla/browser/branding/unofficial/locales/en-US/brand.properties \
+				    | grep brandShortName | sed -e 's/brandShortName\=//')
+	STARTUP_WM_CLASS	= $(BRAND_NAME)
+else
+ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
+	BRANDING		= --enable-official-branding
+	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-beta.desktop
+	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
+				    | grep brandShortName | sed -e 's/brandShortName\=//')
+	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
 else
 	# automatically build with official branding for final and final RCs builds
 	BRANDING		= --enable-official-branding
 	DESKTOP_BRANDED		= $(DEBIAN_NAME)-final.desktop
 	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	PRESENTATION_NAME	= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
+	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
 endif
 endif
 endif
 endif
-
-PRESENTATION_NAME_OTHER	= $(strip "A Web Browser" $(DEBIAN_APP_NAME_VER))
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	BINREAL := $(DEBIAN_NAME)
@@ -153,17 +150,17 @@ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
 endif
 
-ifeq (1,$(ENABLE_IPC))
+ifeq (1,$(DEB_ENABLE_IPC))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-ipc
 else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-ipc
 endif
 
-$(info WANT_UNIT_TESTS=$(WANT_UNIT_TESTS))
-ifeq (1,$(WANT_UNIT_TESTS))
+$(info DEB_WANT_UNIT_TESTS=$(DEB_WANT_UNIT_TESTS))
+ifeq (1,$(DEB_WANT_UNIT_TESTS))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-tests --enable-mochitest
 # Uncomment when the IPC test-suite works
-#ifeq (1,$(ENABLE_IPC))
+#ifeq (1,$(DEB_ENABLE_IPC))
 #  EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-ipdl-tests
 #else
 #  EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-ipdl-tests
@@ -226,19 +223,16 @@ else
 	system_myspell_configure_flags  := --enable-system-myspell
 endif
 
-ifeq (1, $(ENABLE_BREAKPAD))
-ifeq (0, $(BUILD_UNOFFICIAL))
-	# Don't enable crash reporting in application.ini for unofficial builds
-	export MOZILLA_OFFICIAL = 1
-endif
+ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-crashreporter
 else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-crashreporter
 endif
 
-# required for various features
-BUILD_OFFICIAL = 1
-export BUILD_OFFICIAL
+ifeq (0, $(DEB_BUILD_UNOFFICIAL))
+	export MOZILLA_OFFICIAL = 1
+	export BUILD_OFFICIAL = 1
+endif
 
 DEB_CONFIGURE_USER_FLAGS= \
 	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
@@ -335,8 +329,8 @@ $(pkg_files)::
 	    -e 's,@APPNAME_OTHER@,$(DEBIAN_NAME_OTHER),g' \
 	    -e 's,@BINREAL@,$(BINREAL),g' \
 	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
-	    -e 's,@PRESENTATION_NAME@,$(PRESENTATION_NAME),g' \
-	    -e 's,@PRESENTATION_NAME_OTHER@,$(PRESENTATION_NAME_OTHER),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
+	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
+	    -e 's,@DEBIAN_MILESTONE_VER@,$(DEBIAN_MILESTONE_VER),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
 
 debian/disable-patches-for-release:
 	if [ -f "$(CURDIR)/debian/patches/series-disable-patches.$(DISTRIB_VERSION_MAJOR).$(DISTRIB_VERSION_MINOR)" ] ; then \
@@ -407,7 +401,7 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)
 	dh_link -p$(DEBIAN_NAME)-core \
 		$(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
-ifeq (1,$(ENABLE_IPC))
+ifeq (1,$(DEB_ENABLE_IPC))
 	dh_install -p$(DEBIAN_NAME)-core \
 		debian/tmp/usr/lib/firefox-*/plugin-container
 endif
@@ -417,7 +411,7 @@ endif
 	fi
 
 	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)-core/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
-ifeq (1, $(ENABLE_BREAKPAD))
+ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	# create build symbols
 	cd build-tree/mozilla/; \
 	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
