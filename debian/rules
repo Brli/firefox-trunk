@@ -296,6 +296,7 @@ pkg_files = \
 	debian/$(DEBIAN_NAME)-gnome-support.install \
 	debian/$(DEBIAN_NAME)-gnome-support.postinst \
 	debian/$(DEBIAN_NAME)-gnome-support.prerm \
+	debian/$(DEBIAN_NAME)-gnome-support.preinst \
 	debian/$(DEBIAN_NAME_OTHER).xml \
 	debian/$(DEBIAN_NAME_OTHER)-gnome-support.install \
 	debian/$(DEBIAN_NAME_OTHER)-gnome-support.postinst \
@@ -313,6 +314,7 @@ pkg_files = \
 	debian/$(DEBIAN_NAME_OTHER).links \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
+	debian/$(DEBIAN_NAME).preinst \
 	$(NULL)
 
 %:: %.in

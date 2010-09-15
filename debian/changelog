@@ -461,6 +461,12 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/usr.bin.firefox.apparmor.10.04
     - update debian/usr.bin.firefox.apparmor.10.10
     - update debian/usr.bin.firefox.apparmor.9.10
+  * Clean up current nightly testers from previous package bugs. We
+    should drop these changes after a couple of weeks
+    - add debian/firefox.preinst.in to clean files from /etc/@APPNAME
+    - add debian/firefox-gnome-support.preinst.in to remove a broken 
+      alternative
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -470,7 +476,7 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 Sep 2010 15:25:09 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 Sep 2010 15:50:19 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
