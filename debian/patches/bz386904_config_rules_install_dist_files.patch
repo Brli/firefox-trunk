@@ -25,16 +25,9 @@ problems because its not really used.
  config/rules.mk |   28 ++++++++++++++++++++++++++++
  1 file changed, 28 insertions(+)
 
-Index: mozilla/config/rules.mk
-===================================================================
---- mozilla.orig/config/rules.mk	2007-08-18 15:15:17.000000000 +0000
-+++ mozilla/config/rules.mk	2007-08-18 15:15:36.000000000 +0000
-@@ -1699,28 +1699,56 @@
- 	@$(EXIT_ON_ERROR) \
- 	for f in $(DIST_FILES); do \
- 	  dest=$(FINAL_TARGET)/`basename $$f`; \
- 	  $(RM) -f $$dest; \
- 	  $(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py \
+--- a/config/rules.mk
++++ b/config/rules.mk
+@@ -1993,6 +1993,20 @@ libs:: $(DIST_FILES) $(DIST)/bin
  	    $(XULAPP_DEFINES) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) \
  	    $(srcdir)/$$f > $$dest; \
  	done
@@ -55,12 +48,7 @@ Index: mozilla/config/rules.mk
  endif
  
  ifneq ($(DIST_CHROME_FILES),)
- libs:: $(DIST_CHROME_FILES)
- 	@$(EXIT_ON_ERROR) \
- 	for f in $(DIST_CHROME_FILES); do \
- 	  dest=$(FINAL_TARGET)/chrome/`basename $$f`; \
- 	  $(RM) -f $$dest; \
- 	  $(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py \
+@@ -2005,6 +2019,20 @@ libs:: $(DIST_CHROME_FILES)
  	    $(XULAPP_DEFINES) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) \
  	    $(srcdir)/$$f > $$dest; \
  	done
@@ -81,8 +69,47 @@ Index: mozilla/config/rules.mk
  endif
  
  ifneq ($(XPI_PKGNAME),)
- libs realchrome::
- ifdef STRIP_XPI
- ifndef MOZ_DEBUG
- 	@echo "Stripping $(XPI_PKGNAME) package directory..."
- 	@echo $(FINAL_TARGET)
+--- a/js/src/config/rules.mk
++++ b/js/src/config/rules.mk
+@@ -1993,6 +1993,20 @@ libs:: $(DIST_FILES) $(DIST)/bin
+ 	    $(XULAPP_DEFINES) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) \
+ 	    $(srcdir)/$$f > $$dest; \
+ 	done
++
++install:: $(DIST_FILES)
++ifndef XPI_NAME
++ifndef NO_INSTALL
++	@$(EXIT_ON_ERROR) \
++	for f in $(DIST_FILES); do \
++	  dest=$(DESTDIR)$(mozappdir)/`basename $$f`; \
++	  $(RM) -f $$dest; \
++	  $(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py \
++	    $(XULAPP_DEFINES) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) \
++	    $(srcdir)/$$f > $$dest; \
++	done
++endif
++endif
+ endif
+ 
+ ifneq ($(DIST_CHROME_FILES),)
+@@ -2005,6 +2019,20 @@ libs:: $(DIST_CHROME_FILES)
+ 	    $(XULAPP_DEFINES) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) \
+ 	    $(srcdir)/$$f > $$dest; \
+ 	done
++
++install:: $(DIST_CHROME_FILES)
++ifndef XPI_NAME
++ifndef NO_INSTALL
++	@$(EXIT_ON_ERROR) \
++	for f in $(DIST_CHROME_FILES); do \
++	  dest=$(DESTDIR)$(mozappdir)/chrome/`basename $$f`; \
++	  $(RM) -f $$dest; \
++	  $(PYTHON) $(MOZILLA_DIR)/config/Preprocessor.py \
++	    $(XULAPP_DEFINES) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) \
++	    $(srcdir)/$$f > $$dest; \
++	done
++endif
++endif
+ endif
+ 
+ ifneq ($(XPI_PKGNAME),)
