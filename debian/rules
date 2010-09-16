@@ -160,6 +160,7 @@ endif
 $(info DEB_WANT_UNIT_TESTS=$(DEB_WANT_UNIT_TESTS))
 ifeq (1,$(DEB_WANT_UNIT_TESTS))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-tests --enable-mochitest
+	DEB_MAKE_CHECK_TARGET = -f ../../debian/testsuite.mk test
 # Uncomment when the IPC test-suite works
 #ifeq (1,$(DEB_ENABLE_IPC))
 #  EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-ipdl-tests
