@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=@BRAND_NAME@ Beta @DEBIAN_MILESTONE_VER@ Web Browser
+Name=@BRAND_NAME@ Beta @FF_VERSION_DEVMILESTONE@ Web Browser
 Comment=Browse the World Wide Web
 GenericName=Web Browser
 Exec=@APPNAME@ %u

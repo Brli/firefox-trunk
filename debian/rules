@@ -18,9 +18,10 @@ DEBIAN_NAME_OTHER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)/
 BRANDING_NAME_OTHER	:= awesome-browser
 
 DEBIAN_VERSION		:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-DEBIAN_FF3_VER		= $(shell cat build-tree/mozilla/browser/config/version.txt)
-DEBIAN_FF3_DIR		= usr/lib/$(DEBIAN_APP_NAME)-$(DEBIAN_FF3_VER)
-DEBIAN_MILESTONE_VER	= $(shell echo $(DEBIAN_FF3_VER) | sed -e 's/pre//; s/\([0-9\.]*\)\([ab]\)\([0-9]*\)/\3/')
+FF_VERSION		= $(shell cat build-tree/mozilla/browser/config/version.txt)
+FF_DIR			= usr/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
+FF_VERSION_DEVMILESTONE	= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
+FF_VERSION_SERIES	= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
 DEB_TAR_SRCDIR		:= mozilla
 
 MOZCLIENT_PROJECTNAME	:= $(DEBIAN_NAME)
@@ -44,9 +45,9 @@ EXTRA_SYSTEM_CONFIGURE_FLAGS	= $(NULL)
 DESKTOP				:= $(DEBIAN_NAME_OTHER).desktop
 
 # minVersion and maxVersion used in install.rdf
-EM_TRANSLATION_VERSION		= $(DEBIAN_FF3_VER)
+EM_TRANSLATION_VERSION		= $(FF_VERSION)
 EM_TRANSLATION_MIN_VERSION	= 3.0
-EM_TRANSLATION_MAX_VERSION	= $(DEBIAN_FF3_VER)
+EM_TRANSLATION_MAX_VERSION	= $(FF_VERSION)
 
 # translation flags
 MOZ_TRANSLATION_AUTO_XPI_OUTDIR		:= debian/lp-export-xpis/
@@ -76,7 +77,7 @@ ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	DESKTOP_BRANDED  	= $(DEBIAN_NAME)-nightly.desktop
 	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/browser/branding/nightly/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
+	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
 else
 ifneq (0, $(DEB_BUILD_UNOFFICIAL))
 	# build with unofficial branding
@@ -99,14 +100,14 @@ ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
 	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-beta.desktop
 	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
+	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
 else
 	# automatically build with official branding for final and final RCs builds
 	BRANDING		= --enable-official-branding
 	DESKTOP_BRANDED		= $(DEBIAN_NAME)-final.desktop
-	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
+	BRAND_NAME		= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(DEBIAN_APP_NAME_VER))
+	STARTUP_WM_CLASS	= $(BRAND_NAME)
 endif
 endif
 endif
@@ -318,21 +319,21 @@ pkg_files = \
 	$(NULL)
 
 %:: %.in
-	sed -e 's,@LIBDIR@,/$(DEBIAN_FF3_DIR),g' \
+	sed -e 's,@LIBDIR@,/$(FF_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
 	    -e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
 	    -e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 	    -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
-	    -e 's/@APP_VERSION@/$(DEBIAN_FF3_VER)/' < $< > $@
+	    -e 's/@APP_VERSION@/$(FF_VERSION)/' < $< > $@
 
 $(pkg_files)::
-	sed -e 's,@LIBDIR@,$(DEBIAN_FF3_DIR),g' \
+	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
 	    -e 's,@APPNAME_OTHER@,$(DEBIAN_NAME_OTHER),g' \
 	    -e 's,@BINREAL@,$(BINREAL),g' \
 	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
 	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
-	    -e 's,@DEBIAN_MILESTONE_VER@,$(DEBIAN_MILESTONE_VER),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
+	    -e 's,@FF_VERSION_DEVMILESTONE@,$(FF_VERSION_DEVMILESTONE),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
 
 debian/disable-patches-for-release:
 	if [ -f "$(CURDIR)/debian/patches/series-disable-patches.$(DISTRIB_VERSION_MAJOR).$(DISTRIB_VERSION_MINOR)" ] ; then \
@@ -396,13 +397,13 @@ endif
 binary-install/$(DEBIAN_NAME)-core::
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	dh_install -p$(DEBIAN_NAME)-core \
-		debian/tmp/$(DEBIAN_FF3_DIR)/*.so \
-			$(DEBIAN_FF3_DIR)
+		debian/tmp/$(FF_DIR)/*.so \
+			$(FF_DIR)
 
 	dh_install -p$(DEBIAN_NAME)-core \
-		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)
+		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(FF_DIR)
 	dh_link -p$(DEBIAN_NAME)-core \
-		$(DEBIAN_FF3_DIR)/$(DEBIAN_NAME)-bin $(DEBIAN_FF3_DIR)/$(DEBIAN_NAME_OTHER)-bin
+		$(FF_DIR)/$(DEBIAN_NAME)-bin $(FF_DIR)/$(DEBIAN_NAME_OTHER)-bin
 ifeq (1,$(DEB_ENABLE_IPC))
 	dh_install -p$(DEBIAN_NAME)-core \
 		debian/tmp/usr/lib/firefox-*/plugin-container
@@ -418,9 +419,9 @@ ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	cd build-tree/mozilla/; \
 	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
 	dh_install -p$(DEBIAN_NAME)-core debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
-	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols-full.zip $(DEBIAN_FF3_DIR)/
+	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols-full.zip $(FF_DIR)/
 ifeq (1, $(DEB_MIN_SYSDEPS))
-	dh_install -p$(DEBIAN_NAME)-core debian/tmp/usr/lib/firefox-*/crashreporter $(DEBIAN_FF3_DIR)/
+	dh_install -p$(DEBIAN_NAME)-core debian/tmp/usr/lib/firefox-*/crashreporter $(FF_DIR)/
 endif
 endif
 
@@ -460,8 +461,8 @@ binary-predeb/$(DEBIAN_NAME)-core::
 	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)-core/usr/lib/firefox-*/components/;) true
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
-	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core/$(DEBIAN_FF3_DIR):$$LD_LIBRARY_PATH \
-	        build-tree/mozilla/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(DEBIAN_FF3_DIR)/$(lib);)
+	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core/$(FF_DIR):$$LD_LIBRARY_PATH \
+	        build-tree/mozilla/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(FF_DIR)/$(lib);)
 
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::
