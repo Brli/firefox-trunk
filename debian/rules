@@ -39,6 +39,11 @@ DEB_MIN_SYSDEPS		?= 1
 DEB_ENABLE_IPC		?= 1
 DEB_ENABLE_BREAKPAD	?= 1
 DEB_BUILD_UNOFFICIAL	?= 0
+DEB_MOZ_VALGRIND	?= 0
+
+ifeq(1,$(DEB_MOZ_VALGRIND))
+	DEB_BUILD_UNOFFICIAL = 1
+endif
 
 EXTRA_SYSTEM_CONFIGURE_FLAGS	= $(NULL)
 
@@ -147,8 +152,12 @@ export LDFLAGS
 
 export DEB_BUILD_HARDENING=1
 
+ifneq (1,$(DEB_MOZ_VALGRIND))
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
+endif
+else
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-optimize="-g -O -freorder-blocks"
 endif
 
 ifeq (1,$(DEB_ENABLE_IPC))
@@ -229,6 +238,11 @@ ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-crashreporter
 else
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-crashreporter
+endif
+
+ifeq (1, $(DEB_MOZ_VALGRIND))
+	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-jemalloc --enable-valgrind
+	export MOZ_MAKE_FLAGS = "-j4"
 endif
 
 ifeq (0, $(DEB_BUILD_UNOFFICIAL))

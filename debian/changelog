@@ -484,6 +484,10 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     xpcshell test to fail, as it relies on knowing the number of default
     bookmarks in order to work properly
     - update debian/patches/ubuntu_bookmarks.patch
+  * Support builds suitable for valgrind, by building with 
+    DEB_MOZ_VALGRIND=1. This will automatically pick the right optimisations
+    and build flags
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -493,7 +497,7 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 17 Sep 2010 01:30:43 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 17 Sep 2010 19:55:30 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
