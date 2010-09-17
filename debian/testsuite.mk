@@ -9,8 +9,13 @@ test: $(TESTS)
 # Required for js/src/trace-tests/sunspider/check-date-format-tofte.js
 check: export TZ = :/usr/share/zoneinfo/posix/US/Pacific
 
-# Required for toolkit/mozapps/extensions/test/xpcshell/test_updatecheck.js
-xpcshell-tests: export LC_ALL = C
+setup-locales:
+	export LOCPATH = $(MOZ_BUILD_ROOT)/../../debian/locales
+	localedef -f UTF-8 -i en_US $(MOZ_BUILD_ROOT)/../../debian/locales/en_US.UTF-8
+	export LC_ALL = en_US.UTF-8
+
+# Setup locales for tests which need it
+xpcshell-tests reftest: setup-locales
 
 # Disable tests that fail
 reftest: reftests-disable
@@ -45,16 +50,12 @@ reftests-disable:
 	sed -ri '/text-language-00/d' $(MOZ_BUILD_ROOT)/layout/reftests/svg/reftest.list
 
 xpcshell-tests-disable:
-	# FIXME: Investigate these failures
-	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/xpcom/tests/unit/test_nsIProcess.js
-	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/xpcom/tests/unit/test_bug364285-1.js
-	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
-
 	# FIXME: Test seems to hang in the buildd
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/chrome/test/unit_ipc/test_resolve_uris_ipc.js
 
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
+	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
 
 crashtests-disable:
 	# FIXME: Investigate these failures
