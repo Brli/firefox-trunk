@@ -48,7 +48,6 @@ xpcshell-tests-disable:
 	# FIXME: Investigate these failures
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/xpcom/tests/unit/test_nsIProcess.js
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/xpcom/tests/unit/test_bug364285-1.js
-	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/places/tests/unit/test_browserGlue_smartBookmarks.js
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
 
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this

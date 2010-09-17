@@ -479,6 +479,11 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/testsuite.mk
     - update debian/rules
     - update debian/control
+  * Update DEFAULT_BOOKMARKS_ON_MENU because we add extra bookmarks by
+    default. Not doing this causes the browserGlue_smartBookmarks
+    xpcshell test to fail, as it relies on knowing the number of default
+    bookmarks in order to work properly
+    - update debian/patches/ubuntu_bookmarks.patch
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -488,7 +493,7 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 16 Sep 2010 21:16:51 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 17 Sep 2010 01:30:43 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
