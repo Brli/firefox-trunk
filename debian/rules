@@ -510,3 +510,4 @@ clean::
 	        mv -f $(CURDIR)/debian/patches/series.orig $(CURDIR)/debian/patches/series ; \
 	fi
 	rm -f debian/disable-patches-for-release
+	rm -rf debian/locales
