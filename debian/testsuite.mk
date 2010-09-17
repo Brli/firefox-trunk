@@ -2,6 +2,8 @@
 
 MOZ_BUILD_ROOT	:= $(shell echo `pwd`)
 TESTS 		:= check xpcshell-tests reftest crashtest
+LOCALE		:= en_US.UTF-8
+LOCDIR		:= $(MOZ_BUILD_ROOT)/dist/.locales
 
 # Run all testsuite targets
 test: $(TESTS)
@@ -9,13 +11,14 @@ test: $(TESTS)
 # Required for js/src/trace-tests/sunspider/check-date-format-tofte.js
 check: export TZ = :/usr/share/zoneinfo/posix/US/Pacific
 
-setup-locales:
-	export LOCPATH = $(MOZ_BUILD_ROOT)/../../debian/locales
-	localedef -f UTF-8 -i en_US $(MOZ_BUILD_ROOT)/../../debian/locales/en_US.UTF-8
-	export LC_ALL = en_US.UTF-8
+$(LOCDIR)/%:
+	mkdir -p $(LOCDIR)
+	export LOCPATH=$(LOCDIR)
+	localedef -f $(shell echo $(notdir $@) | cut -d '.' -f 2) -i $(shell echo $(notdir $@) | cut -d '.' -f 1) $@
+	export LC_ALL=$(notdir $@)
 
 # Setup locales for tests which need it
-xpcshell-tests reftest: setup-locales
+xpcshell-tests reftest: $(LOCDIR)/$(LOCALE)
 
 # Disable tests that fail
 reftest: reftests-disable
