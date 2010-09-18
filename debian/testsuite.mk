@@ -59,7 +59,3 @@ xpcshell-tests-disable:
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
-
-crashtests-disable:
-	# FIXME: Investigate these failures
-	sed -ri '/237421-2/d' $(MOZ_BUILD_ROOT)/layout/tables/crashtests/crashtests.list
