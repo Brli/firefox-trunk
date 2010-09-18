@@ -13,12 +13,12 @@ check: export TZ = :/usr/share/zoneinfo/posix/US/Pacific
 
 $(LOCDIR)/%:
 	mkdir -p $(LOCDIR)
-	export LOCPATH=$(LOCDIR)
 	localedef -f $(shell echo $(notdir $@) | cut -d '.' -f 2) -i $(shell echo $(notdir $@) | cut -d '.' -f 1) $@
-	export LC_ALL=$(notdir $@)
 
 # Setup locales for tests which need it
 xpcshell-tests reftest: $(LOCDIR)/$(LOCALE)
+xpcshell-tests reftest: export LOCPATH=$(LOCDIR)
+xpcshell-tests reftest: export LC_ALL=$(LOCALE)
 
 # Disable tests that fail
 reftest: reftests-disable
