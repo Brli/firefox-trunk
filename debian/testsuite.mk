@@ -34,9 +34,6 @@ $(TESTS):
 	$(WRAPPER) $(MAKE) -C $(MOZ_BUILD_ROOT) $@ || true
 
 reftests-disable:
-	# See https://bugzilla.mozilla.org/show_bug.cgi?id=386567
-	sed -ri '/bidi-004/d' $(MOZ_BUILD_ROOT)/layout/reftests/bidi/reftest.list
-
 	# FIXME: Investigate these failures
 	sed -ri '/482592/d' $(MOZ_BUILD_ROOT)/layout/reftests/bugs/reftest.list
 	sed -ri '/textarea-resize-background/d' $(MOZ_BUILD_ROOT)/layout/reftests/forms/reftest.list
