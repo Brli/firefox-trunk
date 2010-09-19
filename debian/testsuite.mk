@@ -16,9 +16,9 @@ $(LOCDIR)/%:
 	localedef -f $(shell echo $(notdir $@) | cut -d '.' -f 2) -i $(shell echo $(notdir $@) | cut -d '.' -f 1) $@
 
 # Setup locales for tests which need it
-xpcshell-tests reftest: $(LOCDIR)/$(LOCALE)
-xpcshell-tests reftest: export LOCPATH=$(LOCDIR)
-xpcshell-tests reftest: export LC_ALL=$(LOCALE)
+xpcshell-tests: $(LOCDIR)/$(LOCALE)
+xpcshell-tests: export LOCPATH=$(LOCDIR)
+xpcshell-tests: export LC_ALL=$(LOCALE)
 
 # Disable tests that fail
 reftest: reftests-disable
