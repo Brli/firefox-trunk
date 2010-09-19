@@ -53,14 +53,6 @@ xpcshell-tests-disable:
 	# FIXME: Investigate these failures
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/places/tests/unit/test_browserGlue_smartBookmarks.js
 
-	# FIXME: Test seems to hang in the buildd
-	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/chrome/test/unit_ipc
-	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/ipc/testshell/tests
-	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/toolkit/components/contentprefs/tests/unit_ipc
-	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/ipc
-	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/cookie/test/unit_ipc
-	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/test/unit_ipc
-
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
