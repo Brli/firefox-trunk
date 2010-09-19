@@ -51,7 +51,12 @@ reftests-disable:
 
 xpcshell-tests-disable:
 	# FIXME: Test seems to hang in the buildd
-	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/chrome/test/unit_ipc/test_resolve_uris_ipc.js
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/chrome/test/unit_ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/ipc/testshell/tests
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/toolkit/components/contentprefs/tests/unit_ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/cookie/test/unit_ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/test/unit_ipc
 
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
