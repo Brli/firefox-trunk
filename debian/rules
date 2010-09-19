@@ -33,7 +33,7 @@ ifneq (,$(filter $(DISTRIB),Ubuntu))
 	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
 endif
 
-DEB_WANT_UNIT_TESTS	?= 0
+DEB_WANT_UNIT_TESTS	?= 1
 # FIXME: DEB_MIN_SYSDEPS=0 will fail completely now. We need logic to handle both jar and omni format to be able to use this
 DEB_MIN_SYSDEPS		?= 1
 DEB_ENABLE_IPC		?= 1

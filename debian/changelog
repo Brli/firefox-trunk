@@ -473,8 +473,6 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/lp512615_cairo_lcd_filter.patch
   * Add support for running the Mozilla test suite at build time. Currently,
     we run the following targets: check, xpcshell-tests, reftest and crashtest.
-    The test-suite is disabled by default as quite a few tests need network
-    access, and hang inside the buildd's
     - add debian/testsuite.mk
     - update debian/rules
     - update debian/control

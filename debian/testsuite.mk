@@ -16,14 +16,12 @@ $(LOCDIR)/%:
 	localedef -f $(shell echo $(notdir $@) | cut -d '.' -f 2) -i $(shell echo $(notdir $@) | cut -d '.' -f 1) $@
 
 # Setup locales for tests which need it
-xpcshell-tests: $(LOCDIR)/$(LOCALE)
-xpcshell-tests: export LOCPATH=$(LOCDIR)
-xpcshell-tests: export LC_ALL=$(LOCALE)
+xpcshell-tests reftest: $(LOCDIR)/$(LOCALE)
+xpcshell-tests reftest: export LOCPATH=$(LOCDIR)
+xpcshell-tests reftest: export LC_ALL=$(LOCALE)
 
-# Disable tests that fail
-reftest: reftests-disable
+# Disable tests that are known to fail
 xpcshell-tests: xpcshell-tests-disable
-crashtest: crashtests-disable
 
 # Tests that need a X server
 reftest crashtest: WRAPPER = xvfb-run -s "-screen 0 1024x768x24"
@@ -33,25 +31,17 @@ $(TESTS):
 	HOME="$(MOZ_BUILD_ROOT)/dist" \
 	$(WRAPPER) $(MAKE) -C $(MOZ_BUILD_ROOT) $@ || true
 
-reftests-disable:
-	# FIXME: Investigate these failures
-	sed -ri '/482592/d' $(MOZ_BUILD_ROOT)/layout/reftests/bugs/reftest.list
-	sed -ri '/textarea-resize-background/d' $(MOZ_BUILD_ROOT)/layout/reftests/forms/reftest.list
-	sed -ri '/scale-stretchy-4/d' $(MOZ_BUILD_ROOT)/layout/reftests/mathml/reftest.list
-	sed -ri '/413027-4/d' $(MOZ_BUILD_ROOT)/layout/reftests/marquee/reftest.list
-	sed -ri '/objectBoundingBox-and-fePointLight-01/d' $(MOZ_BUILD_ROOT)/layout/reftests/svg/reftest.list
-	sed -ri '/translate/d' $(MOZ_BUILD_ROOT)/layout/reftests/transform/reftest.list
-	sed -ri '/abspos/d' $(MOZ_BUILD_ROOT)/layout/reftests/transform/reftest.list
-	sed -ri '/text-font-lang/d' $(MOZ_BUILD_ROOT)/layout/reftests/canvas/reftest.list
-	sed -ri '/src-list-local-full/d' $(MOZ_BUILD_ROOT)/layout/reftests/font-face/reftest.list
-	sed -ri '/local-1/d' $(MOZ_BUILD_ROOT)/layout/reftests/font-face/reftest.list
-	sed -ri '/defaultjapanese-/d' $(MOZ_BUILD_ROOT)/layout/reftests/font-matching/reftest.list
-	sed -ri '/background-image-zoom-1/d' $(MOZ_BUILD_ROOT)/layout/reftests/image/reftest.list
-	sed -ri '/text-language-00/d' $(MOZ_BUILD_ROOT)/layout/reftests/svg/reftest.list
-
 xpcshell-tests-disable:
-	# FIXME: Investigate these failures
-	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/places/tests/unit/test_browserGlue_smartBookmarks.js
+	# Hangs without network access
+	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/toolkit/components/places/tests/unit/test_404630.js
+
+	# FIXME: IPC tests seem to hang in the buildd's
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/chrome/test/unit_ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/ipc/testshell/tests
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/toolkit/components/contentprefs/tests/unit_ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/cookie/test/unit_ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/test/unit_ipc
 
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
