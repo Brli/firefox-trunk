@@ -478,11 +478,6 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/testsuite.mk
     - update debian/rules
     - update debian/control
-  * Update DEFAULT_BOOKMARKS_ON_MENU because we add extra bookmarks by
-    default. Not doing this causes the browserGlue_smartBookmarks
-    xpcshell test to fail, as it relies on knowing the number of default
-    bookmarks in order to work properly
-    - update debian/patches/ubuntu_bookmarks.patch
   * Support builds suitable for valgrind, by building with 
     DEB_MOZ_VALGRIND=1. This will automatically pick the right optimisations
     and build flags
