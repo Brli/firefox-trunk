@@ -110,8 +110,7 @@
   # per-user firefox configuration
   owner @{HOME}/.mozilla/ rw,
   owner @{HOME}/.mozilla/** rw,
-  owner @{HOME}/.mozilla/**/*.sqlite* k,
-  owner @{HOME}/.mozilla/**/.parentlock k,
+  owner @{HOME}/.mozilla/**/*.{db,parentlock,sqlite}* k,
   owner @{HOME}/.mozilla/plugins/** rm,
   owner @{HOME}/.mozilla/**/plugins/** rm,
 

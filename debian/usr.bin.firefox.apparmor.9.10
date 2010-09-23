@@ -111,8 +111,7 @@
   # per-user firefox configuration
   @{HOME}/.mozilla/ rw,
   @{HOME}/.mozilla/** rw,
-  @{HOME}/.mozilla/**/*.sqlite* k,
-  @{HOME}/.mozilla/**/.parentlock k,
+  @{HOME}/.mozilla/**/*.{db,parentlock,sqlite}* k,
   @{HOME}/.mozilla/plugins/** rm,
   @{HOME}/.mozilla/**/plugins/** rm,
 
