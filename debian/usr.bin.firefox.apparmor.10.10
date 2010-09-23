@@ -43,8 +43,8 @@
   /etc/firefox*/ r,
   /etc/firefox*/** r,
   /etc/xul-ext/** r,
-  /etc/xulrunner-1.9*/ r,
-  /etc/xulrunner-1.9*/** r,
+  /etc/xulrunner-2.0*/ r,
+  /etc/xulrunner-2.0*/** r,
   /etc/gre.d/ r,
   /etc/gre.d/* r,
 
@@ -94,11 +94,12 @@
   owner @{HOME}/Downloads/* rw,
 
   # per-user firefox configuration
-  owner @{HOME}/.mozilla/ rw,
-  owner @{HOME}/.mozilla/** rw,
-  owner @{HOME}/.mozilla/**/*.{db,parentlock,sqlite}* k,
-  owner @{HOME}/.mozilla/plugins/** rm,
-  owner @{HOME}/.mozilla/**/plugins/** rm,
+  owner @{HOME}/.{firefox,mozilla}/ rw,
+  owner @{HOME}/.{firefox,mozilla}/** rw,
+  owner @{HOME}/.{firefox,mozilla}/**/*.{db,parentlock,sqlite}* k,
+  owner @{HOME}/.{firefox,mozilla}/plugins/** rm,
+  owner @{HOME}/.{firefox,mozilla}/**/plugins/** rm,
+  owner @{HOME}/.config/ibus/bus/ w,
 
   #
   # Extensions
