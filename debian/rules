@@ -2,18 +2,50 @@
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
-DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-DEB_BUILD_ARCH		?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+DEB_HOST_GNU_TYPE		?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE		?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_BUILD_ARCH			?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+DEB_HOST_GNU_CPU		?= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
+# Other things which should be defined before including the CDBS rules
+DEB_TAR_SRCDIR			:= mozilla
+DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
+DEB_DH_STRIP_ARGS		= --dbg-package=$(DEBIAN_NAME)-dbg
+# We don't want build-tree/mozilla/README to be shipped as a doc
+DEB_INSTALL_DOCS_ALL 		:= $(NULL)
+# Needed for mozclient
+DEBIAN_NAME			:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+MOZCLIENT_PROJECTNAME		:= $(DEBIAN_NAME)
+MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 
-DEB_HOST_GNU_CPU	?= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
+# We need to do this before including patchsys-quilt.mk
+# because we don't want the pre-build target to depend on this, but
+# we want to ensure that appropriate patches are disabled before the
+# apply-patches target is called
+post-patches:: debian/disable-patches-for-release
 
-DEBIAN_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+include /usr/share/cdbs/1/rules/tarball.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/patchsys-quilt.mk
+include /usr/share/cdbs/1/class/autotools.mk
+include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
+# FIXME: We need to do this another way in the new world
+#include /usr/share/mozilla-devscripts/lp-locale-export.mk
+-include $(DEB_BUILDDIR)/config/autoconf.mk
 
+# Various build options
+DEB_WANT_UNIT_TESTS	?= 1
+# FIXME: DEB_MIN_SYSDEPS=0 will fail completely now. We need logic to handle both jar and omni format to be able to use this
+DEB_MIN_SYSDEPS		?= 1
+DEB_ENABLE_IPC		?= 1
+DEB_ENABLE_BREAKPAD	?= 1
+DEB_BUILD_UNOFFICIAL	?= 0
+DEB_MOZ_VALGRIND	?= 0
+
+# Define other variables used throughout the build
 DEBIAN_APP_NAME		:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
 DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/.*-//g')
-DEBIAN_APP_NAME_OTHER	:= abrowser
 
+DEBIAN_APP_NAME_OTHER	:= abrowser
 DEBIAN_NAME_OTHER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)/$(DEBIAN_APP_NAME_OTHER)/')
 BRANDING_NAME_OTHER	:= awesome-browser
 
@@ -23,26 +55,12 @@ FF_DIR			= usr/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
 FF_VERSION_DEVMILESTONE	= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
 FF_VERSION_SERIES	= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
 
-DEB_TAR_SRCDIR		:= mozilla
-
-MOZCLIENT_PROJECTNAME	:= $(DEBIAN_NAME)
-MOZCLIENT_PROJECTDIR	:= $(CURDIR)/debian/mozclient
-
 PYTHON			:= $(shell which python)
-
-DISTRIB := $(shell lsb_release -i -s)
+DISTRIB 		:= $(shell lsb_release -i -s)
 ifneq (,$(filter $(DISTRIB),Ubuntu))
 	DISTRIB_VERSION_MAJOR := $(shell lsb_release -s -r | cut -d '.' -f 1)
 	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
 endif
-
-DEB_WANT_UNIT_TESTS	?= 1
-# FIXME: DEB_MIN_SYSDEPS=0 will fail completely now. We need logic to handle both jar and omni format to be able to use this
-DEB_MIN_SYSDEPS		?= 1
-DEB_ENABLE_IPC		?= 1
-DEB_ENABLE_BREAKPAD	?= 1
-DEB_BUILD_UNOFFICIAL	?= 0
-DEB_MOZ_VALGRIND	?= 0
 
 ifeq (1,$(DEB_MOZ_VALGRIND))
 	DEB_BUILD_UNOFFICIAL = 1
@@ -121,35 +139,17 @@ endif
 endif
 endif
 
+# This defines the name of the real executable binary (not the wrapper shell script)
+# This is necessary so we can blacklist it in Apport
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	BINREAL := $(DEBIAN_NAME)
 else
 	BINREAL := $(DEBIAN_NAME)-bin
 endif
 
-DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
-DEB_DH_STRIP_ARGS		:= --dbg-package=$(DEBIAN_NAME)-dbg
-
+# Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)"
-
-# We need to do this before including patchsys-quilt.mk
-# because we don't want the pre-build target to depend on this, but
-# we want to ensure that appropriate patches are disabled before the
-# apply-patches target is called
-post-patches:: debian/disable-patches-for-release
-
-include /usr/share/cdbs/1/rules/tarball.mk
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/rules/patchsys-quilt.mk
-include /usr/share/cdbs/1/class/autotools.mk
-include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
-# FIXME: We need to do this another way in the new world
-#include /usr/share/mozilla-devscripts/lp-locale-export.mk
--include $(DEB_BUILDDIR)/config/autoconf.mk
-
-# We don't want build-tree/mozilla/README to be shipped as a doc
-DEB_INSTALL_DOCS_ALL := $(NULL)
 
 CFLAGS		= -g
 CXXFLAGS	= -g
@@ -159,6 +159,7 @@ export LDFLAGS
 
 export DEB_BUILD_HARDENING=1
 
+# Define the configure flags
 ifneq (1,$(DEB_MOZ_VALGRIND))
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
@@ -403,7 +404,7 @@ else
 	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/preferences/ubuntu.js
 endif
 
-common-install-arch::
+common-install-arch:: $(pkg_files)
 	rm -rf build-tree/mozilla/dist/bin/chrome/browser-branding*
 ifeq (1,$(DEB_MIN_SYSDEPS))
 	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/pref/ubuntu.js
@@ -418,8 +419,6 @@ endif
 	cd build-tree/mozilla/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
-
-common-binary-arch:: $(pkg_files)
 
 binary-install/$(DEBIAN_NAME)-core::
 ifeq (1, $(DEB_MIN_SYSDEPS))
@@ -499,7 +498,7 @@ binary-predeb/$(DEBIAN_NAME_OTHER)-gnome-support::
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME_OTHER)-gnome-support/usr/lib/firefox-*/components/$(file);) true
 endif
 
-pre-build:: debian/usr.bin.firefox.apparmor.in $(pkg_files) $(subst_files)
+pre-build:: debian/usr.bin.firefox.apparmor.in $(subst_files)
 	set -e; for i in $(UUDECODE); do \
 	        uudecode -o debian/$$i debian/$$i.uu; \
 	        done ; \
