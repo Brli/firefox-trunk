@@ -33,7 +33,6 @@ include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 
 # Various build options
 DEB_WANT_UNIT_TESTS	?= 1
-# FIXME: DEB_MIN_SYSDEPS=0 will fail completely now. We need logic to handle both jar and omni format to be able to use this
 DEB_MIN_SYSDEPS		?= 1
 DEB_ENABLE_IPC		?= 1
 DEB_ENABLE_BREAKPAD	?= 1
@@ -149,7 +148,7 @@ endif
 # Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
-		-DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS) -DDEB_ENABLE_IPC=$(DEB_ENABLE_IPC)
+		-DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS) -DDEB_ENABLE_IPC=$(DEB_ENABLE_IPC) -DDEB_ENABLE_BREAKPAD=$(DEB_ENABLE_BREAKPAD)
 
 CFLAGS		= -g
 CXXFLAGS	= -g
@@ -339,9 +338,12 @@ pkg_files = \
 	debian/$(DEBIAN_NAME)-core.prerm \
 	debian/$(DEBIAN_NAME_OTHER).install \
 	debian/$(DEBIAN_NAME_OTHER).links \
+	debian/$(DEBIAN_NAME_OTHER).dirs \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
+	debian/$(DEBIAN_NAME).dirs \
 	debian/$(DEBIAN_NAME).preinst \
+	debian/$(DEBIAN_NAME)-mozsymbols.install \
 	$(NULL)
 
 %:: %.in
@@ -408,6 +410,11 @@ else
 endif
 
 common-install-arch:: $(pkg_files)
+ifeq (1, $(DEB_ENABLE_BREAKPAD))
+	# create build symbols
+	cd build-tree/mozilla/; \
+	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
+endif
 	rm -rf build-tree/mozilla/dist/bin/chrome/browser-branding*
 ifeq (1,$(DEB_MIN_SYSDEPS))
 	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/pref/vendor.js
@@ -425,13 +432,6 @@ endif
 
 binary-install/$(DEBIAN_NAME)-core::
 	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)-core/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
-ifeq (1, $(DEB_ENABLE_BREAKPAD))
-	# create build symbols
-	cd build-tree/mozilla/; \
-	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
-	dh_install -p$(DEBIAN_NAME)-core debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
-	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols-full.zip $(FF_DIR)/
-endif
 
 binary-install/$(DEBIAN_NAME_OTHER)::
 	cp -f debian/$(DESKTOP) \

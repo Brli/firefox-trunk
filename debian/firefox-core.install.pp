@@ -21,6 +21,10 @@ debian/tmp/@LIBDIR@/plugin-container
 #endif
 #endif
 
+#ifdef DEB_ENABLE_BREAKPAD
+debian/apport/@APPNAME@ etc/apport/blacklist.d
+#endif
+
 debian/tmp/@LIBDIR@/run-mozilla.sh
 debian/tmp/@LIBDIR@/@APPNAME@
 debian/tmp/@LIBDIR@/chrome.manifest
