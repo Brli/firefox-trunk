@@ -1,7 +1,7 @@
 --- a/toolkit/crashreporter/google-breakpad/src/client/linux/handler/exception_handler.cc
 +++ b/toolkit/crashreporter/google-breakpad/src/client/linux/handler/exception_handler.cc
 @@ -89,6 +89,11 @@
- #include "common/linux/memory.h"
+ #include "common/memory.h"
  #include "client/linux/minidump_writer/minidump_writer.h"
  #include "common/linux/guid_creator.h"
 +#include "common/linux/eintr_wrapper.h"

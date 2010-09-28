@@ -58,21 +58,21 @@
 -browser.jar:
 +browser-branding.jar:
  % content branding %content/branding/ contentaccessible=yes
+   content/branding/about.png                     (about.png)
    content/branding/about-logo.png                (about-logo.png)
-   content/branding/about-wordmark.png            (about-wordmark.png)
 --- a/browser/branding/unofficial/content/jar.mn
 +++ b/browser/branding/unofficial/content/jar.mn
 @@ -1,4 +1,4 @@
 -browser.jar:
 +browser-branding.jar:
  % content branding %content/branding/ contentaccessible=yes
+   content/branding/about.png                     (about.png)
    content/branding/about-logo.png                (about-logo.png)
-   content/branding/about-wordmark.png            (about-wordmark.png)
 --- a/other-licenses/branding/firefox/content/jar.mn
 +++ b/other-licenses/branding/firefox/content/jar.mn
 @@ -1,4 +1,4 @@
 -browser.jar:
 +browser-branding.jar:
  % content branding %content/branding/ contentaccessible=yes
+   content/branding/about.png                     (about.png)
    content/branding/about-logo.png                (about-logo.png)
-   content/branding/about-wordmark.png            (about-wordmark.png)

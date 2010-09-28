@@ -41,38 +41,21 @@ even though it might be temporarily equal to the default pref.
  modules/libpref/src/prefapi.cpp |   16 ++++++++++++----
  1 file changed, 12 insertions(+), 4 deletions(-)
 
-Index: mozilla/modules/libpref/src/prefapi.cpp
-===================================================================
---- mozilla.orig/modules/libpref/src/prefapi.cpp
-+++ mozilla/modules/libpref/src/prefapi.cpp
-@@ -322,20 +322,17 @@
-     if (!pref)
-         return PL_DHASH_NEXT;
- 
-     nsCAutoString prefValue;
- 
+--- a/modules/libpref/src/prefapi.cpp
++++ b/modules/libpref/src/prefapi.cpp
+@@ -328,10 +328,7 @@ pref_savePref(PLDHashTable *table, PLDHa
      // where we're getting our pref from
      PrefValue* sourcePref;
  
 -    if (PREF_HAS_USER_VALUE(pref) &&
 -        pref_ValueChanged(pref->defaultPref,
 -                          pref->userPref,
--                          (PrefType) PREF_TYPE(pref)))
-+    if (PREF_HAS_USER_VALUE(pref))
+-                          (PrefType) PREF_TYPE(pref))) {
++    if (PREF_HAS_USER_VALUE(pref)) {
          sourcePref = &pref->userPref;
-     else
-         // do not save default prefs that haven't changed
-         return PL_DHASH_NEXT;
- 
-     // strings are in quotes!
-     if (pref->flags & PREF_STRING) {
-         prefValue = '\"';
-@@ -735,16 +732,27 @@
-            Otherwise, set the user value only if it has changed */
-         if ( !pref_ValueChanged(pref->defaultPref, value, type) )
-         {
-             if (PREF_HAS_USER_VALUE(pref))
-             {
+     } else {
+         if (argData->saveTypes == SAVE_ALL_AND_DEFAULTS) {
+@@ -748,6 +745,17 @@ nsresult pref_HashPref(const char *key,
                  pref->flags &= ~PREF_USERSET;
                  if (!PREF_IS_LOCKED(pref))
                      valueChanged = PR_TRUE;
@@ -90,8 +73,3 @@ Index: mozilla/modules/libpref/src/prefapi.cpp
              }
          }
          else if ( !PREF_HAS_USER_VALUE(pref) ||
-                    pref_ValueChanged(pref->userPref, value, type) )
-         {
-             pref_SetValue(&pref->userPref, value, type);
-             pref->flags |= PREF_USERSET;
-             if (!PREF_IS_LOCKED(pref))

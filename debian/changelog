@@ -501,6 +501,10 @@ firefox-4.0 (4.0~b7~hg20100926r54658+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Blacklist plugin-container in Apport for DEB_MIN_SYSDEPS builds
     - rename debian/apport/firefox.in => debian/apport/firefox.pp
     - update debian/apport/firefox.pp
+  * Refresh patches
+    - update debian/patches/browser_branding.patch
+    - update ebian/patches/bz591331_att469858_breakpad_allow_ptrace.patch
+    - update debian/patches/lp548866_bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -510,7 +514,7 @@ firefox-4.0 (4.0~b7~hg20100926r54658+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 28 Sep 2010 23:49:51 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 29 Sep 2010 00:21:05 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
