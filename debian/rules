@@ -30,7 +30,6 @@ include /usr/share/cdbs/1/class/autotools.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 # FIXME: We need to do this another way in the new world
 #include /usr/share/mozilla-devscripts/lp-locale-export.mk
--include $(DEB_BUILDDIR)/config/autoconf.mk
 
 # Various build options
 DEB_WANT_UNIT_TESTS	?= 1
@@ -149,7 +148,8 @@ endif
 
 # Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
-		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)"
+		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
+		-DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS) -DDEB_ENABLE_IPC=$(DEB_ENABLE_IPC)
 
 CFLAGS		= -g
 CXXFLAGS	= -g
@@ -236,10 +236,12 @@ ifneq (1, $(DEB_MIN_SYSDEPS))
 	system_zlib_configure_flags     := --with-system-zlib=/usr
 	system_myspell_configure_flags  := --disable-system-myspell
 	system_xul_configure_flags      := --with-libxul-sdk=$(DEBIAN_XUL_DEV) --with-system-libxul
+	system_chrome_configure_flags	:= --enable-chrome-format=jar
 else
 	system_jpeg_configure_flags     := --without-system-jpeg
 	system_zlib_configure_flags     := --without-system-zlib
 	system_myspell_configure_flags  := --enable-system-myspell
+	system_chrome_configure_flags	:= --enable-chrome-format=omni
 endif
 
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
@@ -266,6 +268,7 @@ DEB_CONFIGURE_USER_FLAGS= \
 	$(system_zlib_configure_flags) \
 	$(system_xul_configure_flags) \
 	$(system_myspell_configure_flags) \
+	$(system_chrome_configure_flags) \
 	--disable-composer \
 	--disable-elf-dynstr-gc \
 	--disable-gtktest \
@@ -350,7 +353,7 @@ pkg_files = \
 	    -e 's/@APP_VERSION@/$(FF_VERSION)/' < $< > $@
 
 %.in:: %.pp
-	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(ACDEFINES) $(CURDIR)/$< > $(CURDIR)/$@
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
 
 $(pkg_files):: $(foreach file, $(pkg_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
 	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
@@ -421,24 +424,6 @@ endif
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 
 binary-install/$(DEBIAN_NAME)-core::
-ifeq (1, $(DEB_MIN_SYSDEPS))
-	dh_install -p$(DEBIAN_NAME)-core \
-		debian/tmp/$(FF_DIR)/*.so \
-			$(FF_DIR)
-
-	dh_install -p$(DEBIAN_NAME)-core \
-		debian/tmp/usr/lib/firefox-*/$(DEBIAN_NAME)-bin $(FF_DIR)
-	dh_link -p$(DEBIAN_NAME)-core \
-		$(FF_DIR)/$(DEBIAN_NAME)-bin $(FF_DIR)/$(DEBIAN_NAME_OTHER)-bin
-ifeq (1,$(DEB_ENABLE_IPC))
-	dh_install -p$(DEBIAN_NAME)-core \
-		debian/tmp/usr/lib/firefox-*/plugin-container
-endif
-endif
-	if [ -d debian/$(DEBIAN_NAME)-core/usr/lib/xulrunner-addons/extensions ] ; then \
-		touch $(foreach dir,$(wildcard debian/$(DEBIAN_NAME)-core/usr/lib/xulrunner-addons/extensions/*),$(dir)/chrome.manifest) ; \
-	fi
-
 	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)-core/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	# create build symbols
@@ -446,18 +431,13 @@ ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
 	dh_install -p$(DEBIAN_NAME)-core debian/apport/$(DEBIAN_NAME) etc/apport/blacklist.d/
 	dh_install -p$(DEBIAN_NAME)-mozsymbols build-tree/mozilla/dist/*symbols-full.zip $(FF_DIR)/
-ifeq (1, $(DEB_MIN_SYSDEPS))
-	dh_install -p$(DEBIAN_NAME)-core debian/tmp/usr/lib/firefox-*/crashreporter $(FF_DIR)/
-endif
 endif
 
 binary-install/$(DEBIAN_NAME_OTHER)::
-	mkdir -p debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/
 	cp -f debian/$(DESKTOP) \
 	        debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
 
 binary-install/$(DEBIAN_NAME)::
-	mkdir -p debian/$(DEBIAN_NAME)/usr/share/applications/
 	cp -f debian/$(DESKTOP_BRANDED) \
 	        debian/$(DEBIAN_NAME)/usr/share/applications/$(DEBIAN_NAME).desktop
 

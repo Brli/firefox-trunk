@@ -1,5 +1,26 @@
 debian/tmp/@LIBDIR@/components/*.manifest
 debian/tmp/@LIBDIR@/components/*.so
+
+#ifndef DEB_MIN_SYSDEPS
+debian/tmp/@LIBDIR@/components/*.js
+debian/tmp/@LIBDIR@/components/*.xpt
+debian/tmp/@LIBDIR@/chrome/en-US.jar
+debian/tmp/@LIBDIR@/chrome/browser.jar
+debian/tmp/@LIBDIR@/defaults/autoconfig
+debian/tmp/@LIBDIR@/defaults/preferences/[a-u]*.js
+debian/tmp/@LIBDIR@/defaults/profile
+debian/tmp/@LIBDIR@/modules
+#else
+debian/tmp/@LIBDIR@/*.so
+debian/tmp/@LIBDIR@/@APPNAME@-bin
+#ifdef DEB_ENABLE_BREAKPAD
+debian/tmp/@LIBDIR@/crashreporter
+#endif
+#ifdef DEB_ENABLE_IPC
+debian/tmp/@LIBDIR@/plugin-container
+#endif
+#endif
+
 debian/tmp/@LIBDIR@/run-mozilla.sh
 debian/tmp/@LIBDIR@/@APPNAME@
 debian/tmp/@LIBDIR@/chrome.manifest

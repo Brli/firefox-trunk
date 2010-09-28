@@ -488,6 +488,16 @@ firefox-4.0 (4.0~b7~hg20100926r54658+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     preprocessor. This means we'll be able to support the different build
     configurations without having a huge debian/rules with lots of logic in
     - update debian/rules
+    - add debian/abrowser.dirs.in
+    - rename debian/abrowser.install.in => debian/abrowser.install.pp
+    - update debian/abrowser.install.pp
+    - rename debian/firefox-core.install.in => debian/firefox-core.install.pp
+    - update debian/firefox-core.install.pp
+    - rename debian/firefox-core.links.in => debian/firefox-core.links.pp
+    - update debian/firefox-core.links.pp
+    - add debian/firefox.dirs.in
+    - rename debian/firefox.install.in => debian/firefox.install.pp
+    - update debian/firefox.install.pp
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -497,7 +507,7 @@ firefox-4.0 (4.0~b7~hg20100926r54658+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 28 Sep 2010 12:51:53 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 28 Sep 2010 19:45:22 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
