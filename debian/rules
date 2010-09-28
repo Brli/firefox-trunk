@@ -402,17 +402,17 @@ common-build-arch::
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/pref/ubuntu.js
+	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/pref/vendor.js
 else
-	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/preferences/ubuntu.js
+	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/preferences/vendor.js
 endif
 
 common-install-arch:: $(pkg_files)
 	rm -rf build-tree/mozilla/dist/bin/chrome/browser-branding*
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/pref/ubuntu.js
+	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/pref/vendor.js
 else
-	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/preferences/ubuntu.js
+	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/preferences/vendor.js
 endif
 	cd build-tree/mozilla/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
