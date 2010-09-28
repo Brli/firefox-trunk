@@ -108,12 +108,12 @@
   audit deny @{HOME}/.gnupg/** mrwkl,
 
   # per-user firefox configuration
-  owner @{HOME}/.mozilla/ rw,
-  owner @{HOME}/.mozilla/** rw,
-  owner @{HOME}/.mozilla/**/*.sqlite* k,
-  owner @{HOME}/.mozilla/**/.parentlock k,
-  owner @{HOME}/.mozilla/plugins/** rm,
-  owner @{HOME}/.mozilla/**/plugins/** rm,
+  owner @{HOME}/.{firefox,mozilla}/ rw,
+  owner @{HOME}/.{firefox,mozilla}/** rw,
+  owner @{HOME}/.{firefox,mozilla}/**/*.{db,parentlock,sqlite}* k,
+  owner @{HOME}/.{firefox,mozilla}/plugins/** rm,
+  owner @{HOME}/.{firefox,mozilla}/**/plugins/** rm,
+  owner @{HOME}/.config/ibus/bus/ w,
 
   #
   # Extensions
