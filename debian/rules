@@ -22,10 +22,13 @@ FF_VERSION		= $(shell cat build-tree/mozilla/browser/config/version.txt)
 FF_DIR			= usr/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
 FF_VERSION_DEVMILESTONE	= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
 FF_VERSION_SERIES	= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
+
 DEB_TAR_SRCDIR		:= mozilla
 
 MOZCLIENT_PROJECTNAME	:= $(DEBIAN_NAME)
 MOZCLIENT_PROJECTDIR	:= $(CURDIR)/debian/mozclient
+
+PYTHON			:= $(shell which python)
 
 DISTRIB := $(shell lsb_release -i -s)
 ifneq (,$(filter $(DISTRIB),Ubuntu))
@@ -127,6 +130,9 @@ endif
 DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
 DEB_DH_STRIP_ARGS		:= --dbg-package=$(DEBIAN_NAME)-dbg
 
+DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
+		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)"
+
 # We need to do this before including patchsys-quilt.mk
 # because we don't want the pre-build target to depend on this, but
 # we want to ensure that appropriate patches are disabled before the
@@ -140,6 +146,7 @@ include /usr/share/cdbs/1/class/autotools.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 # FIXME: We need to do this another way in the new world
 #include /usr/share/mozilla-devscripts/lp-locale-export.mk
+-include $(DEB_BUILDDIR)/config/autoconf.mk
 
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL := $(NULL)
@@ -341,7 +348,10 @@ pkg_files = \
 	    -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
 	    -e 's/@APP_VERSION@/$(FF_VERSION)/' < $< > $@
 
-$(pkg_files)::
+%.in:: %.pp
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(ACDEFINES) $(CURDIR)/$< > $(CURDIR)/$@
+
+$(pkg_files):: $(foreach file, $(pkg_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
 	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
 	    -e 's,@APPNAME_OTHER@,$(DEBIAN_NAME_OTHER),g' \
@@ -408,7 +418,9 @@ endif
 	cd build-tree/mozilla/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
-	
+
+common-binary-arch:: $(pkg_files)
+
 binary-install/$(DEBIAN_NAME)-core::
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	dh_install -p$(DEBIAN_NAME)-core \
@@ -501,6 +513,7 @@ clean::
 	        done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) $(pkg_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
+	find debian/ -name *.pp | sed -e 's/\.pp$/\.in/g' | xargs rm -f
 	rm -f debian/migrator/ffox-32-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 	rm -rf debian/tmp-*

@@ -484,6 +484,10 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     kernel ptrace hardening
     - add debian/patches/bz591331_att469858_breakpad_allow_ptrace.patch
     - update debian/patches/series
+  * Add support for running debhelper files through the Mozilla text
+    preprocessor. This means we'll be able to support the different build
+    configurations without having a huge debian/rules with lots of logic in
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -493,7 +497,7 @@ firefox-4.0 (4.0~b7~hg20100915r53868+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 21 Sep 2010 23:27:00 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 28 Sep 2010 12:51:53 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
