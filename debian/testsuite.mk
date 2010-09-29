@@ -42,6 +42,7 @@ xpcshell-tests-disable:
 	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/ipc
 	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/cookie/test/unit_ipc
 	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/netwerk/test/unit_ipc
+	rm -rf $(MOZ_BUILD_ROOT)/_tests/xpcshell/modules/libpref/test/unit_ipc
 
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
 	rm -f $(MOZ_BUILD_ROOT)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
