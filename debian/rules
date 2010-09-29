@@ -409,7 +409,7 @@ else
 	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/preferences/vendor.js
 endif
 
-common-install-arch:: $(pkg_files)
+common-install-arch::
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	# create build symbols
 	cd build-tree/mozilla/; \
@@ -478,7 +478,7 @@ binary-predeb/$(DEBIAN_NAME_OTHER)-gnome-support::
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME_OTHER)-gnome-support/usr/lib/firefox-*/components/$(file);) true
 endif
 
-pre-build:: debian/usr.bin.firefox.apparmor.in $(subst_files)
+pre-build:: debian/usr.bin.firefox.apparmor.in $(subst_files) $(pkg_files)
 	set -e; for i in $(UUDECODE); do \
 	        uudecode -o debian/$$i debian/$$i.uu; \
 	        done ; \
