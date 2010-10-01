@@ -45,11 +45,27 @@ DEBIAN_APP_NAME_OTHER	:= abrowser
 DEBIAN_NAME_OTHER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)/$(DEBIAN_APP_NAME_OTHER)/')
 BRANDING_NAME_OTHER	:= awesome-browser
 
-DEBIAN_VERSION		:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
-FF_VERSION		= $(shell cat build-tree/mozilla/browser/config/version.txt)
-FF_DIR			= usr/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
-FF_VERSION_DEVMILESTONE	= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
-FF_VERSION_SERIES	= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
+DEB_MAKE_MAKEFILE		:= client.mk
+
+# Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
+DEB_MAKE_EXTRA_ARGS		:=
+
+# These normally come from autotools.mk, which we no longer include (because we
+# don't want to run configure)
+DEB_MAKE_INSTALL_TARGET		:= install DESTDIR=$(CURDIR)/debian/tmp
+DEB_MAKE_CLEAN_TARGET		:= distclean
+DEB_CONFIGURE_LOCALSTATEDIR	:= /var
+DEB_CONFIGURE_LIBEXECDIR	= /$(FF_DIR)
+DEB_CONFIGURE_PREFIX		= /$(FF_PREFIX)
+
+DEBIAN_VERSION			:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
+FF_VERSION			= $(shell cat $(DEB_BUILDDIR)/browser/config/version.txt)
+FF_PREFIX			:= usr
+FF_DIR				= $(FF_PREFIX)/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
+FF_VERSION_DEVMILESTONE		:= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
+FF_VERSION_SERIES		:= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
+
+MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
 
 PYTHON			:= $(shell which python)
 DISTRIB 		:= $(shell lsb_release -i -s)
@@ -98,7 +114,7 @@ ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for snapshots
 	BRANDING 		= --with-branding=browser/branding/nightly
 	DESKTOP_BRANDED  	= $(DEBIAN_NAME)-nightly.desktop
-	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/browser/branding/nightly/locales/en-US/brand.properties \
+	STARTUP_WM_CLASS	= $(shell cat $(DEB_BUILDDIR)/browser/branding/nightly/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
 	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
 else
@@ -106,7 +122,7 @@ ifneq (0, $(DEB_BUILD_UNOFFICIAL))
 	# build with unofficial branding
 	BRANDING		= --with-branding=browser/branding/unofficial
 	DESKTOP_BRANDED		= $(DEBIAN_NAME)-unofficial.desktop
-	BRAND_NAME		= $(shell cat build-tree/mozilla/browser/branding/unofficial/locales/en-US/brand.properties \
+	BRAND_NAME		= $(shell cat $(DEB_BUILDDIR)/browser/branding/unofficial/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
 	STARTUP_WM_CLASS	= $(BRAND_NAME)
 else
@@ -114,21 +130,21 @@ ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha
 	BRANDING		= --with-branding=browser/branding/unofficial
 	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-unofficial.desktop
-	BRAND_NAME		= $(shell cat build-tree/mozilla/browser/branding/unofficial/locales/en-US/brand.properties \
+	BRAND_NAME		= $(shell cat $(DEB_BUILDDIR)/browser/branding/unofficial/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
 	STARTUP_WM_CLASS	= $(BRAND_NAME)
 else
 ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
 	BRANDING		= --enable-official-branding
 	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-beta.desktop
-	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
+	STARTUP_WM_CLASS	= $(shell cat $(DEB_BUILDDIR)/other-licenses/branding/firefox/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
 	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
 else
 	# automatically build with official branding for final and final RCs builds
 	BRANDING		= --enable-official-branding
 	DESKTOP_BRANDED		= $(DEBIAN_NAME)-final.desktop
-	BRAND_NAME		= $(shell cat build-tree/mozilla/other-licenses/branding/firefox/locales/en-US/brand.properties \
+	BRAND_NAME		= $(shell cat $(DEB_BUILDDIR)/other-licenses/branding/firefox/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
 	STARTUP_WM_CLASS	= $(BRAND_NAME)
 endif
@@ -156,17 +172,6 @@ ifneq (1,$(DEB_BUILD_UNOFFICIAL))
 	export BUILD_OFFICIAL=1
 endif
 
-DEB_MAKE_MAKEFILE		:= client.mk
-DEB_MAKE_EXTRA_ARGS		:=
-
-# These normally come from autotools.mk, which we no longer include (because we
-# don't want to run configure)
-DEB_MAKE_INSTALL_TARGET		:= install DESTDIR=$(CURDIR)/debian/tmp
-DEB_MAKE_CLEAN_TARGET		:= distclean
-DEB_CONFIGURE_PREFIX		:= /usr
-DEB_CONFIGURE_LOCALSTATEDIR	:= /var
-DEB_CONFIGURE_LIBEXECDIR	:= $(DEB_CONFIGURE_PREFIX)/lib/$(DEBIAN_NAME)
-
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
@@ -186,9 +191,9 @@ endif
 # Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
-		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)/$(DEB_BUILDDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
+		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
 		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
-		-DDEB_CONFIGURE_LIBEXECDIR="$(DEB_CONFIGURE_LIBEXECDIR)"
+		-DDEB_CONFIGURE_LIBEXECDIR="$(DEB_CONFIGURE_LIBEXECDIR)" -DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)"
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	DEB_DEFINES += -DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS)
 endif
@@ -323,7 +328,7 @@ post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 
 debian/stamp-testsuite:
 ifeq (1,$(DEB_WANT_UNIT_TESTS))
-	cd build-tree/mozilla/objdir/; \
+	cd $(MOZ_OBJDIR); \
 		$(MAKE) -f ../../../debian/testsuite.mk test
 endif
 	touch $@
@@ -331,33 +336,33 @@ endif
 debian/stamp-buildsymbols:
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	# create build symbols
-	cd build-tree/mozilla/objdir; \
+	cd $(MOZ_OBJDIR); \
 	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
 endif
 	touch $@
 
 common-build-arch:: debian/stamp-testsuite
-	cd build-tree/mozilla/objdir/browser/locales/; \
+	cd $(MOZ_OBJDIR)/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-firefox.js build-tree/mozilla/objdir/dist/bin/defaults/pref/vendor.js
+	cp debian/ubuntu-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/vendor.js
 else
-	cp debian/ubuntu-firefox.js build-tree/mozilla/objdir/dist/bin/defaults/preferences/vendor.js
+	cp debian/ubuntu-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/vendor.js
 endif
 
 common-install-arch::
-	rm -rf build-tree/mozilla/objdir/dist/bin/chrome/browser-branding*
+	rm -rf $(MOZ_OBJDIR)/dist/bin/chrome/browser-branding*
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-abrowser.js build-tree/mozilla/objdir/dist/bin/defaults/pref/vendor.js
+	cp debian/ubuntu-abrowser.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/vendor.js
 else
-	cp debian/ubuntu-abrowser.js build-tree/mozilla/objdir/dist/bin/defaults/preferences/vendor.js
+	cp debian/ubuntu-abrowser.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/vendor.js
 endif
-	cd build-tree/mozilla/objdir/browser/locales/; \
+	cd $(MOZ_OBJDIR)/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
 		$(MAKE) -C ../../browser/app/
-	cd build-tree/mozilla/objdir/; \
+	cd $(MOZ_OBJDIR)/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 
@@ -401,7 +406,7 @@ binary-predeb/$(DEBIAN_NAME)-core::
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core/$(FF_DIR):$$LD_LIBRARY_PATH \
-	        build-tree/mozilla/objdir/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(FF_DIR)/$(lib);)
+	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(FF_DIR)/$(lib);)
 
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::

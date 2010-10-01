@@ -8,8 +8,8 @@ ac_add_options --libexecdir=@DEB_CONFIGURE_LIBEXECDIR@
 ac_add_options --disable-maintainer-mode
 ac_add_options --disable-dependency-tracking
 ac_add_options --disable-silent-rules
-ac_add_options --srcdir=@TOPSRCDIR@
-mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/objdir
+ac_add_options --srcdir=@TOPSRCDIR@/@DEB_BUILDDIR@
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/@MOZ_OBJDIR@
 ac_add_options --disable-elf-dynstr-gc
 ac_add_options --disable-install-strip
 ac_add_options --disable-strip
