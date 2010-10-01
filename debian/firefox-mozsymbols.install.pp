@@ -1,3 +1,3 @@
 #ifdef DEB_ENABLE_BREAKPAD
-build-tree/mozilla/dist/*symbols-full.zip @LIBDIR@
+build-tree/mozilla/objdir/dist/*symbols-full.zip @LIBDIR@
 #endif

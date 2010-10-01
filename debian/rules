@@ -8,7 +8,6 @@ DEB_BUILD_ARCH			?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 DEB_HOST_GNU_CPU		?= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
 # Other things which should be defined before including the CDBS rules
 DEB_TAR_SRCDIR			:= mozilla
-DEB_AUTO_UPDATE_AUTOCONF	:= 2.13
 DEB_DH_STRIP_ARGS		= --dbg-package=$(DEBIAN_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 		:= $(NULL)
@@ -26,13 +25,12 @@ post-patches:: debian/disable-patches-for-release
 include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
-include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/class/makefile.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 # FIXME: We need to do this another way in the new world
 #include /usr/share/mozilla-devscripts/lp-locale-export.mk
 
 # Various build options
-DEB_WANT_UNIT_TESTS	?= 1
 DEB_MIN_SYSDEPS		?= 1
 DEB_ENABLE_IPC		?= 1
 DEB_ENABLE_BREAKPAD	?= 1
@@ -55,6 +53,7 @@ FF_VERSION_SERIES	= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | 
 
 PYTHON			:= $(shell which python)
 DISTRIB 		:= $(shell lsb_release -i -s)
+
 ifneq (,$(filter $(DISTRIB),Ubuntu))
 	DISTRIB_VERSION_MAJOR := $(shell lsb_release -s -r | cut -d '.' -f 1)
 	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
@@ -97,7 +96,7 @@ endif
 # Change branding based on Version
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for snapshots
-	BRANDING 		= $(NULL)
+	BRANDING 		= --with-branding=browser/branding/nightly
 	DESKTOP_BRANDED  	= $(DEBIAN_NAME)-nightly.desktop
 	STARTUP_WM_CLASS	= $(shell cat build-tree/mozilla/browser/branding/nightly/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
@@ -145,156 +144,85 @@ else
 	BINREAL := $(DEBIAN_NAME)-bin
 endif
 
-# Defines used for the Mozilla text preprocessor
-DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
-		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
-		-DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS) -DDEB_ENABLE_IPC=$(DEB_ENABLE_IPC) -DDEB_ENABLE_BREAKPAD=$(DEB_ENABLE_BREAKPAD)
-
 CFLAGS		= -g
 CXXFLAGS	= -g
 
 LDFLAGS = $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 export LDFLAGS
-
 export DEB_BUILD_HARDENING=1
+export MOZCONFIG=$(CURDIR)/debian/mozconfig
 
-# Define the configure flags
-ifneq (1,$(DEB_MOZ_VALGRIND))
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-optimize
-endif
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-optimize="-g -O -freorder-blocks"
-endif
+DEB_MAKE_MAKEFILE		:= client.mk
+DEB_MAKE_EXTRA_ARGS		:=
 
-ifeq (1,$(DEB_ENABLE_IPC))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-ipc
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-ipc
-endif
-
-$(info DEB_WANT_UNIT_TESTS=$(DEB_WANT_UNIT_TESTS))
-ifeq (1,$(DEB_WANT_UNIT_TESTS))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-tests --enable-mochitest
-	DEB_MAKE_CHECK_TARGET = -f ../../debian/testsuite.mk test
-# Uncomment when the IPC test-suite works
-#ifeq (1,$(DEB_ENABLE_IPC))
-#  EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-ipdl-tests
-#else
-#  EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-ipdl-tests
-#endif
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-tests --disable-mochitest --disable-ipdl-tests
-endif
+# These normally come from autotools.mk, which we no longer include (because we
+# don't want to run configure)
+DEB_MAKE_INSTALL_TARGET		:= install DESTDIR=$(CURDIR)/debian/tmp
+DEB_MAKE_CLEAN_TARGET		:= distclean
+DEB_CONFIGURE_PREFIX		:= /usr
+DEB_CONFIGURE_LOCALSTATEDIR	:= /var
+DEB_CONFIGURE_LIBEXECDIR	:= $(DEB_CONFIGURE_PREFIX)/lib/$(DEBIAN_NAME)
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
-endif
-ifeq (1,$(USE_SYSTEM_NSPR))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --with-system-nspr
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --without-system-nspr
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
-# for old cairo versions we cannot use system cairo
-ifeq (1,$(USE_SYSTEM_CAIRO))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-cairo
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-cairo
-endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.1'; a=$$?; if test $$a != 1; then echo 1; fi)
-endif
-ifeq (1,$(USE_SYSTEM_SQLITE))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-system-sqlite
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-system-sqlite
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.7'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
-ifeq (1,$(USE_SYSTEM_NSS))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --with-system-nss
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --without-system-nss
-endif
 
-ifneq (1, $(DEB_MIN_SYSDEPS))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-extensions=default,-reporter
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-extensions=default
+# Defines used for the Mozilla text preprocessor
+DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
+		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
+		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)/$(DEB_BUILDDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
+		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
+		-DDEB_CONFIGURE_LIBEXECDIR="$(DEB_CONFIGURE_LIBEXECDIR)"
+ifeq (1, $(DEB_MIN_SYSDEPS))
+	DEB_DEFINES += -DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS)
 endif
-
-ifneq (1, $(DEB_MIN_SYSDEPS))
-	system_jpeg_configure_flags     := --with-system-jpeg=/usr
-	system_zlib_configure_flags     := --with-system-zlib=/usr
-	system_myspell_configure_flags  := --disable-system-myspell
-	system_xul_configure_flags      := --with-libxul-sdk=$(DEBIAN_XUL_DEV) --with-system-libxul
-	system_chrome_configure_flags	:= --enable-chrome-format=jar
-else
-	system_jpeg_configure_flags     := --without-system-jpeg
-	system_zlib_configure_flags     := --without-system-zlib
-	system_myspell_configure_flags  := --enable-system-myspell
-	system_chrome_configure_flags	:= --enable-chrome-format=omni
+ifeq (1, $(DEB_ENABLE_IPC))
+	DEB_DEFINES += -DDEB_ENABLE_IPC=$(DEB_ENABLE_IPC)
 endif
-
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --enable-crashreporter
-else
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-crashreporter
+	DEB_DEFINES += -DDEB_ENABLE_BREAKPAD=$(DEB_ENABLE_BREAKPAD)
 endif
-
 ifeq (1, $(DEB_MOZ_VALGRIND))
-	EXTRA_SYSTEM_CONFIGURE_FLAGS += --disable-jemalloc --enable-valgrind
-	export MOZ_MAKE_FLAGS = "-j4"
+	DEB_DEFINES += -DDEB_MOZ_VALGRIND=$(DEB_MOZ_VALGRIND)
 endif
-
-ifeq (0, $(DEB_BUILD_UNOFFICIAL))
-	export MOZILLA_OFFICIAL = 1
-	export BUILD_OFFICIAL = 1
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	DEB_DEFINES += -DDEB_NO_OPTIMIZE=1
 endif
-
-DEB_CONFIGURE_USER_FLAGS= \
-	$(EXTRA_SYSTEM_CONFIGURE_FLAGS) \
-	--disable-debug \
-	--with-user-appdir=.mozilla \
-	$(system_jpeg_configure_flags) \
-	$(system_zlib_configure_flags) \
-	$(system_xul_configure_flags) \
-	$(system_myspell_configure_flags) \
-	$(system_chrome_configure_flags) \
-	--disable-composer \
-	--disable-elf-dynstr-gc \
-	--disable-gtktest \
-	--disable-install-strip \
-	--disable-installer \
-	--disable-ldap \
-	--disable-mailnews \
-	--disable-profilesharing \
-	--disable-strip \
-	--disable-strip-libs \
-	--disable-updater \
-	--disable-xprint \
-	--enable-application=browser \
-	--enable-canvas \
-	--enable-default-toolkit=cairo-gtk2 \
-	--enable-gnomevfs \
-	--enable-optimize \
-	--enable-pango \
-	--enable-postscript \
-	--enable-svg \
-	--enable-mathml \
-	--enable-xft \
-	--enable-xinerama \
-	--enable-safe-browsing \
-	--enable-single-profile \
-	--with-distribution-id=com.ubuntu \
-	$(BRANDING)
+ifeq (1, $(USE_SYSTEM_NSPR))
+	DEB_DEFINES += -DUSE_SYSTEM_NSPR=$(USE_SYSTEM_NSPR)
+endif
+ifeq (1, $(USE_SYSTEM_CAIRO))
+	DEB_DEFINES += -DUSE_SYSTEM_CAIRO=$(USE_SYSTEM_CAIRO)
+endif
+ifeq (1, $(USE_SYSTEM_SQLITE))
+	DEB_DEFINES += -DUSE_SYSTEM_SQLITE=$(USE_SYSTEM_SQLITE)
+endif
+ifeq (1, $(USE_SYSTEM_NSS))
+	DEB_DEFINES += -DUSE_SYSTEM_NSS=$(USE_SYSTEM_NSS)
+endif
+ifeq (1, $(DEB_BUILD_UNOFFICIAL))
+	DEB_DEFINES += -DDEB_BUILD_UNOFFICIAL=$(DEB_BUILD_UNOFFICIAL)
+endif
+DEB_WANT_UNIT_TESTS=0
+ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	DEB_WANT_UNIT_TESTS=1
+	DEB_DEFINES += -DDEB_WANT_UNIT_TESTS=$(DEB_WANT_UNIT_TESTS)
+endif
+ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+	DEB_DEFINES += -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)"
+endif
 
 UUDECODE = \
 	debsearch.gif \
@@ -344,6 +272,7 @@ pkg_files = \
 	debian/$(DEBIAN_NAME).dirs \
 	debian/$(DEBIAN_NAME).preinst \
 	debian/$(DEBIAN_NAME)-mozsymbols.install \
+	debian/mozconfig \
 	$(NULL)
 
 %:: %.in
@@ -354,10 +283,10 @@ pkg_files = \
 	    -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
 	    -e 's/@APP_VERSION@/$(FF_VERSION)/' < $< > $@
 
-%.in:: %.pp
+%.in: %.pp
 	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
 
-$(pkg_files):: $(foreach file, $(pkg_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
+$(pkg_files): $(foreach file, $(pkg_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
 	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
 	    -e 's,@APPNAME_OTHER@,$(DEBIAN_NAME_OTHER),g' \
@@ -389,44 +318,45 @@ BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
 	../../browser/branding/$(BRANDING_NAME_OTHER)/content/Makefile \
 	$(NULL)
 
-ifeq (1, $(DEB_MIN_SYSDEPS))
-post-patches:: debian/stamp-autotools-files-moz
-debian/stamp-autotools-files-moz:
-	# Number of processors: $(PROCESSORS) [$(shell grep 'model name' /proc/cpuinfo | head -1)]
-	if [ "Z$(DEB_AUTO_UPDATE_AUTOCONF)" != Z ] || [ ! -e $(DEB_SRCDIR)/js/src/configure ]; \
-	then cd $(DEB_SRCDIR)/js/src && `which autoconf$(DEB_AUTO_UPDATE_AUTOCONF) || which autoconf`; fi
-	touch $@
-endif
-
 post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 
-common-build-arch::
-	cd build-tree/mozilla/browser/locales/; \
+debian/stamp-testsuite:
+ifeq (1,$(DEB_WANT_UNIT_TESTS))
+	cd build-tree/mozilla/objdir/; \
+		$(MAKE) -f ../../../debian/testsuite.mk test
+endif
+	touch $@
+
+debian/stamp-buildsymbols:
+ifeq (1, $(DEB_ENABLE_BREAKPAD))
+	# create build symbols
+	cd build-tree/mozilla/objdir; \
+	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
+endif
+	touch $@
+
+common-build-arch:: debian/stamp-testsuite debian/stamp-buildsymbols
+	cd build-tree/mozilla/objdir/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/pref/vendor.js
+	cp debian/ubuntu-firefox.js build-tree/mozilla/objdir/dist/bin/defaults/pref/vendor.js
 else
-	cp debian/ubuntu-firefox.js build-tree/mozilla/dist/bin/defaults/preferences/vendor.js
+	cp debian/ubuntu-firefox.js build-tree/mozilla/objdir/dist/bin/defaults/preferences/vendor.js
 endif
 
 common-install-arch::
-ifeq (1, $(DEB_ENABLE_BREAKPAD))
-	# create build symbols
-	cd build-tree/mozilla/; \
-	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
-endif
-	rm -rf build-tree/mozilla/dist/bin/chrome/browser-branding*
+	rm -rf build-tree/mozilla/objdir/dist/bin/chrome/browser-branding*
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/pref/vendor.js
+	cp debian/ubuntu-abrowser.js build-tree/mozilla/objdir/dist/bin/defaults/pref/vendor.js
 else
-	cp debian/ubuntu-abrowser.js build-tree/mozilla/dist/bin/defaults/preferences/vendor.js
+	cp debian/ubuntu-abrowser.js build-tree/mozilla/objdir/dist/bin/defaults/preferences/vendor.js
 endif
-	cd build-tree/mozilla/browser/locales/; \
+	cd build-tree/mozilla/objdir/browser/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
 		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
 		$(MAKE) -C ../../browser/app/
-	cd build-tree/mozilla/; \
+	cd build-tree/mozilla/objdir/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 
@@ -468,7 +398,7 @@ binary-predeb/$(DEBIAN_NAME)-core::
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core/$(FF_DIR):$$LD_LIBRARY_PATH \
-	        build-tree/mozilla/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(FF_DIR)/$(lib);)
+	        build-tree/mozilla/objdir/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(FF_DIR)/$(lib);)
 
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::
@@ -492,13 +422,13 @@ clean::
 	        done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) $(pkg_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
-	find debian/ -name *.pp | sed -e 's/\.pp$/\.in/g' | xargs rm -f
+	find debian/ -name *.pp | sed -e 's/pp$$/in/g' | xargs rm -f
 	rm -f debian/migrator/ffox-32-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 	rm -rf debian/tmp-*
-	rm -f debian/stamp-autotools-files-moz
 	rm -f debian/usr.bin.firefox.apparmor.in
 	if [ -f "$(CURDIR)/debian/patches/series.orig" ] ; then \
 	        mv -f $(CURDIR)/debian/patches/series.orig $(CURDIR)/debian/patches/series ; \
 	fi
 	rm -f debian/disable-patches-for-release
+	rm -f debian/stamp-*
