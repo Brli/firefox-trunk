@@ -335,7 +335,7 @@ ifeq (1, $(DEB_ENABLE_BREAKPAD))
 endif
 	touch $@
 
-common-build-arch:: debian/stamp-testsuite debian/stamp-buildsymbols
+common-build-arch:: debian/stamp-testsuite
 	cd build-tree/mozilla/objdir/browser/locales/; \
 		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 ifeq (1,$(DEB_MIN_SYSDEPS))
@@ -359,6 +359,8 @@ endif
 	cd build-tree/mozilla/objdir/; \
 		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
 		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
+
+common-binary-arch:: debian/stamp-buildsymbols
 
 binary-install/$(DEBIAN_NAME)-core::
 	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)-core/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
