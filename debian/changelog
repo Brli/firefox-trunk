@@ -122,11 +122,6 @@ firefox-4.0 (4.0~b7~hg20100928r54686+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Provide iceweasel
     - update debian/control
-  * Make it possible to disable patches on a per-release basis. This
-    makes it easier to share packaging branches across releases, and makes
-    it possible to disable the patches which make the Hardy daily builds fail
-    - update debian/rules
-    - add debian/disable-patches.sh
   * Make the debian/usr.bin.firefox.apparmor.in target a dependency of
     pre-build rather than makebuilddir. Whilst this doesn't really change
     much, it is technically slightly more correct (makebuilddir is just for
@@ -520,7 +515,7 @@ firefox-4.0 (4.0~b7~hg20100928r54686+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Oct 2010 16:12:29 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Oct 2010 21:49:41 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

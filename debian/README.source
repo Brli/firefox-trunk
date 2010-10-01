@@ -25,9 +25,3 @@ So, basically:
 You get the idea.....
 
 3) To remove any changes applied to the packaging, run "fakeroot debian/rules clean". This will remove all patches and delete auto-generated files
-
-4) It is possible to disable quilt patches on a per-release basis. To do this, create a debian/patches/series-disable-patches.<major_version>.<minor_version> file, and list the patches that you don't want to apply for a particular release. Eg, for Ubuntu 8.04, create a file named debian/patches/series-disable-patches.8.04.
-
-You can still edit patches in the usual fashion - when manually applying patches, no patches are disabled (this only happens at build time).
-
-To manually disable the patches for your current release, run "debian/rules debian/disable-patches-for-release". To re-enable them again, run the clean target (but any changes you made to the temporary debian/patches/series will be lost here)

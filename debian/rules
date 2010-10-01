@@ -16,12 +16,6 @@ DEBIAN_NAME			:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ 
 MOZCLIENT_PROJECTNAME		:= $(DEBIAN_NAME)
 MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 
-# We need to do this before including patchsys-quilt.mk
-# because we don't want the pre-build target to depend on this, but
-# we want to ensure that appropriate patches are disabled before the
-# apply-patches target is called
-post-patches:: debian/disable-patches-for-release
-
 include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
@@ -301,12 +295,6 @@ $(pkg_files): $(foreach file, $(pkg_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(f
 	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
 	    -e 's,@FF_VERSION_DEVMILESTONE@,$(FF_VERSION_DEVMILESTONE),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
 
-debian/disable-patches-for-release:
-	if [ -f "$(CURDIR)/debian/patches/series-disable-patches.$(DISTRIB_VERSION_MAJOR).$(DISTRIB_VERSION_MINOR)" ] ; then \
-	        /bin/sh $(CURDIR)/debian/disable-patches.sh $(CURDIR)/debian/patches/series-disable-patches.$(DISTRIB_VERSION_MAJOR).$(DISTRIB_VERSION_MINOR) $(CURDIR) ; \
-	fi
-	touch $@
-
 debian/usr.bin.firefox.apparmor.in:
 	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1010' ]; then \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.10.10 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
@@ -435,8 +423,4 @@ clean::
 	rm -f debian/migrator/*~
 	rm -rf debian/tmp-*
 	rm -f debian/usr.bin.firefox.apparmor.in
-	if [ -f "$(CURDIR)/debian/patches/series.orig" ] ; then \
-	        mv -f $(CURDIR)/debian/patches/series.orig $(CURDIR)/debian/patches/series ; \
-	fi
-	rm -f debian/disable-patches-for-release
 	rm -f debian/stamp-*
