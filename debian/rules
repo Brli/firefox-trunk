@@ -146,14 +146,6 @@ endif
 endif
 endif
 
-# This defines the name of the real executable binary (not the wrapper shell script)
-# This is necessary so we can blacklist it in Apport
-ifneq (1, $(DEB_MIN_SYSDEPS))
-	BINREAL := $(DEBIAN_NAME)
-else
-	BINREAL := $(DEBIAN_NAME)-bin
-endif
-
 CFLAGS		= -g
 CXXFLAGS	= -g
 
@@ -183,7 +175,7 @@ ifneq (1, $(DEB_MIN_SYSDEPS))
 endif
 
 # Defines used for the Mozilla text preprocessor
-DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" -DBINREAL="$(BINREAL)" \
+DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
 		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
 		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
@@ -290,7 +282,6 @@ $(pkg_files): $(foreach file, $(pkg_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(f
 	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
 	    -e 's,@APPNAME_OTHER@,$(DEBIAN_NAME_OTHER),g' \
-	    -e 's,@BINREAL@,$(BINREAL),g' \
 	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
 	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
 	    -e 's,@FF_VERSION_DEVMILESTONE@,$(FF_VERSION_DEVMILESTONE),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
