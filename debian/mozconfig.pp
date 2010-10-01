@@ -90,8 +90,4 @@ ac_add_options --enable-crashreporter
 #else
 ac_add_options --disable-crashreporter
 #endif
-#ifndef DEB_BUILD_UNOFFICIAL
-mk_add_options MOZILLA_OFFICIAL=1
-mk_add_options BUILD_OFFICIAL=1
-#endif
 ac_add_options @BRANDING@

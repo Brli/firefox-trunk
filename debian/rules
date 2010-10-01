@@ -151,6 +151,10 @@ LDFLAGS = $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
 export MOZCONFIG=$(CURDIR)/debian/mozconfig
+ifneq (1,$(DEB_BUILD_UNOFFICIAL))
+	export MOZILLA_OFFICIAL=1
+	export BUILD_OFFICIAL=1
+endif
 
 DEB_MAKE_MAKEFILE		:= client.mk
 DEB_MAKE_EXTRA_ARGS		:=
@@ -211,9 +215,6 @@ ifeq (1, $(USE_SYSTEM_SQLITE))
 endif
 ifeq (1, $(USE_SYSTEM_NSS))
 	DEB_DEFINES += -DUSE_SYSTEM_NSS=$(USE_SYSTEM_NSS)
-endif
-ifeq (1, $(DEB_BUILD_UNOFFICIAL))
-	DEB_DEFINES += -DDEB_BUILD_UNOFFICIAL=$(DEB_BUILD_UNOFFICIAL)
 endif
 DEB_WANT_UNIT_TESTS=0
 ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
