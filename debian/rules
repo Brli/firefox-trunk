@@ -16,10 +16,16 @@ DEBIAN_NAME			:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ 
 MOZCLIENT_PROJECTNAME		:= $(DEBIAN_NAME)
 MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 
+DEB_WANT_UNIT_TESTS	:= 0
+ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	DEB_WANT_UNIT_TESTS=1
+endif
+
 include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/makefile.mk
+include $(CURDIR)/debian/testsuite.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 # FIXME: We need to do this another way in the new world
 #include /usr/share/mozilla-devscripts/lp-locale-export.mk
@@ -207,9 +213,7 @@ endif
 ifeq (1, $(USE_SYSTEM_NSS))
 	DEB_DEFINES += -DUSE_SYSTEM_NSS=$(USE_SYSTEM_NSS)
 endif
-DEB_WANT_UNIT_TESTS=0
-ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
-	DEB_WANT_UNIT_TESTS=1
+ifeq (1,$(DEB_WANT_UNIT_TESTS))
 	DEB_DEFINES += -DDEB_WANT_UNIT_TESTS=$(DEB_WANT_UNIT_TESTS)
 endif
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
@@ -304,13 +308,6 @@ BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
 	$(NULL)
 
 post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
-
-debian/stamp-testsuite:
-ifeq (1,$(DEB_WANT_UNIT_TESTS))
-	cd $(MOZ_OBJDIR); \
-		$(MAKE) -f ../../../debian/testsuite.mk test
-endif
-	touch $@
 
 debian/stamp-buildsymbols:
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
