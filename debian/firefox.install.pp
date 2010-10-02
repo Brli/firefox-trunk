@@ -6,3 +6,4 @@ debian/tmp/@LIBDIR@/omni.jar @LIBDIR@
 debian/tmp/@LIBDIR@/chrome/browser-branding*.jar
 debian/tmp/@LIBDIR@/chrome/*.manifest
 #endif
+debian/@APPNAME@.desktop usr/share/applications

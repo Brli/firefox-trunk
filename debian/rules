@@ -229,14 +229,11 @@ DEBIAN_EXECUTABLES = \
 	$(NULL)
 
 subst_files = \
-	debian/usr.bin.firefox.apparmor \
+	debian/usr.bin.$(DEBIAN_NAME).apparmor \
 	debian/README.Debian \
 	debian/firefox.sh \
 	debian/ubuntu-firefox.js \
 	debian/ubuntu-abrowser.js \
-	$(NULL)
-
-pkg_files = \
 	debian/apport/$(DEBIAN_NAME) \
 	debian/$(DESKTOP) \
 	debian/apport/$(DEBIAN_NAME).py \
@@ -262,29 +259,23 @@ pkg_files = \
 	debian/$(DEBIAN_NAME)-core.prerm \
 	debian/$(DEBIAN_NAME_OTHER).install \
 	debian/$(DEBIAN_NAME_OTHER).links \
-	debian/$(DEBIAN_NAME_OTHER).dirs \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
-	debian/$(DEBIAN_NAME).dirs \
 	debian/$(DEBIAN_NAME).preinst \
 	debian/$(DEBIAN_NAME)-mozsymbols.install \
 	debian/mozconfig \
 	$(NULL)
 
-%:: %.in
-	sed -e 's,@LIBDIR@,/$(FF_DIR),g' \
+%.in: %.pp
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
+
+$(subst_files): $(foreach file, $(subst_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
+	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
 	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
 	    -e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
 	    -e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
 	    -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
-	    -e 's/@APP_VERSION@/$(FF_VERSION)/' < $< > $@
-
-%.in: %.pp
-	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
-
-$(pkg_files): $(foreach file, $(pkg_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
-	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
-	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
+	    -e 's/@APP_VERSION@/$(FF_VERSION)/g' \
 	    -e 's,@APPNAME_OTHER@,$(DEBIAN_NAME_OTHER),g' \
 	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
 	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
@@ -298,6 +289,9 @@ debian/usr.bin.firefox.apparmor.in:
 	else \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.9.10 $(CURDIR)/debian/usr.bin.firefox.apparmor.in ; \
 	fi
+
+debian/$(DEBIAN_NAME).desktop: debian/$(DESKTOP_BRANDED)
+	cp $< $@
 
 debian/migrator/ffox-32-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
@@ -344,17 +338,6 @@ endif
 
 common-binary-arch:: debian/stamp-buildsymbols
 
-binary-install/$(DEBIAN_NAME)-core::
-	cp debian/usr.bin.firefox.apparmor debian/$(DEBIAN_NAME)-core/etc/apparmor.d/usr.bin.$(DEBIAN_NAME)
-
-binary-install/$(DEBIAN_NAME_OTHER)::
-	cp -f debian/$(DESKTOP) \
-	        debian/$(DEBIAN_NAME_OTHER)/usr/share/applications/$(DEBIAN_NAME_OTHER).desktop
-
-binary-install/$(DEBIAN_NAME)::
-	cp -f debian/$(DESKTOP_BRANDED) \
-	        debian/$(DEBIAN_NAME)/usr/share/applications/$(DEBIAN_NAME).desktop
-
 LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~hg.*/pre/' | tr -d '~')
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
@@ -392,7 +375,7 @@ binary-predeb/$(DEBIAN_NAME_OTHER)-gnome-support::
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME_OTHER)-gnome-support/usr/lib/firefox-*/components/$(file);) true
 endif
 
-pre-build:: debian/usr.bin.firefox.apparmor.in $(subst_files) $(pkg_files)
+pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	set -e; for i in $(UUDECODE); do \
 	        uudecode -o debian/$$i debian/$$i.uu; \
 	        done ; \
@@ -405,10 +388,11 @@ clean::
 	        rm -f debian/$$i; \
 	        done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
-	rm -f $(subst_files) $(pkg_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
+	rm -f $(subst_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
 	find debian/ -name *.pp | sed -e 's/pp$$/in/g' | xargs rm -f
 	rm -f debian/migrator/ffox-32-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 	rm -rf debian/tmp-*
 	rm -f debian/usr.bin.firefox.apparmor.in
 	rm -f debian/stamp-*
+	rm -f debian/$(DEBIAN_NAME).desktop
