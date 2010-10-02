@@ -29,7 +29,7 @@ include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 # FIXME: We need to do this another way in the new world
 #include /usr/share/mozilla-devscripts/lp-locale-export.mk
 
-MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir
+MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
 include $(CURDIR)/debian/testsuite.mk
 
 # Various build options
