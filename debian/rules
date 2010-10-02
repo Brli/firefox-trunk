@@ -25,10 +25,12 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/makefile.mk
-include $(CURDIR)/debian/testsuite.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 # FIXME: We need to do this another way in the new world
 #include /usr/share/mozilla-devscripts/lp-locale-export.mk
+
+MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir
+include $(CURDIR)/debian/testsuite.mk
 
 # Various build options
 DEB_MIN_SYSDEPS		?= 1
@@ -64,8 +66,6 @@ FF_PREFIX			:= usr
 FF_DIR				= $(FF_PREFIX)/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
 FF_VERSION_DEVMILESTONE		:= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
 FF_VERSION_SERIES		:= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
-
-MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
 
 PYTHON			:= $(shell which python)
 DISTRIB 		:= $(shell lsb_release -i -s)
