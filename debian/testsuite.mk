@@ -8,33 +8,35 @@ ifeq (1,$(DEB_WANT_UNIT_TESTS))
 	TESTS += check xpcshell-tests reftest crashtest
 endif
 
-debian/stamp-testsuite: $(TESTS)
-	touch $@
+debian/stamp-testsuite: $(addprefix debian/stamp-,$(TESTS))
+
+$(addprefix debian/stamp-,$(TESTS)): debian/stamp-makefile-build
 
 # Required for js/src/trace-tests/sunspider/check-date-format-tofte.js
-check: export TZ = :/usr/share/zoneinfo/posix/US/Pacific
+$(addprefix debian/stamp-,check): export TZ = :/usr/share/zoneinfo/posix/US/Pacific
 
 $(LOCDIR)/%:
 	mkdir -p $(LOCDIR)
 	localedef -f $(shell echo $(notdir $@) | cut -d '.' -f 2) -i $(shell echo $(notdir $@) | cut -d '.' -f 1) $@
 
 # Setup locales for tests which need it
-xpcshell-tests reftest: $(LOCDIR)/$(LOCALE)
-xpcshell-tests reftest: export LOCPATH=$(LOCDIR)
-xpcshell-tests reftest: export LC_ALL=$(LOCALE)
+$(addprefix debian/stamp-,xpcshell-tests reftest): $(LOCDIR)/$(LOCALE)
+$(addprefix debian/stamp-,xpcshell-tests reftest): export LOCPATH=$(LOCDIR)
+$(addprefix debian/stamp-,xpcshell-tests reftest): export LC_ALL=$(LOCALE)
 
 # Disable tests that are known to fail
-xpcshell-tests: xpcshell-tests-disable
+$(addprefix debian/stamp-,xpcshell-tests): debian/stamp-xpcshell-tests-disable
 
 # Tests that need a X server
-reftest crashtest: WRAPPER = xvfb-run -s "-screen 0 1024x768x24"
+$(addprefix debian/stamp-,reftest crashtest): WRAPPER = xvfb-run -s "-screen 0 1024x768x24"
 
 # Run the test!
-$(TESTS):
+$(addprefix debian/stamp-,$(TESTS)):
 	HOME="$(CURDIR)/$(MOZ_OBJDIR)/dist" \
-	$(WRAPPER) $(MAKE) -C $(CURDIR)/$(MOZ_OBJDIR) $@ || true
+	$(WRAPPER) $(MAKE) -C $(CURDIR)/$(MOZ_OBJDIR) $(subst debian/stamp-,,$@) || true
+	touch $@
 
-xpcshell-tests-disable:
+debian/stamp-xpcshell-tests-disable: debian/stamp-makefile-build
 	# Hangs without network access
 	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/toolkit/components/places/tests/unit/test_404630.js
 
@@ -50,3 +52,4 @@ xpcshell-tests-disable:
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
 	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
 	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
+	touch $@

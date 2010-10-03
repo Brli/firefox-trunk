@@ -303,7 +303,7 @@ BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
 
 post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 
-debian/stamp-buildsymbols:
+debian/stamp-buildsymbols: debian/stamp-makefile-build
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	# create build symbols
 	cd $(MOZ_OBJDIR); \
