@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 LOCALE		:= en_US.UTF-8
-LOCDIR		= $(MOZ_OBJDIR)/dist/.locales
+LOCDIR		= $(CURDIR)/$(MOZ_OBJDIR)/dist/.locales
 
 TESTS	:= $(NULL)
 ifeq (1,$(DEB_WANT_UNIT_TESTS))
@@ -31,22 +31,22 @@ reftest crashtest: WRAPPER = xvfb-run -s "-screen 0 1024x768x24"
 
 # Run the test!
 $(TESTS):
-	HOME="$(MOZ_OBJDIR)/dist" \
-	$(WRAPPER) $(MAKE) -C $(MOZ_OBJDIR) $@ || true
+	HOME="$(CURDIR)/$(MOZ_OBJDIR)/dist" \
+	$(WRAPPER) $(MAKE) -C $(CURDIR)/$(MOZ_OBJDIR) $@ || true
 
 xpcshell-tests-disable:
 	# Hangs without network access
-	rm -f $(MOZ_OBJDIR)/_tests/xpcshell/toolkit/components/places/tests/unit/test_404630.js
+	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/toolkit/components/places/tests/unit/test_404630.js
 
 	# FIXME: IPC tests seem to hang in the buildd's
-	rm -rf $(MOZ_OBJDIR)/_tests/xpcshell/chrome/test/unit_ipc
-	rm -rf $(MOZ_OBJDIR)/_tests/xpcshell/ipc/testshell/tests
-	rm -rf $(MOZ_OBJDIR)/_tests/xpcshell/toolkit/components/contentprefs/tests/unit_ipc
-	rm -rf $(MOZ_OBJDIR)/_tests/xpcshell/ipc
-	rm -rf $(MOZ_OBJDIR)/_tests/xpcshell/netwerk/cookie/test/unit_ipc
-	rm -rf $(MOZ_OBJDIR)/_tests/xpcshell/netwerk/test/unit_ipc
-	rm -rf $(MOZ_OBJDIR)/_tests/xpcshell/modules/libpref/test/unit_ipc
+	rm -rf $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/chrome/test/unit_ipc
+	rm -rf $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/ipc/testshell/tests
+	rm -rf $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/toolkit/components/contentprefs/tests/unit_ipc
+	rm -rf $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/ipc
+	rm -rf $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/netwerk/cookie/test/unit_ipc
+	rm -rf $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/netwerk/test/unit_ipc
+	rm -rf $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/modules/libpref/test/unit_ipc
 
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
-	rm -f $(MOZ_OBJDIR)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
-	rm -f $(MOZ_OBJDIR)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
+	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
+	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
