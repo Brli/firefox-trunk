@@ -279,6 +279,7 @@ $(subst_files): $(foreach file, $(subst_files), $(subst -$(DEBIAN_APP_NAME_VER),
 	    -e 's,@APPNAME_OTHER@,$(DEBIAN_NAME_OTHER),g' \
 	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
 	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
+	    -e 's,@DEB_CONFIGURE_LIBEXECDIR@,$(DEB_CONFIGURE_LIBEXECDIR),g' \
 	    -e 's,@FF_VERSION_DEVMILESTONE@,$(FF_VERSION_DEVMILESTONE),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
 
 debian/usr.bin.firefox.apparmor.in:

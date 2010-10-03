@@ -17,7 +17,7 @@
 # default profile for us.
 
 MOZDIR=$HOME/.mozilla
-LIBDIR=@LIBDIR@
+LIBDIR=@DEB_CONFIGURE_LIBEXECDIR@
 GDB=/usr/bin/gdb
 DROPPED=abandoned
 
