@@ -79,8 +79,6 @@ ifeq (1,$(DEB_MOZ_VALGRIND))
 	DEB_BUILD_UNOFFICIAL = 1
 endif
 
-EXTRA_SYSTEM_CONFIGURE_FLAGS	= $(NULL)
-
 DESKTOP				:= $(DEBIAN_NAME_OTHER).desktop
 
 # minVersion and maxVersion used in install.rdf
@@ -166,17 +164,8 @@ endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
-endif
-
-ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
-endif
-
-ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.1'; a=$$?; if test $$a != 1; then echo 1; fi)
-endif
-
-ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.7'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
 
