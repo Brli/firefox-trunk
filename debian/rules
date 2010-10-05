@@ -64,8 +64,8 @@ DEBIAN_VERSION			:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/
 FF_VERSION			= $(shell cat $(DEB_BUILDDIR)/browser/config/version.txt)
 FF_PREFIX			:= usr
 FF_DIR				= $(FF_PREFIX)/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
-FF_VERSION_DEVMILESTONE		:= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
-FF_VERSION_SERIES		:= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
+FF_VERSION_DEVMILESTONE		= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
+FF_VERSION_SERIES		= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
 
 PYTHON			:= $(shell which python)
 DISTRIB 		:= $(shell lsb_release -i -s)
