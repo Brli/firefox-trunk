@@ -30,7 +30,6 @@ include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 #include /usr/share/mozilla-devscripts/lp-locale-export.mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
-include $(CURDIR)/debian/testsuite.mk
 
 # Various build options
 DEB_MIN_SYSDEPS		?= 1
@@ -38,6 +37,24 @@ DEB_ENABLE_IPC		?= 1
 DEB_ENABLE_BREAKPAD	?= 1
 DEB_BUILD_UNOFFICIAL	?= 0
 DEB_MOZ_VALGRIND	?= 0
+DEB_BUILD_PGO		?= 0
+
+ifeq (1,$(DEB_MOZ_VALGRIND))
+	DEB_BUILD_UNOFFICIAL = 1
+endif
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	DEB_BUILD_PGO = 0
+endif
+
+ifeq (1, $(DEB_BUILD_PGO))
+	# See https://bugzilla.mozilla.org/show_bug.cgi?id=602245
+	DEB_WANT_UNIT_TESTS = 0
+	# We don't really want the crash reporter on for PGO builds yet
+	DEB_BUILD_UNOFFICIAL = 1
+endif
+
+include $(CURDIR)/debian/testsuite.mk
 
 # Define other variables used throughout the build
 DEBIAN_APP_NAME		:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
@@ -54,6 +71,9 @@ DEB_MAKE_EXTRA_ARGS		:=
 
 # These normally come from autotools.mk, which we no longer include (because we
 # don't want to run configure)
+ifeq (1, $(DEB_BUILD_PGO))
+	DEB_MAKE_BUILD_TARGET	:= profiledbuild
+endif
 DEB_MAKE_INSTALL_TARGET		:= install DESTDIR=$(CURDIR)/debian/tmp
 DEB_MAKE_CLEAN_TARGET		:= distclean
 DEB_CONFIGURE_LOCALSTATEDIR	:= /var
@@ -73,10 +93,6 @@ DISTRIB 		:= $(shell lsb_release -i -s)
 ifneq (,$(filter $(DISTRIB),Ubuntu))
 	DISTRIB_VERSION_MAJOR := $(shell lsb_release -s -r | cut -d '.' -f 1)
 	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
-endif
-
-ifeq (1,$(DEB_MOZ_VALGRIND))
-	DEB_BUILD_UNOFFICIAL = 1
 endif
 
 DESKTOP				:= $(DEBIAN_NAME_OTHER).desktop
@@ -161,6 +177,12 @@ ifneq (1,$(DEB_BUILD_UNOFFICIAL))
 	export MOZILLA_OFFICIAL=1
 	export BUILD_OFFICIAL=1
 endif
+ifeq (1,$(DEB_BUILD_PGO))
+	CC	= $(shell which gcc-4.5)
+	CXX	= $(shell which g++-4.5)
+	export CC
+	export CXX
+endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
 	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
@@ -174,7 +196,7 @@ DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
 		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
 		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
-		-DDEB_CONFIGURE_LIBEXECDIR="$(DEB_CONFIGURE_LIBEXECDIR)" -DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)"
+		-DDEB_CONFIGURE_LIBEXECDIR="$(DEB_CONFIGURE_LIBEXECDIR)" -DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DPYTHON="$(PYTHON)"
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	DEB_DEFINES += -DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS)
 endif
@@ -207,6 +229,9 @@ ifeq (1,$(DEB_WANT_UNIT_TESTS))
 endif
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 	DEB_DEFINES += -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)"
+endif
+ifeq (1,$(DEB_BUILD_PGO))
+	DEB_DEFINES += -DDEB_BUILD_PGO=$(DEB_BUILD_PGO)
 endif
 
 UUDECODE = \
