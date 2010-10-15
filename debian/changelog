@@ -475,10 +475,6 @@ firefox-4.0 (4.0~b7~hg20100928r54686+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     DEB_MOZ_VALGRIND=1. This will automatically pick the right optimisations
     and build flags
     - update debian/rules
-  * Fix LP: #623509 - Firefox is creating empty crash reports due to 
-    kernel ptrace hardening
-    - add debian/patches/bz591331_att469858_breakpad_allow_ptrace.patch
-    - update debian/patches/series
   * Add support for running debhelper files through the Mozilla text
     preprocessor. This means we'll be able to support the different build
     configurations without having a huge debian/rules with lots of logic in
@@ -520,7 +516,7 @@ firefox-4.0 (4.0~b7~hg20100928r54686+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Oct 2010 22:55:13 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 15 Oct 2010 02:44:12 +0100
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

@@ -18,4 +18,3 @@ bzXXX_plugin_for_mimetype_pref.patch
 ftbfs_crashreporter.patch
 bz588410_fix_make_install_with_omnijar.patch
 install_ubuntu_prefs.patch
-bz591331_att469858_breakpad_allow_ptrace.patch
