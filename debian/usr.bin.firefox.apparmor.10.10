@@ -35,6 +35,8 @@
   /etc/xdg/xubuntu/applications/defaults.list r,
   owner @{HOME}/.local/share/applications/defaults.list r,
   owner @{HOME}/.local/share/applications/mimeinfo.cache r,
+  owner /tmp/** m,
+  owner /var/tmp/** m,
 
   /etc/timezone r,
   /etc/wildmidi/wildmidi.cfg r,
