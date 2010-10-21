@@ -77,6 +77,12 @@
   /etc/mtab r,
   /etc/fstab r,
 
+  # Needed for the crash reporter
+  owner @{PROC}/[0-9]*/environ r,
+  owner @{PROC}/[0-9]*/auxv r,
+  /etc/lsb-release r,
+  /usr/bin/expr ix,
+
   # allow access to documentation and other files the user may want to look
   # at in /usr
   /usr/ r,

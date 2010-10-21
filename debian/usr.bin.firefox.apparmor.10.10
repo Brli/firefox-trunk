@@ -76,6 +76,12 @@
   /etc/mtab r,
   /etc/fstab r,
 
+  # Needed for the crash reporter
+  owner @{PROC}/[0-9]*/environ r,
+  owner @{PROC}/[0-9]*/auxv r,
+  /etc/lsb-release r,
+  /usr/bin/expr ix,
+
   # Needed for container to work in xul builds
   /usr/lib/xulrunner-*/plugin-container ixr,
 
