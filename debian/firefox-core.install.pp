@@ -36,7 +36,7 @@ debian/firefox.sh @LIBDIR@
 debian/@APPNAME@-restart-required.update-notifier @LIBDIR@
 debian/migrator/ffox-32-beta-profile-migration-dialog @LIBDIR@
 debian/distribution.ini @LIBDIR@/distribution
-debian/usr.bin.@APPNAME@.apparmor etc/apparmor.d
+debian/usr.bin.@APPNAME@ etc/apparmor.d
 
 #debian/debsearch.gif usr/lib/@APPNAME@-addons/searchplugins
 #debian/debsearch.src usr/lib/@APPNAME@-addons/searchplugins

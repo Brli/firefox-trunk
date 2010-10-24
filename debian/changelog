@@ -456,12 +456,6 @@ firefox-4.0 (4.0~b8~hg20101023r56404+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/usr.bin.firefox.apparmor.10.04
     - update debian/usr.bin.firefox.apparmor.10.10
     - update debian/usr.bin.firefox.apparmor.9.10
-  * Clean up current nightly testers from previous package bugs. We
-    should drop these changes after a couple of weeks
-    - add debian/firefox.preinst.in to clean files from /etc/@APPNAME
-    - add debian/firefox-gnome-support.preinst.in to remove a broken 
-      alternative
-    - update debian/rules
   * Ensure that rules.mk and system-headers are identical in config/ and
     js/src/config/, as this causes test-suite failures
     - update debian/patches/bz386904_config_rules_install_dist_files.patch
@@ -509,6 +503,9 @@ firefox-4.0 (4.0~b8~hg20101023r56404+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches after landing of (bmo: 601830) aka app.update.url.manual for 
     nightly builds should point to the nightly builds
     - update debian/patches/firefox-profilename.patch
+  * Add temporary change to clean up rogue Apparmor profile on upgrade for
+    current nightly testers
+    - update debian/firefox-core.preinst.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
