@@ -23,8 +23,8 @@
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
  // nightly=8 hours, official=24 hours
  pref("app.update.interval", 28800);
@@ -41,7 +41,7 @@
  
  // Release notes URL
 -pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
-+pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
@@ -50,8 +50,8 @@
 @@ -1,14 +1,14 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
@@ -63,7 +63,7 @@
  
  // Release notes URL
 -pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
-+pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
@@ -88,8 +88,8 @@
 -pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/releasenotes/");
 +pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
  
+ pref("browser.search.param.ms-pc", "MOZI");
  pref("browser.search.param.yahoo-fr", "moz35");
- pref("browser.search.param.yahoo-fr-cjkt", "moz35"); // now unused
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
 @@ -59,10 +59,10 @@ pref("extensions.logging.enabled", false
@@ -116,7 +116,7 @@
  
  // Update Timer Manager preferences
  // Interval: When all registered timers should be checked (in milliseconds)
-@@ -197,7 +197,7 @@ pref("extensions.update.url", "https://v
+@@ -202,7 +202,7 @@ pref("extensions.update.url", "https://v
  pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
                                              // Themes every day
  // Non-symmetric (not shared by extensions) extension-specific [update] preferences
@@ -125,7 +125,7 @@
  pref("extensions.dss.enabled", false);          // Dynamic Skin Switching                                               
  pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
                                                  // restart.
-@@ -314,7 +314,7 @@ pref("browser.download.manager.scanWhenD
+@@ -319,7 +319,7 @@ pref("browser.download.manager.scanWhenD
  pref("browser.download.manager.resumeOnWakeDelay", 10000);
  
  // search engines URL
@@ -134,7 +134,7 @@
  
  // pointer to the default engine name
  pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
-@@ -729,8 +729,8 @@ pref("browser.safebrowsing.provider.0.re
+@@ -732,8 +732,8 @@ pref("browser.safebrowsing.provider.0.re
  pref("browser.safebrowsing.provider.0.reportMalwareErrorURL", "http://{moz:locale}.malware-error.mozilla.com/?hl={moz:locale}");
  
  // FAQ URLs
@@ -145,7 +145,7 @@
  
  // Name of the about: page contributed by safebrowsing to handle display of error
  // pages on phishing/malware hits.  (bug 399233)
-@@ -874,7 +874,7 @@ pref("browser.zoom.updateBackgroundTabs"
+@@ -883,7 +883,7 @@ pref("browser.zoom.updateBackgroundTabs"
  pref("breakpad.reportURL", "http://crash-stats.mozilla.com/report/index/");
  
  // base URL for web-based support pages
@@ -159,17 +159,13 @@
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
  // nightly=8 hours, official=24 hours
  pref("app.update.interval", 28800);
-@@ -8,13 +8,13 @@ pref("app.update.interval", 28800);
- pref("app.update.download.backgroundInterval", 60);
- // URL user can browse to manually if for some reason all update installation
- // attempts fail.
--pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
-+pref("app.update.url.manual", "http://www.mozilla.org/products/firefox/");
+@@ -11,10 +11,10 @@ pref("app.update.download.backgroundInte
+ pref("app.update.url.manual", "http://nightly.mozilla.org/");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
 -pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
@@ -177,7 +173,7 @@
  
  // Release notes URL
 -pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
-+pref("app.releaseNotesURL", "http://%LOCALE%.www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
++pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%LOCALE%/firefox/%VERSION%/releasenotes/");
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
