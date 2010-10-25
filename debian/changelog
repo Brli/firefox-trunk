@@ -506,6 +506,9 @@ firefox-4.0 (4.0~b8~hg20101023r56404+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Add temporary change to clean up rogue Apparmor profile on upgrade for
     current nightly testers
     - update debian/firefox-core.preinst.in
+  * Disable gnomevfs support on >= 11.04 (LP: #661287)
+    - update debian/rules
+    - update debian/mozconfig.pp
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -515,7 +518,7 @@ firefox-4.0 (4.0~b8~hg20101023r56404+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sun, 24 Oct 2010 07:20:56 -0400
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 25 Oct 2010 12:19:17 -0400
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

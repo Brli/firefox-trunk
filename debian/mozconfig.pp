@@ -94,3 +94,6 @@ ac_add_options @BRANDING@
 #ifdef DEB_BUILD_PGO
 mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py'
 #endif
+#ifdef DISABLE_GNOMEVFS
+ac_add_options --disable-gnomevfs
+#endif
