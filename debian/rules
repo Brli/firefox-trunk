@@ -21,6 +21,13 @@ ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	DEB_WANT_UNIT_TESTS=1
 endif
 
+# This is super hacky, but we need to ensure that debian/control is regenerated
+# first in the clean target, as it depends on pre-build (because it needs the
+# Mozilla text preprocessor). Declaring this after the includes would mean it runs
+# after build-tree is removed, which is FAIL. This can go away once we stop using
+# an embedded tarball
+clean:: regen-debian-control
+
 include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
@@ -270,9 +277,7 @@ subst_files = \
 	debian/mozconfig \
 	$(NULL)
 
-# B'ah, we can't have a debian/control target to do this, as buildcore.mk already provides one, which gets run
-# at inconvenient times during clean, when the preprocessor isn't available. CDBS sucks
-regen-debian-control: pre-build
+regen-debian-control:: pre-build
 	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/debian/control.pp > $(CURDIR)/debian/control
 
 %.in: %.pp

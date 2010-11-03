@@ -26,7 +26,7 @@ ac_add_options --with-distribution-id=com.ubuntu
 ac_add_options --with-system-jpeg=/usr
 ac_add_options --with-system-png=/usr
 ac_add_options --with-system-zlib=/usr
-ac_add_options --disable-system-hunspell
+ac_add_options --enable-system-hunspell
 ac_add_options --with-libxul-sdk=@DEBIAN_XUL_DEV@
 ac_add_options --with-system-libxul
 ac_add_options --enable-chrome-format=jar
@@ -34,7 +34,7 @@ ac_add_options --enable-chrome-format=jar
 ac_add_options --without-system-jpeg
 ac_add_options --without-system-png
 ac_add_options --without-system-zlib
-ac_add_options --enable-system-hunspell
+ac_add_options --disable-system-hunspell
 ac_add_options --enable-chrome-format=omni
 #endif
 #ifndef DEB_MOZ_VALGRIND

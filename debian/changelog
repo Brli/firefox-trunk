@@ -539,7 +539,7 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - remove debian/ubuntu-abrowser.js.in
   * Don't build with -pie on Natty (LP: #663294)
     - update debian/rules
-  * Add a mechanism for auto-generating debian/control, auto-populating
+  * Auto-generate debian/control in the clean target, auto-populating
     the build-depends
     - add debian/control.pp
     - update debian/rules
@@ -553,7 +553,7 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Nov 2010 17:32:17 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Nov 2010 16:45:42 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
