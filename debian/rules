@@ -238,9 +238,9 @@ endif
 ifeq (1,$(DEB_BUILD_PGO))
 	DEB_DEFINES += -DDEB_BUILD_PGO=$(DEB_BUILD_PGO)
 endif
-if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1104' ]; then \
-	DEB_DEFINES += -DDISABLE_GNOMEVFS \
-fi
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
+	DEB_DEFINES += -DDISABLE_GNOMEVFS
+endif
 
 UUDECODE = \
 	debsearch.gif \
