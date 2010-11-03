@@ -270,8 +270,20 @@ subst_files = \
 	debian/mozconfig \
 	$(NULL)
 
+%.in: %.pp
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
+
 $(subst_files): $(foreach file, $(subst_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
-	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $(CURDIR)/$@
+	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
+	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
+	    -e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
+	    -e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
+	    -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
+	    -e 's/@APP_VERSION@/$(FF_VERSION)/g' \
+	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
+	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
+	    -e 's,@DEB_CONFIGURE_LIBEXECDIR@,$(DEB_CONFIGURE_LIBEXECDIR),g' \
+	    -e 's,@FF_VERSION_DEVMILESTONE@,$(FF_VERSION_DEVMILESTONE),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
 
 debian/usr.bin.firefox.in:
 	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1010' ]; then \
@@ -355,6 +367,7 @@ clean::
 	        done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
+	find debian/ -name *.pp | sed -e 's/pp$$/in/g' | xargs rm -f
 	rm -f debian/migrator/ffox-32-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
 	rm -f debian/usr.bin.firefox.in
