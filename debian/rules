@@ -270,8 +270,10 @@ subst_files = \
 	debian/mozconfig \
 	$(NULL)
 
-debian/control:: debian/control.in
-	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
+# B'ah, we can't have a debian/control target to do this, as buildcore.mk already provides one, which gets run
+# at inconvenient times during clean, when the preprocessor isn't available. CDBS sucks
+regen-debian-control: pre-build
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/debian/control.pp > $(CURDIR)/debian/control
 
 %.in: %.pp
 	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
@@ -364,7 +366,7 @@ pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	                chmod a+x debian/$$i; \
 	        done
 
-clean:: debian/control
+clean::
 	set -e; for i in $(UUDECODE); do \
 	        rm -f debian/$$i; \
 	        done ; 
