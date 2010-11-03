@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+install|upgrade)
+    if dpkg --compare-versions "$2" le "4.0~b8~hg20101029r56674+nobinonly-0ubuntu1"; then
+        rm_conffile "firefox-4.0-core" "/etc/apparmor.d/usr.bin.firefox-4.0.apparmor"
+	rm_conffile "firefox-4.0-core" "/etc/apparmor.d/usr.bin.firefox-3.7"
+    fi
+esac
