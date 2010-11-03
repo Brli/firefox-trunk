@@ -60,7 +60,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-PROFILENAME=`echo $APPNAME | sed -e 's/abrowser/firefox/'`
+PROFILENAME="$APPNAME"
 if [ ! -d $MOZDIR/$PROFILENAME ] ; then
   FOUND=""
   if [ -d $MOZDIR/firefox-3.7 ] ; then

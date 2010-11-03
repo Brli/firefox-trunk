@@ -1,3 +1,0 @@
-debian/tmp/@LIBDIR@/components/libnkgnomevfs.so
-debian/tmp/@LIBDIR@/components/libmozgnome.so
-debian/@APPNAME_OTHER@.xml usr/share/gnome-control-center/default-apps

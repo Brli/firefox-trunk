@@ -509,6 +509,34 @@ firefox-4.0 (4.0~b8~hg20101023r56404+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Disable gnomevfs support on >= 11.04 (LP: #661287)
     - update debian/rules
     - update debian/mozconfig.pp
+  * Drop abrowser from the Firefox source package:
+    - remove debian/abrowser-gnome-support.install.in
+    - remove debian/abrowser-gnome-support.postinst.in
+    - remove debian/abrowser-gnome-support.prerm.in
+    - remove debian/abrowser.desktop.in
+    - remove debian/abrowser.install.in
+    - remove debian/abrowser.links.in
+    - remove debian/abrowser.xml.in
+    - update debian/control
+    - rename debian/firefox-core.dirs.in => debian/firefox.dirs.in
+    - rename debian/firefox-core.docs.in => debian/firefox.docs.in
+    - remove debian/firefox.install.in
+    - rename debian/firefox-core.install.in => debian/firefox.install.in
+    - update debian/firefox.install.in
+    - remove debian/firefox.links.in
+    - rename debian/firefox-core.links.in => debian/firefox.links.in
+    - update debian/firefox.links.in
+    - rename debian/firefox-core.postinst.in => debian/firefox.postinst.in
+    - rename debian/firefox-core.postrm.in => debian/firefox.postrm.in
+    - rename debian/firefox-core.preinst.in => debian/firefox.preinst.in
+    - rename debian/firefox-core.prerm.in => debian/firefox.prerm.in
+    - update debian/firefox.sh.in
+    - update debian/mozclient/firefox-4.0.conf
+    - remove debian/patches/awesome_branding_updates.patch
+    - remove debian/patches/browser_branding.patch
+    - update debian/patches/series
+    - update debian/rules
+    - remove debian/ubuntu-abrowser.js.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -518,7 +546,7 @@ firefox-4.0 (4.0~b8~hg20101023r56404+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 25 Oct 2010 12:19:17 -0400
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Nov 2010 13:29:29 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

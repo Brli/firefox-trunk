@@ -60,10 +60,6 @@ include $(CURDIR)/debian/testsuite.mk
 DEBIAN_APP_NAME		:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
 DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/.*-//g')
 
-DEBIAN_APP_NAME_OTHER	:= abrowser
-DEBIAN_NAME_OTHER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)/$(DEBIAN_APP_NAME_OTHER)/')
-BRANDING_NAME_OTHER	:= awesome-browser
-
 DEB_MAKE_MAKEFILE		:= client.mk
 
 # Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
@@ -94,8 +90,6 @@ ifneq (,$(filter $(DISTRIB),Ubuntu))
 	DISTRIB_VERSION_MAJOR := $(shell lsb_release -s -r | cut -d '.' -f 1)
 	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
 endif
-
-DESKTOP				:= $(DEBIAN_NAME_OTHER).desktop
 
 # minVersion and maxVersion used in install.rdf
 EM_TRANSLATION_VERSION		= $(FF_VERSION)
@@ -192,7 +186,7 @@ ifneq (1, $(DEB_MIN_SYSDEPS))
 endif
 
 # Defines used for the Mozilla text preprocessor
-DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" \
+DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)"  \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
 		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
 		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
@@ -250,9 +244,7 @@ subst_files = \
 	debian/README.Debian \
 	debian/firefox.sh \
 	debian/ubuntu-firefox.js \
-	debian/ubuntu-abrowser.js \
 	debian/apport/$(DEBIAN_NAME) \
-	debian/$(DESKTOP) \
 	debian/apport/$(DEBIAN_NAME).py \
 	debian/$(DESKTOP_BRANDED) \
 	debian/$(DEBIAN_NAME)-restart-required.update-notifier \
@@ -260,21 +252,14 @@ subst_files = \
 	debian/$(DEBIAN_NAME)-gnome-support.install \
 	debian/$(DEBIAN_NAME)-gnome-support.postinst \
 	debian/$(DEBIAN_NAME)-gnome-support.prerm \
-	debian/$(DEBIAN_NAME_OTHER).xml \
-	debian/$(DEBIAN_NAME_OTHER)-gnome-support.install \
-	debian/$(DEBIAN_NAME_OTHER)-gnome-support.postinst \
-	debian/$(DEBIAN_NAME_OTHER)-gnome-support.prerm \
-	debian/$(DEBIAN_NAME)-core.dirs \
-	debian/$(DEBIAN_NAME)-core.docs \
-	debian/$(DEBIAN_NAME)-core.install \
-	debian/$(DEBIAN_NAME)-core.links \
+	debian/$(DEBIAN_NAME).dirs \
+	debian/$(DEBIAN_NAME).docs \
 	debian/$(DEBIAN_NAME).menu \
-	debian/$(DEBIAN_NAME)-core.postinst \
-	debian/$(DEBIAN_NAME)-core.postrm \
+	debian/$(DEBIAN_NAME).postinst \
+	debian/$(DEBIAN_NAME).postrm \
+	debian/$(DEBIAN_NAME).preinst \
 	debian/$(DEBIAN_NAME)-core.preinst \
-	debian/$(DEBIAN_NAME)-core.prerm \
-	debian/$(DEBIAN_NAME_OTHER).install \
-	debian/$(DEBIAN_NAME_OTHER).links \
+	debian/$(DEBIAN_NAME).prerm \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
 	debian/$(DEBIAN_NAME)-mozsymbols.install \
@@ -299,11 +284,6 @@ debian/$(DEBIAN_NAME).desktop: debian/$(DESKTOP_BRANDED)
 debian/migrator/ffox-32-beta-profile-migration-dialog: debian/migrator/main.c
 	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
 
-BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
-	../../browser/branding/$(BRANDING_NAME_OTHER)/locales/Makefile \
-	../../browser/branding/$(BRANDING_NAME_OTHER)/content/Makefile \
-	$(NULL)
-
 post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 
 debian/stamp-buildsymbols: debian/stamp-makefile-build
@@ -315,29 +295,11 @@ endif
 	touch $@
 
 common-build-arch:: debian/stamp-testsuite
-	cd $(MOZ_OBJDIR)/browser/locales/; \
-		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 ifeq (1,$(DEB_MIN_SYSDEPS))
 	cp debian/ubuntu-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/vendor.js
 else
 	cp debian/ubuntu-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/vendor.js
 endif
-
-common-install-arch::
-	rm -rf $(MOZ_OBJDIR)/dist/bin/chrome/browser-branding*
-ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-abrowser.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/vendor.js
-else
-	cp debian/ubuntu-abrowser.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/vendor.js
-endif
-	cd $(MOZ_OBJDIR)/browser/locales/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
-		$(MAKE) -C ../../browser/app/
-	cd $(MOZ_OBJDIR)/; \
-		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
-		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 
 common-binary-arch:: debian/stamp-buildsymbols
 
@@ -347,8 +309,8 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 	GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 endif
 
-#binary-post-install/$(DEBIAN_NAME)-core:: auto-locale-xpi.mk/translate compare
-binary-post-install/$(DEBIAN_NAME)-core:: compare
+#binary-post-install/$(DEBIAN_NAME):: auto-locale-xpi.mk/translate compare
+binary-post-install/$(DEBIAN_NAME):: compare
 #	sed \
 #	        -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
 #	        -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
@@ -363,7 +325,7 @@ binary-post-install/$(DEBIAN_NAME)-core:: compare
 ifeq (1, $(DEB_MIN_SYSDEPS))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 # install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
-binary-predeb/$(DEBIAN_NAME)-core::
+binary-predeb/$(DEBIAN_NAME)::
 	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)-core/usr/lib/firefox-*/components/;) true
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
@@ -373,9 +335,6 @@ binary-predeb/$(DEBIAN_NAME)-core::
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME)-gnome-support/usr/lib/firefox-*/components/$(file);) true
-
-binary-predeb/$(DEBIAN_NAME_OTHER)-gnome-support::
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME_OTHER)-gnome-support/usr/lib/firefox-*/components/$(file);) true
 endif
 
 pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
@@ -394,7 +353,5 @@ clean::
 	rm -f $(subst_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
 	rm -f debian/migrator/ffox-32-beta-profile-migration-dialog
 	rm -f debian/migrator/*~
-	rm -rf debian/tmp-*
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
-	rm -f debian/$(DEBIAN_NAME).desktop
