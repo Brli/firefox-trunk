@@ -270,6 +270,9 @@ subst_files = \
 	debian/mozconfig \
 	$(NULL)
 
+debian/control:: debian/control.in
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
+
 %.in: %.pp
 	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
 
@@ -336,17 +339,17 @@ binary-post-install/$(DEBIAN_NAME):: compare
 #ifeq (,$(findstring $(EM_TRANSLATION_VERSION), $(LOCALE_VERSION)))
 #	$(warning EM_TRANSLATION_VERSION=$(EM_TRANSLATION_VERSION) LOCALE_VERSION=$(LOCALE_VERSION). You need to explicitly adjust the translation version and min/max bounds.)
 #endif
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)-core/usr/lib/firefox-*/components/$(file);) true
+	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/$(file);) true
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 # install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 binary-predeb/$(DEBIAN_NAME)::
-	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)-core/usr/lib/firefox-*/components/;) true
+	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/;) true
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
-	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core/$(FF_DIR):$$LD_LIBRARY_PATH \
-	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core/$(FF_DIR)/$(lib);)
+	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)/$(FF_DIR):$$LD_LIBRARY_PATH \
+	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)/$(FF_DIR)/$(lib);)
 
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::
@@ -361,7 +364,7 @@ pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	                chmod a+x debian/$$i; \
 	        done
 
-clean::
+clean:: debian/control
 	set -e; for i in $(UUDECODE); do \
 	        rm -f debian/$$i; \
 	        done ; 

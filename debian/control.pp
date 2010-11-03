@@ -1,4 +1,4 @@
-Source: firefox-4.0
+Source: @APPNAME@
 Section: web
 Priority: optional
 Maintainer: Ubuntu Mozilla Team <ubuntu-mozillateam@lists.ubuntu.com>
@@ -35,12 +35,26 @@ Build-Depends: cdbs,
 	libiw-dev,
 	mesa-common-dev,
 	libnotify-dev (>= 0.4),
+#ifndef DEB_MIN_SYSDEPS
+	libnspr4-dev, 
+	libnss3-dev,
+	libcairo2-dev, 
+	libsqlite3-dev,
+	libpixman-1-dev,
+	libjpeg62-dev,
+	libpng12-dev, 
+	zlib1g-dev, 
+	libhunspell-dev,
+	xulrunner-2.0, 
+#endif
+#ifndef DISABLE_GNOMEVFS
 	libgnomevfs2-dev, 
+#endif
         yasm,
 	xvfb,
 Standards-Version: 3.8.1
 
-Package: firefox-4.0
+Package: @APPNAME@
 Architecture: any
 Depends: fontconfig,
 	psmisc,
@@ -66,29 +80,29 @@ Description: safe and easy web browser from Mozilla
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
 
-Package: firefox-4.0-gnome-support
+Package: @APPNAME@-gnome-support
 Architecture: any
 Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
-	firefox-4.0 (= ${binary:Version})
+	@APPNAME@ (= ${binary:Version})
 Provides: gnome-www-browser
 Description: Support for GNOME in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
  integration features.
 
-Package: firefox-4.0-dbg
+Package: @APPNAME@-dbg
 Architecture: any
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
-	firefox-4.0 (= ${binary:Version})
-Description: firefox-4.0 debug symbols
+	@APPNAME@ (= ${binary:Version})
+Description: @APPNAME@ debug symbols
  Debug symbols for Firefox 4.0.
 
-Package: firefox-4.0-mozsymbols
+Package: @APPNAME@-mozsymbols
 Architecture: amd64 i386 armel
 Section: debug
 Priority: extra
@@ -99,6 +113,7 @@ Description: firefox debug symbols for mozilla
  breakpad. eventually this package should go away and the symbol upload be
  implemented in soyuz (or other builders that build this package)
 
+# Transitional packages below here
 
 Package: firefox-4.0-branding
 Architecture: any

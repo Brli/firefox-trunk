@@ -1,7 +1,7 @@
 debian/tmp/@LIBDIR@/components/*.manifest
 debian/tmp/@LIBDIR@/components/*.so
-debian/tmp/@LIBDIR@/icons @LIBDIR@
-debian/tmp/@LIBDIR@/chrome/icons @LIBDIR@/chrome
+debian/tmp/@LIBDIR@/icons
+debian/tmp/@LIBDIR@/chrome/icons
 
 #ifndef DEB_MIN_SYSDEPS
 debian/tmp/@LIBDIR@/components/*.js
@@ -16,7 +16,7 @@ debian/tmp/@LIBDIR@/modules
 #else
 debian/tmp/@LIBDIR@/*.so
 debian/tmp/@LIBDIR@/@APPNAME@-bin
-debian/tmp/@LIBDIR@/omni.jar @LIBDIR@
+debian/tmp/@LIBDIR@/omni.jar
 #ifdef DEB_ENABLE_BREAKPAD
 debian/tmp/@LIBDIR@/crashreporter
 #endif
