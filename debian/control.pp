@@ -47,9 +47,7 @@ Build-Depends: cdbs,
 	libhunspell-dev,
 	xulrunner-2.0, 
 #endif
-#ifndef DISABLE_GNOMEVFS
 	libgnomevfs2-dev, 
-#endif
         yasm,
 	xvfb,
 Standards-Version: 3.8.1
