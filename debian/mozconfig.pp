@@ -22,7 +22,6 @@ ac_add_options --enable-svg
 ac_add_options --enable-mathml
 ac_add_options --enable-safe-browsing
 ac_add_options --with-distribution-id=com.ubuntu
-ac_add_options --enable-gio
 #ifndef DEB_MIN_SYSDEPS
 ac_add_options --with-system-jpeg=/usr
 ac_add_options --with-system-png=/usr
@@ -99,4 +98,5 @@ mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@
 #endif
 #ifdef DISABLE_GNOMEVFS
 ac_add_options --disable-gnomevfs
+ac_add_options --enable-gio
 #endif
