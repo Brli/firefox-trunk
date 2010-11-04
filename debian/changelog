@@ -544,6 +544,8 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - add debian/control.pp
     - update debian/rules
     - update debian/mozconfig.pp
+  * Enable GIO support
+    - update debian/mozconfig.pp
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -553,7 +555,7 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Nov 2010 16:45:42 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 04 Nov 2010 03:14:21 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
