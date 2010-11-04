@@ -550,6 +550,12 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - remove debian/patches/bz386904_config_rules_install_dist_files.patch
     - remove debian/patches/ftbfs_crashreporter.patch
     - update debian/patches/series
+  * Rewrite the launcher script to not wrap around the upstream start
+    scripts, but start the Firefox binary directly. The upstream start scripts 
+    contain a lot of complexity for dealing with things that we don't need to 
+    worry about, and are quite slow. Also, add in the hooks for the new
+    profile migrator
+    - update debian/firefox.sh.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -559,7 +565,7 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 04 Nov 2010 17:48:13 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 04 Nov 2010 20:00:19 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

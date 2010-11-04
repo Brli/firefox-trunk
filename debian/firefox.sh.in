@@ -7,155 +7,81 @@
 #  Alexander Sack <asac@jwsdot.com>
 #  Fabien Tassin <fta@sofaraway.org>
 #  Steve Langasek <steve.langasek@canonical.com>
+#  Chris Coulson <chris.coulson@canonical.com>
 # License: GPLv2 or later
-
-## profile migration disabled for now, instead, resurrect the previous code
-
-# If there's still no ~/mozilla/firefox-4.0 profile, try to find a previous
-# firefox profile and initialize with that.
-# If nothing is found, we'll go for a fresh run and let firefox create a
-# default profile for us.
 
 MOZDIR=$HOME/.mozilla
 LIBDIR=@DEB_CONFIGURE_LIBEXECDIR@
 GDB=/usr/bin/gdb
-DROPPED=abandoned
+NAME=`which $NAME`
+APPNAME=`basename $NAME`
+MOZ_APP_LAUNCHER=$NAME
+SERIES=@SERIES@
 
-NAME="$0"
-APPNAME="$(basename "$NAME")"
+export MOZ_APP_LAUNCHER
+unset UBUNTU_MENUPROXY
 
-while [ ! -f "$LIBDIR/$APPNAME" ] && [ -L "$NAME" ]; do
-  TARGET="$(readlink "$NAME")"
-  if [ "x$TARGET" = "x$(basename "$TARGET")" ]; then
-    TARGET="$(dirname "$NAME")/$TARGET"
-  fi
-  NAME="$TARGET"
-  APPNAME="$(basename "$NAME")"
-  if [ "x$APPNAME" = "xfirefox.sh" ]; then
-    APPNAME=firefox
-    break
-  fi
+while [ ! -x "$LIBDIR/$APPNAME"-bin ] && [ -L "$NAME" ]; do
+    NAME=`readlink -f $NAME`
+    LIBDIR=`dirname $NAME`
 done
 
 usage () {
-  $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
-  echo
-  echo "        -g or --debug		Start within $GDB (Must be first)"
+    $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
+    echo
+    echo "      -g or --debug       Start within $GDB (Must be first)"
 }
 
-script_args=""
+moz_debug=0
+moz_debugger_args=""
+
 while [ $# -gt 0 ]; do
-  case "$1" in
-    -h | --help | -help )
-      usage
-      exit 0 ;;
-    -g | --debug )
-      script_args="$script_args -g"
-      shift ;;
-    -- ) # Stop option prcessing
-      shift
-      break ;;
-    * )
-      break ;;
-  esac
+    case "$1" in
+        -h | --help )
+            usage
+            exit 0
+            ;;
+        -g | --debug )
+            moz_debug=1
+            shift
+            ;;
+        -a | --debugger-args )
+            moz_debugger_args=$2;
+            if [ "${moz_debugger_args}" != "" ] ; then
+                shift 2
+            else
+                echo "-a requires an argument"
+                exit 1
+            fi
+            ;;
+        -- ) # Stop option processing
+            shift
+            break
+            ;;
+        * )
+            break
+            ;;
+    esac
 done
 
-PROFILENAME="$APPNAME"
-if [ ! -d $MOZDIR/$PROFILENAME ] ; then
-  FOUND=""
-  if [ -d $MOZDIR/firefox-3.7 ] ; then
-    FOUND=firefox-3.7
-  elif [ -d $MOZDIR/firefox-3.6 ] ; then
-    FOUND=firefox-3.6
-  elif [ -d $MOZDIR/firefox ] ; then
-    FOUND=firefox
-  fi
-
-  if [ "$FOUND" != "" ] ; then
-    echo "*NOTICE* No previous $PROFILENAME profile found, we'll initialize a profile using a copy of your existing '$FOUND' profile."
-    echo -n "Transfering..."
-    cp -a $MOZDIR/$FOUND $MOZDIR/$PROFILENAME
-    echo " done."
-  else
-    echo "*NOTICE* No previous firefox profile found, starting with a fresh one"
-  fi
-fi
-
-# if there exists a beta profile (first found: $MOZDIR/firefox-3.0,
-# $MOZDIR/firefox-trunk, $MOZDIR/granparadiso) and there is a standard
-# firefox profile as well, ask the user what to do. In case he decides to
-# import the firefox 2 profile settings, we keep the firefox directory
-# untouched, but rename the beta profile by appending the suffix
-# |.abandoned|. In case the user decides to keep using the firefox 3
-# profile, we will rename the original firefox profile to firefox.2-replaced
-# and rename the beta profile to be |.mozilla/firefox|.
-#
-# as a third option the user can defer his final decision. This will leave the
-# directories untouched, thus making the user use the old firefox profile by
-# default.
-#
-# in addition, even older profiles are renamed too, by appending |.abandoned|
-# to their name.
-
-if [ 0 ] ; then
-
-FOUND=""
-if [ -d $MOZDIR/firefox ] ; then
-  FOUND=firefox
-fi
-
-FOUND_BETA=""
-BETA_LIST=""
-for betaname in granparadiso firefox-trunk firefox-3.0; do
-  if [ -d $MOZDIR/$betaname ]; then
-    BETA_LIST="$BETA_LIST $betaname"
-    FOUND_BETA=$betaname
-  fi
-done
-
-if [ "$FOUND" != "" -a "$FOUND_BETA" != "" ] ; then
-  echo -n "Found Beta Participation ..."
-  $LIBDIR/ffox-3-beta-profile-migration-dialog
-  result=$?
-  if [ $result = 1 ]; then
-     mv $MOZDIR/$FOUND $MOZDIR/$FOUND.2-replaced
-     mv $MOZDIR/$FOUND_BETA $MOZDIR/$FOUND
-     for beta in $BETA_LIST ; do
-       if [ $beta != $FOUND_BETA ] ; then
-         mv $MOZDIR/$beta $MOZDIR/$beta.$DROPPED
-       fi
-     done
-     echo " keep beta profile."
-  elif [ $result = 2 ]; then
-     for beta in $BETA_LIST ; do
-       mv $MOZDIR/$beta $MOZDIR/$beta.$DROPPED
-     done
-     echo " use firefox 2 profile."
-  else
-     echo " use firefox 2 profile, but will ask again next time."
-  fi
-  echo " ... will check again next time."
-elif [ "$FOUND_BETA" != "" -a "$FOUND" = "" ]; then
-  # in case we only have a beta profile the user most likely wants to use
-  # that. just doing, no questions asked.
-  mv $MOZDIR/$FOUND_BETA $MOZDIR/firefox
-  for beta in $BETA_LIST ; do
-    # Move out the older beta profiles
-    if [ $beta != $FOUND_BETA ] ; then
-      mv $MOZDIR/$beta $MOZDIR/$beta.$DROPPED
+if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
+    if [ ! -d $MOZDIR/$APPNAME ] ; then
+        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME
+    elif [ -f $MOZDIR/$APPNAME.last-series ] ; then
+        last_series="$(cat $MOZDIR/APPNAME.last-series)"
+        if [ $SERIES -gt $last_series ] ; then
+            $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME
+        fi
     fi
-  done
-  echo "*NOTICE* Profile $FOUND_BETA found and moved as main profile"
 fi
 
-fi
+echo $SERIES >> $MOZDIR/$APPNAME.last-series
 
-unset UBUNTU_MENUPROXY
+LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
+export LD_LIBRARY_PATH
 
-if [ -x $LIBDIR/$APPNAME-bin ] ; then
-	# This is an all-in-one build
-	exec $LIBDIR/$APPNAME $script_args "$@"
+if [ $moz_debug -eq 1 ] ; then
+    exec $GDB $moz_debugger_args --args "$LIBDIR/$APPNAME"-bin "$@"
 else
-	# This is a build with external xulrunner
-	exec $LIBDIR/run-mozilla.sh $script_args $LIBDIR/$APPNAME "$@"
+    exec "$LIBDIR/$APPNAME"-bin "$@"
 fi
