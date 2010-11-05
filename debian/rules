@@ -197,7 +197,7 @@ ifneq (1, $(DEB_MIN_SYSDEPS))
 endif
 
 # Defines used for the Mozilla text preprocessor
-DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)"  \
+DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
 		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
 		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
@@ -248,6 +248,7 @@ UUDECODE = \
 
 DEBIAN_EXECUTABLES = \
 	firefox.sh \
+	debian/migrator/xulapp-profilemigrator \
 	$(NULL)
 
 subst_files = \
@@ -292,6 +293,7 @@ $(subst_files): $(foreach file, $(subst_files), $(subst -$(DEBIAN_APP_NAME_VER),
 	    -e 's/@APP_VERSION@/$(FF_VERSION)/g' \
 	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
 	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
+	    -e 's,@SERIES@,$(FF_VERSION_SERIES),g' \
 	    -e 's,@DEB_CONFIGURE_LIBEXECDIR@,$(DEB_CONFIGURE_LIBEXECDIR),g' \
 	    -e 's,@FF_VERSION_DEVMILESTONE@,$(FF_VERSION_DEVMILESTONE),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
 
@@ -306,11 +308,6 @@ debian/usr.bin.firefox.in:
 
 debian/$(DEBIAN_NAME).desktop: debian/$(DESKTOP_BRANDED)
 	cp $< $@
-
-debian/migrator/ffox-32-beta-profile-migration-dialog: debian/migrator/main.c
-	$(CC) $(CFLAGS) -o $@ $< $(shell pkg-config --cflags --libs gtk+-2.0)
-
-post-patches:: debian/migrator/ffox-32-beta-profile-migration-dialog
 
 debian/stamp-buildsymbols: debian/stamp-makefile-build
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
@@ -378,7 +375,5 @@ clean::
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
 	find debian/ -name *.pp | sed -e 's/pp$$/in/g' | xargs rm -f
-	rm -f debian/migrator/ffox-32-beta-profile-migration-dialog
-	rm -f debian/migrator/*~
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*

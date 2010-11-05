@@ -1,0 +1,411 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import glib
+import gtk
+import os.path
+import ConfigParser
+import re
+import shutil
+
+def get_last_series_for_profile (profile):
+    last_series = None
+
+    last_series_file = profile + '.series-stamp'
+    if os.path.isfile (last_series_file):
+        fd = open (last_series_file)
+        last_series = fd.read ()
+        fd.close ()
+
+    return last_series
+
+def get_last_version_from_profile (profile):
+    subprofile = find_default_subprofile_for_profile (profile)
+    if subprofile == None:
+        for f in os.listdir (profile):
+            if os.path.isdir (os.path.join (profile, f)) and os.path.exists (os.path.join (profile, f, 'compatibility.ini')):
+                subprofile = os.path.join (profile, f)
+                break
+
+    return get_last_version_from_compat_ini (subprofile)
+
+def find_default_subprofile_for_profile (profile):
+    subprofile = None
+    subprofiles = ConfigParser.ConfigParser ()
+    subprofiles.read (os.path.join (profile, 'profiles.ini'))
+    for i in subprofiles.sections ():
+        if i == 'General':
+            continue
+
+        if not subprofiles.has_option (i, 'Default'):
+            continue
+
+        if subprofiles.getint (i, 'Default') == 1:
+            ppath = subprofiles.get (i, 'Path')
+            if os.path.isfile (os.path.join (profile, ppath, 'compatibility.ini')):
+                subprofile = os.path.join (profile, ppath)
+            break
+
+    return subprofile
+
+
+def get_last_version_from_compat_ini (subprofile):
+    if subprofile == None:
+        return None
+
+    compat_ini = ConfigParser.ConfigParser ()
+    compat_ini.read (os.path.join (subprofile, 'compatibility.ini'))
+
+    return re.sub (r'_.*', '', compat_ini.get ('Compatibility', 'LastVersion'))
+
+def guess_series_from_last_version (version):
+    series = re.sub (r'[ab].*', '', re.sub (r'pre.*', '', version)).split ('.')
+    return series[0] + '.' + series[1]
+
+class Enum (set):
+    def __getattr__ (self, name):
+        if name in self:
+            return name
+        raise AttributeError
+
+MigrationType = Enum (["NEW", "BETA"])
+CompareResultType = Enum (["LT", "EQ", "GT"])
+MigrationActionType = Enum (["KEEP", "IMPORT", "ASKLATER"])
+
+class ProfileVersion:
+    def __init__ (this, version):
+        this.release = re.sub (r'[ab].*', '', re.sub (r'pre.*', '', version))
+        this.prerelease = False if len (re.findall ('pre', version)) == 0 else True
+        this.beta_milestone = None if len (re.findall ('b', version)) == 0 else re.sub(r'.*b', '', re.sub(r'pre.*' , '', version))
+        this.alpha_milestone = None if len (re.findall ('a', version)) == 0 else re.sub(r'.*a', '', re.sub(r'pre.*' , '', version))
+        this.raw = version
+
+    def compare (this, version):
+        this_version_spl = this.release.split ('.')
+        comp_version_spl = version.release.split ('.')
+
+        for i in range (len (this_version_spl)):
+            if i == len (comp_version_spl):
+                return CompareResultType.GT
+            if i == (len (this_version_spl) - 1) and i < (len (comp_version_spl) - 1) and int (this_version_spl[i]) == int (comp_version_spl[i]):
+                return CompareResultType.LT
+            if int (this_version_spl[i]) > int (comp_version_spl[i]):
+                return CompareResultType.GT
+            elif int (this_version_spl[i]) < int (comp_version_spl[i]):
+                return CompareResultType.LT
+
+        if this.alpha_milestone != None:
+            if version.alpha_milestone == None:
+                return CompareResultType.LT
+            elif int (this.alpha_milestone) > int (version.alpha_milestone):
+                return CompareResultType.GT
+            elif int (this.alpha_milestone) < int (version.alpha_milestone):
+                return CompareResultType.LT
+        elif this.beta_milestone != None:
+            if version.beta_milestone == None and version.alpha_milestone == None:
+                return CompareResultType.LT
+            elif version.alpha_milestone != None:
+                return CompareResultType.GT
+            elif int (this.beta_milestone) > int (version.beta_milestone):
+                return CompareResultType.GT
+            elif int (this.beta_milestone) < int (version.beta_milestone):
+                return CompareResultType.LT
+        elif version.alpha_milestone != None or version.beta_milestone != None:
+            return CompareResultType.GT
+
+        if this.prerelease == True and version.prerelease == False:
+            return CompareResultType.LT
+        elif this.prerelease == False and version.prerelease == True:
+            return CompareResultType.GT
+        else:
+            return CompareResultType.EQ
+
+class ProfileFolder:
+    def __init__ (this, path):
+        this.path = path
+        this.series = None
+        this.version = None
+        this.last_version_string = None
+        this.is_profile = os.path.isfile (os.path.join (this.path, 'profiles.ini'))
+        if this.is_profile == True:
+            series = get_last_series_for_profile (this.path)
+            if series != None:
+                this.series = ProfileVersion (series)
+            this.last_version_string = get_last_version_from_profile (this.path)
+            if this.series == None:
+                series = guess_series_from_last_version (this.last_version_string)
+                if series != None:
+                    this.series = ProfileVersion (series)
+
+            this.version = ProfileVersion (this.last_version_string)
+
+        this.name = re.sub (r'-.*', '', os.path.basename (this.path))
+
+    def is_suitable (this, name, new_series, last_series=None):
+        if name != this.name:
+            return False
+
+        if this.series.compare (new_series) == CompareResultType.GT:
+            return False
+
+        if last_series != None and this.series.compare (last_series) != CompareResultType.GT:
+            return False
+
+        return True
+
+class ProfileMigrator:
+    def __init__ (this, options):
+        this.new_series = ProfileVersion (options.series)
+        this.profile = ProfileFolder (options.profile)
+        this.candidates = list ()
+        this.last_series = None
+        this.name = this.profile.name
+        this.updated = False
+        this.ask_again = False
+        this.brand = options.brand
+        this.action = MigrationActionType.ASKLATER
+
+        if os.path.isdir (this.profile.path) and this.profile.is_profile:
+            this.migrate_type = MigrationType.BETA
+            this.last_series = this.profile.series
+        else:
+            this.migrate_type = MigrationType.NEW
+
+    def check_candidates (this):
+        for f in os.listdir (os.path.dirname (this.profile.path)):
+            (root, ext) = os.path.splitext (f)
+            if len (re.findall ('.abandoned', ext)) > 0:
+                continue
+
+            if len (re.findall ('replaced', ext)) > 0:
+                continue
+
+            profile = ProfileFolder (os.path.join (os.path.dirname (this.profile.path), f))
+            if not profile.is_profile:
+                continue
+
+            if profile.is_suitable (this.name, this.new_series, this.last_series):
+                this.candidates.append (profile)
+
+        if len (this.candidates) == 0:
+            gtk.main_quit ()
+            return
+
+        if this.migrate_type == MigrationType.NEW:
+            this.create_new_profile ()
+        else:
+            this.show_dialog ()
+
+    def select_profile (this):
+        selected = None
+        for profile in this.candidates:
+            if (selected != None and profile.version.compare (selected.version) == CompareResultType.GT) or selected == None:
+                selected = profile
+
+        return selected
+
+    def create_new_profile (this):
+        selected = this.select_profile ()
+
+        if selected == None:
+            gtk.main_quit ()
+            return
+
+        # FIXME: Don't copy an in-use profile
+        # FIXME: What if the destination folder exists already?
+        shutil.copytree (src=selected.path, dst=this.profile.path, symlinks=True)
+        this.updated = True
+        gtk.main_quit ()
+        return
+
+    def show_dialog (this):
+        selected = this.select_profile ()
+
+        if selected == None:
+            gtk.main_quit ()
+            return
+
+        title = this.brand + " Profile Migration"
+        this.dialog = gtk.Dialog (title=title, buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+
+        msg_box = gtk.HBox (False, 12)
+        this.dialog.vbox.pack_start (msg_box, False, False, 0)
+
+        img = gtk.Image ()
+        img.set_from_stock (gtk.STOCK_DIALOG_QUESTION, gtk.ICON_SIZE_DIALOG)
+        img.set_alignment (0.5, 0.5)
+        msg_box.pack_start (img, False, False, 0)
+
+        label_box = gtk.VBox (False, 12)
+        msg_box.pack_start (label_box, True, True, 0)
+
+        label_txt = "<b> Would you like to import your settings from " + this.brand + " " + selected.series.raw + "?</b>"
+        label = gtk.Label ()
+        label.set_markup (label_txt)
+        label.set_alignment (0, 0)
+        label_box.pack_start (label, False, False, 5)
+
+        label_txt = "It seems that you have used " + this.brand + " " + selected.series.raw + " before. " + \
+            "The bookmarks and other settings for " + this.brand + " " + selected.series.raw + " are currently stored " + \
+            "in a separate profile. It is possible to import these settings in to your current " + this.brand + " profile."
+        label = gtk.Label (label_txt)
+        label.set_line_wrap (True)
+        label.set_alignment (0.0, 0.0)
+        label_box.pack_start (label, True, True, 0)
+
+        label_txt = "What would you like to do?"
+        label = gtk.Label (label_txt)
+        label.set_line_wrap (True)
+        label.set_alignment (0.0, 0.0)
+        label_box.pack_start (label, True, True, 0)
+
+        label_txt = "Keep my bookmarks and settings from " + this.brand + " " + this.last_series.raw + " (version " + this.profile.version.raw + ")"
+        button = gtk.RadioButton (None, label_txt)
+        button.connect ("toggled", this.toggle_callback, MigrationActionType.KEEP)
+        button.set_active (True)
+        button.toggled ()
+        this.dialog.vbox.pack_start (button, True, True, 0)
+
+        label_txt = "Import my bookmarks and settings from " + this.brand + " " + selected.series.raw + " (version " + selected.version.raw + ")"
+        button = gtk.RadioButton (button, label_txt)
+        button.connect ("toggled", this.toggle_callback, MigrationActionType.IMPORT)
+        this.dialog.vbox.pack_start (button, True, True, 0)
+
+        label_txt = "I can't decide, so ask me again later"
+        button = gtk.RadioButton (button, label_txt)
+        button.connect ("toggled", this.toggle_callback, MigrationActionType.ASKLATER)
+        this.dialog.vbox.pack_start (button, True, True, 0)
+
+        this.dialog.set_border_width (5)
+        msg_box.set_border_width (5)
+        this.dialog.vbox.set_spacing (14)
+        this.dialog.action_area.set_border_width (5)
+        this.dialog.action_area.set_spacing (6)
+
+        this.dialog.connect ("response", this.dialog_response, selected)
+
+        this.dialog.show_all ()
+
+    def dialog_response (this, dialog, response_id, selected):
+        this.dialog.hide_all ()
+        this.dialog.destroy ()
+
+        if response_id != gtk.RESPONSE_ACCEPT:
+            gtk.main_quit ()
+            return
+
+        if this.action == MigrationActionType.KEEP:
+            this.abandon_remaining_candidates ()
+            this.updated = True
+            gtk.main_quit ()
+        elif this.action == MigrationActionType.ASKLATER:
+            this.ask_again = True
+            gtk.main_quit()
+        elif this.action == MigrationActionType.IMPORT:
+            this.import_profile (selected)
+            this.updated = True
+        else:
+            raise RuntimeError
+
+    def import_profile (this, selected):
+        if selected == None:
+            raise RuntimeError
+
+        # FIXME: What if .replaced already exists?
+        shutil.move (this.profile.path, this.profile.path + '.replaced')
+        shutil.move (selected.path, this.profile.path)
+
+        try:
+            os.unlink (selected.path + '.series-stamp')
+        except:
+            pass
+
+        this.abandon_remaining_candidates ()
+
+        gtk.main_quit()
+
+    def toggle_callback (this, widget, data=None):
+        if widget.get_active ():
+            this.action = data
+
+    def abandon_remaining_candidates (this):
+        for i in this.candidates:
+            if os.path.isdir (i.path):
+                # FIXME: What is .abandoned already exists
+                shutil.move (i.path, i.path + '.abandoned')
+
+    def main (this):
+        if this.migrate_type == MigrationType.BETA and this.new_series == this.last_series:
+            return False
+
+        glib.idle_add (this.check_candidates)
+        gtk.main ()
+
+        return this.updated
+
+def test_compare ():
+    baseline1 = ProfileVersion ("4.0")
+    print baseline1.compare (ProfileVersion ("3.6"))
+    print baseline1.compare (ProfileVersion ("4.1"))
+    print baseline1.compare (ProfileVersion ("4.0"))
+    print baseline1.compare (ProfileVersion ("4.0.1"))
+    print baseline1.compare (ProfileVersion ("3.6.12"))
+    print baseline1.compare (ProfileVersion ("4.0b8"))
+    print baseline1.compare (ProfileVersion ("4.0b8pre"))
+    print baseline1.compare (ProfileVersion ("4.0a1"))
+    print baseline1.compare (ProfileVersion ("4.0a2pre"))
+    print baseline1.compare (ProfileVersion ("4"))
+    print baseline1.compare (ProfileVersion ("3"))
+
+    baseline2 = ProfileVersion ("4.0b8pre")
+    print baseline2.compare (ProfileVersion ("3.6"))
+    print baseline2.compare (ProfileVersion ("4.1"))
+    print baseline2.compare (ProfileVersion ("4.0"))
+    print baseline2.compare (ProfileVersion ("4.0.1"))
+    print baseline2.compare (ProfileVersion ("3.6.12"))
+    print baseline2.compare (ProfileVersion ("4.0b8"))
+    print baseline2.compare (ProfileVersion ("4.0b8pre"))
+    print baseline2.compare (ProfileVersion ("4.0a1"))
+    print baseline2.compare (ProfileVersion ("4.0a2pre"))
+    print baseline2.compare (ProfileVersion ("4"))
+    print baseline2.compare (ProfileVersion ("3"))
+
+    baseline3 = ProfileVersion ("4.0b8")
+    print baseline3.compare (ProfileVersion ("3.6"))
+    print baseline3.compare (ProfileVersion ("4.1"))
+    print baseline3.compare (ProfileVersion ("4.0"))
+    print baseline3.compare (ProfileVersion ("4.0.1"))
+    print baseline3.compare (ProfileVersion ("3.6.12"))
+    print baseline3.compare (ProfileVersion ("4.0b8"))
+    print baseline3.compare (ProfileVersion ("4.0b8pre"))
+    print baseline3.compare (ProfileVersion ("4.0a1"))
+    print baseline3.compare (ProfileVersion ("4.0a2pre"))
+    print baseline3.compare (ProfileVersion ("4"))
+    print baseline3.compare (ProfileVersion ("3"))
+
+def update_stamp (options):
+    fd = open (options.profile + '.series-stamp', 'w')
+    fd.write (options.series)
+    fd.close()
+
+def parse_argv ():
+    parser = OptionParser ()
+    parser.add_option ("-s", type="string", dest="series")
+    parser.add_option ("-p", type="string", dest="profile")
+    parser.add_option ("-t", action="store_true", dest="test_compare")
+    parser.add_option ("-b", type="string", dest="brand")
+    return parser.parse_args ()
+
+if __name__ == '__main__':
+    (options, args) = parse_argv ()
+
+    if options.test_compare == True:
+        test_compare ()
+        exit (0)
+
+    migrator = ProfileMigrator (options)
+    if ((migrator.main () == True or not os.path.isfile (options.profile + '.series-stamp')) and migrator.ask_again == False):
+        update_stamp (options)
+
+    exit (0)
+

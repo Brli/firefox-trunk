@@ -40,7 +40,7 @@ debian/@APPNAME@.desktop usr/share/applications
 debian/presubj usr/share/bug/@APPNAME@
 debian/firefox.sh @LIBDIR@
 debian/@APPNAME@-restart-required.update-notifier @LIBDIR@
-debian/migrator/ffox-32-beta-profile-migration-dialog @LIBDIR@
+debian/migrator/xulapp-profilemigrator @LIBDIR@
 debian/distribution.ini @LIBDIR@/distribution
 debian/usr.bin.@APPNAME@ etc/apparmor.d
 

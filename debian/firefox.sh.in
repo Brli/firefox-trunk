@@ -13,18 +13,24 @@
 MOZDIR=$HOME/.mozilla
 LIBDIR=@DEB_CONFIGURE_LIBEXECDIR@
 GDB=/usr/bin/gdb
-NAME=`which $NAME`
+NAME=`which $0`
 APPNAME=`basename $NAME`
 MOZ_APP_LAUNCHER=$NAME
 SERIES=@SERIES@
+BRAND=@BRAND_NAME@
 
 export MOZ_APP_LAUNCHER
 unset UBUNTU_MENUPROXY
 
-while [ ! -x "$LIBDIR/$APPNAME"-bin ] && [ -L "$NAME" ]; do
+while [ ! -x "$LIBDIR/$APPNAME"-bin ] && [ -L "$NAME" ] ; do
     NAME=`readlink -f $NAME`
     LIBDIR=`dirname $NAME`
 done
+
+if [ ! -x "$LIBDIR/$APPNAME"-bin ] ; then
+	echo "Can't find $LIBDIR/$APPNAME-bin"
+	exit 1
+fi
 
 usage () {
     $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
@@ -66,16 +72,16 @@ done
 
 if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
     if [ ! -d $MOZDIR/$APPNAME ] ; then
-        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME
-    elif [ -f $MOZDIR/$APPNAME.last-series ] ; then
-        last_series="$(cat $MOZDIR/APPNAME.last-series)"
-        if [ $SERIES -gt $last_series ] ; then
-            $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME
+        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME -b $BRAND
+    elif [ -f $MOZDIR/$APPNAME.series-stamp ] ; then
+        last_series=`cat $MOZDIR/$APPNAME.series-stamp`
+        if [ $SERIES != $last_series ] ; then
+            $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME -b $BRAND
         fi
+    else
+	$LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME -b $BRAND
     fi
 fi
-
-echo $SERIES >> $MOZDIR/$APPNAME.last-series
 
 LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
 export LD_LIBRARY_PATH

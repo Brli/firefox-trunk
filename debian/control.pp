@@ -58,6 +58,8 @@ Depends: fontconfig,
 	psmisc,
 	lsb-release,
 	debianutils (>= 1.16),
+	python,
+	python-gtk,
 	${misc:Depends},
 	${shlibs:Depends}
 Recommends: ubufox

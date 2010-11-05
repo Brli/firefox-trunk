@@ -556,6 +556,17 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     worry about, and are quite slow. Also, add in the hooks for the new
     profile migrator
     - update debian/firefox.sh.in
+  * Replace the old profile migrator. The previous one relied on hard-coded
+    values and fragile shell script that isn't really scalable enough
+    now that stable Ubuntu releases see new major Firefox versions. The
+    new profile migrator doesn't require any hard-coded values, and should
+    be lower maintenance
+    - add debian/migrator/xulapp-profilemigrator
+    - remove debian/migrator/main.c
+    - update debian/rules
+    - update debian/firefox.sh.in
+    - update debian/firefox.install.pp
+    - update debian/control
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -565,7 +576,7 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 04 Nov 2010 20:00:19 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 05 Nov 2010 18:11:21 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
