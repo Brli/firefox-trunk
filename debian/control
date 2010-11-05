@@ -47,7 +47,7 @@ Depends: fontconfig,
 	lsb-release,
 	debianutils (>= 1.16),
 	python,
-	python-gtk,
+	python-gtk2,
 	${misc:Depends},
 	${shlibs:Depends}
 Recommends: ubufox
