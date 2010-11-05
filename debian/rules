@@ -241,7 +241,7 @@ UUDECODE = \
 
 DEBIAN_EXECUTABLES = \
 	firefox.sh \
-	debian/migrator/xulapp-profilemigrator \
+	migrator/xulapp-profilemigrator \
 	$(NULL)
 
 subst_files = \
