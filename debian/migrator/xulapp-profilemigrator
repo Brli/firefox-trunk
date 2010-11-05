@@ -362,44 +362,50 @@ class ProfileMigrator:
         return this.updated
 
 def test_compare ():
+    matrix = {   "3.6" : [ CompareResultType.GT, CompareResultType.GT, CompareResultType.GT ],
+        "4.1" : [ CompareResultType.LT, CompareResultType.LT, CompareResultType.LT ],
+        "4.0" : [ CompareResultType.EQ, CompareResultType.LT, CompareResultType.LT ],
+        "4.0.1" : [ CompareResultType.LT, CompareResultType.LT, CompareResultType.LT ],
+        "3.6.12" : [ CompareResultType.GT, CompareResultType.GT, CompareResultType.GT ],
+        "4.0b8" : [ CompareResultType.GT, CompareResultType.LT, CompareResultType.EQ ],
+        "4.0b8pre" : [ CompareResultType.GT, CompareResultType.EQ, CompareResultType.GT ],
+        "4.0a1" : [ CompareResultType.GT, CompareResultType.GT, CompareResultType.GT ],
+        "4.0a2pre" : [ CompareResultType.GT, CompareResultType.GT, CompareResultType.GT ],
+        "4" : [ CompareResultType.GT, CompareResultType.GT, CompareResultType.GT ],
+        "3" : [ CompareResultType.GT, CompareResultType.GT, CompareResultType.GT ],
+        "5" : [ CompareResultType.LT, CompareResultType.LT, CompareResultType.LT ]}
+
     baseline1 = ProfileVersion ("4.0")
-    print baseline1.compare (ProfileVersion ("3.6"))
-    print baseline1.compare (ProfileVersion ("4.1"))
-    print baseline1.compare (ProfileVersion ("4.0"))
-    print baseline1.compare (ProfileVersion ("4.0.1"))
-    print baseline1.compare (ProfileVersion ("3.6.12"))
-    print baseline1.compare (ProfileVersion ("4.0b8"))
-    print baseline1.compare (ProfileVersion ("4.0b8pre"))
-    print baseline1.compare (ProfileVersion ("4.0a1"))
-    print baseline1.compare (ProfileVersion ("4.0a2pre"))
-    print baseline1.compare (ProfileVersion ("4"))
-    print baseline1.compare (ProfileVersion ("3"))
-
     baseline2 = ProfileVersion ("4.0b8pre")
-    print baseline2.compare (ProfileVersion ("3.6"))
-    print baseline2.compare (ProfileVersion ("4.1"))
-    print baseline2.compare (ProfileVersion ("4.0"))
-    print baseline2.compare (ProfileVersion ("4.0.1"))
-    print baseline2.compare (ProfileVersion ("3.6.12"))
-    print baseline2.compare (ProfileVersion ("4.0b8"))
-    print baseline2.compare (ProfileVersion ("4.0b8pre"))
-    print baseline2.compare (ProfileVersion ("4.0a1"))
-    print baseline2.compare (ProfileVersion ("4.0a2pre"))
-    print baseline2.compare (ProfileVersion ("4"))
-    print baseline2.compare (ProfileVersion ("3"))
-
     baseline3 = ProfileVersion ("4.0b8")
-    print baseline3.compare (ProfileVersion ("3.6"))
-    print baseline3.compare (ProfileVersion ("4.1"))
-    print baseline3.compare (ProfileVersion ("4.0"))
-    print baseline3.compare (ProfileVersion ("4.0.1"))
-    print baseline3.compare (ProfileVersion ("3.6.12"))
-    print baseline3.compare (ProfileVersion ("4.0b8"))
-    print baseline3.compare (ProfileVersion ("4.0b8pre"))
-    print baseline3.compare (ProfileVersion ("4.0a1"))
-    print baseline3.compare (ProfileVersion ("4.0a2pre"))
-    print baseline3.compare (ProfileVersion ("4"))
-    print baseline3.compare (ProfileVersion ("3"))
+
+    has_fail = False
+
+    for i in matrix:
+        exp1, exp2, exp3 = matrix[i]
+        res1 = baseline1.compare (ProfileVersion (i))
+        res2 = baseline2.compare (ProfileVersion (i))
+        res3 = baseline3.compare (ProfileVersion (i))
+
+        if res1 != exp1:
+            print "***FAIL: " + baseline1.raw + " against " + i + " - expected " + exp1 + ", got " + res1 + " ***"
+            has_fail = True
+        else:
+            print "PASS: " + baseline1.raw + " against " + i + " - got " + res1
+        if res2 != exp2:
+            print "***FAIL: " + baseline2.raw + " against " + i + " - expected " + exp2 + ", got " + res2 + " ***"
+            has_fail = True
+        else:
+            print "PASS: " + baseline2.raw + " against " + i + " - got " + res2
+        if res3 != exp3:
+            print "***FAIL: " + baseline3.raw + " against " + i + " - expected " + exp3 + ", got " + res3 + " ***"
+            has_fail = True
+        else:
+            print "PASS: " + baseline3.raw + " against " + i + " - got " + res3
+
+    if has_fail == True:
+        exit (1)
+
 
 def update_stamp (options):
     fd = open (options.profile + '.series-stamp', 'w')
