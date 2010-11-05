@@ -265,7 +265,7 @@ class ProfileMigrator:
 
         label_txt = "It seems that you have used " + this.brand + " " + selected.series.raw + " before. " + \
             "The bookmarks and other settings for " + this.brand + " " + selected.series.raw + " are currently stored " + \
-            "in a separate profile. It is possible to import these settings in to your current " + this.brand + " profile."
+            "in a separate profile. It is possible to import these settings in to your current " + this.brand + " " + this.last_series.raw + " profile."
         label = gtk.Label (label_txt)
         label.set_line_wrap (True)
         label.set_alignment (0.0, 0.0)
