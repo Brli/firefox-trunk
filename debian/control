@@ -46,6 +46,8 @@ Depends: fontconfig,
 	psmisc,
 	lsb-release,
 	debianutils (>= 1.16),
+	python,
+	python-gtk,
 	${misc:Depends},
 	${shlibs:Depends}
 Recommends: ubufox
@@ -99,6 +101,7 @@ Description: firefox debug symbols for mozilla
  breakpad. eventually this package should go away and the symbol upload be
  implemented in soyuz (or other builders that build this package)
 
+# Transitional packages below here
 
 Package: firefox-4.0-branding
 Architecture: any

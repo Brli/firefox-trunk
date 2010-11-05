@@ -21,13 +21,6 @@ ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	DEB_WANT_UNIT_TESTS=1
 endif
 
-# This is super hacky, but we need to ensure that debian/control is regenerated
-# first in the clean target, as it depends on pre-build (because it needs the
-# Mozilla text preprocessor). Declaring this after the includes would mean it runs
-# after build-tree is removed, which is FAIL. This can go away once we stop using
-# an embedded tarball
-clean:: regen-debian-control
-
 include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
@@ -278,8 +271,15 @@ subst_files = \
 	debian/mozconfig \
 	$(NULL)
 
-regen-debian-control:: pre-build
-	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/debian/control.pp > $(CURDIR)/debian/control
+ifneq (1, $(DEB_MIN_SYSDEPS))
+EXTRA_BD = \n\tlibnspr4-dev,\n\tlibnss3-dev,\n\tlibcairo2-dev,\n\tlibsqlite3-dev,\n\tlibpixman-1-dev,\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibhunspell-dev,\n\txulrunner-2.0,
+else
+EXTRA_BD = $(NULL)
+endif
+
+regen-debian-control::
+	sed -e 's/@EXTRA_BD@/$(EXTRA_BD)/g' \
+	    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' < debian/control.pp > debian/control
 
 %.in: %.pp
 	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
@@ -368,7 +368,7 @@ pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	                chmod a+x debian/$$i; \
 	        done
 
-clean::
+clean:: regen-debian-control
 	set -e; for i in $(UUDECODE); do \
 	        rm -f debian/$$i; \
 	        done ; 
