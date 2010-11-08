@@ -2,16 +2,9 @@
  browser/base/content/browser.js |   20 +++++++++++++++++++-
  1 file changed, 19 insertions(+), 1 deletion(-)
 
-Index: mozilla/browser/base/content/browser.js
-===================================================================
---- mozilla.orig/browser/base/content/browser.js
-+++ mozilla/browser/base/content/browser.js
-@@ -5997,30 +5997,42 @@
-     // clear the plugin list, now that at least one plugin has been installed
-     browser.missingPlugins = null;
- 
-     var notificationBox = gBrowser.getNotificationBox(browser);
-     var notification = notificationBox.getNotificationWithValue("missing-plugins");
+--- a/browser/base/content/browser.js
++++ b/browser/base/content/browser.js
+@@ -6178,7 +6178,11 @@ var gPluginHandler = {
      if (notification)
        notificationBox.removeNotification(notification);
  
@@ -24,15 +17,12 @@ Index: mozilla/browser/base/content/browser.js
      browser.reload();
    },
  
-   // Callback for user clicking on a missing (unsupported) plugin.
-   installSinglePlugin: function (aEvent) {
-     var missingPluginsArray = {};
- 
+@@ -6189,9 +6193,17 @@ var gPluginHandler = {
      var pluginInfo = getPluginInfo(aEvent.target);
      missingPluginsArray[pluginInfo.mimetype] = pluginInfo;
  
 +    gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
-+                                              gMissingPluginInstaller.refreshBrowser,
++                                              gPluginHandler.newPluginInstalled,
 +                                              false);
 +
      openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
@@ -40,27 +30,17 @@ Index: mozilla/browser/base/content/browser.js
                 {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
 +
 +    gBrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
-+                                                 gMissingPluginInstaller.refreshBrowser,
++                                                 gPluginHandler.newPluginInstalled,
 +                                                 false);
    },
  
    // Callback for user clicking on a disabled plugin
-   managePlugins: function (aEvent) {
-     BrowserOpenAddonsMgr("addons://list/plugin");
-   },
- 
-   // Callback for user clicking "submit a report" link
-@@ -6076,21 +6088,27 @@
-       var url = formatURL("plugins.update.url", true);
-       gBrowser.loadOneTab(url, {inBackground: false});
-       return true;
-     }
- 
+@@ -6257,11 +6269,17 @@ var gPluginHandler = {
      function showPluginsMissing() {
        // get the urls of missing plugins
        var missingPluginsArray = gBrowser.selectedBrowser.missingPlugins;
 +      gBrowser.selectedBrowser.addEventListener("NewPluginInstalled",
-+                                                gMissingPluginInstaller.refreshBrowser,
++                                                gPluginHandler.newPluginInstalled,
 +                                                false);
        if (missingPluginsArray) {
          openDialog("chrome://mozapps/content/plugins/pluginInstallerWizard.xul",
@@ -68,13 +48,8 @@ Index: mozilla/browser/base/content/browser.js
                     {plugins: missingPluginsArray, browser: gBrowser.selectedBrowser});
        }
 +      gBrowser.selectedBrowser.removeEventListener("NewPluginInstalled",
-+                                                   gMissingPluginInstaller.refreshBrowser,
++                                                   gPluginHandler.newPluginInstalled,
 +                                                   false);
      }
  
      let notifications = {
-       PluginBlocklisted : {
-                             barID   : "blocked-plugins",
-                             iconURL : "chrome://mozapps/skin/plugins/notifyPluginBlocked.png",
-                             message : gNavigatorBundle.getString("blockedpluginsMessage.title"),
-                             buttons : [{
