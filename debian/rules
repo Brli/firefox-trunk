@@ -190,7 +190,8 @@ ifneq (1, $(DEB_MIN_SYSDEPS))
 endif
 
 # Defines used for the Mozilla text preprocessor
-DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF_VERSION_SERIES)" \
+DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF_VERSION_SERIES)" -DVENDOR="`lsb_release -i -s`" \
+		-DVENDOR_SUB="`lsb_release -r -s`" -DVENDOR_COMMENT="`lsb_release -c -s`" \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
 		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
 		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
@@ -232,7 +233,7 @@ ifeq (1,$(DEB_BUILD_PGO))
 	DEB_DEFINES += -DDEB_BUILD_PGO=$(DEB_BUILD_PGO)
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
-	DEB_DEFINES += -DDISABLE_GNOMEVFS
+	DEB_DEFINES += -DDISABLE_GNOMEVFS=1
 endif
 
 UUDECODE = \
@@ -281,22 +282,8 @@ regen-debian-control::
 	sed -e 's/@EXTRA_BD@/$(EXTRA_BD)/g' \
 	    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' < debian/control.pp > debian/control
 
-%.in: %.pp
-	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution $(DEB_DEFINES) $(CURDIR)/$< > $(CURDIR)/$@
-
 $(subst_files): $(foreach file, $(subst_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
-	sed -e 's,@LIBDIR@,$(FF_DIR),g' \
-	    -e 's,@APPNAME@,$(DEBIAN_NAME),g' \
-	    -e 's/@VENDOR@/'`lsb_release -i -s`'/g' \
-	    -e 's/@VENDOR_SUB@/'`lsb_release -r -s`'/g' \
-	    -e 's/@VENDOR_COMMENT@/'`lsb_release -c -s`'/g' \
-	    -e 's/@APP_VERSION@/$(FF_VERSION)/g' \
-	    -e 's,@STARTUP_WM_CLASS@,$(STARTUP_WM_CLASS),g' \
-	    -e 's,@BRAND_NAME@,$(BRAND_NAME),g' \
-	    -e 's,@DEB_CONFIGURE_LIBEXECDIR@,$(DEB_CONFIGURE_LIBEXECDIR),g' \
-	    -e 's,@SERIES@,$(FF_VERSION_SERIES),g' \
-	    -e 's,@DEB_MIN_SYSDEPS@,$(DEB_MIN_SYSDEPS),g' \
-	    -e 's,@FF_VERSION_DEVMILESTONE@,$(FF_VERSION_DEVMILESTONE),g' < $(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $@
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $(CURDIR)/$@
 
 debian/usr.bin.firefox.in:
 	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1010' ]; then \

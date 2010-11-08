@@ -3,7 +3,7 @@ debian/tmp/@LIBDIR@/components/*.so
 debian/tmp/@LIBDIR@/icons
 debian/tmp/@LIBDIR@/chrome/icons
 
-#ifndef DEB_MIN_SYSDEPS
+%%ifndef DEB_MIN_SYSDEPS
 debian/tmp/@LIBDIR@/components/*.js
 debian/tmp/@LIBDIR@/components/*.xpt
 debian/tmp/@LIBDIR@/chrome/en-US.jar
@@ -14,21 +14,21 @@ debian/tmp/@LIBDIR@/defaults/preferences/[a-u]*.js
 debian/tmp/@LIBDIR@/defaults/profile
 debian/tmp/@LIBDIR@/modules
 debian/tmp/@LIBDIR@/@APPNAME@
-#else
+%%else
 debian/tmp/@LIBDIR@/*.so
 debian/tmp/@LIBDIR@/@APPNAME@-bin
 debian/tmp/@LIBDIR@/omni.jar
-#ifdef DEB_ENABLE_BREAKPAD
+%%ifdef DEB_ENABLE_BREAKPAD
 debian/tmp/@LIBDIR@/crashreporter
-#endif
-#ifdef DEB_ENABLE_IPC
+%%endif
+%%ifdef DEB_ENABLE_IPC
 debian/tmp/@LIBDIR@/plugin-container
-#endif
-#endif
+%%endif
+%%endif
 
-#ifdef DEB_ENABLE_BREAKPAD
+%%ifdef DEB_ENABLE_BREAKPAD
 debian/apport/@APPNAME@ etc/apport/blacklist.d
-#endif
+%%endif
 
 debian/tmp/@LIBDIR@/chrome.manifest
 debian/tmp/@LIBDIR@/searchplugins/* usr/lib/@APPNAME@-addons/searchplugins/en-US
