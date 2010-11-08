@@ -192,7 +192,7 @@ class ProfileMigrator:
     def check_candidates (this):
         for f in os.listdir (os.path.dirname (this.profile.path)):
             (root, ext) = os.path.splitext (f)
-            if len (re.findall ('.abandoned', ext)) > 0:
+            if len (re.findall ('abandoned', ext)) > 0:
                 continue
 
             if len (re.findall ('replaced', ext)) > 0:
@@ -316,7 +316,6 @@ class ProfileMigrator:
             return
 
         if this.action == MigrationActionType.KEEP:
-            this.abandon_remaining_candidates ()
             this.updated = True
             gtk.main_quit ()
         elif this.action == MigrationActionType.ASKLATER:
@@ -334,26 +333,18 @@ class ProfileMigrator:
 
         # FIXME: What if .replaced already exists?
         shutil.move (this.profile.path, this.profile.path + '.replaced')
-        shutil.move (selected.path, this.profile.path)
+        shutil.copytree (src=selected.path, dst=this.profile.path, symlinks=True)
 
         try:
             os.unlink (selected.path + '.series-stamp')
         except:
             pass
 
-        this.abandon_remaining_candidates ()
-
         gtk.main_quit()
 
     def toggle_callback (this, widget, data=None):
         if widget.get_active ():
             this.action = data
-
-    def abandon_remaining_candidates (this):
-        for i in this.candidates:
-            if os.path.isdir (i.path):
-                # FIXME: What is .abandoned already exists
-                shutil.move (i.path, i.path + '.abandoned')
 
     def main (this):
         if this.migrate_type == MigrationType.BETA and this.new_series == this.last_series:
