@@ -1,4 +1,4 @@
-firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b8~hg20101107r57082+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -567,6 +567,18 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.sh.in
     - update debian/firefox.install.pp
     - update debian/control
+  * Refresh patches after landing of bmo: 596075 aka Move First-Run Video To 
+    Be A Tab Pointing To A Mozilla-Hosted Web Page
+    - update debian/patches/firefox-profilename
+  * Refresh patches after landing of bmo: 588410 aka Fix make install to 
+    work with omnijar
+    - remove debian/patches/bz588410_fix_make_install_with_omnijar.patch
+    - update debian/patches/series
+  * Don't install run-mozilla.sh and upstream firefox shell script
+    - update debian/firefox.install.pp
+  * Fix launcher script to work with FF-on-XR builds
+    - rename debian/firefox.sh.in => debian/firefox.sh.pp
+    - update debian/firefox.sh.pp
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -576,7 +588,7 @@ firefox-4.0 (4.0~b8~hg20101103r56843+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 05 Nov 2010 18:11:21 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 08 Nov 2010 00:22:54 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

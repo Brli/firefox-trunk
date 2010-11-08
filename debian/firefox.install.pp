@@ -13,6 +13,7 @@ debian/tmp/@LIBDIR@/defaults/autoconfig
 debian/tmp/@LIBDIR@/defaults/preferences/[a-u]*.js
 debian/tmp/@LIBDIR@/defaults/profile
 debian/tmp/@LIBDIR@/modules
+debian/tmp/@LIBDIR@/@APPNAME@
 #else
 debian/tmp/@LIBDIR@/*.so
 debian/tmp/@LIBDIR@/@APPNAME@-bin
@@ -29,8 +30,6 @@ debian/tmp/@LIBDIR@/plugin-container
 debian/apport/@APPNAME@ etc/apport/blacklist.d
 #endif
 
-debian/tmp/@LIBDIR@/run-mozilla.sh
-debian/tmp/@LIBDIR@/@APPNAME@
 debian/tmp/@LIBDIR@/chrome.manifest
 debian/tmp/@LIBDIR@/searchplugins/* usr/lib/@APPNAME@-addons/searchplugins/en-US
 debian/tmp/@LIBDIR@/blocklist.xml

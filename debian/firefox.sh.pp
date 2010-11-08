@@ -18,22 +18,27 @@ APPNAME=`basename $NAME`
 MOZ_APP_LAUNCHER=$NAME
 SERIES=@SERIES@
 BRAND="@STARTUP_WM_CLASS@"
+#if DEB_MIN_SYSDEPS=1
+EXE="$APPNAME"-bin
+#else
+EXE=$APPNAME
+#endif
 
 export MOZ_APP_LAUNCHER
 unset UBUNTU_MENUPROXY
 
-while [ ! -x "$LIBDIR/$APPNAME"-bin ] && [ -L "$NAME" ] ; do
+while [ ! -x $LIBDIR/$EXE ] && [ -L "$NAME" ] ; do
     NAME=`readlink -f $NAME`
     LIBDIR=`dirname $NAME`
 done
 
-if [ ! -x "$LIBDIR/$APPNAME"-bin ] ; then
-	echo "Can't find $LIBDIR/$APPNAME-bin"
+if [ ! -x $LIBDIR/$EXE ] ; then
+	echo "Can't find $LIBDIR/$EXE"
 	exit 1
 fi
 
 usage () {
-    $LIBDIR/$APPNAME -h | sed -e 's,/.*/,,'
+    $LIBDIR/$EXE -h | sed -e 's,/.*/,,'
     echo
     echo "      -g or --debug       Start within $GDB (Must be first)"
 }
@@ -83,11 +88,13 @@ if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
     fi
 fi
 
+#if DEB_MIN_SYSDEPS=1
 LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
 export LD_LIBRARY_PATH
+#endif
 
 if [ $moz_debug -eq 1 ] ; then
-    exec $GDB $moz_debugger_args --args "$LIBDIR/$APPNAME"-bin "$@"
+    exec $GDB $moz_debugger_args --args $LIBDIR/$EXE "$@"
 else
-    exec "$LIBDIR/$APPNAME"-bin "$@"
+    exec $LIBDIR/$EXE "$@"
 fi
