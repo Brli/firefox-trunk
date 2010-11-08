@@ -396,9 +396,9 @@ def test_compare ():
         exit (1)
 
 
-def update_stamp (options):
-    fd = open (options.profile + '.series-stamp', 'w')
-    fd.write (options.series)
+def update_stamp (stampfile, series):
+    fd = open (stampfile, 'w')
+    fd.write (series)
     fd.close()
 
 def parse_argv ():
@@ -417,8 +417,8 @@ if __name__ == '__main__':
         exit (0)
 
     migrator = ProfileMigrator (options)
-    if ((migrator.main () == True or not os.path.isfile (options.profile + '.series-stamp')) and migrator.ask_again == False):
-        update_stamp (options)
+    if (migrator.main () == True or not os.path.isfile (options.profile + '.series-stamp')):
+        update_stamp (options.profile + '.series-stamp', options.series if migrator.ask_again == False else migrator.last_series.raw))
 
     exit (0)
 
