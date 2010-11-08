@@ -335,11 +335,6 @@ class ProfileMigrator:
         shutil.move (this.profile.path, this.profile.path + '.replaced')
         shutil.copytree (src=selected.path, dst=this.profile.path, symlinks=True)
 
-        try:
-            os.unlink (selected.path + '.series-stamp')
-        except:
-            pass
-
         gtk.main_quit()
 
     def toggle_callback (this, widget, data=None):
