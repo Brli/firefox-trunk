@@ -418,7 +418,7 @@ if __name__ == '__main__':
 
     migrator = ProfileMigrator (options)
     if (migrator.main () == True or not os.path.isfile (options.profile + '.series-stamp')):
-        update_stamp (options.profile + '.series-stamp', options.series if migrator.ask_again == False else migrator.last_series.raw))
+        update_stamp (options.profile + '.series-stamp', options.series if migrator.ask_again == False else migrator.last_series.raw)
 
     exit (0)
 
