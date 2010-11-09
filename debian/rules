@@ -253,7 +253,6 @@ subst_files = \
 	debian/apport/$(DEBIAN_NAME) \
 	debian/apport/$(DEBIAN_NAME).py \
 	debian/$(DESKTOP_BRANDED) \
-	debian/$(DEBIAN_NAME)-restart-required.update-notifier \
 	debian/$(DEBIAN_NAME).xml \
 	debian/$(DEBIAN_NAME)-gnome-support.install \
 	debian/$(DEBIAN_NAME)-gnome-support.postinst \
