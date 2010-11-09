@@ -362,6 +362,5 @@ clean:: regen-debian-control
 	        done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
-	find debian/ -name *.pp | sed -e 's/pp$$/in/g' | xargs rm -f
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
