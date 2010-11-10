@@ -592,6 +592,10 @@ firefox-4.0 (4.0~b8~hg20101107r57082+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Build with --enable-jsd in the hope that Venkman might start working
     - update debian/mozconfig.in
+  * Make sure our vendor.js preferences are included in the build
+    - rename debian/ubuntu-firefox.js.in => debian/vendor.js.in
+    - update debian/rules
+    - update debian/patches/install_ubuntu_prefs.patch
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -601,7 +605,7 @@ firefox-4.0 (4.0~b8~hg20101107r57082+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 10 Nov 2010 00:19:36 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 10 Nov 2010 14:49:52 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

@@ -5,7 +5,7 @@
  @BINPATH@/@PREF_DIR@/services-sync.js
  #endif
 +; Ubuntu preferences
-+@BINPATH@/@PREF_DIR@/ubuntu.js
++@BINPATH@/@PREF_DIR@/vendor.js
  @BINPATH@/greprefs.js
  @BINPATH@/defaults/autoconfig/platform.js
  @BINPATH@/defaults/autoconfig/prefcalls.js

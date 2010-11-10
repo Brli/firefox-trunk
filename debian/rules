@@ -249,7 +249,7 @@ subst_files = \
 	debian/usr.bin.$(DEBIAN_NAME) \
 	debian/README.Debian \
 	debian/firefox.sh \
-	debian/ubuntu-firefox.js \
+	debian/vendor.js \
 	debian/apport/$(DEBIAN_NAME) \
 	debian/apport/$(DEBIAN_NAME).py \
 	debian/$(DESKTOP_BRANDED) \
@@ -306,9 +306,9 @@ endif
 
 common-build-arch:: debian/stamp-testsuite
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/ubuntu-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/vendor.js
+	cp debian/vendor.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/
 else
-	cp debian/ubuntu-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/vendor.js
+	cp debian/vendor.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/
 endif
 
 common-binary-arch:: debian/stamp-buildsymbols
