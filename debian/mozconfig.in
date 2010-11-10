@@ -100,4 +100,3 @@ mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@
 ac_add_options --disable-gnomevfs
 ac_add_options --enable-gio
 %%endif
-ac_add_options --enable-jsd
