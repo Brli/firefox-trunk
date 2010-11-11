@@ -167,9 +167,9 @@ LDFLAGS = $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
 # See https://launchpad.net/bugs/663294
-if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1104' ]; then \
-	export DEB_BUILD_HARDENING_PIE=0 \
-fi
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
+    export DEB_BUILD_HARDENING_PIE=0
+endif
 export MOZCONFIG=$(CURDIR)/debian/mozconfig
 ifneq (1,$(DEB_BUILD_UNOFFICIAL))
 	export MOZILLA_OFFICIAL=1
