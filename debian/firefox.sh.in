@@ -23,6 +23,8 @@ EXE="$APPNAME"-bin
 %%else
 EXE=$APPNAME
 %%endif
+# Hack for abrowser
+PROFILENAME=`echo $APPNAME | sed -e 's/abrowser/firefox/'`
 
 export MOZ_APP_LAUNCHER
 unset UBUNTU_MENUPROXY
@@ -76,15 +78,15 @@ while [ $# -gt 0 ]; do
 done
 
 if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
-    if [ ! -d $MOZDIR/$APPNAME ] ; then
-        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME -b $BRAND
-    elif [ -f $MOZDIR/$APPNAME.series-stamp ] ; then
-        last_series=`cat $MOZDIR/$APPNAME.series-stamp`
+    if [ ! -d $MOZDIR/$PROFILENAME ] ; then
+        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$PROFILENAME -b $BRAND
+    elif [ -f $MOZDIR/$PROFILENAME.series-stamp ] ; then
+        last_series=`cat $MOZDIR/$PROFILENAME.series-stamp`
         if [ $SERIES != $last_series ] ; then
-            $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME -b $BRAND
+            $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$PROFILENAME -b $BRAND
         fi
     else
-	$LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$APPNAME -b $BRAND
+	$LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$PROFILENAME -b $BRAND
     fi
 fi
 

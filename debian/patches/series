@@ -2,6 +2,8 @@ firefox-profilename
 firefox-fsh
 lp185622_system_path_default_browser.patch
 bz460917_att350845_reload_new_plugins.patch
+browser_branding.patch
+awesome_branding_updates.patch
 ubuntu_codes_amazon.patch
 ubuntu_bookmarks.patch
 bz515232_att399338_distro_locale_searchplugins.patch

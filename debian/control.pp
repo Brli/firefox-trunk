@@ -42,6 +42,39 @@ Standards-Version: 3.8.1
 
 Package: @APPNAME@
 Architecture: any
+Depends: @APPNAME@-core (= ${binary:Version}),
+	${misc:Depends},
+	${shlibs:Depends}
+Provides: www-browser, iceweasel
+Conflicts: firefox-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1), 
+	@APPNAME_OTHER@
+Replaces: firefox-4.0-branding, 
+	kubuntu-firefox-installer
+Suggests: @APPNAME@-gnome-support (= ${binary:Version})
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+Description: Safe and easy web browser from Mozilla
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+
+Package: @APPNAME_OTHER@
+Architecture: any
+Depends: @APPNAME@-core (= ${binary:Version}), 
+	${misc:Depends},
+	${shlibs:Depends}
+Provides: www-browser, iceweasel
+Conflicts: @APPNAME@, 
+	abrowser-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1)
+Replaces: abrowser-4.0-branding
+Suggests: @APPNAME_OTHER@-gnome-support (= ${binary:Version})
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+Description: Unbranded web browser based on Mozilla
+ ABrowser 4.0 is an unbranded version of the popular Firefox webbrowser;
+ it is written in the XUL language and designed to be lightweight and
+ cross-platform.
+
+Package: @APPNAME@-core
+Architecture: any
 Depends: fontconfig,
 	psmisc,
 	lsb-release,
@@ -51,22 +84,18 @@ Depends: fontconfig,
 	${misc:Depends},
 	${shlibs:Depends}
 Recommends: ubufox
-Provides: www-browser, iceweasel
-Conflicts: firefox-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1), 
-        firefox-4.0-gnome-support (<= 4.0~b3~hg20100804r48791+nobinonly-0ubuntu1),
-	firefox-4.0-core (<= 4.0~b8~hg20101103r56843+nobinonly-0ubuntu1)
-Replaces: firefox-4.0-branding, 
-	kubuntu-firefox-installer,
-        firefox-4.0-gnome-support,
-	firefox-4.0-core
-Suggests: @APPNAME@-gnome-support (= ${binary:Version}),
-	latex-xft-fonts,
-	libthai0
-XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
-Description: safe and easy web browser from Mozilla
+Suggests: latex-xft-fonts, libthai0
+Replaces: firefox-4.0, 
+	firefox-4.0-gnome-support
+Conflicts: firefox-4.0-gnome-support (<= 4.0~b3~hg20100804r48791+nobinonly-0ubuntu1), 
+	firefox-4.0 (<= 4.0~b8~hg20101111r57316+nobinonly-0ubuntu1~umd1)
+Description: Safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
+ .
+ This package contains the common components shared between the
+ @APPNAME_OTHER@ and @APPNAME@ packages
 
 Package: @APPNAME@-gnome-support
 Architecture: any
@@ -75,8 +104,22 @@ Depends: ${shlibs:Depends},
 	${misc:Depends}, 
 	@APPNAME@ (= ${binary:Version})
 Provides: gnome-www-browser
+Conflicts: @APPNAME_OTHER@-gnome-support
 Description: Support for GNOME in Mozilla Firefox
  This is an extension to Firefox that allows it to use protocol
+ handlers from GnomeVFS, such as smb or sftp, and other GNOME
+ integration features.
+
+Package: @APPNAME_OTHER@-gnome-support
+Architecture: any
+Section: gnome
+Depends: ${shlibs:Depends}, 
+	${misc:Depends}, 
+	@APPNAME_OTHER@ (= ${binary:Version})
+Provides: gnome-www-browser
+Conflicts: @APPNAME@-gnome-support
+Description: Support for GNOME in ABrowser
+ This is an extension to ABrowser that allows it to use protocol
  handlers from GnomeVFS, such as smb or sftp, and other GNOME
  integration features.
 
@@ -86,7 +129,7 @@ Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
-	@APPNAME@ (= ${binary:Version})
+	@APPNAME@ (= ${binary:Version}) | @APPNAME_OTHER@ (= ${binary:Version})
 Description: @APPNAME@ debug symbols
  Debug symbols for Firefox 4.0.
 
@@ -108,10 +151,10 @@ Architecture: any
 Depends: firefox-4.0, ${misc:Depends}
 Description: Transitional package to pull in firefox-4.0
 
-Package: firefox-4.0-core
-Architecture: any
-Depends: firefox-4.0 (= ${binary:Version}), ${misc:Depends}
-Description: Transitional package to pull in firefox-4.0
+Package: abrowser-4.0-branding
+Architecture: all
+Depends: abrowser-4.0, ${misc:Depends}
+Description: Transitional package to pull in abrowser-4.0
 
 Package: firefox-4.0-gnome-support-dbg
 Architecture: any
