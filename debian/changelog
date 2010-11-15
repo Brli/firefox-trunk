@@ -594,6 +594,8 @@ firefox-4.0 (4.0~b8~hg20101107r57082+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - rename debian/ubuntu-firefox.js.in => debian/vendor.js.in
     - update debian/rules
     - update debian/patches/install_ubuntu_prefs.patch
+  * Rebase patches after landing of bmo: 606289 aka Fix logo link in about:
+    - update debian/patches/firefox-profilename
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -603,7 +605,7 @@ firefox-4.0 (4.0~b8~hg20101107r57082+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 10 Nov 2010 14:51:22 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 15 Nov 2010 14:02:02 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
