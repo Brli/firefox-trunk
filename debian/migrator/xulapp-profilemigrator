@@ -38,14 +38,16 @@ def get_last_series_for_profile (profile):
     return last_series
 
 def get_last_version_from_profile (profile):
-    subprofile = find_default_subprofile_for_profile (profile)
-    if subprofile == None:
+    version = get_last_version_from_compat_ini (find_default_subprofile_for_profile (profile))
+
+    if version == None:
         for f in os.listdir (profile):
             if os.path.isdir (os.path.join (profile, f)) and os.path.exists (os.path.join (profile, f, 'compatibility.ini')):
-                subprofile = os.path.join (profile, f)
-                break
+                version = get_last_version_from_compat_ini (os.path.join (profile, f))
+                if version != None:
+                    break
 
-    return get_last_version_from_compat_ini (subprofile)
+    return version
 
 def find_default_subprofile_for_profile (profile):
     subprofile = None
@@ -74,7 +76,11 @@ def get_last_version_from_compat_ini (subprofile):
     compat_ini = ConfigParser.ConfigParser ()
     compat_ini.read (os.path.join (subprofile, 'compatibility.ini'))
 
-    return re.sub (r'_.*', '', compat_ini.get ('Compatibility', 'LastVersion'))
+    try:
+        version = re.sub (r'_.*', '', compat_ini.get ('Compatibility', 'LastVersion'))
+        return version if re.match('[0-9]', version[0]) != None else None
+    except:
+        return None
 
 def guess_series_from_last_version (version):
     series = re.sub (r'[ab].*', '', re.sub (r'pre.*', '', version)).split ('.')
@@ -151,11 +157,17 @@ class ProfileFolder:
                 this.series = ProfileVersion (series)
             this.last_version_string = get_last_version_from_profile (this.path)
             if this.series == None:
-                series = guess_series_from_last_version (this.last_version_string)
-                if series != None:
-                    this.series = ProfileVersion (series)
+                if this.last_version_string == None:
+                    this.is_profile = False
+                else:
+                    series = guess_series_from_last_version (this.last_version_string)
+                    if series != None:
+                        this.series = ProfileVersion (series)
+                    else:
+                        this.is_profile = False
 
-            this.version = ProfileVersion (this.last_version_string)
+            if this.last_version_string != None:
+                this.version = ProfileVersion (this.last_version_string)
 
         this.name = re.sub (r'-.*', '', os.path.basename (this.path))
 

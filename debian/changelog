@@ -573,6 +573,9 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-beta.desktop.in
     - update debian/firefox-nightly.desktop.in
     - update debian/firefox-unofficial.desktop.in
+  * Fix the profile migrator to not crash on profiles where 
+    'LastVersion=Safe Mode' (LP: #674607)
+    - update debian/migrator/xulapp-profilemigrator
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -582,7 +585,7 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 15 Nov 2010 17:47:57 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Nov 2010 22:53:20 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
