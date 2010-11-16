@@ -59,6 +59,9 @@ include $(CURDIR)/debian/testsuite.mk
 # Define other variables used throughout the build
 DEBIAN_APP_NAME		:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
 DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/.*-//g')
+ifeq ($(DEBIAN_NAME),$(DEBIAN_APP_NAME_VER))
+	DEBIAN_APP_NAME_VER	:=
+endif
 
 DEBIAN_APP_NAME_OTHER	:= abrowser
 DEBIAN_NAME_OTHER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)/$(DEBIAN_APP_NAME_OTHER)/')
@@ -77,13 +80,11 @@ endif
 DEB_MAKE_INSTALL_TARGET		:= install DESTDIR=$(CURDIR)/debian/tmp
 DEB_MAKE_CLEAN_TARGET		:= distclean
 DEB_CONFIGURE_LOCALSTATEDIR	:= /var
-DEB_CONFIGURE_LIBEXECDIR	= /$(FF_DIR)
-DEB_CONFIGURE_PREFIX		= /$(FF_PREFIX)
 
 DEBIAN_VERSION			:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 FF_VERSION			= $(shell cat $(DEB_BUILDDIR)/browser/config/version.txt)
-FF_PREFIX			:= usr
-FF_DIR				= $(FF_PREFIX)/lib/$(DEBIAN_APP_NAME)-$(FF_VERSION)
+FF_PREFIX			:= /usr
+FF_DIR				= $(FF_PREFIX)/lib/$(DEBIAN_NAME)-$(FF_VERSION)
 FF_VERSION_DEVMILESTONE		= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
 FF_VERSION_SERIES		= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
 
@@ -200,8 +201,8 @@ DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF_VE
 		-DVENDOR_SUB="`lsb_release -r -s`" -DVENDOR_COMMENT="`lsb_release -c -s`" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" \
 		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
 		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
-		-DDEB_CONFIGURE_PREFIX="$(DEB_CONFIGURE_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" \
-		-DDEB_CONFIGURE_LIBEXECDIR="$(DEB_CONFIGURE_LIBEXECDIR)" -DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DPYTHON="$(PYTHON)"
+		-DFF_PREFIX="$(FF_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" -DAPP_VERSION="$(FF_VERSION)" \
+		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DPYTHON="$(PYTHON)"
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	DEB_DEFINES += -DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS)
 endif
@@ -294,10 +295,15 @@ endif
 
 regen-debian-control::
 	sed -e 's/@EXTRA_BD@/$(EXTRA_BD)/g' \
-	    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' < debian/control.pp > debian/control
+	    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' \
+	    -e 's/@APPNAME_OTHER@/$(DEBIAN_NAME_OTHER)/g' < debian/control.pp > debian/control
 
-$(subst_files): $(foreach file, $(subst_files), $(subst -$(DEBIAN_APP_NAME_VER),,$(file).in))
-	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst -$(DEBIAN_APP_NAME_VER),,$@.in) > $(CURDIR)/$@
+BRANCH	:=
+ifneq (,$(DEBIAN_APP_NAME_VER))
+	BRANCH = -$(DEBIAN_APP_NAME_VER)
+endif
+$(subst_files): $(foreach file, $(subst_files), $(subst $(BRANCH),,$(file).in))
+	$(PYTHON) $(DEB_BUILDDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst $(BRANCH),,$@.in) > $(CURDIR)/$@
 
 debian/usr.bin.firefox.in:
 	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1010' ]; then \
@@ -377,8 +383,8 @@ binary-predeb/$(DEBIAN_NAME)-core::
 	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/;) true
 
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
-	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)/$(FF_DIR):$$LD_LIBRARY_PATH \
-	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)/$(FF_DIR)/$(lib);)
+	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core$(FF_DIR):$$LD_LIBRARY_PATH \
+	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core$(FF_DIR)/$(lib);)
 
 # ... and remove them from the -gnome-support package accordingly
 binary-predeb/$(DEBIAN_NAME)-gnome-support::
@@ -401,7 +407,7 @@ clean:: regen-debian-control
 	        rm -f debian/$$i; \
 	        done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
-	rm -f $(subst_files) debian/install.rdf debian/apport/$(DEBIAN_NAME).in
+	rm -f $(subst_files) debian/install.rdf
 	rm -rf debian/tmp-*
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*

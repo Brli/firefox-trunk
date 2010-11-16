@@ -1,8 +1,8 @@
 %%ifdef DEB_MIN_SYSDEPS
-@DEB_CONFIGURE_LIBEXECDIR@/@APPNAME@-bin
+@LIBDIR@/@APPNAME@-bin
 %%ifdef DEB_ENABLE_IPC
-@DEB_CONFIGURE_LIBEXECDIR@/plugin-container
+@LIBDIR@/plugin-container
 %%endif
 %%else
-@DEB_CONFIGURE_LIBEXECDIR@/@APPNAME@
+@LIBDIR@/@APPNAME@
 %%endif

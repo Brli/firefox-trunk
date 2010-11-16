@@ -4,11 +4,11 @@
 #include <tunables/global>
 
 # We want to confine the binaries that match:
-#  @DEB_CONFIGURE_LIBEXECDIR@/@APPNAME@
-#  @DEB_CONFIGURE_LIBEXECDIR@/firefox
+#  @LIBDIR@/@APPNAME@
+#  @LIBDIR@/firefox
 # but not:
-#  @DEB_CONFIGURE_LIBEXECDIR@/firefox.sh
-@DEB_CONFIGURE_LIBEXECDIR@/firefox{,*[^s][^h]} {
+#  @LIBDIR@/firefox.sh
+@LIBDIR@/firefox{,*[^s][^h]} {
   #include <abstractions/audio>
   #include <abstractions/base>
   #include <abstractions/cups-client>
@@ -55,7 +55,7 @@
   /etc/gre.d/* r,
 
   # noisy
-  deny @DEB_CONFIGURE_LIBEXECDIR@/** w,
+  deny @LIBDIR@/** w,
   deny /usr/lib/@APPNAME@-addons/** w,
   deny /usr/lib/xulrunner-addons/** w,
   deny /usr/lib/xulrunner-*/components/*.tmp w,
@@ -64,7 +64,7 @@
   deny /boot/vmlinuz* r,
 
   # These are needed when a new user starts firefox and firefox.sh is used
-  @DEB_CONFIGURE_LIBEXECDIR@/** ixr,
+  @LIBDIR@/** ixr,
   /usr/bin/basename ixr,
   /usr/bin/dirname ixr,
   /usr/bin/pwd ixr,
@@ -128,7 +128,7 @@
   # Allow 'x' for downloaded extensions, but inherit policy for safety
   owner @{HOME}/.mozilla/**/extensions/** mixr,
 
-  deny @DEB_CONFIGURE_LIBEXECDIR@/update.test w,
+  deny @LIBDIR@/update.test w,
   deny /usr/lib/mozilla/extensions/**/ w,
   deny /usr/lib/xulrunner-addons/extensions/**/ w,
   deny /usr/share/mozilla/extensions/**/ w,

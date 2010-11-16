@@ -1,9 +1,9 @@
-debian/tmp/@LIBDIR@/icons @LIBDIR@
-debian/tmp/@LIBDIR@/chrome/icons @LIBDIR@/chrome
+debian/tmp@LIBDIR@/icons
+debian/tmp@LIBDIR@/chrome/icons
 %%ifdef DEB_MIN_SYSDEPS
-debian/tmp/@LIBDIR@/omni.jar @LIBDIR@
+debian/tmp@LIBDIR@/omni.jar
 %%else
-debian/tmp/@LIBDIR@/chrome/browser-branding*.jar
-debian/tmp/@LIBDIR@/chrome/*.manifest
+debian/tmp@LIBDIR@/chrome/browser-branding*.jar
+debian/tmp@LIBDIR@/chrome/*.manifest
 %%endif
-debian/@APPNAME@.desktop usr/share/applications
+debian/@APPNAME@.desktop /usr/share/applications

@@ -11,7 +11,7 @@
 # License: GPLv2 or later
 
 MOZDIR=$HOME/.mozilla
-LIBDIR=@DEB_CONFIGURE_LIBEXECDIR@
+LIBDIR=@LIBDIR@
 GDB=/usr/bin/gdb
 NAME=`which $0`
 APPNAME=`basename $NAME`

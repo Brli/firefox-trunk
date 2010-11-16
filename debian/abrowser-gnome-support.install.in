@@ -1,3 +1,5 @@
-debian/tmp/@LIBDIR@/components/libnkgnomevfs.so
-debian/tmp/@LIBDIR@/components/libmozgnome.so
-debian/@APPNAME_OTHER@.xml usr/share/gnome-control-center/default-apps
+%%ifndef DISABLE_GNOMEVFS
+debian/tmp@LIBDIR@/components/libnkgnomevfs.so @LIBDIR@/components
+%%endif
+debian/tmp@LIBDIR@/components/libmozgnome.so @LIBDIR@/components
+debian/@APPNAME_OTHER@.xml /usr/share/gnome-control-center/default-apps
