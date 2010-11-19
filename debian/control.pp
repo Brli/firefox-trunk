@@ -50,7 +50,7 @@ Conflicts: firefox-4.0-branding (<= 4.0~b5~hg20100818r50769+nobinonly-0ubuntu1),
 	@APPNAME_OTHER@
 Replaces: firefox-4.0-branding, 
 	kubuntu-firefox-installer
-Suggests: @APPNAME@-gnome-support (= ${binary:Version})
+Suggests: @APPNAME@-gnome-support (= ${binary:Version}) | firefox-kde-support
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: Safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,

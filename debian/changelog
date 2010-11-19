@@ -585,6 +585,16 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
+  [ Felix Geyer <debfx-pkg@fobos.de> ]
+  * Re-add KDE integration
+    - add debian/patches/mozilla-kde.patch
+    - add debian/patches/firefox-kde.patch
+    - update debian/patches/series
+    - update debian/rules
+  * Make firefox-4.0 suggest firefox-kde-support
+    - update debian/control
+    - update debian/control.pp
+
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Nov 2010 22:53:20 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low

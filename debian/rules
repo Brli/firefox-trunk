@@ -402,6 +402,11 @@ pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	                chmod a+x debian/$$i; \
 	        done
 
+	# KDE integration
+	cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
+	cp $(DEB_SRCDIR)/toolkit/content/widgets/preferences.xml $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
+	cp $(DEB_SRCDIR)/browser/base/content/browser.xul $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
+
 clean:: regen-debian-control
 	set -e; for i in $(UUDECODE); do \
 	        rm -f debian/$$i; \

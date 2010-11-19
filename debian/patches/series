@@ -14,3 +14,5 @@ ubuntu_codes_google.patch
 bzXXX_plugin_for_mimetype_pref.patch
 #bz467738_att351145_lockPref_everywhere.patch
 install_ubuntu_prefs.patch
+mozilla-kde.patch
+firefox-kde.patch
