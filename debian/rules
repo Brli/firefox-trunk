@@ -155,6 +155,8 @@ ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
 	STARTUP_WM_CLASS	= $(shell cat $(DEB_BUILDDIR)/other-licenses/branding/firefox/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
 	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
+	# Hack to turn on testpilot for beta builds. Other than that, the update channel is not used anywhere for our build
+	MOZ_UPDATE_CHANNEL	= beta
 else
 	# automatically build with official branding for final and final RCs builds
 	BRANDING		= --enable-official-branding
@@ -190,10 +192,10 @@ ifeq (1,$(DEB_BUILD_PGO))
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
-	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.4.99'; a=$$?; if test $$a != 1; then echo 1; fi)
+	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.6'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.1'; a=$$?; if test $$a != 1; then echo 1; fi)
-	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.7'; a=$$?; if test $$a != 1; then echo 1; fi)
+	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.8'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
 
 # Defines used for the Mozilla text preprocessor
@@ -241,6 +243,9 @@ ifeq (1,$(DEB_BUILD_PGO))
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
 	DEB_DEFINES += -DDISABLE_GNOMEVFS=1
+endif
+ifneq (,$(MOZ_UPDATE_CHANNEL))
+	DEB_DEFINES += -DMOZ_UPDATE_CHANNEL="$(MOZ_UPDATE_CHANNEL)"
 endif
 
 UUDECODE = \

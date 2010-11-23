@@ -40,6 +40,9 @@ debian/usr.bin.@APPNAME@ /etc/apparmor.d
 #debian/debsearch.src /usr/lib/@APPNAME@-addons/searchplugins
 
 debian/tmp@LIBDIR@/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} /usr/lib/@APPNAME@-addons/extensions
+%%if MOZ_UPDATE_CHANNEL == beta
+debian/tmp@LIBDIR@/extensions/testpilot@labs.mozilla.com /usr/lib/@APPNAME@-addons/extensions
+%%endif
 
 # debian/tmp@LIBDIR@/plugins/*.so /usr/lib/@APPNAME@-addons/plugins
 

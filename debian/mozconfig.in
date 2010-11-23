@@ -16,6 +16,7 @@ ac_add_options --disable-strip
 ac_add_options --disable-updater
 ac_add_options --enable-application=browser
 ac_add_options --enable-default-toolkit=cairo-gtk2
+ac_add_options --enable-startup-notification
 ac_add_options --enable-gnomevfs
 ac_add_options --enable-pango
 ac_add_options --enable-svg
@@ -99,4 +100,7 @@ mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@
 %%ifdef DISABLE_GNOMEVFS
 ac_add_options --disable-gnomevfs
 ac_add_options --enable-gio
+%%endif
+%%ifdef MOZ_UPDATE_CHANNEL
+ac_add_options --enable-update-channel=@MOZ_UPDATE_CHANNEL@
 %%endif

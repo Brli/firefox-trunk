@@ -576,6 +576,31 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Fix the profile migrator to not crash on profiles where 
     'LastVersion=Safe Mode' (LP: #674607)
     - update debian/migrator/xulapp-profilemigrator
+  * Bump minimum NSS / NSPR version
+    - update debian/rules
+  * Fix the profile migrator to not hang when ~/.mozilla doesn't exist, and
+    other improvements- update debian/migrator/xulapp-profilemigrator
+    - update debian/migrator/xulapp-profilemigrator
+  * Build with --enable-startup-notification again, this got dropped
+    in the 3.6 => 4.0 update
+    - update debian/mozconfig.in
+  * Ship the testpilot extension for beta as per the official builds, based
+    on the discussion on #developers. We achieve this by building with
+    --enable-update-channel=beta for the beta milestones only. The update
+    channel isn't used anywhere at runtime because we disable the updater.
+    This means that Ubuntu users can participate in testpilot user studies
+    in Natty
+    - update debian/rules
+    - update debian/firefox-core.install.in
+    - update debian/mozconfig.in
+  * Add a hack to the launcher to handle being launched from an alternative,
+    which is a symlink to the launcher script, and breaks the current launch
+    mechanism. Also remove a useless stat() from the current script
+    - update debian/firefox.sh.in
+  * Re-add patch that got dropped to not remove and re-add search plugins
+    during upgrade
+    - add debian/patches/bz534663_attXXX_normalize_distribution_searchplugins.patch
+    - update debian/patches/series
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -585,7 +610,7 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Nov 2010 22:53:20 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 23 Nov 2010 18:47:31 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

@@ -19,8 +19,10 @@ MOZ_APP_LAUNCHER=$NAME
 SERIES=@SERIES@
 BRAND="@STARTUP_WM_CLASS@"
 %%if DEB_MIN_SYSDEPS == 1
+FALLBACK_EXE=@APPNAME@-bin
 EXE="$APPNAME"-bin
 %%else
+FALLBACK_EXE=@APPNAME@
 EXE=$APPNAME
 %%endif
 # Hack for abrowser
@@ -29,15 +31,17 @@ PROFILENAME=`echo $APPNAME | sed -e 's/abrowser/firefox/'`
 export MOZ_APP_LAUNCHER
 unset UBUNTU_MENUPROXY
 
-while [ ! -x $LIBDIR/$EXE ] && [ -L "$NAME" ] ; do
-    NAME=`readlink -f $NAME`
-    LIBDIR=`dirname $NAME`
+while [ ! -x $LIBDIR/$EXE ] ; do
+    if [ -L "$NAME" ] ; then
+        NAME=`readlink -f $NAME`
+        LIBDIR=`dirname $NAME`
+    elif [ -x $LIBDIR/$FALLBACK_EXE ] ; then
+        EXE="$FALLBACK_EXE"
+    else
+       echo "Can't find $LIBDIR/$EXE"
+       exit 1
+    fi
 done
-
-if [ ! -x $LIBDIR/$EXE ] ; then
-	echo "Can't find $LIBDIR/$EXE"
-	exit 1
-fi
 
 usage () {
     $LIBDIR/$EXE -h | sed -e 's,/.*/,,'

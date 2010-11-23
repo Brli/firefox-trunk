@@ -8,6 +8,7 @@ ubuntu_codes_amazon.patch
 ubuntu_bookmarks.patch
 bz515232_att399338_distro_locale_searchplugins.patch
 bzXXX_libxul_sdk_nspr.patch
+bz534663_attXXX_normalize_distribution_searchplugins.patch
 lp548866_bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
 lp512615_cairo_lcd_filter.patch
 ubuntu_codes_google.patch

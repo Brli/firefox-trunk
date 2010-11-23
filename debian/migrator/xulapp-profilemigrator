@@ -26,49 +26,6 @@ import ConfigParser
 import re
 import shutil
 
-def get_last_series_for_profile (profile):
-    last_series = None
-
-    last_series_file = profile + '.series-stamp'
-    if os.path.isfile (last_series_file):
-        fd = open (last_series_file)
-        last_series = fd.read ()
-        fd.close ()
-
-    return last_series
-
-def get_last_version_from_profile (profile):
-    version = get_last_version_from_compat_ini (find_default_subprofile_for_profile (profile))
-
-    if version == None:
-        for f in os.listdir (profile):
-            if os.path.isdir (os.path.join (profile, f)) and os.path.exists (os.path.join (profile, f, 'compatibility.ini')):
-                version = get_last_version_from_compat_ini (os.path.join (profile, f))
-                if version != None:
-                    break
-
-    return version
-
-def find_default_subprofile_for_profile (profile):
-    subprofile = None
-    subprofiles = ConfigParser.ConfigParser ()
-    subprofiles.read (os.path.join (profile, 'profiles.ini'))
-    for i in subprofiles.sections ():
-        if i == 'General':
-            continue
-
-        if not subprofiles.has_option (i, 'Default'):
-            continue
-
-        if subprofiles.getint (i, 'Default') == 1:
-            ppath = subprofiles.get (i, 'Path')
-            if os.path.isfile (os.path.join (profile, ppath, 'compatibility.ini')):
-                subprofile = os.path.join (profile, ppath)
-            break
-
-    return subprofile
-
-
 def get_last_version_from_compat_ini (subprofile):
     if subprofile == None:
         return None
@@ -82,8 +39,10 @@ def get_last_version_from_compat_ini (subprofile):
     except:
         return None
 
-def guess_series_from_last_version (version):
+def get_series_from_last_version (version):
     series = re.sub (r'[ab].*', '', re.sub (r'pre.*', '', version)).split ('.')
+    # FIXME: The "series" returned should have the same format and length as that passed
+    # on the command line, rather than hard-coding the first 2 digits
     return series[0] + '.' + series[1]
 
 class Enum (set):
@@ -150,34 +109,81 @@ class ProfileFolder:
         this.series = None
         this.version = None
         this.last_version_string = None
+        this.subprofiles = list ()
+        this.default_subprofile = None
+
+        # If there is no profiles.ini, then ignore this folder
         this.is_profile = os.path.isfile (os.path.join (this.path, 'profiles.ini'))
+
         if this.is_profile == True:
-            series = get_last_series_for_profile (this.path)
-            if series != None:
-                this.series = ProfileVersion (series)
-            this.last_version_string = get_last_version_from_profile (this.path)
-            if this.series == None:
-                if this.last_version_string == None:
-                    this.is_profile = False
-                else:
-                    series = guess_series_from_last_version (this.last_version_string)
-                    if series != None:
-                        this.series = ProfileVersion (series)
-                    else:
-                        this.is_profile = False
-
+            this.build_list_of_subprofiles ()
+            this.find_last_version_from_profile ()
             if this.last_version_string != None:
-                this.version = ProfileVersion (this.last_version_string)
+                series_string = get_series_from_last_version (this.last_version_string)
+                if series_string != None:
+                    this.series = ProfileVersion (series_string)
+                else:
+                    this.is_profile = False
+            else:
+                this.is_profile = False
 
+        # FIXME: What if the application name has a hyphen in? This would fall over then
         this.name = re.sub (r'-.*', '', os.path.basename (this.path))
+
+    def build_list_of_subprofiles (this):
+        # Parse profiles.ini for the list of "subprofiles" in this profile.
+        profiles_ini = ConfigParser.ConfigParser ()
+        profiles_ini.read (os.path.join (this.path, 'profiles.ini'))
+        has_default = False
+        for i in profiles_ini.sections ():
+            if i == 'General':
+                if profiles_ini.has_option (i, 'StartWithLastProfile') and profiles_ini.getint (i, 'StartWithLastProfile') == 1:
+                    has_default = True
+                continue
+
+            if profiles_ini.has_option (i, 'Path'):
+                ppath = profiles_ini.get (i, 'Path')
+                if os.path.isfile (os.path.join (this.path, ppath, 'compatibility.ini')):
+                    this.subprofiles.append (os.path.join (this.path, ppath))
+
+                    if profiles_ini.has_option (i, 'Default') == True and profiles_ini.getint (i, 'Default') == 1:
+                        this.default_subprofile = os.path.join (this.path, ppath)
+
+        if has_default == False:
+            this.default_subprofile = None
+
+    def find_last_version_from_profile (this):
+        last_version_string = None
+
+        if this.default_subprofile != None:
+            # If there is a default subprofile and StartWithLastProfile == 1, then take the version from there
+            this.last_version_string = get_last_version_from_compat_ini (this.default_subprofile)
+
+        if this.last_version_string != None:
+            this.version = ProfileVersion (this.last_version_string)
+            return
+
+        # If there is no default subprofile, iterate over all profiles and find the highest version
+        for i in this.subprofiles:
+            last_version_string = get_last_version_from_compat_ini (i)
+            if last_version_string != None:
+                version = ProfileVersion (last_version_string)
+                if this.version == None or this.version.compare (version) != CompareResultType.GT:
+                    this.version = version
+                    this.last_version_string = last_version_string
 
     def is_suitable (this, name, new_series, last_series=None):
         if name != this.name:
             return False
 
+        # If this profile is from an application that is newer than the
+        # one running now, it isn't suitable
         if this.series.compare (new_series) == CompareResultType.GT:
             return False
 
+        # If this profile is from an application that is older than
+        # the application that last ran the profile we are migrating, then
+        # ignore this profile
         if last_series != None and this.series.compare (last_series) != CompareResultType.GT:
             return False
 
@@ -195,11 +201,28 @@ class ProfileMigrator:
         this.brand = options.brand
         this.action = MigrationActionType.ASKLATER
 
+        if not os.path.isdir (os.path.dirname (this.profile.path)):
+            # The parent directory doesn't exist, so there's nothing to do
+            exit (0)
+
         if os.path.isdir (this.profile.path) and this.profile.is_profile:
+            # This profile already exists, so we do the beta migration routine
             this.migrate_type = MigrationType.BETA
             this.last_series = this.profile.series
-        else:
+        elif not os.path.isdir (this.profile.path):
+            # There is no profile yet, so we look for an existing profile
+            # to base our new profile on
             this.migrate_type = MigrationType.NEW
+            if os.path.isfile (this.profile.path + ".series-stamp"):
+                # In this case, the user deleted their profile directory.
+                # They want a fresh profile, so give them this
+                update_stamp (options.profile + '.series-stamp', options.series)
+                exit (0)
+        else:
+            # There is a folder where we wan't our profile, but it doesn't
+            # look like an existing profile. Just bail
+            update_stamp (options.profile + '.series-stamp', options.series)
+            exit (0)
 
     def check_candidates (this):
         for f in os.listdir (os.path.dirname (this.profile.path)):
@@ -218,6 +241,7 @@ class ProfileMigrator:
                 this.candidates.append (profile)
 
         if len (this.candidates) == 0:
+            this.updated = True
             gtk.main_quit ()
             return
 
@@ -228,6 +252,7 @@ class ProfileMigrator:
 
     def select_profile (this):
         selected = None
+        # Iterate over the list of candidate profiles and pick the newest
         for profile in this.candidates:
             if (selected != None and profile.version.compare (selected.version) == CompareResultType.GT) or selected == None:
                 selected = profile
@@ -345,6 +370,7 @@ class ProfileMigrator:
 
         # FIXME: What if .replaced already exists?
         shutil.move (this.profile.path, this.profile.path + '.replaced')
+        # FIXME: What if the profile is in use?
         shutil.copytree (src=selected.path, dst=this.profile.path, symlinks=True)
 
         gtk.main_quit()
