@@ -73,8 +73,8 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       not disabled
     - debian/rules:
       + add DISTRIB, DISTRIB_VERSION_MAJOR and DISTRIB_VERSION_MINOR
-      + ship 9.10 profile for Karmic and under and 10.04 profile for Lucid
-        and 10.10 for maverick and later
+      + ship 9.10 profile for Karmic and under and 10.04 profile for Lucid,
+        10.10 for maverick, and 11.04 for natty and later
       + install profile and update subst_files
     - debian/control: have firefox-4.0 Depends on lsb-release (needed in
       preinst)
