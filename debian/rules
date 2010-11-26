@@ -386,19 +386,14 @@ binary-post-install/$(DEBIAN_NAME)-core:: compare
 ifeq (1, $(DEB_MIN_SYSDEPS))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 # install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
-binary-predeb/$(DEBIAN_NAME)-core::
-	$(foreach file,$(GNOME_SUPPORT_FILES),cp -vf debian/tmp/usr/lib/firefox-*/components/$(file) debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/;) true
+common-binary-predeb-arch::
+	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(DEBIAN_NAME)-gnome-support$(FF_DIR)/components/$(file) debian/$(DEBIAN_NAME)-core$(FF_DIR)/components/;) true
+	touch $@
 
+binary-predeb/$(DEBIAN_NAME)-core::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core$(FF_DIR):$$LD_LIBRARY_PATH \
 	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core$(FF_DIR)/$(lib);)
-
-# ... and remove them from the -gnome-support package accordingly
-binary-predeb/$(DEBIAN_NAME)-gnome-support::
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME)-gnome-support/usr/lib/firefox-*/components/$(file);) true
-
-binary-predeb/$(DEBIAN_NAME_OTHER)-gnome-support::
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -vf debian/$(DEBIAN_NAME_OTHER)-gnome-support/usr/lib/firefox-*/components/$(file);) true
 endif
 
 pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop

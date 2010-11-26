@@ -601,6 +601,13 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     during upgrade
     - add debian/patches/bz534663_attXXX_normalize_distribution_searchplugins.patch
     - update debian/patches/series
+  * Move libmozgnome.so to the main package in common-binary-predeb-arch.
+    The previous method of deleting it from -gnome-support and copying it to
+    the main package from debian/tmp in each of the binary-predeb targets
+    meant that we were shipping an unstripped copy, which caused a lintian
+    error. This new method ensures we retain the stripped SO and we still
+    only move it after dh_shlibdeps has run
+    - update debian/rules
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
