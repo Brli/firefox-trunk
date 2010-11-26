@@ -2,16 +2,9 @@
  toolkit/components/search/nsSearchService.js |    9 +++++++++
  1 file changed, 9 insertions(+)
 
-Index: mozilla/toolkit/components/search/nsSearchService.js
-===================================================================
---- mozilla.orig/toolkit/components/search/nsSearchService.js
-+++ mozilla/toolkit/components/search/nsSearchService.js
-@@ -47,16 +47,17 @@ const PERMS_DIRECTORY = 0755;
- 
- const MODE_RDONLY   = 0x01;
- const MODE_WRONLY   = 0x02;
- const MODE_CREATE   = 0x08;
- const MODE_APPEND   = 0x10;
+--- a/toolkit/components/search/nsSearchService.js
++++ b/toolkit/components/search/nsSearchService.js
+@@ -54,6 +54,7 @@ const MODE_APPEND   = 0x10;
  const MODE_TRUNCATE = 0x20;
  
  // Directory service keys
@@ -19,17 +12,7 @@ Index: mozilla/toolkit/components/search/nsSearchService.js
  const NS_APP_SEARCH_DIR_LIST  = "SrchPluginsDL";
  const NS_APP_USER_SEARCH_DIR  = "UsrSrchPlugns";
  const NS_APP_SEARCH_DIR       = "SrchPlugns";
- const NS_APP_USER_PROFILE_50_DIR = "ProfD";
- 
- // Search engine "locations". If this list is changed, be sure to update
- // the engine's _isDefault function accordingly.
- const SEARCH_APP_DIR = 1;
-@@ -2797,16 +2798,23 @@ SearchService.prototype = {
- 
-     while (files.hasMoreElements()) {
-       var file = files.nextFile;
- 
-       // Ignore hidden and empty files, and directories
+@@ -2776,6 +2777,13 @@ SearchService.prototype = {
        if (!file.isFile() || file.fileSize == 0 || file.isHidden())
          continue;
  
@@ -40,11 +23,6 @@ Index: mozilla/toolkit/components/search/nsSearchService.js
 +      if (file.path.indexOf(appdirstr) == 0)
 +        file.normalize();
 +
-       var fileURL = gIoSvc.newFileURI(file).QueryInterface(Ci.nsIURL);
+       var fileURL = NetUtil.ioService.newFileURI(file).QueryInterface(Ci.nsIURL);
        var fileExtension = fileURL.fileExtension.toLowerCase();
        var isWritable = isInProfile && file.isWritable();
- 
-       var dataType;
-       switch (fileExtension) {
-         case XML_FILE_EXT:
-           dataType = SEARCH_DATA_XML;
