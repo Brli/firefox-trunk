@@ -38,6 +38,7 @@
   owner @{HOME}/.local/share/applications/mimeinfo.cache r,
   owner /tmp/** m,
   owner /var/tmp/** m,
+  /tmp/.X[0-9]*-lock r,
 
   /etc/timezone r,
   /etc/wildmidi/wildmidi.cfg r,
@@ -60,6 +61,10 @@
   deny /boot/initrd.img* r,
   deny /boot/vmlinuz* r,
   deny /var/cache/fontconfig/ w,
+  deny @{HOME}/.local/share/recently-used.xbel r,
+
+  # TODO: investigate
+  deny /usr/bin/gconftool-2 x,
 
   # These are needed when a new user starts firefox and firefox.sh is used
   @LIBDIR@/** ixr,
@@ -75,6 +80,7 @@
   @{PROC}/[0-9]*/stat r,
   @{PROC}/[0-9]*/status r,
   @{PROC}/filesystems r,
+  owner @{HOME}/.thumbnails/*/*.png r,
 
   /etc/mtab r,
   /etc/fstab r,
@@ -111,6 +117,7 @@
   owner @{HOME}/.{firefox,mozilla}/plugins/** rm,
   owner @{HOME}/.{firefox,mozilla}/**/plugins/** rm,
   owner @{HOME}/.config/ibus/bus/ w,
+  owner @{HOME}/.gnome2/firefox*-bin-* rw,
 
   #
   # Extensions

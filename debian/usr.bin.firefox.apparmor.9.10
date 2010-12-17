@@ -44,6 +44,7 @@
   /usr/bin/scim-bridge Ux,
   /usr/lib/gstreamer0.10/gstreamer-0.10/gst-plugin-scanner ix,
   /usr/bin/apturl Uxr,
+  /tmp/.X[0-9]*-lock r,
 
   # firefox specific
   /etc/firefox*/ r,
@@ -62,6 +63,10 @@
   deny /.suspended r,
   deny /boot/initrd.img* r,
   deny /boot/vmlinuz* r,
+  deny /var/cache/fontconfig/ w,
+
+  # TODO: investigate
+  deny /usr/bin/gconftool-2 x,
 
   # These are needed when a new user starts firefox and firefox.sh is used
   @LIBDIR@/** ixr,
@@ -73,6 +78,7 @@
   /usr/bin/tr ixr,
   @{PROC}/ r,
   @{PROC}/[0-9]*/cmdline r,
+  @{PROC}/[0-9]*/mountinfo r,
   @{PROC}/[0-9]*/stat r,
   @{PROC}/[0-9]*/status r,
   @{PROC}/filesystems r,
@@ -114,7 +120,6 @@
   owner @{HOME}/.{firefox,mozilla}/**/*.{db,parentlock,sqlite}* k,
   owner @{HOME}/.{firefox,mozilla}/plugins/** rm,
   owner @{HOME}/.{firefox,mozilla}/**/plugins/** rm,
-  owner @{HOME}/.config/ibus/bus/ w,
 
   # per-user common plugin configuration
   @{HOME}/.adobe/ rw,
