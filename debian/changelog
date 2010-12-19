@@ -1,3 +1,11 @@
+firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu2) UNRELEASED; urgency=low
+
+  * Change xubuntu applications defaults list in natty apparmor profile; Path
+    changed in xubuntu-default-settings (11.04.0)
+    - update usr.bin.firefox.apparmor.11.04
+
+ -- Micah Gersten <micahg@ubuntu.com>  Sun, 19 Dec 2010 01:11:06 -0600
+
 firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
