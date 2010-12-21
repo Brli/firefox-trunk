@@ -10,14 +10,10 @@
 #  @LIBDIR@/firefox.sh
 @LIBDIR@/firefox{,*[^s][^h]} {
   #include <abstractions/audio>
-  #include <abstractions/base>
   #include <abstractions/cups-client>
   #include <abstractions/dbus-session>
-  #include <abstractions/fonts>
-  #include <abstractions/freedesktop.org>
   #include <abstractions/gnome>
   #include <abstractions/nameservice>
-  #include <abstractions/user-tmp>
 
   # Addons
   #include <abstractions/ubuntu-browsers.d/firefox>
