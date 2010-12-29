@@ -1,12 +1,4 @@
-firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu2) UNRELEASED; urgency=low
-
-  * Change xubuntu applications defaults list in natty apparmor profile; Path
-    changed in xubuntu-default-settings (11.04.0)
-    - update usr.bin.firefox.apparmor.11.04
-
- -- Micah Gersten <micahg@ubuntu.com>  Sun, 19 Dec 2010 01:11:06 -0600
-
-firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b9~hg20101229r59721+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -63,6 +55,9 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Only install plugin-container if IPC is enabled
     - update debian/rules
+  * Change xubuntu applications defaults list in natty apparmor profile; Path
+    changed in xubuntu-default-settings (11.04.0)
+    - update usr.bin.firefox.apparmor.11.04
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -625,7 +620,17 @@ firefox-4.0 (4.0~b8~hg20101115r57519+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 23 Nov 2010 18:47:31 +0000
+  [ Felix Geyer <debfx-pkg@fobos.de> ]
+  * Re-add KDE integration
+    - add debian/patches/mozilla-kde.patch
+    - add debian/patches/firefox-kde.patch
+    - update debian/patches/series
+    - update debian/rules
+  * Make firefox-4.0 suggest firefox-kde-support
+    - update debian/control
+    - update debian/control.pp
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Nov 2010 22:53:20 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

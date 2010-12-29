@@ -59,7 +59,7 @@ Replaces: firefox-4.0-branding,
 	kubuntu-firefox-installer,
         firefox-4.0-gnome-support,
 	firefox-4.0-core
-Suggests: firefox-4.0-gnome-support (= ${binary:Version}),
+Suggests: firefox-4.0-gnome-support (= ${binary:Version}) | firefox-kde-support,
 	latex-xft-fonts,
 	libthai0
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
