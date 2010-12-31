@@ -6,7 +6,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest"
-               em:id="langpack-en-US@firefox-3.0.ubuntu.com"
+               em:id="langpack-en-US@firefox.ubuntu.com"
                em:name="Firefox (en-US)"
                em:version="@EM_VERSION@"
                em:type="8"

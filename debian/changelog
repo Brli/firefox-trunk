@@ -611,6 +611,9 @@ firefox-4.0 (4.0~b9~hg20101229r59721+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     error. This new method ensures we retain the stripped SO and we still
     only move it after dh_shlibdeps has run
     - update debian/rules
+  * Generate the en-US xpi at build time again for importing in to Launchpad
+    - update debian/rules
+    - update debian/translation-support/install.rdf.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -630,7 +633,7 @@ firefox-4.0 (4.0~b9~hg20101229r59721+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/control.pp
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Nov 2010 22:53:20 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 31 Dec 2010 10:52:25 +0000
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
