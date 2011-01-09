@@ -632,8 +632,10 @@ firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Make firefox-4.0 suggest firefox-kde-support
     - update debian/control
     - update debian/control.pp
+  * Rebase mozilla-kde.patch
+    - update debian/patches/mozilla-kde.patch
 
- -- Micah Gersten <micahg@ubuntu.com>  Fri, 07 Jan 2011 00:04:48 -0600
+ -- Micah Gersten <micahg@ubuntu.com>  Sat, 08 Jan 2011 20:09:32 -0600
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

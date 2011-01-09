@@ -14,9 +14,9 @@ diff -Nur a/modules/libpref/src/nsPrefService.cpp b/modules/libpref/src/nsPrefSe
 --- a/modules/libpref/src/nsPrefService.cpp	2010-11-15 21:41:29.000000000 +0100
 +++ b/modules/libpref/src/nsPrefService.cpp	2010-11-18 12:18:51.850643351 +0100
 @@ -60,6 +60,7 @@
- #include "nsCOMArray.h"
  #include "nsXPCOMCID.h"
  #include "nsAutoPtr.h"
+ #include "nsThreadUtils.h"
 +#include "nsKDEUtils.h"
  
  #include "nsQuickSort.h"
