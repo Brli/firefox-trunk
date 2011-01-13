@@ -1,7 +1,41 @@
-diff -Nur a/modules/libpref/src/Makefile.in b/modules/libpref/src/Makefile.in
---- a/modules/libpref/src/Makefile.in	2010-11-15 21:39:52.000000000 +0100
-+++ b/modules/libpref/src/Makefile.in	2010-11-18 12:18:51.850643351 +0100
-@@ -95,6 +95,8 @@
+---
+ modules/libpref/src/Makefile.in                        |    2 
+ modules/libpref/src/nsPrefService.cpp                  |   33 +
+ toolkit/components/downloads/src/Makefile.in           |    1 
+ toolkit/components/downloads/src/nsDownloadManager.cpp |   14 
+ toolkit/content/jar.mn                                 |    4 
+ toolkit/content/widgets/dialog-kde.xml                 |   11 
+ toolkit/content/widgets/preferences-kde.xml            |   11 
+ toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp |   31 +
+ toolkit/xre/Makefile.in                                |    3 
+ toolkit/xre/nsKDEUtils.cpp                             |  334 +++++++++++++++++
+ toolkit/xre/nsKDEUtils.h                               |   77 +++
+ uriloader/exthandler/Makefile.in                       |    3 
+ uriloader/exthandler/unix/nsCommonRegistry.cpp         |   87 ++++
+ uriloader/exthandler/unix/nsCommonRegistry.h           |   56 ++
+ uriloader/exthandler/unix/nsKDERegistry.cpp            |  119 ++++++
+ uriloader/exthandler/unix/nsKDERegistry.h              |   61 +++
+ uriloader/exthandler/unix/nsMIMEInfoUnix.cpp           |   30 +
+ uriloader/exthandler/unix/nsOSHelperAppService.cpp     |   10 
+ widget/src/gtk2/Makefile.in                            |    3 
+ widget/src/gtk2/nsFilePicker.cpp                       |  235 +++++++++++
+ widget/src/gtk2/nsFilePicker.h                         |    6 
+ xpcom/components/Makefile.in                           |    1 
+ xpcom/components/ManifestParser.cpp                    |    9 
+ xpcom/io/Makefile.in                                   |    2 
+ xpcom/io/nsLocalFileUnix.cpp                           |   42 +-
+ 25 files changed, 1154 insertions(+), 31 deletions(-)
+
+Index: mozilla/modules/libpref/src/Makefile.in
+===================================================================
+--- mozilla.orig/modules/libpref/src/Makefile.in
++++ mozilla/modules/libpref/src/Makefile.in
+@@ -90,14 +90,16 @@
+ # Optimizer bug with GCC 3.2.2 on OS/2
+ ifeq ($(OS_ARCH), OS2)
+ nsPrefService.$(OBJ_SUFFIX): nsPrefService.cpp
+ 	$(REPORT_BUILD)
+ 	@$(MAKE_DEPS_AUTO_CXX)
  	$(ELOG) $(CCC) $(OUTOPTION)$@ -c $(COMPILE_CXXFLAGS:-O2=-O1) $(_VPATH_SRCS)
  endif
  
@@ -10,18 +44,37 @@ diff -Nur a/modules/libpref/src/Makefile.in b/modules/libpref/src/Makefile.in
  
  greprefs.js: $(GREPREF_FILES)
  	$(PYTHON) $(topsrcdir)/config/Preprocessor.py $(PREF_PPFLAGS) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $^ > $@
-diff -Nur a/modules/libpref/src/nsPrefService.cpp b/modules/libpref/src/nsPrefService.cpp
---- a/modules/libpref/src/nsPrefService.cpp	2010-11-15 21:41:29.000000000 +0100
-+++ b/modules/libpref/src/nsPrefService.cpp	2010-11-18 12:18:51.850643351 +0100
-@@ -60,6 +60,7 @@
+ 
+ libs:: greprefs.js
+ 	$(INSTALL) $^ $(DIST)/bin/
+Index: mozilla/modules/libpref/src/nsPrefService.cpp
+===================================================================
+--- mozilla.orig/modules/libpref/src/nsPrefService.cpp
++++ mozilla/modules/libpref/src/nsPrefService.cpp
+@@ -55,16 +55,17 @@
+ #include "nsIStringEnumerator.h"
+ #include "nsIZipReader.h"
+ #include "nsPrefBranch.h"
+ #include "nsXPIDLString.h"
+ #include "nsCRT.h"
+ #include "nsCOMArray.h"
  #include "nsXPCOMCID.h"
  #include "nsAutoPtr.h"
- #include "nsThreadUtils.h"
 +#include "nsKDEUtils.h"
  
  #include "nsQuickSort.h"
  #include "prmem.h"
-@@ -765,6 +766,24 @@
+ #include "pldhash.h"
+ 
+ #include "prefapi.h"
+ #include "prefread.h"
+ #include "prefapi_private_data.h"
+@@ -772,30 +773,48 @@
+ }
+ 
+ static nsresult pref_LoadPrefsInDirList(const char *listId)
+ {
+   nsresult rv;
    nsCOMPtr<nsIProperties> dirSvc(do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv));
    if (NS_FAILED(rv)) return rv;
  
@@ -46,7 +99,13 @@ diff -Nur a/modules/libpref/src/nsPrefService.cpp b/modules/libpref/src/nsPrefSe
    nsCOMPtr<nsISimpleEnumerator> dirList;
    dirSvc->Get(listId,
                NS_GET_IID(nsISimpleEnumerator),
-@@ -778,7 +797,7 @@
+               getter_AddRefs(dirList));
+   if (dirList) {
+     PRBool hasMore;
+     while (NS_SUCCEEDED(dirList->HasMoreElements(&hasMore)) && hasMore) {
+       nsCOMPtr<nsISupports> elem;
+       dirList->GetNext(getter_AddRefs(elem));
+       if (elem) {
          nsCOMPtr<nsIFile> dir = do_QueryInterface(elem);
          if (dir) {
            // Do we care if a file provided by this process fails to load?
@@ -55,7 +114,17 @@ diff -Nur a/modules/libpref/src/nsPrefService.cpp b/modules/libpref/src/nsPrefSe
          }
        }
      }
-@@ -819,6 +838,7 @@
+   }
+   return NS_OK;
+ }
+ 
+ //----------------------------------------------------------------------------------------
+@@ -826,28 +845,40 @@
+   /* these pref file names should not be used: we process them after all other application pref files for backwards compatibility */
+   static const char* specialFiles[] = {
+ #if defined(XP_MAC) || defined(XP_MACOSX)
+       "macprefs.js"
+ #elif defined(XP_WIN)
        "winpref.js"
  #elif defined(XP_UNIX)
        "unix.js"
@@ -63,7 +132,12 @@ diff -Nur a/modules/libpref/src/nsPrefService.cpp b/modules/libpref/src/nsPrefSe
  #if defined(VMS)
        , "openvms.js"
  #elif defined(_AIX)
-@@ -831,6 +851,17 @@
+       , "aix.js"
+ #endif
+ #elif defined(XP_OS2)
+       "os2pref.js"
+ #elif defined(XP_BEOS)
+       "beos.js"
  #endif
    };
  
@@ -81,18 +155,35 @@ diff -Nur a/modules/libpref/src/nsPrefService.cpp b/modules/libpref/src/nsPrefSe
    rv = pref_LoadPrefsInDir(defaultPrefDir, specialFiles, NS_ARRAY_LENGTH(specialFiles));
    if (NS_FAILED(rv)) {
      NS_WARNING("Error parsing application default preferences.");
-diff -Nur a/toolkit/components/downloads/src/Makefile.in b/toolkit/components/downloads/src/Makefile.in
---- a/toolkit/components/downloads/src/Makefile.in	2010-11-15 21:40:13.000000000 +0100
-+++ b/toolkit/components/downloads/src/Makefile.in	2010-11-18 12:18:51.850643351 +0100
-@@ -76,3 +76,4 @@
+   }
+ 
+   return NS_OK;
+ }
+ 
+Index: mozilla/toolkit/components/downloads/src/Makefile.in
+===================================================================
+--- mozilla.orig/toolkit/components/downloads/src/Makefile.in
++++ mozilla/toolkit/components/downloads/src/Makefile.in
+@@ -71,8 +71,9 @@
+   nsDownloadManagerUI.manifest \
+   $(NULL)
+ endif
+ 
+ include $(topsrcdir)/config/rules.mk
  
  EXTRA_DSO_LDOPTS += $(MOZ_COMPONENT_LIBS)
  
 +LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
-diff -Nur a/toolkit/components/downloads/src/nsDownloadManager.cpp b/toolkit/components/downloads/src/nsDownloadManager.cpp
---- a/toolkit/components/downloads/src/nsDownloadManager.cpp	2010-11-15 21:40:13.000000000 +0100
-+++ b/toolkit/components/downloads/src/nsDownloadManager.cpp	2010-11-18 12:18:51.850643351 +0100
-@@ -76,6 +76,10 @@
+Index: mozilla/toolkit/components/downloads/src/nsDownloadManager.cpp
+===================================================================
+--- mozilla.orig/toolkit/components/downloads/src/nsDownloadManager.cpp
++++ mozilla/toolkit/components/downloads/src/nsDownloadManager.cpp
+@@ -71,16 +71,20 @@
+ 
+ #if defined(XP_WIN) && !defined(WINCE)
+ #include <shlobj.h>
+ #ifdef DOWNLOAD_SCANNER
+ #include "nsDownloadScanner.h"
  #endif
  #endif
  
@@ -103,7 +194,17 @@ diff -Nur a/toolkit/components/downloads/src/nsDownloadManager.cpp b/toolkit/com
  #ifdef XP_MACOSX
  #include <CoreFoundation/CoreFoundation.h>
  #endif
-@@ -2195,6 +2199,15 @@
+ 
+ #define DOWNLOAD_MANAGER_BUNDLE "chrome://mozapps/locale/downloads/downloads.properties"
+ #define DOWNLOAD_MANAGER_ALERT_ICON "chrome://mozapps/skin/downloads/downloadIcon.png"
+ #define PREF_BDM_SHOWALERTONCOMPLETE "browser.download.manager.showAlertOnComplete"
+ #define PREF_BDM_SHOWALERTINTERVAL "browser.download.manager.showAlertInterval"
+@@ -2197,16 +2201,25 @@
+       nsCOMPtr<nsIPrefBranch> pref(do_GetService(NS_PREFSERVICE_CONTRACTID));
+ 
+       // Master pref to control this function.
+       PRBool showTaskbarAlert = PR_TRUE;
+       if (pref)
          pref->GetBoolPref(PREF_BDM_SHOWALERTONCOMPLETE, &showTaskbarAlert);
  
        if (showTaskbarAlert) {
@@ -119,7 +220,17 @@ diff -Nur a/toolkit/components/downloads/src/nsDownloadManager.cpp b/toolkit/com
          PRInt32 alertInterval = 2000;
          if (pref)
            pref->GetIntPref(PREF_BDM_SHOWALERTINTERVAL, &alertInterval);
-@@ -2230,6 +2243,7 @@
+ 
+         PRInt64 alertIntervalUSec = alertInterval * PR_USEC_PER_MSEC;
+         PRInt64 goat = PR_Now() - mStartTime;
+         showTaskbarAlert = goat > alertIntervalUSec;
+ 
+@@ -2232,16 +2245,17 @@
+               // because if it is, they'll click open the download manager and
+               // the items they downloaded will have been removed.
+               alerts->ShowAlertNotification(
+                   NS_LITERAL_STRING(DOWNLOAD_MANAGER_ALERT_ICON), title,
+                   message, !removeWhenDone, EmptyString(), mDownloadManager,
                    EmptyString());
              }
          }
@@ -127,10 +238,21 @@ diff -Nur a/toolkit/components/downloads/src/nsDownloadManager.cpp b/toolkit/com
        }
  
  #if (defined(XP_WIN) && !defined(WINCE)) || defined(XP_MACOSX)
-diff -Nur a/toolkit/content/jar.mn b/toolkit/content/jar.mn
---- a/toolkit/content/jar.mn	2010-11-15 21:40:16.000000000 +0100
-+++ b/toolkit/content/jar.mn	2010-11-18 12:18:51.850643351 +0100
-@@ -45,6 +45,8 @@
+       nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(mTarget);
+       nsCOMPtr<nsIFile> file;
+       nsAutoString path;
+ 
+       if (fileURL &&
+Index: mozilla/toolkit/content/jar.mn
+===================================================================
+--- mozilla.orig/toolkit/content/jar.mn
++++ mozilla/toolkit/content/jar.mn
+@@ -40,29 +40,33 @@
+ *+ content/global/viewZoomOverlay.js          (viewZoomOverlay.js)
+ *+ content/global/bindings/autocomplete.xml    (widgets/autocomplete.xml)
+ *+ content/global/bindings/browser.xml         (widgets/browser.xml)
+ *+ content/global/bindings/button.xml          (widgets/button.xml)
+ *+ content/global/bindings/checkbox.xml        (widgets/checkbox.xml)
  *+ content/global/bindings/colorpicker.xml     (widgets/colorpicker.xml)
  *+ content/global/bindings/datetimepicker.xml  (widgets/datetimepicker.xml)
  *+ content/global/bindings/dialog.xml          (widgets/dialog.xml)
@@ -139,7 +261,13 @@ diff -Nur a/toolkit/content/jar.mn b/toolkit/content/jar.mn
  *+ content/global/bindings/editor.xml          (widgets/editor.xml)
  *  content/global/bindings/expander.xml        (widgets/expander.xml)
  *  content/global/bindings/filefield.xml       (widgets/filefield.xml)
-@@ -58,6 +60,8 @@
+ *+ content/global/bindings/findbar.xml         (widgets/findbar.xml)
+ *+ content/global/bindings/general.xml         (widgets/general.xml)
+ *+ content/global/bindings/groupbox.xml        (widgets/groupbox.xml)
+ *+ content/global/bindings/listbox.xml         (widgets/listbox.xml)
+ *+ content/global/bindings/menu.xml            (widgets/menu.xml)
+ *+ content/global/bindings/menulist.xml        (widgets/menulist.xml)
+ *+ content/global/bindings/notification.xml    (widgets/notification.xml)
  *+ content/global/bindings/numberbox.xml       (widgets/numberbox.xml)
  *+ content/global/bindings/popup.xml           (widgets/popup.xml)
  *+ content/global/bindings/preferences.xml     (widgets/preferences.xml)
@@ -148,10 +276,21 @@ diff -Nur a/toolkit/content/jar.mn b/toolkit/content/jar.mn
  *+ content/global/bindings/progressmeter.xml   (widgets/progressmeter.xml)
  *+ content/global/bindings/radio.xml           (widgets/radio.xml)
  *+ content/global/bindings/resizer.xml         (widgets/resizer.xml)
-diff -Nur a/toolkit/content/widgets/dialog-kde.xml b/toolkit/content/widgets/dialog-kde.xml
---- a/toolkit/content/widgets/dialog-kde.xml	2010-11-15 21:40:17.000000000 +0100
-+++ b/toolkit/content/widgets/dialog-kde.xml	2010-11-18 12:18:51.850643351 +0100
-@@ -16,7 +16,7 @@
+ *+ content/global/bindings/richlistbox.xml     (widgets/richlistbox.xml)
+ *+ content/global/bindings/scale.xml           (widgets/scale.xml)
+ *+ content/global/bindings/scrollbar.xml       (widgets/scrollbar.xml)
+ *+ content/global/bindings/scrollbox.xml       (widgets/scrollbox.xml)
+ *+ content/global/bindings/splitter.xml        (widgets/splitter.xml)
+Index: mozilla/toolkit/content/widgets/dialog-kde.xml
+===================================================================
+--- mozilla.orig/toolkit/content/widgets/dialog-kde.xml
++++ mozilla/toolkit/content/widgets/dialog-kde.xml
+@@ -11,25 +11,34 @@
+     </resources>
+     <content>
+       <xul:vbox class="box-inherit dialog-content-box" flex="1">
+         <children/>
+       </xul:vbox>
            
        <xul:hbox class="dialog-button-box" anonid="buttons"
                  xbl:inherits="pack=buttonpack,align=buttonalign,dir=buttondir,orient=buttonorient"
@@ -160,7 +299,8 @@ diff -Nur a/toolkit/content/widgets/dialog-kde.xml b/toolkit/content/widgets/dia
                  >
          <xul:button dlgtype="disclosure" class="dialog-button" hidden="true"/>
          <xul:button dlgtype="help" class="dialog-button" hidden="true"/>
-@@ -25,6 +25,15 @@
+         <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
+         <xul:button dlgtype="extra1" class="dialog-button" hidden="true"/>
          <xul:spacer anonid="spacer" flex="1"/>
          <xul:button dlgtype="cancel" class="dialog-button"/>
          <xul:button dlgtype="accept" class="dialog-button" xbl:inherits="disabled=buttondisabledaccept"/>
@@ -176,10 +316,21 @@ diff -Nur a/toolkit/content/widgets/dialog-kde.xml b/toolkit/content/widgets/dia
  #else
                  pack="end">
          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
-diff -Nur a/toolkit/content/widgets/preferences-kde.xml b/toolkit/content/widgets/preferences-kde.xml
---- a/toolkit/content/widgets/preferences-kde.xml	2010-11-15 21:40:17.000000000 +0100
-+++ b/toolkit/content/widgets/preferences-kde.xml	2010-11-18 12:18:51.860642952 +0100
-@@ -573,7 +573,7 @@
+         <xul:spacer anonid="spacer" flex="1" hidden="true"/>
+         <xul:button dlgtype="accept" class="dialog-button" xbl:inherits="disabled=buttondisabledaccept"/>
+         <xul:button dlgtype="extra1" class="dialog-button" hidden="true"/>
+         <xul:button dlgtype="cancel" class="dialog-button"/>
+         <xul:button dlgtype="help" class="dialog-button" hidden="true"/>
+Index: mozilla/toolkit/content/widgets/preferences-kde.xml
+===================================================================
+--- mozilla.orig/toolkit/content/widgets/preferences-kde.xml
++++ mozilla/toolkit/content/widgets/preferences-kde.xml
+@@ -568,25 +568,34 @@
+                         role="listbox"/> <!-- Expose to accessibility APIs as a listbox -->
+       </xul:windowdragbox>
+       <xul:hbox flex="1" class="paneDeckContainer">
+         <xul:deck anonid="paneDeck" flex="1">
+           <children includes="prefpane"/>
          </xul:deck>
        </xul:hbox>
        <xul:hbox anonid="dlg-buttons" class="prefWindow-dlgbuttons"
@@ -188,7 +339,8 @@ diff -Nur a/toolkit/content/widgets/preferences-kde.xml b/toolkit/content/widget
                  >
          <xul:button dlgtype="disclosure" class="dialog-button" hidden="true"/>
          <xul:button dlgtype="help" class="dialog-button" hidden="true" icon="help"/>
-@@ -582,6 +582,15 @@
+         <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
+         <xul:button dlgtype="extra1" class="dialog-button" hidden="true"/>
          <xul:spacer anonid="spacer" flex="1"/>
          <xul:button dlgtype="cancel" class="dialog-button" icon="cancel"/>
          <xul:button dlgtype="accept" class="dialog-button" icon="accept"/>
@@ -204,10 +356,21 @@ diff -Nur a/toolkit/content/widgets/preferences-kde.xml b/toolkit/content/widget
  #else
                  pack="end">
          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
-diff -Nur a/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp b/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
---- a/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2010-11-15 21:40:41.000000000 +0100
-+++ b/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2010-11-18 12:18:51.860642952 +0100
-@@ -49,6 +49,8 @@
+         <xul:spacer anonid="spacer" flex="1"/>
+         <xul:button dlgtype="accept" class="dialog-button" icon="accept"/>
+         <xul:button dlgtype="extra1" class="dialog-button" hidden="true"/>
+         <xul:button dlgtype="cancel" class="dialog-button" icon="cancel"/>
+         <xul:button dlgtype="help" class="dialog-button" hidden="true" icon="help"/>
+Index: mozilla/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
+===================================================================
+--- mozilla.orig/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
++++ mozilla/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
+@@ -44,32 +44,35 @@
+ #include "nsIURI.h"
+ #include "nsReadableUtils.h"
+ #include "nsArrayUtils.h"
+ #include "prnetdb.h"
+ #include "prenv.h"
  #include "nsPrintfCString.h"
  #include "nsNetUtil.h"
  #include "nsISupportsPrimitives.h"
@@ -216,7 +379,16 @@ diff -Nur a/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp b/toolkit/sys
  
  class nsUnixSystemProxySettings : public nsISystemProxySettings {
  public:
-@@ -65,6 +67,7 @@
+   NS_DECL_ISUPPORTS
+   NS_DECL_NSISYSTEMPROXYSETTINGS
+ 
+   nsUnixSystemProxySettings() {}
+   nsresult Init();
+ 
+ private:
+   ~nsUnixSystemProxySettings() {}
+   
+   nsCOMPtr<nsIGConfService> mGConf;
    PRBool IsProxyMode(const char* aMode);
    nsresult SetProxyResultFromGConf(const char* aKeyBase, const char* aType, nsACString& aResult);
    nsresult GetProxyFromGConf(const nsACString& aScheme, const nsACString& aHost, PRInt32 aPort, nsACString& aResult);
@@ -224,7 +396,17 @@ diff -Nur a/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp b/toolkit/sys
  };
  
  NS_IMPL_ISUPPORTS1(nsUnixSystemProxySettings, nsISystemProxySettings)
-@@ -406,12 +409,40 @@
+ 
+ nsresult
+ nsUnixSystemProxySettings::Init()
+ {
+   mGConf = do_GetService(NS_GCONFSERVICE_CONTRACTID);
+@@ -401,22 +404,50 @@
+   nsCAutoString host;
+   rv = aURI->GetHost(host);
+   NS_ENSURE_SUCCESS(rv, rv);
+ 
+   PRInt32 port;
    rv = aURI->GetPort(&port);
    NS_ENSURE_SUCCESS(rv, rv);
  
@@ -265,10 +447,21 @@ diff -Nur a/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp b/toolkit/sys
  #define NS_UNIXSYSTEMPROXYSERVICE_CID  /* 0fa3158c-d5a7-43de-9181-a285e74cf1d4 */\
       { 0x0fa3158c, 0xd5a7, 0x43de, \
         {0x91, 0x81, 0xa2, 0x85, 0xe7, 0x4c, 0xf1, 0xd4 } }
-diff -Nur a/toolkit/xre/Makefile.in b/toolkit/xre/Makefile.in
---- a/toolkit/xre/Makefile.in	2010-11-15 21:41:30.000000000 +0100
-+++ b/toolkit/xre/Makefile.in	2010-11-18 12:18:51.860642952 +0100
-@@ -102,7 +102,8 @@
+ 
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsUnixSystemProxySettings, Init)
+ NS_DEFINE_NAMED_CID(NS_UNIXSYSTEMPROXYSERVICE_CID);
+ 
+ static const mozilla::Module::CIDEntry kUnixProxyCIDs[] = {
+Index: mozilla/toolkit/xre/Makefile.in
+===================================================================
+--- mozilla.orig/toolkit/xre/Makefile.in
++++ mozilla/toolkit/xre/Makefile.in
+@@ -97,17 +97,18 @@
+ else
+ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
+ CPPSRCS += nsNativeAppSupportOS2.cpp
+ else
+ ifeq ($(MOZ_WIDGET_TOOLKIT),beos)
  CPPSRCS += nsNativeAppSupportBeOS.cpp
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
@@ -278,9 +471,15 @@ diff -Nur a/toolkit/xre/Makefile.in b/toolkit/xre/Makefile.in
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),qt)
  CPPSRCS += nsNativeAppSupportQt.cpp
-diff -Nur a/toolkit/xre/nsKDEUtils.cpp b/toolkit/xre/nsKDEUtils.cpp
---- a/toolkit/xre/nsKDEUtils.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ b/toolkit/xre/nsKDEUtils.cpp	2010-11-18 12:18:51.860642952 +0100
+ CPPSRCS += nsQAppInstance.cpp
+ EXPORTS += nsQAppInstance.h
+ ifdef MOZ_ENABLE_MEEGOTOUCH
+ MOCSRCS += moc_MozMeegoAppService.cpp
+ CPPSRCS += moc_MozMeegoAppService.cpp
+Index: mozilla/toolkit/xre/nsKDEUtils.cpp
+===================================================================
+--- /dev/null
++++ mozilla/toolkit/xre/nsKDEUtils.cpp
 @@ -0,0 +1,334 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -616,9 +815,10 @@ diff -Nur a/toolkit/xre/nsKDEUtils.cpp b/toolkit/xre/nsKDEUtils.cpp
 +    fputs( "\\E\n", commandFile ); // done as \E, so it cannot happen in normal data
 +    fflush( commandFile );
 +    }
-diff -Nur a/toolkit/xre/nsKDEUtils.h b/toolkit/xre/nsKDEUtils.h
---- a/toolkit/xre/nsKDEUtils.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/toolkit/xre/nsKDEUtils.h	2010-11-18 12:18:51.860642952 +0100
+Index: mozilla/toolkit/xre/nsKDEUtils.h
+===================================================================
+--- /dev/null
++++ mozilla/toolkit/xre/nsKDEUtils.h
 @@ -0,0 +1,77 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-
 + *
@@ -697,10 +897,16 @@ diff -Nur a/toolkit/xre/nsKDEUtils.h b/toolkit/xre/nsKDEUtils.h
 +    };
 +
 +#endif // nsKDEUtils
-diff -Nur a/uriloader/exthandler/Makefile.in b/uriloader/exthandler/Makefile.in
---- a/uriloader/exthandler/Makefile.in	2010-11-15 21:40:50.000000000 +0100
-+++ b/uriloader/exthandler/Makefile.in	2010-11-18 12:18:51.860642952 +0100
-@@ -99,8 +99,9 @@
+Index: mozilla/uriloader/exthandler/Makefile.in
+===================================================================
+--- mozilla.orig/uriloader/exthandler/Makefile.in
++++ mozilla/uriloader/exthandler/Makefile.in
+@@ -94,18 +94,19 @@
+             -I$(topsrcdir)/dom/ipc \
+             -I$(topsrcdir)/content/base/src \
+             -I$(topsrcdir)/content/events/src \
+             -I$(topsrcdir)/netwerk/base/src \
+             -I$(topsrcdir)/netwerk/protocol/http
  endif
  
  ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
@@ -711,9 +917,15 @@ diff -Nur a/uriloader/exthandler/Makefile.in b/uriloader/exthandler/Makefile.in
  endif
  
  ifeq ($(MOZ_WIDGET_TOOLKIT),android)
-diff -Nur a/uriloader/exthandler/unix/nsCommonRegistry.cpp b/uriloader/exthandler/unix/nsCommonRegistry.cpp
---- a/uriloader/exthandler/unix/nsCommonRegistry.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ b/uriloader/exthandler/unix/nsCommonRegistry.cpp	2010-11-18 12:18:51.860642952 +0100
+ OSHELPER += nsMIMEInfoAndroid.cpp
+ OSHELPER += nsAndroidHandlerApp.cpp
+ OSHELPER += nsExternalSharingAppService.cpp
+ EXPORTS += nsExternalSharingAppService.h
+ OSHELPER += nsExternalURLHandlerService.cpp
+Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.cpp
+===================================================================
+--- /dev/null
++++ mozilla/uriloader/exthandler/unix/nsCommonRegistry.cpp
 @@ -0,0 +1,87 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -802,9 +1014,10 @@ diff -Nur a/uriloader/exthandler/unix/nsCommonRegistry.cpp b/uriloader/exthandle
 +        return nsKDERegistry::GetFromType( aMIMEType );
 +    return nsGNOMERegistry::GetFromType( aMIMEType );
 +}
-diff -Nur a/uriloader/exthandler/unix/nsCommonRegistry.h b/uriloader/exthandler/unix/nsCommonRegistry.h
---- a/uriloader/exthandler/unix/nsCommonRegistry.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/uriloader/exthandler/unix/nsCommonRegistry.h	2010-11-18 12:18:51.860642952 +0100
+Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.h
+===================================================================
+--- /dev/null
++++ mozilla/uriloader/exthandler/unix/nsCommonRegistry.h
 @@ -0,0 +1,56 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -862,9 +1075,10 @@ diff -Nur a/uriloader/exthandler/unix/nsCommonRegistry.h b/uriloader/exthandler/
 +
 +  static already_AddRefed<nsMIMEInfoBase> GetFromType(const nsACString& aMIMEType);
 +};
-diff -Nur a/uriloader/exthandler/unix/nsKDERegistry.cpp b/uriloader/exthandler/unix/nsKDERegistry.cpp
---- a/uriloader/exthandler/unix/nsKDERegistry.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ b/uriloader/exthandler/unix/nsKDERegistry.cpp	2010-11-18 12:18:51.860642952 +0100
+Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.cpp
+===================================================================
+--- /dev/null
++++ mozilla/uriloader/exthandler/unix/nsKDERegistry.cpp
 @@ -0,0 +1,119 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -985,9 +1199,10 @@ diff -Nur a/uriloader/exthandler/unix/nsKDERegistry.cpp b/uriloader/exthandler/u
 +        }
 +    return nsnull;
 +}
-diff -Nur a/uriloader/exthandler/unix/nsKDERegistry.h b/uriloader/exthandler/unix/nsKDERegistry.h
---- a/uriloader/exthandler/unix/nsKDERegistry.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/uriloader/exthandler/unix/nsKDERegistry.h	2010-11-18 12:18:51.860642952 +0100
+Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.h
+===================================================================
+--- /dev/null
++++ mozilla/uriloader/exthandler/unix/nsKDERegistry.h
 @@ -0,0 +1,61 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -1050,10 +1265,16 @@ diff -Nur a/uriloader/exthandler/unix/nsKDERegistry.h b/uriloader/exthandler/uni
 +  static already_AddRefed<nsMIMEInfoBase> GetFromHelper(const nsCStringArray& command);
 +
 +};
-diff -Nur a/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp b/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
---- a/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2010-11-15 21:40:50.000000000 +0100
-+++ b/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2010-11-18 12:18:51.860642952 +0100
-@@ -53,18 +53,21 @@
+Index: mozilla/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
+===================================================================
+--- mozilla.orig/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
++++ mozilla/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
+@@ -48,28 +48,31 @@
+ #include <QDesktopServices>
+ #include <QUrl>
+ #include <QString>
+ #include <contentaction/contentaction.h>
+ #include "nsContentHandlerApp.h"
  #endif
  
  #include "nsMIMEInfoUnix.h"
@@ -1077,7 +1298,17 @@ diff -Nur a/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp b/uriloader/exthandler/
  
  #if (MOZ_PLATFORM_MAEMO == 5) && defined (MOZ_ENABLE_GNOMEVFS)
    if (NS_FAILED(rv)){
-@@ -96,12 +99,12 @@
+     HildonURIAction *action = hildon_uri_get_default_action(mSchemeOrType.get(), nsnull);
+     if (action) {
+       nsCAutoString spec;
+       aURI->GetAsciiSpec(spec);
+       if (hildon_uri_open(spec.get(), action, nsnull))
+@@ -91,22 +94,22 @@
+ 
+   return rv;
+ }
+ 
+ NS_IMETHODIMP
  nsMIMEInfoUnix::GetHasDefaultHandler(PRBool *_retval)
  {
    *_retval = PR_FALSE;
@@ -1092,7 +1323,17 @@ diff -Nur a/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp b/uriloader/exthandler/
      }
    }
    if (mimeInfo)
-@@ -154,6 +157,23 @@
+     *_retval = PR_TRUE;
+ 
+   if (*_retval)
+     return NS_OK;
+ 
+@@ -149,32 +152,49 @@
+     ContentAction::Action::defaultActionForFile(uri, QString(mSchemeOrType.get()));
+   if (action.isValid()) {
+     action.trigger();
+     return NS_OK;
+   }
    return NS_ERROR_FAILURE;
  #endif
  
@@ -1116,7 +1357,15 @@ diff -Nur a/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp b/uriloader/exthandler/
    nsCOMPtr<nsIGIOService> giovfs = do_GetService(NS_GIOSERVICE_CONTRACTID);
    nsCOMPtr<nsIGnomeVFSService> gnomevfs = do_GetService(NS_GNOMEVFSSERVICE_CONTRACTID);
    if (giovfs) {
-@@ -169,7 +189,7 @@
+     nsCOMPtr<nsIGIOMimeApp> app;
+     if (NS_SUCCEEDED(giovfs->GetAppForMimeType(mSchemeOrType, getter_AddRefs(app))) && app)
+       return app->Launch(nativePath);
+   } else if (gnomevfs) {
+     /* Fallback to GnomeVFS */
+     nsCOMPtr<nsIGnomeVFSMimeApp> app;
+     if (NS_SUCCEEDED(gnomevfs->GetAppForMimeType(mSchemeOrType, getter_AddRefs(app))) && app)
+       return app->Launch(nativePath);
+   }
  
    // If we haven't got an app we try to get a valid one by searching for the
    // extension mapped type
@@ -1125,10 +1374,21 @@ diff -Nur a/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp b/uriloader/exthandler/
    if (mimeInfo) {
      nsCAutoString type;
      mimeInfo->GetType(type);
-diff -Nur a/uriloader/exthandler/unix/nsOSHelperAppService.cpp b/uriloader/exthandler/unix/nsOSHelperAppService.cpp
---- a/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2010-11-15 21:40:50.000000000 +0100
-+++ b/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2010-11-18 12:18:51.860642952 +0100
-@@ -49,7 +49,7 @@
+     if (giovfs) {
+       nsCOMPtr<nsIGIOMimeApp> app;
+       if (NS_SUCCEEDED(giovfs->GetAppForMimeType(type, getter_AddRefs(app))) && app)
+         return app->Launch(nativePath);
+     } else if (gnomevfs) {
+Index: mozilla/uriloader/exthandler/unix/nsOSHelperAppService.cpp
+===================================================================
+--- mozilla.orig/uriloader/exthandler/unix/nsOSHelperAppService.cpp
++++ mozilla/uriloader/exthandler/unix/nsOSHelperAppService.cpp
+@@ -44,17 +44,17 @@
+ #if (MOZ_PLATFORM_MAEMO == 6)
+ #include <contentaction/contentaction.h>
+ #include <QString>
+ #endif
+ 
  #include "nsOSHelperAppService.h"
  #include "nsMIMEInfoUnix.h"
  #ifdef MOZ_WIDGET_GTK2
@@ -1137,7 +1397,17 @@ diff -Nur a/uriloader/exthandler/unix/nsOSHelperAppService.cpp b/uriloader/extha
  #endif
  #include "nsISupports.h"
  #include "nsString.h"
-@@ -1224,7 +1224,7 @@
+ #include "nsReadableUtils.h"
+ #include "nsUnicharUtils.h"
+ #include "nsXPIDLString.h"
+ #include "nsIURL.h"
+ #include "nsIFileStreams.h"
+@@ -1219,29 +1219,29 @@
+     ContentAction::Action::defaultActionForScheme(QString(aProtocolScheme) + ':');
+ 
+   if (action.isValid())
+     *aHandlerExists = PR_TRUE;
+ #endif
  
  #ifdef MOZ_WIDGET_GTK2
    // Check the GConf registry for a protocol handler
@@ -1146,7 +1416,11 @@ diff -Nur a/uriloader/exthandler/unix/nsOSHelperAppService.cpp b/uriloader/extha
  #if (MOZ_PLATFORM_MAEMO == 5) && defined (MOZ_ENABLE_GNOMEVFS)
    *aHandlerExists = nsMIMEInfoUnix::HandlerExists(aProtocolScheme);
  #endif
-@@ -1236,7 +1236,7 @@
+ #endif
+ 
+   return NS_OK;
+ }
+ 
  NS_IMETHODIMP nsOSHelperAppService::GetApplicationDescription(const nsACString& aScheme, nsAString& _retval)
  {
  #ifdef MOZ_WIDGET_GTK2
@@ -1155,7 +1429,17 @@ diff -Nur a/uriloader/exthandler/unix/nsOSHelperAppService.cpp b/uriloader/extha
    return _retval.IsEmpty() ? NS_ERROR_NOT_AVAILABLE : NS_OK;
  #else
    return NS_ERROR_NOT_AVAILABLE;
-@@ -1332,7 +1332,7 @@
+ #endif
+ }
+ 
+ nsresult nsOSHelperAppService::GetFileTokenForPath(const PRUnichar * platformAppPath, nsIFile ** aFile)
+ {
+@@ -1327,17 +1327,17 @@
+                                          minorType,
+                                          mime_types_description,
+                                          PR_TRUE);
+ 
+   if (NS_FAILED(rv) || majorType.IsEmpty()) {
      
  #ifdef MOZ_WIDGET_GTK2
      LOG(("Looking in GNOME registry\n"));
@@ -1164,7 +1448,17 @@ diff -Nur a/uriloader/exthandler/unix/nsOSHelperAppService.cpp b/uriloader/extha
      if (gnomeInfo) {
        LOG(("Got MIMEInfo from GNOME registry\n"));
        return gnomeInfo;
-@@ -1458,7 +1458,7 @@
+     }
+ #endif
+ 
+     rv = LookUpTypeAndDescription(NS_ConvertUTF8toUTF16(aFileExt),
+                                   majorType,
+@@ -1453,17 +1453,17 @@
+ #ifdef MOZ_WIDGET_GTK2
+   nsMIMEInfoBase *gnomeInfo = nsnull;
+   if (handler.IsEmpty()) {
+     // No useful data yet.  Check the GNOME registry.  Unfortunately, newer
+     // GNOME versions no longer have type-to-extension mappings, so we might
      // get back a MIMEInfo without any extensions set.  In that case we'll have
      // to look in our mime.types files for the extensions.    
      LOG(("Looking in GNOME registry\n"));
@@ -1173,10 +1467,21 @@ diff -Nur a/uriloader/exthandler/unix/nsOSHelperAppService.cpp b/uriloader/extha
      if (gnomeInfo && gnomeInfo->HasExtensions()) {
        LOG(("Got MIMEInfo from GNOME registry, and it has extensions set\n"));
        return gnomeInfo;
-diff -Nur a/widget/src/gtk2/Makefile.in b/widget/src/gtk2/Makefile.in
---- a/widget/src/gtk2/Makefile.in	2010-11-15 21:40:52.000000000 +0100
-+++ b/widget/src/gtk2/Makefile.in	2010-11-18 12:18:51.860642952 +0100
-@@ -162,6 +162,9 @@
+     }
+   }
+ #endif
+ 
+   // Now look up our extensions
+Index: mozilla/widget/src/gtk2/Makefile.in
+===================================================================
+--- mozilla.orig/widget/src/gtk2/Makefile.in
++++ mozilla/widget/src/gtk2/Makefile.in
+@@ -157,11 +157,14 @@
+ 
+ DEFINES		+= -DCAIRO_GFX
+ 
+ INCLUDES	+= \
+ 		-I$(srcdir)/../xpwidgets \
  		-I$(srcdir)/../shared \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
  		$(NULL)
@@ -1186,10 +1491,16 @@ diff -Nur a/widget/src/gtk2/Makefile.in b/widget/src/gtk2/Makefile.in
  ifdef MOZ_X11
  INCLUDES   	+= -I$(srcdir)/../shared/x11
  endif
-diff -Nur a/widget/src/gtk2/nsFilePicker.cpp b/widget/src/gtk2/nsFilePicker.cpp
---- a/widget/src/gtk2/nsFilePicker.cpp	2010-11-15 21:41:30.000000000 +0100
-+++ b/widget/src/gtk2/nsFilePicker.cpp	2010-11-18 12:18:51.860642952 +0100
-@@ -36,6 +36,7 @@
+Index: mozilla/widget/src/gtk2/nsFilePicker.cpp
+===================================================================
+--- mozilla.orig/widget/src/gtk2/nsFilePicker.cpp
++++ mozilla/widget/src/gtk2/nsFilePicker.cpp
+@@ -31,16 +31,17 @@
+  * decision by deleting the provisions above and replace them with the notice
+  * and other provisions required by the GPL or the LGPL. If you do not delete
+  * the provisions above, a recipient may use your version of this file under
+  * the terms of any one of the MPL, the GPL or the LGPL.
+  *
   * ***** END LICENSE BLOCK ***** */
  
  #include <gtk/gtk.h>
@@ -1197,15 +1508,35 @@ diff -Nur a/widget/src/gtk2/nsFilePicker.cpp b/widget/src/gtk2/nsFilePicker.cpp
  
  #include "nsIFileURL.h"
  #include "nsIURI.h"
-@@ -55,6 +56,7 @@
+ #include "nsIWidget.h"
+ #include "nsILocalFile.h"
+ #include "nsIStringBundle.h"
+ 
+ #include "nsArrayEnumerator.h"
+@@ -50,16 +51,17 @@
+ #include "nsReadableUtils.h"
+ #include "mozcontainer.h"
+ 
+ #include "prmem.h"
+ #include "prlink.h"
  
  #include "nsFilePicker.h"
  #include "nsAccessibilityHelper.h"
 +#include "nsKDEUtils.h"
  
- #ifdef MOZ_PLATFORM_MAEMO
+ #if (MOZ_PLATFORM_MAEMO == 5)
  #include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
-@@ -275,7 +277,9 @@
+ #endif
+ 
+ #define MAX_PREVIEW_SIZE 180
+ 
+ nsILocalFile *nsFilePicker::mPrevDisplayDirectory = nsnull;
+@@ -271,17 +273,19 @@
+   return nsBaseFilePicker::AppendFilters(aFilterMask);
+ }
+ 
+ NS_IMETHODIMP
+ nsFilePicker::AppendFilter(const nsAString& aTitle, const nsAString& aFilter)
  {
    if (aFilter.EqualsLiteral("..apps")) {
      // No platform specific thing we can do here, really....
@@ -1216,7 +1547,17 @@ diff -Nur a/widget/src/gtk2/nsFilePicker.cpp b/widget/src/gtk2/nsFilePicker.cpp
    }
  
    nsCAutoString filter, name;
-@@ -423,6 +427,9 @@
+   CopyUTF16toUTF8(aFilter, filter);
+   CopyUTF16toUTF8(aTitle, name);
+ 
+   mFilters.AppendElement(filter);
+   mFilterNames.AppendElement(name);
+@@ -419,16 +423,19 @@
+   gtk_widget_destroy(dialog);
+ 
+   return result;
+ }
+ 
  NS_IMETHODIMP
  nsFilePicker::Show(PRInt16 *aReturn)
  {
@@ -1226,7 +1567,17 @@ diff -Nur a/widget/src/gtk2/nsFilePicker.cpp b/widget/src/gtk2/nsFilePicker.cpp
    NS_ENSURE_ARG_POINTER(aReturn);
  
    nsXPIDLCString title;
-@@ -573,3 +580,229 @@
+   title.Adopt(ToNewUTF8String(mTitle));
+ 
+   GtkWindow *parent_widget = get_gtk_window_for_nsiwidget(mParentWidget);
+ 
+   GtkFileChooserAction action = GetGtkFileChooserAction(mMode);
+@@ -569,8 +576,234 @@
+     *aReturn = nsIFilePicker::returnCancel;
+     break;
+   }
+ 
+   gtk_widget_destroy(file_chooser);
  
    return NS_OK;
  }
@@ -1456,10 +1807,16 @@ diff -Nur a/widget/src/gtk2/nsFilePicker.cpp b/widget/src/gtk2/nsFilePicker.cpp
 +        }
 +    return NS_OK;
 +    }
-diff -Nur a/widget/src/gtk2/nsFilePicker.h b/widget/src/gtk2/nsFilePicker.h
---- a/widget/src/gtk2/nsFilePicker.h	2010-11-15 21:40:52.000000000 +0100
-+++ b/widget/src/gtk2/nsFilePicker.h	2010-11-18 12:18:51.860642952 +0100
-@@ -94,6 +94,12 @@
+Index: mozilla/widget/src/gtk2/nsFilePicker.h
+===================================================================
+--- mozilla.orig/widget/src/gtk2/nsFilePicker.h
++++ mozilla/widget/src/gtk2/nsFilePicker.h
+@@ -89,11 +89,17 @@
+   nsString  mDefault;
+   nsString  mDefaultExtension;
+ 
+   nsTArray<nsCString> mFilters;
+   nsTArray<nsCString> mFilterNames;
  
  private:
    static nsILocalFile *mPrevDisplayDirectory;
@@ -1472,20 +1829,32 @@ diff -Nur a/widget/src/gtk2/nsFilePicker.h b/widget/src/gtk2/nsFilePicker.h
  };
  
  #endif
-diff -Nur a/xpcom/components/Makefile.in b/xpcom/components/Makefile.in
---- a/xpcom/components/Makefile.in	2010-11-15 21:40:53.000000000 +0100
-+++ b/xpcom/components/Makefile.in	2010-11-18 12:18:51.860642952 +0100
-@@ -99,5 +99,6 @@
+Index: mozilla/xpcom/components/Makefile.in
+===================================================================
+--- mozilla.orig/xpcom/components/Makefile.in
++++ mozilla/xpcom/components/Makefile.in
+@@ -94,10 +94,11 @@
+ 
+ # Force use of PIC
+ FORCE_USE_PIC	= 1
+ include $(topsrcdir)/config/rules.mk
+ 
  DEFINES	+= -D_IMPL_NS_COM
  
  ifneq (,$(filter gtk2,$(MOZ_WIDGET_TOOLKIT)))
 +LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
  CXXFLAGS += $(MOZ_GTK2_CFLAGS)
  endif
-diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParser.cpp
---- a/xpcom/components/ManifestParser.cpp	2010-11-15 21:40:53.000000000 +0100
-+++ b/xpcom/components/ManifestParser.cpp	2010-11-18 12:18:51.860642952 +0100
-@@ -60,6 +60,7 @@
+Index: mozilla/xpcom/components/ManifestParser.cpp
+===================================================================
+--- mozilla.orig/xpcom/components/ManifestParser.cpp
++++ mozilla/xpcom/components/ManifestParser.cpp
+@@ -55,16 +55,17 @@
+ #include "nsTextFormatter.h"
+ #include "nsVersionComparator.h"
+ #include "nsXPCOMCIDInternal.h"
+ 
+ #include "nsIConsoleService.h"
  #include "nsIScriptError.h"
  #include "nsIXULAppInfo.h"
  #include "nsIXULRuntime.h"
@@ -1493,7 +1862,17 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
  
  struct ManifestDirective
  {
-@@ -427,6 +428,7 @@
+   const char* directive;
+   int argc;
+ 
+   // Some directives should only be delivered for NS_COMPONENT_LOCATION
+   // manifests.
+@@ -422,16 +423,17 @@
+ 
+   NS_NAMED_LITERAL_STRING(kPlatform, "platform");
+   NS_NAMED_LITERAL_STRING(kContentAccessible, "contentaccessible");
+   NS_NAMED_LITERAL_STRING(kApplication, "application");
+   NS_NAMED_LITERAL_STRING(kAppVersion, "appversion");
    NS_NAMED_LITERAL_STRING(kOs, "os");
    NS_NAMED_LITERAL_STRING(kOsVersion, "osversion");
    NS_NAMED_LITERAL_STRING(kABI, "abi");
@@ -1501,7 +1880,17 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
  
    // Obsolete
    NS_NAMED_LITERAL_STRING(kXPCNativeWrappers, "xpcnativewrappers");
-@@ -466,6 +468,7 @@
+ 
+   nsAutoString appID;
+   nsAutoString appVersion;
+   nsAutoString osTarget;
+   nsAutoString abi;
+@@ -461,35 +463,39 @@
+         CopyUTF8toUTF16(s, abi);
+         abi.Insert(PRUnichar('_'), 0);
+         abi.Insert(osTarget, 0);
+       }
+     }
    }
  
    nsAutoString osVersion;
@@ -1509,7 +1898,7 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
  #if defined(XP_WIN)
    OSVERSIONINFO info = { sizeof(OSVERSIONINFO) };
    if (GetVersionEx(&info)) {
-@@ -473,6 +476,7 @@
+     nsTextFormatter::ssprintf(osVersion, NS_LITERAL_STRING("%ld.%ld").get(),
                                           info.dwMajorVersion,
                                           info.dwMinorVersion);
    }
@@ -1517,7 +1906,8 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
  #elif defined(XP_MACOSX)
    SInt32 majorVersion, minorVersion;
    if ((Gestalt(gestaltSystemVersionMajor, &majorVersion) == noErr) &&
-@@ -481,10 +485,12 @@
+       (Gestalt(gestaltSystemVersionMinor, &minorVersion) == noErr)) {
+     nsTextFormatter::ssprintf(osVersion, NS_LITERAL_STRING("%ld.%ld").get(),
                                           majorVersion,
                                           minorVersion);
    }
@@ -1530,7 +1920,17 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
  #endif
  
    // Because contracts must be registered after CIDs, we save and process them
-@@ -563,6 +569,7 @@
+   // at the end.
+   nsTArray<CachedDirective> contracts;
+ 
+   char *token;
+   char *newline = buf;
+@@ -558,24 +564,26 @@
+     bool ok = true;
+     TriState stAppVersion = eUnspecified;
+     TriState stApp = eUnspecified;
+     TriState stOsVersion = eUnspecified;
+     TriState stOs = eUnspecified;
      TriState stABI = eUnspecified;
      bool platform = false;
      bool contentAccessible = false;
@@ -1538,7 +1938,8 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
  
      while (NULL != (token = nsCRT::strtok(whitespace, kWhitespace, &whitespace)) && ok) {
        ToLowerCase(token);
-@@ -571,6 +578,7 @@
+       NS_ConvertASCIItoUTF16 wtoken(token);
+ 
        if (CheckStringFlag(kApplication, wtoken, appID, stApp) ||
            CheckStringFlag(kOs, wtoken, osTarget, stOs) ||
            CheckStringFlag(kABI, wtoken, abi, stABI) ||
@@ -1546,7 +1947,17 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
            CheckVersionFlag(kOsVersion, wtoken, osVersion, stOsVersion) ||
            CheckVersionFlag(kAppVersion, wtoken, appVersion, stAppVersion))
          continue;
-@@ -599,6 +607,7 @@
+ 
+       if (directive->contentflags &&
+           (CheckFlag(kPlatform, wtoken, platform) ||
+            CheckFlag(kContentAccessible, wtoken, contentAccessible)))
+         continue;
+@@ -594,16 +602,17 @@
+       ok = false;
+     }
+ 
+     if (!ok ||
+         stApp == eBad ||
          stAppVersion == eBad ||
          stOs == eBad ||
          stOsVersion == eBad ||
@@ -1554,10 +1965,21 @@ diff -Nur a/xpcom/components/ManifestParser.cpp b/xpcom/components/ManifestParse
          stABI == eBad)
        continue;
  
-diff -Nur a/xpcom/io/Makefile.in b/xpcom/io/Makefile.in
---- a/xpcom/io/Makefile.in	2010-11-15 21:41:30.000000000 +0100
-+++ b/xpcom/io/Makefile.in	2010-11-18 12:18:51.860642952 +0100
-@@ -197,7 +197,7 @@
+     if (directive->regfunc) {
+ #ifdef MOZ_IPC
+       if (GeckoProcessType_Default != XRE_GetProcessType())
+         continue;
+ #endif
+Index: mozilla/xpcom/io/Makefile.in
+===================================================================
+--- mozilla.orig/xpcom/io/Makefile.in
++++ mozilla/xpcom/io/Makefile.in
+@@ -192,17 +192,17 @@
+ DEFINES		+= -D_IMPL_NS_COM
+ 
+ ifeq ($(OS_ARCH),Linux)
+ ifneq (,$(findstring lib64,$(libdir)))
+ DEFINES     += -DHAVE_USR_LIB64_DIR
  endif
  endif
  
@@ -1566,10 +1988,21 @@ diff -Nur a/xpcom/io/Makefile.in b/xpcom/io/Makefile.in
  
  ifeq ($(MOZ_PLATFORM_MAEMO),5)
  CFLAGS          += $(MOZ_DBUS_CFLAGS)
-diff -Nur a/xpcom/io/nsLocalFileUnix.cpp b/xpcom/io/nsLocalFileUnix.cpp
---- a/xpcom/io/nsLocalFileUnix.cpp	2010-11-15 21:40:56.000000000 +0100
-+++ b/xpcom/io/nsLocalFileUnix.cpp	2010-11-18 12:18:51.860642952 +0100
-@@ -96,6 +96,7 @@
+ CXXFLAGS        += $(MOZ_DBUS_CFLAGS)
+ endif
+ 
+ ifdef MOZ_PLATFORM_MAEMO
+ CFLAGS          += $(MOZ_PLATFORM_MAEMO_CFLAGS)
+Index: mozilla/xpcom/io/nsLocalFileUnix.cpp
+===================================================================
+--- mozilla.orig/xpcom/io/nsLocalFileUnix.cpp
++++ mozilla/xpcom/io/nsLocalFileUnix.cpp
+@@ -91,16 +91,17 @@
+ #include "prproces.h"
+ #include "nsIDirectoryEnumerator.h"
+ #include "nsISimpleEnumerator.h"
+ #include "nsITimelineService.h"
+ 
  #ifdef MOZ_WIDGET_GTK2
  #include "nsIGIOService.h"
  #include "nsIGnomeVFSService.h"
@@ -1577,7 +2010,17 @@ diff -Nur a/xpcom/io/nsLocalFileUnix.cpp b/xpcom/io/nsLocalFileUnix.cpp
  #endif
  
  #ifdef XP_MACOSX
-@@ -1823,21 +1824,13 @@
+ #include <Carbon/Carbon.h>
+ #include "CocoaFileUtils.h"
+ #include "prmem.h"
+ #include "plbase64.h"
+ 
+@@ -1820,44 +1821,50 @@
+ 
+     return NS_OK;
+ }
+ #else
+ NS_IMETHODIMP
  nsLocalFile::Reveal()
  {
  #ifdef MOZ_WIDGET_GTK2
@@ -1601,7 +2044,8 @@ diff -Nur a/xpcom/io/nsLocalFileUnix.cpp b/xpcom/io/nsLocalFileUnix.cpp
      } else {
          nsCOMPtr<nsIFile> parentDir;
          nsCAutoString dirPath;
-@@ -1846,11 +1839,25 @@
+         if (NS_FAILED(GetParent(getter_AddRefs(parentDir))))
+             return NS_ERROR_FAILURE;
          if (NS_FAILED(parentDir->GetNativePath(dirPath)))
              return NS_ERROR_FAILURE;
  
@@ -1631,7 +2075,17 @@ diff -Nur a/xpcom/io/nsLocalFileUnix.cpp b/xpcom/io/nsLocalFileUnix.cpp
  #elif defined(XP_MACOSX)
      CFURLRef url;
      if (NS_SUCCEEDED(GetCFURL(&url))) {
-@@ -1886,6 +1893,13 @@
+       nsresult rv = CocoaFileUtils::RevealFileInFinder(url);
+       ::CFRelease(url);
+       return rv;
+     }
+     return NS_ERROR_FAILURE;
+@@ -1883,16 +1890,23 @@
+ 
+     if (nsnull == connection)
+       return NS_ERROR_FAILURE;
+ 
+     if (hildon_mime_open_file(connection, mPath.get()) != kHILDON_SUCCESS)
        return NS_ERROR_FAILURE;
      return NS_OK;
  #else
@@ -1645,3 +2099,8 @@ diff -Nur a/xpcom/io/nsLocalFileUnix.cpp b/xpcom/io/nsLocalFileUnix.cpp
      nsCOMPtr<nsIGIOService> giovfs = do_GetService(NS_GIOSERVICE_CONTRACTID);
      nsCOMPtr<nsIGnomeVFSService> gnomevfs = do_GetService(NS_GNOMEVFSSERVICE_CONTRACTID);
      if (giovfs) {
+       return giovfs->ShowURIForInput(mPath);
+     } else if (gnomevfs) {
+       /* GnomeVFS fallback */
+       return gnomevfs->ShowURIForInput(mPath);
+     }

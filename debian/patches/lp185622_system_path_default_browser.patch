@@ -104,22 +104,22 @@ Index: mozilla/browser/components/shell/src/nsGNOMEShellService.cpp
  #endif
  
    nsCOMPtr<nsIGConfService> gconf = do_GetService(NS_GCONFSERVICE_CONTRACTID);
- 
+   if (gconf) {
 +#ifdef SYSTEM_PATH_BUILD
-+  nsCAutoString appKeyValue(mSystemAppPath);
++    nsCAutoString appKeyValue(mSystemAppPath);
 +#else
-   nsCAutoString appKeyValue(mAppPath);
--  appKeyValue.Append(" \"%s\"");
+     nsCAutoString appKeyValue(mAppPath);
+-    appKeyValue.Append(" \"%s\"");
 +#endif
-+  appKeyValue.Append(" %s");
-   unsigned int i;
- 
-   for (i = 0; i < NS_ARRAY_LENGTH(appProtocols); ++i) {
-     if (appProtocols[i].essential || aClaimAllTypes) {
-       gconf->SetAppForProtocol(nsDependentCString(appProtocols[i].name),
-                                appKeyValue);
++    appKeyValue.Append(" %s");
+     for (unsigned int i = 0; i < NS_ARRAY_LENGTH(appProtocols); ++i) {
+       if (appProtocols[i].essential || aClaimAllTypes) {
+         gconf->SetAppForProtocol(nsDependentCString(appProtocols[i].name),
+                                  appKeyValue);
+       }
      }
    }
+ 
 Index: mozilla/browser/components/shell/src/nsGNOMEShellService.h
 ===================================================================
 --- mozilla.orig/browser/components/shell/src/nsGNOMEShellService.h
