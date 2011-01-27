@@ -150,3 +150,24 @@
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
+--- a/browser/app/application.ini
++++ b/browser/app/application.ini
+@@ -38,7 +38,7 @@
+ #filter substitution
+ [App]
+ Vendor=Mozilla
+-Name=Firefox
++Name=Firefox-4.0
+ Version=@APP_VERSION@
+ BuildID=@GRE_BUILDID@
+ #ifdef MOZ_SOURCE_REPO
+--- a/browser/confvars.sh
++++ b/browser/confvars.sh
+@@ -37,6 +37,7 @@
+ # ***** END LICENSE BLOCK *****
+ 
+ MOZ_APP_NAME=firefox
++MOZ_APP_UA_NAME=Firefox
+ MOZ_UPDATER=1
+ MOZ_PHOENIX=1
+ 
