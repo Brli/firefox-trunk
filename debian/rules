@@ -195,10 +195,10 @@ ifeq (1,$(DEB_BUILD_PGO))
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
-	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.6'; a=$$?; if test $$a != 1; then echo 1; fi)
+	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.7'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.1'; a=$$?; if test $$a != 1; then echo 1; fi)
-	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.8'; a=$$?; if test $$a != 1; then echo 1; fi)
+	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.9'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
 
 # Defines used for the Mozilla text preprocessor
@@ -386,10 +386,8 @@ endif
 
 common-binary-arch:: debian/stamp-buildsymbols debian/lp-export-xpis/en-US.xpi
 
-LOCALE_VERSION = $(shell echo $(DEBIAN_VERSION) | sed -e 's/~hg.*/pre/' | tr -d '~')
-
 ifeq (1, $(DEB_MIN_SYSDEPS))
-	GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
+GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 endif
 
 binary-post-install/$(DEBIAN_NAME)-core:: compare

@@ -5,7 +5,7 @@ LOCDIR		= $(CURDIR)/$(MOZ_OBJDIR)/dist/.locales
 
 TESTS	:= $(NULL)
 ifeq (1,$(DEB_WANT_UNIT_TESTS))
-	TESTS += check xpcshell-tests reftest crashtest
+	TESTS += check xpcshell-tests jstestbrowser reftest crashtest mochitest
 endif
 
 debian/stamp-testsuite: $(addprefix debian/stamp-,$(TESTS))
@@ -28,7 +28,7 @@ $(addprefix debian/stamp-,xpcshell-tests reftest): export LC_ALL=$(LOCALE)
 $(addprefix debian/stamp-,xpcshell-tests): debian/stamp-xpcshell-tests-disable
 
 # Tests that need a X server
-$(addprefix debian/stamp-,reftest crashtest): WRAPPER = xvfb-run -s "-screen 0 1024x768x24"
+$(addprefix debian/stamp-,jstestbrowser reftest crashtest mochitest): WRAPPER = xvfb-run -s "-screen 0 1024x768x24"
 
 # Run the test!
 $(addprefix debian/stamp-,$(TESTS)):
