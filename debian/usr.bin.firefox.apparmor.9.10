@@ -80,6 +80,7 @@
   @{PROC}/[0-9]*/cmdline r,
   @{PROC}/[0-9]*/mountinfo r,
   @{PROC}/[0-9]*/stat r,
+  owner @{PROC}/[0-9]*/task/[0-9]*/stat r,
   @{PROC}/[0-9]*/status r,
   @{PROC}/filesystems r,
   capability sys_ptrace,
