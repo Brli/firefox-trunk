@@ -37,6 +37,7 @@ Build-Depends: cdbs,
 	libgnomevfs2-dev, 
         yasm,
 	xvfb,
+	imagemagick
 Standards-Version: 3.8.1
 
 Package: firefox-4.0

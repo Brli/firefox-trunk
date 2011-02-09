@@ -37,6 +37,7 @@ Build-Depends: cdbs,
 	libgnomevfs2-dev, 
         yasm,
 	xvfb,
+	imagemagick
 Standards-Version: 3.8.1
 
 Package: @APPNAME@
@@ -133,31 +134,43 @@ Description: Safe and easy web browser from Mozilla - Breakpad symbols
 Package: firefox-4.0-branding
 Architecture: any
 Depends: firefox-4.0, ${misc:Depends}
-Description: Transitional package to pull in firefox-4.0
+Description: Safe and easy web browser from Mozilla - transitional package
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
 
 Package: abrowser-4.0-branding
 Architecture: all
 Depends: firefox-4.0, ${misc:Depends}
-Description: Transitional package to pull in firefox-4.0
+Description: Safe and easy web browser from Mozilla - transitional package
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
 
 Package: firefox-4.0-gnome-support-dbg
 Architecture: any
 Section: debug
 Priority: extra
 Depends: ${misc:Depends}, firefox-4.0-dbg (= ${binary:Version})
-Description: Transitional package to pull in firefox-4.0-dbg
+Description: Safe and easy web browser from Mozilla - transitional package
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
 
 Package: abrowser-4.0
 Architecture: any
 Depends: ${misc:Depends}, firefox-4.0
-Description: Transitional package to pull in firefox-4.0
+Description: Safe and easy web browser from Mozilla - transitional package
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
 
 Package: firefox-4.0-core
 Architecture: any
 Depends: ${misc:Depends}, firefox-4.0
-Description: Transitional package to pull in firefox-4.0
+Description: Safe and easy web browser from Mozilla - transitional package
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
 
 Package: abrowser-4.0-gnome-support
 Architecture: any
 Depends: ${misc:Depends}, firefox-4.0-gnome-support
-Description: Transitional package to pull in firefox-4.0-gnome-support
+Description: Safe and easy web browser from Mozilla - transitional package
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed

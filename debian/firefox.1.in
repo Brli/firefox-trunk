@@ -1,0 +1,50 @@
+.TH FIREFOX 1 2011-02-09 @APPNAME@
+.SH NAME
+@APPNAME@ \- a free and open source web browser from Mozilla
+
+.SH SYNOPSIS
+.B @APPNAME@
+[\fIOPTIONS\fR] [\fIurl\fR]
+
+.SH DESCRIPTION
+See http://support.mozilla.com for help using the browser.
+This manpage only describes how to run it.
+
+.SH OPTIONS
+.TP
+\fB\-\-help\fR
+Prints the command line options.
+.TP
+\fB\-g, \-\-debug\fR
+Starts \fB@APPNAME@\fR in a debugger.
+.TP
+\fB\-d, \-\-debugger\fR
+Specify the debugger in which to start \fB@APPNAME@\fR. The default is GDB. Used in conjunction with \fB-g\fR.
+.TP
+\fB\-a, \-\-debugger\-args\fR
+Specify arguments to pass to the debugger. Used in conjunction with \fB-g\fR.
+.TP
+\fB\-no\-remote\fR
+Don't connect to any other running instances of \fB@APPNAME@\fR. Use this if you want to run \fB@APPNAME@\fR
+in an entirely new process. By default, \fB@APPNAME@\fR will delegate a command to an already running instance.
+.TP
+\fB\-ProfileManager\fR
+Start the profilemanager. Use this to choose the profile you would like to run \fB@APPNAME@\fR with. You
+will need to also use \fB\-no\-remote\fR if there is already a running \fB@APPNAME@\fR instance.
+.TP
+\fB\-P\fR \fIprofile\fR
+Start \fB@APPNAME@\fR with the profile named \fIprofile\fR. Will start the profile manager if a valid profile
+name is not specified. You will need to also use \fB\-no\-remote\fR if there is already a running \fB@APPNAME@\fR instance.
+.TP
+\fB\-safe\-mode\fR
+Start \fB@APPNAME@\fR in safe-mode. This disables all third-part extensions, and may be necessary if
+you are having problems with an extension you installed.
+.TP
+\fB\-new\-tab\fR \fIurl\fR
+Open \fIurl\fR in a new tab.
+.TP
+\fB\-new\-window\fR \fIurl\fR
+Open \fIurl\fR in a new window.
+.TP
+\fB\-v, \-version\fI
+Print the current version of \fB@APPNAME@\fR.

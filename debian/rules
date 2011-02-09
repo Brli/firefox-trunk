@@ -305,14 +305,17 @@ subst_files = \
 	debian/$(DEBIAN_NAME).dirs \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
+	debian/$(DEBIAN_NAME).manpages \
 	debian/$(DEBIAN_NAME).menu \
 	debian/$(DEBIAN_NAME).postinst \
 	debian/$(DEBIAN_NAME).postrm \
 	debian/$(DEBIAN_NAME).preinst \
 	debian/$(DEBIAN_NAME).prerm \
+	debian/$(DEBIAN_NAME).1 \
 	debian/$(DEBIAN_NAME)-mozsymbols.install \
 	debian/$(DEBIAN_NAME)-dev.install \
 	debian/$(DEBIAN_NAME)-dev.links \
+	debian/$(DEBIAN_NAME).lintian-overrides \
 	debian/mozconfig \
 	$(NULL)
 
@@ -376,6 +379,9 @@ else
 endif
 
 common-binary-arch:: debian/stamp-buildsymbols debian/lp-export-xpis/en-US.xpi
+
+binary-install/$(DEBIAN_NAME)::
+	convert debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).png debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).xpm
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
 GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
