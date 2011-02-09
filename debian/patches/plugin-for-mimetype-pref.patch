@@ -1,14 +1,16 @@
-We introduce a new preference that allows users to set a preferred
-plugin for a given mime-type.
+Description: We introduce a new preference that allows users to set a preferred
+ plugin for a given mime-type.
 
-For example:
+ For example:
 
- pref ("modules.plugins.mimetype.application/x-shockwave-flash", "/usr/lib/firefox-3.0.1/plugins/libflashplayer.so")
+  pref ("modules.plugins.mimetype.application/x-shockwave-flash", "/usr/lib/firefox-3.0.1/plugins/libflashplayer.so")
 
-would make the flashplyer installed in that location the preferred one to use.
+ would make the flashplyer installed in that location the preferred one to use.
 
-In case the path is not valid, we just go ahead and search for the first match
-given the mime-type.
+ In case the path is not valid, we just go ahead and search for the first match
+ given the mime-type.
+Author: Alexander Sack <asac@ubuntu.com>
+Forwarded: no
 
 --- a/modules/plugin/base/src/nsPluginHost.cpp
 +++ b/modules/plugin/base/src/nsPluginHost.cpp

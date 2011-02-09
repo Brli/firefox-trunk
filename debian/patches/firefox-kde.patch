@@ -1,3 +1,11 @@
+Description: Add KDE integration to Firefox (browser parts)
+Author: Wolfgang Rosenauer <wolfgang@rosenauer.org>
+Author: Felix Geyer <debfx-pkg@fobos.de>
+Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=140751
+Bug-Ubuntu: https://launchpad.net/bugs/494067
+Bug-OpenSUSE: https://bugzilla.novell.com/show_bug.cgi?id=170055
+Forwarded: no
+
 diff -Nur a/browser/app/Makefile.in b/browser/app/Makefile.in
 --- a/browser/app/Makefile.in
 +++ b/browser/app/Makefile.in

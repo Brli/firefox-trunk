@@ -20,6 +20,8 @@ import os
 import ConfigParser
 import cStringIO
 from xml.dom import minidom
+import re
+from zipfile import ZipFile
 
 def extensions_ini_parser(extensions_ini_file):
     '''parses profile's extensions.ini file and returns a tuple:
@@ -29,27 +31,32 @@ def extensions_ini_parser(extensions_ini_file):
     parser.read(extensions_ini_file) 
     ext_ini_d = {}
     for section in parser.sections():
-        section_gre, section_app, section_local, my_ext = [], [], [], ''
+        section_system, section_user, my_ext = [], [], ''
         for extension in parser.options(section):
             my_ext = parser.get(section, extension)
-            if '/usr/lib/xulrunner' in my_ext:
-                section_gre.append((my_ext))
-            elif '/usr/lib/firefox' in my_ext:
-                section_app.append((my_ext))
+            if '/usr/lib' in my_ext or '/usr/share' in my_ext:
+                section_system.append((my_ext))
             else:
-                section_local.append((my_ext))
-        ext_ini_d[section] = (section_gre, section_app, section_local)
+                section_user.append((my_ext))
+        ext_ini_d[section] = (section_system, section_user)
     return (ext_ini_d['ExtensionDirs'], ext_ini_d['ThemeDirs'])
 
 def install_ini_parser(extension_path):
     '''parses each extension's install.rdf and returns string:
     extension name, its version and the id.'''
-    rdf_file = os.path.join(extension_path, 'install.rdf')
     if not os.path.exists(extension_path):
         return '''  %s does not exist (old profile?)''' % extension_path
+
+    if not os.path.isdir(extension_path):
+        try:
+            dom_doc = minidom.parseString(ZipFile(extension_path).open('install.rdf').read())
+        except:
+            return '''  %s is not unpacked, and we can't inspect its contents''' % extension_path
+    else:
+        dom_doc = minidom.parse(os.path.join(extension_path, 'install.rdf'))
+
     refs_dict = {'em:version': '', 'em:id': '', 'em:name': ''}
     parse_err = '%s (Not Parsed)\n' % extension_path 
-    dom_doc = minidom.parse(rdf_file)
     for key in refs_dict.keys():
         this_key = ''
         try:
@@ -71,13 +78,13 @@ def install_ini_parser(extension_path):
             refs_dict[key] = repr(this_key)
     return '''%(em:name)s (version: %(em:version)s) -\tid: %(em:id)s''' % refs_dict
 
-def extension_summary_helper(extension_list, section_name, alt_output = 1):
+def extension_summary_helper(extension_list, section_name, profile_path, alt_output = 1):
     '''does some output proccessing for extensionSummary'''
     summary = ''
     if len(extension_list) > 0:
         summary += '''  %s:\n''' % section_name
         for extension in extension_list:
-            summary += '''    %s\n''' % install_ini_parser(extension)
+            summary += '''    %s\n''' % re.sub(profile_path, '/<hidden_local_profile>', install_ini_parser(extension))
     else:
         if alt_output == 1: # if 0, don't output anything
             summary += '''  No %s in this Profile.\n''' % section_name 
@@ -119,13 +126,37 @@ def add_info(report):
         report['ThirdParty'] = 'True'
         report['CrashDB'] = 'ubuntu-mozilla-ppa-bugs'
 
+    packages = ['@APPNAME@',
+                'flashplugin-installer',
+                'adobe-flashplugin',
+                'icedtea-plugin']
+
+    versions = ''
+    for package in packages:
+        try:
+            version = packaging.get_version(package)
+        except ValueError:
+            version = 'N/A'
+        if version is None:
+            version = 'N/A'
+        versions += '%s %s\n' % (package, version)
+    report['FirefoxPackages'] = versions
+
+
     '''adds hooked info into the apport report.'''
-    config_dir = os.path.join(os.environ['HOME'], '.mozilla', 'firefox-4.0')
+    config_dir = os.path.join(os.environ['HOME'], '.mozilla', '@APPNAME@')
     profiles_d = {}
     # append profiles.ini file & parse it:
     profiles_ini = os.path.join(config_dir,'profiles.ini') 
     if os.path.exists(profiles_ini):
-        report['profiles.ini'] = open(profiles_ini).read() 
+	profiles_ini_contents = ""
+	for line in open(profiles_ini).readlines():
+	    if not 'Path=' in line:
+		profiles_ini_contents += line
+	pbuffer = cStringIO.StringIO()
+	print >> pbuffer, profiles_ini_contents
+	pbuffer.seek(0)
+        report['profiles.ini'] = pbuffer.read() 
         # parse profiles.ini: 
         profile_parser = ConfigParser.ConfigParser()
         profile_parser.read(profiles_ini)
@@ -142,29 +173,28 @@ def add_info(report):
     # future append each profile's pluginreg.dat file)
     extensions_dict, themes_dict, extension_summary = {}, {}, ''
     for profile_name in profiles_d.keys():
+        profile_name_apport = "".join(x for x in profile_name if x.isalnum())
         profile_path, is_default = profiles_d[profile_name]
         extensions_ini = os.path.join(profile_path, 'extensions.ini')
         pluginreg_dat = os.path.join(profile_path, 'pluginreg.dat')
         if os.path.exists(pluginreg_dat):
             if is_default == '1':
-                report['default_profile_pluginreg.dat'] = open(pluginreg_dat).read()
+                report['default_profile_pluginreg.dat'] = re.sub(profile_path, '/<hidden_local_profile>', open(pluginreg_dat).read())
             else:
-                report['profile_%s_pluginreg.dat' % profile_name] = open(pluginreg_dat).read()
+                report['profile_%s_pluginreg.dat' % profile_name_apport] = re.sub(profile_path, '/<hidden_local_profile>', open(pluginreg_dat).read())
         if os.path.exists(extensions_ini):
             # attach each profile's extensions.ini too (not enabled).
             #report['extensions.ini (profile: %s)' % profile_name ] = open(extensions_ini).read()
-            (extensions_dict['gre_extensions'], extensions_dict['app_extensions'], extensions_dict['local_extensions']), \
-            (themes_dict['gre_theme'], themes_dict['app_theme'], themes_dict['local_theme']) = extensions_ini_parser(extensions_ini)
+            (extensions_dict['system_extensions'], extensions_dict['user_extensions']), \
+            (themes_dict['system_theme'], themes_dict['user_theme']) = extensions_ini_parser(extensions_ini)
             if is_default == '1': 
                 is_default_str = ''' (The Default):'''
             else: is_default_str = ''':'''
             extension_summary += '''Profile "%s"%s\n\n''' % (profile_name, is_default_str)
-            extension_summary += extension_summary_helper(extensions_dict['gre_extensions'], 'GRE Extensions')
-            extension_summary += extension_summary_helper(extensions_dict['app_extensions'], 'Application Extensions')
-            extension_summary += extension_summary_helper(extensions_dict['local_extensions'], 'Local Extensions')
-            extension_summary += extension_summary_helper(themes_dict['gre_theme'], 'GRE Theme', 0)
-            extension_summary += extension_summary_helper(themes_dict['app_theme'], 'Application Theme', 0)
-            extension_summary += extension_summary_helper(themes_dict['local_theme'], 'Local Theme', 0)
+            extension_summary += extension_summary_helper(extensions_dict['system_extensions'], 'System Extensions', profile_path)
+            extension_summary += extension_summary_helper(extensions_dict['user_extensions'], 'User Extensions', profile_path)
+            extension_summary += extension_summary_helper(themes_dict['system_theme'], 'System Themes', profile_path, 0)
+            extension_summary += extension_summary_helper(themes_dict['user_theme'], 'User Themes', profile_path, 0)
         wbuffer = cStringIO.StringIO() # it's needed for propper apport attachments
         print >> wbuffer, extension_summary
         wbuffer.seek(0)
@@ -176,7 +206,7 @@ def add_info(report):
     add_apparmor = True
     if os.path.isdir(apparmor_disable_dir):
         for f in os.listdir(apparmor_disable_dir):
-            if f.startswith("usr.bin.firefox"):
+            if f.startswith("usr.bin.@APPNAME@"):
                 add_apparmor = False
                 break
     if add_apparmor:
@@ -199,7 +229,10 @@ def add_info(report):
 #### debug ####
 # (uncomment the 'return report' at add_report())
 if __name__ == "__main__":
-    D = {}  
-    REPORT = add_info(D)
-    for KEY in REPORT.keys(): 
-        print '''-------------------%s: ------------------\n''' % KEY, REPORT[KEY]
+    import apport
+    from apport import packaging
+    D = {}
+    D['Package'] = '@APPNAME@' 
+    add_info(D)
+    for KEY in D.keys(): 
+        print '''-------------------%s: ------------------\n''' % KEY, D[KEY]

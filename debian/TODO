@@ -1,6 +1,0 @@
-1) $LIBDIR/defaults is now shipped in omni.jar. This has several issues:
- a) This means there is currently no support for system-wide preferences shipped in /etc/firefox (so, things like apturl and software-center won't register their own protocol handlers)
- b) omni.jar is getting created without our Ubuntu preferences (debian/firefox.js, debian/ubuntu-useragent.js and debian/ubuntu-abrowser.js). This really needs fixing pretty quickly
- c) There is currently no point in applying add_syspref_dir.patch and bz467738_att351145_lockPref_everywhere.patch, so these are disabled until we have a solution
-
-2) Fix generating the en-US xpi. The previous method doesn't work anymore, but we should be able to use the upstream build system to do this already

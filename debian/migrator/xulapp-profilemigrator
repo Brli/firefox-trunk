@@ -127,9 +127,6 @@ class ProfileFolder:
             else:
                 this.is_profile = False
 
-        # FIXME: What if the application name has a hyphen in? This would fall over then
-        this.name = re.sub (r'-.*', '', os.path.basename (this.path))
-
     def build_list_of_subprofiles (this):
         # Parse profiles.ini for the list of "subprofiles" in this profile.
         profiles_ini = ConfigParser.ConfigParser ()
@@ -173,7 +170,8 @@ class ProfileFolder:
                     this.last_version_string = last_version_string
 
     def is_suitable (this, name, new_series, last_series=None):
-        if name != this.name:
+        basename = re.sub (r'-.*', '', os.path.basename (this.path))
+        if name != basename:
             return False
 
         # If this profile is from an application that is newer than the
@@ -195,10 +193,11 @@ class ProfileMigrator:
         this.profile = ProfileFolder (options.profile)
         this.candidates = list ()
         this.last_series = None
-        this.name = this.profile.name
+        this.basename = options.name
+        this.name = os.path.basename (this.profile.path)
         this.updated = False
         this.ask_again = False
-        this.brand = options.brand
+        this.displayname = options.displayname
         this.action = MigrationActionType.ASKLATER
 
         if not os.path.isdir (os.path.dirname (this.profile.path)):
@@ -213,15 +212,15 @@ class ProfileMigrator:
             # There is no profile yet, so we look for an existing profile
             # to base our new profile on
             this.migrate_type = MigrationType.NEW
-            if os.path.isfile (this.profile.path + ".series-stamp"):
+            if os.path.isfile (this.profile.path + ".last-version"):
                 # In this case, the user deleted their profile directory.
                 # They want a fresh profile, so give them this
-                update_stamp (options.profile + '.series-stamp', options.series)
+                update_stamp (options.profile + '.last-version', options.series)
                 exit (0)
         else:
             # There is a folder where we wan't our profile, but it doesn't
             # look like an existing profile. Just bail
-            update_stamp (options.profile + '.series-stamp', options.series)
+            update_stamp (options.profile + '.last-version', options.series)
             exit (0)
 
     def check_candidates (this):
@@ -237,7 +236,7 @@ class ProfileMigrator:
             if not profile.is_profile:
                 continue
 
-            if profile.is_suitable (this.name, this.new_series, this.last_series):
+            if profile.is_suitable (this.basename, this.new_series, this.last_series):
                 this.candidates.append (profile)
 
         if len (this.candidates) == 0:
@@ -280,7 +279,7 @@ class ProfileMigrator:
             gtk.main_quit ()
             return
 
-        title = this.brand + " Profile Migration"
+        title = this.displayname + " Profile Migration"
         this.dialog = gtk.Dialog (title=title, buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
 
         msg_box = gtk.HBox (False, 12)
@@ -294,15 +293,15 @@ class ProfileMigrator:
         label_box = gtk.VBox (False, 12)
         msg_box.pack_start (label_box, True, True, 0)
 
-        label_txt = "<b><big> Would you like to import your settings from " + this.brand + " " + selected.series.raw + "?</big></b>"
+        label_txt = "<b><big> Would you like to import your settings from " + this.displayname + " " + selected.series.raw + "?</big></b>"
         label = gtk.Label ()
         label.set_markup (label_txt)
         label.set_alignment (0, 0)
         label_box.pack_start (label, False, False, 5)
 
-        label_txt = "It seems that you have used " + this.brand + " " + selected.series.raw + " before. " + \
-            "The bookmarks and other settings for " + this.brand + " " + selected.series.raw + " are currently stored " + \
-            "in a separate profile. It is possible to import these settings in to your current " + this.brand + " " + this.last_series.raw + " profile."
+        label_txt = "It seems that you have used " + this.displayname + " " + selected.series.raw + " before. " + \
+            "The bookmarks and other settings for " + this.displayname + " " + selected.series.raw + " are currently stored " + \
+            "in a separate profile. It is possible to import these settings in to your current " + this.displayname + " " + this.last_series.raw + " profile."
         label = gtk.Label (label_txt)
         label.set_line_wrap (True)
         label.set_alignment (0.0, 0.0)
@@ -314,14 +313,14 @@ class ProfileMigrator:
         label.set_alignment (0.0, 0.0)
         label_box.pack_start (label, True, True, 0)
 
-        label_txt = "Keep my bookmarks and settings from " + this.brand + " " + this.last_series.raw + " (version " + this.profile.version.raw + ")"
+        label_txt = "Keep my bookmarks and settings from " + this.displayname + " " + this.last_series.raw + " (version " + this.profile.version.raw + ")"
         button = gtk.RadioButton (None, label_txt)
         button.connect ("toggled", this.toggle_callback, MigrationActionType.KEEP)
         button.set_active (True)
         button.toggled ()
         this.dialog.vbox.pack_start (button, True, True, 0)
 
-        label_txt = "Import my bookmarks and settings from " + this.brand + " " + selected.series.raw + " (version " + selected.version.raw + ")"
+        label_txt = "Import my bookmarks and settings from " + this.displayname + " " + selected.series.raw + " (version " + selected.version.raw + ")"
         button = gtk.RadioButton (button, label_txt)
         button.connect ("toggled", this.toggle_callback, MigrationActionType.IMPORT)
         this.dialog.vbox.pack_start (button, True, True, 0)
@@ -340,7 +339,7 @@ class ProfileMigrator:
         this.dialog.connect ("response", this.dialog_response, selected)
 
         this.dialog.set_icon_name (this.name)
-        this.dialog.set_wmclass (this.brand, this.brand)
+        this.dialog.set_wmclass (this.displayname, this.displayname)
 
         this.dialog.show_all ()
 
@@ -444,7 +443,8 @@ def parse_argv ():
     parser.add_option ("-s", type="string", dest="series")
     parser.add_option ("-p", type="string", dest="profile")
     parser.add_option ("-t", action="store_true", dest="test_compare")
-    parser.add_option ("-b", type="string", dest="brand")
+    parser.add_option ("-d", type="string", dest="displayname")
+    parser.add_option ("-a", type="string", dest="name")
     return parser.parse_args ()
 
 if __name__ == '__main__':
@@ -455,8 +455,8 @@ if __name__ == '__main__':
         exit (0)
 
     migrator = ProfileMigrator (options)
-    if (migrator.main () == True or not os.path.isfile (options.profile + '.series-stamp')):
-        update_stamp (options.profile + '.series-stamp', options.series if migrator.ask_again == False else migrator.last_series.raw)
+    if (migrator.main () == True or not os.path.isfile (options.profile + '.last-version')):
+        update_stamp (options.profile + '.last-version', options.series if migrator.ask_again == False else migrator.last_series.raw)
 
     exit (0)
 

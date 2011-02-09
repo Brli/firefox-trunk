@@ -17,12 +17,14 @@ ac_add_options --disable-updater
 ac_add_options --enable-application=browser
 ac_add_options --enable-default-toolkit=cairo-gtk2
 ac_add_options --enable-startup-notification
-ac_add_options --enable-gnomevfs
 ac_add_options --enable-pango
 ac_add_options --enable-svg
 ac_add_options --enable-mathml
 ac_add_options --enable-safe-browsing
 ac_add_options --with-distribution-id=com.ubuntu
+%%ifdef DEB_ENABLE_THUMB2
+ac_add_options --enable-thumb2
+%%endif
 %%ifndef DEB_MIN_SYSDEPS
 ac_add_options --with-system-jpeg=/usr
 ac_add_options --with-system-png=/usr
@@ -38,14 +40,16 @@ ac_add_options --without-system-zlib
 ac_add_options --disable-system-hunspell
 ac_add_options --enable-chrome-format=omni
 %%endif
-%%ifndef DEB_MOZ_VALGRIND
 %%ifdef DEB_NO_OPTIMIZE
 ac_add_options --disable-optimize
 %%else
+%%ifndef DEB_MOZ_VALGRIND
 ac_add_options --enable-optimize
-%%endif
 %%else
 ac_add_options --enable-optimize="-g -O -freorder-blocks"
+%%endif
+%%endif
+%%ifdef DEB_MOZ_VALGRIND
 ac_add_options --disable-jemalloc
 ac_add_options --enable-valgrind
 mk_add_options MOZ_MAKE_FLAGS=-j4
@@ -93,15 +97,25 @@ ac_add_options --enable-crashreporter
 %%else
 ac_add_options --disable-crashreporter
 %%endif
-ac_add_options @BRANDING@
+ac_add_options @BRANDING_OPTION@
 %%ifdef DEB_BUILD_PGO
 mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py'
 %%endif
 %%ifdef DISABLE_GNOMEVFS
 ac_add_options --disable-gnomevfs
 ac_add_options --enable-gio
+%%else
+ac_add_options --enable-gnomevfs
+ac_add_options --disable-gio
 %%endif
 %%ifdef MOZ_UPDATE_CHANNEL
 ac_add_options --enable-update-channel=@MOZ_UPDATE_CHANNEL@
 %%endif
+%%ifdef DEBUG
+ac_add_options --enable-debug
+%%else
+ac_add_options --disable-debug
+%%endif
+%%ifdef DISABLE_ELF_HACK
 ac_add_options --disable-elf-hack
+%%endif

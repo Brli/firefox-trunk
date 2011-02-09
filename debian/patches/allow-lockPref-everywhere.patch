@@ -1,3 +1,8 @@
+Description: Allow use of lockPref in all preference files
+Author: Alexander Sack <asac@ubuntu.com>
+Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=467738
+Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
+
 --- a/modules/libpref/src/prefread.cpp
 +++ b/modules/libpref/src/prefread.cpp
 @@ -75,6 +75,7 @@ enum {

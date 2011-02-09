@@ -96,7 +96,7 @@
  pref("extensions.dss.enabled", false);          // Dynamic Skin Switching                                               
  pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
                                                  // restart.
-@@ -321,7 +321,7 @@ pref("browser.download.manager.scanWhenD
+@@ -329,7 +329,7 @@ pref("browser.download.manager.scanWhenD
  pref("browser.download.manager.resumeOnWakeDelay", 10000);
  
  // search engines URL
@@ -105,7 +105,7 @@
  
  // pointer to the default engine name
  pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
-@@ -719,8 +719,8 @@ pref("browser.safebrowsing.provider.0.re
+@@ -736,8 +736,8 @@ pref("browser.safebrowsing.provider.0.re
  pref("browser.safebrowsing.provider.0.reportMalwareErrorURL", "http://{moz:locale}.malware-error.mozilla.com/?hl={moz:locale}");
  
  // FAQ URLs
@@ -116,7 +116,7 @@
  
  // Name of the about: page contributed by safebrowsing to handle display of error
  // pages on phishing/malware hits.  (bug 399233)
-@@ -870,7 +870,7 @@ pref("browser.zoom.updateBackgroundTabs"
+@@ -887,7 +887,7 @@ pref("browser.zoom.updateBackgroundTabs"
  pref("breakpad.reportURL", "http://crash-stats.mozilla.com/report/index/");
  
  // base URL for web-based support pages
@@ -163,10 +163,12 @@
  #ifdef MOZ_SOURCE_REPO
 --- a/browser/confvars.sh
 +++ b/browser/confvars.sh
-@@ -37,6 +37,7 @@
+@@ -36,7 +36,8 @@
+ #
  # ***** END LICENSE BLOCK *****
  
- MOZ_APP_NAME=firefox
+-MOZ_APP_NAME=firefox
++MOZ_APP_NAME=firefox-4.0
 +MOZ_APP_UA_NAME=Firefox
  MOZ_UPDATER=1
  MOZ_PHOENIX=1

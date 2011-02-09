@@ -16,9 +16,28 @@ DEBIAN_NAME			:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ 
 MOZCLIENT_PROJECTNAME		:= $(DEBIAN_NAME)
 MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 
-DEB_WANT_UNIT_TESTS	:= 0
-ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
-	DEB_WANT_UNIT_TESTS=1
+# Various build options
+# 1 = Use bundled libs
+DEB_MIN_SYSDEPS		?= 1
+# 1 = Enable IPC (if supported)
+DEB_ENABLE_IPC		?= 1
+# 1 = Enable crashreporter (if supported)
+DEB_ENABLE_BREAKPAD	?= 1
+# 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
+DEB_BUILD_UNOFFICIAL	?= 0
+# 1 = Build without jemalloc suitable for valgrind debugging
+DEB_MOZ_VALGRIND	?= 0
+# 1 = Profile guided build
+DEB_BUILD_PGO		?= 0
+# 1 = Build and run the testsuite
+DEB_WANT_UNIT_TESTS	?= 1
+# 1 = Turn on debugging bits and disable optimizations
+DEB_DEBUG		?= 0
+# 1 = Disable optimizations
+DEB_NO_OPTIMIZE		?= 0
+
+ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	DEB_WANT_UNIT_TESTS=0
 endif
 
 include /usr/share/cdbs/1/rules/tarball.mk
@@ -29,20 +48,19 @@ include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
 
-# Various build options
-DEB_MIN_SYSDEPS		?= 1
-DEB_ENABLE_IPC		?= 1
-DEB_ENABLE_BREAKPAD	?= 1
-DEB_BUILD_UNOFFICIAL	?= 0
-DEB_MOZ_VALGRIND	?= 0
-DEB_BUILD_PGO		?= 0
-
 ifeq (1,$(DEB_MOZ_VALGRIND))
 	DEB_BUILD_UNOFFICIAL = 1
 endif
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	DEB_BUILD_PGO = 0
+	DEB_NO_OPTIMIZE = 1
+endif
+
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	DEB_NO_OPTIMIZE = 1
+	DEB_DEBUG = 1
+	DEB_BUILD_UNOFFICIAL = 1
 endif
 
 ifeq (1, $(DEB_BUILD_PGO))
@@ -55,15 +73,11 @@ endif
 include $(CURDIR)/debian/testsuite.mk
 
 # Define other variables used throughout the build
-DEBIAN_APP_NAME		:= $(shell echo $(DEBIAN_NAME) | sed -e 's/-.*//')
-DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/.*-//g')
+DEBIAN_APP_NAME		:= firefox
+DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)-*//g' )
 ifeq ($(DEBIAN_NAME),$(DEBIAN_APP_NAME_VER))
 	DEBIAN_APP_NAME_VER	:=
 endif
-
-DEBIAN_APP_NAME_OTHER	:= abrowser
-DEBIAN_NAME_OTHER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)/$(DEBIAN_APP_NAME_OTHER)/')
-BRANDING_NAME_OTHER	:= awesome-browser
 
 DEB_MAKE_MAKEFILE		:= client.mk
 
@@ -82,9 +96,17 @@ DEB_CONFIGURE_LOCALSTATEDIR	:= /var
 DEBIAN_VERSION			:= $(shell dpkg-parsechangelog | sed -n 's/^Version: *\(.*\)$$/\1/ p')
 FF_VERSION			= $(shell cat $(DEB_BUILDDIR)/browser/config/version.txt)
 FF_PREFIX			:= /usr
-FF_DIR				= $(FF_PREFIX)/lib/$(DEBIAN_NAME)-$(FF_VERSION)
+FF_LIBDIR			= $(FF_PREFIX)/lib/$(DEBIAN_NAME)-$(FF_VERSION)
+FF_INCDIR			= $(FF_PREFIX)/include/$(DEBIAN_NAME)-$(FF_VERSION)
+FF_IDLDIR			= $(FF_PREFIX)/share/idl/$(DEBIAN_NAME)-$(FF_VERSION)
+FF_SDKDIR			= $(FF_PREFIX)/lib/$(DEBIAN_NAME)-devel-$(FF_VERSION)
 FF_VERSION_DEVMILESTONE		= $(shell echo $(FF_VERSION) | grep [ab] | sed -e 's/pre//; s/.*[ab]//')
 FF_VERSION_SERIES		= $(shell echo $(FF_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
+
+NSPR_DEPENDS	:= $(NULL)
+NSS_DEPENDS	:= $(NULL)
+CAIRO_DEPENDS	:= $(NULL)
+DEB_DH_GENCONTROL_ARGS	= -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS)
 
 PYTHON			:= $(shell which python)
 DISTRIB 		:= $(shell lsb_release -i -s)
@@ -93,8 +115,6 @@ ifneq (,$(filter $(DISTRIB),Ubuntu))
 	DISTRIB_VERSION_MAJOR := $(shell lsb_release -s -r | cut -d '.' -f 1)
 	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
 endif
-
-DESKTOP				:= $(DEBIAN_NAME_OTHER).desktop
 
 # minVersion and maxVersion used in install.rdf
 EM_TRANSLATION_VERSION		= $(FF_VERSION)
@@ -126,47 +146,47 @@ endif
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 	# minefield branding for snapshots
 	BRANDING_DIR		= browser/branding/nightly
-	BRANDING 		= --with-branding=$(BRANDING_DIR)
-	DESKTOP_BRANDED  	= $(DEBIAN_NAME)-nightly.desktop
+	BRANDING_OPTION		= --with-branding=$(BRANDING_DIR)
+	DESKTOP  		= $(DEBIAN_NAME)-nightly.desktop
 	STARTUP_WM_CLASS	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
+	DISPLAY_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
 else
 ifneq (0, $(DEB_BUILD_UNOFFICIAL))
 	# build with unofficial branding
 	BRANDING_DIR		= browser/branding/unofficial
-	BRANDING		= --with-branding=$(BRANDING_DIR)
-	DESKTOP_BRANDED		= $(DEBIAN_NAME)-unofficial.desktop
-	BRAND_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
+	BRANDING_OPTION		= --with-branding=$(BRANDING_DIR)
+	DESKTOP			= $(DEBIAN_NAME)-unofficial.desktop
+	DISPLAY_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(BRAND_NAME)
+	STARTUP_WM_CLASS	= $(DISPLAY_NAME)
 else
 ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
 	# codename branding for alpha
 	BRANDING_DIR		= browser/branding/unofficial
-	BRANDING		= --with-branding=$(BRANDING_DIR)
-	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-unofficial.desktop
-	BRAND_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
+	BRANDING_OPTION		= --with-branding=$(BRANDING_DIR)
+	DESKTOP 		= $(DEBIAN_NAME)-unofficial.desktop
+	DISPLAY_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(BRAND_NAME)
+	STARTUP_WM_CLASS	= $(DISPLAY_NAME)
 else
 ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
 	BRANDING_DIR		= other-licenses/branding/firefox
-	BRANDING		= --enable-official-branding
-	DESKTOP_BRANDED 	= $(DEBIAN_NAME)-beta.desktop
+	BRANDING_OPTION		= --enable-official-branding
+	DESKTOP 		= $(DEBIAN_NAME)-beta.desktop
 	STARTUP_WM_CLASS	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	BRAND_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
+	DISPLAY_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
 	# Hack to turn on testpilot for beta builds. Other than that, the update channel is not used anywhere for our build
 	MOZ_UPDATE_CHANNEL	= beta
 else
 	# automatically build with official branding for final and final RCs builds
 	BRANDING_DIR		= other-licenses/branding/firefox
-	BRANDING		= --enable-official-branding
-	DESKTOP_BRANDED		= $(DEBIAN_NAME)-final.desktop
-	BRAND_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
+	BRANDING_OPTION		= --enable-official-branding
+	DESKTOP			= $(DEBIAN_NAME)-final.desktop
+	DISPLAY_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(BRAND_NAME)
+	STARTUP_WM_CLASS	= $(DISPLAY_NAME)
 endif
 endif
 endif
@@ -195,65 +215,78 @@ ifeq (1,$(DEB_BUILD_PGO))
 endif
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
+ifneq (1, $(DEB_DEBUG))
 	USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.7'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.1'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.9'; a=$$?; if test $$a != 1; then echo 1; fi)
 endif
+endif
 
 # Defines used for the Mozilla text preprocessor
-DEB_DEFINES = 	-DLIBDIR="$(FF_DIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF_VERSION_SERIES)" -DVENDOR="`lsb_release -i -s`" \
-		-DVENDOR_SUB="`lsb_release -r -s`" -DVENDOR_COMMENT="`lsb_release -c -s`" -DAPPNAME_OTHER="$(DEBIAN_NAME_OTHER)" \
-		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DBRAND_NAME="$(BRAND_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
-		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING="$(BRANDING)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
-		-DFF_PREFIX="$(FF_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" -DAPP_VERSION="$(FF_VERSION)" \
-		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DPYTHON="$(PYTHON)"
+DEB_DEFINES = 	-DLIBDIR="$(FF_LIBDIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF_VERSION_SERIES)" -DAPPBASENAME="$(DEBIAN_APP_NAME)"\
+		-DINCDIR="$(FF_INCDIR)" -DIDLDIR="$(FF_IDLDIR)" \
+		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DDISPLAY_NAME="$(DISPLAY_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
+		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING_OPTION="$(BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
+		-DFF_PREFIX="$(FF_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" -DSDKDIR="$(FF_SDKDIR)" \
+		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DPYTHON="$(PYTHON)" -DMOZ_PROFILE_FOLDER=".mozilla/$(DEBIAN_NAME)"
 ifeq (1, $(DEB_MIN_SYSDEPS))
-	DEB_DEFINES += -DDEB_MIN_SYSDEPS=$(DEB_MIN_SYSDEPS)
+	DEB_DEFINES += -DDEB_MIN_SYSDEPS
 endif
 ifeq (1, $(DEB_ENABLE_IPC))
-	DEB_DEFINES += -DDEB_ENABLE_IPC=$(DEB_ENABLE_IPC)
+	DEB_DEFINES += -DDEB_ENABLE_IPC
 endif
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
-	DEB_DEFINES += -DDEB_ENABLE_BREAKPAD=$(DEB_ENABLE_BREAKPAD)
+	DEB_DEFINES += -DDEB_ENABLE_BREAKPAD
 endif
 ifeq (1, $(DEB_MOZ_VALGRIND))
-	DEB_DEFINES += -DDEB_MOZ_VALGRIND=$(DEB_MOZ_VALGRIND)
+	DEB_DEFINES += -DDEB_MOZ_VALGRIND
 endif
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	DEB_DEFINES += -DDEB_NO_OPTIMIZE=1
+ifeq (1,$(DEB_NO_OPTIMIZE))
+	DEB_DEFINES += -DDEB_NO_OPTIMIZE
 endif
 ifeq (1, $(USE_SYSTEM_NSPR))
-	DEB_DEFINES += -DUSE_SYSTEM_NSPR=$(USE_SYSTEM_NSPR)
+	DEB_DEFINES += -DUSE_SYSTEM_NSPR
+	NSPR_DEPENDS = libnspr4-dev
 endif
 ifeq (1, $(USE_SYSTEM_CAIRO))
-	DEB_DEFINES += -DUSE_SYSTEM_CAIRO=$(USE_SYSTEM_CAIRO)
+	DEB_DEFINES += -DUSE_SYSTEM_CAIRO
+	CAIRO_DEPENDS = libcairo2-dev
 endif
 ifeq (1, $(USE_SYSTEM_SQLITE))
-	DEB_DEFINES += -DUSE_SYSTEM_SQLITE=$(USE_SYSTEM_SQLITE)
+	DEB_DEFINES += -DUSE_SYSTEM_SQLITE
 endif
 ifeq (1, $(USE_SYSTEM_NSS))
-	DEB_DEFINES += -DUSE_SYSTEM_NSS=$(USE_SYSTEM_NSS)
+	DEB_DEFINES += -DUSE_SYSTEM_NSS
+	NSS_DEPENDS = libnss3-dev
 endif
 ifeq (1,$(DEB_WANT_UNIT_TESTS))
-	DEB_DEFINES += -DDEB_WANT_UNIT_TESTS=$(DEB_WANT_UNIT_TESTS)
+	DEB_DEFINES += -DDEB_WANT_UNIT_TESTS
 endif
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 	DEB_DEFINES += -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)"
 endif
 ifeq (1,$(DEB_BUILD_PGO))
-	DEB_DEFINES += -DDEB_BUILD_PGO=$(DEB_BUILD_PGO)
+	DEB_DEFINES += -DDEB_BUILD_PGO
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
-	DEB_DEFINES += -DDISABLE_GNOMEVFS=1
+	DEB_DEFINES += -DDISABLE_GNOMEVFS
+	DEB_DEFINES += -DDISABLE_CONTROL_CENTER
 endif
 ifneq (,$(MOZ_UPDATE_CHANNEL))
 	DEB_DEFINES += -DMOZ_UPDATE_CHANNEL="$(MOZ_UPDATE_CHANNEL)"
 endif
-
-UUDECODE = \
-	debsearch.gif \
-	$(NULL)
+ifeq (1,$(DEB_DEBUG))
+	DEB_DEFINES += -DDEBUG
+endif
+ifneq (,$(findstring armel,$(DEB_BUILD_ARCH)))
+	DEB_DEFINES += -DDEB_ENABLE_THUMB2
+endif
+ifeq (,$(findstring i386,$(DEB_BUILD_ARCH)))
+ifeq (,$(findstring amd64,$(DEB_BUILD_ARCH)))
+	DEB_DEFINES += -DDISABLE_ELF_HACK
+endif
+endif
 
 DEBIAN_EXECUTABLES = \
 	firefox.sh \
@@ -264,34 +297,22 @@ subst_files = \
 	debian/usr.bin.$(DEBIAN_NAME) \
 	debian/README.Debian \
 	debian/firefox.sh \
-	debian/vendor-firefox.js \
-	debian/vendor-abrowser.js \
 	debian/apport/$(DEBIAN_NAME) \
-	debian/$(DESKTOP) \
 	debian/apport/$(DEBIAN_NAME).py \
-	debian/$(DESKTOP_BRANDED) \
+	debian/$(DESKTOP) \
 	debian/$(DEBIAN_NAME).xml \
 	debian/$(DEBIAN_NAME)-gnome-support.install \
-	debian/$(DEBIAN_NAME)-gnome-support.postinst \
-	debian/$(DEBIAN_NAME)-gnome-support.prerm \
-	debian/$(DEBIAN_NAME_OTHER).xml \
-	debian/$(DEBIAN_NAME_OTHER)-gnome-support.install \
-	debian/$(DEBIAN_NAME_OTHER)-gnome-support.postinst \
-	debian/$(DEBIAN_NAME_OTHER)-gnome-support.prerm \
-	debian/$(DEBIAN_NAME)-core.dirs \
-	debian/$(DEBIAN_NAME)-core.docs \
-	debian/$(DEBIAN_NAME)-core.install \
-	debian/$(DEBIAN_NAME)-core.links \
-	debian/$(DEBIAN_NAME).menu \
-	debian/$(DEBIAN_NAME)-core.postinst \
-	debian/$(DEBIAN_NAME)-core.postrm \
-	debian/$(DEBIAN_NAME)-core.preinst \
-	debian/$(DEBIAN_NAME)-core.prerm \
-	debian/$(DEBIAN_NAME_OTHER).install \
-	debian/$(DEBIAN_NAME_OTHER).links \
+	debian/$(DEBIAN_NAME).dirs \
 	debian/$(DEBIAN_NAME).install \
 	debian/$(DEBIAN_NAME).links \
+	debian/$(DEBIAN_NAME).menu \
+	debian/$(DEBIAN_NAME).postinst \
+	debian/$(DEBIAN_NAME).postrm \
+	debian/$(DEBIAN_NAME).preinst \
+	debian/$(DEBIAN_NAME).prerm \
 	debian/$(DEBIAN_NAME)-mozsymbols.install \
+	debian/$(DEBIAN_NAME)-dev.install \
+	debian/$(DEBIAN_NAME)-dev.links \
 	debian/mozconfig \
 	$(NULL)
 
@@ -303,8 +324,7 @@ endif
 
 regen-debian-control::
 	sed -e 's/@EXTRA_BD@/$(EXTRA_BD)/g' \
-	    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' \
-	    -e 's/@APPNAME_OTHER@/$(DEBIAN_NAME_OTHER)/g' < debian/control.pp > debian/control
+	    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' < debian/control.pp > debian/control
 
 BRANCH	:=
 ifneq (,$(DEBIAN_APP_NAME_VER))
@@ -324,13 +344,8 @@ debian/usr.bin.firefox.in:
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.9.10 $(CURDIR)/debian/usr.bin.firefox.in ; \
 	fi
 
-debian/$(DEBIAN_NAME).desktop: debian/$(DESKTOP_BRANDED)
+debian/$(DEBIAN_NAME).desktop: debian/$(DESKTOP)
 	cp $< $@
-
-BRANDING_MAKEFILES = ../../browser/branding/$(BRANDING_NAME_OTHER)/Makefile \
-	../../browser/branding/$(BRANDING_NAME_OTHER)/locales/Makefile \
-	../../browser/branding/$(BRANDING_NAME_OTHER)/content/Makefile \
-	$(NULL)
 
 debian/stamp-buildsymbols: debian/stamp-makefile-build
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
@@ -341,14 +356,8 @@ endif
 	touch $@
 
 debian/lp-export-xpis/en-US.xpi: debian/stamp-makefile-build
-	# Don't include branding strings in the translation template
-	mv $(MOZ_OBJDIR)/$(BRANDING_DIR)/locales/Makefile $(MOZ_OBJDIR)/$(BRANDING_DIR)/locales/Makefile.bak
-	echo "#!/usr/bin/make" >> $(MOZ_OBJDIR)/$(BRANDING_DIR)/locales/Makefile
-	echo "all:" >> $(MOZ_OBJDIR)/$(BRANDING_DIR)/locales/Makefile
 	rm -rf $(MOZ_OBJDIR)/dist/xpi-stage/locale-en-US
 	$(MAKE) -C $(MOZ_OBJDIR)/browser/locales langpack
-	rm -f $(MOZ_OBJDIR)/$(BRANDING_DIR)/locales/Makefile
-	mv $(MOZ_OBJDIR)/$(BRANDING_DIR)/locales/Makefile.bak $(MOZ_OBJDIR)/$(BRANDING_DIR)/locales/Makefile
 	sed \
 	        -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
 	        -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
@@ -360,29 +369,11 @@ debian/lp-export-xpis/en-US.xpi: debian/stamp-makefile-build
 	mv $(MOZ_OBJDIR)/dist/xpi-stage/locale-en-US/en-US.xpi debian/lp-export-xpis/en-US.xpi
 
 common-build-arch:: debian/stamp-testsuite
-	cd $(MOZ_OBJDIR)/browser/locales/; \
-		$(MAKE) SUBMAKEFILES="$(BRANDING_MAKEFILES)" $(BRANDING_MAKEFILES)
 ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/vendor-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/vendor.js
+	cp debian/vendor.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/
 else
-	cp debian/vendor-firefox.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/vendor.js
+	cp debian/vendor.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/
 endif
-
-common-install-arch::
-	rm -rf $(MOZ_OBJDIR)/dist/bin/chrome/browser-branding*
-ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/vendor-abrowser.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/vendor.js
-else
-	cp debian/vendor-abrowser.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/vendor.js
-endif
-	cd $(MOZ_OBJDIR)/browser/locales/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/content/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/locales/; \
-		$(MAKE) -C ../../browser/branding/$(BRANDING_NAME_OTHER)/; \
-		$(MAKE) -C ../../browser/app/
-	cd $(MOZ_OBJDIR)/; \
-		mkdir -p $(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/; \
-		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-$(DEBIAN_NAME_OTHER)-branding/
 
 common-binary-arch:: debian/stamp-buildsymbols debian/lp-export-xpis/en-US.xpi
 
@@ -390,27 +381,24 @@ ifeq (1, $(DEB_MIN_SYSDEPS))
 GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 endif
 
-binary-post-install/$(DEBIAN_NAME)-core:: compare
+binary-post-install/$(DEBIAN_NAME):: compare
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/$(file);) true
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 # install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 common-binary-predeb-arch::
-	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(DEBIAN_NAME)-gnome-support$(FF_DIR)/components/$(file) debian/$(DEBIAN_NAME)-core$(FF_DIR)/components/;) true
+	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(DEBIAN_NAME)-gnome-support$(FF_LIBDIR)/components/$(file) debian/$(DEBIAN_NAME)$(FF_LIBDIR)/components/;) true
 	touch $@
 
-binary-predeb/$(DEBIAN_NAME)-core::
+binary-predeb/$(DEBIAN_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
-	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)-core$(FF_DIR):$$LD_LIBRARY_PATH \
-	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)-core$(FF_DIR)/$(lib);)
+	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)$(FF_LIBDIR):$$LD_LIBRARY_PATH \
+	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)$(FF_LIBDIR)/$(lib);)
 endif
 
 pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
-	set -e; for i in $(UUDECODE); do \
-	        uudecode -o debian/$$i debian/$$i.uu; \
-	        done ; \
-	        for i in $(DEBIAN_EXECUTABLES); do \
+	set -e; for i in $(DEBIAN_EXECUTABLES); do \
 	                chmod a+x debian/$$i; \
 	        done
 
@@ -420,12 +408,8 @@ pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	cp $(DEB_SRCDIR)/browser/base/content/browser.xul $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
 
 clean:: regen-debian-control
-	set -e; for i in $(UUDECODE); do \
-	        rm -f debian/$$i; \
-	        done ; 
 	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) debian/install.rdf
-	rm -rf debian/tmp-*
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
 	rm -f debian/$(DEBIAN_NAME).desktop

@@ -1,2 +1,0 @@
-@LIBDIR@/icons/mozicon128.png /usr/share/pixmaps/@APPNAME_OTHER@.png
-@LIBDIR@/firefox.sh /usr/bin/@APPNAME_OTHER@

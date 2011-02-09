@@ -1,3 +1,8 @@
+Description: Normalize the paths to distribution searchplugins so that
+ associated metadata is not lost on upgrades (when the install location changes)
+Author: Alexander Sack <asac@ubuntu.com>
+Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=534663
+Forwarded: no
 ---
  toolkit/components/search/nsSearchService.js |    9 +++++++++
  1 file changed, 9 insertions(+)

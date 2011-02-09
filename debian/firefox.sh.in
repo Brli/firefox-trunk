@@ -10,33 +10,25 @@
 #  Chris Coulson <chris.coulson@canonical.com>
 # License: GPLv2 or later
 
-MOZDIR=$HOME/.mozilla
+PROFILE=$HOME/@MOZ_PROFILE_FOLDER@
 LIBDIR=@LIBDIR@
-GDB=/usr/bin/gdb
 NAME=`which $0`
-APPNAME=`basename $NAME`
 MOZ_APP_LAUNCHER=$NAME
 SERIES=@SERIES@
-BRAND="@STARTUP_WM_CLASS@"
+DISPLAYNAME="@STARTUP_WM_CLASS@"
 %%if DEB_MIN_SYSDEPS == 1
-FALLBACK_EXE=@APPNAME@-bin
-EXE="$APPNAME"-bin
+EXE=@APPNAME@-bin
 %%else
-FALLBACK_EXE=@APPNAME@
-EXE=$APPNAME
+EXE=@APPNAME@
 %%endif
-# Hack for abrowser
-PROFILENAME=`echo $APPNAME | sed -e 's/abrowser/firefox/'`
+APPNAME=@APPBASENAME@
 
 export MOZ_APP_LAUNCHER
-unset UBUNTU_MENUPROXY
 
 while [ ! -x $LIBDIR/$EXE ] ; do
     if [ -L "$NAME" ] ; then
         NAME=`readlink -f $NAME`
         LIBDIR=`dirname $NAME`
-    elif [ -x $LIBDIR/$FALLBACK_EXE ] ; then
-        EXE="$FALLBACK_EXE"
     else
        echo "Can't find $LIBDIR/$EXE"
        exit 1
@@ -46,11 +38,14 @@ done
 usage () {
     $LIBDIR/$EXE -h | sed -e 's,/.*/,,'
     echo
-    echo "      -g or --debug       Start within $GDB (Must be first)"
+    echo "      -g or --debug          Start within debugger"
+    echo "      -d or --debugger       Specify debugger to start with (eg, gdb or valgrind)"
+    echo "      -a or --debugger-args  Specify arguments for debugger"
 }
 
 moz_debug=0
 moz_debugger_args=""
+moz_debugger="gdb"
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -61,6 +56,15 @@ while [ $# -gt 0 ]; do
         -g | --debug )
             moz_debug=1
             shift
+            ;;
+        -d | --debugger)
+            moz_debugger=$2;
+            if [ "${moz_debugger}" != "" ]; then
+	      shift 2
+            else
+              echo "-d requires an argument"
+              exit 1
+            fi
             ;;
         -a | --debugger-args )
             moz_debugger_args=$2;
@@ -82,15 +86,20 @@ while [ $# -gt 0 ]; do
 done
 
 if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
-    if [ ! -d $MOZDIR/$PROFILENAME ] ; then
-        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$PROFILENAME -b $BRAND
-    elif [ -f $MOZDIR/$PROFILENAME.series-stamp ] ; then
-        last_series=`cat $MOZDIR/$PROFILENAME.series-stamp`
+    RUN_MIGRATOR=0
+    if [ ! -d $PROFILE ] ; then
+        RUN_MIGRATOR=1
+    elif [ -f $PROFILE.last-version ] ; then
+        last_series=`cat $PROFILE.last-version`
         if [ $SERIES != $last_series ] ; then
-            $LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$PROFILENAME -b $BRAND
+            RUN_MIGRATOR=1
         fi
     else
-	$LIBDIR/xulapp-profilemigrator -s $SERIES -p $MOZDIR/$PROFILENAME -b $BRAND
+	RUN_MIGRATOR=1
+    fi
+
+    if [ "$RUN_MIGRATOR" = "1" ] ; then
+        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $PROFILE -d $DISPLAYNAME -a $APPNAME
     fi
 fi
 
@@ -100,7 +109,23 @@ export LD_LIBRARY_PATH
 %%endif
 
 if [ $moz_debug -eq 1 ] ; then
-    exec $GDB $moz_debugger_args --args $LIBDIR/$EXE "$@"
+    debugger=`which $moz_debugger`
+    if [ ! -x $debugger ] ; then
+       echo "Invalid debugger"
+       exit 1
+    fi
+
+    case `basename $debugger` in
+       gdb)
+         exec $debugger $moz_debugger_args --args $LIBDIR/$EXE "$@"
+         ;;
+       valgrind)
+         exec $debugger $moz_debugger_args $LIBDIR/$EXE "$@"
+         ;;
+       *)
+         exec $debugger $moz_debugger_args $LIBDIR/$EXE "$@"
+         ;;
+    esac
 else
     exec $LIBDIR/$EXE "$@"
 fi

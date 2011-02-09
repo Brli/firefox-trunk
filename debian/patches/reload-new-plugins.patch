@@ -1,10 +1,14 @@
+Description: Ensure that new plugins are reloaded
+Author: Alexander Sack <asac@ubuntu.com>
+Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=460917
+Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=350845
 ---
  browser/base/content/browser.js |   20 +++++++++++++++++++-
  1 file changed, 19 insertions(+), 1 deletion(-)
 
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -6178,7 +6178,11 @@ var gPluginHandler = {
+@@ -6680,7 +6680,11 @@ var gPluginHandler = {
      if (notification)
        notificationBox.removeNotification(notification);
  
@@ -17,7 +21,7 @@
      browser.reload();
    },
  
-@@ -6189,9 +6193,17 @@ var gPluginHandler = {
+@@ -6691,9 +6695,17 @@ var gPluginHandler = {
      var pluginInfo = getPluginInfo(aEvent.target);
      missingPluginsArray[pluginInfo.mimetype] = pluginInfo;
  
@@ -35,7 +39,7 @@
    },
  
    // Callback for user clicking on a disabled plugin
-@@ -6257,11 +6269,17 @@ var gPluginHandler = {
+@@ -6758,11 +6770,17 @@ var gPluginHandler = {
      function showPluginsMissing() {
        // get the urls of missing plugins
        var missingPluginsArray = gBrowser.selectedBrowser.missingPlugins;
@@ -52,4 +56,4 @@
 +                                                   false);
      }
  
-     let notifications = {
+ #ifdef XP_MACOSX

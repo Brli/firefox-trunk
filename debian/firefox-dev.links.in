@@ -1,0 +1,14 @@
+%%ifdef USE_SYSTEM_NSPR
+/usr/include/nspr @INCDIR@/nspr
+/usr/bin/nspr-config @SDKDIR@/sdk/bin/nspr-config
+%%else
+@LIBDIR@/libnspr4.so @SDKDIR@/sdk/lib/libnspr4.so
+@LIBDIR@/libplc4.so @SDKDIR@/sdk/lib/libplc4.so
+@LIBDIR@/libplds4.so @SDKDIR@/sdk/lib/libplds4.so
+%%endif
+%%ifdef USE_SYSTEM_CAIRO
+/usr/include/cairo @INCDIR@/cairo
+%%endif
+@LIBDIR@/libmozalloc.so @SDKDIR@/sdk/lib/libmozalloc.so
+@LIBDIR@/libxpcom.so @SDKDIR@/sdk/lib/libxpcom.so
+@LIBDIR@/libxul.so @SDKDIR@/sdk/lib/libxul.so

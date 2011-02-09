@@ -1,11 +1,11 @@
-firefox-4.0 (4.0~b11~hg20110127r61359+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b12~hg20110209r62212+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   [ Micah Gersten ]
   * Refresh patches
     - update debian/patches/lp185622_system_path_default_browser.patch
     - update debian/patches/mozilla-kde.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 27 Jan 2011 19:07:41 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 09 Feb 2011 17:36:03 +0000
 
 firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 

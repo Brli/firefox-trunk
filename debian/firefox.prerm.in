@@ -5,8 +5,8 @@ set -e
 APPNAME=@APPNAME@
 
 if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
+    update-alternatives --remove gnome-www-browser /usr/bin/$APPNAME
     update-alternatives --remove x-www-browser /usr/bin/$APPNAME
-    rm -f /var/lib/update-notifier/user.d/$APPNAME-restart-required
 fi
 
 if [ -f /usr/share/apport/package-hooks/$APPNAME.pyc ] ; then

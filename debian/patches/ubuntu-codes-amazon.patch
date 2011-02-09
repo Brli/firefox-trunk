@@ -1,3 +1,6 @@
+Description: Update the URL for Amazon search
+Author: Alexander Sack <asac@ubuntu.com>
+Forwarded: not-needed
 ---
  browser/locales/en-US/searchplugins/amazondotcom.xml |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

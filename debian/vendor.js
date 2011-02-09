@@ -1,10 +1,3 @@
-// Useragent strings
-pref("general.useragent.vendor", "@VENDOR@");
-pref("general.useragent.vendorSub", "@VENDOR_SUB@");
-pref("general.useragent.vendorComment", "@VENDOR_COMMENT@");
-
-pref("extensions.update.enabled", true);
-
 // Use LANG environment variable to choose locale
 pref("intl.locale.matchOS", true);
 

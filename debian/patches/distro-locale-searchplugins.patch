@@ -1,3 +1,8 @@
+Description: Add support for localized distribution searchplugins
+Author: Alexander Sack <asac@ubuntu.com>
+Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=515232
+Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=399338
+
 diff --git a/browser/components/dirprovider/DirectoryProvider.cpp b/browser/components/dirprovider/DirectoryProvider.cpp
 --- a/browser/components/dirprovider/DirectoryProvider.cpp
 +++ b/browser/components/dirprovider/DirectoryProvider.cpp
