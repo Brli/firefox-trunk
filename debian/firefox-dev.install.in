@@ -37,3 +37,5 @@ debian/tmp@SDKDIR@/sdk/bin/nspr-config
 debian/tmp@SDKDIR@/sdk/bin/xpidl
 debian/tmp@SDKDIR@/sdk/bin/xpt_dump
 debian/tmp@SDKDIR@/sdk/bin/xpt_link
+
+debian/pkgconfig/*.pc /usr/lib/pkgconfig
