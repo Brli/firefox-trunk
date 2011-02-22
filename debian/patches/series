@@ -10,7 +10,6 @@ cairo-lcd-filter.patch
 ubuntu-codes-google.patch
 plugin-for-mimetype-pref.patch
 allow-lockPref-everywhere.patch
-install-ubuntu-prefs.patch
 mozilla-kde.patch
 firefox-kde.patch
 fix-sdk-bin-install.patch

@@ -29,7 +29,6 @@ ac_add_options --enable-thumb2
 ac_add_options --with-system-jpeg=/usr
 ac_add_options --with-system-png=/usr
 ac_add_options --with-system-zlib=/usr
-ac_add_options --enable-system-hunspell
 ac_add_options --with-libxul-sdk=@DEBIAN_XUL_DEV@
 ac_add_options --with-system-libxul
 ac_add_options --enable-chrome-format=jar
@@ -37,7 +36,6 @@ ac_add_options --enable-chrome-format=jar
 ac_add_options --without-system-jpeg
 ac_add_options --without-system-png
 ac_add_options --without-system-zlib
-ac_add_options --disable-system-hunspell
 ac_add_options --enable-chrome-format=omni
 %%endif
 %%ifdef DEB_NO_OPTIMIZE
@@ -91,6 +89,11 @@ ac_add_options --without-system-nss
 ac_add_options --enable-system-sqlite
 %%else
 ac_add_options --disable-system-sqlite
+%%endif
+%%ifdef USE_SYSTEM_HUNSPELL
+ac_add_options --enable-system-hunspell
+%%else
+ac_add_options --disable-system-hunspell
 %%endif
 %%ifdef DEB_ENABLE_BREAKPAD
 ac_add_options --enable-crashreporter

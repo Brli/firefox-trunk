@@ -81,6 +81,4 @@ if [ -d /var/run ] ; then
     touch /var/run/$APPNAME-restart-required
 fi
 
-if [ -x /usr/bin/update-menus ] ; then
-  /usr/bin/update-menus
-fi
+#DEBHELPER#

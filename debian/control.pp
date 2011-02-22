@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Ubuntu Mozilla Team <ubuntu-mozillateam@lists.ubuntu.com>
 Vcs-Bzr: https://code.launchpad.net/~mozillateam/firefox/firefox-4.0.head
 Build-Depends: cdbs, 
-	debhelper (>= 5),
+	debhelper (>= 5), 
 	m4,
 	autotools-dev, 
 	autoconf2.13,
@@ -38,7 +38,7 @@ Build-Depends: cdbs,
         yasm,
 	xvfb,
 	imagemagick
-Standards-Version: 3.8.1
+Standards-Version: 3.9.1
 
 Package: @APPNAME@
 Architecture: any
@@ -54,8 +54,10 @@ Recommends: ubufox
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser
-Suggests: latex-xft-fonts,
+Suggests: @APPNAME@-gnome-support | firefox-kde-support,
+	latex-xft-fonts,
 	libthai0
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Replaces: firefox-4.0-core,
 	abrowser-4.0,
 	firefox-4.0-gnome-support
@@ -106,13 +108,12 @@ Depends: ${shlibs:Depends},
 	${nspr:Depends},
 	${nss:Depends},
 	${cairo:Depends}
-Description: Safe and easy web browser from Mozilla - debug symbols
+Description: Safe and easy web browser from Mozilla - development files
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
  .
- This package contains the debugging symbols for the Firefox web
- browser
+ This package contains the headers and SDK for building plugins with Firefox
 
 Package: @APPNAME@-mozsymbols
 Architecture: amd64 i386 armel
@@ -149,7 +150,7 @@ Package: firefox-4.0-gnome-support-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${misc:Depends}, firefox-4.0-dbg (= ${binary:Version})
+Depends: ${misc:Depends}, firefox-4.0-gnome-support, firefox-4.0-dbg (= ${binary:Version})
 Description: Safe and easy web browser from Mozilla - transitional package
  This is a transitional package to ensure that upgrades work correctly.
  It can be safely removed

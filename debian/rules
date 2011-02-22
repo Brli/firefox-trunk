@@ -222,6 +222,11 @@ ifneq (1, $(DEB_DEBUG))
 	USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.1'; a=$$?; if test $$a != 1; then echo 1; fi)
 	USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.9'; a=$$?; if test $$a != 1; then echo 1; fi)
+	USE_SYSTEM_HUNSPELL := $(shell pkg-config --exists 'hunspell >= 1.2' && echo 1)
+ifeq (1, $(USE_SYSTEM_CAIRO))
+	USE_SYSTEM_CAIRO := $(shell printf "\#include <cairo-tee.h>\nint main(int argc, char *argv[]) { return 0; }" > test.c && \
+			      gcc `pkg-config --cflags --libs cairo` -lc -o test test.c > /dev/null 2>&1 && echo "1"; rm -f test test.c)
+endif
 endif
 endif
 
@@ -262,6 +267,9 @@ ifeq (1, $(USE_SYSTEM_NSS))
 	DEB_DEFINES += -DUSE_SYSTEM_NSS
 	NSS_DEPENDS = libnss3-dev
 endif
+ifeq (1,$(USE_SYSTEM_HUNSPELL))
+	DEB_DEFINES += -DUSE_SYSTEM_HUNSPELL
+endif
 ifeq (1,$(DEB_WANT_UNIT_TESTS))
 	DEB_DEFINES += -DDEB_WANT_UNIT_TESTS
 endif
@@ -291,8 +299,8 @@ endif
 endif
 
 DEBIAN_EXECUTABLES = \
-	firefox.sh \
-	migrator/xulapp-profilemigrator \
+	$(DEBIAN_NAME)$(FF_LIBDIR)/firefox.sh \
+	$(DEBIAN_NAME)$(FF_LIBDIR)/xulapp-profilemigrator \
 	$(NULL)
 
 subst_files = \
@@ -375,16 +383,11 @@ debian/lp-export-xpis/en-US.xpi: debian/stamp-makefile-build
 	mv $(MOZ_OBJDIR)/dist/xpi-stage/locale-en-US/en-US.xpi debian/lp-export-xpis/en-US.xpi
 
 common-build-arch:: debian/stamp-testsuite
-ifeq (1,$(DEB_MIN_SYSDEPS))
-	cp debian/vendor.js $(MOZ_OBJDIR)/dist/bin/defaults/pref/
-else
-	cp debian/vendor.js $(MOZ_OBJDIR)/dist/bin/defaults/preferences/
-endif
 
 common-binary-arch:: debian/stamp-buildsymbols debian/lp-export-xpis/en-US.xpi
 
 binary-install/$(DEBIAN_NAME)::
-	convert debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).png debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).xpm
+	convert -resize 32x32 debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).png debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).xpm
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
 GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
@@ -392,6 +395,13 @@ endif
 
 binary-post-install/$(DEBIAN_NAME):: compare
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/$(file);) true
+
+binary-post-install/$(DEBIAN_NAME)-dev::
+	rm -f debian/$(DEBIAN_NAME)-dev$(FF_INCDIR)/nspr/md/_linux.cfg
+	dh_link -p$(DEBIAN_NAME)-dev $(FF_INCDIR)/nspr/prcpucfg.h $(FF_INCDIR)/nspr/md/_linux.cfg
+
+common-binary-predeb-arch::
+	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
 
 ifeq (1, $(DEB_MIN_SYSDEPS))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
@@ -407,9 +417,6 @@ binary-predeb/$(DEBIAN_NAME)::
 endif
 
 pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
-	set -e; for i in $(DEBIAN_EXECUTABLES); do \
-	                chmod a+x debian/$$i; \
-	        done
 
 	# KDE integration
 	cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml

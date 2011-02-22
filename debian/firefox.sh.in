@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # Firefox launcher containing a Profile migration helper for
 # temporary profiles used during alpha and beta phases.
 

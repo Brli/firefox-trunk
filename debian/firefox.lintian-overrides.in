@@ -2,3 +2,10 @@
 @APPNAME@ binary: embedded-libjpeg .@LIBDIR@/libxul.so
 @APPNAME@ binary: embedded-zlib .@LIBDIR@/libxul.so
 %%endif
+@APPNAME@ binary: image-file-in-usr-lib @LIBDIR@/icons/document.png
+@APPNAME@ binary: image-file-in-usr-lib @LIBDIR@/icons/mozicon128.png
+@APPNAME@ binary: image-file-in-usr-lib @LIBDIR@/chrome/icons/default/default16.png
+@APPNAME@ binary: image-file-in-usr-lib @LIBDIR@/chrome/icons/default/default32.png
+@APPNAME@ binary: image-file-in-usr-lib @LIBDIR@/chrome/icons/default/default48.png
+@APPNAME@ binary: image-file-in-usr-lib @FF_PREFIX@/lib/@APPNAME@-addons/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/icon.png
+@APPNAME@ binary: image-file-in-usr-lib @FF_PREFIX@/lib/@APPNAME@-addons/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/preview.png

@@ -10,3 +10,5 @@ if [ "$1" = "purge" ]; then
     rm -f "/etc/apparmor.d/abstractions/ubuntu-browsers.d/@APPNAME@" || true
     rmdir /etc/apparmor.d/local 2>/dev/null || true
 fi
+
+#DEBHELPER#
