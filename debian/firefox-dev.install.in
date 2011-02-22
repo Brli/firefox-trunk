@@ -22,6 +22,8 @@ debian/tmp@INCDIR@/tremor
 %%endif
 debian/tmp@INCDIR@/vpx
 debian/tmp@INCDIR@/*.h
+debian/tmp@INCDIR@/*.tbl
+debian/tmp@INCDIR@/*.msg
 debian/tmp@IDLDIR@/*.idl
 
 debian/tmp@SDKDIR@/sdk/lib/*.a
