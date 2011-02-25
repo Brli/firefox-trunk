@@ -1,5 +1,7 @@
 change-moz-app-name.patch
-system-path-default-browser.patch
+use-MOZ_APP_LAUNCHER-for-launcher-exec.patch
+fix-nsGIOService.patch
+default-browser-check-use-gio.patch
 reload-new-plugins.patch
 ubuntu-codes-amazon.patch
 ubuntu-bookmarks.patch

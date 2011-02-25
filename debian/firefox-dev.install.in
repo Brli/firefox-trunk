@@ -4,7 +4,6 @@ debian/tmp@INCDIR@/cairo
 %%endif
 debian/tmp@INCDIR@/harfbuzz
 debian/tmp@INCDIR@/IPC
-debian/tmp@INCDIR@/md
 debian/tmp@INCDIR@/mozilla
 debian/tmp@INCDIR@/nestegg
 %%ifndef USE_SYSTEM_NSPR
