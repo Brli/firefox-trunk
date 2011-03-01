@@ -122,3 +122,6 @@ ac_add_options --disable-debug
 %%ifdef DISABLE_ELF_HACK
 ac_add_options --disable-elf-hack
 %%endif
+%%ifdef ENABLE_GLOBALMENU
+ac_add_options --enable-extensions=default,globalmenu
+%%endif

@@ -204,6 +204,9 @@ export DEB_BUILD_HARDENING=1
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
     export DEB_BUILD_HARDENING_PIE=0
 endif
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
+	ENABLE_GLOBALMENU := 1
+endif
 export MOZCONFIG=$(CURDIR)/debian/mozconfig
 ifneq (1,$(DEB_BUILD_UNOFFICIAL))
 	export MOZILLA_OFFICIAL=1
@@ -297,6 +300,9 @@ ifeq (,$(findstring amd64,$(DEB_BUILD_ARCH)))
 	DEB_DEFINES += -DDISABLE_ELF_HACK
 endif
 endif
+ifeq (1,$(ENABLE_GLOBALMENU))
+	DEB_DEFINES += -DENABLE_GLOBALMENU
+endif
 
 DEBIAN_EXECUTABLES = \
 	$(DEBIAN_NAME)$(FF_LIBDIR)/firefox.sh \
@@ -326,6 +332,7 @@ subst_files = \
 	debian/$(DEBIAN_NAME)-dev.install \
 	debian/$(DEBIAN_NAME)-dev.links \
 	debian/$(DEBIAN_NAME).lintian-overrides \
+	debian/$(DEBIAN_NAME)-globalmenu.dirs \
 	debian/pkgconfig/$(DEBIAN_NAME)-plugin.pc \
 	debian/mozconfig \
 	$(NULL)
@@ -389,6 +396,12 @@ common-binary-arch:: debian/stamp-buildsymbols debian/lp-export-xpis/en-US.xpi
 binary-install/$(DEBIAN_NAME)::
 	convert -resize 32x32 debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).png debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).xpm
 
+ifeq (1, $(ENABLE_GLOBALMENU))
+binary-install/$(DEBIAN_NAME)-globalmenu::
+	unzip -o -d debian/$(DEBIAN_NAME)-globalmenu$(FF_PREFIX)/lib/$(DEBIAN_NAME)-addons/extensions/globalmenu@ubuntu.com/ $(MOZ_OBJDIR)/dist/xpi-stage/globalmenu.xpi
+	find debian/$(DEBIAN_NAME)-globalmenu$(FF_PREFIX)/lib/$(DEBIAN_NAME)-addons/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
+endif
+
 ifeq (1, $(DEB_MIN_SYSDEPS))
 GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 endif
@@ -422,6 +435,8 @@ pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
 	cp $(DEB_SRCDIR)/toolkit/content/widgets/preferences.xml $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
 	cp $(DEB_SRCDIR)/browser/base/content/browser.xul $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
+	mkdir -p $(DEB_SRCDIR)/extensions/globalmenu
+	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -) 
 
 clean:: regen-debian-control
 	rm -f debian/$(DEBIAN_NAME).desktop

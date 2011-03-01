@@ -50,7 +50,8 @@ Depends: fontconfig,
 	python-gtk2,
 	${misc:Depends},
 	${shlibs:Depends}
-Recommends: ubufox
+Recommends: ubufox,
+	@APPNAME@-globalmenu
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser
@@ -129,6 +130,15 @@ Description: Safe and easy web browser from Mozilla - Breakpad symbols
  This package contains the Firefox symbols in a format expected by Mozilla's
  Breakpad. Eventually this package should go away and the symbol upload be
  implemented in soyuz (or other builders that build this package)
+
+Package: @APPNAME@-globalmenu
+Architecture: any
+Depends: ${shlibs:Depends},
+	${misc:Depends},
+	@APPNAME@ (= ${binary:Version})
+Description: Unity appmenu integration for Firefox
+ This package provides an extension which adds support for the Unity
+ appmenu to Firefox 
 
 # Transitional packages below here
 

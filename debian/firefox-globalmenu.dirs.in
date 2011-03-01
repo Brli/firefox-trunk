@@ -1,0 +1,3 @@
+%%ifdef ENABLE_GLOBALMENU
+@FF_PREFIX@/lib/@APPNAME@-addons/extensions/globalmenu@ubuntu.com
+%%endif
