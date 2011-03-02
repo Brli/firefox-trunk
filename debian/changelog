@@ -18,8 +18,11 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu) UNRELEASED; urgency=low
       LP: #612162, LP: #620400, LP: #623980, LP: #625014, LP: #630643,
       LP: #635166, LP: #638342, LP: #641838, LP: #658828, LP: #668809,
       LP: #672282, LP: #676239, LP: #707704, LP: #724090 
+  * Don't allow users to report bugs with apport-bug when /usr/bin/firefox
+    has been diverted
+    - update debian/firefox.py.in 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:02:17 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:04:09 +0000
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

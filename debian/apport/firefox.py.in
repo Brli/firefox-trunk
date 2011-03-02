@@ -22,6 +22,7 @@ import cStringIO
 from xml.dom import minidom
 import re
 from zipfile import ZipFile
+from subprocess import Popen
 
 def extensions_ini_parser(extensions_ini_file):
     '''parses profile's extensions.ini file and returns a tuple:
@@ -122,6 +123,14 @@ def recent_auditlog(pattern):
     return lines
 
 def add_info(report):
+    ddproc = Popen(['dpkg-divert', '--truename', '/usr/bin/@APPNAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    truename = ddproc.communicate()
+    if ddproc.returncode == 0 and truename[0].strip() != '/usr/bin/@APPNAME@':
+        ddproc = Popen(['dpkg-divert', '--listpackage', '/usr/bin/@APPNAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        diverter = ddproc.communicate()
+        report['UnreportableReason'] = "/usr/bin/@APPNAME@ has been diverted by a third party package (%s)" % diverter[0].strip()
+        return
+
     if not apport.packaging.is_distro_package(report['Package'].split()[0]):
         report['ThirdParty'] = 'True'
         report['CrashDB'] = 'ubuntu-mozilla-ppa-bugs'
