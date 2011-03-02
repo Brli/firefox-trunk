@@ -1,4 +1,4 @@
-firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
   * New upstream release v4.0 B12 (FIREFOX_4_0b12_BUILD1)
 
