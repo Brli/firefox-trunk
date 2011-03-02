@@ -21,8 +21,10 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu) UNRELEASED; urgency=low
   * Don't allow users to report bugs with apport-bug when /usr/bin/firefox
     has been diverted
     - update debian/firefox.py.in 
+  * Don't build with --disable-elfhack on armel. It's been fixed now
+    - update debian/rules 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:04:09 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:05:09 +0000
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

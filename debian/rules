@@ -297,7 +297,9 @@ ifneq (,$(findstring armel,$(DEB_BUILD_ARCH)))
 endif
 ifeq (,$(findstring i386,$(DEB_BUILD_ARCH)))
 ifeq (,$(findstring amd64,$(DEB_BUILD_ARCH)))
+ifeq (,$(findstring armel,$(DEB_BUILD_ARCH)))
 	DEB_DEFINES += -DDISABLE_ELF_HACK
+endif
 endif
 endif
 ifeq (1,$(ENABLE_GLOBALMENU))
