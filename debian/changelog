@@ -1,3 +1,9 @@
+firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu) UNRELEASED; urgency=low
+
+  * New upstream snapshot v4.0 B13 HG 20100302R63246
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 16:41:45 +0000
+
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
   * New upstream release v4.0 B12 (FIREFOX_4_0b12_BUILD1)
