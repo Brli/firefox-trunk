@@ -23,8 +23,16 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu) UNRELEASED; urgency=low
     - update debian/firefox.py.in 
   * Don't build with --disable-elfhack on armel. It's been fixed now
     - update debian/rules 
+  * Don't disable the crashreporter for DEB_BUILD_UNOFFICIAL builds.
+    - update debian/rules
+  * Automatically set DEB_BUILD_UNOFFICIAL for builds where we change
+    MOZ_APP_NAME
+    - update debian/rules
+  * Disable the crashreporter for nightlies earlier than Maverick. Also
+    disable for the firefox-next PPA for now
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:05:09 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:20:20 +0000
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
