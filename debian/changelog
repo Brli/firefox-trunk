@@ -31,8 +31,15 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu) UNRELEASED; urgency=low
   * Disable the crashreporter for nightlies earlier than Maverick. Also
     disable for the firefox-next PPA for now
     - update debian/rules
+  * Add a separate DEB_SYS_LIBXUL option separate from DEB_MIN_SYSDEPS. This
+    gives the ability to use the internal libxul but with other system libs
+    - update debian/rules
+    - update debian/firefox.install.in
+    - update debian/firefox.lintian-overrides.in
+    - update debian/firefox.sh.in
+    - update debian/mozconfig.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:20:20 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:33:45 +0000
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

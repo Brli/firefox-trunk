@@ -2,7 +2,7 @@ debian/tmp@LIBDIR@/icons
 debian/tmp@LIBDIR@/chrome/icons
 debian/tmp@LIBDIR@/components/*.manifest
 debian/tmp@LIBDIR@/components/*.so
-%%ifndef DEB_MIN_SYSDEPS
+%%ifdef DEB_SYS_LIBXUL
 debian/tmp@LIBDIR@/components/*.js
 debian/tmp@LIBDIR@/components/*.xpt
 debian/tmp@LIBDIR@/chrome/*.jar

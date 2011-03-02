@@ -1,4 +1,4 @@
-%%ifdef DEB_MIN_SYSDEPS
+%%ifndef DEB_SYS_LIBXUL
 @APPNAME@ binary: embedded-libjpeg .@LIBDIR@/libxul.so
 @APPNAME@ binary: embedded-zlib .@LIBDIR@/libxul.so
 %%endif

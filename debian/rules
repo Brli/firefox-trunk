@@ -19,6 +19,8 @@ MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 # Various build options
 # 1 = Use bundled libs
 DEB_MIN_SYSDEPS		?= 1
+# 1 - Use system libxul
+DEB_SYS_LIBXUL		?= 0
 # 1 = Enable IPC (if supported)
 DEB_ENABLE_IPC		?= 1
 # 1 = Enable crashreporter (if supported)
@@ -47,6 +49,10 @@ include /usr/share/cdbs/1/class/makefile.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
+
+ifeq (1,$(DEB_SYS_LIBXUL))
+	DEB_MIN_SYSDEPS = 0
+endif
 
 ifeq (1,$(DEB_MOZ_VALGRIND))
 	DEB_BUILD_UNOFFICIAL = 1
@@ -132,7 +138,7 @@ EM_TRANSLATION_MIN_VERSION	= $(FF_VERSION)
 EM_TRANSLATION_MAX_VERSION	= $(FF_VERSION)
 endif
 
-ifneq (1, $(DEB_MIN_SYSDEPS))
+ifeq (1, $(DEB_SYS_LIBXUL))
 	DEBIAN_XUL_VER	:= $(shell MALLOC_OPTIONS=O xulrunner-2.0 --gre-version)
 	DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
 	DEBIAN_XUL_DIR	:= usr/lib/xulrunner-$(DEBIAN_XUL_VER)
@@ -264,6 +270,9 @@ DEB_DEFINES = 	-DLIBDIR="$(FF_LIBDIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	DEB_DEFINES += -DDEB_MIN_SYSDEPS
 endif
+ifeq (1, $(DEB_SYS_LIBXUL))
+	DEB_DEFINES += -DDEB_SYS_LIBXUL
+endif
 ifeq (1, $(DEB_ENABLE_IPC))
 	DEB_DEFINES += -DDEB_ENABLE_IPC
 endif
@@ -361,9 +370,13 @@ subst_files = \
 	$(NULL)
 
 ifneq (1, $(DEB_MIN_SYSDEPS))
-EXTRA_BD = \n\tlibnspr4-dev,\n\tlibnss3-dev,\n\tlibcairo2-dev,\n\tlibsqlite3-dev,\n\tlibpixman-1-dev,\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibhunspell-dev,\n\txulrunner-2.0,
+EXTRA_BD = \n\tlibnspr4-dev,\n\tlibnss3-dev,\n\tlibcairo2-dev,\n\tlibsqlite3-dev,\n\tlibpixman-1-dev,\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibhunspell-dev,
 else
 EXTRA_BD = $(NULL)
+endif
+
+ifeq (1, $(DEB_SYS_LIBXUL))
+EXTRA_BD += \n\txulrunner-2.0,
 endif
 
 regen-debian-control::
@@ -425,7 +438,7 @@ binary-install/$(DEBIAN_NAME)-globalmenu::
 	find debian/$(DEBIAN_NAME)-globalmenu$(FF_PREFIX)/lib/$(DEBIAN_NAME)-addons/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
 endif
 
-ifeq (1, $(DEB_MIN_SYSDEPS))
+ifneq (1, $(DEB_SYS_LIBXUL))
 GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 endif
 
@@ -439,7 +452,7 @@ binary-post-install/$(DEBIAN_NAME)-dev::
 common-binary-predeb-arch::
 	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
 
-ifeq (1, $(DEB_MIN_SYSDEPS))
+ifneq (1, $(DEB_SYS_LIBXUL))
 # we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 # install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 common-binary-predeb-arch::

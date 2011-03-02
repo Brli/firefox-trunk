@@ -18,7 +18,7 @@ NAME=`which $0`
 MOZ_APP_LAUNCHER=$NAME
 SERIES=@SERIES@
 DISPLAYNAME="@STARTUP_WM_CLASS@"
-%%if DEB_MIN_SYSDEPS == 1
+%%ifndef DEB_SYS_LIBXUL
 EXE=@APPNAME@-bin
 %%else
 EXE=@APPNAME@
@@ -105,7 +105,7 @@ if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
     fi
 fi
 
-%%if DEB_MIN_SYSDEPS == 1
+%%ifndef DEB_SYS_LIBXUL
 LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
 export LD_LIBRARY_PATH
 %%endif
