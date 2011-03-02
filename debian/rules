@@ -440,14 +440,16 @@ endif
 
 ifneq (1, $(DEB_SYS_LIBXUL))
 GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
-endif
 
 binary-post-install/$(DEBIAN_NAME):: compare
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/$(file);) true
+endif
 
+ifneq (1, $(USE_SYSTEM_NSPR))
 binary-post-install/$(DEBIAN_NAME)-dev::
 	rm -f debian/$(DEBIAN_NAME)-dev$(FF_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(DEBIAN_NAME)-dev $(FF_INCDIR)/nspr/prcpucfg.h $(FF_INCDIR)/nspr/md/_linux.cfg
+endif
 
 common-binary-predeb-arch::
 	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
@@ -458,7 +460,9 @@ ifneq (1, $(DEB_SYS_LIBXUL))
 common-binary-predeb-arch::
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(DEBIAN_NAME)-gnome-support$(FF_LIBDIR)/components/$(file) debian/$(DEBIAN_NAME)$(FF_LIBDIR)/components/;) true
 	touch $@
+endif
 
+ifneq (1, $(USE_SYSTEM_NSS))
 binary-predeb/$(DEBIAN_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)$(FF_LIBDIR):$$LD_LIBRARY_PATH \
