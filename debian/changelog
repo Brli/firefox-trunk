@@ -1,13 +1,543 @@
-firefox-4.0 (4.0~b13~hg20110301r63189+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  [ Micah Gersten ]
-  * Refresh patches
+  * New upstream release v4.0 B12 (FIREFOX_4_0b12_BUILD1)
+
+  * Land the Unity appmenu extension work. It's shipped in its own package,
+    although we build it from the Firefox source tree
+  * Fix build with system NSPR
+    - update debian/firefox-dev.install.in
+  * Bump Standards-Version to 3.9.1
+    - update debian/control
+  * Add support for unpacked xpi's in the apport hook when reporting
+    the extensions installed
+    - update debian/apport/firefox.py.in
+  * Ensure the Apport hook can be tested properly without modification
+    - update debian/apport/firefox.py.in
+  * Fix description of firefox-dev
+    - update debian/control
+  * Don't ship a vendor.js with our preferences in, as it requires a patch
+    in order to get it in to the distributed omni.jar. Instead, move our
+    vendor prefs in to distribution.ini
+    - remove debian/vendor.js
+    - update debian/distribution.ini
+    - update debian/rules
+    - remove debian/patches/install-ubuntu-prefs.patch
+    - update debian/patches/series
+  * Fix desktop-entry-invalid-category lintian warnings - remove Internet
+    and Application categories, add GTK and GNOME
+    - update debian/firefox-beta.desktop.in
+    - update debian/firefox-final.desktop.in
+    - update debian/firefox-nightly.desktop.in
+    - update debian/firefox-unofficial.desktop.in
+  * Fix build with system NSPR
+    - update debian/firefox-dev.install.in
+  * Add some missing files to the SDK
+    - update debian/firefox-dev.install.in
+  * Quiten some image-in-usr-lib lintian warnings by adding them to
+    lintian-overrides. There's not much point in moving them to /usr/share
+    unless we split them out in to an arch-all firefox-common package
+    - update debian/firefox.lintian-overrides.in
+  * Don't call update-menus in postinst, and add #DEBHELPER# tokens where
+    those are missing
+    - update debian/firefox.postinst.in
+    - update debian/firefox.postrm.in
+    - update debian/firefox.preinst.in
+  * Check the hunspell version is new enough in DEB_MIN_SYSDEPS=0 mode
+    - update debian/rules
+    - update debian/mozconfig.in
+  * Refresh patches:
+    - update debian/patches/change-moz-app-name.patch
+    - update debian/patches/mozilla-kde.patch
+  * Don't hardcode the browser executable to /usr/bin/firefox for the
+    default browser. Instead, apply a patch reviewed upstream to set
+    this to MOZ_APP_LAUNCHER
+    - drop debian/patches/system-path-default-browser.patch
+    - add debian/patches/use-MOZ_APP_LAUNCHER-for-launcher-exec.patch
+    - update debian/patches
+  * Fix the default browser check to use the new x-scheme-handler
+    mechanism via GIO, rather than the old GConf way
+    - add debian/patches/fix-nsGIOService.patch
+    - add debian/patches/default-browser-check-use-gio.patch
+    - update debian/patches/series
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 16:12:58 +0000
+
+firefox-4.0 (4.0~b11+build3+nobinonly-0ubuntu1) natty; urgency=low
+
+  * New upstream release v4.0b11 build 3 (FIREFOX_4_0b11_BUILD3) 
+
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
+  * AppArmor:
+    - update to allow owner read access to @{PROC}/[0-9]*/task/[0-9]*/stat
+
+  [ Chris Coulson <chris.coulson@canonical.com> ]
+  * Add DEP-3 compliant headers to all of our patches, and drop the
+    bug numbers we carried in filenames. Some of the filenames are so long
+    that we get constant lintian warnings about long lines in the changelog
+  * Drop libxul-sdk-nspr.patch - it doesn't seem to be needed
+    - remove debian/patches/libxul-sdk-nspr.patch
+    - update debian/patches/series
+  * Move default-apps/firefox.xml to firefox-gnome-support when it is installed
+    - update debian/firefox.install.in
+    - update debian/firefox-gnome-support.install.in
+  * Fix menu-icon-not-in-xpm-format lintian error - generate the xpm at
+    build time
+    - update debian/rules
+    - update debian/control
+  * Quieten embedded-zlib and embedded-libjpeg lintian errors. These aren't
+    really errors, as we're intentionally embedding copies here
+    - update debian/rules
+    - add debian/firefox.lintian-overrides.in
+  * Fix some extended-description-is-empty lintian errors
+    - update debian/control
+  * Add a manpage to fix a lintian warning
+    - add debian/firefox.1.in
+    - add debian/firefox.manpages.in
+  * Fix build on armel, make sure we install $(INCDIR)/tremor
+    - update debian/firefox-dev.install.in
+  * Fix description of firefox-dev
+    - update debian/control
+  * Ship a pkgconfig file to enable browser plugins to build against
+    Firefox rather than xulrunner
+    - add debian/pkgconfig/firefox-plugin.pc.in
+    - update debian/firefox-dev.install.in
+    - update debian/rules
+  * Check for tee surface support when deciding whether to use tree or
+    system cairo
+    - update debian/rules
+  * Check the hunspell version is new enough in DEB_MIN_SYSDEPS=0 mode
+    - update debian/rules
+    - update debian/mozconfig.in
+  * Fix the permissions of some files once they are installed, rather than
+    directly in debian/. We weren't restoring them in clean anyway
+    - update debian/rules
+  * Quiten some image-in-usr-lib lintian warnings by adding them to
+    lintian-overrides. There's not much point in moving them to /usr/share
+    unless we split them out in to an arch-all firefox-common package
+    - update debian/firefox.lintian-overrides.in
+  * Don't call update-menus in postinst, and add #DEBHELPER# tokens where
+    those are missing
+    - update debian/firefox.postinst.in
+    - update debian/firefox.postrm.in
+    - update debian/firefox.preinst.in
+  * Fix desktop-entry-invalid-category lintian warnings - remove Internet
+    and Application categories, add GTK and GNOME
+    - update debian/firefox-beta.desktop.in
+    - update debian/firefox-final.desktop.in
+    - update debian/firefox-nightly.desktop.in
+    - update debian/firefox-unofficial.desktop.in
+  * Fix menu-icon-too-big lintian error, by downscaling the icon
+    - update debian/rules
+  * Fix package-contains-hardlink lintian warning in SDK. Replace it
+    with symbolic link
+    - update debian/rules
+  * Don't ship a vendor.js with our preferences in, as it requires a patch
+    in order to get it in to the distributed omni.jar. Instead, move our
+    vendor prefs in to distribution.ini
+    - remove debian/vendor.js
+    - update debian/distribution.ini
+    - update debian/rules
+    - remove debian/patches/install-ubuntu-prefs.patch
+    - update debian/patches/series
+  * Add "set -e" to launcher script as per Debian policy 10.4
+    - update debian/firefox.sh.in
+  * Bump Standards-Version to 3.9.1
+    - update debian/control
+  * Fix dbg-package-missing-depends lintian warning - add firefox-gnome-support
+    dependency to firefox-gnome-support-dbg transitional package
+    - update debian/control
+  * Fix LP: #717666 - firefox needs to replace kubuntu-firefox-installer
+    again. This got dropped accidentally during the package reorg after
+    dropping abrowser
+    - update debian/control
+  * Drop abrowser:
+    - remove debian/abrowser-branding.install.in
+    - remove debian/abrowser-branding.links.in
+    - remove debian/abrowser.desktop.in
+    - remove debian/abrowser.xml.in
+    - update debian/control
+    - remove debian/firefox-branding.install.in
+    - remove debian/firefox-branding.links.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - rename debian/firefox-branding.menu.in => debian/firefox.menu.in
+    - update debian/firefox.sh.in
+    - update debian/mozclient/firefox.conf
+    - remove debian/patches/awesome_branding_updates.patch
+    - remove debian/patches/browser_branding.patch
+    - update debian/patches/series
+    - update debian/rules
+    - remove debian/vendor-abrowser.js.in
+    - rename debian/vendor-firefox.js.in => debian/vendor.js.in
+  * Don't install the example config file (firefox.cfg) - it's redundant
+    at the moment as there is no way to configure system preferences
+    - remove debian/firefox.cfg
+    - remove debian/firefox.docs.in
+    - update debian/rules
+  * Don't install presubj, this is for the Debian BTS
+    - remove debian/presubj
+    - update debian/firefox.install.in
+  * Don't install the default-apps xml file for gnome-control-center in
+    Natty. It's not needed any more
+    - update debian/rules
+    - update debian/firefox.install.in
+  * Ship an SDK again
+    - update debian/control
+    - add debian/firefox-dev.install.in
+    - add debian/firefox-dev.links.in
+    - add debian/patches/bzXXX_fix_sdk_bin_install.patch
+    - update debian/patches/series
+    - update debian/rules
+  * Build with --disable-elf-hack on armel and powerpc
+    - update debian/rules
+    - update debian/mozconfig.in
+  * Drop the general.useragent.vendor* preferences. These are obsolete
+    in Firefox 4
+    - rename debian/vendor.js.in => debian/vendor.js
+    - update debian/vendor.js
+    - update debian/rules
+  * Update the apport hook to not choke on unpacked extensions, and install
+    it again. We still need to add support for unpacked xpi's though
+    - update debian/apport/firefox.py.in
+    - update debian/firefox.install.in
+  * Add support to the launcher for specifying a debugger
+    - update debian/firefox.sh.in
+
+ -- Micah Gersten <micahg@ubuntu.com>  Thu, 17 Feb 2011 00:24:41 -0600
+
+firefox-4.0 (4.0~b10+nobinonly-0ubuntu1) natty; urgency=low
+
+  * New upstream release v4.0b10 (FIREFOX_4_0b10_BUILD1) 
+
+  [ Chris Coulson <chris.coulson@canonical.com> ]
+  * Fix FTBFS - testpilot moved to distribution/extensions
+    - update debian/firefox.install.in
+  * Refresh patches after landing of bmo: #624267 aka Crash on Ubuntu
+    [@ nsGNOMEShellService::SetDefaultBrowser ]
     - update debian/patches/lp185622_system_path_default_browser.patch
+  * Refresh patches after landing of bmo: #624625 aka change home page of
+    Google search plugin to google.com
+    - update debian/patches/ubuntu_codes_google.patch
+  * Remove debian/remove.binonly.sh from package, it's not used anyway
+    (the one from mozilla-devscripts is used instead)
+    - remove debian/remove.binonly.sh
+  * Bump NSS and NSPR minimum versions to 3.12.9 and 4.8.7 respectively
+    - update debian/rules
+  * Clean unused variable from debian/rules
+    - update debian/rules
+  * Use the smaller crashreporter-symbols.zip after landing of bmo: #588129 aka
+    symbols.txt file missing from *.crashreporter-symbols.zip
+    - update debian/firefox-mozsymbols.install.in
+  * Run jstestbrowser and mochitest test suites
+    - update debian/testsuite.mk
+  * Build with --disable-elf-hack for now
+    - update debian/mozconfig.in
+  * Refresh patch
+    - update debian/patches/firefox-fsh
+
+ -- Micah Gersten <micahg@ubuntu.com>  Sun, 30 Jan 2011 02:23:31 -0600
+
+firefox-4.0 (4.0~b9+nobinonly-0ubuntu1) natty; urgency=low
+
+  * New upstream release v4.0b9 (FIREFOX_4_0b9_BUILD1)
+
+  * Refresh KDE patch
     - update debian/patches/mozilla-kde.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 09 Feb 2011 17:36:03 +0000
+ -- Micah Gersten <micahg@ubuntu.com>  Sun, 16 Jan 2011 22:12:59 -0600
 
-firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-4.0 (4.0~b8+nobinonly-0ubuntu1) natty; urgency=low
+
+  * Really fix LP: #680395 - firefox 4b7 depends on firefox 3.6.x; Have 
+    firefox-4.0 provide firefox
+    - update debian/control.pp
+
+ -- Micah Gersten <micahg@ubuntu.com>  Wed, 05 Jan 2011 21:51:53 -0600
+
+firefox-4.0 (4.0~b8+nobinonly-0ubuntu1) natty; urgency=low
+
+  * Re-release 4.0~b8+nobinonly-0ubuntu1~mfn~maverick2 as some of the changes
+    didn't make it into the upload
+
+ -- Micah Gersten <micahg@ubuntu.com>  Sat, 01 Jan 2011 23:57:38 -0600
+
+firefox-4.0 (4.0~b8+nobinonly-0ubuntu1) natty; urgency=low
+
+  * Drop patch that was actually in 4.0 Beta 8 (Fixes FTBFS)
+    - drop debian/patches/bz588410_fix_make_install_with_omnijar.patch
+    - update debian/patches/series
+  * fix LP: #680395 - firefox 4b7 depends on firefox 3.6.x; Have firefox-4.0
+    provide firefox
+    - update debian/control
+
+ -- Micah Gersten <micahg@ubuntu.com>  Thu, 30 Dec 2010 23:28:32 -0600
+
+firefox-4.0 (4.0~b8+nobinonly-0ubuntu1) natty; urgency=low
+
+  * New upstream release v4.0b8 (FIREFOX_4_0b8_RELEASE)
+
+  [ Chris Coulson <chris.coulson@canonical.com> ]
+  * Bump minimum NSS / NSPR version
+    - update debian/rules
+  * Fix the profile migrator to not hang when ~/.mozilla doesn't exist, and
+    other improvements- update debian/migrator/xulapp-profilemigrator
+    - update debian/migrator/xulapp-profilemigrator
+  * Build with --enable-startup-notification again, this got dropped
+    in the 3.6 => 4.0 update
+    - update debian/mozconfig.in
+  * Ship the testpilot extension for beta as per the official builds, based
+    on the discussion on #developers. We achieve this by building with
+    --enable-update-channel=beta for the beta milestones only. The update
+    channel isn't used anywhere at runtime because we disable the updater.
+    This means that Ubuntu users can participate in testpilot user studies
+    in Natty
+    - update debian/rules
+    - update debian/firefox-core.install.in
+    - update debian/mozconfig.in
+  * Add a hack to the launcher to handle being launched from an alternative,
+    which is a symlink to the launcher script, and breaks the current launch
+    mechanism. Also remove a useless stat() from the current script
+    - update debian/firefox.sh.in
+  * Re-add patch that got dropped to not remove and re-add search plugins
+    during upgrade
+    - add debian/patches/bz534663_attXXX_normalize_distribution_searchplugins.patch
+    - update debian/patches/series
+  * Move libmozgnome.so to the main package in common-binary-predeb-arch.
+    The previous method of deleting it from -gnome-support and copying it to
+    the main package from debian/tmp in each of the binary-predeb targets
+    meant that we were shipping an unstripped copy, which caused a lintian
+    error. This new method ensures we retain the stripped SO and we still
+    only move it after dh_shlibdeps has run
+    - update debian/rules
+  * Rebase patches after landing of bmo: 606289 aka Fix logo link in about:
+    - update debian/patches/firefox-profilename
+
+  [ Micah Gersten <micahg@ubuntu.com> ]
+  * Change xubuntu applications defaults list in natty apparmor profile; Path
+    changed in xubuntu-default-settings (11.04.0)
+    - update usr.bin.firefox.apparmor.11.04
+
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
+  * update debian/usr.bin.firefox.apparmor.10.10:
+     - deny write to /var/cache/fontconfig
+     - allow read to @{HOME}/.local/share/applications/mimeapps.list
+     - allow read to @{PROC}/[0-9]*/mountinfo
+    - allow read to /tmp/.X[0-9]*-lock
+    - deny read to @{HOME}/.local/share/recently-used.xbel
+    - deny execute of /usr/bin/gconftool-2
+    - allow read to @{HOME}/.thumbnails/*/*.png
+    - allow read/write to @{HOME}/.gnome2/firefox*-bin-*
+  * update debian/usr.bin.firefox.apparmor.{9.04,10.04}:
+    - deny write to /var/cache/fontconfig
+    - allow read to @{PROC}/[0-9]*/mountinfo
+    - allow read to /tmp/.X[0-9]*-lock
+    - deny execute of /usr/bin/gconftool-2
+    - remove extraneous @{HOME}/.config/ibus/bus/
+  * add debian/usr.bin.firefox.apparmor.11.04 based on 10.10
+
+ -- Micah Gersten <micahg@ubuntu.com>  Wed, 22 Dec 2010 23:22:25 -0600
+
+firefox-4.0 (4.0~b7+nobinonly-0ubuntu1) natty; urgency=low
+
+  * Fix Conflicts for b8 that were imported from the daily build
+    - update debian/control.pp
+    - update debian/control
+
+ -- Micah Gersten <micahg@ubuntu.com>  Mon, 22 Nov 2010 18:54:50 -0600
+
+firefox-4.0 (4.0~b7+nobinonly-0ubuntu1) natty; urgency=low
+
+  * Switch on the patches to change MOZ_APP_NAME
+    - update debian/patches/series
+  * Roll back patches to b7 from the current nightly versions
+    - update debian/patches/firefox-profilename
+  * Build with DEB_BUILD_UNOFFICIAL=1 to stop the official branding being
+    turned on
+    - update debian/rules
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 22 Nov 2010 17:27:27 +0000
+
+firefox-4.0 (4.0~b7+nobinonly-0ubuntu1) natty; urgency=low
+
+  * New upstream release v4.0b7 (FIREFOX_4_0b7_RELEASE)
+
+  [ Chris Coulson <chris.coulson@canonical.com> ]
+  * Add an abrowser.xml in abrowser-gnome-support for the default apps
+    - add debian/patches/abrowser.desktop.in
+    - update debian/rules
+    - update debian/abrowser-gnome-support.install.in
+    - update debian/abrowser.desktop.in
+  * Refresh patches after landing of (bmo: 595455) aka After several 
+    background update check failures notify the user that they should 
+    check if there is a new version available
+    - update debian/patches/firefox-profilename
+  * Refresh patches after landing of (bmo: 579547) aka New About window 
+    for Firefox 4
+    - update debian/patches/browser_branding.patch
+  * Rename firefox-minefield.desktop.in to firefox-nightly.desktop.in to
+    be more consistent with the firefox-unofficial desktop file
+  * Add translations to desktop files where those are known already, and just
+    make the branding name substitutable at build time
+    - update debian/firefox-final.desktop.in
+    - update debian/firefox-nightly.desktop.in
+    - update debian/firefox-unofficial.desktop.in
+  * Add a beta desktop file for official branding which has the beta milestone
+    version in the name (no translations yet). Adjust the branding logic a 
+    little to match what upstream appears to do ("nightly" for nightlies, 
+    "unofficial" for alphas, and official for beta's. Still provide a means 
+    to override this though and disable the official branding)
+    - add debian/firefox-beta.desktop.in
+    - update debian/rules
+  * Namespace the environment variables affecting the build by prefixing them
+    all with "DEB_"
+    - update debian/rules
+  * Don't rely on /usr/lib/firefox-addons provided by the default Firefox.
+    Instead, provide our own /usr/lib/firefox-4.0-addons. This makes it
+    possible to ship Firefox 4.0 localizations without cluttering the
+    addons-manager of the default Firefox install. In addition to this, we
+    no longer depend on the default Firefox install for search plugins.
+    In future, /usr/lib/firefox-*-addons shall only be for components that
+    are directly tied with a specific browser install (eg, language packs).
+    Everything else should go in /usr/lib/mozilla, and we will enforce 
+    this next cycle
+    - update debian/firefox-core.dirs.in
+    - update debian/firefox-core.install.in
+    - update debian/firefox-core.links.in
+    - update debian/usr.bin.firefox.apparmor.10.04
+    - update debian/usr.bin.firefox.apparmor.10.10
+    - update debian/usr.bin.firefox.apparmor.9.10
+  * Ensure that rules.mk and system-headers are identical in config/ and
+    js/src/config/, as this causes test-suite failures
+    - update debian/patches/bz386904_config_rules_install_dist_files.patch
+    - update debian/patches/lp512615_cairo_lcd_filter.patch
+  * Add support for running the Mozilla test suite at build time. Currently,
+    we run the following targets: check, xpcshell-tests, reftest and crashtest.
+    - add debian/testsuite.mk
+    - update debian/rules
+    - update debian/control
+  * Support builds suitable for valgrind, by building with 
+    DEB_MOZ_VALGRIND=1. This will automatically pick the right optimisations
+    and build flags
+    - update debian/rules
+  * Add support for running debhelper files through the Mozilla text
+    preprocessor. This means we'll be able to support the different build
+    configurations without having a huge debian/rules with lots of logic in
+    - update debian/rules
+    - add debian/abrowser.dirs.in
+    - rename debian/abrowser.install.in => debian/abrowser.install.pp
+    - update debian/abrowser.install.pp
+    - rename debian/firefox-core.install.in => debian/firefox-core.install.pp
+    - update debian/firefox-core.install.pp
+    - rename debian/firefox-core.links.in => debian/firefox-core.links.pp
+    - update debian/firefox-core.links.pp
+    - add debian/firefox.dirs.in
+    - rename debian/firefox.install.in => debian/firefox.install.pp
+    - update debian/firefox.install.pp
+  * Blacklist plugin-container in Apport for DEB_MIN_SYSDEPS builds
+    - rename debian/apport/firefox.in => debian/apport/firefox.pp
+    - update debian/apport/firefox.pp
+  * Refresh patches
+    - update debian/patches/browser_branding.patch
+    - update debian/patches/lp548866_bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
+  * Build with "make -f client.mk" and using a mozconfig, rather than the
+    autoconf/configure/make steps used previously. The client.mk contains the
+    sequencing for doing PGO builds
+    - update debian/firefox-mozsymbols.install.pp
+    - add debian/mozconfig.pp
+    - update debian/rules
+  * Add support for building with PGO. Add a build option (DEB_BUILD_PGO)
+    which will run the build with make -f client.mk profiledbuild. This is
+    off by default, and requires GCC 4.5 anyway
+    - update debian/rules
+    - update debian/mozconfig.pp
+  * Refresh patches after landing of (bmo: 601830) aka app.update.url.manual for 
+    nightly builds should point to the nightly builds
+    - update debian/patches/firefox-profilename.patch
+  * Add temporary change to clean up rogue Apparmor profile on upgrade for
+    current nightly testers
+    - update debian/firefox-core.preinst.in
+  * Disable gnomevfs support on >= 11.04 (LP: #661287)
+    - update debian/rules
+    - update debian/mozconfig.pp
+  * Don't build with -pie on Natty (LP: #663294)
+    - update debian/rules
+  * Auto-generate debian/control in the clean target, auto-populating
+    the build-depends
+    - add debian/control.pp
+    - update debian/rules
+    - update debian/mozconfig.pp
+  * Enable GIO support
+    - update debian/mozconfig.pp
+  * Drop unneeded patches
+    - remove debian/patches/bz386904_config_rules_install_dist_files.patch
+    - remove debian/patches/ftbfs_crashreporter.patch
+    - update debian/patches/series
+  * Rewrite the launcher script to not wrap around the upstream start
+    scripts, but start the Firefox binary directly. The upstream start scripts 
+    contain a lot of complexity for dealing with things that we don't need to 
+    worry about, and are quite slow. Also, add in the hooks for the new
+    profile migrator
+    - update debian/firefox.sh.in
+  * Replace the old profile migrator. The previous one relied on hard-coded
+    values and fragile shell script that isn't really scalable enough
+    now that stable Ubuntu releases see new major Firefox versions. The
+    new profile migrator doesn't require any hard-coded values, and should
+    be lower maintenance
+    - add debian/migrator/xulapp-profilemigrator
+    - remove debian/migrator/main.c
+    - update debian/rules
+    - update debian/firefox.sh.in
+    - update debian/firefox.install.pp
+    - update debian/control
+  * Refresh patches after landing of bmo: 596075 aka Move First-Run Video To 
+    Be A Tab Pointing To A Mozilla-Hosted Web Page
+    - update debian/patches/firefox-profilename
+  * Refresh patches after landing of bmo: 588410 aka Fix make install to 
+    work with omnijar
+    - remove debian/patches/bz588410_fix_make_install_with_omnijar.patch
+    - update debian/patches/series
+  * Don't install run-mozilla.sh and upstream firefox shell script
+    - update debian/firefox.install.pp
+  * Fix launcher script to work with FF-on-XR builds
+    - rename debian/firefox.sh.in => debian/firefox.sh.pp
+    - update debian/firefox.sh.pp
+  * Port bz460917_att350845_reload_new_plugins to Firefox 4 so that
+    we can start the plugin installer without throwing an exception
+    - update debian/patches/bz460917_att350845_reload_new_plugins.patch
+  * Don't use update-notifier for the restart required notification - it
+    is redundant having 2 separate mechanisms, and the update-notifier
+    notification was never translated properly anyway. This means we rely
+    on the in-browser notification from ubufox
+    - remove debian/firefox-restart-required.update-notifier.in
+    - update debian/firefox.install.in
+    - update debian/firefox.postinst.in
+    - update debian/rules
+  * Make sure our vendor.js preferences are included in the build
+    - rename debian/ubuntu-firefox.js.in => debian/vendor.js.in
+    - update debian/rules
+    - update debian/patches/install_ubuntu_prefs.patch
+  * Rebase patches after landing of bmo: 606289 aka Fix logo link in about:
+    - update debian/patches/firefox-profilename
+  * Add x-scheme-handler magic to desktop files
+    - update debian/firefox.desktop.in
+    - update debian/firefox-beta.desktop.in
+    - update debian/firefox-nightly.desktop.in
+    - update debian/firefox-unofficial.desktop.in
+  * Fix the profile migrator to not crash on profiles where 
+    'LastVersion=Safe Mode' (LP: #674607)
+    - update debian/migrator/xulapp-profilemigrator
+
+ -- Micah Gersten <micahg@ubuntu.com>  Sun, 21 Nov 2010 21:43:35 -0600
+
+firefox-4.0 (4.0~b6+nobinonly-0ubuntu1) natty; urgency=low
+
+  * New upstream release v4.0b6 (FIREFOX_4_0b6_RELEASE)
+
+ -- Micah Gersten <micahg@ubuntu.com>  Mon, 20 Sep 2010 11:09:15 -0500
+
+firefox-4.0 (4.0~b5+nobinonly-0ubuntu1) natty; urgency=low
+
+  * New upstream release v4.0b5 (FIREFOX_4_0b5_RELEASE)
 
   [ Fabien Tassin <fta@ubuntu.com> ]
   * Mass update from 3.6 to 3.7
@@ -64,9 +594,6 @@ firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Only install plugin-container if IPC is enabled
     - update debian/rules
-  * Change xubuntu applications defaults list in natty apparmor profile; Path
-    changed in xubuntu-default-settings (11.04.0)
-    - update usr.bin.firefox.apparmor.11.04
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * add AppArmor profile (disabled by default)
@@ -85,8 +612,8 @@ firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
       not disabled
     - debian/rules:
       + add DISTRIB, DISTRIB_VERSION_MAJOR and DISTRIB_VERSION_MINOR
-      + ship 9.10 profile for Karmic and under and 10.04 profile for Lucid,
-        10.10 for maverick, and 11.04 for natty and later
+      + ship 9.10 profile for Karmic and under and 10.04 profile for Lucid
+        and 10.10 for maverick and later
       + install profile and update subst_files
     - debian/control: have firefox-4.0 Depends on lsb-release (needed in
       preinst)
@@ -134,6 +661,11 @@ firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Provide iceweasel
     - update debian/control
+  * Make it possible to disable patches on a per-release basis. This
+    makes it easier to share packaging branches across releases, and makes
+    it possible to disable the patches which make the Hardy daily builds fail
+    - update debian/rules
+    - add debian/disable-patches.sh
   * Make the debian/usr.bin.firefox.apparmor.in target a dependency of
     pre-build rather than makebuilddir. Whilst this doesn't really change
     much, it is technically slightly more correct (makebuilddir is just for
@@ -424,205 +956,6 @@ firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches after landing of (bmo: 581076) aka No "See all results" 
     link present when searching for add-ons and not all are displayed
     - update debian/patches/firefox-profilename.patch
-  * Add an abrowser.xml in abrowser-gnome-support for the default apps
-    - add debian/patches/abrowser.desktop.in
-    - update debian/rules
-    - update debian/abrowser-gnome-support.install.in
-    - update debian/abrowser.desktop.in
-  * Refresh patches after landing of (bmo: 595455) aka After several 
-    background update check failures notify the user that they should 
-    check if there is a new version available
-    - update debian/patches/firefox-profilename
-  * Refresh patches after landing of (bmo: 579547) aka New About window 
-    for Firefox 4
-    - update debian/patches/browser_branding.patch
-  * Rename firefox-minefield.desktop.in to firefox-nightly.desktop.in to
-    be more consistent with the firefox-unofficial desktop file
-  * Add translations to desktop files where those are known already, and just
-    make the branding name substitutable at build time
-    - update debian/firefox-final.desktop.in
-    - update debian/firefox-nightly.desktop.in
-    - update debian/firefox-unofficial.desktop.in
-  * Add a beta desktop file for official branding which has the beta milestone
-    version in the name (no translations yet). Adjust the branding logic a 
-    little to match what upstream appears to do ("nightly" for nightlies, 
-    "unofficial" for alphas, and official for beta's. Still provide a means 
-    to override this though and disable the official branding)
-    - add debian/firefox-beta.desktop.in
-    - update debian/rules
-  * Namespace the environment variables affecting the build by prefixing them
-    all with "DEB_"
-    - update debian/rules
-  * Don't rely on /usr/lib/firefox-addons provided by the default Firefox.
-    Instead, provide our own /usr/lib/firefox-4.0-addons. This makes it
-    possible to ship Firefox 4.0 localizations without cluttering the
-    addons-manager of the default Firefox install. In addition to this, we
-    no longer depend on the default Firefox install for search plugins.
-    In future, /usr/lib/firefox-*-addons shall only be for components that
-    are directly tied with a specific browser install (eg, language packs).
-    Everything else should go in /usr/lib/mozilla, and we will enforce 
-    this next cycle
-    - update debian/firefox-core.dirs.in
-    - update debian/firefox-core.install.in
-    - update debian/firefox-core.links.in
-    - update debian/usr.bin.firefox.apparmor.10.04
-    - update debian/usr.bin.firefox.apparmor.10.10
-    - update debian/usr.bin.firefox.apparmor.9.10
-  * Ensure that rules.mk and system-headers are identical in config/ and
-    js/src/config/, as this causes test-suite failures
-    - update debian/patches/bz386904_config_rules_install_dist_files.patch
-    - update debian/patches/lp512615_cairo_lcd_filter.patch
-  * Add support for running the Mozilla test suite at build time. Currently,
-    we run the following targets: check, xpcshell-tests, reftest and crashtest.
-    - add debian/testsuite.mk
-    - update debian/rules
-    - update debian/control
-  * Support builds suitable for valgrind, by building with 
-    DEB_MOZ_VALGRIND=1. This will automatically pick the right optimisations
-    and build flags
-    - update debian/rules
-  * Add support for running debhelper files through the Mozilla text
-    preprocessor. This means we'll be able to support the different build
-    configurations without having a huge debian/rules with lots of logic in
-    - update debian/rules
-    - add debian/abrowser.dirs.in
-    - rename debian/abrowser.install.in => debian/abrowser.install.pp
-    - update debian/abrowser.install.pp
-    - rename debian/firefox-core.install.in => debian/firefox-core.install.pp
-    - update debian/firefox-core.install.pp
-    - rename debian/firefox-core.links.in => debian/firefox-core.links.pp
-    - update debian/firefox-core.links.pp
-    - add debian/firefox.dirs.in
-    - rename debian/firefox.install.in => debian/firefox.install.pp
-    - update debian/firefox.install.pp
-  * Blacklist plugin-container in Apport for DEB_MIN_SYSDEPS builds
-    - rename debian/apport/firefox.in => debian/apport/firefox.pp
-    - update debian/apport/firefox.pp
-  * Refresh patches
-    - update debian/patches/browser_branding.patch
-    - update debian/patches/lp548866_bz467766_att351173-dont-reset-user-prefs-on-upgrade.patch
-  * Build with "make -f client.mk" and using a mozconfig, rather than the
-    autoconf/configure/make steps used previously. The client.mk contains the
-    sequencing for doing PGO builds
-    - update debian/firefox-mozsymbols.install.pp
-    - add debian/mozconfig.pp
-    - update debian/rules
-  * Add support for building with PGO. Add a build option (DEB_BUILD_PGO)
-    which will run the build with make -f client.mk profiledbuild. This is
-    off by default, and requires GCC 4.5 anyway
-    - update debian/rules
-    - update debian/mozconfig.pp
-  * Refresh patches after landing of (bmo: 601830) aka app.update.url.manual for 
-    nightly builds should point to the nightly builds
-    - update debian/patches/firefox-profilename.patch
-  * Add temporary change to clean up rogue Apparmor profile on upgrade for
-    current nightly testers
-    - update debian/firefox-core.preinst.in
-  * Disable gnomevfs support on >= 11.04 (LP: #661287)
-    - update debian/rules
-    - update debian/mozconfig.pp
-  * Don't build with -pie on Natty (LP: #663294)
-    - update debian/rules
-  * Auto-generate debian/control in the clean target, auto-populating
-    the build-depends
-    - add debian/control.pp
-    - update debian/rules
-    - update debian/mozconfig.pp
-  * Enable GIO support
-    - update debian/mozconfig.pp
-  * Drop unneeded patches
-    - remove debian/patches/bz386904_config_rules_install_dist_files.patch
-    - remove debian/patches/ftbfs_crashreporter.patch
-    - update debian/patches/series
-  * Rewrite the launcher script to not wrap around the upstream start
-    scripts, but start the Firefox binary directly. The upstream start scripts 
-    contain a lot of complexity for dealing with things that we don't need to 
-    worry about, and are quite slow. Also, add in the hooks for the new
-    profile migrator
-    - update debian/firefox.sh.in
-  * Replace the old profile migrator. The previous one relied on hard-coded
-    values and fragile shell script that isn't really scalable enough
-    now that stable Ubuntu releases see new major Firefox versions. The
-    new profile migrator doesn't require any hard-coded values, and should
-    be lower maintenance
-    - add debian/migrator/xulapp-profilemigrator
-    - remove debian/migrator/main.c
-    - update debian/rules
-    - update debian/firefox.sh.in
-    - update debian/firefox.install.pp
-    - update debian/control
-  * Refresh patches after landing of bmo: 596075 aka Move First-Run Video To 
-    Be A Tab Pointing To A Mozilla-Hosted Web Page
-    - update debian/patches/firefox-profilename
-  * Refresh patches after landing of bmo: 588410 aka Fix make install to 
-    work with omnijar
-    - remove debian/patches/bz588410_fix_make_install_with_omnijar.patch
-    - update debian/patches/series
-  * Don't install run-mozilla.sh and upstream firefox shell script
-    - update debian/firefox.install.pp
-  * Fix launcher script to work with FF-on-XR builds
-    - rename debian/firefox.sh.in => debian/firefox.sh.pp
-    - update debian/firefox.sh.pp
-  * Port bz460917_att350845_reload_new_plugins to Firefox 4 so that
-    we can start the plugin installer without throwing an exception
-    - update debian/patches/bz460917_att350845_reload_new_plugins.patch
-  * Don't use update-notifier for the restart required notification - it
-    is redundant having 2 separate mechanisms, and the update-notifier
-    notification was never translated properly anyway. This means we rely
-    on the in-browser notification from ubufox
-    - remove debian/firefox-restart-required.update-notifier.in
-    - update debian/firefox.install.in
-    - update debian/firefox.postinst.in
-    - update debian/rules
-  * Make sure our vendor.js preferences are included in the build
-    - rename debian/ubuntu-firefox.js.in => debian/vendor.js.in
-    - update debian/rules
-    - update debian/patches/install_ubuntu_prefs.patch
-  * Rebase patches after landing of bmo: 606289 aka Fix logo link in about:
-    - update debian/patches/firefox-profilename
-  * Add x-scheme-handler magic to desktop files
-    - update debian/firefox.desktop.in
-    - update debian/firefox-beta.desktop.in
-    - update debian/firefox-nightly.desktop.in
-    - update debian/firefox-unofficial.desktop.in
-  * Fix the profile migrator to not crash on profiles where 
-    'LastVersion=Safe Mode' (LP: #674607)
-    - update debian/migrator/xulapp-profilemigrator
-  * Bump minimum NSS / NSPR version
-    - update debian/rules
-  * Fix the profile migrator to not hang when ~/.mozilla doesn't exist, and
-    other improvements- update debian/migrator/xulapp-profilemigrator
-    - update debian/migrator/xulapp-profilemigrator
-  * Build with --enable-startup-notification again, this got dropped
-    in the 3.6 => 4.0 update
-    - update debian/mozconfig.in
-  * Ship the testpilot extension for beta as per the official builds, based
-    on the discussion on #developers. We achieve this by building with
-    --enable-update-channel=beta for the beta milestones only. The update
-    channel isn't used anywhere at runtime because we disable the updater.
-    This means that Ubuntu users can participate in testpilot user studies
-    in Natty
-    - update debian/rules
-    - update debian/firefox-core.install.in
-    - update debian/mozconfig.in
-  * Add a hack to the launcher to handle being launched from an alternative,
-    which is a symlink to the launcher script, and breaks the current launch
-    mechanism. Also remove a useless stat() from the current script
-    - update debian/firefox.sh.in
-  * Re-add patch that got dropped to not remove and re-add search plugins
-    during upgrade
-    - add debian/patches/bz534663_attXXX_normalize_distribution_searchplugins.patch
-    - update debian/patches/series
-  * Move libmozgnome.so to the main package in common-binary-predeb-arch.
-    The previous method of deleting it from -gnome-support and copying it to
-    the main package from debian/tmp in each of the binary-predeb targets
-    meant that we were shipping an unstripped copy, which caused a lintian
-    error. This new method ensures we retain the stripped SO and we still
-    only move it after dh_shlibdeps has run
-    - update debian/rules
-  * Generate the en-US xpi at build time again for importing in to Launchpad
-    - update debian/rules
-    - update debian/translation-support/install.rdf.in
 
   [ Alexander Sack <asac@linaro.org> ]
   * add support for mozilla breakpad symbols and in turn enable
@@ -632,19 +965,7 @@ firefox-4.0 (4.0~b9~hg20110106r60061+nobinonly-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/rules
 
-  [ Felix Geyer <debfx-pkg@fobos.de> ]
-  * Re-add KDE integration
-    - add debian/patches/mozilla-kde.patch
-    - add debian/patches/firefox-kde.patch
-    - update debian/patches/series
-    - update debian/rules
-  * Make firefox-4.0 suggest firefox-kde-support
-    - update debian/control
-    - update debian/control.pp
-  * Rebase mozilla-kde.patch
-    - update debian/patches/mozilla-kde.patch
-
- -- Micah Gersten <micahg@ubuntu.com>  Sat, 08 Jan 2011 20:09:32 -0600
+ -- Micah Gersten <micahg@ubuntu.com>  Sun, 12 Sep 2010 06:02:57 -0500
 
 firefox-3.6 (3.6~a2~hg20090810r31291+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
@@ -2208,6 +2529,46 @@ firefox (1.99+2.0b2+dfsg-1) experimental; urgency=low
 
  -- Mike Hommey <glandium@debian.org>  Fri,  1 Sep 2006 08:36:26 +0200
 
+firefox (1.99+2.0b1+dfsg-1) experimental; urgency=low
+
+  * New upstream beta targetted at experimental:
+    - Much better search plugins handling. They can be added and removed at
+      will, and even better, system-wise search plugins can be ignored at the
+      profile level. (Closes: #352195, #320957, #296425, #308005)
+  * browser/components/shell/src/Makefile.in: Correctly install the
+    setDefaultBrowser component.
+  * config/rules.mk: Don't install extensions in the chrome.
+  * debian/firefox.links: Link /usr/lib/firefox/dictionaries to
+    /usr/share/myspell/dicts.
+  * config/autoconf.mk.in, configure, configure.in: Add the
+    --enable-system-myspell argument to configure to use the system myspell
+    library.
+  * extensions/spellcheck/myspell/src/Makefile.in: Use the system myspell
+    library when asked to.
+  * debian/rules:
+    - Add --enable-system-myspell to configure call.
+    - Do shlibsign libfreebl's (there can be several depending on the arch).
+  * debian/control: Add libmyspell-dev to build dependencies.
+  * browser/components/microsummaries/src/Makefile.in, config/Makefile.in:
+    Add rules so that make clean cleans everything.
+  * allmakefiles.sh: Removed references to nonexisting Makefiles in
+    extensions/xmlextras/base.
+  * configure, configure.in: Apply patches from bz#334866, bz#319012 and
+    bz#335949 + fixups to workaround gcc visibility hidden bugs, especially
+    #331460 (an instance of which is actually still present in C++,
+    see gcc#26905).
+  * extensions/inspector/build/src/Makefile.in,
+    extensions/inspector/build/src/inspector.pkg,
+    extensions/inspector/build/src/nsInspectorModule.cpp: Added missing files
+    for the DOM Inspector component.
+  * extensions/inspector/build/src/Makefile.in,
+    layout/inspector/public/Makefile.in: Adapted so that the DOM Inspector
+    component would build correctly and the xpt would be installed in
+    the extensions directory.
+  * extensions/reporter/Makefile.in: Install missing reporter's preference.
+
+ -- Mike Hommey <glandium@debian.org>  Fri, 21 Jul 2006 07:05:25 +0200
+
 firefox (1.5.dfsg+1.5.0.6-3) unstable; urgency=low
 
   * browser/app/Makefile.in: Workaround to force link the xpcom library to
@@ -2253,46 +2614,6 @@ firefox (1.5.dfsg+1.5.0.5-1) unstable; urgency=high
     useless new line that showed up in the diff.gz.
 
  -- Eric Dorland <eric@debian.org>  Sun, 30 Jul 2006 17:08:38 -0400
-
-firefox (1.99+2.0b1+dfsg-1) experimental; urgency=low
-
-  * New upstream beta targetted at experimental:
-    - Much better search plugins handling. They can be added and removed at
-      will, and even better, system-wise search plugins can be ignored at the
-      profile level. (Closes: #352195, #320957, #296425, #308005)
-  * browser/components/shell/src/Makefile.in: Correctly install the
-    setDefaultBrowser component.
-  * config/rules.mk: Don't install extensions in the chrome.
-  * debian/firefox.links: Link /usr/lib/firefox/dictionaries to
-    /usr/share/myspell/dicts.
-  * config/autoconf.mk.in, configure, configure.in: Add the
-    --enable-system-myspell argument to configure to use the system myspell
-    library.
-  * extensions/spellcheck/myspell/src/Makefile.in: Use the system myspell
-    library when asked to.
-  * debian/rules:
-    - Add --enable-system-myspell to configure call.
-    - Do shlibsign libfreebl's (there can be several depending on the arch).
-  * debian/control: Add libmyspell-dev to build dependencies.
-  * browser/components/microsummaries/src/Makefile.in, config/Makefile.in:
-    Add rules so that make clean cleans everything.
-  * allmakefiles.sh: Removed references to nonexisting Makefiles in
-    extensions/xmlextras/base.
-  * configure, configure.in: Apply patches from bz#334866, bz#319012 and
-    bz#335949 + fixups to workaround gcc visibility hidden bugs, especially
-    #331460 (an instance of which is actually still present in C++,
-    see gcc#26905).
-  * extensions/inspector/build/src/Makefile.in,
-    extensions/inspector/build/src/inspector.pkg,
-    extensions/inspector/build/src/nsInspectorModule.cpp: Added missing files
-    for the DOM Inspector component.
-  * extensions/inspector/build/src/Makefile.in,
-    layout/inspector/public/Makefile.in: Adapted so that the DOM Inspector
-    component would build correctly and the xpt would be installed in
-    the extensions directory.
-  * extensions/reporter/Makefile.in: Install missing reporter's preference.
-
- -- Mike Hommey <glandium@debian.org>  Fri, 21 Jul 2006 07:05:25 +0200
 
 firefox (1.5.dfsg+1.5.0.4-3) unstable; urgency=low
   
@@ -3266,14 +3587,6 @@ mozilla-firefox (1.4.99+1.5beta1.dfsg-3) experimental; urgency=low
 
  -- Mike Hommey <glandium@debian.org>  Mon, 26 Sep 2005 18:35:11 +0200
 
-mozilla-firefox (1.0.7-1) unstable; urgency=high
-
-  * New upstream release. Contains fixes for various security issues.
-  * debian/mozilla-firefox-runner: Remove /usr/lib from
-    LD_LIBRARY_PATH. (Closes: #321789)
-
- -- Eric Dorland <eric@debian.org>  Thu, 22 Sep 2005 01:23:10 -0400
-
 mozilla-firefox (1.4.99+1.5beta1.dfsg-2) experimental; urgency=low
 
   * debian/rules: enabled support for canvas.
@@ -3305,16 +3618,6 @@ mozilla-firefox (1.4.99+1.5beta1-2) experimental; urgency=critical
     imgicon module in mozilla-firefox-gnome-support. (Closes: #327451)
 
  -- Mike Hommey <glandium@debian.org>  Sun, 11 Sep 2005 10:45:34 +0200
-
-mozilla-firefox (1.0.6-5) unstable; urgency=critical
-
-  * xpcom/reflect/xptcall/src/md/unix/xptcstubs_arm.cpp: Fix for previous
-    arm fix. Thanks Steve. (Closes: #325535)
-  * netwerk/base/src/nsStandardURL.cpp: Patch from bz#307259 to fix
-    CAN-2005-2871, a buffer overflow vulnerability in IDN
-    processing. (Closes: #327452)
-
- -- Eric Dorland <eric@debian.org>  Sat, 10 Sep 2005 23:03:26 -0400
 
 mozilla-firefox (1.4.99+1.5beta1-1) experimental; urgency=low
 
@@ -3372,22 +3675,6 @@ mozilla-firefox (1.4.99+1.5beta1-1) experimental; urgency=low
 
  -- Mike Hommey <glandium@debian.org>  Fri,  9 Sep 2005 17:40:40 +0200
 
-mozilla-firefox (1.0.6-4) unstable; urgency=low
-
-  * xpcom/reflect/xptcall/src/md/unix/xptcinvoke_linux_alpha.cpp,
-    xpcom/reflect/xptcall/src/md/unix/xptcstubs_arm.cpp,
-    xpcom/reflect/xptcall/src/md/unix/xptcstubs_linux_alpha.cpp: Patch
-    from Steve Langasek to fix unused vs. used gcc attribute on alpha and
-    arm. (Closes: #325535)
-  * browser/app/profile/firefox.js: Revert patch to remove the "I'm
-    feeling lucky" search. Some like it, some hate it, so upstream
-    behaviour wins. If you still feel strongly about it, make your case
-    upstream.
-  * gfx/src/gtk/nsFontMetricsXft.cpp: Apply patch from bz#252033 to work
-    around a bug in XRender that might be causing #319349. 
-
- -- Eric Dorland <eric@debian.org>  Tue,  6 Sep 2005 02:10:07 -0400
-
 mozilla-firefox (1.0.99+deerpark-alpha2-2) experimental; urgency=low
 
   * Sync with unstable branch changes, except the controversial "I'm feeling
@@ -3402,47 +3689,6 @@ mozilla-firefox (1.0.99+deerpark-alpha2-2) experimental; urgency=low
     (hoped for 1.5).
 
  -- Mike Hommey <glandium@debian.org>  Sun,  4 Sep 2005 09:01:54 +0200
-
-mozilla-firefox (1.0.6-3) unstable; urgency=low
-
-  * debian/rules, nsprpub/pr/include/md/_linux.cfg,
-    security/coreconf/Linux.mk: Apply patch from Andreas Jochens to allow
-    ppc64 builds. (Closes: #322617)
-  * debian/mozilla-firefox.prerm: Move -depth option to find to suppress
-    warnings. Thanks Mike Hommey.
-  * debian/presubj: Have bugzilla bug URL point to a page where you can
-    enter a bug.
-  * browser/app/profile/firefox.js: removed the "I'm feeling lucky" from
-    the keyword.URL, so now if you enter search terms in the address bar
-    you will be presented with search results and not taken to the first
-    result. Thanks Torok Edwin. (Closes: #321823)
-
- -- Eric Dorland <eric@debian.org>  Mon, 22 Aug 2005 01:20:28 -0400
-
-mozilla-firefox (1.0.6-2) unstable; urgency=medium
-
-  * modules/libpr0n/src/imgLoader.cpp, modules/libpr0n/src/imgLoader.h:
-    Apply ported patch from Serge Belyshev from bz#293307 to fix problem
-    with gcc-4.0 on amd64. (Closes: #319336)
-  * debian/rules: Remove silly --enable-freetype configure line. Thanks
-    Antony Gelberg. (Closes: #319886)
-
- -- Eric Dorland <eric@debian.org>  Sat, 30 Jul 2005 02:11:03 -0400
-
-mozilla-firefox (1.0.6-1) unstable; urgency=low
-
-  * New upstream release. (Closes: #318672)
-  * debian/rules: Remove hack to use gcc 3.4 on amd64, since now we're all
-    on gcc 4.0. (Closes: #318684)
-  * debian/control:
-    - Remove gcc 3.4 build depends on amd64
-    - Explicitly build depend on libxinerama-dev. 
-  * gfx/src/gtk/nsScreenGtk.cpp: Patch from Loic Minier to fix
-    gdk_property_get warnings.
-  * widget/src/gtk2/mozdrawingarea.c: Patch from Loic Minier to fix
-    crashes under GTK 2.7. (Closes: #318903)
-
- -- Eric Dorland <eric@debian.org>  Wed, 20 Jul 2005 02:57:44 -0400
 
 mozilla-firefox (1.0.99+deerpark-alpha2-1) experimental; urgency=low
 
@@ -3505,6 +3751,81 @@ mozilla-firefox (1.0.99+deerpark-alpha2-1) experimental; urgency=low
   * debian/mozilla-firefox.prerm: Put -depth option of find before -type d.
 
  -- Mike Hommey <glandium@debian.org>  Sat, 16 Jul 2005 10:18:40 +0200
+
+mozilla-firefox (1.0.7-1) unstable; urgency=high
+
+  * New upstream release. Contains fixes for various security issues.
+  * debian/mozilla-firefox-runner: Remove /usr/lib from
+    LD_LIBRARY_PATH. (Closes: #321789)
+
+ -- Eric Dorland <eric@debian.org>  Thu, 22 Sep 2005 01:23:10 -0400
+
+mozilla-firefox (1.0.6-5) unstable; urgency=critical
+
+  * xpcom/reflect/xptcall/src/md/unix/xptcstubs_arm.cpp: Fix for previous
+    arm fix. Thanks Steve. (Closes: #325535)
+  * netwerk/base/src/nsStandardURL.cpp: Patch from bz#307259 to fix
+    CAN-2005-2871, a buffer overflow vulnerability in IDN
+    processing. (Closes: #327452)
+
+ -- Eric Dorland <eric@debian.org>  Sat, 10 Sep 2005 23:03:26 -0400
+
+mozilla-firefox (1.0.6-4) unstable; urgency=low
+
+  * xpcom/reflect/xptcall/src/md/unix/xptcinvoke_linux_alpha.cpp,
+    xpcom/reflect/xptcall/src/md/unix/xptcstubs_arm.cpp,
+    xpcom/reflect/xptcall/src/md/unix/xptcstubs_linux_alpha.cpp: Patch
+    from Steve Langasek to fix unused vs. used gcc attribute on alpha and
+    arm. (Closes: #325535)
+  * browser/app/profile/firefox.js: Revert patch to remove the "I'm
+    feeling lucky" search. Some like it, some hate it, so upstream
+    behaviour wins. If you still feel strongly about it, make your case
+    upstream.
+  * gfx/src/gtk/nsFontMetricsXft.cpp: Apply patch from bz#252033 to work
+    around a bug in XRender that might be causing #319349. 
+
+ -- Eric Dorland <eric@debian.org>  Tue,  6 Sep 2005 02:10:07 -0400
+
+mozilla-firefox (1.0.6-3) unstable; urgency=low
+
+  * debian/rules, nsprpub/pr/include/md/_linux.cfg,
+    security/coreconf/Linux.mk: Apply patch from Andreas Jochens to allow
+    ppc64 builds. (Closes: #322617)
+  * debian/mozilla-firefox.prerm: Move -depth option to find to suppress
+    warnings. Thanks Mike Hommey.
+  * debian/presubj: Have bugzilla bug URL point to a page where you can
+    enter a bug.
+  * browser/app/profile/firefox.js: removed the "I'm feeling lucky" from
+    the keyword.URL, so now if you enter search terms in the address bar
+    you will be presented with search results and not taken to the first
+    result. Thanks Torok Edwin. (Closes: #321823)
+
+ -- Eric Dorland <eric@debian.org>  Mon, 22 Aug 2005 01:20:28 -0400
+
+mozilla-firefox (1.0.6-2) unstable; urgency=medium
+
+  * modules/libpr0n/src/imgLoader.cpp, modules/libpr0n/src/imgLoader.h:
+    Apply ported patch from Serge Belyshev from bz#293307 to fix problem
+    with gcc-4.0 on amd64. (Closes: #319336)
+  * debian/rules: Remove silly --enable-freetype configure line. Thanks
+    Antony Gelberg. (Closes: #319886)
+
+ -- Eric Dorland <eric@debian.org>  Sat, 30 Jul 2005 02:11:03 -0400
+
+mozilla-firefox (1.0.6-1) unstable; urgency=low
+
+  * New upstream release. (Closes: #318672)
+  * debian/rules: Remove hack to use gcc 3.4 on amd64, since now we're all
+    on gcc 4.0. (Closes: #318684)
+  * debian/control:
+    - Remove gcc 3.4 build depends on amd64
+    - Explicitly build depend on libxinerama-dev. 
+  * gfx/src/gtk/nsScreenGtk.cpp: Patch from Loic Minier to fix
+    gdk_property_get warnings.
+  * widget/src/gtk2/mozdrawingarea.c: Patch from Loic Minier to fix
+    crashes under GTK 2.7. (Closes: #318903)
+
+ -- Eric Dorland <eric@debian.org>  Wed, 20 Jul 2005 02:57:44 -0400
 
 mozilla-firefox (1.0.5-1) unstable; urgency=high
 
