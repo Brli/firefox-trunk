@@ -4,8 +4,22 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu) UNRELEASED; urgency=low
 
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
+  * Fix up the mess left by Ubuntuzilla rather than leaving our official
+    package in a broken and inconsistent state, which ends up with users
+    reporting bugs to Launchpad and giving us a bad reputation. If 
+    /usr/bin/firefox has been diverted and there is no /usr/bin/firefox 
+    provided on the system, just do the job of whatever package it was that
+    broke the users install and remove the diversion for them. This should
+    hopefully stop the frequently reported bugs we get from Ubuntuzilla users
+    about /usr/bin/firefox being missing
+    - update debian/firefox.postinst.in
+    - Fixes LP: #512937, LP: #529136, LP: #552919, LP: #572733, LP: #574111,
+      LP: #599978, LP: #600271, LP: #610522, LP: #610756, LP: #610907,
+      LP: #612162, LP: #620400, LP: #623980, LP: #625014, LP: #630643,
+      LP: #635166, LP: #638342, LP: #641838, LP: #658828, LP: #668809,
+      LP: #672282, LP: #676239, LP: #707704, LP: #724090 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 16:59:00 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 17:02:17 +0000
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

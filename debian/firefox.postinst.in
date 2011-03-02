@@ -6,11 +6,38 @@ LIBDIR=@LIBDIR@
 APPNAME=@APPNAME@
 
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
-    update-alternatives --install /usr/bin/gnome-www-browser \
-        gnome-www-browser /usr/bin/$APPNAME 40
+    if [ `dpkg-divert --truename /usr/bin/$APPNAME` != "/usr/bin/$APPNAME" ] ; then
+        # Ubuntuzilla has trashed this install. Grrrrrrrrrr!
+        BROKEN=1
+    else
+        BROKEN=0
+    fi
 
-    update-alternatives --install /usr/bin/x-www-browser \
-        x-www-browser /usr/bin/$APPNAME 40
+    if [ ! -x /usr/bin/$APPNAME ] && [ "$BROKEN" = "1" ] ; then
+        echo "***Your system has been left in a broken state by a third party package***"
+        echo "This is usually caused by installing packages from Ubuntuzilla. Fixing this now"
+        dpkg-divert --rename --remove /usr/bin/$APPNAME
+        # Yay! We are sane again now \o/
+        BROKEN=0
+    fi
+
+    if [ "$BROKEN" = "0" ] ; then
+        update-alternatives --install /usr/bin/gnome-www-browser \
+            gnome-www-browser /usr/bin/$APPNAME 40
+
+        update-alternatives --install /usr/bin/x-www-browser \
+            x-www-browser /usr/bin/$APPNAME 40
+    else
+        PACKAGE=`dpkg-divert --listpackage /usr/bin/$APPNAME`
+        if [ "$PACKAGE" = "LOCAL" ] ; then
+            echo "/usr/bin/$APPNAME has been diverted by a third party package which didn't specify"
+            echo "a package name to dpkg-divert. This is usually as a result of installing unsupported"
+            echo "packages from Ubuntuzilla."
+            echo "***This is a BUG. Please report this bug to the vendor of the third party package you installed***"
+        else
+            echo "/usr/bin/$APPNAME has been diverted by $PACKAGE"
+        fi
+    fi
 
     #
     # AppArmor
