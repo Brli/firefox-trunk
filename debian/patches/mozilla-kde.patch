@@ -1044,15 +1044,16 @@ Forwarded: no
 +};
 --- a/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
 +++ b/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
-@@ -55,18 +55,21 @@
+@@ -55,7 +55,7 @@
  #endif
  
  #include "nsMIMEInfoUnix.h"
 -#include "nsGNOMERegistry.h"
 +#include "nsCommonRegistry.h"
  #include "nsIGIOService.h"
- #include "nsIGnomeVFSService.h"
- #include "nsAutoPtr.h"
+ #include "nsNetCID.h"
+ #include "nsIIOService.h"
+@@ -64,11 +64,14 @@
  #ifdef MOZ_ENABLE_DBUS
  #include "nsDBusHandlerApp.h"
  #endif
@@ -1068,7 +1069,7 @@ Forwarded: no
  
  #if (MOZ_PLATFORM_MAEMO == 5) && defined (MOZ_ENABLE_GNOMEVFS)
    if (NS_FAILED(rv)){
-@@ -98,12 +101,12 @@ NS_IMETHODIMP
+@@ -100,12 +103,12 @@ NS_IMETHODIMP
  nsMIMEInfoUnix::GetHasDefaultHandler(PRBool *_retval)
  {
    *_retval = PR_FALSE;
@@ -1083,7 +1084,7 @@ Forwarded: no
      }
    }
    if (mimeInfo)
-@@ -156,6 +159,23 @@ nsMIMEInfoUnix::LaunchDefaultWithFile(ns
+@@ -158,6 +161,23 @@ nsMIMEInfoUnix::LaunchDefaultWithFile(ns
    return NS_ERROR_FAILURE;
  #endif
  
@@ -1105,9 +1106,9 @@ Forwarded: no
 +  }
 +
    nsCOMPtr<nsIGIOService> giovfs = do_GetService(NS_GIOSERVICE_CONTRACTID);
-   nsCOMPtr<nsIGnomeVFSService> gnomevfs = do_GetService(NS_GNOMEVFSSERVICE_CONTRACTID);
+   nsCAutoString uriSpec;
    if (giovfs) {
-@@ -171,7 +191,7 @@ nsMIMEInfoUnix::LaunchDefaultWithFile(ns
+@@ -185,7 +205,7 @@ nsMIMEInfoUnix::LaunchDefaultWithFile(ns
  
    // If we haven't got an app we try to get a valid one by searching for the
    // extension mapped type
