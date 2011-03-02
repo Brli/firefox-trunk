@@ -7,11 +7,12 @@ debian/tmp@INCDIR@/IPC
 debian/tmp@INCDIR@/mozilla
 debian/tmp@INCDIR@/nestegg
 %%ifndef USE_SYSTEM_NSPR
+debian/tmp@INCDIR@/md
 debian/tmp@INCDIR@/nspr
-%%endif
 debian/tmp@INCDIR@/obsolete
-debian/tmp@INCDIR@/ogg
 debian/tmp@INCDIR@/private
+%%endif
+debian/tmp@INCDIR@/ogg
 debian/tmp@INCDIR@/sydneyaudio
 debian/tmp@INCDIR@/theora
 %%if DEB_BUILD_ARCH != armel
