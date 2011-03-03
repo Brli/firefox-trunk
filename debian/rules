@@ -48,7 +48,9 @@ include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/makefile.mk
 include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
 
-MOZ_OBJDIR		:= $(DEB_BUILDDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
+MOZ_MOZDIR		:=
+MOZ_OBJDIR		:= $(DEB_BUILDDIR)$(MOZ_MOZDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
+MOZ_DISTDIR		:= $(MOZ_OBJDIR)$(MOZ_MOZDIR)/dist
 
 ifeq (1,$(DEB_SYS_LIBXUL))
 	DEB_MIN_SYSDEPS = 0
@@ -413,17 +415,17 @@ endif
 	touch $@
 
 debian/lp-export-xpis/en-US.xpi: debian/stamp-makefile-build
-	rm -rf $(MOZ_OBJDIR)/dist/xpi-stage/locale-en-US
+	rm -rf $(MOZ_DISTDIR)/xpi-stage/locale-en-US
 	$(MAKE) -C $(MOZ_OBJDIR)/browser/locales langpack
 	sed \
 	        -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
 	        -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
 	        -e 's/@EM_FIREFOX_MAX_VERSION@/$(EM_TRANSLATION_MAX_VERSION)/' \
-	        < debian/translation-support/install.rdf.in > $(MOZ_OBJDIR)/dist/xpi-stage/locale-en-US/install.rdf
-	cd $(MOZ_OBJDIR)/dist/xpi-stage/locale-en-US/; \
+	        < debian/translation-support/install.rdf.in > $(MOZ_DISTDIR)/xpi-stage/locale-en-US/install.rdf
+	cd $(MOZ_DISTDIR)/xpi-stage/locale-en-US/; \
 		zip -r9D en-US.xpi chrome chrome.manifest install.rdf
 	mkdir debian/lp-export-xpis
-	mv $(MOZ_OBJDIR)/dist/xpi-stage/locale-en-US/en-US.xpi debian/lp-export-xpis/en-US.xpi
+	mv $(MOZ_DISTDIR)/xpi-stage/locale-en-US/en-US.xpi debian/lp-export-xpis/en-US.xpi
 
 common-build-arch:: debian/stamp-testsuite
 
@@ -434,7 +436,7 @@ binary-install/$(DEBIAN_NAME)::
 
 ifeq (1, $(ENABLE_GLOBALMENU))
 binary-install/$(DEBIAN_NAME)-globalmenu::
-	unzip -o -d debian/$(DEBIAN_NAME)-globalmenu$(FF_PREFIX)/lib/$(DEBIAN_NAME)-addons/extensions/globalmenu@ubuntu.com/ $(MOZ_OBJDIR)/dist/xpi-stage/globalmenu.xpi
+	unzip -o -d debian/$(DEBIAN_NAME)-globalmenu$(FF_PREFIX)/lib/$(DEBIAN_NAME)-addons/extensions/globalmenu@ubuntu.com/ $(MOZ_DISTDIR)/xpi-stage/globalmenu.xpi
 	find debian/$(DEBIAN_NAME)-globalmenu$(FF_PREFIX)/lib/$(DEBIAN_NAME)-addons/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
 endif
 
@@ -466,7 +468,7 @@ ifneq (1, $(USE_SYSTEM_NSS))
 binary-predeb/$(DEBIAN_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(DEBIAN_NAME)$(FF_LIBDIR):$$LD_LIBRARY_PATH \
-	        $(MOZ_OBJDIR)/dist/bin/shlibsign -v -i debian/$(DEBIAN_NAME)$(FF_LIBDIR)/$(lib);)
+	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(DEBIAN_NAME)$(FF_LIBDIR)/$(lib);)
 endif
 
 pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop

@@ -37,7 +37,8 @@ Build-Depends: cdbs,
 	libgnomevfs2-dev, 
         yasm,
 	xvfb,
-	imagemagick
+	imagemagick,
+	libdbusmenu-gtk-dev
 Standards-Version: 3.9.1
 
 Package: @APPNAME@

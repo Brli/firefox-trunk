@@ -41,8 +41,14 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu1) UNRELEASED; urgency=lo
   * Don't remove the hardlink in the nspr headers for builds done with
     system nspr. Likewise, don't try to create checksums for system nss builds
     - update debian/rules
+  * Define MOZ_DISTDIR throughout the build
+    - update debian/rules
+    - update debian/testsuite.mk
+    - update debian/firefox-mozsymbols.install.in
+  * Build-depend on libdbusmenu-gtk-dev
+    - update debian/control.pp
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 Mar 2011 18:46:59 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 03 Mar 2011 17:55:12 +0000
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

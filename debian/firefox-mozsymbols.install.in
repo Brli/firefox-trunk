@@ -1,3 +1,3 @@
 %%ifdef DEB_ENABLE_BREAKPAD
-@MOZ_OBJDIR@/dist/*symbols.zip @LIBDIR@
+@MOZ_DISTDIR@/*symbols.zip @LIBDIR@
 %%endif
