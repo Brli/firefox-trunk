@@ -47,8 +47,10 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu1) UNRELEASED; urgency=lo
     - update debian/firefox-mozsymbols.install.in
   * Build-depend on libdbusmenu-gtk-dev
     - update debian/control.pp
+  * Fix some typos in the manpage
+    - update debian/firefox.1.in 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 03 Mar 2011 17:55:12 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 06 Mar 2011 10:30:51 +0000
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

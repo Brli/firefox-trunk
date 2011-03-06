@@ -7,7 +7,7 @@
 [\fIOPTIONS\fR] [\fIurl\fR]
 
 .SH DESCRIPTION
-See http://support.mozilla.com for help using the browser.
+See http://support.mozilla.com/ for help using the browser.
 This manpage only describes how to run it.
 
 .SH OPTIONS
@@ -19,7 +19,7 @@ Prints the command line options.
 Starts \fB@APPNAME@\fR in a debugger.
 .TP
 \fB\-d, \-\-debugger\fR
-Specify the debugger in which to start \fB@APPNAME@\fR. The default is GDB. Used in conjunction with \fB-g\fR.
+Specify the debugger in which to start \fB@APPNAME@\fR. The default is gdb. Used in conjunction with \fB-g\fR.
 .TP
 \fB\-a, \-\-debugger\-args\fR
 Specify arguments to pass to the debugger. Used in conjunction with \fB-g\fR.
@@ -37,7 +37,7 @@ Start \fB@APPNAME@\fR with the profile named \fIprofile\fR. Will start the profi
 name is not specified. You will need to also use \fB\-no\-remote\fR if there is already a running \fB@APPNAME@\fR instance.
 .TP
 \fB\-safe\-mode\fR
-Start \fB@APPNAME@\fR in safe-mode. This disables all third-part extensions, and may be necessary if
+Start \fB@APPNAME@\fR in safe-mode. This disables all third-party extensions, and may be necessary if
 you are having problems with an extension you installed.
 .TP
 \fB\-new\-tab\fR \fIurl\fR
