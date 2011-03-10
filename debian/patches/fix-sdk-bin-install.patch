@@ -1,7 +1,8 @@
 Description: Fix the SDK layout with make install, to match the
  upstream layout
 Author: Chris Coulson <chris.coulson@canonical.com>
-Forwarded: no
+Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=639554
+Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=517465
 
 --- a/toolkit/mozapps/installer/packager.mk
 +++ b/toolkit/mozapps/installer/packager.mk

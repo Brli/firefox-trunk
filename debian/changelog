@@ -51,6 +51,10 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu1) UNRELEASED; urgency=lo
     - update debian/firefox.1.in 
   * Fix build failure when breakpad is enabled
     - update debian/rules
+  * Fix build on PPC64
+    - add debian/patches/64-bit-be-fix.patch
+    - add debian/patches/update-assembler-excl-arch-list.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Sun, 06 Mar 2011 10:45:02 +0000
 

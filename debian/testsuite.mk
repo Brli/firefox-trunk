@@ -52,6 +52,6 @@ debian/stamp-xpcshell-tests-disable: debian/stamp-makefile-build
 	rm -rf $(CURDIR)/$(MOZ_OBJDIR)$(MOZ_MOZDIR)/_tests/xpcshell/uriloader/exthandler/tests/unit_ipc
 
 	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
-	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
-	rm -f $(CURDIR)/$(MOZ_OBJDIR)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
+	rm -f $(CURDIR)/$(MOZ_OBJDIR)$(MOZ_MOZDIR)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
+	rm -f $(CURDIR)/$(MOZ_OBJDIR)$(MOZ_MOZDIR)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
 	touch $@
