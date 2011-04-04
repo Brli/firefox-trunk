@@ -12,12 +12,12 @@
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE/firefox/%VERSION%/firstrun/");
- pref("browser.panorama.welcome_url", "http://www.mozilla.com/firefox/panorama/");
++pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
  // nightly=8 hours, official=24 hours
-@@ -9,14 +9,14 @@ pref("app.update.interval", 28800);
+ pref("app.update.interval", 28800);
+@@ -8,14 +8,14 @@ pref("app.update.interval", 28800);
  pref("app.update.download.backgroundInterval", 60);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
@@ -43,10 +43,10 @@
 -pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
- pref("browser.panorama.welcome_url", "http://www.mozilla.com/firefox/panorama/");
  // Interval: Time between checks for a new version (in seconds)
  // nightly=6 hours, official=24 hours
-@@ -12,11 +12,11 @@ pref("app.update.download.backgroundInte
+ pref("app.update.interval", 86400);
+@@ -11,11 +11,11 @@ pref("app.update.download.backgroundInte
  pref("app.update.url.manual", "http://www.firefox.com");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -63,7 +63,7 @@
  pref("browser.search.param.yahoo-fr", "moz35");
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -59,10 +59,10 @@ pref("extensions.logging.enabled", false
+@@ -57,10 +57,10 @@ pref("extensions.logging.enabled", false
  // Preferences for AMO integration
  pref("extensions.getAddons.cache.enabled", true);
  pref("extensions.getAddons.maxResults", 15);
@@ -78,7 +78,7 @@
  
  // Blocklist preferences
  pref("extensions.blocklist.enabled", true);
-@@ -76,7 +76,7 @@ pref("extensions.blocklist.detailsURL",
+@@ -74,7 +74,7 @@ pref("extensions.blocklist.detailsURL",
  pref("extensions.update.autoUpdateDefault", true);
  
  // Dictionary download preference
@@ -87,7 +87,7 @@
  
  // Update Timer Manager preferences
  // Interval: When all registered timers should be checked (in milliseconds)
-@@ -202,7 +202,7 @@ pref("extensions.update.url", "https://v
+@@ -200,7 +200,7 @@ pref("extensions.update.url", "https://v
  pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
                                              // Themes every day
  // Non-symmetric (not shared by extensions) extension-specific [update] preferences
@@ -96,7 +96,7 @@
  pref("extensions.dss.enabled", false);          // Dynamic Skin Switching                                               
  pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
                                                  // restart.
-@@ -329,7 +329,7 @@ pref("browser.download.manager.scanWhenD
+@@ -327,7 +327,7 @@ pref("browser.download.manager.scanWhenD
  pref("browser.download.manager.resumeOnWakeDelay", 10000);
  
  // search engines URL
@@ -105,7 +105,7 @@
  
  // pointer to the default engine name
  pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
-@@ -736,8 +736,8 @@ pref("browser.safebrowsing.provider.0.re
+@@ -729,8 +729,8 @@ pref("browser.safebrowsing.provider.0.re
  pref("browser.safebrowsing.provider.0.reportMalwareErrorURL", "http://{moz:locale}.malware-error.mozilla.com/?hl={moz:locale}");
  
  // FAQ URLs
@@ -116,7 +116,7 @@
  
  // Name of the about: page contributed by safebrowsing to handle display of error
  // pages on phishing/malware hits.  (bug 399233)
-@@ -887,7 +887,7 @@ pref("browser.zoom.updateBackgroundTabs"
+@@ -880,7 +880,7 @@ pref("browser.zoom.updateBackgroundTabs"
  pref("breakpad.reportURL", "http://crash-stats.mozilla.com/report/index/");
  
  // base URL for web-based support pages
@@ -130,12 +130,12 @@
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
- pref("browser.panorama.welcome_url", "http://www.mozilla.com/firefox/panorama/");
++pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
  // nightly=8 hours, official=24 hours
-@@ -12,11 +12,11 @@ pref("app.update.download.backgroundInte
+ pref("app.update.interval", 28800);
+@@ -11,11 +11,11 @@ pref("app.update.download.backgroundInte
  pref("app.update.url.manual", "http://nightly.mozilla.org/");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -157,7 +157,7 @@
  [App]
  Vendor=Mozilla
 -Name=Firefox
-+Name=Firefox-4.0
++Name=Firefox-Trunk
  Version=@APP_VERSION@
  BuildID=@GRE_BUILDID@
  #ifdef MOZ_SOURCE_REPO
@@ -168,7 +168,7 @@
  # ***** END LICENSE BLOCK *****
  
 -MOZ_APP_NAME=firefox
-+MOZ_APP_NAME=firefox-4.0
++MOZ_APP_NAME=firefox-trunk
 +MOZ_APP_UA_NAME=Firefox
  MOZ_UPDATER=1
  MOZ_PHOENIX=1

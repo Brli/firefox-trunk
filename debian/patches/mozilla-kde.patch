@@ -87,50 +87,6 @@ Forwarded: no
    rv = pref_LoadPrefsInDir(defaultPrefDir, specialFiles, NS_ARRAY_LENGTH(specialFiles));
    if (NS_FAILED(rv)) {
      NS_WARNING("Error parsing application default preferences.");
---- a/toolkit/components/downloads/src/Makefile.in
-+++ b/toolkit/components/downloads/src/Makefile.in
-@@ -76,3 +76,4 @@ include $(topsrcdir)/config/rules.mk
- 
- EXTRA_DSO_LDOPTS += $(MOZ_COMPONENT_LIBS)
- 
-+LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
---- a/toolkit/components/downloads/src/nsDownloadManager.cpp
-+++ b/toolkit/components/downloads/src/nsDownloadManager.cpp
-@@ -76,6 +76,10 @@
- #endif
- #endif
- 
-+#if defined(XP_UNIX) && !defined(XP_MACOSX)
-+#include "nsKDEUtils.h"
-+#endif
-+
- #ifdef XP_MACOSX
- #include <CoreFoundation/CoreFoundation.h>
- #endif
-@@ -2202,6 +2206,15 @@ nsDownload::SetState(DownloadState aStat
-         pref->GetBoolPref(PREF_BDM_SHOWALERTONCOMPLETE, &showTaskbarAlert);
- 
-       if (showTaskbarAlert) {
-+        if( nsKDEUtils::kdeSupport()) {
-+            nsCStringArray command;
-+            command.AppendCString( NS_LITERAL_CSTRING( "DOWNLOADFINISHED" ));
-+            nsAutoString displayName;
-+            GetDisplayName( displayName );
-+            command.AppendCString( nsCAutoString( ToNewUTF8String( displayName )));
-+            nsKDEUtils::command( command );
-+        } else {
-+        // begin non-KDE block
-         PRInt32 alertInterval = 2000;
-         if (pref)
-           pref->GetIntPref(PREF_BDM_SHOWALERTINTERVAL, &alertInterval);
-@@ -2237,6 +2250,7 @@ nsDownload::SetState(DownloadState aStat
-                   EmptyString());
-             }
-         }
-+        } // end non-KDE block
-       }
- 
- #if (defined(XP_WIN) && !defined(WINCE)) || defined(XP_MACOSX)
 --- a/toolkit/content/jar.mn
 +++ b/toolkit/content/jar.mn
 @@ -45,6 +45,8 @@ toolkit.jar:
@@ -267,8 +223,8 @@ Forwarded: no
         {0x91, 0x81, 0xa2, 0x85, 0xe7, 0x4c, 0xf1, 0xd4 } }
 --- a/toolkit/xre/Makefile.in
 +++ b/toolkit/xre/Makefile.in
-@@ -102,7 +102,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),beos)
- CPPSRCS += nsNativeAppSupportBeOS.cpp
+@@ -99,7 +99,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
+ CPPSRCS += nsNativeAppSupportOS2.cpp
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
 -CPPSRCS += nsNativeAppSupportUnix.cpp
@@ -696,7 +652,7 @@ Forwarded: no
 +#endif // nsKDEUtils
 --- a/uriloader/exthandler/Makefile.in
 +++ b/uriloader/exthandler/Makefile.in
-@@ -99,8 +99,9 @@ LOCAL_INCLUDES += -I$(topsrcdir)/dom/bas
+@@ -95,8 +95,9 @@ LOCAL_INCLUDES += -I$(topsrcdir)/dom/bas
  endif
  
  ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
@@ -1482,7 +1438,7 @@ Forwarded: no
  CFLAGS          += $(MOZ_DBUS_CFLAGS)
 --- a/xpcom/io/nsLocalFileUnix.cpp
 +++ b/xpcom/io/nsLocalFileUnix.cpp
-@@ -98,6 +98,7 @@
+@@ -93,6 +93,7 @@
  #ifdef MOZ_WIDGET_GTK2
  #include "nsIGIOService.h"
  #include "nsIGnomeVFSService.h"
@@ -1490,7 +1446,7 @@ Forwarded: no
  #endif
  
  #ifdef XP_MACOSX
-@@ -1827,21 +1828,13 @@ NS_IMETHODIMP
+@@ -1735,21 +1736,13 @@ NS_IMETHODIMP
  nsLocalFile::Reveal()
  {
  #ifdef MOZ_WIDGET_GTK2
@@ -1514,7 +1470,7 @@ Forwarded: no
      } else {
          nsCOMPtr<nsIFile> parentDir;
          nsCAutoString dirPath;
-@@ -1850,11 +1843,25 @@ nsLocalFile::Reveal()
+@@ -1758,11 +1751,25 @@ nsLocalFile::Reveal()
          if (NS_FAILED(parentDir->GetNativePath(dirPath)))
              return NS_ERROR_FAILURE;
  
@@ -1544,7 +1500,7 @@ Forwarded: no
  #elif defined(XP_MACOSX)
      CFURLRef url;
      if (NS_SUCCEEDED(GetCFURL(&url))) {
-@@ -1890,6 +1897,13 @@ nsLocalFile::Launch()
+@@ -1798,6 +1805,13 @@ nsLocalFile::Launch()
        return NS_ERROR_FAILURE;
      return NS_OK;
  #else
@@ -1558,6 +1514,51 @@ Forwarded: no
      nsCOMPtr<nsIGIOService> giovfs = do_GetService(NS_GIOSERVICE_CONTRACTID);
      nsCOMPtr<nsIGnomeVFSService> gnomevfs = do_GetService(NS_GNOMEVFSSERVICE_CONTRACTID);
      if (giovfs) {
+--- a/toolkit/components/downloads/Makefile.in
++++ b/toolkit/components/downloads/Makefile.in
+@@ -84,3 +84,5 @@ endif
+ include $(topsrcdir)/config/rules.mk
+ 
+ EXTRA_DSO_LDOPTS += $(MOZ_COMPONENT_LIBS)
++
++LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
+--- a/toolkit/components/downloads/nsDownloadManager.cpp
++++ b/toolkit/components/downloads/nsDownloadManager.cpp
+@@ -76,6 +76,10 @@
+ #endif
+ #endif
+ 
++#if defined(XP_UNIX) && !defined(XP_MACOSX)
++#include "nsKDEUtils.h"
++#endif
++
+ #ifdef XP_MACOSX
+ #include <CoreFoundation/CoreFoundation.h>
+ #endif
+@@ -2202,6 +2206,15 @@ nsDownload::SetState(DownloadState aStat
+         pref->GetBoolPref(PREF_BDM_SHOWALERTONCOMPLETE, &showTaskbarAlert);
+ 
+       if (showTaskbarAlert) {
++        if( nsKDEUtils::kdeSupport()) {
++            nsCStringArray command;
++            command.AppendCString( NS_LITERAL_CSTRING( "DOWNLOADFINISHED" ));
++            nsAutoString displayName;
++            GetDisplayName( displayName );
++            command.AppendCString( nsCAutoString( ToNewUTF8String( displayName )));
++            nsKDEUtils::command( command );
++        } else {
++        // begin non-KDE block
+         PRInt32 alertInterval = 2000;
+         if (pref)
+           pref->GetIntPref(PREF_BDM_SHOWALERTINTERVAL, &alertInterval);
+@@ -2237,6 +2250,7 @@ nsDownload::SetState(DownloadState aStat
+                   EmptyString());
+             }
+         }
++        } // end non-KDE block
+       }
+ 
+ #if (defined(XP_WIN) && !defined(WINCE)) || defined(XP_MACOSX)
 --- a/xpcom/components/ManifestParser.cpp
 +++ b/xpcom/components/ManifestParser.cpp
 @@ -60,6 +60,7 @@

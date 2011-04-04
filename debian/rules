@@ -12,8 +12,8 @@ DEB_DH_STRIP_ARGS		= --dbg-package=$(DEBIAN_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 		:= $(NULL)
 # Needed for mozclient
-DEBIAN_NAME			:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
-MOZCLIENT_PROJECTNAME		:= $(DEBIAN_NAME)
+DEBIAN_APP_NAME			:= firefox
+MOZCLIENT_PROJECTNAME		:= $(DEBIAN_APP_NAME)
 MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 
 # Various build options
@@ -46,7 +46,7 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/makefile.mk
-include $(CURDIR)/debian/mozclient/$(DEBIAN_NAME).mk
+include $(CURDIR)/debian/mozclient/$(DEBIAN_APP_NAME).mk
 
 MOZ_MOZDIR		:=
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)$(MOZ_MOZDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
@@ -82,7 +82,7 @@ endif
 include $(CURDIR)/debian/testsuite.mk
 
 # Define other variables used throughout the build
-DEBIAN_APP_NAME		:= firefox
+DEBIAN_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
 DEBIAN_APP_NAME_VER	:= $(shell echo $(DEBIAN_NAME) | sed -e 's/$(DEBIAN_APP_NAME)-*//g' )
 ifeq ($(DEBIAN_NAME),$(DEBIAN_APP_NAME_VER))
 	DEBIAN_APP_NAME_VER	:=

@@ -16,5 +16,4 @@ mozilla-kde.patch
 firefox-kde.patch
 fix-sdk-bin-install.patch
 unity-globalmenu-build-support.patch
-64-bit-be-fix.patch
 update-assembler-excl-arch-list.patch

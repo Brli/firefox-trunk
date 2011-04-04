@@ -1,9 +1,10 @@
-firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (4.2~a1~hg20110401r64633+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v4.0 B13 HG 20100302R63246
+  * New upstream snapshot v4.2 A1 HG 20110401R64633
 
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
+    - update debian/patches/change-moz-app-name.patch
   * Fix up the mess left by Ubuntuzilla rather than leaving our official
     package in a broken and inconsistent state, which ends up with users
     reporting bugs to Launchpad and giving us a bad reputation. If 
@@ -55,8 +56,18 @@ firefox-4.0 (4.0~b13~hg20110302r63246+nobinonly-0ubuntu1) UNRELEASED; urgency=lo
     - add debian/patches/64-bit-be-fix.patch
     - add debian/patches/update-assembler-excl-arch-list.patch
     - update debian/patches/series
+  * Rename firefox-4.0 => firefox-trunk
+    - update debian/control
+    - rename debian/mozclient/firefox-4.0.conf => debian/mozclient/firefox.conf
+    - rename debian/mozclient/firefox-4.0.mk => debian/mozclient/firefox.mk
+    - update debian/mozclient/firefox.conf
+    - update debian/mozclient/firefox.mk
+    - update debian/rules
+  * Drop patches merged upstream
+    - remove debian/patches/64-bit-be-fix.patch
+    - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sun, 06 Mar 2011 10:45:02 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Apr 2011 23:56:51 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
