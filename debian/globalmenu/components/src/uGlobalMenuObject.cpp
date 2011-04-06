@@ -39,7 +39,6 @@
 #include <prtypes.h>
 #include <nsStringAPI.h>
 #include <nsIURI.h>
-#include <imgILoader.h>
 #include <nsILoadGroup.h>
 #include <nsServiceManagerUtils.h>
 #include <imgIContainer.h>
@@ -57,6 +56,8 @@
 #include <nsIDOMCSSValue.h>
 #include <nsIDOMCSSPrimitiveValue.h>
 #include <nsIDOMRect.h>
+#include <nsICaseConversion.h>
+#include <nsUnicharUtilCIID.h>
 
 #include <libdbusmenu-gtk/menuitem.h>
 
@@ -64,11 +65,14 @@
 #include "uGlobalMenuBar.h"
 #include "uWidgetAtoms.h"
 
+#define MAX_LABEL_NCHARS 40
+
 typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 
 NS_IMPL_ISUPPORTS2(uGlobalMenuIconLoader, imgIDecoderObserver, imgIContainerObserver)
 
 PRInt32 uGlobalMenuIconLoader::sImagesInMenus = -1;
+nsCOMPtr<imgILoader> uGlobalMenuIconLoader::sLoader = 0;
 
 PRBool
 uGlobalMenuIconLoader::ShouldShowIcon()
@@ -167,20 +171,17 @@ uGlobalMenuIconLoader::Run()
   nsCOMPtr<nsIDOMRect> domRect;
 
   if (!hasImage) {
+    nsCOMPtr<nsIDOMViewCSS> domViewCSS;
     nsCOMPtr<nsIDOMDocumentView> domDocView =
       do_QueryInterface(mContent->GetDocument());
-    if (!domDocView) {
-      return NS_ERROR_FAILURE;
+    if (domDocView) {
+      nsCOMPtr<nsIDOMAbstractView> domAbstractView;
+      domDocView->GetDefaultView(getter_AddRefs(domAbstractView));
+      if (domAbstractView) {
+        domViewCSS = do_QueryInterface(domAbstractView);
+      }
     }
 
-    nsCOMPtr<nsIDOMAbstractView> domAbstractView;
-    domDocView->GetDefaultView(getter_AddRefs(domAbstractView));
-    if (!domAbstractView) {
-      return NS_ERROR_FAILURE;
-    }
-
-    nsCOMPtr<nsIDOMViewCSS> domViewCSS =
-      do_QueryInterface(domAbstractView);
     if (!domViewCSS) {
       return NS_ERROR_FAILURE;
     }
@@ -198,31 +199,27 @@ uGlobalMenuIconLoader::Run()
     }
 
     nsCOMPtr<nsIDOMCSSValue> cssValue;
+    nsCOMPtr<nsIDOMCSSPrimitiveValue> primitiveValue;
+    PRUint16 primitiveType;
     cssStyleDecl->GetPropertyCSSValue(NS_LITERAL_STRING("list-style-image"),
                                       getter_AddRefs(cssValue));
-    if (!cssValue) {
-      return NS_ERROR_FAILURE;
+    if (cssValue) {
+      primitiveValue = do_QueryInterface(cssValue);
+      if (primitiveValue) {
+        primitiveValue->GetPrimitiveType(&primitiveType);
+        if (primitiveType == nsIDOMCSSPrimitiveValue::CSS_URI) {
+          rv = primitiveValue->GetStringValue(uriString);
+          if (NS_SUCCEEDED(rv)) {
+            hasImage = PR_TRUE;
+          }
+        } else {
+          NS_WARNING("list-style-image has wrong primitive type");
+        }
+      }
     }
 
-    nsCOMPtr<nsIDOMCSSPrimitiveValue> primitiveValue =
-      do_QueryInterface(cssValue);
-    if (!primitiveValue) {
-      return NS_ERROR_FAILURE;
-    }
-
-    PRUint16 primitiveType;
-    rv = primitiveValue->GetPrimitiveType(&primitiveType);
-    if (NS_FAILED(rv)) {
-      return rv;
-    }
-
-    if (primitiveType != nsIDOMCSSPrimitiveValue::CSS_URI) {
-      return NS_ERROR_FAILURE;
-    }
-
-    rv = primitiveValue->GetStringValue(uriString);
-    if (NS_FAILED(rv)) {
-      return rv;
+    if (!hasImage) {
+      return NS_OK;
     }
 
     cssStyleDecl->GetPropertyCSSValue(NS_LITERAL_STRING("-moz-image-region"),
@@ -230,10 +227,11 @@ uGlobalMenuIconLoader::Run()
     if (cssValue) {
       primitiveValue = do_QueryInterface(cssValue);
       if (primitiveValue) {
-        rv = primitiveValue->GetPrimitiveType(&primitiveType);
-        if (NS_SUCCEEDED(rv) && primitiveType ==
-            nsIDOMCSSPrimitiveValue::CSS_RECT) {
+        primitiveValue->GetPrimitiveType(&primitiveType);
+        if (primitiveType == nsIDOMCSSPrimitiveValue::CSS_RECT) {
           primitiveValue->GetRectValue(getter_AddRefs(domRect));
+        } else {
+          NS_WARNING("-moz-image-region has wrong primitive type");
         }
       }
     }
@@ -246,8 +244,12 @@ uGlobalMenuIconLoader::Run()
     return NS_OK;
   }
 
-  nsCOMPtr<imgILoader> loader = do_GetService("@mozilla.org/image/loader;1");
-  if (!loader) {
+  if (!sLoader) {
+    sLoader = do_GetService("@mozilla.org/image/loader;1");
+  }
+
+  NS_ASSERTION(sLoader, "No icon loader");
+  if (!sLoader) {
     return NS_OK;
   }
 
@@ -255,11 +257,11 @@ uGlobalMenuIconLoader::Run()
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
 
 #ifdef MOZILLA_1_9_2_BRANCH
-  loader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
+  sLoader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
                     nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                     nsnull, getter_AddRefs(mIconRequest));
 #else
-  loader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
+  sLoader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
                     nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                     nsnull, nsnull, getter_AddRefs(mIconRequest));
 #endif
@@ -359,6 +361,17 @@ uGlobalMenuIconLoader::OnStopFrame(imgIRequest *aRequest, PRUint32 aFrame)
          mImageRect.width == origWidth && mImageRect.height == origHeight)) {
       needsClip = PR_TRUE;
     }
+  }
+
+  if ((!needsClip && (origWidth > 100 || origHeight > 100)) ||
+     (needsClip && (mImageRect.width > 100 || mImageRect.height > 100))) {
+    /* The icon data needs to go across DBus. Make sure the icon
+     * data isn't too large, else our connection gets terminated and
+     * GDbus helpfully aborts the application. Thank you :)
+     */
+    NS_WARNING("Icon data too large");
+    ClearIcon();
+    return NS_OK;
   }
 
   nsCOMPtr<imgIContainer> clippedImg;
@@ -475,20 +488,40 @@ uGlobalMenuObject::SyncLabelFromContent()
   nsAutoString accesskey;
   mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::accesskey, accesskey);
 
-  const PRUnichar *key = accesskey.BeginReading();
+  const PRUnichar *tmp = accesskey.BeginReading();
+  PRUnichar keyUpper;
+  PRUnichar keyLower;
+  // XXX: I think we need to link against libxul.so to get ToLowerCase
+  //      and ToUpperCase from nsUnicharUtils.h
+  nsCOMPtr<nsICaseConversion> converter =
+    do_GetService(NS_UNICHARUTIL_CONTRACTID);
+  if (converter) {
+    converter->ToUpper(*tmp, &keyUpper);
+    converter->ToLower(*tmp, &keyLower);
+  } else {
+    if (*tmp < 256) {
+      keyUpper = toupper(char(*tmp));
+      keyLower = tolower(char(*tmp));
+    } else {
+      NS_WARNING("accesskey matching is case-sensitive when it shouldn't be");
+      keyUpper = *tmp;
+      keyLower = *tmp;
+    }
+  }
+
   PRUnichar *cur = label.BeginWriting();
   PRUnichar *end = label.EndWriting();
   int length = label.Length();
   int pos = 0;
   PRBool foundAccessKey = false;
 
-  while(cur < end) {
-    if((*cur == *key && !foundAccessKey) || *cur == PRUnichar('_')) {
-      
+  while (cur < end) {
+    if (((*cur == keyLower || *cur == keyUpper) && !foundAccessKey) ||
+        *cur == PRUnichar('_')) {      
       length += 1;
       label.SetLength(length);
       int newLength = label.Length();
-      if(length != newLength)
+      if (length != newLength)
         break; 
      
       cur = label.BeginWriting() + pos;
@@ -498,7 +531,7 @@ uGlobalMenuObject::SyncLabelFromContent()
       *cur = PRUnichar('_'); // Yeah!
 //                      v
 
-      if(*cur == *key)
+      if (*cur == keyLower || *cur == keyUpper)
         foundAccessKey = true;
 
       cur += 2;
@@ -511,13 +544,13 @@ uGlobalMenuObject::SyncLabelFromContent()
   }
 
   // Ellipsize long labels. I've picked an arbitrary length here
-  if(length > 36) {
+  if (length > MAX_LABEL_NCHARS) {
     cur = label.BeginWriting();
-    *(cur + 33) = PRUnichar('.');
-    *(cur + 34) = PRUnichar('.');
-    *(cur + 35) = PRUnichar('.');
-    *(cur + 36) = nsnull;
-    label.SetLength(36);
+    for (PRUint32 i = 1; i < 4; i++) {
+      *(cur + (MAX_LABEL_NCHARS - i)) = PRUnichar('.');
+    }
+    *(cur + MAX_LABEL_NCHARS) = nsnull;
+    label.SetLength(MAX_LABEL_NCHARS);
   }
 
   nsCAutoString clabel;
@@ -525,6 +558,34 @@ uGlobalMenuObject::SyncLabelFromContent()
   dbusmenu_menuitem_property_set(mDbusMenuItem,
                                  DBUSMENU_MENUITEM_PROP_LABEL,
                                  clabel.get());
+}
+
+void
+uGlobalMenuObject::SyncLabelFromContent(nsIContent *aCommandContent)
+{
+  if (mLabelSyncGuard) {
+    return;
+  }
+
+  mLabelSyncGuard = PR_TRUE;
+
+  if (aCommandContent) {
+    nsAutoString label;
+    aCommandContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
+    if (!label.IsEmpty() || aCommandContent == mLabelContent) {
+      // If the command content node has a label, or we previously mirrored a
+      // label from it, then mirror its label again to the menuitem content node.
+      // If it doesn't have a label and never did, then we just fall back to
+      // the label from the menuitem content node
+      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label,
+                        label, PR_TRUE);
+      mLabelContent = aCommandContent;
+    }
+  }
+
+  SyncLabelFromContent();
+
+  mLabelSyncGuard = PR_FALSE;
 }
 
 // Synchronize the 'hidden' attribute on the DOM node with the
@@ -554,17 +615,34 @@ uGlobalMenuObject::SyncSensitivityFromContent()
                                                              eCaseMatters));
 }
 
-// Synchronize the 'disabled' attribute on the specified DOM node with the
-// 'sensitivity' property on the dbusmenu node
+// Synchronize the 'disabled' attribute on the specified command content
+// node with the menuitem content node and the 'sensitivity' property on 
+// the dbusmenu node
 void
-uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aContent)
+uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aCommandContent)
 {
-  dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
-                                      DBUSMENU_MENUITEM_PROP_ENABLED,
-                                      !aContent->AttrValueIs(kNameSpaceID_None,
-                                                             uWidgetAtoms::disabled,
-                                                             uWidgetAtoms::_true,
-                                                             eCaseMatters));
+  if (mSensitivitySyncGuard) {
+    return;
+  }
+
+  mSensitivitySyncGuard = PR_TRUE;
+
+  if (aCommandContent) {
+    PRBool disabled = aCommandContent->AttrValueIs(kNameSpaceID_None,
+                                                   uWidgetAtoms::disabled,
+                                                   uWidgetAtoms::_true,
+                                                   eCaseMatters);
+    if (disabled) {
+      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
+                        NS_LITERAL_STRING("true"), PR_TRUE);
+    } else {
+      mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, PR_TRUE);
+    }
+  }
+
+  SyncSensitivityFromContent();
+
+  mSensitivitySyncGuard = PR_FALSE;
 }
 
 void

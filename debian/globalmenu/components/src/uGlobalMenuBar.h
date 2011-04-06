@@ -68,17 +68,17 @@ class uGlobalMenuBarListener: public nsIDOMKeyListener,
 public:
   NS_DECL_ISUPPORTS
 
-  NS_IMETHOD KeyPress (nsIDOMEvent *aKeyEvent);
-  NS_IMETHOD KeyUp (nsIDOMEvent *aKeyEvent) { return NS_OK; }
-  NS_IMETHOD KeyDown (nsIDOMEvent *aKeyEvent) { return NS_OK; }
+  NS_IMETHOD KeyPress(nsIDOMEvent *aKeyEvent);
+  NS_IMETHOD KeyUp(nsIDOMEvent *aKeyEvent);
+  NS_IMETHOD KeyDown(nsIDOMEvent *aKeyEvent);
 
-  NS_IMETHOD Focus (nsIDOMEvent *aEvent);
-  NS_IMETHOD Blur (nsIDOMEvent *aEvent) { return NS_OK; }
-  NS_IMETHOD HandleEvent (nsIDOMEvent *aEvent) { return NS_OK; }
+  NS_IMETHOD Focus(nsIDOMEvent *aEvent);
+  NS_IMETHOD Blur(nsIDOMEvent *aEvent);
+  NS_IMETHOD HandleEvent(nsIDOMEvent *aEvent) { return NS_OK; }
 
-  uGlobalMenuBarListener (uGlobalMenuBar *aMenuBar):
-                          mMenuBar(aMenuBar) { };
-  ~uGlobalMenuBarListener () { };
+  uGlobalMenuBarListener(uGlobalMenuBar *aMenuBar):
+                         mMenuBar(aMenuBar) { };
+  ~uGlobalMenuBarListener() { };
 
 private:
   uGlobalMenuBar *mMenuBar;
@@ -93,50 +93,49 @@ public:
 
   static uGlobalMenuBar* Create(nsIWidget *aWindow,
                                 nsIContent *aMenuBar);
-  ~uGlobalMenuBar ();
+  ~uGlobalMenuBar();
 
   // Return the native ID of the window
-  PRUint32 GetWindowID ();
+  PRUint32 GetWindowID();
 
   // Returns the path of the menubar on the session bus
-  const char* GetMenuPath ();
+  const char* GetMenuPath();
 
   // Checks if the menubar shares the same top level window as the 
   // specified nsIWidget
-  PRBool WidgetHasSameToplevelWindow (nsIWidget *aWidget);
-
-  void ChildPopupOpen (uGlobalMenu *aMenu);
-  void ChildPopupClosed (uGlobalMenu *aMenu);
+  PRBool WidgetHasSameToplevelWindow(nsIWidget *aWidget);
 
   PRBool OpenedByKeyboard() { return mOpenedByKeyboard; }
 
   // Called from the menu service. Used to hide the DOM element for the menubar
-  void SetXULMenuBarHidden (PRBool hidden);
+  void SetXULMenuBarHidden(PRBool hidden);
 
 protected:
-  void Focus ();
-  nsresult KeyPress (nsIDOMEvent *aKeyEvent);
+  void Focus();
+  void Blur();
+  nsresult KeyPress(nsIDOMEvent *aKeyEvent);
+  nsresult KeyUp(nsIDOMEvent *aKeyEvent);
+  nsresult KeyDown(nsIDOMEvent *aKeyEvent);
 private:
-  uGlobalMenuBar (): uGlobalMenuObject(MenuBar),
-                     mServer(nsnull),
-                     mTopLevel(nsnull),
-                     mOpenMenu(nsnull),
-                     mOpenedByKeyboard(PR_FALSE),
-                     mOpenMenuPending(PR_FALSE) { };
+  uGlobalMenuBar(): uGlobalMenuObject(MenuBar),
+                    mServer(nsnull),
+                    mTopLevel(nsnull),
+                    mOpenedByKeyboard(PR_FALSE) { };
   // Initialize the menu structure
-  nsresult Init (nsIWidget *aWindow,
-                 nsIContent *aMenuBar);
+  nsresult Init(nsIWidget *aWindow,
+                nsIContent *aMenuBar);
 
-  GtkWidget* WidgetToGTKWindow (nsIWidget *aWidget);
-  nsresult Build ();
-  PRUint32 GetModifiersFromEvent (nsIDOMKeyEvent *aKeyEvent);
+  GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
+  nsresult Build();
+  PRUint32 GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent);
+  PRBool ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent);
 
-  void RemoveMenuObjectAt (PRUint32 index);
-  void InsertMenuObjectAt (uGlobalMenuObject *menu,
-                           PRUint32 index);
-  void AppendMenuObject (uGlobalMenuObject *menu);
-  PRBool ShouldParentStayVisible (nsIContent *aContent);
-  PRBool IsParentOfMenuBar (nsIContent *aContent);
+  void RemoveMenuObjectAt(PRUint32 index);
+  void InsertMenuObjectAt(uGlobalMenuObject *menu,
+                          PRUint32 index);
+  void AppendMenuObject(uGlobalMenuObject *menu);
+  PRBool ShouldParentStayVisible(nsIContent *aContent);
+  PRBool IsParentOfMenuBar(nsIContent *aContent);
 
   DbusmenuServer *mServer;
   GtkWidget *mTopLevel;
@@ -148,10 +147,9 @@ private:
   PRBool mRestoreHidden;
   PRBool mXULMenuHidden;
   nsRefPtr<uGlobalMenuBarListener> mEventListener;
+  PRInt32 mAccessKey;
   PRUint32 mAccessKeyMask;
-  uGlobalMenu *mOpenMenu;
   PRBool mOpenedByKeyboard;
-  PRBool mOpenMenuPending;
 
   // Should probably have a container class and subclass that
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;

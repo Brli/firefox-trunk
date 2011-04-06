@@ -58,15 +58,15 @@ public:
                                    uGlobalMenuBar *aMenuBar);
 
 private:
-  uGlobalMenuSeparator (): uGlobalMenuObject(MenuSeparator) { };
+  uGlobalMenuSeparator(): uGlobalMenuObject(MenuSeparator) { };
 
-  nsresult Init (uGlobalMenuObject *aParent,
-                 uGlobalMenuDocListener *aListener,
-                 nsIContent *aContent,
-                 uGlobalMenuBar *aMenuBar);
-  ~uGlobalMenuSeparator ();
+  nsresult Init(uGlobalMenuObject *aParent,
+                uGlobalMenuDocListener *aListener,
+                nsIContent *aContent,
+                uGlobalMenuBar *aMenuBar);
+  ~uGlobalMenuSeparator();
 
-  nsresult ConstructDbusMenuItem (); 
+  nsresult ConstructDbusMenuItem(); 
 };
 
 

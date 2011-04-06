@@ -89,7 +89,7 @@ public:
     }
   }
 
-  ~uGlobalMenuRequestAutoCanceller ()
+  ~uGlobalMenuRequestAutoCanceller()
   {
     if (mCancellable) {
       g_cancellable_cancel(mCancellable);
@@ -97,7 +97,7 @@ public:
     }
   }
 private:
-  uGlobalMenuRequestAutoCanceller () { };
+  uGlobalMenuRequestAutoCanceller() { };
   PRBool Init()
   {
     mCancellable = g_cancellable_new();
@@ -116,30 +116,30 @@ public:
   NS_DECL_UIGLOBALMENUSERVICE
   NS_DECL_NSIWINDOWMEDIATORLISTENER
 
-  uGlobalMenuService () : mOnline(PR_FALSE),
-                          mDbusProxy(NULL),
-                          mCancellable(NULL) { };
+  uGlobalMenuService() : mOnline(PR_FALSE),
+                         mDbusProxy(NULL),
+                         mCancellable(NULL) { };
   nsresult Init();
 
-  ~uGlobalMenuService ();
+  ~uGlobalMenuService();
 
 protected:
   GDBusProxy* GetDbusProxy() { return mDbusProxy; }
 
 private:
-  void SetOnline (PRBool aOnline);
-  static void ProxyCreatedCallback (GObject *object,
-                                    GAsyncResult *res,
-                                    gpointer userdata);
-  static void NameOwnerChangedCallback (GObject *object,
-                                        GParamSpec *pspec,
-                                        gpointer userdata);
-  static void RegisterWindowCallback (GObject *object,
-                                      GAsyncResult *res,
-                                      gpointer userdata);
-  PRBool WidgetHasGlobalMenu (nsIWidget *aWidget);
-  void DestroyMenus ();
-  void DestroyMenuForWidget (nsIWidget *aWidget);
+  void SetOnline(PRBool aOnline);
+  static void ProxyCreatedCallback(GObject *object,
+                                   GAsyncResult *res,
+                                   gpointer userdata);
+  static void NameOwnerChangedCallback(GObject *object,
+                                       GParamSpec *pspec,
+                                       gpointer userdata);
+  static void RegisterWindowCallback(GObject *object,
+                                     GAsyncResult *res,
+                                     gpointer userdata);
+  PRBool WidgetHasGlobalMenu(nsIWidget *aWidget);
+  void DestroyMenus();
+  void DestroyMenuForWidget(nsIWidget *aWidget);
 
   PRBool  mOnline;
   GDBusProxy *mDbusProxy;

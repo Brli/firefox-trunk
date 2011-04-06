@@ -53,7 +53,7 @@ nsresult
 uGlobalMenuDummy::ConstructDbusMenuItem()
 {
   mDbusMenuItem = dbusmenu_menuitem_new();
-  if(!mDbusMenuItem)
+  if (!mDbusMenuItem)
     return NS_ERROR_OUT_OF_MEMORY;
 
   dbusmenu_menuitem_property_set(mDbusMenuItem,
@@ -66,7 +66,7 @@ uGlobalMenuDummy::ConstructDbusMenuItem()
 uGlobalMenuDummy::~uGlobalMenuDummy()
 {
 
-  if(mDbusMenuItem)
+  if (mDbusMenuItem)
     g_object_unref(mDbusMenuItem);
 }
 

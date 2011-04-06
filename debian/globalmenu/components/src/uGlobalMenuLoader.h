@@ -65,15 +65,15 @@ public:
   NS_DECL_NSIWINDOWMEDIATORLISTENER
   NS_DECL_NSIWEBPROGRESSLISTENER
 
-  uGlobalMenuLoader () { };
-  ~uGlobalMenuLoader ();
-  nsresult Init ();
+  uGlobalMenuLoader() { };
+  ~uGlobalMenuLoader();
+  nsresult Init();
 
 private:
-  void RegisterAllMenus ();
-  void RegisterMenuForWindow (nsIXULWindow *aWindow);
-  PRBool RegisterMenu (nsIWidget *aWindow,
-                       nsIDocShell *aDocShell);
+  void RegisterAllMenus();
+  void RegisterMenuForWindow(nsIXULWindow *aWindow);
+  PRBool RegisterMenu(nsIWidget *aWindow,
+                      nsIDocShell *aDocShell);
 
   nsCOMPtr<uIGlobalMenuService> mService;
 };

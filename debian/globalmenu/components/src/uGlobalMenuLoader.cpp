@@ -69,22 +69,22 @@ void
 uGlobalMenuLoader::RegisterMenuForWindow(nsIXULWindow *aWindow)
 {
   nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(aWindow);
-  if(!baseWindow)
+  if (!baseWindow)
     return;
 
   nsCOMPtr<nsIWidget> mainWidget;
   baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
-  if(!mainWidget)
+  if (!mainWidget)
     return;
 
   nsCOMPtr<nsIDocShell> docShell;
   aWindow->GetDocShell(getter_AddRefs(docShell));
-  if(!docShell)
+  if (!docShell)
     return;
 
   nsCOMPtr<nsIWebProgress> progress;
   progress = do_GetInterface(docShell);
-  if(progress) {
+  if (progress) {
     // If we've been called off a window open event from the window mediator,
     // then the document probably hasn't loaded yet. To fix this, we set up a progress
     // listener on the docshell, so we can do the actual menu load once the
@@ -94,7 +94,7 @@ uGlobalMenuLoader::RegisterMenuForWindow(nsIXULWindow *aWindow)
 
   PRBool res = RegisterMenu(mainWidget, docShell);
 
-  if(res && progress) {
+  if (res && progress) {
     progress->RemoveProgressListener(this);
   }
 }
@@ -105,7 +105,7 @@ uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
 {
   nsCOMPtr<nsIContentViewer> cv;
   aDocShell->GetContentViewer(getter_AddRefs(cv));
-  if(!cv)
+  if (!cv)
     return PR_FALSE;
 
 #ifdef MOZILLA_1_9_2_BRANCH
@@ -119,7 +119,7 @@ uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
   nsIDocument *doc = cv->GetDocument();
 #endif
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-  if(!domDoc)
+  if (!domDoc)
     return PR_FALSE;
 
   nsCOMPtr<nsIDOMNodeList> elements;
@@ -127,10 +127,10 @@ uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
                                  NS_LITERAL_STRING("menubar"),
                                  getter_AddRefs(elements));
 
-  if(elements) {
+  if (elements) {
     nsCOMPtr<nsIDOMNode> menubar;
     elements->Item(0, getter_AddRefs(menubar));
-    if(menubar) {
+    if (menubar) {
       nsCOMPtr<nsIContent> menubarContent = do_QueryInterface(menubar);
       // XXX: Should we do anything with errors here?
       mService->CreateGlobalMenuBar(aWindow, menubarContent);
@@ -144,28 +144,28 @@ uGlobalMenuLoader::RegisterAllMenus()
 {
   nsCOMPtr<nsIWindowMediator> wm =
       do_GetService("@mozilla.org/appshell/window-mediator;1");
-  if(!wm) {
+  if (!wm) {
     return;
   }
 
   nsCOMPtr<nsISimpleEnumerator> iter;
   wm->GetXULWindowEnumerator(nsnull, getter_AddRefs(iter));
-  if(!iter) {
+  if (!iter) {
     return;
   }
 
   PRBool hasMore;
   iter->HasMoreElements(&hasMore);
 
-  while(hasMore) {
+  while (hasMore) {
     nsCOMPtr<nsISupports> elem;
     iter->GetNext(getter_AddRefs(elem));
     iter->HasMoreElements(&hasMore);
-    if(!elem)
+    if (!elem)
       continue;
 
     nsCOMPtr<nsIXULWindow> xulWindow = do_QueryInterface(elem);
-    if(!xulWindow)
+    if (!xulWindow)
       continue;
 
     RegisterMenuForWindow(xulWindow);
@@ -190,7 +190,7 @@ uGlobalMenuLoader::Init()
 
   PRBool online;
   mService->GetOnline(&online);
-  if(online) {
+  if (online) {
     RegisterAllMenus();
   }
 
@@ -204,7 +204,7 @@ uGlobalMenuLoader::~uGlobalMenuLoader()
   nsCOMPtr<nsIWindowMediator> wm =
       do_GetService("@mozilla.org/appshell/window-mediator;1");
  
-  if(wm) {
+  if (wm) {
     wm->RemoveListener(this);
   }
 }
@@ -214,7 +214,7 @@ uGlobalMenuLoader::Observe(nsISupports *aSubject,
                            const char *aTopic,
                            const PRUnichar *aData)
 {
-  if(strcmp(aTopic, "menuservice-online") == 0) {
+  if (strcmp(aTopic, "menuservice-online") == 0) {
     RegisterAllMenus();
   }
 
@@ -270,14 +270,14 @@ uGlobalMenuLoader::OnStateChange(nsIWebProgress *aWebProgress,
   }
 
   nsCOMPtr<nsIBaseWindow> baseWindow = do_GetInterface(aWebProgress);
-  if(baseWindow) {
+  if (baseWindow) {
     nsCOMPtr<nsIWidget> parentWidget;
     baseWindow->GetParentWidget(getter_AddRefs(parentWidget));
 
     nsCOMPtr<nsIDocShell> docShell = do_GetInterface(aWebProgress);
-    if(docShell && parentWidget) {
+    if (docShell && parentWidget) {
       PRBool res = RegisterMenu(parentWidget, docShell);
-      if(res) {
+      if (res) {
         aWebProgress->RemoveProgressListener(this);
       }
     }

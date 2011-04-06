@@ -232,7 +232,7 @@ uGlobalMenuService::DestroyMenus()
   }
 
   count = mMenus.Length();
-  for(PRUint32 j = 0; j < count; j++) {
+  for (PRUint32 j = 0; j < count; j++) {
     mMenus.RemoveElementAt(0);
   }
 }
@@ -240,8 +240,8 @@ uGlobalMenuService::DestroyMenus()
 void
 uGlobalMenuService::DestroyMenuForWidget(nsIWidget *aWidget)
 {
-  for(PRUint32 i = 0; i < mMenus.Length(); i++) {
-    if(mMenus[i]->WidgetHasSameToplevelWindow(aWidget)) {
+  for (PRUint32 i = 0; i < mMenus.Length(); i++) {
+    if (mMenus[i]->WidgetHasSameToplevelWindow(aWidget)) {
       mMenus.RemoveElementAt(i);
       return;
     }
@@ -251,15 +251,15 @@ uGlobalMenuService::DestroyMenuForWidget(nsIWidget *aWidget)
 void
 uGlobalMenuService::SetOnline(PRBool aOnline)
 {
-  if(mOnline != aOnline) {
+  if (mOnline != aOnline) {
     mOnline = aOnline;
     nsCOMPtr<nsIObserverService> os =
       do_GetService("@mozilla.org/observer-service;1");
-    if(os) {
+    if (os) {
       os->NotifyObservers(nsnull, mOnline ? "menuservice-online" : "menuservice-offline", 0);
     }
 
-    if(!mOnline) {
+    if (!mOnline) {
       DestroyMenus();
     }
   }
@@ -268,8 +268,8 @@ uGlobalMenuService::SetOnline(PRBool aOnline)
 PRBool
 uGlobalMenuService::WidgetHasGlobalMenu(nsIWidget *aWidget)
 {
-  for(PRUint32 i = 0; i < mMenus.Length(); i++) {
-    if(mMenus[i]->WidgetHasSameToplevelWindow(aWidget))
+  for (PRUint32 i = 0; i < mMenus.Length(); i++) {
+    if (mMenus[i]->WidgetHasSameToplevelWindow(aWidget))
       return PR_TRUE;
   }
   return PR_FALSE;
@@ -312,11 +312,11 @@ uGlobalMenuService::~uGlobalMenuService()
   nsCOMPtr<nsIWindowMediator> wm =
       do_GetService("@mozilla.org/appshell/window-mediator;1");
  
-  if(wm) {
+  if (wm) {
     wm->RemoveListener(this);
   }
 
-  if(mDbusProxy) {
+  if (mDbusProxy) {
     g_signal_handler_disconnect(mDbusProxy, mNOCHandlerID);
     g_object_unref(mDbusProxy);
   }
@@ -333,7 +333,7 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
 
   // Sanity check to make sure we don't register more than one menu
   // for each top-level window
-  if(WidgetHasGlobalMenu(aParent))
+  if (WidgetHasGlobalMenu(aParent))
     return NS_ERROR_FAILURE;
 
   uGlobalMenuBar *menu = uGlobalMenuBar::Create(aParent, aMenuBarNode);
@@ -348,15 +348,15 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
 NS_IMETHODIMP_(void)
 uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar)
 {
-  if(mOnline != PR_TRUE)
+  if (mOnline != PR_TRUE)
     return;
 
-  if(!aMenuBar)
+  if (!aMenuBar)
     return;
 
   PRUint32 xid = aMenuBar->GetWindowID();
   nsCAutoString path(aMenuBar->GetMenuPath());
-  if(xid == 0 || path.IsEmpty())
+  if (xid == 0 || path.IsEmpty())
     return;
 
   uGlobalMenuRequestAutoCanceller *canceller =

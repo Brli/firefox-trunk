@@ -70,25 +70,25 @@ public:
                                    uGlobalMenuBar *aMenuBar);
 
 private:
-  uGlobalMenuItem (): uGlobalMenuObject(MenuItem) { };
+  uGlobalMenuItem(): uGlobalMenuObject(MenuItem) { };
 
-  nsresult Init (uGlobalMenuObject *aParent,
-                 uGlobalMenuDocListener *aListener,
-                 nsIContent *aContent,
-                 uGlobalMenuBar *aMenuBar);
-  ~uGlobalMenuItem ();
+  nsresult Init(uGlobalMenuObject *aParent,
+                uGlobalMenuDocListener *aListener,
+                nsIContent *aContent,
+                uGlobalMenuBar *aMenuBar);
+  ~uGlobalMenuItem();
 
-  PRUint32 GetKeyCode (nsAString &aKeyName);
-  PRUint32 MozKeyCodeToGdkKeyCode (PRUint32 aMozKeyCode);
-  void SyncAccelFromContent ();
-  void SyncProperties ();
-  void SyncTypeAndStateFromContent ();
-  nsresult ConstructDbusMenuItem ();
-  static void ItemActivatedCallback (DbusmenuMenuitem *menuItem,
-                                     PRUint32 timeStamp,
-                                     void *data);
-  void Activate ();
-  void UncheckSiblings ();
+  PRUint32 GetKeyCode(nsAString &aKeyName);
+  PRUint32 MozKeyCodeToGdkKeyCode(PRUint32 aMozKeyCode);
+  void SyncAccelFromContent();
+  void SyncProperties();
+  void SyncTypeAndStateFromContent();
+  nsresult ConstructDbusMenuItem();
+  static void ItemActivatedCallback(DbusmenuMenuitem *menuItem,
+                                    PRUint32 timeStamp,
+                                    void *data);
+  void Activate();
+  void UncheckSiblings();
 
   nsCOMPtr<nsIContent> mCommandContent;
   nsCOMPtr<nsIContent> mKeyContent;

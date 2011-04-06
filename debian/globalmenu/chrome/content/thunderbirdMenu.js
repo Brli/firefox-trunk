@@ -69,7 +69,7 @@ Observer.prototype = {
   },
 
   maybeMoveSpinner: function() {
-    if(this.spinnerMoved == true) {
+    if (this.spinnerMoved == true) {
       return;
     }
 

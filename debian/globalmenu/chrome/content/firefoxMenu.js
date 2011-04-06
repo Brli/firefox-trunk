@@ -64,8 +64,8 @@ Observer.prototype = {
   },
 
   observe: function(subject, topic, data) {
-    if(topic == "menuservice-popup-open") {
-      if(data == "menu_EditPopup") {
+    if (topic == "menuservice-popup-open") {
+      if (data == "menu_EditPopup") {
         // This is really hacky, but the edit menu items only set the correct
         // sensitivity when the menupopup state == showing or open, which is
         // a read only property set in layout/xul/base/src/nsMenuPopupFrame.cpp
@@ -112,14 +112,14 @@ function onLoad()
   // XXX: This is just to start the menu loader, I can't figure out a way
   //      to start it without this (eg, on component registration)
   var loader = Cc["@canonical.com/globalmenu-loader;1"].getService(uIGlobalMenuLoader);
-  if(!observer) {
+  if (!observer) {
     observer = new Observer();
   }
 }
 
 function onUnload()
 {
-  if(observer) {
+  if (observer) {
     observer.shutdown();
     delete observer;
   }

@@ -57,15 +57,15 @@ public:
                                    nsIContent *aContent);
 
 private:
-  uGlobalMenuDummy (): uGlobalMenuObject(MenuDummy) { };
+  uGlobalMenuDummy(): uGlobalMenuObject(MenuDummy) { };
 
-  nsresult Init (uGlobalMenuObject *aParent,
-                 uGlobalMenuDocListener *aListener,
-                 nsIContent *aContent);
+  nsresult Init(uGlobalMenuObject *aParent,
+                uGlobalMenuDocListener *aListener,
+                nsIContent *aContent);
 
-  ~uGlobalMenuDummy ();
+  ~uGlobalMenuDummy();
 
-  nsresult ConstructDbusMenuItem (); 
+  nsresult ConstructDbusMenuItem(); 
 };
 
 

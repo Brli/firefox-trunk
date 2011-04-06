@@ -55,18 +55,18 @@ NewGlobalMenuItem(uGlobalMenuObject *aParent,
                   uGlobalMenuBar *aMenuBar)
 {
 #ifdef MOZILLA_1_9_2_BRANCH
-  if(aContent->GetNameSpaceID() != kNameSpaceID_XUL) {
+  if (aContent->GetNameSpaceID() != kNameSpaceID_XUL) {
 #else
-  if(!aContent->IsXUL()) {
+  if (!aContent->IsXUL()) {
 #endif
     return nsnull;
   }
 
-  if(aContent->Tag() == uWidgetAtoms::menu) {
+  if (aContent->Tag() == uWidgetAtoms::menu) {
     return uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
-  } else if(aContent->Tag() == uWidgetAtoms::menuitem) {
+  } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
     return uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
-  } else if(aContent->Tag() == uWidgetAtoms::menuseparator) {
+  } else if (aContent->Tag() == uWidgetAtoms::menuseparator) {
     return uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
   } else {
     // We didn't recognize the tag.  We'll insert an invisible

@@ -49,6 +49,8 @@
 #include <nsIPrefService.h>
 #include <nsIDOMKeyEvent.h>
 #include <nsIDOMEventListener.h>
+#include <nsICaseConversion.h>
+#include <nsUnicharUtilCIID.h>
 
 #include <glib-object.h>
 #include <gdk/gdk.h>
@@ -80,9 +82,30 @@ uGlobalMenuBarListener::KeyPress(nsIDOMEvent *aKeyEvent)
 }
 
 NS_IMETHODIMP
+uGlobalMenuBarListener::KeyUp(nsIDOMEvent *aKeyEvent)
+{
+  return mMenuBar->KeyUp(aKeyEvent);
+}
+
+NS_IMETHODIMP
+uGlobalMenuBarListener::KeyDown(nsIDOMEvent *aKeyEvent)
+{
+  return mMenuBar->KeyDown(aKeyEvent);
+}
+
+NS_IMETHODIMP
+uGlobalMenuBarListener::Blur(nsIDOMEvent *aEvent)
+{
+  if (mMenuBar) {
+    mMenuBar->Blur();
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 uGlobalMenuBarListener::Focus(nsIDOMEvent *aEvent)
 {
-  if(mMenuBar) {
+  if (mMenuBar) {
     mMenuBar->Focus();
   }
   return NS_OK;
@@ -93,13 +116,13 @@ uGlobalMenuBar::WidgetToGTKWindow(nsIWidget *aWidget)
 {
   // Get the main GDK drawing window from our nsIWidget
   GdkWindow *window = static_cast<GdkWindow *>(aWidget->GetNativeData(NS_NATIVE_WINDOW));
-  if(!window)
+  if (!window)
     return nsnull;
 
   // Get the widget for the main drawing window, which should be a MozContainer
   gpointer user_data = nsnull;
   gdk_window_get_user_data(window, &user_data);
-  if(!user_data || !GTK_IS_CONTAINER(user_data))
+  if (!user_data || !GTK_IS_CONTAINER(user_data))
     return nsnull;
 
   return gtk_widget_get_toplevel(GTK_WIDGET(user_data));
@@ -139,7 +162,7 @@ uGlobalMenuBar::Build()
 {
   PRUint32 count = mContent->GetChildCount();
 
-  for(PRUint32 i = 0; i < count; i++) {
+  for (PRUint32 i = 0; i < count; i++) {
     nsIContent *menuContent = mContent->GetChildAt(i);
     uGlobalMenuObject *newItem =
       NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
@@ -162,7 +185,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   mContent = aMenuBar;
 
   mTopLevel = WidgetToGTKWindow(aWindow);
-  if(!GTK_IS_WINDOW(mTopLevel))
+  if (!GTK_IS_WINDOW(mTopLevel))
     return NS_ERROR_FAILURE;
 
   g_object_ref(mTopLevel);
@@ -173,17 +196,17 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   mPath.Append(xid);
 
   mServer = dbusmenu_server_new(mPath.get());
-  if(!mServer)
+  if (!mServer)
     return NS_ERROR_OUT_OF_MEMORY;
 
   mDbusMenuItem = dbusmenu_menuitem_new();
-  if(!mDbusMenuItem)
+  if (!mDbusMenuItem)
     return NS_ERROR_OUT_OF_MEMORY;
 
   dbusmenu_server_set_root(mServer, mDbusMenuItem);
 
   mListener = new uGlobalMenuDocListener();
-  if(!mListener)
+  if (!mListener)
     return NS_ERROR_OUT_OF_MEMORY;
 
   nsresult rv = mListener->Init(mContent);
@@ -216,25 +239,33 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   mDOMWinTarget->AddEventListener(NS_LITERAL_STRING("focus"),
                                   (nsIDOMFocusListener *)mEventListener,
                                   PR_TRUE);
+  mDOMWinTarget->AddEventListener(NS_LITERAL_STRING("blur"),
+                                  (nsIDOMFocusListener *)mEventListener,
+                                  PR_FALSE);
 
   mDocTarget = do_QueryInterface(mContent->GetDocument());
 
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keypress"),
                                (nsIDOMKeyListener *)mEventListener,
                                PR_FALSE);
+  mDocTarget->AddEventListener(NS_LITERAL_STRING("keydown"),
+                               (nsIDOMKeyListener *)mEventListener,
+                               PR_FALSE);
+  mDocTarget->AddEventListener(NS_LITERAL_STRING("keyup"),
+                               (nsIDOMKeyListener *)mEventListener,
+                               PR_FALSE);
 
   nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID);
   NS_ENSURE_TRUE(prefs, NS_ERROR_FAILURE);
 
-  PRInt32 accessKey;
-  prefs->GetIntPref("ui.key.menuAccessKey", &accessKey);
-  if (accessKey == nsIDOMKeyEvent::DOM_VK_SHIFT) {
+  prefs->GetIntPref("ui.key.menuAccessKey", &mAccessKey);
+  if (mAccessKey == nsIDOMKeyEvent::DOM_VK_SHIFT) {
     mAccessKeyMask = MODIFIER_SHIFT;
-  } else if (accessKey == nsIDOMKeyEvent::DOM_VK_CONTROL) {
+  } else if (mAccessKey == nsIDOMKeyEvent::DOM_VK_CONTROL) {
     mAccessKeyMask = MODIFIER_CONTROL;
-  } else if (accessKey == nsIDOMKeyEvent::DOM_VK_ALT) {
+  } else if (mAccessKey == nsIDOMKeyEvent::DOM_VK_ALT) {
     mAccessKeyMask = MODIFIER_ALT;
-  } else if (accessKey == nsIDOMKeyEvent::DOM_VK_META) {
+  } else if (mAccessKey == nsIDOMKeyEvent::DOM_VK_META) {
     mAccessKeyMask = MODIFIER_META;
   } else {
     mAccessKeyMask = MODIFIER_ALT;
@@ -345,20 +376,29 @@ uGlobalMenuBar::~uGlobalMenuBar()
   mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
                                      (nsIDOMFocusListener *)mEventListener,
                                      PR_TRUE);
+  mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
+                                     (nsIDOMFocusListener *)mEventListener,
+                                     PR_FALSE);
 
   mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
+                                  (nsIDOMKeyListener *)mEventListener,
+                                  PR_FALSE);
+  mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
+                                  (nsIDOMKeyListener *)mEventListener,
+                                  PR_FALSE);
+  mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
                                   (nsIDOMKeyListener *)mEventListener,
                                   PR_FALSE);
 
   mListener->Destroy();
 
-  if(mTopLevel)
+  if (mTopLevel)
     g_object_unref(mTopLevel);
 
-  if(mDbusMenuItem)
+  if (mDbusMenuItem)
     g_object_unref(mDbusMenuItem);
 
-  if(mServer)
+  if (mServer)
     g_object_unref(mServer);
 }
 
@@ -380,25 +420,81 @@ uGlobalMenuBar::Create(nsIWidget *aWindow,
 }
 
 void
+uGlobalMenuBar::Blur()
+{
+  dbusmenu_server_set_status(mServer, DBUSMENU_STATUS_NORMAL);
+}
+
+void
 uGlobalMenuBar::Focus()
 {
-  if(mOpenMenu) {
-    mOpenMenu->OnClose(PR_TRUE);
+  mOpenedByKeyboard = PR_FALSE;
+}
+
+PRBool
+uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
+{
+  nsCOMPtr<nsIDOMNSEvent> nsEvent = do_QueryInterface(aKeyEvent);
+  if (!nsEvent) {
+    return PR_FALSE;
   }
+
+  PRBool handled, trusted;
+  nsEvent->GetPreventDefault(&handled);
+  nsEvent->GetIsTrusted(&trusted);
+
+  if (handled || !trusted) {
+    return PR_FALSE;
+  }
+
+  return PR_TRUE;
+}
+
+nsresult
+uGlobalMenuBar::KeyDown(nsIDOMEvent *aKeyEvent)
+{
+  if (!ShouldHandleKeyEvent(aKeyEvent)) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aKeyEvent);
+  if (keyEvent) {
+    PRUint32 keyCode;
+    keyEvent->GetKeyCode(&keyCode);
+    PRUint32 modifiers = GetModifiersFromEvent(keyEvent);
+    if ((keyCode == static_cast<PRUint32>(mAccessKey)) &&
+        ((modifiers & ~mAccessKeyMask) == 0)) {
+      dbusmenu_server_set_status(mServer, DBUSMENU_STATUS_NOTICE);
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
+uGlobalMenuBar::KeyUp(nsIDOMEvent *aKeyEvent)
+{
+  if (!ShouldHandleKeyEvent(aKeyEvent)) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aKeyEvent);
+  if (keyEvent) {
+    PRUint32 keyCode;
+    keyEvent->GetKeyCode(&keyCode);
+    if (keyCode == static_cast<PRUint32>(mAccessKey)) {
+      dbusmenu_server_set_status(mServer, DBUSMENU_STATUS_NORMAL);
+    }
+  }
+
+  return NS_OK;
 }
 
 nsresult
 uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
 {
-  nsCOMPtr<nsIDOMNSEvent> nsEvent = do_QueryInterface(aKeyEvent);
-  if (nsEvent) {
-    PRBool handled, trusted;
-    nsEvent->GetPreventDefault(&handled);
-    nsEvent->GetIsTrusted(&trusted);
-
-    if (handled || !trusted) {
-      return NS_OK;
-    }
+  if (!ShouldHandleKeyEvent(aKeyEvent)) {
+    return NS_OK;
   }
 
   nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aKeyEvent);
@@ -414,34 +510,35 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
       PRUint32 charCode;
       keyEvent->GetCharCode(&charCode);
       if (charCode != 0) {
-        // XXX: This bit is all really hacky, but we don't have access to
-        //      ToLowerCase from nsUnicharUtils.h, which can convert the
-        //      PRUnichar. What we have to do is convert from UTF16 to UTF8,
-        //      convert to lower case using ToLowerCase from nsStringAPI.h,
-        //      then convert back again and get the new PRUnichar, which
-        //      we do the comparison with when checking each menus accesskey
         PRUnichar ch = PRUnichar(charCode);
-        nsAutoString aCharCode;
-        nsCAutoString cCharCode, lowerCaseCode;
-        aCharCode = ch;
-        CopyUTF16toUTF8(aCharCode, cCharCode);
-        ToLowerCase(cCharCode, lowerCaseCode);
-        CopyUTF8toUTF16(lowerCaseCode, aCharCode);
-        ch = *aCharCode.BeginWriting();
-        PRUint32 i;
-        for (i = 0; i < count; i++) {
+        PRUnichar chl;
+        PRUnichar chu;
+        // XXX: I think we need to link against libxul.so to get ToLowerCase
+        //      and ToUpperCase from nsUnicharUtils.h
+        nsCOMPtr<nsICaseConversion> converter =
+          do_GetService(NS_UNICHARUTIL_CONTRACTID);
+        if (converter) {
+          converter->ToUpper(ch, &chu);
+          converter->ToLower(ch, &chl);
+        } else {
+          if (ch < 256) {
+            chu = toupper(char(ch));
+            chl = tolower(char(ch));
+          } else {
+            chu = ch;
+            chl = ch;
+          }
+        }
+
+        for (PRUint32 i = 0; i < count; i++) {
           nsCOMPtr<nsIContent> content;
           mMenuObjects[i]->GetContent(getter_AddRefs(content));
           if (content) {
-            nsAutoString aAccesskey;
-            nsCAutoString cAccesskey, lowerCaseAccessKey;
+            nsAutoString accessKey;
             content->GetAttr(kNameSpaceID_None, uWidgetAtoms::accesskey,
-                             aAccesskey);
-            CopyUTF16toUTF8(aAccesskey, cAccesskey);
-            ToLowerCase(cAccesskey, lowerCaseAccessKey);
-            CopyUTF8toUTF16(lowerCaseAccessKey, aAccesskey);
-            PRUnichar *key = aAccesskey.BeginWriting();
-            if (*key == ch) {
+                             accessKey);
+            const PRUnichar *key = accessKey.BeginReading();
+            if (*key == chl || *key == chu) {
               found = mMenuObjects[i];
               break;
             }
@@ -478,8 +575,8 @@ uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
 {
   mXULMenuHidden = hidden;
 
-  if(hidden) {
-    if(mHiddenElement) {
+  if (hidden) {
+    if (mHiddenElement) {
       mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
                               mRestoreHidden ? NS_LITERAL_STRING("true") :
                               NS_LITERAL_STRING("false"), PR_TRUE);
@@ -487,7 +584,7 @@ uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
     nsIContent *tmp = mContent;
 
     // Walk up the DOM tree until we find a node with siblings
-    while(tmp) {
+    while (tmp) {
       if (ShouldParentStayVisible(tmp)) {
         break;
       }
@@ -503,95 +600,11 @@ uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
 
     mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
                             NS_LITERAL_STRING("true"), PR_TRUE);
-  } else if(mHiddenElement) {
+  } else if (mHiddenElement) {
     mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
                             mRestoreHidden ? NS_LITERAL_STRING("true") :
                             NS_LITERAL_STRING("false"), PR_TRUE);
     mHiddenElement = nsnull;
-  }
-}
-
-void
-uGlobalMenuBar::ChildPopupOpen(uGlobalMenu *aMenu)
-{
-  if(!aMenu) {
-    return;
-  }
-
-  if(!mOpenMenu) {
-    mOpenMenu = aMenu;
-    return;
-  }
-
-  if(aMenu == mOpenMenu) {
-    return;
-  }
-
-  uGlobalMenuObject *tmp = aMenu->GetParent();
-  
-  while(tmp->GetType() == Menu) {
-    if(tmp == mOpenMenu) {
-      // A child of the currently open menu just opened
-      mOpenMenu = aMenu;
-      return;
-    }
-    tmp = tmp->GetParent();
-  }
-
-  // If we got here, then the newly opened menu isn't
-  // a child of the currently opened menu. If that's the
-  // case, we need to find a common ancestor, and close all
-  // of the menus up to there
-  tmp = aMenu->GetParent();
-  uGlobalMenuObject *common = nsnull;
-  while(tmp->GetType() == Menu && !common) {
-    uGlobalMenuObject *tmp2 = mOpenMenu->GetParent();
-    while(tmp2->GetType() == Menu) {
-      if(tmp2 == tmp) {
-        common = tmp;
-        break;
-      }
-      tmp2 = tmp2->GetParent();
-    }
-    tmp = tmp->GetParent();
-  }
-
-  tmp = static_cast<uGlobalMenuObject *>(mOpenMenu);
-  // From now on, mOpenMenu will change as the menus we close call ChildPopupClosed,
-  // so we can't use it again until we know we've closed all the menus we need to
-  mOpenMenuPending = PR_TRUE; // Don't let ChildPopupClosed reset mOpenedByKeyboard
-  while(tmp->GetType() == Menu && tmp != common) {
-    static_cast<uGlobalMenu *>(tmp)->OnClose(PR_FALSE);
-    tmp = tmp->GetParent();
-  }
-  mOpenMenuPending = PR_FALSE;
-
-  mOpenMenu = aMenu;
-}
-
-void
-uGlobalMenuBar::ChildPopupClosed(uGlobalMenu *aMenu)
-{
-  if(!aMenu) {
-    return;
-  }
-
-  // Check if this menu is in our hierarchy of open menus
-  uGlobalMenuObject *tmp = static_cast<uGlobalMenuObject *>(aMenu);
-  uGlobalMenuObject *found = nsnull;
-  while(tmp->GetType() == Menu) {
-    if(tmp == static_cast<uGlobalMenuObject *>(mOpenMenu)) {
-      found = tmp;
-      break;
-    }
-    tmp = tmp->GetParent();
-  }
-
-  if(found) {
-    mOpenMenu = (found->GetParent())->GetType() == Menu ? static_cast<uGlobalMenu *>(found->GetParent()) : nsnull;
-    if (!mOpenMenu && mOpenMenuPending == PR_FALSE) {
-      mOpenedByKeyboard = PR_FALSE;
-    }
   }
 }
 

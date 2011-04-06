@@ -46,6 +46,7 @@
 #include <imgIRequest.h>
 #include <imgIContainerObserver.h>
 #include <nsThreadUtils.h>
+#include <imgILoader.h>
 
 #include <libdbusmenu-glib/server.h>
 
@@ -72,18 +73,18 @@ public:
   NS_DECL_IMGICONTAINEROBSERVER
   NS_DECL_NSIRUNNABLE
 
-  void LoadIcon ();
+  void LoadIcon();
 
-  uGlobalMenuIconLoader (uGlobalMenuObject *aMenuItem):
-                         mMenuItem(aMenuItem) { };
-  ~uGlobalMenuIconLoader () { };
+  uGlobalMenuIconLoader(uGlobalMenuObject *aMenuItem):
+                        mMenuItem(aMenuItem) { };
+  ~uGlobalMenuIconLoader() { };
 
 protected:
-  void Destroy ();
+  void Destroy();
 
 private:
-  void ClearIcon ();
-  PRBool ShouldShowIcon ();
+  void ClearIcon();
+  PRBool ShouldShowIcon();
 
   PRBool mIconLoaded;
   uGlobalMenuObject *mMenuItem;
@@ -91,6 +92,7 @@ private:
   nsCOMPtr<imgIRequest> mIconRequest;
   nsIntRect mImageRect;
   static PRInt32 sImagesInMenus;
+  static nsCOMPtr<imgILoader> sLoader;
 };
 
 class uGlobalMenuObject
@@ -100,22 +102,27 @@ public:
   uGlobalMenuObject (uMenuObjectType aType): mDbusMenuItem(nsnull),
                                              mListener(nsnull),
                                              mParent(nsnull),
-                                             mType(aType) { };
-  DbusmenuMenuitem* GetDbusMenuItem () { return mDbusMenuItem; }
+                                             mType(aType),
+                                             mLabelContent(nsnull),
+                                             mLabelSyncGuard(PR_FALSE),
+                                             mSensitivitySyncGuard(PR_FALSE)
+                                             { };
+  DbusmenuMenuitem* GetDbusMenuItem() { return mDbusMenuItem; }
   uGlobalMenuObject* GetParent() { return mParent; }
   uMenuObjectType GetType() { return mType; }
-  void GetContent (nsIContent **_retval);
+  void GetContent(nsIContent **_retval);
   void UpdateVisibility();
-  virtual ~uGlobalMenuObject () { };
+  virtual ~uGlobalMenuObject() { };
 
 protected:
-  void SyncLabelFromContent ();
-  void SyncVisibilityFromContent ();
-  void SyncSensitivityFromContent ();
-  void SyncSensitivityFromContent (nsIContent *aContent);
-  void SyncIconFromContent ();
+  void SyncLabelFromContent();
+  void SyncLabelFromContent(nsIContent *aCommandContent);
+  void SyncVisibilityFromContent();
+  void SyncSensitivityFromContent();
+  void SyncSensitivityFromContent(nsIContent *aCommandContent);
+  void SyncIconFromContent();
   void UpdateInfoFromContentClass();
-  void DestroyIconLoader ();
+  void DestroyIconLoader();
   PRBool WithFavicon() { return mWithFavicon; }
 
   nsCOMPtr<nsIContent> mContent;
@@ -125,11 +132,14 @@ protected:
   uMenuObjectType mType;
   PRBool mContentVisible;
   uGlobalMenuBar *mMenuBar;
-  PRBool mWithFavicon;
-  PRBool mShowOnlyForKb;
 
 private:
   nsRefPtr<uGlobalMenuIconLoader> mIconLoader;
+  PRBool mWithFavicon;
+  PRBool mShowOnlyForKb;
+  nsIContent *mLabelContent;
+  PRBool mLabelSyncGuard;
+  PRBool mSensitivitySyncGuard;
 };
 
 #endif

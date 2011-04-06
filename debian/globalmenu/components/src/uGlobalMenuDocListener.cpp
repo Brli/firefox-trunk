@@ -125,11 +125,11 @@ uGlobalMenuDocListener::AttributeChanged(nsIDocument *aDocument,
                                          PRInt32 aModType)
 #endif
 {
-  if(!aElement)
+  if (!aElement)
     return;
 
   uMenuChangeObserver *obs = LookupContentChangeObserver(aElement);
-  if(obs)
+  if (obs)
     obs->ObserveAttributeChanged(aDocument, aElement, aAttribute);
 }
 
@@ -159,11 +159,11 @@ uGlobalMenuDocListener::ContentInserted(nsIDocument *aDocument,
                                         nsIContent *aChild,
                                         PRInt32 aIndexInContainer)
 {
-  if(!aContainer)
+  if (!aContainer)
     return;
 
   uMenuChangeObserver *obs = LookupContentChangeObserver(aContainer);
-  if(obs)
+  if (obs)
     obs->ObserveContentInserted(aDocument, aContainer, aChild,
                                 aIndexInContainer);
 
@@ -187,11 +187,11 @@ uGlobalMenuDocListener::ContentRemoved(nsIDocument *aDocument,
                                        nsIContent *aPreviousSibling)
 #endif
 {
-  if(!aContainer)
+  if (!aContainer)
     return;
 
   uMenuChangeObserver *obs = LookupContentChangeObserver(aContainer);
-  if(obs)
+  if (obs)
     obs->ObserveContentRemoved(aDocument, aContainer, aChild,
                                aIndexInContainer);
 

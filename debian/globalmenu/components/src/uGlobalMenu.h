@@ -67,40 +67,45 @@ public:
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
 
-  ~uGlobalMenu ();
+  ~uGlobalMenu();
 
-  void OpenMenu ();
-
-protected:
-  void OnClose (PRBool propagate);
+  void OpenMenu();
 
 private:
-  uGlobalMenu (): uGlobalMenuObject(Menu), mPopupBound(PR_FALSE) { };
+  uGlobalMenu(): uGlobalMenuObject(Menu), mPopupBound(PR_FALSE) { };
 
   // Initialize the menu structure
-  nsresult Init (uGlobalMenuObject *aParent,
-                 uGlobalMenuDocListener *aListener,
-                 nsIContent *aContent,
-                 uGlobalMenuBar *aMenuBar);
-  void InsertMenuObjectAt (uGlobalMenuObject *menuObj,
-                           PRUint32 index);
-  void AppendMenuObject (uGlobalMenuObject *menuObj);
-  void RemoveMenuObjectAt (PRUint32 index);
-  nsresult ConstructDbusMenuItem ();
-  void Rebuild ();
-  nsresult Build ();
-  void GetMenuPopupFromMenu (nsIContent **aResult);
-  static PRBool MenuOpenCallback (DbusmenuMenuitem *menu,
+  nsresult Init(uGlobalMenuObject *aParent,
+                uGlobalMenuDocListener *aListener,
+                nsIContent *aContent,
+                uGlobalMenuBar *aMenuBar);
+  void InsertMenuObjectAt(uGlobalMenuObject *menuObj,
+                          PRUint32 index);
+  void AppendMenuObject(uGlobalMenuObject *menuObj);
+  void RemoveMenuObjectAt(PRUint32 index);
+  nsresult ConstructDbusMenuItem();
+  void Rebuild();
+  nsresult Build();
+  void GetMenuPopupFromMenu(nsIContent **aResult);
+  static PRBool MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
+                                        void *data);
+  static PRBool MenuEventCallback(DbusmenuMenuitem *menu,
+                                  const gchar *name,
+                                  GVariant *value,
+                                  guint timestamp,
                                   void *data);
-  PRBool CanOpen ();
-  void OnOpen ();
-  void Activate ();
-  void Deactivate ();
+  PRBool CanOpen();
+  void AboutToOpen();
+  void OnOpen();
+  void OnClose();
+  void Activate();
+  void Deactivate();
 
   nsCOMPtr<nsIContent> mPopupContent;
   nsCOMPtr<nsIContent> mCommandContent;
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
   PRUint32 mOpenHandlerID;
+  PRUint32 mEventHandlerID;
   DbusmenuMenuitem *mPlaceHolder;
   PRBool mPopupBound;
 };

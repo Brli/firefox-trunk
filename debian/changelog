@@ -2,6 +2,8 @@ firefox-trunk (4.2~a1~hg20110401r64633+nobinonly-0ubuntu1) UNRELEASED; urgency=l
 
   * New upstream snapshot v4.2 A1 HG 20110401R64633
 
+  * Update globalmenu-extension code to 0.7
+
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/change-moz-app-name.patch
@@ -67,7 +69,7 @@ firefox-trunk (4.2~a1~hg20110401r64633+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - remove debian/patches/64-bit-be-fix.patch
     - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Apr 2011 23:56:51 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Apr 2011 23:50:33 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

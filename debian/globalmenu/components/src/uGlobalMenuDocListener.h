@@ -56,18 +56,18 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIMUTATIONOBSERVER
 
-  uGlobalMenuDocListener ();
-  nsresult Init (nsIContent *rootNode);
-  void RegisterForContentChanges (nsIContent *aContent,
-                                  uMenuChangeObserver *aMenuObject);
-  void UnregisterForContentChanges (nsIContent *aContent);
-  void RegisterForAllChanges (uMenuChangeObserver *aMenuObject);
-  void UnregisterForAllChanges (uMenuChangeObserver *aMenuObject);
-  void Destroy ();
-  ~uGlobalMenuDocListener () { };
+  uGlobalMenuDocListener();
+  nsresult Init(nsIContent *rootNode);
+  void RegisterForContentChanges(nsIContent *aContent,
+                                 uMenuChangeObserver *aMenuObject);
+  void UnregisterForContentChanges(nsIContent *aContent);
+  void RegisterForAllChanges(uMenuChangeObserver *aMenuObject);
+  void UnregisterForAllChanges(uMenuChangeObserver *aMenuObject);
+  void Destroy();
+  ~uGlobalMenuDocListener() { };
 
 private:
-  uMenuChangeObserver* LookupContentChangeObserver (nsIContent *aContent);
+  uMenuChangeObserver* LookupContentChangeObserver(nsIContent *aContent);
 
   nsIDocument *mDocument;
   nsDataHashtable<nsPtrHashKey<nsIContent>, uMenuChangeObserver *> mContentToObserverTable;
