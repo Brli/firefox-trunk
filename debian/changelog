@@ -1,6 +1,6 @@
-firefox-trunk (4.2~a1~hg20110401r64633+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (6.0~a1~hg20110417r68226+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v4.2 A1 HG 20110401R64633
+  * New upstream snapshot v6.0 A1 HG 20110417R68226
 
   * Update globalmenu-extension code to 0.7
 
@@ -68,8 +68,11 @@ firefox-trunk (4.2~a1~hg20110401r64633+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Drop patches merged upstream
     - remove debian/patches/64-bit-be-fix.patch
     - update debian/patches/series
+    - remove debian/patches/default-browser-check-use-gio.patch
+    - remove debian/patches/fix-nsGIOService.patch
+    - remove debian/patches/use-MOZ_APP_LAUNCHER-for-launcher-exec.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Apr 2011 23:50:33 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Apr 2011 20:46:09 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

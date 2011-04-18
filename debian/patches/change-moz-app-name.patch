@@ -36,8 +36,8 @@
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
---- a/other-licenses/branding/firefox/pref/firefox-branding.js
-+++ b/other-licenses/branding/firefox/pref/firefox-branding.js
+--- a/browser/branding/official/pref/firefox-branding.js
++++ b/browser/branding/official/pref/firefox-branding.js
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
@@ -173,3 +173,20 @@
  MOZ_UPDATER=1
  MOZ_PHOENIX=1
  
+--- a/browser/branding/aurora/pref/firefox-branding.js
++++ b/browser/branding/aurora/pref/firefox-branding.js
+@@ -12,11 +12,11 @@ pref("app.update.download.backgroundInte
+ pref("app.update.url.manual", "http://nightly.mozilla.org/");
+ // A default value for the "More information about this update" link
+ // supplied in the "An update is available" page of the update wizard. 
+-pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
++pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
+ 
+ // Release notes and vendor URLs
+-pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
+-pref("app.vendorURL", "http://www.mozilla.org/projects/%APP%/");
++pref("app.releaseNotesURL", "http://www.mozilla.org/projects/firefox/%VERSION%/releasenotes/");
++pref("app.vendorURL", "http://www.mozilla.org/projects/firefox/");
+ 
+ // Search codes belong only in builds with official branding
+ pref("browser.search.param.yahoo-fr", "");
