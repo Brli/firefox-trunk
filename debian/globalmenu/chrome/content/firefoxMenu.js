@@ -40,6 +40,8 @@ const nsIObserverService = Ci.nsIObserverService;
 const uIGlobalMenuLoader = Ci.uIGlobalMenuLoader;
 const uIGlobalMenuService = Ci.uIGlobalMenuService;
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 var observer = null;
 
 window.addEventListener('load', onLoad, false);
@@ -124,3 +126,62 @@ function onUnload()
     delete observer;
   }
 }
+
+// Note that we need to initialize _startMarker and _endMarker ourselves.
+// This normally comes from XBL bindings on non-Mac platforms when the menu
+// frame is drawn (which never happens here), or some #ifdef'd code on Mac.
+// We also need to ensure that _nativeView is true before the menu is built,
+// which happens normally when creating a new PlacesMenu or HistoryMenu. To
+// do this, we subclass PlacesMenu and HistoryMenu and do the required
+// initialization ourselves. We also override the popupshowing handlers to
+// instantiate our classes
+
+function PlacesMenuUnityImpl(aPopupShowingEvent, aPlace)
+{
+  this._rootElt = aPopupShowingEvent.target; // <menupopup>
+  this._viewElt = this._rootElt.parentNode;   // <menu>
+  this._viewElt._placesView = this;
+  this._addEventListeners(this._rootElt, ["popupshowing", "popuphidden"], true);
+  this._addEventListeners(window, ["unload"], false);
+
+  if (this._viewElt.parentNode.localName == "menubar") {
+    this._nativeView = true;
+    this._rootElt._startMarker = -1;
+    this._rootElt._endMarker = -1;
+  }
+
+  PlacesViewBase.call(this, aPlace);
+  this._onPopupShowing(aPopupShowingEvent);
+}
+
+PlacesMenuUnityImpl.prototype = {
+  __proto__: PlacesMenu.prototype
+};
+
+function HistoryMenuUnityImpl(aPopupShowingEvent)
+{
+  this.__proto__.__proto__.__proto__ = PlacesMenu.prototype;
+
+  XPCOMUtils.defineLazyServiceGetter(this, "_ss",
+                                     "@mozilla.org/browser/sessionstore;1",
+                                     "nsISessionStore");
+
+  this._rootElt = aPopupShowingEvent.target; // <menupopup>
+  this._viewElt = this._rootElt.parentNode;   // <menu>
+  this._viewElt._placesView = this;
+  this._addEventListeners(this._rootElt, ["popupshowing", "popuphidden"], true);
+  this._addEventListeners(window, ["unload"], false);
+
+  if (this._viewElt.parentNode.localName == "menubar") {
+    this._nativeView = true;
+    this._rootElt._startMarker = -1;
+    this._rootElt._endMarker = -1;
+  }
+
+  PlacesViewBase.call(this, "place:redirectsMode=2&sort=4&maxResults=10");
+  this._onPopupShowing(aPopupShowingEvent);
+}
+
+HistoryMenuUnityImpl.prototype = {
+  __proto__: HistoryMenu.prototype
+};

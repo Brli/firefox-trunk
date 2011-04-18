@@ -323,23 +323,12 @@ uGlobalMenu::ConstructDbusMenuItem()
   if (!mDbusMenuItem)
     return NS_ERROR_OUT_OF_MEMORY;
 
-  // We need a placeholder child until we get our own children
-  // This ensures that the menu gets a submenu now, which we need
-  // in order to get our AboutToShow signal, and trigger the loading
-  // of our lazy-loaded menus (eg, bookmarks)
-
-  mPlaceHolder = dbusmenu_menuitem_new();
-  if (mPlaceHolder) {
-    dbusmenu_menuitem_property_set(mPlaceHolder,
-                                   DBUSMENU_MENUITEM_PROP_LABEL, "");
-    dbusmenu_menuitem_property_set_bool(mPlaceHolder,
-                                        DBUSMENU_MENUITEM_PROP_VISIBLE,
-                                        PR_TRUE);
-    dbusmenu_menuitem_property_set_bool(mPlaceHolder,
-                                        DBUSMENU_MENUITEM_PROP_ENABLED,
-                                        PR_FALSE);
-    dbusmenu_menuitem_child_append(mDbusMenuItem, mPlaceHolder);
-  }
+  // This happens automatically when we add children, but we have to
+  // do this manually for menus which don't initially have children,
+  // so we can receive about-to-show which triggers a build of the menu
+  dbusmenu_menuitem_property_set(mDbusMenuItem,
+                                 DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
+                                 DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU);
 
   mOpenHandlerID = g_signal_connect(G_OBJECT(mDbusMenuItem),
                                     "about-to-show",
@@ -401,10 +390,6 @@ void
 uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                                 PRUint32 index)
 {
-  if (mMenuObjects.Length() == 0 and mPlaceHolder) {
-    dbusmenu_menuitem_child_delete(mDbusMenuItem, mPlaceHolder);
-  }
-
   PRBool res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                     menuObj->GetDbusMenuItem(),
                                                     index);
@@ -416,10 +401,6 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
 void
 uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 {
-  if (mMenuObjects.Length() == 0 and mPlaceHolder) {
-    dbusmenu_menuitem_child_delete(mDbusMenuItem, mPlaceHolder);
-  }
-
   PRBool res = dbusmenu_menuitem_child_append(mDbusMenuItem,
                                               menuObj->GetDbusMenuItem());
   NS_ASSERTION(res, "Failed to append child to menu. Everything will go horribly wrong now");
@@ -435,10 +416,6 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
   NS_ASSERTION(res, "Failed to delete child from menu. Everything will go horribly wrong now");
 
   mMenuObjects.RemoveElementAt(index);
-
-  if (mMenuObjects.Length() == 0 and mPlaceHolder) {
-    dbusmenu_menuitem_child_append(mDbusMenuItem, mPlaceHolder);
-  }
 }
 
 nsresult
@@ -575,10 +552,6 @@ uGlobalMenu::~uGlobalMenu()
   }
 
   DestroyIconLoader();
-
-  if (mPlaceHolder) {
-    g_object_unref(mPlaceHolder);
-  }
 
   if (mDbusMenuItem) {
     g_signal_handler_disconnect(mDbusMenuItem, mOpenHandlerID);

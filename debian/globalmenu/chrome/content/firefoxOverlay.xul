@@ -39,32 +39,12 @@
 <overlay id="globalmenu-extension-browser-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript" src="chrome://globalmenu/content/firefoxMenu.js" />
 
-<!-- We need to override the popupshowing handlers for the bookmarks and history
-   - menu popups, so that we initialize some data that would normally come from
-   - either XBL bindings (which aren't bound because we don't have a frame), or
-   - some #ifdef'd code only applicable on the Mac. Without this, we don't create
-   - the "(Empty)" placeholder for empty bookmark menus. Note that we need
-   - menu._nativeView to be true when the menu DOM nodes are created. However,
-   - these are all created when instantiating a new PlacesMenu, and before we've had
-   - a chance to set _nativeView.
-   - To work around this, we call menu._rebuildPopup, which discards all the newly
-   - created nodes and rebuilds the menu again (correctly). This sucks, as it means
-   - we are building the menu twice, but I can't think of another way :( -->
-
   <menupopup id="goPopup"
-    onpopupshowing="if (!this.parentNode._placesView) {
-                      this._startMarker = -1;
-                      this._endMarker = -1;
-                      var menu = new HistoryMenu(event);
-                      menu._nativeView = true;
-                      menu._rebuildPopup(this)};"/>
+    onpopupshowing="if (!this.parentNode._placesView)
+                      new HistoryMenuUnityImpl(event);"/>
 
   <menupopup id="bookmarksMenuPopup"
     onpopupshowing="PlacesCommandHook.updateBookmarkAllTabsCommand();
-                    if (!this.parentNode._placesView) {
-                      this._startMarker = -1;
-                      this._endMarker = -1;
-                      var menu = new PlacesMenu(event, 'place:folder=BOOKMARKS_MENU');
-                      menu._nativeView = true;
-                      menu._rebuildPopup(this)};"/>
+                    if (!this.parentNode._placesView)
+                      new PlacesMenuUnityImpl(event, 'place:folder=BOOKMARKS_MENU');"/>
 </overlay>

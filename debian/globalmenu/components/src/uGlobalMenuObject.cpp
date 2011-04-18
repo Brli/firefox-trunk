@@ -513,34 +513,33 @@ uGlobalMenuObject::SyncLabelFromContent()
   PRUnichar *end = label.EndWriting();
   int length = label.Length();
   int pos = 0;
-  PRBool foundAccessKey = false;
+  PRBool foundAccessKey = PR_FALSE;
 
   while (cur < end) {
-    if (((*cur == keyLower || *cur == keyUpper) && !foundAccessKey) ||
-        *cur == PRUnichar('_')) {      
-      length += 1;
-      label.SetLength(length);
-      int newLength = label.Length();
-      if (length != newLength)
-        break; 
+    if (*cur != PRUnichar('_')) {
+      if ((*cur != keyLower && *cur != keyUpper) || foundAccessKey) {
+        cur++;
+        pos++;
+        continue;
+      }
+      foundAccessKey = PR_TRUE;
+    }
+
+    length += 1;
+    label.SetLength(length);
+    int newLength = label.Length();
+    if (length != newLength)
+      break; 
      
-      cur = label.BeginWriting() + pos;
-      end = label.EndWriting();
-      memmove(cur + 1, cur, (length - 1 - pos) * sizeof(PRUnichar));
-//                     \^/
-      *cur = PRUnichar('_'); // Yeah!
-//                      v
+    cur = label.BeginWriting() + pos;
+    end = label.EndWriting();
+    memmove(cur + 1, cur, (length - 1 - pos) * sizeof(PRUnichar));
+//                   \^/
+    *cur = PRUnichar('_'); // Yeah!
+//                    v
 
-      if (*cur == keyLower || *cur == keyUpper)
-        foundAccessKey = true;
-
-      cur += 2;
-      pos += 2; 
-
-    } else {
-      cur++;
-      pos++;
-    } 
+    cur += 2;
+    pos += 2;
   }
 
   // Ellipsize long labels. I've picked an arbitrary length here
