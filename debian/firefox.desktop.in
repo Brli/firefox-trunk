@@ -1,5 +1,6 @@
 [Desktop Entry]
 Version=1.0
+%%ifdef OFFICIAL_BRANDING
 Name=Firefox Web Browser
 Name[ar]=متصفح الوِب فَيَرفُكْس
 Name[ca]=Navegador web Firefox
@@ -26,6 +27,33 @@ Name[ru]=Веб-браузер Firefox
 Name[vi]=Trình duyệt web Firefox
 Name[zh_CN]=Firefox 网络浏览器
 Name[zh_TW]=Firefox 網路瀏覽器
+%%else
+Name=@DISPLAY_NAME@ Web Browser
+Name[ca]=Navegador web @DISPLAY_NAME@
+Name[cs]=@DISPLAY_NAME@ Webový prohlížeč
+Name[es]=Navegador web @DISPLAY_NAME@
+Name[et]=@DISPLAY_NAME@i veebibrauser
+Name[fa]=مرورگر اینترنتی @DISPLAY_NAME@
+Name[fi]=@DISPLAY_NAME@-selain
+Name[fr]=Navigateur Web @DISPLAY_NAME@
+Name[hu]=@DISPLAY_NAME@ webböngésző
+Name[it]=@DISPLAY_NAME@ Browser Web
+Name[ja]=@DISPLAY_NAME@ ウェブ・ブラウザ
+Name[ko]=@DISPLAY_NAME@ 웹 브라우저
+Name[nb]=@DISPLAY_NAME@ Nettleser
+Name[nl]=@DISPLAY_NAME@ webbrowser
+Name[nn]=@DISPLAY_NAME@ Nettlesar
+Name[no]=@DISPLAY_NAME@ Nettleser
+Name[pl]=Przeglądarka WWW @DISPLAY_NAME@
+Name[pt]=@DISPLAY_NAME@ Navegador Web
+Name[pt_BR]=Navegador Web @DISPLAY_NAME@
+Name[sk]=@DISPLAY_NAME@ - internetový prehliadač
+Name[sv]=Webbläsaren @DISPLAY_NAME@
+Name[ru]=Веб-браузер @DISPLAY_NAME@
+Name[vi]=Trình duyệt web @DISPLAY_NAME@
+Name[zh_CN]=@DISPLAY_NAME@ 网络浏览器
+Name[zh_TW]=@DISPLAY_NAME@ 網路瀏覽器
+%%endif
 Comment=Browse the World Wide Web
 Comment[ar]=تصفح الشبكة العنكبوتية العالمية
 Comment[ca]=Navegueu per el web
@@ -86,5 +114,5 @@ Type=Application
 Icon=@APPNAME@
 Categories=GNOME;GTK;Network;WebBrowser;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;
-StartupWMClass=@STARTUP_WM_CLASS@
+StartupWMClass=@DISPLAY_NAME@
 StartupNotify=true

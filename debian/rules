@@ -13,6 +13,7 @@ DEB_DH_STRIP_ARGS		= --dbg-package=$(DEBIAN_NAME)-dbg
 DEB_INSTALL_DOCS_ALL 		:= $(NULL)
 # Needed for mozclient
 DEBIAN_APP_NAME			:= firefox
+CHANNEL				:= nightly
 MOZCLIENT_PROJECTNAME		:= $(DEBIAN_APP_NAME)
 MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 
@@ -158,55 +159,19 @@ endif
 endif
 endif
 
-# Change branding based on Version
-ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
-	# minefield branding for snapshots
-	BRANDING_DIR		= browser/branding/nightly
-	BRANDING_OPTION		= --with-branding=$(BRANDING_DIR)
-	DESKTOP  		= $(DEBIAN_NAME)-nightly.desktop
-	STARTUP_WM_CLASS	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
-				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	DISPLAY_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
-else
-ifneq (0, $(DEB_BUILD_UNOFFICIAL))
-	# build with unofficial branding
-	BRANDING_DIR		= browser/branding/unofficial
-	BRANDING_OPTION		= --with-branding=$(BRANDING_DIR)
-	DESKTOP			= $(DEBIAN_NAME)-unofficial.desktop
-	DISPLAY_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
-				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(DISPLAY_NAME)
-else
-ifneq (,$(findstring ~a,$(DEBIAN_VERSION)))
-	# codename branding for alpha
-	BRANDING_DIR		= browser/branding/unofficial
-	BRANDING_OPTION		= --with-branding=$(BRANDING_DIR)
-	DESKTOP 		= $(DEBIAN_NAME)-unofficial.desktop
-	DISPLAY_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
-				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(DISPLAY_NAME)
-else
-ifneq (,$(findstring ~b,$(DEBIAN_VERSION)))
-	BRANDING_DIR		= other-licenses/branding/firefox
-	BRANDING_OPTION		= --enable-official-branding
-	DESKTOP 		= $(DEBIAN_NAME)-beta.desktop
-	STARTUP_WM_CLASS	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
-				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	DISPLAY_NAME		= $(strip $(STARTUP_WM_CLASS) $(FF_VERSION_SERIES))
-	# Hack to turn on testpilot for beta builds. Other than that, the update channel is not used anywhere for our build
-	MOZ_UPDATE_CHANNEL	= beta
-else
-	# automatically build with official branding for final and final RCs builds
-	BRANDING_DIR		= other-licenses/branding/firefox
-	BRANDING_OPTION		= --enable-official-branding
-	DESKTOP			= $(DEBIAN_NAME)-final.desktop
-	DISPLAY_NAME		= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
-				    | grep brandShortName | sed -e 's/brandShortName\=//')
-	STARTUP_WM_CLASS	= $(DISPLAY_NAME)
+BRANDING	= $(CHANNEL)
+ifeq (1,$(DEB_BUILD_UNOFFICIAL))
+ifneq (,$(filter official beta aurora, $(BRANDING)))
+	BRANDING = unofficial
 endif
 endif
+BRANDING_DIR	= browser/branding/$(BRANDING)
+BRANDING_OPTION = --with-branding=$(BRANDING_DIR)
+ifneq (,$(filter official beta, $(BRANDING)))
+	BRANDING_OPTION	= --enable-official-branding
 endif
-endif
+DISPLAY_NAME	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
+		    | grep brandShortName | sed -e 's/brandShortName\=//')
 
 ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1010" && echo "1"))
@@ -265,7 +230,7 @@ endif
 # Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DLIBDIR="$(FF_LIBDIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF_VERSION_SERIES)" -DAPPBASENAME="$(DEBIAN_APP_NAME)"\
 		-DINCDIR="$(FF_INCDIR)" -DIDLDIR="$(FF_IDLDIR)" -DFF_VERSION="$(FF_VERSION)" -DXUL_VERSION="$(DEBIAN_XUL_VER)" -DDEB_BUILD_ARCH="$(DEB_BUILD_ARCH)" \
-		-DSTARTUP_WM_CLASS="$(STARTUP_WM_CLASS)" -DDISPLAY_NAME="$(DISPLAY_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
+		-DDISPLAY_NAME="$(DISPLAY_NAME)" -DFF_VERSION_DEVMILESTONE="$(FF_VERSION_DEVMILESTONE)" \
 		-DDEBIAN_XUL_DEV="$(DEBIAN_XUL_DEV)" -DBRANDING_OPTION="$(BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)" \
 		-DFF_PREFIX="$(FF_PREFIX)" -DDEB_CONFIGURE_LOCALSTATEDIR="$(DEB_CONFIGURE_LOCALSTATEDIR)" -DSDKDIR="$(FF_SDKDIR)" -DMOZ_DISTDIR="$(MOZ_DISTDIR)" \
 		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DPYTHON="$(PYTHON)" -DMOZ_PROFILE_FOLDER=".mozilla/$(DEBIAN_NAME)"
@@ -337,6 +302,9 @@ endif
 ifeq (1,$(ENABLE_GLOBALMENU))
 	DEB_DEFINES += -DENABLE_GLOBALMENU
 endif
+ifneq (,$(filter beta official, $(BRANDING)))
+	DEB_DEFINES += -DOFFICIAL_BRANDING
+endif
 
 DEBIAN_EXECUTABLES = \
 	$(DEBIAN_NAME)$(FF_LIBDIR)/firefox.sh \
@@ -349,7 +317,7 @@ subst_files = \
 	debian/firefox.sh \
 	debian/apport/$(DEBIAN_NAME) \
 	debian/apport/$(DEBIAN_NAME).py \
-	debian/$(DESKTOP) \
+	debian/$(DEBIAN_NAME).desktop \
 	debian/$(DEBIAN_NAME).xml \
 	debian/$(DEBIAN_NAME)-gnome-support.install \
 	debian/$(DEBIAN_NAME).dirs \
@@ -402,9 +370,6 @@ debian/usr.bin.firefox.in:
 	else \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.9.10 $(CURDIR)/debian/usr.bin.firefox.in ; \
 	fi
-
-debian/$(DEBIAN_NAME).desktop: debian/$(DESKTOP)
-	cp $< $@
 
 debian/stamp-buildsymbols: debian/stamp-makefile-build
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
@@ -471,7 +436,7 @@ binary-predeb/$(DEBIAN_NAME)::
 	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(DEBIAN_NAME)$(FF_LIBDIR)/$(lib);)
 endif
 
-pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
+pre-build:: $(subst_files)
 
 	# KDE integration
 	cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
@@ -481,9 +446,7 @@ pre-build:: $(subst_files) debian/$(DEBIAN_NAME).desktop
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -) 
 
 clean:: regen-debian-control
-	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -f $(subst_files) debian/install.rdf
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
-	rm -f debian/$(DEBIAN_NAME).desktop
 	rm -rf debian/lp-export-xpis

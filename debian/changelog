@@ -75,8 +75,17 @@ firefox-trunk (6.0~a1~hg20110417r68226+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     a particular URI scheme has a handler, rather than probing GConf
     - add debian/patches/default-uri-handler-check-use-gio.patch
     - update debian/patches/series
+  * Ditch all the version-number based branding selection. Do this all
+    purely on the channel now
+    - remove debian/firefox-beta.desktop.in
+    - remove debian/firefox-nightly.desktop.in
+    - remove debian/firefox-unofficial.desktop.in
+    - rename debian/firefox-final.desktop.in => debian/firefox.desktop.in
+    - update debian/firefox.desktop.in
+    - update debian/rules
+    - update debian/firefox.sh.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Apr 2011 20:55:41 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Apr 2011 21:57:58 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
