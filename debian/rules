@@ -131,16 +131,6 @@ ifneq ($(DEBIAN_NAME),$(DEBIAN_APP_NAME))
 	DEB_BUILD_UNOFFICIAL = 1
 endif
 
-# minVersion and maxVersion used in install.rdf
-EM_TRANSLATION_VERSION		= $(FF_VERSION)
-ifeq (,$(FF_VERSION_DEVMILESTONE))
-EM_TRANSLATION_MIN_VERSION	= $(FF_VERSION_SERIES)
-EM_TRANSLATION_MAX_VERSION	= $(FF_VERSION_SERIES).*
-else
-EM_TRANSLATION_MIN_VERSION	= $(FF_VERSION)
-EM_TRANSLATION_MAX_VERSION	= $(FF_VERSION)
-endif
-
 ifeq (1, $(DEB_SYS_LIBXUL))
 	DEBIAN_XUL_VER	:= $(shell MALLOC_OPTIONS=O xulrunner-2.0 --gre-version)
 	DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
@@ -379,22 +369,9 @@ ifeq (1, $(DEB_ENABLE_BREAKPAD))
 endif
 	touch $@
 
-debian/lp-export-xpis/en-US.xpi: debian/stamp-makefile-build
-	rm -rf $(MOZ_DISTDIR)/xpi-stage/locale-en-US
-	$(MAKE) -C $(MOZ_OBJDIR)/browser/locales langpack
-	sed \
-	        -e 's/@EM_VERSION@/$(EM_TRANSLATION_VERSION)/' \
-	        -e 's/@EM_FIREFOX_MIN_VERSION@/$(EM_TRANSLATION_MIN_VERSION)/' \
-	        -e 's/@EM_FIREFOX_MAX_VERSION@/$(EM_TRANSLATION_MAX_VERSION)/' \
-	        < debian/translation-support/install.rdf.in > $(MOZ_DISTDIR)/xpi-stage/locale-en-US/install.rdf
-	cd $(MOZ_DISTDIR)/xpi-stage/locale-en-US/; \
-		zip -r9D en-US.xpi chrome chrome.manifest install.rdf
-	mkdir debian/lp-export-xpis
-	mv $(MOZ_DISTDIR)/xpi-stage/locale-en-US/en-US.xpi debian/lp-export-xpis/en-US.xpi
-
 common-build-arch:: debian/stamp-testsuite
 
-common-binary-arch:: debian/stamp-buildsymbols debian/lp-export-xpis/en-US.xpi
+common-binary-arch:: debian/stamp-buildsymbols
 
 binary-install/$(DEBIAN_NAME)::
 	convert -resize 32x32 debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).png debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).xpm
@@ -446,7 +423,6 @@ pre-build:: $(subst_files)
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -) 
 
 clean:: regen-debian-control
-	rm -f $(subst_files) debian/install.rdf
+	rm -f $(subst_files)
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
-	rm -rf debian/lp-export-xpis

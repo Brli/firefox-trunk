@@ -88,8 +88,12 @@ firefox-trunk (6.0~a1~hg20110417r68226+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/firefox.desktop.in
   * Add static quicklist item 'Open a New Window'. (LP: #741046)
     - update debian/firefox.desktop.in
+  * Rip out the bits to create a en-US.xpi. We're going to rework how
+    we do translations
+    - update debian/rules
+    - remove debian/translation-support/install.rdf.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Apr 2011 22:06:35 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Apr 2011 22:12:37 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
