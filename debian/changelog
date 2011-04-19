@@ -94,8 +94,13 @@ firefox-trunk (6.0~a1~hg20110417r68226+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - remove debian/translation-support/install.rdf.in
   * xpt_link and xpt_dump have been replaced by xpt.py
     - update debian/firefox-dev.install.in
+  * Drop the DEB_ENABLE_IPC option, now that IPC is mandatory
+    - update debian/rules
+    - update debian/apport/firefox.in
+    - update debian/firefox.install.in
+    - update debian/mozconfig.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 19 Apr 2011 01:42:01 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 19 Apr 2011 09:10:51 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

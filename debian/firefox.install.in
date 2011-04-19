@@ -17,9 +17,7 @@ debian/tmp@LIBDIR@/@APPNAME@-bin
 %%ifdef DEB_ENABLE_BREAKPAD
 debian/tmp@LIBDIR@/crashreporter
 %%endif
-%%ifdef DEB_ENABLE_IPC
 debian/tmp@LIBDIR@/plugin-container
-%%endif
 %%endif
 
 debian/@APPNAME@.desktop /usr/share/applications

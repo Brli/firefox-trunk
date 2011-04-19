@@ -1,8 +1,6 @@
 %%ifndef DEB_SYS_LIBXUL
 @LIBDIR@/@APPNAME@-bin
-%%ifdef DEB_ENABLE_IPC
 @LIBDIR@/plugin-container
-%%endif
 %%else
 @LIBDIR@/@APPNAME@
 %%endif
