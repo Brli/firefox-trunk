@@ -38,13 +38,4 @@
   
 <overlay id="globalmenu-extension-browser-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript" src="chrome://globalmenu/content/firefoxMenu.js" />
-
-  <menupopup id="goPopup"
-    onpopupshowing="if (!this.parentNode._placesView)
-                      new HistoryMenuUnityImpl(event);"/>
-
-  <menupopup id="bookmarksMenuPopup"
-    onpopupshowing="PlacesCommandHook.updateBookmarkAllTabsCommand();
-                    if (!this.parentNode._placesView)
-                      new PlacesMenuUnityImpl(event, 'place:folder=BOOKMARKS_MENU');"/>
 </overlay>

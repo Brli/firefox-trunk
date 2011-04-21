@@ -279,7 +279,7 @@ uGlobalMenu::OnClose()
      nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
     if (docEvent) {
       nsCOMPtr<nsIDOMEvent> event;
-      docEvent->CreateEvent(NS_LITERAL_STRING("uievent"),
+      docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                             getter_AddRefs(event));
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);

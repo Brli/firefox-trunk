@@ -21,6 +21,7 @@
  *
  * Contributor(s):
  * Chris Coulson <chris.coulson@canonical.com>
+ * Nils Maier <maierman@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,95 +37,94 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
+(function() {
+  "use strict";
 
-const uIGlobalMenuLoader = Ci.uIGlobalMenuLoader;
-const uIGlobalMenuService = Ci.uIGlobalMenuService;
+  function $(id) document.getElementById(id);
 
-window.addEventListener('load', onLoad, false);
-window.addEventListener('unload', onUnload, false);
-
-var menuObserver = null;
-
-function Observer()
-{
-  this.init();
-}
-
-Observer.prototype = {
-  init: function() {
-    this.spinnerMoved = false;
-    var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(uIGlobalMenuService);
-    menuService.registerNotification(this);
-    if (menuService.online == true) {
-      this.maybeMoveSpinner();
-    }
-  },
-
-  observe: function(subject, topic, data) {
-    if(topic == "menuservice-online") {
-      this.maybeMoveSpinner();
-    }
-  },
-
-  maybeMoveSpinner: function() {
-    if (this.spinnerMoved == true) {
-      return;
-    }
-
-    var menuBar = window.document.getElementById("mail-toolbar-menubar2");
-    if (!menuBar) {
-      return;
-    }
-
-    var mailBar = window.document.getElementById("mail-bar3");
-    if (!mailBar || mailBar.hidden == true) {
-      return;
-    }
-
-    var curSet = menuBar.currentSet;
-    var throbberPos = curSet.indexOf("throbber-box");
-    if (throbberPos == -1) {
-      return;
-    }
-
-    if (throbberPos == 0) {
-      var newSet = curSet.replace(/throbber-box,/,"");
-    } else {
-      var newSet = curSet.replace(/,throbber-box/,"");
-    }
-
-    menuBar.currentSet = newSet;
-
-    curSet = mailBar.currentSet;
-    newSet = curSet + ",throbber-box";
-    mailBar.currentSet = newSet;
-
-    this.spinnerMoved = true;
-  },
-
-  shutdown: function() {
-    var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(uIGlobalMenuService);
-    menuService.unregisterNotification(this);
+  function Observer() {
+    this.init();
   }
-}
+  Observer.prototype = {
+    init: function() {
+      this.spinnerMoved = false;
+      var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(Ci.uIGlobalMenuService);
+      menuService.registerNotification(this);
+      if (menuService.online == true) {
+        this.maybeMoveSpinner();
+      }
+    },
 
-function onLoad()
-{
-  // XXX: This is just to start the menu loader, I can't figure out a way
-  //      to start it without this (eg, on component registration)
-  var loader = Cc["@canonical.com/globalmenu-loader;1"].getService(uIGlobalMenuLoader);
-  if (menuObserver == null) {
-    menuObserver = new Observer();
-  }
-}
+    observe: function(subject, topic, data) {
+      if(topic == "menuservice-online") {
+        this.maybeMoveSpinner();
+      }
+    },
 
-function onUnload()
-{
-  if (menuObserver) {
-    menuObserver.shutdown();
-    delete menuObserver;
-    menuObserver = null;
+    maybeMoveSpinner: function() {
+      if (this.spinnerMoved == true) {
+        return;
+      }
+
+      var menuBar = $("mail-toolbar-menubar2");
+      if (!menuBar) {
+        return;
+      }
+
+      var mailBar = $("mail-bar3");
+      if (!mailBar || mailBar.hidden == true) {
+        return;
+      }
+
+      var curSet = menuBar.currentSet;
+      var throbberPos = curSet.indexOf("throbber-box");
+      if (throbberPos == -1) {
+        return;
+      }
+
+      if (throbberPos == 0) {
+        var newSet = curSet.replace(/throbber-box,/,"");
+      } else {
+        var newSet = curSet.replace(/,throbber-box/,"");
+      }
+
+      menuBar.currentSet = newSet;
+
+      curSet = mailBar.currentSet;
+      newSet = curSet + ",throbber-box";
+      mailBar.currentSet = newSet;
+
+      this.spinnerMoved = true;
+    },
+
+    shutdown: function() {
+      var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(Ci.uIGlobalMenuService);
+      menuService.unregisterNotification(this);
+    }
   }
-}
+
+  const Cc = Components.classes;
+  const Ci = Components.interfaces;
+
+  var menuObserver = null;
+
+  addEventListener("load", function onLoad() {
+    removeEventListener("load", onLoad, false);
+
+    // XXX: This is just to start the menu loader, I can't figure out a way
+    //      to start it without this (eg, on component registration)
+    var loader = Cc["@canonical.com/globalmenu-loader;1"].getService(Ci.uIGlobalMenuLoader);
+    if (menuObserver == null) {
+      menuObserver = new Observer();
+    }
+  }, false);
+
+  addEventListener("load", function onUnload() {
+    removeEventListener("unload", onUnload, false);
+    if (menuObserver) {
+      menuObserver.shutdown();
+      menuObserver = null;
+    }
+  }, false);
+
+})();

@@ -21,6 +21,7 @@
  *
  * Contributor(s):
  * Chris Coulson <chris.coulson@canonical.com>
+ * Nils Maier <maierman@web.de>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,152 +37,123 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-const nsIObserverService = Ci.nsIObserverService;
-const uIGlobalMenuLoader = Ci.uIGlobalMenuLoader;
-const uIGlobalMenuService = Ci.uIGlobalMenuService;
-
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
-var observer = null;
+(function unity_overrides() {
+  "use strict";
 
-window.addEventListener('load', onLoad, false);
-window.addEventListener('unload', onUnload, false);
+  function enablePlacesNativeViewMenu(name) {
+    // store the original ctor
+    var menuCtor = window[name];
 
-function Observer()
-{
-  this.init();
-}
-
-Observer.prototype = {
-  init: function() {
-    var os = Cc["@mozilla.org/observer-service;1"].getService(nsIObserverService);
-    os.addObserver(this, "menuservice-popup-open", false);
-
-    var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(uIGlobalMenuService);
-    menuService.registerNotification(this);
-
-    if (menuService.online == true) {
-      this.fixupUI(true);
-    }
-  },
-
-  observe: function(subject, topic, data) {
-    if (topic == "menuservice-popup-open") {
-      if (data == "menu_EditPopup") {
-        // This is really hacky, but the edit menu items only set the correct
-        // sensitivity when the menupopup state == showing or open, which is
-        // a read only property set in layout/xul/base/src/nsMenuPopupFrame.cpp
-        // We can't do this off the popupshowing event, because we might run
-        // before the handler hanging off the onpopupshowing attribute, which
-        // will set the wrong sensitivity again, so we have our own notification
-        // Uuuurgh! :(
-        var saved_gEditUIVisible = gEditUIVisible;
-        gEditUIVisible = true;
-        goUpdateGlobalEditMenuItems();
-        gEditUIVisible = saved_gEditUIVisible;
+    // Override the original ctor, so that nativeView = true gets set
+    // Note that somebody might have had the same stupid idea to override the ctor. ;)
+    // So, try to interfere the least
+    window[name] = function(aEvent) {
+      var rootElt = aEvent.target;
+      var viewElt = rootElt.parentNode;
+      if (viewElt.parentNode.localName == "menubar") {
+        this._nativeView = true;
+        rootElt._startMarker = -1;
+        rootElt._endMarker = -1;
       }
-    } else if (topic == "menuservice-online") {
-      this.fixupUI(true);
-    } else if (topic == "menuservice-offline") {
-      this.fixupUI(false);
+      menuCtor.apply(this, arguments);
     }
-  },
+    // rewrite the prototype
+    window[name].prototype = menuCtor.prototype;
+  }
 
-  fixupUI: function(online) {
-    if (online == true) {
-      this.autohideSaved = document.getElementById("toolbar-menubar").getAttribute("autohide");
-      document.getElementById("toolbar-menubar").setAttribute("autohide", "false");
-      document.getElementById("toolbar-menubar").removeAttribute("toolbarname");
-    } else {
-      document.getElementById("toolbar-menubar").setAttribute("autohide", this.autohideSaved);
-      document.getElementById("toolbar-menubar").setAttribute("toolbarname", "&menubarCmd.label;");
+  enablePlacesNativeViewMenu("PlacesMenu");
+  enablePlacesNativeViewMenu("HistoryMenu");
+
+})();
+
+(function unity_init() {
+  "use strict";
+
+  function $(id) document.getElementById(id);
+
+  function Observer() {
+    this.init();
+  }
+  Observer.prototype = {
+    init: function() {
+      this._os = "Services" in window
+        ? Services.obs
+         : Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+      this._os.addObserver(this, "menuservice-popup-open", false);
+
+      this._menuService = Cc["@canonical.com/globalmenu-service;1"].getService(Ci.uIGlobalMenuService);
+      this._menuService.registerNotification(this);
+
+      if (this._menuService.online) {
+        this.fixupUI(true);
+      }
+    },
+
+    observe: function(subject, topic, data) {
+      if (topic == "menuservice-popup-open") {
+        if (data == "menu_EditPopup") {
+          // This is really hacky, but the edit menu items only set the correct
+          // sensitivity when the menupopup state == showing or open, which is
+          // a read only property set in layout/xul/base/src/nsMenuPopupFrame.cpp
+          // We can't do this off the popupshowing event, because we might run
+          // before the handler hanging off the onpopupshowing attribute, which
+          // will set the wrong sensitivity again, so we have our own notification
+          // Uuuurgh! :(
+          var saved_gEditUIVisible = gEditUIVisible;
+          gEditUIVisible = true;
+          goUpdateGlobalEditMenuItems();
+          gEditUIVisible = saved_gEditUIVisible;
+        }
+      } else if (topic == "menuservice-online") {
+        this.fixupUI(true);
+      } else if (topic == "menuservice-offline") {
+        this.fixupUI(false);
+      }
+    },
+
+    fixupUI: function(online) {
+      if (online == true) {
+        this.autohideSaved = document.getElementById("toolbar-menubar").getAttribute("autohide");
+        document.getElementById("toolbar-menubar").setAttribute("autohide", "false");
+        document.getElementById("toolbar-menubar").removeAttribute("toolbarname");
+      } else {
+        document.getElementById("toolbar-menubar").setAttribute("autohide", this.autohideSaved);
+        document.getElementById("toolbar-menubar").setAttribute("toolbarname", "&menubarCmd.label;");
+      }
+
+      updateAppButtonDisplay();
+    },
+
+    shutdown: function() {
+      this._os.removeObserver(this, "menuservice-popup-open", false);
+      this._menuService.unregisterNotification(this);
     }
-
-    updateAppButtonDisplay();
-  },
-
-  shutdown: function() {
-    var os = Cc["@mozilla.org/observer-service;1"].getService(nsIObserverService);
-    os.removeObserver(this, "menuservice-popup-open", false);
-
-    var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(uIGlobalMenuService);
-    menuService.unregisterNotification(this);
-  }
-}
-
-function onLoad()
-{
-  // XXX: This is just to start the menu loader, I can't figure out a way
-  //      to start it without this (eg, on component registration)
-  var loader = Cc["@canonical.com/globalmenu-loader;1"].getService(uIGlobalMenuLoader);
-  if (!observer) {
-    observer = new Observer();
-  }
-}
-
-function onUnload()
-{
-  if (observer) {
-    observer.shutdown();
-    delete observer;
-  }
-}
-
-// Note that we need to initialize _startMarker and _endMarker ourselves.
-// This normally comes from XBL bindings on non-Mac platforms when the menu
-// frame is drawn (which never happens here), or some #ifdef'd code on Mac.
-// We also need to ensure that _nativeView is true before the menu is built,
-// which happens normally when creating a new PlacesMenu or HistoryMenu. To
-// do this, we subclass PlacesMenu and HistoryMenu and do the required
-// initialization ourselves. We also override the popupshowing handlers to
-// instantiate our classes
-
-function PlacesMenuUnityImpl(aPopupShowingEvent, aPlace)
-{
-  this._rootElt = aPopupShowingEvent.target; // <menupopup>
-  this._viewElt = this._rootElt.parentNode;   // <menu>
-  this._viewElt._placesView = this;
-  this._addEventListeners(this._rootElt, ["popupshowing", "popuphidden"], true);
-  this._addEventListeners(window, ["unload"], false);
-
-  if (this._viewElt.parentNode.localName == "menubar") {
-    this._nativeView = true;
-    this._rootElt._startMarker = -1;
-    this._rootElt._endMarker = -1;
   }
 
-  PlacesViewBase.call(this, aPlace);
-  this._onPopupShowing(aPopupShowingEvent);
-}
 
-PlacesMenuUnityImpl.prototype = {
-  __proto__: PlacesMenu.prototype
-};
+  var observer = null;
 
-function HistoryMenuUnityImpl(aPopupShowingEvent)
-{
-  this.__proto__.__proto__.__proto__ = PlacesMenu.prototype;
+  addEventListener("load", function onLoad()
+  {
+    removeEventListener("load", onLoad, false);
 
-  XPCOMUtils.defineLazyServiceGetter(this, "_ss",
-                                     "@mozilla.org/browser/sessionstore;1",
-                                     "nsISessionStore");
+    // XXX: This is just to start the menu loader, I can't figure out a way
+    //      to start it without this (eg, on component registration)
+    var loader = Cc["@canonical.com/globalmenu-loader;1"].getService(Ci.uIGlobalMenuLoader);
+    if (!observer) {
+      observer = new Observer();
+    }
+  }, false);
 
-  this._rootElt = aPopupShowingEvent.target; // <menupopup>
-  this._viewElt = this._rootElt.parentNode;   // <menu>
-  this._viewElt._placesView = this;
-  this._addEventListeners(this._rootElt, ["popupshowing", "popuphidden"], true);
-  this._addEventListeners(window, ["unload"], false);
+  addEventListener("unload", function onUnload()
+  {
+    removeEventListener("unload", onUnload, false);
+    if (observer) {
+      observer.shutdown();
+      observer = null;
+    }
+  }, false);
 
-  if (this._viewElt.parentNode.localName == "menubar") {
-    this._nativeView = true;
-    this._rootElt._startMarker = -1;
-    this._rootElt._endMarker = -1;
-  }
-
-  PlacesViewBase.call(this, "place:redirectsMode=2&sort=4&maxResults=10");
-  this._onPopupShowing(aPopupShowingEvent);
-}
-
-HistoryMenuUnityImpl.prototype = {
-  __proto__: HistoryMenu.prototype
-};
+})();
