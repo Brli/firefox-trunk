@@ -3,6 +3,6 @@
 /usr/lib/@APPNAME@-addons/plugins @LIBDIR@/plugins
 /usr/lib/@APPNAME@-addons/searchplugins @LIBDIR@/searchplugins
 /usr/lib/@APPNAME@-addons/searchplugins @LIBDIR@/distribution/searchplugins
-/usr/share/myspell/dicts @LIBDIR@/dictionaries
+@SYSTEM_DICTDIR@ @LIBDIR@/dictionaries
 @LIBDIR@/firefox.sh /usr/bin/@APPNAME@
 @LIBDIR@/icons/mozicon128.png /usr/share/pixmaps/@APPNAME@.png
