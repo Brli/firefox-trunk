@@ -421,6 +421,24 @@ pre-build:: $(subst_files)
 	mkdir -p $(DEB_SRCDIR)/extensions/globalmenu
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -) 
 
+get-compare-locales:
+	mkdir -p compare-locales-tmp
+	hg clone http://hg.mozilla.org/build/compare-locales compare-locales-tmp
+ifdef HGTAG
+	cd compare-locales-tmp; \
+		hg update $(HGTAG); \
+		printf "TAG=%s" $(HGTAG) > REV
+else
+	cd compare-locales-tmp; \
+		CHANGESET=`hg summary | grep parent | cut -d ' ' -f 2 | cut -d : -f 2`; \
+		printf "CHANGESET=%s" $$CHANGESET > REV
+endif
+	cd  compare-locales-tmp; \
+		find . -name *.pyc | xargs rm -f; \
+		rm -rf .hg .hgtags .hgignore tests *.py
+	rm -rf debian/compare-locales
+	mv compare-locales-tmp debian/compare-locales
+
 clean:: regen-debian-control
 	rm -f $(subst_files)
 	rm -f debian/usr.bin.firefox.in

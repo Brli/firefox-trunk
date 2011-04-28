@@ -105,6 +105,9 @@ firefox-trunk (6.0~a1~hg20110417r68226+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     somehow in natty
     - update debian/rules
     - update debian/firefox.links/in
+  * Include compare-locales FIREFOX_5_0b1_BUILD1 from
+    http://hg.mozilla.org/build/compare-locales. It's needed for merging
+    en-US strings with incomplete locales
 
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 21 Apr 2011 16:44:28 +0100
 
