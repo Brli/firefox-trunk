@@ -113,10 +113,19 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Configure build for creating language packs
     - update debian/mozconfig.in
   * Store the list of locales to ship, and provide a way of automatically
-    generating that list from the upstream source
+    generating that list and the control file entries from the upstream source
     - update debian/rules
-    - add debian/shipped-locales
-    - add debian/list-supported-locales.sh
+    - add debian/locales-supported
+    - add debian/control.langpacks.pp
+    - add debian/control.langpacks
+    - update debian/control
+    - add debian/locale-descriptions
+  * Provide a way to map Mozilla langpack codes to Ubuntu langpack codes
+    - update debian/rules
+    - add debian/locale-map
+  * Provide a blacklist of language packs we don't want to ship in Ubuntu
+    - add debian/locale-blacklist
+    - update debian/rules
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 29 Apr 2011 16:50:08 +0100
 
