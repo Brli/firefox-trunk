@@ -439,6 +439,11 @@ endif
 	rm -rf debian/compare-locales
 	mv compare-locales-tmp debian/compare-locales
 
+refresh-supported-languages: apply-patches
+	rm -f debian/shipped-locales
+	sh debian/list-supported-locales.sh -m $(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(DEB_BUILDDIR)/l10n > debian/shipped-locales
+	
+
 clean:: regen-debian-control
 	rm -f $(subst_files)
 	rm -f debian/usr.bin.firefox.in

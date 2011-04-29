@@ -1,4 +1,4 @@
-firefox-trunk (6.0~a1~hg20110417r68226+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream snapshot v6.0 A1 HG 20110417R68226
 
@@ -112,8 +112,13 @@ firefox-trunk (6.0~a1~hg20110417r68226+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/mozclient/firefox.conf
   * Configure build for creating language packs
     - update debian/mozconfig.in
+  * Store the list of locales to ship, and provide a way of automatically
+    generating that list from the upstream source
+    - update debian/rules
+    - add debian/shipped-locales
+    - add debian/list-supported-locales.sh
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 29 Apr 2011 00:21:53 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 29 Apr 2011 16:50:08 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
