@@ -379,10 +379,7 @@ compare-locales/scripts/compare-locales:
 	chmod +x $(CURDIR)/compare-locales/scripts/*
 
 build-langpack-xpis: compare-locales/scripts/compare-locales
-	if [ -d $(CURDIR)/debian/l10n-mergedirs ] ; \
-	then \
-		rm -rf $(CURDIR)/debian/l10n-mergedirs ; \
-	fi
+	rm -rf $(CURDIR)/debian/l10n-mergedirs
 	mkdir $(CURDIR)/debian/l10n-mergedirs
 
 	export PATH=$(CURDIR)/compare-locales/scripts/:$$PATH ; \
