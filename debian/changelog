@@ -126,8 +126,15 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Provide a blacklist of language packs we don't want to ship in Ubuntu
     - add debian/locale-blacklist
     - update debian/rules
+  * Use the Gecko version number from config/milestone.txt for the
+    package version. The Gecko version series is now the same as Firefox,
+    but the Gecko version number might have additional granularity
+    in the future (eg, beta releases for 5.0 will all have 5.0 for the
+    Firefox version, but different 5.0b* versions for the Gecko version
+    in each build)
+    - update debian/mozclient.conf
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 29 Apr 2011 16:50:08 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 30 Apr 2011 20:02:27 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
