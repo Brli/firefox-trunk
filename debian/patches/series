@@ -13,5 +13,4 @@ mozilla-kde.patch
 firefox-kde.patch
 fix-sdk-bin-install.patch
 unity-globalmenu-build-support.patch
-update-assembler-excl-arch-list.patch
 default-uri-handler-check-use-gio.patch

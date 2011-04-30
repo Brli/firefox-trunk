@@ -7,6 +7,8 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/change-moz-app-name.patch
+    - update debian/patches/firefox-kde.patch
+    - update debian/patches/plugin-for-mimetype-pref.patch
   * Fix up the mess left by Ubuntuzilla rather than leaving our official
     package in a broken and inconsistent state, which ends up with users
     reporting bugs to Launchpad and giving us a bad reputation. If 
@@ -54,10 +56,6 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/firefox.1.in 
   * Fix build failure when breakpad is enabled
     - update debian/rules
-  * Fix build on PPC64
-    - add debian/patches/64-bit-be-fix.patch
-    - add debian/patches/update-assembler-excl-arch-list.patch
-    - update debian/patches/series
   * Rename firefox-4.0 => firefox-trunk
     - update debian/control
     - rename debian/mozclient/firefox-4.0.conf => debian/mozclient/firefox.conf

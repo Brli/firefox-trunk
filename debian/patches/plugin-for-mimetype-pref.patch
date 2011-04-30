@@ -14,44 +14,44 @@ Forwarded: no
 
 --- a/modules/plugin/base/src/nsPluginHost.cpp
 +++ b/modules/plugin/base/src/nsPluginHost.cpp
-@@ -1625,6 +1625,40 @@ nsPluginHost::FindPluginForType(const ch
-   // if we have a mimetype passed in, search the mPlugins
-   // linked list for a match
-   if (aMimeType) {
-+    nsresult res;
-+    nsCOMPtr<nsIPrefBranch> prefB (do_QueryInterface(mPrefService));
+@@ -1647,6 +1647,40 @@ nsPluginHost::FindPluginForType(const ch
+ 
+   LoadPlugins();
+ 
++  nsCOMPtr<nsIPrefBranch> pref (do_QueryInterface(mPrefService));
 +
-+    char *preferredPluginPath = NULL;
-+    nsCAutoString mimetypePrefString ("modules.plugins.mimetype.");
-+    mimetypePrefString.Append(aMimeType);
-+    const char *mimetypePrefChar = mimetypePrefString.get();
-+    res = prefB->GetCharPref(mimetypePrefChar, &preferredPluginPath);
++  char *preferredPluginPath = NULL;
++  nsCAutoString mimetypePrefString ("modules.plugins.mimetype.");
++  mimetypePrefString.Append(aMimeType);
++  // FIXME: preferredPluginPath is leaked. Ouch
++  nsresult rv = pref->GetCharPref(mimetypePrefString.get(), &preferredPluginPath);
 +
-+    if(!NS_SUCCEEDED(res)) preferredPluginPath = NULL;
-+
-+    plugins = mPlugins;
-+    if(preferredPluginPath) {
-+       while (nsnull != plugins) {
-+         if (0 == PL_strcasecmp(plugins->mFileName.get(), preferredPluginPath) ||
-+             0 == PL_strcasecmp(plugins->mFullPath.get(), preferredPluginPath)) {
-+           return plugins;
-+         }
-+         plugins = plugins->mNext;
-+       }
-+
-+       // now lets search for substrings
-+       plugins=mPlugins;
-+       while (nsnull != plugins) {
-+         if (nsnull != PL_strstr(plugins->mFileName.get(), preferredPluginPath) ||
-+             nsnull != PL_strstr(plugins->mFullPath.get(), preferredPluginPath)) {
-+           return plugins;
-+         }
-+         plugins = plugins->mNext;
-+       }
++  if(NS_SUCCEEDED(rv) && preferredPluginPath) {
++    // FIXME: This should really check if the selected plugin can handle
++    //        the specified mimetype and that it is enabled, and just reject the
++    //        pref if not
++    nsPluginTag *plugins = mPlugins;
++    while (plugins) {
++      if (0 == PL_strcasecmp(plugins->mFileName.get(), preferredPluginPath) ||
++          0 == PL_strcasecmp(plugins->mFullPath.get(), preferredPluginPath)) {
++        return plugins;
++      }
++      plugins = plugins->mNext;
 +    }
 +
-+    // if there is no pref for this mime-type, or if the plugin named in pref
-+    // isn't found, we pick the first that matches for this mime-type
-     plugins = mPlugins;
- 
-     while (plugins) {
++    // now lets search for substrings
++    plugins=mPlugins;
++    while (plugins) {
++      if (nsnull != PL_strstr(plugins->mFileName.get(), preferredPluginPath) ||
++          nsnull != PL_strstr(plugins->mFullPath.get(), preferredPluginPath)) {
++        return plugins;
++      }
++      plugins = plugins->mNext;
++    }
++  }
++
++  // if there is no pref for this mime-type, or if the plugin named in pref
++  // isn't found, we pick the first that matches for this mime-type
+   nsPluginTag *plugin = mPlugins;
+   while (plugin) {
+     if (!aCheckEnabled || plugin->IsEnabled()) {
