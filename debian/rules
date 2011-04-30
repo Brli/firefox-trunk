@@ -374,7 +374,27 @@ ifeq (1, $(DEB_ENABLE_BREAKPAD))
 endif
 	touch $@
 
-common-build-arch:: debian/stamp-testsuite
+compare-locales/scripts/compare-locales:
+	cp -r $(CURDIR)/debian/compare-locales $(CURDIR)
+	chmod +x $(CURDIR)/compare-locales/scripts/*
+
+build-langpack-xpis: compare-locales/scripts/compare-locales
+	if [ -d $(CURDIR)/debian/l10n-mergedirs ] ; \
+	then \
+		rm -rf $(CURDIR)/debian/l10n-mergedirs ; \
+	fi
+	mkdir $(CURDIR)/debian/l10n-mergedirs
+
+	export PATH=$(CURDIR)/compare-locales/scripts/:$$PATH ; \
+	export PYTHONPATH=$(CURDIR)/compare-locales/lib ; \
+	cd $(MOZ_OBJDIR)/browser/locales ; \
+	while read line ; \
+	do \
+		$(MAKE) merge-$$line LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$line ; \
+		$(MAKE) langpack-$$line LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$line ; \
+	done < $(CURDIR)/debian/locales-supported
+
+common-build-arch:: build-langpack-xpis debian/stamp-testsuite
 
 common-binary-arch:: debian/stamp-buildsymbols
 
@@ -560,3 +580,5 @@ clean:: regen-debian-control
 	rm -f $(subst_files)
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
+	rm -rf debian/l10n-mergedirs
+	rm -rf compare-locales
