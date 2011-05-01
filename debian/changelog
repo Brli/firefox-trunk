@@ -103,27 +103,31 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     somehow in natty
     - update debian/rules
     - update debian/firefox.links/in
-  * Include compare-locales FIREFOX_5_0b1_BUILD1 from
-    http://hg.mozilla.org/build/compare-locales. It's needed for merging
-    en-US strings with incomplete locales
-  * Include l10n data in tarball
-    - update debian/mozclient/firefox.conf
-  * Configure build for creating language packs
-    - update debian/mozconfig.in
-  * Store the list of locales to ship, and provide a way of automatically
-    generating that list and the control file entries from the upstream source
-    - update debian/rules
-    - add debian/locales-supported
-    - add debian/control.langpacks.pp
-    - add debian/control.langpacks
-    - update debian/control
-    - add debian/locale-descriptions
-  * Provide a way to map Mozilla langpack codes to Ubuntu langpack codes
-    - update debian/rules
-    - add debian/locale-map
-  * Provide a blacklist of language packs we don't want to ship in Ubuntu
-    - add debian/locale-blacklist
-    - update debian/rules
+  * Build language packs directly from the firefox source
+    - Include compare-locales FIREFOX_5_0b1_BUILD1 from
+      http://hg.mozilla.org/build/compare-locales. It's needed for merging
+      en-US strings with incomplete locales
+    - Include l10n data in tarball
+      + update debian/mozclient/firefox.conf
+    - Configure build for creating language packs
+      + update debian/mozconfig.in
+    - Store the list of locales to ship, and provide a way of automatically
+      generating that list and the control file entries from the upstream
+      source. Also provide a way to blacklist languages and a way to map
+      Mozilla language pack codes to Ubuntu language packs
+      + update debian/rules
+      + add debian/locales-supported
+      + add debian/control.langpacks.pp
+      + add debian/control.langpacks
+      + update debian/control
+      + add debian/locale-descriptions
+      + add debian/locale-map
+      + add debian/locale-blacklist
+    - Add common-build-indep hook to build the translation xpi's
+      + update debian/rules
+    - Add common-binary-post-install-indep to install the xpi's and
+      searchplugins in to the correct debian packages
+      + update debian/rules
   * Use the Gecko version number from config/milestone.txt for the
     package version. The Gecko version series is now the same as Firefox,
     but the Gecko version number might have additional granularity
@@ -131,8 +135,10 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     Firefox version, but different 5.0b* versions for the Gecko version
     in each build)
     - update debian/mozclient.conf
+  * Disable globalmenu-extension temporarily
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 30 Apr 2011 20:02:27 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 01 May 2011 09:28:30 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
