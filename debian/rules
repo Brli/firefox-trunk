@@ -611,7 +611,7 @@ refresh-supported-languages: apply-patches
 		exit 1 ; \
 	fi
 
-	rm -f debian/locales-supported.old
+	rm -f debian/locales-supported.old debian/control.langpacks.old
 
 clean:: regen-debian-control
 	rm -f $(subst_files)
