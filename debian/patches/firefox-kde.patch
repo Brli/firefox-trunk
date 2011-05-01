@@ -6,10 +6,9 @@ Bug-Ubuntu: https://launchpad.net/bugs/494067
 Bug-OpenSUSE: https://bugzilla.novell.com/show_bug.cgi?id=170055
 Forwarded: no
 
-diff -Nur a/browser/app/Makefile.in b/browser/app/Makefile.in
 --- a/browser/app/Makefile.in
 +++ b/browser/app/Makefile.in
-@@ -49,6 +49,7 @@
+@@ -49,6 +49,7 @@ DIRS		= profile/extensions
  
  PREF_JS_EXPORTS = $(srcdir)/profile/firefox.js \
  		  $(srcdir)/profile/channel-prefs.js \
@@ -17,10 +16,9 @@ diff -Nur a/browser/app/Makefile.in b/browser/app/Makefile.in
  		  $(NULL)
  
  
-diff -Nur a/browser/base/content/browser-kde.xul b/browser/base/content/browser-kde.xul
 --- a/browser/base/content/browser-kde.xul
 +++ b/browser/base/content/browser-kde.xul
-@@ -194,7 +194,7 @@
+@@ -199,7 +199,7 @@
        </row>
        <vbox id="editBookmarkPanelContent" flex="1" hidden="true"/>
        <hbox id="editBookmarkPanelBottomButtons" pack="end">
@@ -29,10 +27,9 @@ diff -Nur a/browser/base/content/browser-kde.xul b/browser/base/content/browser-
          <button id="editBookmarkPanelDoneButton"
                  class="editBookmarkPanelBottomButton"
                  label="&editBookmark.done.label;"
-diff -Nur a/browser/base/jar.mn b/browser/base/jar.mn
 --- a/browser/base/jar.mn
 +++ b/browser/base/jar.mn
-@@ -25,6 +25,8 @@
+@@ -26,6 +26,8 @@ browser.jar:
  *       content/browser/browser.css                   (content/browser.css)
  *       content/browser/browser.js                    (content/browser.js)
  *       content/browser/browser.xul                   (content/browser.xul)
@@ -41,7 +38,6 @@ diff -Nur a/browser/base/jar.mn b/browser/base/jar.mn
  *       content/browser/browser-tabPreviews.xml       (content/browser-tabPreviews.xml)
  *       content/browser/fullscreen-video.xhtml        (content/fullscreen-video.xhtml)
  *       content/browser/inspector.html                (content/inspector.html)
-diff -Nur a/browser/components/build/nsModule.cpp b/browser/components/build/nsModule.cpp
 --- a/browser/components/build/nsModule.cpp
 +++ b/browser/components/build/nsModule.cpp
 @@ -46,7 +46,7 @@
@@ -52,8 +48,8 @@ diff -Nur a/browser/components/build/nsModule.cpp b/browser/components/build/nsM
 +#include "nsUnixShellService.h"
  #endif
  
- #ifndef WINCE
-@@ -89,8 +89,6 @@
+ #include "nsProfileMigrator.h"
+@@ -83,8 +83,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(Directory
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsWindowsShellService)
  #elif defined(XP_MACOSX)
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsMacShellService)
@@ -61,8 +57,8 @@ diff -Nur a/browser/components/build/nsModule.cpp b/browser/components/build/nsM
 -NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsGNOMEShellService, Init)
  #endif
  
- #ifndef WINCE
-@@ -156,7 +154,7 @@
+ NS_GENERIC_FACTORY_CONSTRUCTOR(nsDogbertProfileMigrator)
+@@ -140,7 +138,7 @@ static const mozilla::Module::CIDEntry k
  #if defined(XP_WIN)
      { &kNS_SHELLSERVICE_CID, false, NULL, nsWindowsShellServiceConstructor },
  #elif defined(MOZ_WIDGET_GTK2)
@@ -71,10 +67,9 @@ diff -Nur a/browser/components/build/nsModule.cpp b/browser/components/build/nsM
  #endif
      { &kNS_FEEDSNIFFER_CID, false, NULL, nsFeedSnifferConstructor },
      { &kNS_BROWSER_ABOUT_REDIRECTOR_CID, false, NULL, AboutRedirector::Create },
-diff -Nur a/browser/components/shell/src/Makefile.in b/browser/components/shell/src/Makefile.in
 --- a/browser/components/shell/src/Makefile.in
 +++ b/browser/components/shell/src/Makefile.in
-@@ -57,7 +57,8 @@
+@@ -57,7 +57,8 @@ ifeq (cocoa,$(MOZ_WIDGET_TOOLKIT))
  CPPSRCS = nsMacShellService.cpp
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT), gtk2)
@@ -84,8 +79,7 @@ diff -Nur a/browser/components/shell/src/Makefile.in b/browser/components/shell/
  endif
  endif
  endif
-diff -Nur a/browser/components/shell/src/nsKDEShellService.cpp b/browser/components/shell/src/nsKDEShellService.cpp
---- a/browser/components/shell/src/nsKDEShellService.cpp
+--- /dev/null
 +++ b/browser/components/shell/src/nsKDEShellService.cpp
 @@ -0,0 +1,193 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
@@ -281,8 +275,7 @@ diff -Nur a/browser/components/shell/src/nsKDEShellService.cpp b/browser/compone
 +    NS_ADDREF(*_retval = defaultReader);
 +    return NS_OK;
 +    }
-diff -Nur a/browser/components/shell/src/nsKDEShellService.h b/browser/components/shell/src/nsKDEShellService.h
---- a/browser/components/shell/src/nsKDEShellService.h
+--- /dev/null
 +++ b/browser/components/shell/src/nsKDEShellService.h
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
@@ -344,8 +337,7 @@ diff -Nur a/browser/components/shell/src/nsKDEShellService.h b/browser/component
 +};
 +
 +#endif // nskdeshellservice_h____
-diff -Nur a/browser/components/shell/src/nsUnixShellService.cpp b/browser/components/shell/src/nsUnixShellService.cpp
---- a/browser/components/shell/src/nsUnixShellService.cpp
+--- /dev/null
 +++ b/browser/components/shell/src/nsUnixShellService.cpp
 @@ -0,0 +1,52 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
@@ -400,8 +392,7 @@ diff -Nur a/browser/components/shell/src/nsUnixShellService.cpp b/browser/compon
 +        return nsKDEShellServiceConstructor( aOuter, aIID, aResult );
 +    return nsGNOMEShellServiceConstructor( aOuter, aIID, aResult );
 +}
-diff -Nur a/browser/components/shell/src/nsUnixShellService.h b/browser/components/shell/src/nsUnixShellService.h
---- a/browser/components/shell/src/nsUnixShellService.h
+--- /dev/null
 +++ b/browser/components/shell/src/nsUnixShellService.h
 @@ -0,0 +1,45 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
@@ -449,10 +440,9 @@ diff -Nur a/browser/components/shell/src/nsUnixShellService.h b/browser/componen
 +nsUnixShellServiceConstructor(nsISupports *aOuter, REFNSIID aIID, void **aResult);
 +
 +#endif // nsunixshellservice_h____
-diff -Nur a/browser/installer/package-manifest.in b/browser/installer/package-manifest.in
 --- a/browser/installer/package-manifest.in
 +++ b/browser/installer/package-manifest.in
-@@ -437,6 +437,7 @@
+@@ -442,6 +442,7 @@
  @BINPATH@/@PREF_DIR@/firefox.js
  @BINPATH@/@PREF_DIR@/firefox-branding.js
  @BINPATH@/@PREF_DIR@/channel-prefs.js

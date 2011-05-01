@@ -5,6 +5,7 @@ ac_add_options --host=@DEB_HOST_GNU_TYPE@
 ac_add_options --prefix=@FF_PREFIX@
 ac_add_options --localstatedir=@DEB_CONFIGURE_LOCALSTATEDIR@
 ac_add_options --libexecdir=@LIBDIR@
+ac_add_options --with-l10n-base=@TOPSRCDIR@/@DEB_BUILDDIR@/l10n
 ac_add_options --disable-maintainer-mode
 ac_add_options --disable-dependency-tracking
 ac_add_options --disable-silent-rules
