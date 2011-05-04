@@ -148,8 +148,13 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/firefox.sh.in
   * Add some missing options to the manpage
     - update debian/firefox.1.in
+  * Rename vendor.js to distrib.js. The pref service reads these in reverse
+    alphabetical order, and we want ours to be read last
+    - rename debian/vendor.js => debian/distrib.js
+    - update debian/rules
+    - update debian/patches/install-vendor-prefs.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 13:28:31 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 13:35:33 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
