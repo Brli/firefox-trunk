@@ -12,3 +12,4 @@
 @LIBDIR@/libmozalloc.so @SDKDIR@/sdk/lib/libmozalloc.so
 @LIBDIR@/libxpcom.so @SDKDIR@/sdk/lib/libxpcom.so
 @LIBDIR@/libxul.so @SDKDIR@/sdk/lib/libxul.so
+@SDKDIR@/sdk/bin/xpidl @LIBDIR@/xpidl
