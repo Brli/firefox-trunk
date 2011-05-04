@@ -1,0 +1,17 @@
+Description: To ensure our distrib.js is included in omni.jar, we
+ need to ensure it is in $(DIST)/$(STAGEPATH) at the time that the
+ omni.jar is packed. It seems that the only way to do this is to
+ copy it in to $(DIST)/bin before running make install, and then adding
+ the file to the package-manifest
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: not-needed
+
+--- a/browser/installer/package-manifest.in
++++ b/browser/installer/package-manifest.in
+@@ -566,3 +566,6 @@ bin/components/@DLL_PREFIX@nkgnomevfs@DL
+ @BINPATH@/*.xqs
+ @BINPATH@/components/*.xqs
+ #endif
++
++; [Vendor preferences]
++@BINPATH@/@PREF_DIR@/distrib.js
