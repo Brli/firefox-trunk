@@ -4,5 +4,6 @@
 /usr/lib/@APPNAME@-addons/searchplugins @LIBDIR@/searchplugins
 /usr/lib/@APPNAME@-addons/searchplugins @LIBDIR@/distribution/searchplugins
 @SYSTEM_DICTDIR@ @LIBDIR@/dictionaries
+/usr/share/hyphen @LIBDIR@/hyphenation
 @LIBDIR@/firefox.sh /usr/bin/@APPNAME@
 @LIBDIR@/icons/mozicon128.png /usr/share/pixmaps/@APPNAME@.png
