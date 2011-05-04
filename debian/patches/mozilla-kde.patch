@@ -1122,7 +1122,7 @@ Forwarded: no
        return gnomeInfo;
 --- a/widget/src/gtk2/Makefile.in
 +++ b/widget/src/gtk2/Makefile.in
-@@ -162,6 +162,9 @@ INCLUDES	+= \
+@@ -163,6 +163,9 @@ INCLUDES	+= \
  		-I$(srcdir)/../shared \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
  		$(NULL)
@@ -1558,7 +1558,7 @@ Forwarded: no
 +        } // end non-KDE block
        }
  
- #if (defined(XP_WIN) && !defined(WINCE)) || defined(XP_MACOSX) || defined(ANDROID)
+ #if defined(XP_WIN) || defined(XP_MACOSX) || defined(ANDROID)
 --- a/xpcom/components/ManifestParser.cpp
 +++ b/xpcom/components/ManifestParser.cpp
 @@ -60,6 +60,7 @@

@@ -12,8 +12,8 @@ Description: We introduce a new preference that allows users to set a preferred
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: no
 
---- a/modules/plugin/base/src/nsPluginHost.cpp
-+++ b/modules/plugin/base/src/nsPluginHost.cpp
+--- a/dom/plugins/base/nsPluginHost.cpp
++++ b/dom/plugins/base/nsPluginHost.cpp
 @@ -1647,6 +1647,40 @@ nsPluginHost::FindPluginForType(const ch
  
    LoadPlugins();
