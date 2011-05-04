@@ -12,7 +12,7 @@ This manpage only describes how to run it.
 
 .SH OPTIONS
 .TP
-\fB\-\-help\fR
+\fB\-h, \-\-help\fR
 Prints the command line options.
 .TP
 \fB\-g, \-\-debug\fR
@@ -46,5 +46,26 @@ Open \fIurl\fR in a new tab.
 \fB\-new\-window\fR \fIurl\fR
 Open \fIurl\fR in a new window.
 .TP
-\fB\-v, \-version\fI
+\fB\-v, \-version\fR
 Print the current version of \fB@APPNAME@\fR.
+.TP
+\fB\-UILocale\fR \fIlocale\fR
+Start \fB@APPNAME@\fR with the specified locale \fIlocale\fR. Use this to override your environment
+.TP
+\fB\-preferences\fR
+Open the preferences dialog.
+.TP
+\fB\-private\fR
+Start \fB@APPNAME@\fR in private browsing mode
+.TP
+\fB\-private\-toggle\fR
+Toggle private browsing mode
+.TP
+\fB\-setDefaultBrowser\fR
+Set \fB@APPNAME@\fR as the default web browser
+.TP
+\fB\-search\fR \fIterm\fR
+Search for \fIterm\fR with your default search engine
+.TP
+\fB\-jsconsole\fR
+Open the Error console. If \fB@APPNAME@\fR is not already running, this will open a new browser window too

@@ -144,8 +144,12 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/rules
     - add debian/patches/install-vendor-prefs.patch
     - update debian/patches/series
+  * Ensure we set LD_LIBRARY_PATH before running "firefox -h"
+    - update debian/firefox.sh.in
+  * Add some missing options to the manpage
+    - update debian/firefox.1.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 12:49:52 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 13:28:31 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

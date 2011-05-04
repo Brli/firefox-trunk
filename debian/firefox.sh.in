@@ -37,6 +37,11 @@ while [ ! -x $LIBDIR/$EXE ] ; do
     fi
 done
 
+%%ifndef DEB_SYS_LIBXUL
+LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
+export LD_LIBRARY_PATH
+%%endif
+
 usage () {
     $LIBDIR/$EXE -h | sed -e 's,/.*/,,'
     echo
@@ -104,11 +109,6 @@ if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
         $LIBDIR/xulapp-profilemigrator -s $SERIES -p $PROFILE -d $DISPLAYNAME -a $APPNAME
     fi
 fi
-
-%%ifndef DEB_SYS_LIBXUL
-LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
-export LD_LIBRARY_PATH
-%%endif
 
 if [ $moz_debug -eq 1 ] ; then
     debugger=`which $moz_debugger`
