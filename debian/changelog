@@ -2,7 +2,7 @@ firefox-trunk (6.0~a1~hg20110504r68953+nobinonly-0ubuntu1) UNRELEASED; urgency=l
 
   * New upstream snapshot v6.0 A1 HG 20110504R68953
 
-  * Update globalmenu-extension code to 1.5 prerelease based on r151
+  * Update globalmenu-extension code to 1.5 prerelease based on r153
 
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
@@ -157,7 +157,7 @@ firefox-trunk (6.0~a1~hg20110504r68953+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     @LIBDIR@/hyphenation to /usr/share/hyphen
     - update debian/firefox.links.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 18:54:39 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 18:57:48 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

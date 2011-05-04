@@ -42,21 +42,26 @@
 #include <nsIDOMDocumentEvent.h>
 #include <nsIDOMEvent.h>
 #include <nsIDOMMouseEvent.h>
-#include <nsIDOMAbstractView.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+# include <nsIDOMWindow.h>
+# include <nsIDOMDocument.h>
+#else
+# include <nsIDOMAbstractView.h>
+# include <nsIDOMDocumentView.h>
+#endif
 #include <nsStringAPI.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIPrivateDOMEvent.h>
 #include <nsPIDOMWindow.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIObserverService.h>
-#include <nsIDOMDocumentView.h>
 #include <nsIDOMXULCommandEvent.h>
 #include <nsIXPConnect.h>
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptContext.h>
 #include <jsapi.h>
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 2
-#include <mozilla/dom/Element.h>
+# include <mozilla/dom/Element.h>
 #endif
 
 #include <glib-object.h>
@@ -196,9 +201,15 @@ uGlobalMenu::AboutToOpen()
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+          nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+          nsCOMPtr<nsIDOMWindow> window;
+          domDoc->GetDefaultView(getter_AddRefs(window));
+#else
           nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
           nsCOMPtr<nsIDOMAbstractView> window;
           domDocView->GetDefaultView(getter_AddRefs(window));
+#endif
           if (window) {
             mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popupshowing"),
                                        PR_TRUE, PR_TRUE, window, nsnull,
@@ -245,9 +256,15 @@ uGlobalMenu::OnOpen()
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+          nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+          nsCOMPtr<nsIDOMWindow> window;
+          domDoc->GetDefaultView(getter_AddRefs(window));
+#else
           nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
           nsCOMPtr<nsIDOMAbstractView> window;
           domDocView->GetDefaultView(getter_AddRefs(window));
+#endif
           if (window) {
             mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popupshown"),
                                        PR_TRUE, PR_TRUE, window, nsnull,
@@ -284,9 +301,15 @@ uGlobalMenu::OnClose()
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+          nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+          nsCOMPtr<nsIDOMWindow> window;
+          domDoc->GetDefaultView(getter_AddRefs(window));
+#else
           nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
           nsCOMPtr<nsIDOMAbstractView> window;
           domDocView->GetDefaultView(getter_AddRefs(window));
+#endif
           if (window) {
             mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popuphiding"),
                                        PR_TRUE, PR_TRUE, window, nsnull,

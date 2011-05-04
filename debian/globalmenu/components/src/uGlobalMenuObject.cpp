@@ -48,9 +48,14 @@
 #include <nsIDOMNSElement.h>
 #include <nsIDOMDOMTokenList.h>
 #include <nsILookAndFeel.h>
-#include <nsIDOMDocumentView.h>
-#include <nsIDOMAbstractView.h>
-#include <nsIDOMViewCSS.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+# include <nsIDOMDocument.h>
+# include <nsIDOMWindow.h>
+#else
+# include <nsIDOMDocumentView.h>
+# include <nsIDOMAbstractView.h>
+# include <nsIDOMViewCSS.h>
+#endif
 #include <nsIDOMElement.h>
 #include <nsIDOMCSSStyleDeclaration.h>
 #include <nsIDOMCSSValue.h>
@@ -171,29 +176,41 @@ uGlobalMenuIconLoader::Run()
   nsCOMPtr<nsIDOMRect> domRect;
 
   if (!hasImage) {
-    nsCOMPtr<nsIDOMViewCSS> domViewCSS;
+    nsCOMPtr<nsIDOMCSSStyleDeclaration> cssStyleDecl;
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+    nsCOMPtr<nsIDOMDocument> domDoc =
+      do_QueryInterface(mContent->GetDocument());
+    if (domDoc) {
+      nsCOMPtr<nsIDOMWindow> domWin;
+      domDoc->GetDefaultView(getter_AddRefs(domWin));
+      if (domWin) {
+        nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
+        if (domElement) {
+          domWin->GetComputedStyle(domElement, EmptyString(),
+                                   getter_AddRefs(cssStyleDecl));
+        }
+      }
+    }
+#else
     nsCOMPtr<nsIDOMDocumentView> domDocView =
       do_QueryInterface(mContent->GetDocument());
     if (domDocView) {
-      nsCOMPtr<nsIDOMAbstractView> domAbstractView;
-      domDocView->GetDefaultView(getter_AddRefs(domAbstractView));
-      if (domAbstractView) {
-        domViewCSS = do_QueryInterface(domAbstractView);
+      nsCOMPtr<nsIDOMAbstractView> domWin;
+      domDocView->GetDefaultView(getter_AddRefs(domWin));
+      if (domWin) {
+        nsCOMPtr<nsIDOMViewCSS> domViewCSS;
+        domViewCSS = do_QueryInterface(domWin);
+        if (domViewCSS) {
+          nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
+          if (!domElement) {
+            domViewCSS->GetComputedStyle(domElement, EmptyString(),
+                                         getter_AddRefs(cssStyleDecl));
+          }
+        }
       }
     }
+#endif
 
-    if (!domViewCSS) {
-      return NS_ERROR_FAILURE;
-    }
-
-    nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
-    if (!domElement) {
-      return NS_ERROR_FAILURE;
-    }
-
-    nsCOMPtr<nsIDOMCSSStyleDeclaration> cssStyleDecl;
-    domViewCSS->GetComputedStyle(domElement, EmptyString(),
-                                 getter_AddRefs(cssStyleDecl));
     if (!cssStyleDecl) {
       return NS_ERROR_FAILURE;
     }

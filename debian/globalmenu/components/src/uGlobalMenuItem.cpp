@@ -47,14 +47,19 @@
 #include <nsIDOMDocumentEvent.h>
 #include <nsIDOMXULCommandEvent.h>
 #include <nsPIDOMWindow.h>
-#include <nsIDOMAbstractView.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+# include <nsIDOMWindow.h>
+# include <nsIDOMDocument.h>
+#else
+# include <nsIDOMAbstractView.h>
+# include <nsIDOMDocumentView.h>
+#endif
 #include <nsIPrivateDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 # include <mozilla/dom/Element.h>
 #endif
 #include <nsIContent.h>
-#include <nsIDOMDocumentView.h>
 #if MOZILLA_BRANCH_MAJOR_VERSION < 2
 # include <nsIDOMDocument.h>
 # include <nsIDOMElement.h>
@@ -575,9 +580,15 @@ uGlobalMenuItem::Activate()
       if (event) {
         nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
         if (cmdEvent) {
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+          nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+          nsCOMPtr<nsIDOMWindow> window;
+          domDoc->GetDefaultView(getter_AddRefs(window));
+#else
           nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
           nsCOMPtr<nsIDOMAbstractView> window;
           domDocView->GetDefaultView(getter_AddRefs(window));
+#endif
           if (window) {
             cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
                                        PR_TRUE, PR_TRUE, window, 0,
