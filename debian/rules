@@ -146,6 +146,12 @@ endif
 endif
 endif
 
+ifeq (1, $(DEB_SYS_LIBXUL))
+	VENDORPREF_DIST = $(CURDIR)/$(MOZ_DISTDIR)/bin/defaults/preferences/vendor.js
+else
+	VENDORPREF_DIST = $(CURDIR)/$(MOZ_DISTDIR)/bin/defaults/pref/vendor.js
+endif
+
 BRANDING	= $(CHANNEL)
 ifeq (1,$(DEB_BUILD_UNOFFICIAL))
 ifneq (,$(filter official beta aurora, $(BRANDING)))
@@ -397,7 +403,10 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 
 	touch $@
 
-common-build-arch:: debian/stamp-testsuite
+$(VENDORPREF_DIST):
+	cp debian/vendor.js $@
+
+common-build-arch:: $(VENDORPREF_DIST) debian/stamp-testsuite
 
 common-build-indep:: debian/stamp-langpack-xpi-build
 
