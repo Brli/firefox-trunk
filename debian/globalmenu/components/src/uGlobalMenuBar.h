@@ -117,10 +117,7 @@ protected:
   nsresult KeyUp(nsIDOMEvent *aKeyEvent);
   nsresult KeyDown(nsIDOMEvent *aKeyEvent);
 private:
-  uGlobalMenuBar(): uGlobalMenuObject(MenuBar),
-                    mServer(nsnull),
-                    mTopLevel(nsnull),
-                    mOpenedByKeyboard(PR_FALSE) { };
+  uGlobalMenuBar();
   // Initialize the menu structure
   nsresult Init(nsIWidget *aWindow,
                 nsIContent *aMenuBar);

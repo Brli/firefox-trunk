@@ -63,11 +63,19 @@ uGlobalMenuDummy::ConstructDbusMenuItem()
   return NS_OK;
 }
 
+uGlobalMenuDummy::uGlobalMenuDummy():
+  uGlobalMenuObject(MenuDummy)
+{
+  MOZ_COUNT_CTOR(uGlobalMenuDummy);
+}
+
 uGlobalMenuDummy::~uGlobalMenuDummy()
 {
 
   if (mDbusMenuItem)
     g_object_unref(mDbusMenuItem);
+
+  MOZ_COUNT_DTOR(uGlobalMenuDummy);
 }
 
 nsresult

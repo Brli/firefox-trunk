@@ -57,7 +57,7 @@ public:
                                    nsIContent *aContent);
 
 private:
-  uGlobalMenuDummy(): uGlobalMenuObject(MenuDummy) { };
+  uGlobalMenuDummy();
 
   nsresult Init(uGlobalMenuObject *aParent,
                 uGlobalMenuDocListener *aListener,

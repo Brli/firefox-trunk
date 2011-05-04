@@ -54,7 +54,7 @@ NewGlobalMenuItem(uGlobalMenuObject *aParent,
                   nsIContent *aContent,
                   uGlobalMenuBar *aMenuBar)
 {
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
   if (aContent->GetNameSpaceID() != kNameSpaceID_XUL) {
 #else
   if (!aContent->IsXUL()) {

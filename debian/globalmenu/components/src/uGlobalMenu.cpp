@@ -55,7 +55,7 @@
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptContext.h>
 #include <jsapi.h>
-#ifndef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 #include <mozilla/dom/Element.h>
 #endif
 
@@ -496,12 +496,12 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
   if (doc) {
     nsAutoString attr;
     mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, attr);
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
     nsCOMPtr<nsIDOMDocument> domDoc(do_QueryInterface(doc));
     nsCOMPtr<nsIDOMElement> domElmt;
 #endif
     if (!attr.IsEmpty()) {
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
       if (domDoc) {
         domDoc->GetElementById(attr, getter_AddRefs(domElmt));
       }
@@ -541,6 +541,12 @@ uGlobalMenu::Rebuild()
   Build();
 }
 
+uGlobalMenu::uGlobalMenu():
+  uGlobalMenuObject(Menu), mPopupBound(PR_FALSE)
+{
+  MOZ_COUNT_CTOR(uGlobalMenu);
+}
+
 uGlobalMenu::~uGlobalMenu()
 {
   mListener->UnregisterForContentChanges(mContent);
@@ -557,6 +563,8 @@ uGlobalMenu::~uGlobalMenu()
     g_signal_handler_disconnect(mDbusMenuItem, mOpenHandlerID);
     g_object_unref(mDbusMenuItem);
   }
+
+  MOZ_COUNT_DTOR(uGlobalMenu);
 }
 
 /*static*/ uGlobalMenuObject*

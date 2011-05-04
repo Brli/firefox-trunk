@@ -42,7 +42,7 @@
 #include <nsIDocument.h>
 #include <nsIAtom.h>
 #include <nsINode.h>
-#ifndef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 #include <mozilla/dom/Element.h>
 #endif
 #include <nsIContent.h>
@@ -97,7 +97,7 @@ uGlobalMenuDocListener::CharacterDataChanged(nsIDocument *aDocument,
 
 void
 uGlobalMenuDocListener::AttributeWillChange(nsIDocument *aDocument,
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
                                             nsIContent *aContent,
 #else
                                             mozilla::dom::Element *aElement,
@@ -111,14 +111,14 @@ uGlobalMenuDocListener::AttributeWillChange(nsIDocument *aDocument,
 
 void
 uGlobalMenuDocListener::AttributeChanged(nsIDocument *aDocument,
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
                                          nsIContent *aElement,
 #else
                                          mozilla::dom::Element *aElement,
 #endif
                                          PRInt32 aNameSpaceID,
                                          nsIAtom *aAttribute,
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
                                          PRInt32 aModType,
                                          PRUint32 aStateMask)
 #else
@@ -136,12 +136,12 @@ uGlobalMenuDocListener::AttributeChanged(nsIDocument *aDocument,
 void
 uGlobalMenuDocListener::ContentAppended(nsIDocument *aDocument,
                                         nsIContent *aContainer,
-#ifndef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
                                         nsIContent *aFirstNewContent,
 #endif
                                         PRInt32 aNewIndexInContainer)
 {
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
   PRUint32 count = aContainer->GetChildCount();
   while ((PRUint32)aNewIndexInContainer < count) {
     nsIContent *cur = aContainer->GetChildAt(aNewIndexInContainer);
@@ -180,7 +180,7 @@ void
 uGlobalMenuDocListener::ContentRemoved(nsIDocument *aDocument,
                                        nsIContent *aContainer,
                                        nsIContent *aChild,
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
                                        PRInt32 aIndexInContainer)
 #else
                                        PRInt32 aIndexInContainer,

@@ -51,7 +51,7 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsPIDOMWindow.h>
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
 # include <nsIDocumentViewer.h>
 #endif
 
@@ -108,7 +108,7 @@ uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
   if (!cv)
     return PR_FALSE;
 
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
   nsCOMPtr<nsIDocumentViewer> docv(do_QueryInterface(cv));
   if (!docv)
     return PR_FALSE;

@@ -70,7 +70,7 @@ public:
                                    uGlobalMenuBar *aMenuBar);
 
 private:
-  uGlobalMenuItem(): uGlobalMenuObject(MenuItem) { };
+  uGlobalMenuItem();
 
   nsresult Init(uGlobalMenuObject *aParent,
                 uGlobalMenuDocListener *aListener,

@@ -89,12 +89,20 @@ uGlobalMenuSeparator::Init(uGlobalMenuObject *aParent,
   return NS_OK;
 }
 
+uGlobalMenuSeparator::uGlobalMenuSeparator():
+  uGlobalMenuObject(MenuSeparator)
+{
+  MOZ_COUNT_CTOR(uGlobalMenuSeparator);
+}
+
 uGlobalMenuSeparator::~uGlobalMenuSeparator()
 {
   mListener->UnregisterForContentChanges(mContent);
 
   if (mDbusMenuItem)
     g_object_unref(mDbusMenuItem);
+
+  MOZ_COUNT_DTOR(uGlobalMenuSeparator);
 }
 
 /*static*/ uGlobalMenuObject*

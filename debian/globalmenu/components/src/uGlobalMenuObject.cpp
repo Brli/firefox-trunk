@@ -69,7 +69,7 @@
 
 typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 
-NS_IMPL_ISUPPORTS2(uGlobalMenuIconLoader, imgIDecoderObserver, imgIContainerObserver)
+NS_IMPL_ISUPPORTS3(uGlobalMenuIconLoader, imgIDecoderObserver, imgIContainerObserver, nsIRunnable)
 
 PRInt32 uGlobalMenuIconLoader::sImagesInMenus = -1;
 nsCOMPtr<imgILoader> uGlobalMenuIconLoader::sLoader = 0;
@@ -256,7 +256,7 @@ uGlobalMenuIconLoader::Run()
   nsIDocument *doc = mContent->GetDocument();
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
 
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
   sLoader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
                     nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                     nsnull, getter_AddRefs(mIconRequest));
@@ -266,7 +266,11 @@ uGlobalMenuIconLoader::Run()
                     nsnull, nsnull, getter_AddRefs(mIconRequest));
 #endif
 
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+  mImageRect.SetEmpty();
+#else
   mImageRect.Empty();
+#endif
 
   if (domRect) {
     PRInt32 bottom = GetDOMRectSide(domRect, &nsIDOMRect::GetBottom);
@@ -306,7 +310,7 @@ uGlobalMenuIconLoader::OnStartDecode(imgIRequest *aRequest)
 NS_IMETHODIMP
 uGlobalMenuIconLoader::OnStartContainer(imgIRequest *aRequest, imgIContainer *aContainer)
 {
-#ifndef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
   aContainer->RequestDecode();
 #endif
   return NS_OK;
@@ -376,7 +380,7 @@ uGlobalMenuIconLoader::OnStopFrame(imgIRequest *aRequest, PRUint32 aFrame)
 
   nsCOMPtr<imgIContainer> clippedImg;
   if (needsClip) {
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
     nsresult rv = img->ExtractCurrentFrame(mImageRect,
                                            getter_AddRefs(clippedImg));
 #else
@@ -433,7 +437,7 @@ uGlobalMenuIconLoader::OnStopRequest(imgIRequest *aRequest, PRBool aIsLastPart)
   return NS_OK;
 }
 
-#ifndef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 NS_IMETHODIMP
 uGlobalMenuIconLoader::OnDiscard(imgIRequest *aRequest)
 {
@@ -443,7 +447,7 @@ uGlobalMenuIconLoader::OnDiscard(imgIRequest *aRequest)
 
 NS_IMETHODIMP
 uGlobalMenuIconLoader::FrameChanged(imgIContainer *aContainer,
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
                                     nsIntRect *aDirtyRect)
 #else
                                     const nsIntRect *aDirtyRect)

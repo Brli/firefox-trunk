@@ -58,7 +58,7 @@ public:
                                    uGlobalMenuBar *aMenuBar);
 
 private:
-  uGlobalMenuSeparator(): uGlobalMenuObject(MenuSeparator) { };
+  uGlobalMenuSeparator();
 
   nsresult Init(uGlobalMenuObject *aParent,
                 uGlobalMenuDocListener *aListener,

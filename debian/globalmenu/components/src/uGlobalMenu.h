@@ -72,7 +72,7 @@ public:
   void OpenMenu();
 
 private:
-  uGlobalMenu(): uGlobalMenuObject(Menu), mPopupBound(PR_FALSE) { };
+  uGlobalMenu();
 
   // Initialize the menu structure
   nsresult Init(uGlobalMenuObject *aParent,

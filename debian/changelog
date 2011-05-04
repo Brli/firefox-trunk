@@ -2,7 +2,7 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
 
   * New upstream snapshot v6.0 A1 HG 20110417R68226
 
-  * Update globalmenu-extension code to 1.5 prerelease based on r146
+  * Update globalmenu-extension code to 1.5 prerelease based on r151
 
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
@@ -138,7 +138,7 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Disable globalmenu-extension temporarily
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sun, 01 May 2011 09:28:30 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 12:49:52 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

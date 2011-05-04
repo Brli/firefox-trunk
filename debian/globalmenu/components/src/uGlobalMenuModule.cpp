@@ -38,7 +38,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include "nsIClassInfoImpl.h"
-#ifdef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
 #include "nsIGenericFactory.h"
 #else
 #include "mozilla/ModuleUtils.h"
@@ -49,7 +49,7 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(uGlobalMenuService, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(uGlobalMenuLoader, Init)
 
-#ifndef MOZILLA_1_9_2_BRANCH
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 
 NS_DEFINE_NAMED_CID(U_GLOBALMENUSERVICE_CID);
 NS_DEFINE_NAMED_CID(U_GLOBALMENULOADER_CID);

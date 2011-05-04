@@ -366,6 +366,13 @@ uGlobalMenuBar::IsParentOfMenuBar(nsIContent *aContent)
   return PR_FALSE;
 }
 
+uGlobalMenuBar::uGlobalMenuBar():
+  uGlobalMenuObject(MenuBar), mServer(nsnull), mTopLevel(nsnull),
+  mOpenedByKeyboard(PR_FALSE)
+{
+  MOZ_COUNT_CTOR(uGlobalMenuBar);
+}
+
 uGlobalMenuBar::~uGlobalMenuBar()
 {
   mListener->UnregisterForAllChanges(this);
@@ -400,6 +407,8 @@ uGlobalMenuBar::~uGlobalMenuBar()
 
   if (mServer)
     g_object_unref(mServer);
+
+  MOZ_COUNT_DTOR(uGlobalMenuBar);
 }
 
 /*static*/ uGlobalMenuBar*
@@ -647,7 +656,6 @@ uGlobalMenuBar::ObserveContentRemoved(nsIDocument *aDocument,
   }
 
   if (aContainer != mContent) {
-    NS_ASSERTION(0, "Received an event that wasn't meant for us!");
     return;
   }
 
@@ -666,7 +674,6 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
   }
 
   if (aContainer != mContent) {
-    NS_ASSERTION(0, "Received an event that wasn't meant for us!");
     return;
   }
 
