@@ -183,7 +183,7 @@ ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "110
     export DEB_BUILD_HARDENING_PIE=0
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
-	ENABLE_GLOBALMENU := 0
+	ENABLE_GLOBALMENU := 1
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1010" && echo "1"))
 	SYSTEM_DICTDIR = /usr/share/hunspell

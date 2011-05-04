@@ -135,8 +135,6 @@ firefox-trunk (6.0~a1~hg20110429r68743+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     Firefox version, but different 5.0b* versions for the Gecko version
     in each build)
     - update debian/mozclient.conf
-  * Disable globalmenu-extension temporarily
-    - update debian/rules
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 May 2011 12:49:52 +0100
 
