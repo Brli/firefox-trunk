@@ -223,7 +223,7 @@ Forwarded: no
         {0x91, 0x81, 0xa2, 0x85, 0xe7, 0x4c, 0xf1, 0xd4 } }
 --- a/toolkit/xre/Makefile.in
 +++ b/toolkit/xre/Makefile.in
-@@ -99,7 +99,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
+@@ -105,7 +105,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
  CPPSRCS += nsNativeAppSupportOS2.cpp
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
@@ -1561,7 +1561,7 @@ Forwarded: no
  #if defined(XP_WIN) || defined(XP_MACOSX) || defined(ANDROID)
 --- a/xpcom/components/ManifestParser.cpp
 +++ b/xpcom/components/ManifestParser.cpp
-@@ -60,6 +60,7 @@
+@@ -64,6 +64,7 @@
  #include "nsIScriptError.h"
  #include "nsIXULAppInfo.h"
  #include "nsIXULRuntime.h"
@@ -1569,7 +1569,7 @@ Forwarded: no
  
  struct ManifestDirective
  {
-@@ -427,6 +428,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -431,6 +432,7 @@ ParseManifestCommon(NSLocationType aType
    NS_NAMED_LITERAL_STRING(kOs, "os");
    NS_NAMED_LITERAL_STRING(kOsVersion, "osversion");
    NS_NAMED_LITERAL_STRING(kABI, "abi");
@@ -1577,7 +1577,7 @@ Forwarded: no
  
    // Obsolete
    NS_NAMED_LITERAL_STRING(kXPCNativeWrappers, "xpcnativewrappers");
-@@ -466,6 +468,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -470,6 +472,7 @@ ParseManifestCommon(NSLocationType aType
    }
  
    nsAutoString osVersion;
@@ -1585,7 +1585,7 @@ Forwarded: no
  #if defined(XP_WIN)
    OSVERSIONINFO info = { sizeof(OSVERSIONINFO) };
    if (GetVersionEx(&info)) {
-@@ -473,6 +476,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -477,6 +480,7 @@ ParseManifestCommon(NSLocationType aType
                                           info.dwMajorVersion,
                                           info.dwMinorVersion);
    }
@@ -1593,7 +1593,7 @@ Forwarded: no
  #elif defined(XP_MACOSX)
    SInt32 majorVersion, minorVersion;
    if ((Gestalt(gestaltSystemVersionMajor, &majorVersion) == noErr) &&
-@@ -481,10 +485,12 @@ ParseManifestCommon(NSLocationType aType
+@@ -485,14 +489,17 @@ ParseManifestCommon(NSLocationType aType
                                           majorVersion,
                                           minorVersion);
    }
@@ -1603,10 +1603,15 @@ Forwarded: no
                                         gtk_major_version,
                                         gtk_minor_version);
 +  desktop = nsKDEUtils::kdeSession() ? NS_LITERAL_STRING("kde") : NS_LITERAL_STRING("gnome");
+ #elif defined(ANDROID)
+   if (mozilla::AndroidBridge::Bridge()) {
+     mozilla::AndroidBridge::Bridge()->GetStaticStringField("android/os/Build$VERSION", "RELEASE", osVersion);
+   }
++  desktop = NS_LITERAL_STRING("android");
  #endif
  
    // Because contracts must be registered after CIDs, we save and process them
-@@ -563,6 +569,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -571,6 +578,7 @@ ParseManifestCommon(NSLocationType aType
      TriState stABI = eUnspecified;
      bool platform = false;
      bool contentAccessible = false;
@@ -1614,7 +1619,7 @@ Forwarded: no
  
      while (NULL != (token = nsCRT::strtok(whitespace, kWhitespace, &whitespace)) && ok) {
        ToLowerCase(token);
-@@ -571,6 +578,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -579,6 +587,7 @@ ParseManifestCommon(NSLocationType aType
        if (CheckStringFlag(kApplication, wtoken, appID, stApp) ||
            CheckStringFlag(kOs, wtoken, osTarget, stOs) ||
            CheckStringFlag(kABI, wtoken, abi, stABI) ||
@@ -1622,7 +1627,7 @@ Forwarded: no
            CheckVersionFlag(kOsVersion, wtoken, osVersion, stOsVersion) ||
            CheckVersionFlag(kAppVersion, wtoken, appVersion, stAppVersion))
          continue;
-@@ -599,6 +607,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -607,6 +616,7 @@ ParseManifestCommon(NSLocationType aType
          stAppVersion == eBad ||
          stOs == eBad ||
          stOsVersion == eBad ||
