@@ -14,5 +14,4 @@ firefox-kde.patch
 fix-sdk-bin-install.patch
 unity-globalmenu-build-support.patch
 install-vendor-prefs.patch
-default-uri-handler-check-use-gio.patch
 ubuntu-codes-baidu.patch

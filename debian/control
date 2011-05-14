@@ -226,7 +226,7 @@ Description: Safe and easy web browser from Mozilla - transitional package
  This is a transitional package to ensure that upgrades work correctly.
  It can be safely removed
 
-# Language packs
+# Language packs below here
 
 Package: firefox-trunk-locale-af
 Architecture: all
@@ -560,8 +560,8 @@ Description: Marathi language pack for Firefox
 Package: firefox-trunk-locale-nb
 Architecture: all
 Depends: firefox-trunk, ${misc:Depends}
-Description: Bokmål, Norwegian; Norwegian Bokmål language pack for Firefox
- This package contains Bokmål, Norwegian; Norwegian Bokmål translations and search plugins
+Description: Norwegian language pack for Firefox
+ This package contains Norwegian translations and search plugins
  for Firefox
 
 Package: firefox-trunk-locale-nl

@@ -225,3 +225,5 @@ Depends: ${misc:Depends}, firefox-trunk-gnome-support
 Description: Safe and easy web browser from Mozilla - transitional package
  This is a transitional package to ensure that upgrades work correctly.
  It can be safely removed
+
+# Language packs below here
