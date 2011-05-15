@@ -355,8 +355,8 @@ debian/control:: debian/control.in debian/control.langpacks debian/locales-suppo
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
-			language=`echo $$line | sed 's/\([[:alpha:]\-]*\):*\([[:alpha:]\-]*\):*\([[:alnum:][:space:]\-\;,]*\)/\2/'` ; \
-			desc=`echo $$line | sed 's/\([[:alpha:]\-]*\):*\([[:alpha:]\-]*\):*\([[:alnum:][:space:]\-\;,]*\)/\3/'` ; \
+			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\2/'` ; \
+			desc=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\3/'` ; \
 			tmp=`echo $$language | sed 's/\-/_/'` ; \
 			eval b=\$$$$tmp ; \
 			if [ -z $$b ] ; \
@@ -419,7 +419,7 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
-			language=`echo $$line | sed 's/\([[:alpha:]\-]*\):*\([[:alpha:]\-]*\):*\([[:alnum:][:space:]\-\;,]*\)/\1/'` ; \
+			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
 			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language ; \
 			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language ; \
 		fi \
@@ -442,8 +442,8 @@ common-binary-post-install-indep::
 		line=`echo $$language | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
-			language=`echo $$line | sed 's/\([[:alpha:]\-]*\):*\([[:alpha:]\-]*\):*\([[:alnum:][:space:]\-\;,]*\)/\1/'` ; \
-			pkgname=`echo $$line | sed 's/\([[:alpha:]\-]*\):*\([[:alpha:]\-]*\):*\([[:alnum:][:space:]\-\;,]*\)/\2/'` ; \
+			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
+			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\2/'` ; \
 			id=`python $(CURDIR)/debian/get-xpi-id.py $(CURDIR)/$(MOZ_OBJDIR)/dist/install/$(DEBIAN_NAME)-$(FF_VERSION).$${language}.langpack.xpi` ; \
 			dh_installdirs -p$(DEBIAN_NAME)-locale-$${pkgname} usr/lib/$(DEBIAN_NAME)-addons/extensions ; \
 			cp $(CURDIR)/$(MOZ_OBJDIR)/dist/install/$(DEBIAN_NAME)-$(FF_VERSION).$${language}.langpack.xpi \

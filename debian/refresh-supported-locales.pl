@@ -40,8 +40,8 @@ if (defined($lpom_dir)) {
         chomp($line);
         my $langcode = $line;
         my $lang = $line;
-        $langcode =~ s/([[:alpha:]\-]*):*([[:alnum:][:space:]\-;,\(\)]*)/$1/;
-        $lang =~ s/([[:alpha:]\-]*):*([[:alnum:][:space:]\-;,\(\)]*)/$2/;
+        $langcode =~ s/([^:]*):*([^:]*)/$1/;
+        $lang =~ s/([^:]*):*([^:]*)/$2/;
         $languages{$langcode} = $lang;
     }
     close($file);
@@ -52,8 +52,8 @@ if (defined($lpom_dir)) {
         chomp($line);
         my $langcode = $line;
         my $pkgname = $line;
-        $langcode =~ s/([[:alpha:]\-]*):*([[:alpha:]\-]*)/$1/;
-        $pkgname =~ s/([[:alpha:]\-]*):*([[:alpha:]\-]*)/$2/;
+        $langcode =~ s/([^:]*):*([^:]*)/$1/;
+        $pkgname =~ s/([^:]*):*([^:]*)/$2/;
         $locale2pkgname{$langcode} = $pkgname;
     }
     close($file);
@@ -64,8 +64,8 @@ if (defined($lpom_dir)) {
         chomp($line);
         my $langcode = $line;
         my $lang = $line;
-        $langcode =~ s/([[:alpha:]\-]*):*([[:alnum:][:space:]\-;,\(\)]*)/$1/;
-        $lang =~ s/([[:alpha:]\-]*):*([[:alnum:][:space:]\-;,\(\)]*)/$2/;
+        $langcode =~ s/([^:]*):*([^:]*)/$1/;
+        $lang =~ s/([^:]*):*([^:]*)/$2/;
         $languages{$langcode} = $lang;
     }
     close($file);
@@ -77,8 +77,8 @@ while (<$file>) {
     chomp($line);
     my $langcode = $line;
     my $lang = $line;
-    $langcode =~ s/([[:alpha:]\-]*):*([[:alpha:]\-]*):*([[:alnum:][:space:]\-;,\(\)]*)/$2/;
-    $lang =~ s/([[:alpha:]\-]*):*([[:alpha:]\-]*):*([[:alnum:][:space:]\-;,\(\)]*)/$3/;
+    $langcode =~ s/([^:]*):*([^:]*):*([^:]*)/$2/;
+    $lang =~ s/([^:]*):*([^:]*):*([^:]*)/$3/;
     $languages{$langcode} = $lang;
 }
 close($file);
