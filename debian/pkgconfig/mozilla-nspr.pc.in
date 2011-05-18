@@ -4,7 +4,7 @@ includedir=@INCDIR@
 
 Name: NSPR
 Description: The Netscape Portable Runtime
-Version: @XUL_VERSION@
+Version: @FF_VERSION@
 Libs: -L${sdkdir}/lib -lplds4 -lplc4 -lnspr4 -lpthread -ldl
 Cflags: -I${includedir}/nspr
 

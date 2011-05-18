@@ -5,7 +5,7 @@ idldir=@IDLDIR@
 
 Name: libxul
 Description: The Mozilla Runtime and Embedding Engine
-Version: @XUL_VERSION@
+Version: @FF_VERSION@
 %%ifdef USE_SYSTEM_NSPR
 Requires: nspr
 %%else
