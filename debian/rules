@@ -436,7 +436,7 @@ common-binary-arch:: debian/stamp-buildsymbols
 common-binary-post-install-indep::
 	while read line ; \
 	do \
-		line=`echo $$language | sed 's/#.*//' | sed '/^$$/d'` ; \
+		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
