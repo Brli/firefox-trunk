@@ -129,13 +129,6 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - Add common-binary-post-install-indep to install the xpi's and
       searchplugins in to the correct debian packages
       + update debian/rules
-  * Use the Gecko version number from config/milestone.txt for the
-    package version. The Gecko version series is now the same as Firefox,
-    but the Gecko version number might have additional granularity
-    in the future (eg, beta releases for 5.0 will all have 5.0 for the
-    Firefox version, but different 5.0b* versions for the Gecko version
-    in each build)
-    - update debian/mozclient.conf
   * Revert a previous change to add vendor preferences to distribution.ini.
     The preferences there aren't read by the pref service, but loaded
     and set later on, after profile-initial-state, which is too late to
