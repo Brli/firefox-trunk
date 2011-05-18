@@ -11,6 +11,8 @@ my %blacklist;
 my %locale2pkgname;
 my %languages;
 
+my %oldsupported;
+
 my $dir=getcwd;
 chomp($dir);
 
@@ -71,19 +73,33 @@ if (defined($lpom_dir)) {
     close($file);
 }
 
-open($file, "$dir/debian/locales-supported");
+open($file, "$dir/debian/locales.shipped");
 while (<$file>) {
     my $line = $_;
     chomp($line);
     my $langcode = $line;
+    my $pkgname = $line;
     my $lang = $line;
-    $langcode =~ s/([^:]*):*([^:]*):*([^:]*)/$2/;
+    $langcode =~ s/([^:]*):*([^:]*):*([^:]*)/$1/;
+    $pkgname =~ s/([^:]*):*([^:]*):*([^:]*)/$2/;
     $lang =~ s/([^:]*):*([^:]*):*([^:]*)/$3/;
-    $languages{$langcode} = $lang;
+    $languages{$pkgname} = $lang;
+    $oldsupported{$pkgname} = 1;
+    $locale2pkgname{lc($langcode)} = $pkgname;
 }
 close($file);
 
-open($file, "$dir/debian/locale-blacklist");
+if (-e "$dir/debian/locales.unavailable") {
+    open($file, "$dir/debian/locales.unavailable");
+    while (<$file>) {
+        if (not $_ =~ /^$/) {
+            $oldsupported{$_} = 1;
+        }
+    }
+    close($file);
+}
+
+open($file, "$dir/debian/locales.blacklist");
 while (<$file>) {
     my $line = $_;
     chomp($line);
@@ -92,7 +108,7 @@ while (<$file>) {
 close($file);
 
 open($file, $moz_supported_file);
-open(my $outfile, ">$dir/debian/locales-supported");
+open(my $outfile, ">$dir/debian/locales.shipped");
 while (<$file>) {
     my $line = $_;
     chomp($line);
@@ -118,8 +134,16 @@ while (<$file>) {
     }
     my $description = $languages{$pkgname};
     print $outfile "$langcode:$pkgname:$description\n";
+    delete $oldsupported{$pkgname}
 }
 close($file);
 close($outfile);
 
-
+my @unavailable = keys(%oldsupported);
+if (scalar(@unavailable) gt 0) {
+    @unavailable = sort(@unavailable);
+    open(my $outfile, ">$dir/debian/locales.unavailable");
+    foreach my $lang (@unavailable) {
+        print $outfile "$lang\n"
+    }
+}

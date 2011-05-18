@@ -1,0 +1,6 @@
+
+Package: @APPNAME@-locale-@LANGCODE@
+Architecture: all
+Description: Transitional package for unavailable language
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.

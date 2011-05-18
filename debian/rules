@@ -342,7 +342,7 @@ ifeq (1, $(DEB_SYS_LIBXUL))
 EXTRA_BD += \n\txulrunner-2.0,
 endif
 
-debian/control:: debian/control.in debian/control.langpacks debian/locales-supported
+debian/control:: debian/control.in debian/control.langpacks debian/locales.shipped
 	mv debian/control debian/control.old
 	sed -e 's/@EXTRA_BD@/$(EXTRA_BD)/g' \
 	    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' < debian/control.in > debian/control
@@ -364,7 +364,16 @@ debian/control:: debian/control.in debian/control.langpacks debian/locales-suppo
 				eval $$tmp=1 ; \
 			fi \
 		fi \
-	done < debian/locales-supported
+	done < debian/locales.shipped
+
+	if [ -f debian/locales.unavailable ] ; \
+	then \
+		while read line ; \
+		do \
+			sed -e "s/@LANGCODE@/$$line/g" \
+			    -e 's/@APPNAME@/$(DEBIAN_NAME)/g' < debian/control.langpacks.unavail >> debian/control ; \
+		done < debian/locales.unavailable ; \
+	fi
 
 	if ! cmp -s debian/control debian/control.old ; \
 	then \
@@ -420,7 +429,7 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language ; \
 			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language ; \
 		fi \
-	done < $(CURDIR)/debian/locales-supported
+	done < $(CURDIR)/debian/locales.shipped
 
 	touch $@
 
@@ -449,7 +458,7 @@ common-binary-post-install-indep::
 			cp -r $(CURDIR)/$(MOZ_OBJDIR)/dist/xpi-stage/locale-$${language}/searchplugins/*.xml \
 			  $(CURDIR)/debian/$(DEBIAN_NAME)-locale-$${pkgname}/usr/lib/$(DEBIAN_NAME)-addons/searchplugins/$${language}/. ; \
 		fi \
-	done < $(CURDIR)/debian/locales-supported
+	done < $(CURDIR)/debian/locales.shipped
 
 binary-install/$(DEBIAN_NAME)::
 	convert -resize 32x32 debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).png debian/$(DEBIAN_NAME)/usr/share/pixmaps/$(DEBIAN_NAME).xpm
