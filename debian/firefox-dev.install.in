@@ -35,8 +35,10 @@ debian/tmp@MOZ_SDKDIR@/lib
 
 %%ifndef MOZ_USE_SYSTEM_NSPR
 debian/tmp@MOZ_SDKDIR@/sdk/bin/nspr-config
+debian/pkgconfig/mozilla-nspr.pc /usr/lib/pkgconfig
 %%endif
 debian/tmp@MOZ_SDKDIR@/sdk/bin/xpidl
 debian/tmp@MOZ_SDKDIR@/sdk/bin/xpt.py
 
-debian/pkgconfig/*.pc /usr/lib/pkgconfig
+debian/pkgconfig/mozilla-plugin.pc /usr/lib/pkgconfig
+debian/pkgconfig/libxul.pc /usr/lib/pkgconfig

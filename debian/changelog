@@ -181,8 +181,10 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Drop DEBIAN_XUL_VER now that Firefox/Gecko versions are the same
     - update debian/rules
     - update debian/pkgconfig/*.pc.in
+  * Don't install mozilla-nspr.pc for system-NSPR builds
+    - update debian/firefox-dev.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 21:13:40 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 22:27:00 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
