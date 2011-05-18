@@ -4,7 +4,7 @@ LOCALE		:= en_US.UTF-8
 LOCDIR		= $(CURDIR)/$(MOZ_DISTDIR)/.locales
 
 TESTS	:= $(NULL)
-ifeq (1,$(DEB_WANT_UNIT_TESTS))
+ifeq (1,$(MOZ_WANT_UNIT_TESTS))
 	TESTS += check xpcshell-tests jstestbrowser reftest crashtest mochitest
 endif
 

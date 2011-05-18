@@ -2,15 +2,15 @@
 
 set -e
 
-APPNAME=@APPNAME@
+MOZ_APP_NAME=@MOZ_APP_NAME@
 
 if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
-    update-alternatives --remove gnome-www-browser /usr/bin/$APPNAME
-    update-alternatives --remove x-www-browser /usr/bin/$APPNAME
+    update-alternatives --remove gnome-www-browser /usr/bin/$MOZ_APP_NAME
+    update-alternatives --remove x-www-browser /usr/bin/$MOZ_APP_NAME
 fi
 
-if [ -f /usr/share/apport/package-hooks/$APPNAME.pyc ] ; then
-    rm -f /usr/share/apport/package-hooks/$APPNAME.pyc
+if [ -f /usr/share/apport/package-hooks/$MOZ_APP_NAME.pyc ] ; then
+    rm -f /usr/share/apport/package-hooks/$MOZ_APP_NAME.pyc
 fi
 
 #DEBHELPER#

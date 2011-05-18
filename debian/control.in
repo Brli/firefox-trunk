@@ -1,4 +1,4 @@
-Source: @APPNAME@
+Source: @MOZ_APP_NAME@
 Section: web
 Priority: optional
 Maintainer: Ubuntu Mozilla Team <ubuntu-mozillateam@lists.ubuntu.com>
@@ -41,7 +41,7 @@ Build-Depends: cdbs,
 	libdbusmenu-gtk-dev
 Standards-Version: 3.9.1
 
-Package: @APPNAME@
+Package: @MOZ_APP_NAME@
 Architecture: any
 Depends: fontconfig,
 	psmisc,
@@ -52,11 +52,11 @@ Depends: fontconfig,
 	${misc:Depends},
 	${shlibs:Depends}
 Recommends: ubufox,
-	@APPNAME@-globalmenu
+	@MOZ_APP_NAME@-globalmenu
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser
-Suggests: @APPNAME@-gnome-support | firefox-kde-support,
+Suggests: @MOZ_APP_NAME@-gnome-support | firefox-kde-support,
 	latex-xft-fonts,
 	libthai0
 Breaks: firefox-4.0 (<< 4.2~a1~hg20110401r64633)
@@ -67,12 +67,12 @@ Description: Safe and easy web browser from Mozilla
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
 
-Package: @APPNAME@-gnome-support
+Package: @MOZ_APP_NAME@-gnome-support
 Architecture: any
 Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
-	@APPNAME@
+	@MOZ_APP_NAME@
 Breaks: firefox-4.0-gnome-support (<< 4.2~a1~hg20110401r64633)
 Replaces: firefox-4.0-gnome-support
 Description: Safe and easy web browser from Mozilla - GNOME support
@@ -83,13 +83,13 @@ Description: Safe and easy web browser from Mozilla - GNOME support
  This package depends on the GNOME libraries which allow Firefox to take
  advantage of technologies such as GConf, GIO libnotify
 
-Package: @APPNAME@-dbg
+Package: @MOZ_APP_NAME@-dbg
 Architecture: any
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
-	@APPNAME@ (= ${binary:Version})
+	@MOZ_APP_NAME@ (= ${binary:Version})
 Breaks: firefox-4.0-dbg (<< 4.2~a1~hg20110401r64633)
 Replaces: firefox-4.0-dbg
 Description: Safe and easy web browser from Mozilla - debug symbols
@@ -100,13 +100,13 @@ Description: Safe and easy web browser from Mozilla - debug symbols
  This package contains the debugging symbols for the Firefox web
  browser
 
-Package: @APPNAME@-dev
+Package: @MOZ_APP_NAME@-dev
 Architecture: any
 Section: devel
 Priority: extra
 Depends: ${shlibs:Depends},
 	${misc:Depends},
-	@APPNAME@ (= ${binary:Version}),
+	@MOZ_APP_NAME@ (= ${binary:Version}),
 	${nspr:Depends},
 	${nss:Depends},
 	${cairo:Depends}
@@ -121,7 +121,7 @@ Description: Safe and easy web browser from Mozilla - development files
  .
  This package contains the headers and SDK for building plugins with Firefox
 
-Package: @APPNAME@-mozsymbols
+Package: @MOZ_APP_NAME@-mozsymbols
 Architecture: amd64 i386 armel
 Section: debug
 Priority: extra
@@ -136,11 +136,11 @@ Description: Safe and easy web browser from Mozilla - Breakpad symbols
  Breakpad. Eventually this package should go away and the symbol upload be
  implemented in soyuz (or other builders that build this package)
 
-Package: @APPNAME@-globalmenu
+Package: @MOZ_APP_NAME@-globalmenu
 Architecture: any
 Depends: ${shlibs:Depends},
 	${misc:Depends},
-	@APPNAME@ (= ${binary:Version})
+	@MOZ_APP_NAME@ (= ${binary:Version})
 Breaks: firefox-4.0-globalmenu (<< 4.2~a1~hg20110401r64633)
 Replaces: firefox-4.0-globalmenu
 Description: Unity appmenu integration for Firefox

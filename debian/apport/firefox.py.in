@@ -123,19 +123,19 @@ def recent_auditlog(pattern):
     return lines
 
 def add_info(report):
-    ddproc = Popen(['dpkg-divert', '--truename', '/usr/bin/@APPNAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    ddproc = Popen(['dpkg-divert', '--truename', '/usr/bin/@MOZ_APP_NAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     truename = ddproc.communicate()
-    if ddproc.returncode == 0 and truename[0].strip() != '/usr/bin/@APPNAME@':
-        ddproc = Popen(['dpkg-divert', '--listpackage', '/usr/bin/@APPNAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if ddproc.returncode == 0 and truename[0].strip() != '/usr/bin/@MOZ_APP_NAME@':
+        ddproc = Popen(['dpkg-divert', '--listpackage', '/usr/bin/@MOZ_APP_NAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         diverter = ddproc.communicate()
-        report['UnreportableReason'] = "/usr/bin/@APPNAME@ has been diverted by a third party package (%s)" % diverter[0].strip()
+        report['UnreportableReason'] = "/usr/bin/@MOZ_APP_NAME@ has been diverted by a third party package (%s)" % diverter[0].strip()
         return
 
     if not apport.packaging.is_distro_package(report['Package'].split()[0]):
         report['ThirdParty'] = 'True'
         report['CrashDB'] = 'ubuntu-mozilla-ppa-bugs'
 
-    packages = ['@APPNAME@',
+    packages = ['@MOZ_APP_NAME@',
                 'flashplugin-installer',
                 'adobe-flashplugin',
                 'icedtea-plugin']
@@ -153,7 +153,7 @@ def add_info(report):
 
 
     '''adds hooked info into the apport report.'''
-    config_dir = os.path.join(os.environ['HOME'], '.mozilla', '@APPNAME@')
+    config_dir = os.path.join(os.environ['HOME'], '.mozilla', '@MOZ_APP_NAME@')
     profiles_d = {}
     # append profiles.ini file & parse it:
     profiles_ini = os.path.join(config_dir,'profiles.ini') 
@@ -215,7 +215,7 @@ def add_info(report):
     add_apparmor = True
     if os.path.isdir(apparmor_disable_dir):
         for f in os.listdir(apparmor_disable_dir):
-            if f.startswith("usr.bin.@APPNAME@"):
+            if f.startswith("usr.bin.@MOZ_APP_NAME@"):
                 add_apparmor = False
                 break
     if add_apparmor:
@@ -241,7 +241,7 @@ if __name__ == "__main__":
     import apport
     from apport import packaging
     D = {}
-    D['Package'] = '@APPNAME@' 
+    D['Package'] = '@MOZ_APP_NAME@' 
     add_info(D)
     for KEY in D.keys(): 
         print '''-------------------%s: ------------------\n''' % KEY, D[KEY]

@@ -1,15 +1,15 @@
-%%ifdef USE_SYSTEM_NSPR
-/usr/include/nspr @INCDIR@/nspr
-/usr/bin/nspr-config @SDKDIR@/sdk/bin/nspr-config
+%%ifdef MOZ_USE_SYSTEM_NSPR
+/usr/include/nspr @MOZ_INCDIR@/nspr
+/usr/bin/nspr-config @MOZ_SDKDIR@/sdk/bin/nspr-config
 %%else
-@LIBDIR@/libnspr4.so @SDKDIR@/sdk/lib/libnspr4.so
-@LIBDIR@/libplc4.so @SDKDIR@/sdk/lib/libplc4.so
-@LIBDIR@/libplds4.so @SDKDIR@/sdk/lib/libplds4.so
+@MOZ_LIBDIR@/libnspr4.so @MOZ_SDKDIR@/sdk/lib/libnspr4.so
+@MOZ_LIBDIR@/libplc4.so @MOZ_SDKDIR@/sdk/lib/libplc4.so
+@MOZ_LIBDIR@/libplds4.so @MOZ_SDKDIR@/sdk/lib/libplds4.so
 %%endif
-%%ifdef USE_SYSTEM_CAIRO
-/usr/include/cairo @INCDIR@/cairo
+%%ifdef MOZ_USE_SYSTEM_CAIRO
+/usr/include/cairo @MOZ_INCDIR@/cairo
 %%endif
-@LIBDIR@/libmozalloc.so @SDKDIR@/sdk/lib/libmozalloc.so
-@LIBDIR@/libxpcom.so @SDKDIR@/sdk/lib/libxpcom.so
-@LIBDIR@/libxul.so @SDKDIR@/sdk/lib/libxul.so
-@SDKDIR@/sdk/bin/xpidl @LIBDIR@/xpidl
+@MOZ_LIBDIR@/libmozalloc.so @MOZ_SDKDIR@/sdk/lib/libmozalloc.so
+@MOZ_LIBDIR@/libxpcom.so @MOZ_SDKDIR@/sdk/lib/libxpcom.so
+@MOZ_LIBDIR@/libxul.so @MOZ_SDKDIR@/sdk/lib/libxul.so
+@MOZ_SDKDIR@/sdk/bin/xpidl @MOZ_LIBDIR@/xpidl

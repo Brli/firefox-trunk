@@ -141,7 +141,7 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/rules
     - update debian/patches/install-vendor-prefs.patch
   * Add support for the system provided hyphenation patterns, by linking
-    @LIBDIR@/hyphenation to /usr/share/hyphen
+    @MOZ_LIBDIR@/hyphenation to /usr/share/hyphen
     - update debian/firefox.links.in
   * Ship a mozilla-plugin.pc and libxul.pc rather than our custom
     firefox-plugin.pc. No other source packages are aware of firefox-plugin
@@ -1021,7 +1021,7 @@ firefox-4.0 (4.0~b5+nobinonly-0ubuntu1) natty; urgency=low
     the official branding for non-nightly and non-beta builds. It also
     disables the crash reporter in application.ini
     - update debian/rules
-  * Don't forget the leading slash when substituting @LIBDIR@ in certain
+  * Don't forget the leading slash when substituting @MOZ_LIBDIR@ in certain
     places, else we get launching and installation failures
     - update debian/rules
     - update debian/apport/firefox.in
@@ -1056,7 +1056,7 @@ firefox-4.0 (4.0~b5+nobinonly-0ubuntu1) natty; urgency=low
        debian/patches/awesome_branding_updates.patch
     - update debian/patches/awesome_branding_updates.patch
     - update debian/patches/series
-  * Don't install $LIBDIR/.autoreg and drop the maintainer script hooks
+  * Don't install $MOZ_LIBDIR/.autoreg and drop the maintainer script hooks
     to touch this too. This doesn't do anything with the changes to
     XPCOM component registration in Firefox 4
     - update debian/rules
@@ -1502,7 +1502,7 @@ firefox-3.0 (3.0.2+build6+nobinonly-0ubuntu1) intrepid; urgency=low
     pre-build:: which is a left over from previous branding split
     approaches and unused now.
     - update debian/rules
-  * Use APPNAME=`basename $0` in firefox start script; fix bug that would
+  * Use MOZ_APP_NAME=`basename $0` in firefox start script; fix bug that would
     trick abrowser into restarting itself through the "firefox" command.
     - debian/firefox.sh.in
   * Fix LP: #269656 - AN IRRELEVANT LICENSE IS PRESENTED TO
@@ -1789,7 +1789,7 @@ firefox-3.0 (3.0~b5+nobinonly-0ubuntu1) hardy; urgency=low
 
   * Fix multiple misc bugs: "migration creates double dots for abandoned
     profiles", "Wikipedia search plugin shipped upstream",  "blocklist.xml not
-    installed", "use LIBDIR when touching .autoreg in postinst", "Fix restart
+    installed", "use MOZ_LIBDIR when touching .autoreg in postinst", "Fix restart
     notification misbehaviour", "Improve package description (LP: #207199)"
     - update debian/firefox.sh.in
     - drop debian/wikipedia.*
@@ -5052,7 +5052,7 @@ mozilla-firefox (0.9.1-3) experimental; urgency=low
   * debian/update-mozilla-firefox-chrome: 
     - Wait 8 seconds instead of 5 for the hack, might help some 
       people reporting problems.
-    - Remove ${LIBDIR}/extensions/{*}. I may move that to 
+    - Remove ${MOZ_LIBDIR}/extensions/{*}. I may move that to 
       /var/lib/mozilla-firefox eventually, but let's leave it for now.
   * debian/mozilla-firefox.png.uu: Make a nicer png icon, based on the
     about box graphic.

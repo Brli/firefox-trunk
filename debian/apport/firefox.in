@@ -1,2 +1,2 @@
-@LIBDIR@/@APPNAME@-bin
-@LIBDIR@/plugin-container
+@MOZ_LIBDIR@/@MOZ_APP_NAME@-bin
+@MOZ_LIBDIR@/plugin-container

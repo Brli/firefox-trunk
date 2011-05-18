@@ -1,42 +1,42 @@
-debian/tmp@INCDIR@/angle
-%%ifndef USE_SYSTEM_CAIRO
-debian/tmp@INCDIR@/cairo
+debian/tmp@MOZ_INCDIR@/angle
+%%ifndef MOZ_USE_SYSTEM_CAIRO
+debian/tmp@MOZ_INCDIR@/cairo
 %%endif
-debian/tmp@INCDIR@/harfbuzz
-debian/tmp@INCDIR@/IPC
-debian/tmp@INCDIR@/mozilla
-debian/tmp@INCDIR@/nestegg
-%%ifndef USE_SYSTEM_NSPR
-debian/tmp@INCDIR@/md
-debian/tmp@INCDIR@/nspr
-debian/tmp@INCDIR@/obsolete
-debian/tmp@INCDIR@/private
+debian/tmp@MOZ_INCDIR@/harfbuzz
+debian/tmp@MOZ_INCDIR@/IPC
+debian/tmp@MOZ_INCDIR@/mozilla
+debian/tmp@MOZ_INCDIR@/nestegg
+%%ifndef MOZ_USE_SYSTEM_NSPR
+debian/tmp@MOZ_INCDIR@/md
+debian/tmp@MOZ_INCDIR@/nspr
+debian/tmp@MOZ_INCDIR@/obsolete
+debian/tmp@MOZ_INCDIR@/private
 %%endif
-debian/tmp@INCDIR@/ogg
-debian/tmp@INCDIR@/sydneyaudio
-debian/tmp@INCDIR@/theora
+debian/tmp@MOZ_INCDIR@/ogg
+debian/tmp@MOZ_INCDIR@/sydneyaudio
+debian/tmp@MOZ_INCDIR@/theora
 %%if DEB_BUILD_ARCH != armel
-debian/tmp@INCDIR@/vorbis
+debian/tmp@MOZ_INCDIR@/vorbis
 %%else
-debian/tmp@INCDIR@/tremor
+debian/tmp@MOZ_INCDIR@/tremor
 %%endif
-debian/tmp@INCDIR@/vpx
-debian/tmp@INCDIR@/*.h
-debian/tmp@INCDIR@/*.tbl
-debian/tmp@INCDIR@/*.msg
-debian/tmp@IDLDIR@/*.idl
+debian/tmp@MOZ_INCDIR@/vpx
+debian/tmp@MOZ_INCDIR@/*.h
+debian/tmp@MOZ_INCDIR@/*.tbl
+debian/tmp@MOZ_INCDIR@/*.msg
+debian/tmp@MOZ_IDLDIR@/*.idl
 
-debian/tmp@SDKDIR@/sdk/lib/*.a
-debian/tmp@SDKDIR@/*.h
-debian/tmp@SDKDIR@/bin
-debian/tmp@SDKDIR@/idl
-debian/tmp@SDKDIR@/include
-debian/tmp@SDKDIR@/lib
+debian/tmp@MOZ_SDKDIR@/sdk/lib/*.a
+debian/tmp@MOZ_SDKDIR@/*.h
+debian/tmp@MOZ_SDKDIR@/bin
+debian/tmp@MOZ_SDKDIR@/idl
+debian/tmp@MOZ_SDKDIR@/include
+debian/tmp@MOZ_SDKDIR@/lib
 
-%%ifndef USE_SYSTEM_NSPR
-debian/tmp@SDKDIR@/sdk/bin/nspr-config
+%%ifndef MOZ_USE_SYSTEM_NSPR
+debian/tmp@MOZ_SDKDIR@/sdk/bin/nspr-config
 %%endif
-debian/tmp@SDKDIR@/sdk/bin/xpidl
-debian/tmp@SDKDIR@/sdk/bin/xpt.py
+debian/tmp@MOZ_SDKDIR@/sdk/bin/xpidl
+debian/tmp@MOZ_SDKDIR@/sdk/bin/xpt.py
 
 debian/pkgconfig/*.pc /usr/lib/pkgconfig

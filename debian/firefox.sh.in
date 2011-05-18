@@ -13,31 +13,31 @@ set -e
 # License: GPLv2 or later
 
 PROFILE=$HOME/@MOZ_PROFILE_FOLDER@
-LIBDIR=@LIBDIR@
+MOZ_LIBDIR=@MOZ_LIBDIR@
 NAME=`which $0`
 MOZ_APP_LAUNCHER=$NAME
-SERIES=@SERIES@
-DISPLAYNAME="@DISPLAY_NAME@"
-EXE=@APPNAME@-bin
-APPNAME=@APPBASENAME@
+MOZ_SERIES=@MOZ_SERIES@
+MOZ_DISPLAY_NAME="@MOZ_DISPLAY_NAME@"
+EXE=@MOZ_APP_NAME@-bin
+MOZ_APP_BASENAME=@MOZ_APP_BASENAME@
 
 export MOZ_APP_LAUNCHER
 
-while [ ! -x $LIBDIR/$EXE ] ; do
+while [ ! -x $MOZ_LIBDIR/$EXE ] ; do
     if [ -L "$NAME" ] ; then
         NAME=`readlink -f $NAME`
-        LIBDIR=`dirname $NAME`
+        MOZ_LIBDIR=`dirname $NAME`
     else
-       echo "Can't find $LIBDIR/$EXE"
+       echo "Can't find $MOZ_LIBDIR/$EXE"
        exit 1
     fi
 done
 
-LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
+LD_LIBRARY_PATH=${MOZ_LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
 export LD_LIBRARY_PATH
 
 usage () {
-    $LIBDIR/$EXE -h | sed -e 's,/.*/,,'
+    $MOZ_LIBDIR/$EXE -h | sed -e 's,/.*/,,'
     echo
     echo "      -g or --debug          Start within debugger"
     echo "      -d or --debugger       Specify debugger to start with (eg, gdb or valgrind)"
@@ -86,13 +86,13 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
+if [ -x $MOZ_LIBDIR/xulapp-profilemigrator ] ; then
     RUN_MIGRATOR=0
     if [ ! -d $PROFILE ] ; then
         RUN_MIGRATOR=1
     elif [ -f $PROFILE.last-version ] ; then
         last_series=`cat $PROFILE.last-version`
-        if [ $SERIES != $last_series ] ; then
+        if [ $MOZ_SERIES != $last_series ] ; then
             RUN_MIGRATOR=1
         fi
     else
@@ -100,7 +100,7 @@ if [ -x $LIBDIR/xulapp-profilemigrator ] ; then
     fi
 
     if [ "$RUN_MIGRATOR" = "1" ] ; then
-        $LIBDIR/xulapp-profilemigrator -s $SERIES -p $PROFILE -d $DISPLAYNAME -a $APPNAME
+        $MOZ_LIBDIR/xulapp-profilemigrator -s $MOZ_SERIES -p $PROFILE -d $MOZ_DISPLAY_NAME -a $MOZ_APP_BASENAME
     fi
 fi
 
@@ -113,15 +113,15 @@ if [ $moz_debug -eq 1 ] ; then
 
     case `basename $debugger` in
        gdb)
-         exec $debugger $moz_debugger_args --args $LIBDIR/$EXE "$@"
+         exec $debugger $moz_debugger_args --args $MOZ_LIBDIR/$EXE "$@"
          ;;
        valgrind)
-         exec $debugger $moz_debugger_args $LIBDIR/$EXE "$@"
+         exec $debugger $moz_debugger_args $MOZ_LIBDIR/$EXE "$@"
          ;;
        *)
-         exec $debugger $moz_debugger_args $LIBDIR/$EXE "$@"
+         exec $debugger $moz_debugger_args $MOZ_LIBDIR/$EXE "$@"
          ;;
     esac
 else
-    exec $LIBDIR/$EXE "$@"
+    exec $MOZ_LIBDIR/$EXE "$@"
 fi

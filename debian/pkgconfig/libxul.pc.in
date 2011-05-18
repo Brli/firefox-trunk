@@ -1,12 +1,12 @@
-prefix=@FF_PREFIX@
-sdkdir=@SDKDIR@
-includedir=@INCDIR@
-idldir=@IDLDIR@
+prefix=@MOZ_PREFIX@
+sdkdir=@MOZ_SDKDIR@
+includedir=@MOZ_INCDIR@
+idldir=@MOZ_IDLDIR@
 
 Name: libxul
 Description: The Mozilla Runtime and Embedding Engine
-Version: @FF_VERSION@
-%%ifdef USE_SYSTEM_NSPR
+Version: @MOZ_VERSION@
+%%ifdef MOZ_USE_SYSTEM_NSPR
 Requires: nspr
 %%else
 Requires: mozilla-nspr
