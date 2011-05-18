@@ -161,8 +161,12 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - add debian/pkgconfig/mozilla-nspr.pc.in
     - update debian/rules
     - update debian/control.in 
+  * Fix LP: #744580 - Firefox doesn't autoscroll when selecting content
+    downwards
+    - add debian/patches/fix-selection-drag-autoscroll.patch
+    - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 13:36:43 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 13:44:57 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
