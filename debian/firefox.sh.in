@@ -33,7 +33,7 @@ while [ ! -x $MOZ_LIBDIR/$EXE ] ; do
     fi
 done
 
-LD_LIBRARY_PATH=${MOZ_LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
+LD_LIBRARY_PATH=${MOZ_LIBDIR}:${MOZ_LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
 export LD_LIBRARY_PATH
 
 usage () {
