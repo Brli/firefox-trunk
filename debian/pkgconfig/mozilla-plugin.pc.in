@@ -1,9 +1,8 @@
 prefix=@FF_PREFIX@
 sdkdir=@SDKDIR@
 includedir=@INCDIR@
-xulversion=@XUL_VERSION@
 
-Name: Firefox Plug-In API
+Name: Mozilla Plug-In API
 Description: Firefox Plug-In API
-Version: @FF_VERSION@
+Version: @XUL_VERSION@
 Cflags: -I${includedir} -DXP_UNIX

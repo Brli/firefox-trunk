@@ -150,8 +150,19 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Add support for the system provided hyphenation patterns, by linking
     @LIBDIR@/hyphenation to /usr/share/hyphen
     - update debian/firefox.links.in
+  * Ship a mozilla-plugin.pc and libxul.pc rather than our custom
+    firefox-plugin.pc. No other source packages are aware of firefox-plugin
+    and this way avoids patching a whole bunch of apps. We now conflict
+    with the xulrunner SDK though
+    - rename debian/pkgconfig/firefox-plugin.pc.in =>
+       debian/pkgconfig/mozilla-plugin.pc.in
+    - update debian/pkgconfig/mozilla-plugin.pc.in
+    - add debian/pkgconfig/libxul.pc.in
+    - add debian/pkgconfig/mozilla-nspr.pc.in
+    - update debian/rules
+    - update debian/control.in 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 13:28:44 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 13:36:43 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

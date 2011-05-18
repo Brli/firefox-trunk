@@ -112,6 +112,8 @@ Depends: ${shlibs:Depends},
 	${cairo:Depends}
 Breaks: firefox-4.0-dev (<< 4.2~a1~hg20110401r64633)
 Replaces: firefox-4.0-dev
+Conflicts: xulrunner-2.0-dev,
+	xulrunner-1.9.2-dev
 Description: Safe and easy web browser from Mozilla - development files
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,

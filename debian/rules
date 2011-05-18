@@ -326,7 +326,9 @@ subst_files = \
 	debian/$(DEBIAN_NAME)-dev.links \
 	debian/$(DEBIAN_NAME).lintian-overrides \
 	debian/$(DEBIAN_NAME)-globalmenu.dirs \
-	debian/pkgconfig/$(DEBIAN_NAME)-plugin.pc \
+	debian/pkgconfig/mozilla-plugin.pc \
+	debian/pkgconfig/libxul.pc \
+	debian/pkgconfig/mozilla-nspr.pc \
 	debian/mozconfig \
 	$(NULL)
 

@@ -1,0 +1,15 @@
+prefix=@FF_PREFIX@
+sdkdir=@SDKDIR@
+includedir=@INCDIR@
+idldir=@IDLDIR@
+
+Name: libxul
+Description: The Mozilla Runtime and Embedding Engine
+Version: @XUL_VERSION@
+%%ifdef USE_SYSTEM_NSPR
+Requires: nspr
+%%else
+Requires: mozilla-nspr
+%%endif
+Libs: -L${sdkdir}/lib -lxpcomglue_s -lxul -lxpcom -lmozalloc
+Cflags: -I${includedir} -fshort-wchar
