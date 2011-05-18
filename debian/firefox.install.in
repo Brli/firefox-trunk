@@ -2,15 +2,6 @@ debian/tmp@LIBDIR@/icons
 debian/tmp@LIBDIR@/chrome/icons
 debian/tmp@LIBDIR@/components/*.manifest
 debian/tmp@LIBDIR@/components/*.so
-%%ifdef DEB_SYS_LIBXUL
-debian/tmp@LIBDIR@/components/*.js
-debian/tmp@LIBDIR@/components/*.xpt
-debian/tmp@LIBDIR@/chrome/*.jar
-debian/tmp@LIBDIR@/chrome/*.manifest
-debian/tmp@LIBDIR@/defaults
-debian/tmp@LIBDIR@/modules
-debian/tmp@LIBDIR@/@APPNAME@
-%%else
 debian/tmp@LIBDIR@/omni.jar
 debian/tmp@LIBDIR@/*.so
 debian/tmp@LIBDIR@/@APPNAME@-bin
@@ -18,7 +9,6 @@ debian/tmp@LIBDIR@/@APPNAME@-bin
 debian/tmp@LIBDIR@/crashreporter
 %%endif
 debian/tmp@LIBDIR@/plugin-container
-%%endif
 
 debian/@APPNAME@.desktop /usr/share/applications
 

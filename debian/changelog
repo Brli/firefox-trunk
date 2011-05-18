@@ -37,13 +37,6 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Disable the crashreporter for nightlies earlier than Maverick. Also
     disable for the firefox-next PPA for now
     - update debian/rules
-  * Add a separate DEB_SYS_LIBXUL option separate from DEB_MIN_SYSDEPS. This
-    gives the ability to use the internal libxul but with other system libs
-    - update debian/rules
-    - update debian/firefox.install.in
-    - update debian/firefox.lintian-overrides.in
-    - update debian/firefox.sh.in
-    - update debian/mozconfig.in
   * Don't remove the hardlink in the nspr headers for builds done with
     system nspr. Likewise, don't try to create checksums for system nss builds
     - update debian/rules
@@ -178,8 +171,15 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/patches/change-moz-app-name.patch
     - update debian/rules
     - update debian/mozconfig.in
+  * Drop support for building with an external xulrunner
+    - update debian/apport/firefox.in
+    - update debian/firefox.install.in
+    - update debian/firefox.lintian-overrides.in
+    - update debian/firefox.sh.in
+    - update debian/mozconfig.in
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 13:46:48 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 May 2011 21:07:06 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

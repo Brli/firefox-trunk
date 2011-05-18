@@ -1,7 +1,5 @@
-%%ifndef DEB_SYS_LIBXUL
 @APPNAME@ binary: embedded-libjpeg .@LIBDIR@/libxul.so
 @APPNAME@ binary: embedded-zlib .@LIBDIR@/libxul.so
-%%endif
 @APPNAME@ binary: image-file-in-usr-lib usr/lib/@APPNAME@-@FF_VERSION@/icons/document.png
 @APPNAME@ binary: image-file-in-usr-lib usr/lib/@APPNAME@-@FF_VERSION@/icons/mozicon128.png
 @APPNAME@ binary: image-file-in-usr-lib usr/lib/@APPNAME@-@FF_VERSION@/chrome/icons/default/default16.png

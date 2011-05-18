@@ -1,6 +1,2 @@
-%%ifndef DEB_SYS_LIBXUL
 @LIBDIR@/@APPNAME@-bin
 @LIBDIR@/plugin-container
-%%else
-@LIBDIR@/@APPNAME@
-%%endif

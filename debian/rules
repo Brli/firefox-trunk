@@ -20,8 +20,6 @@ MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
 # Various build options
 # 1 = Use bundled libs
 DEB_MIN_SYSDEPS		?= 1
-# 1 - Use system libxul
-DEB_SYS_LIBXUL		?= 0
 # 1 = Enable crashreporter (if supported)
 DEB_ENABLE_BREAKPAD	?= 1
 # 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
@@ -50,10 +48,6 @@ include $(CURDIR)/debian/mozclient/$(DEBIAN_APP_NAME).mk
 MOZ_MOZDIR		:=
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)$(MOZ_MOZDIR)/objdir-$(DEB_BUILD_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)$(MOZ_MOZDIR)/dist
-
-ifeq (1,$(DEB_SYS_LIBXUL))
-	DEB_MIN_SYSDEPS = 0
-endif
 
 ifeq (1,$(DEB_MOZ_VALGRIND))
 	DEB_BUILD_UNOFFICIAL = 1
@@ -130,13 +124,7 @@ ifneq ($(DEBIAN_NAME),$(DEBIAN_APP_NAME))
 	DEB_BUILD_UNOFFICIAL = 1
 endif
 
-ifeq (1, $(DEB_SYS_LIBXUL))
-	DEBIAN_XUL_VER	:= $(shell MALLOC_OPTIONS=O xulrunner-2.0 --gre-version)
-	DEBIAN_XUL_DEV	:= /usr/lib/xulrunner-devel-$(DEBIAN_XUL_VER)
-	DEBIAN_XUL_DIR	:= usr/lib/xulrunner-$(DEBIAN_XUL_VER)
-else
-	DEBIAN_XUL_VER	= $(shell tail -1 $(DEB_BUILDDIR)/config/milestone.txt)
-endif
+DEBIAN_XUL_VER	= $(shell tail -1 $(DEB_BUILDDIR)/config/milestone.txt)
 
 # enable the crash reporter only on i386, amd64 and armel
 ifeq (,$(findstring i386,$(DEB_BUILD_ARCH)))
@@ -147,11 +135,7 @@ endif
 endif
 endif
 
-ifeq (1, $(DEB_SYS_LIBXUL))
-	VENDORPREF_DIST = $(CURDIR)/$(MOZ_DISTDIR)/bin/defaults/preferences/distrib.js
-else
-	VENDORPREF_DIST = $(CURDIR)/$(MOZ_DISTDIR)/bin/defaults/pref/distrib.js
-endif
+VENDORPREF_DIST = $(CURDIR)/$(MOZ_DISTDIR)/bin/defaults/pref/distrib.js
 
 BRANDING	= $(CHANNEL)
 ifneq (,$(filter default beta, $(BRANDING)))
@@ -230,9 +214,6 @@ DEB_DEFINES = 	-DLIBDIR="$(FF_LIBDIR)" -DAPPNAME="$(DEBIAN_NAME)" -DSERIES="$(FF
 		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DPYTHON="$(PYTHON)" -DMOZ_PROFILE_FOLDER=".mozilla/$(DEBIAN_NAME)" -DSYSTEM_DICTDIR="$(SYSTEM_DICTDIR)"
 ifeq (1, $(DEB_MIN_SYSDEPS))
 	DEB_DEFINES += -DDEB_MIN_SYSDEPS
-endif
-ifeq (1, $(DEB_SYS_LIBXUL))
-	DEB_DEFINES += -DDEB_SYS_LIBXUL
 endif
 ifeq (1, $(DEB_ENABLE_BREAKPAD))
 	DEB_DEFINES += -DDEB_ENABLE_BREAKPAD
@@ -339,10 +320,6 @@ ifneq (1, $(DEB_MIN_SYSDEPS))
 EXTRA_BD = \n\tlibnspr4-dev,\n\tlibnss3-dev,\n\tlibcairo2-dev,\n\tlibsqlite3-dev,\n\tlibpixman-1-dev,\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibhunspell-dev,
 else
 EXTRA_BD = $(NULL)
-endif
-
-ifeq (1, $(DEB_SYS_LIBXUL))
-EXTRA_BD += \n\txulrunner-2.0,
 endif
 
 debian/control:: debian/control.in debian/control.langpacks debian/locales.shipped
@@ -472,12 +449,10 @@ binary-install/$(DEBIAN_NAME)-globalmenu::
 	find debian/$(DEBIAN_NAME)-globalmenu$(FF_PREFIX)/lib/$(DEBIAN_NAME)-addons/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
 endif
 
-ifneq (1, $(DEB_SYS_LIBXUL))
 GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 
 binary-post-install/$(DEBIAN_NAME):: compare
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(DEBIAN_NAME)/usr/lib/firefox-*/components/$(file);) true
-endif
 
 ifneq (1, $(USE_SYSTEM_NSPR))
 binary-post-install/$(DEBIAN_NAME)-dev::
@@ -487,14 +462,10 @@ endif
 
 common-binary-predeb-arch::
 	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
-
-ifneq (1, $(DEB_SYS_LIBXUL))
-# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
-# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
-common-binary-predeb-arch::
+	# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
+	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(DEBIAN_NAME)-gnome-support$(FF_LIBDIR)/components/$(file) debian/$(DEBIAN_NAME)$(FF_LIBDIR)/components/;) true
 	touch $@
-endif
 
 ifneq (1, $(USE_SYSTEM_NSS))
 binary-predeb/$(DEBIAN_NAME)::

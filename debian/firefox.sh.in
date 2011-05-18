@@ -18,11 +18,7 @@ NAME=`which $0`
 MOZ_APP_LAUNCHER=$NAME
 SERIES=@SERIES@
 DISPLAYNAME="@DISPLAY_NAME@"
-%%ifndef DEB_SYS_LIBXUL
 EXE=@APPNAME@-bin
-%%else
-EXE=@APPNAME@
-%%endif
 APPNAME=@APPBASENAME@
 
 export MOZ_APP_LAUNCHER
@@ -37,10 +33,8 @@ while [ ! -x $LIBDIR/$EXE ] ; do
     fi
 done
 
-%%ifndef DEB_SYS_LIBXUL
 LD_LIBRARY_PATH=${LIBDIR}:${LIBDIR}/plugins${LD_LIBRARY_PATH:+":$LD_LIBRARY_PATH"}
 export LD_LIBRARY_PATH
-%%endif
 
 usage () {
     $LIBDIR/$EXE -h | sed -e 's,/.*/,,'
