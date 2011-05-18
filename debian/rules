@@ -154,29 +154,28 @@ else
 endif
 
 BRANDING	= $(CHANNEL)
+ifneq (,$(filter default beta, $(BRANDING)))
+	BRANDING = official
+endif
 ifeq (1,$(DEB_BUILD_UNOFFICIAL))
-ifneq (,$(filter official beta aurora, $(BRANDING)))
+ifneq (,$(filter official aurora, $(BRANDING)))
 	BRANDING = unofficial
 endif
 endif
-BRANDING_DIR	= browser/branding/$(BRANDING)
-BRANDING_OPTION = --with-branding=$(BRANDING_DIR)
-ifneq (,$(filter official beta, $(BRANDING)))
+ifeq (official,$(BRANDING))
 	BRANDING_OPTION	= --enable-official-branding
+else
+	BRANDING_OPTION = --with-branding=$(BRANDING_DIR)
 endif
+BRANDING_DIR	= browser/branding/$(BRANDING)
 DISPLAY_NAME	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 		    | grep brandShortName | sed -e 's/brandShortName\=//')
 
-ifneq (,$(findstring ~hg,$(DEBIAN_VERSION)))
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1010" && echo "1"))
-	# Disable crashreporter on nightly builds older than Maverick
+ifeq (nightly,$(BRANDING))
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1104" && echo "1"))
+	# Disable crashreporter on nightly builds older than Natty
 	DEB_ENABLE_BREAKPAD = 0
 endif
-endif
-
-ifneq (,$(findstring ~mfn,$(DEBIAN_VERSION)))
-	# For now, disable crashreporter for the firefox-next PPA
-	DEB_ENABLE_BREAKPAD = 0
 endif
 
 CFLAGS		= -g
@@ -185,10 +184,6 @@ CXXFLAGS	= -g
 LDFLAGS = $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
-# See https://launchpad.net/bugs/663294
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
-    export DEB_BUILD_HARDENING_PIE=0
-endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
 	ENABLE_GLOBALMENU := 1
 endif
@@ -279,8 +274,8 @@ ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "110
 	DEB_DEFINES += -DDISABLE_GNOMEVFS
 	DEB_DEFINES += -DDISABLE_CONTROL_CENTER
 endif
-ifneq (,$(MOZ_UPDATE_CHANNEL))
-	DEB_DEFINES += -DMOZ_UPDATE_CHANNEL="$(MOZ_UPDATE_CHANNEL)"
+ifneq (default,$(CHANNEL))
+	DEB_DEFINES += -DMOZ_UPDATE_CHANNEL="$(CHANNEL)"
 endif
 ifeq (1,$(DEB_DEBUG))
 	DEB_DEFINES += -DDEBUG
@@ -298,7 +293,7 @@ endif
 ifeq (1,$(ENABLE_GLOBALMENU))
 	DEB_DEFINES += -DENABLE_GLOBALMENU
 endif
-ifneq (,$(filter beta official, $(BRANDING)))
+ifeq (official, $(BRANDING))
 	DEB_DEFINES += -DOFFICIAL_BRANDING
 endif
 
