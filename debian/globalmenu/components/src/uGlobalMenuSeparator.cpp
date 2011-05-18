@@ -97,7 +97,9 @@ uGlobalMenuSeparator::uGlobalMenuSeparator():
 
 uGlobalMenuSeparator::~uGlobalMenuSeparator()
 {
-  mListener->UnregisterForContentChanges(mContent);
+  if (mListener) {
+    mListener->UnregisterForContentChanges(mContent);
+  }
 
   if (mDbusMenuItem)
     g_object_unref(mDbusMenuItem);

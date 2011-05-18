@@ -42,9 +42,13 @@
 [ptr] native uGlobalMenuBarPtr(uGlobalMenuBar);
 [ptr] native nsIWidgetPtr(nsIWidget);
 [ptr] native nsIContentPtr(nsIContent);
+[ptr] native uGlobalMenuRequestAutoCancellerPtr(uGlobalMenuRequestAutoCanceller);
 
 %{C++
 class uGlobalMenuBar;
+class uGlobalMenuRequestAutoCanceller;
+class nsIWidget;
+class nsIContent;
 %}
 
 [scriptable, uuid(92e2d4d4-84d6-400b-99ce-bb3b63639b5b)]
@@ -55,7 +59,7 @@ interface uIGlobalMenuService : nsISupports
   [noscript] void  createGlobalMenuBar (in nsIWidgetPtr parent, in nsIContentPtr menuBarNode);
 
   /* Register a menu bar with the menu bar service */
-  [noscript, notxpcom] void  registerGlobalMenuBar (in uGlobalMenuBarPtr menuBar);
+  [noscript, notxpcom] void  registerGlobalMenuBar (in uGlobalMenuBarPtr menuBar, in uGlobalMenuRequestAutoCancellerPtr canceller);
 
   /* Convenience functions to register to receive notification of the menu 
    * service online status changing */

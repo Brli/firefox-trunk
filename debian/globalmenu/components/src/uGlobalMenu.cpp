@@ -68,7 +68,7 @@
 
 #include "uGlobalMenu.h"
 #include "uGlobalMenuBar.h"
-#include "uGlobalMenuFactory.h"
+#include "uGlobalMenuUtils.h"
 #include "uWidgetAtoms.h"
 
 /*static*/ PRBool
@@ -181,6 +181,12 @@ uGlobalMenu::CanOpen()
 void
 uGlobalMenu::AboutToOpen()
 {
+  // If there is no popup content, then there is nothing to do, and it's
+  // unsafe to proceed anyway
+  if (!mPopupContent) {
+    return;
+  }
+
   PRUint32 count = mMenuObjects.Length();
   for (PRUint32 i = 0; i < count; i++) {
     mMenuObjects[i]->UpdateVisibility();
@@ -237,13 +243,19 @@ uGlobalMenu::AboutToOpen()
   if (os) {
     nsAutoString popupID;
     mPopupContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, popupID);
-    os->NotifyObservers(nsnull, "menuservice-popup-open", popupID.get());
+    os->NotifyObservers(nsnull, "native-menu-service:popup-open", popupID.get());
   }
 }
 
 void
 uGlobalMenu::OnOpen()
 {
+  // If there is no popup content, then there is nothing to do, and it's
+  // unsafe to proceed anyway
+  if (!mPopupContent) {
+    return;
+  }
+
   mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open, NS_LITERAL_STRING("true"), PR_TRUE);
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
@@ -289,6 +301,12 @@ uGlobalMenu::OnOpen()
 void
 uGlobalMenu::OnClose()
 {
+  // If there is no popup content, then there is nothing to do, and it's
+  // unsafe to proceed anyway
+  if (!mPopupContent) {
+    return;
+  }
+
   mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, PR_TRUE);
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
@@ -572,12 +590,14 @@ uGlobalMenu::uGlobalMenu():
 
 uGlobalMenu::~uGlobalMenu()
 {
-  mListener->UnregisterForContentChanges(mContent);
-  if (mContent != mPopupContent) {
-    mListener->UnregisterForContentChanges(mPopupContent);
-  }
-  if (mCommandContent) {
-    mListener->UnregisterForContentChanges(mCommandContent);
+  if (mListener) {
+    mListener->UnregisterForContentChanges(mContent);
+    if (mContent != mPopupContent) {
+      mListener->UnregisterForContentChanges(mPopupContent);
+    }
+    if (mCommandContent) {
+      mListener->UnregisterForContentChanges(mCommandContent);
+    }
   }
 
   DestroyIconLoader();

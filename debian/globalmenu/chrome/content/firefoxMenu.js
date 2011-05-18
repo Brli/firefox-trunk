@@ -73,26 +73,22 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
   function $(id) document.getElementById(id);
 
-  function Observer() {
+  function uGlobalMenuObserver() {
     this.init();
   }
-  Observer.prototype = {
+
+  uGlobalMenuObserver.prototype = {
     init: function() {
-      this._os = "Services" in window
-        ? Services.obs
-         : Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-      this._os.addObserver(this, "menuservice-popup-open", false);
-
-      this._menuService = Cc["@canonical.com/globalmenu-service;1"].getService(Ci.uIGlobalMenuService);
+      this._menuService = Cc["@canonical.com/globalmenu-service;1"].
+        getService(Ci.uIGlobalMenuService);
       this._menuService.registerNotification(this);
-
       if (this._menuService.online) {
         this.fixupUI(true);
       }
     },
 
     observe: function(subject, topic, data) {
-      if (topic == "menuservice-popup-open") {
+      if (topic == "native-menu-service:popup-open") {
         if (data == "menu_EditPopup") {
           // This is really hacky, but the edit menu items only set the correct
           // sensitivity when the menupopup state == showing or open, which is
@@ -106,34 +102,33 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
           goUpdateGlobalEditMenuItems();
           gEditUIVisible = saved_gEditUIVisible;
         }
-      } else if (topic == "menuservice-online") {
+      } else if (topic == "native-menu-service:online") {
         this.fixupUI(true);
-      } else if (topic == "menuservice-offline") {
+      } else if (topic == "native-menu-service:offline") {
         this.fixupUI(false);
       }
     },
 
     fixupUI: function(online) {
       if (online == true) {
-        this.autohideSaved = document.getElementById("toolbar-menubar").getAttribute("autohide");
-        document.getElementById("toolbar-menubar").setAttribute("autohide", "false");
-        document.getElementById("toolbar-menubar").removeAttribute("toolbarname");
+        this.autohideSaved = $("toolbar-menubar").getAttribute("autohide");
+        $("toolbar-menubar").setAttribute("autohide", "false");
+        $("toolbar-menubar").removeAttribute("toolbarname");
       } else {
-        document.getElementById("toolbar-menubar").setAttribute("autohide", this.autohideSaved);
-        document.getElementById("toolbar-menubar").setAttribute("toolbarname", "&menubarCmd.label;");
+        $("toolbar-menubar").setAttribute("autohide", this.autohideSaved);
+        $("toolbar-menubar").setAttribute("toolbarname", "&menubarCmd.label;");
       }
 
       updateAppButtonDisplay();
     },
 
     shutdown: function() {
-      this._os.removeObserver(this, "menuservice-popup-open", false);
       this._menuService.unregisterNotification(this);
     }
   }
 
 
-  var observer = null;
+  var menuObserver = null;
 
   addEventListener("load", function onLoad()
   {
@@ -141,18 +136,19 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
     // XXX: This is just to start the menu loader, I can't figure out a way
     //      to start it without this (eg, on component registration)
-    var loader = Cc["@canonical.com/globalmenu-loader;1"].getService(Ci.uIGlobalMenuLoader);
-    if (!observer) {
-      observer = new Observer();
+    var loader = Cc["@canonical.com/globalmenu-loader;1"].
+      getService(Ci.uIGlobalMenuLoader);
+    if (!menuObserver) {
+      menuObserver = new uGlobalMenuObserver();
     }
   }, false);
 
   addEventListener("unload", function onUnload()
   {
     removeEventListener("unload", onUnload, false);
-    if (observer) {
-      observer.shutdown();
-      observer = null;
+    if (menuObserver) {
+      menuObserver.shutdown();
+      menuObserver = null;
     }
   }, false);
 

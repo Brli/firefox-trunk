@@ -36,17 +36,42 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef _U_GLOBALMENUFACTORY_H
-#define _U_GLOBALMENUFACTORY_H
+#include <nsIContent.h>
+#include <nsIAtom.h>
 
-class uGlobalMenuObject;
-class uGlobalMenuDocListener;
-class nsIContent;
-class uGlobalMenuBar;
-class nsIAtom;
+#include "uGlobalMenuObject.h"
+#include "uGlobalMenu.h"
+#include "uGlobalMenuItem.h"
+#include "uGlobalMenuSeparator.h"
+#include "uGlobalMenuDummy.h"
+#include "uGlobalMenuDocListener.h"
+#include "uGlobalMenuBar.h"
+#include "uWidgetAtoms.h"
 
-uGlobalMenuObject* NewGlobalMenuItem(uGlobalMenuObject *aParent,
-                                     uGlobalMenuDocListener *aListener,
-                                     nsIContent *aContent,
-                                     uGlobalMenuBar *aMenuBar);
+uGlobalMenuObject*
+NewGlobalMenuItem(uGlobalMenuObject *aParent,
+                  uGlobalMenuDocListener *aListener,
+                  nsIContent *aContent,
+                  uGlobalMenuBar *aMenuBar)
+{
+#if MOZILLA_BRANCH_MAJOR_VERSION < 2
+  if (aContent->GetNameSpaceID() != kNameSpaceID_XUL) {
+#else
+  if (!aContent->IsXUL()) {
 #endif
+    return uGlobalMenuDummy::Create(aParent, aListener, aContent);
+  }
+
+  if (aContent->Tag() == uWidgetAtoms::menu) {
+    return uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
+  } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
+    return uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
+  } else if (aContent->Tag() == uWidgetAtoms::menuseparator) {
+    return uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
+  } else {
+    // We didn't recognize the tag.  We'll insert an invisible
+    // dummy node so that the indices between the hidden XUL menu
+    // and the GlobalMenu stay in sync.
+    return uGlobalMenuDummy::Create(aParent, aListener, aContent);
+  }
+}

@@ -59,16 +59,10 @@ class RegisterWindowCbData
 {
 public:
   RegisterWindowCbData(uGlobalMenuBar *aMenu,
-                       uGlobalMenuService *aService,
                        uGlobalMenuRequestAutoCanceller *aCanceller):
-                       mMenu(aMenu), mService(aService),
+                       mMenu(aMenu),
                        mCanceller(aCanceller)
   {
-    mDbusProxy = mService->GetDbusProxy();
-    if (mDbusProxy) {
-      g_object_ref(mDbusProxy);
-    }
-
     mCancellable = mCanceller->GetCancellable();
     if (mCancellable) {
       g_object_ref(mCancellable);
@@ -86,20 +80,13 @@ public:
     // that might not exist anymore
 
     cbdata->mMenu = nsnull;
-    cbdata->mService = nsnull;
     cbdata->mCanceller = nsnull;
   }
 
-  GDBusProxy* GetDbusProxy() { return mDbusProxy; }
   uGlobalMenuBar* GetMenuBar() { return mMenu; }
-  uGlobalMenuService *GetService() { return mService; }
-  uGlobalMenuRequestAutoCanceller *GetCanceller() { return mCanceller; }
+
   ~RegisterWindowCbData()
   {
-    if (mDbusProxy) {
-      g_object_unref(mDbusProxy);
-    }
-
     if (mCancellable) {
       g_cancellable_disconnect(mCancellable, mID);
       g_object_unref(mCancellable);
@@ -108,8 +95,6 @@ public:
 
 private:
   uGlobalMenuBar *mMenu;
-  uGlobalMenuService *mService;
-  GDBusProxy *mDbusProxy;
   GCancellable *mCancellable;
   uGlobalMenuRequestAutoCanceller *mCanceller;
   PRUint32 mID;
@@ -177,10 +162,8 @@ uGlobalMenuService::RegisterWindowCallback(GObject *object,
   RegisterWindowCbData *data =
     static_cast<RegisterWindowCbData *>(userdata);
 
-  uGlobalMenuService *service = data->GetService();
   uGlobalMenuBar *menu = data->GetMenuBar();
-  GDBusProxy *proxy = data->GetDbusProxy();
-  uGlobalMenuRequestAutoCanceller *canceller = data->GetCanceller();
+  GDBusProxy *proxy = G_DBUS_PROXY(object);
 
   GError *error = NULL;
   // RegisterWindowCbData owns a reference to the proxy
@@ -201,23 +184,11 @@ uGlobalMenuService::RegisterWindowCallback(GObject *object,
     // This check is probably bogus. menu should only be invalid if
     // the request was cancelled, in which case, we should have
     // returned already
-    menu->SetXULMenuBarHidden(error ? PR_FALSE : PR_TRUE);
+    menu->SetMenuBarRegistered(error ? PR_FALSE : PR_TRUE);
   }
 
   if (error) {
     g_error_free(error);
-  }
-
-  if (service && canceller) {
-    // This check might be bogus too, see above
-    PRUint32 length = service->mPendingMenus.Length();
-    for (PRUint32 i = 0; i < length; i++) {
-      if (canceller == service->mPendingMenus[i]) {
-        service->mPendingMenus[i]->Destroy();
-        service->mPendingMenus.RemoveElementAt(i);
-        break;
-      }
-    }
   }
 
   delete data;
@@ -226,12 +197,7 @@ uGlobalMenuService::RegisterWindowCallback(GObject *object,
 void
 uGlobalMenuService::DestroyMenus()
 {
-  PRUint32 count = mPendingMenus.Length();
-  for (PRUint32 i = 0; i < count; i++) {
-    mPendingMenus.RemoveElementAt(0);
-  }
-
-  count = mMenus.Length();
+  PRUint32 count = mMenus.Length();
   for (PRUint32 j = 0; j < count; j++) {
     mMenus.RemoveElementAt(0);
   }
@@ -256,7 +222,7 @@ uGlobalMenuService::SetOnline(PRBool aOnline)
     nsCOMPtr<nsIObserverService> os =
       do_GetService("@mozilla.org/observer-service;1");
     if (os) {
-      os->NotifyObservers(nsnull, mOnline ? "menuservice-online" : "menuservice-offline", 0);
+      os->NotifyObservers(nsnull, mOnline ? "native-menu-service:online" : "native-menu-service:offline", 0);
     }
 
     if (!mOnline) {
@@ -346,7 +312,8 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
 
 /* [noscript, notxpcom] void registerGlobalMenuBar (in uGlobalMenuBarPtr menuBar); */
 NS_IMETHODIMP_(void)
-uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar)
+uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
+                                          uGlobalMenuRequestAutoCanceller *aCanceller)
 {
   if (mOnline != PR_TRUE)
     return;
@@ -354,34 +321,28 @@ uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar)
   if (!aMenuBar)
     return;
 
+  if (!aCanceller) {
+    return;
+  }
+
   PRUint32 xid = aMenuBar->GetWindowID();
   nsCAutoString path(aMenuBar->GetMenuPath());
   if (xid == 0 || path.IsEmpty())
     return;
 
-  uGlobalMenuRequestAutoCanceller *canceller =
-    uGlobalMenuRequestAutoCanceller::Create();
-  if (!canceller) {
-    return;
-  }
-
   RegisterWindowCbData *data =
     new RegisterWindowCbData(aMenuBar,
-                             this,
-                             canceller);
+                             aCanceller);
   if (!data) {
-    delete canceller;
     return;
   }
-
-  mPendingMenus.AppendElement(canceller);
 
   g_dbus_proxy_call(mDbusProxy,
                     "RegisterWindow",
                     g_variant_new("(uo)", xid, path.get()),
                     G_DBUS_CALL_FLAGS_NONE,
                     -1,
-                    canceller->GetCancellable(),
+                    aCanceller->GetCancellable(),
                     RegisterWindowCallback,
                     data);
 }
@@ -397,10 +358,13 @@ uGlobalMenuService::RegisterNotification(nsIObserver *aObserver)
   NS_ENSURE_TRUE(os, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
-  rv = os->AddObserver(aObserver, "menuservice-online", PR_FALSE);
+  rv = os->AddObserver(aObserver, "native-menu-service:online", PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = os->AddObserver(aObserver, "menuservice-offline", PR_FALSE);
+  rv = os->AddObserver(aObserver, "native-menu-service:offline", PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = os->AddObserver(aObserver, "native-menu-service:popup-open", PR_FALSE);
   return rv;
 }
 
@@ -415,10 +379,13 @@ uGlobalMenuService::UnregisterNotification(nsIObserver *aObserver)
   NS_ENSURE_TRUE(os, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
-  rv = os->RemoveObserver(aObserver, "menuservice-online");
+  rv = os->RemoveObserver(aObserver, "native-menu-service:online");
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = os->RemoveObserver(aObserver, "menuservice-offline");
+  rv = os->RemoveObserver(aObserver, "native-menu-service:offline");
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = os->RemoveObserver(aObserver, "native-menu-service:popup-open");
   return rv;
 }
 

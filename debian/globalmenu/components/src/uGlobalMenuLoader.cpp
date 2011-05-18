@@ -214,7 +214,7 @@ uGlobalMenuLoader::Observe(nsISupports *aSubject,
                            const char *aTopic,
                            const PRUnichar *aData)
 {
-  if (strcmp(aTopic, "menuservice-online") == 0) {
+  if (strcmp(aTopic, "native-menu-service:online") == 0) {
     RegisterAllMenus();
   }
 

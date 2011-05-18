@@ -732,12 +732,14 @@ uGlobalMenuItem::uGlobalMenuItem():
 
 uGlobalMenuItem::~uGlobalMenuItem()
 {
-  mListener->UnregisterForContentChanges(mContent);
-  if (mCommandContent) {
-    mListener->UnregisterForContentChanges(mCommandContent);
-  }
-  if (mKeyContent) {
-    mListener->UnregisterForContentChanges(mKeyContent);
+  if (mListener) {
+    mListener->UnregisterForContentChanges(mContent);
+    if (mCommandContent) {
+      mListener->UnregisterForContentChanges(mCommandContent);
+    }
+    if (mKeyContent) {
+      mListener->UnregisterForContentChanges(mKeyContent);
+    }
   }
 
   DestroyIconLoader();

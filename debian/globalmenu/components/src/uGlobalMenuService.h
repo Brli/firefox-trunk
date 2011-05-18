@@ -49,6 +49,7 @@
 
 #include "uGlobalMenuBar.h"
 #include "uIGlobalMenuService.h"
+#include "uGlobalMenuUtils.h"
 
 #define U_GLOBALMENUSERVICE_CID \
 { 0xa9e41684, 0xbf71, 0x46e3, { 0x93, 0xbf, 0x3c, 0xda, 0x1e, 0xc6, 0x16, 0x49 } }
@@ -57,60 +58,9 @@
 
 class nsIWidget;
 
-class uGlobalMenuRequestAutoCanceller
-{
-public:
-  static uGlobalMenuRequestAutoCanceller* Create()
-  {
-    uGlobalMenuRequestAutoCanceller *canceller =
-      new uGlobalMenuRequestAutoCanceller();
-    if (!canceller) {
-      return nsnull;
-    }
-
-    if (!canceller->Init()) {
-      delete canceller;
-      canceller = nsnull;
-    }
-
-    return canceller;
-  }
-
-  GCancellable* GetCancellable()
-  {
-    return mCancellable;
-  }
-
-  void Destroy()
-  {
-    if (mCancellable) {
-      g_object_unref(mCancellable);
-      mCancellable = nsnull;
-    }
-  }
-
-  ~uGlobalMenuRequestAutoCanceller()
-  {
-    if (mCancellable) {
-      g_cancellable_cancel(mCancellable);
-      g_object_unref(mCancellable);
-    }
-  }
-private:
-  uGlobalMenuRequestAutoCanceller() { };
-  PRBool Init()
-  {
-    mCancellable = g_cancellable_new();
-    return mCancellable ? PR_TRUE : PR_FALSE;
-  }
-
-  GCancellable *mCancellable;
-};
-
 class uGlobalMenuService: public uIGlobalMenuService,
                           public nsIWindowMediatorListener
 {
-  friend class RegisterWindowCbData;
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_UIGLOBALMENUSERVICE
@@ -146,7 +96,6 @@ private:
   nsAutoPtr<uGlobalMenuRequestAutoCanceller> mCancellable;
   PRUint32 mNOCHandlerID;
   nsTArray< nsAutoPtr<uGlobalMenuBar> > mMenus;
-  nsTArray< nsAutoPtr<uGlobalMenuRequestAutoCanceller> > mPendingMenus;
 };
 
 #endif

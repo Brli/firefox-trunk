@@ -36,42 +36,69 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#include <nsIContent.h>
-#include <nsIAtom.h>
+#ifndef _U_GLOBALMENUFACTORY_H
+#define _U_GLOBALMENUFACTORY_H
 
-#include "uGlobalMenuObject.h"
-#include "uGlobalMenu.h"
-#include "uGlobalMenuItem.h"
-#include "uGlobalMenuSeparator.h"
-#include "uGlobalMenuDummy.h"
-#include "uGlobalMenuDocListener.h"
-#include "uGlobalMenuBar.h"
-#include "uWidgetAtoms.h"
+#include <gio/gio.h>
 
-uGlobalMenuObject*
-NewGlobalMenuItem(uGlobalMenuObject *aParent,
-                  uGlobalMenuDocListener *aListener,
-                  nsIContent *aContent,
-                  uGlobalMenuBar *aMenuBar)
+class uGlobalMenuObject;
+class uGlobalMenuDocListener;
+class nsIContent;
+class uGlobalMenuBar;
+class nsIAtom;
+
+class uGlobalMenuRequestAutoCanceller
 {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-  if (aContent->GetNameSpaceID() != kNameSpaceID_XUL) {
-#else
-  if (!aContent->IsXUL()) {
-#endif
-    return nsnull;
+public:
+  static uGlobalMenuRequestAutoCanceller* Create()
+  {
+    uGlobalMenuRequestAutoCanceller *canceller =
+      new uGlobalMenuRequestAutoCanceller();
+    if (!canceller) {
+      return nsnull;
+    }
+
+    if (!canceller->Init()) {
+      delete canceller;
+      canceller = nsnull;
+    }
+
+    return canceller;
   }
 
-  if (aContent->Tag() == uWidgetAtoms::menu) {
-    return uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
-  } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
-    return uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
-  } else if (aContent->Tag() == uWidgetAtoms::menuseparator) {
-    return uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
-  } else {
-    // We didn't recognize the tag.  We'll insert an invisible
-    // dummy node so that the indices between the hidden XUL menu
-    // and the GlobalMenu stay in sync.
-    return uGlobalMenuDummy::Create(aParent, aListener, aContent);
+  GCancellable* GetCancellable()
+  {
+    return mCancellable;
   }
-}
+
+  void Destroy()
+  {
+    if (mCancellable) {
+      g_object_unref(mCancellable);
+      mCancellable = nsnull;
+    }
+  }
+
+  ~uGlobalMenuRequestAutoCanceller()
+  {
+    if (mCancellable) {
+      g_cancellable_cancel(mCancellable);
+      g_object_unref(mCancellable);
+    }
+  }
+private:
+  uGlobalMenuRequestAutoCanceller() { };
+  PRBool Init()
+  {
+    mCancellable = g_cancellable_new();
+    return mCancellable ? PR_TRUE : PR_FALSE;
+  }
+
+  GCancellable *mCancellable;
+};
+
+uGlobalMenuObject* NewGlobalMenuItem(uGlobalMenuObject *aParent,
+                                     uGlobalMenuDocListener *aListener,
+                                     nsIContent *aContent,
+                                     uGlobalMenuBar *aMenuBar);
+#endif

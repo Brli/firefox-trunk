@@ -53,6 +53,7 @@
 
 #include "uMenuChangeObserver.h"
 #include "uGlobalMenuObject.h"
+#include "uGlobalMenuUtils.h"
 
 class nsIObserver;
 class nsIWidget;
@@ -108,7 +109,7 @@ public:
   PRBool OpenedByKeyboard() { return mOpenedByKeyboard; }
 
   // Called from the menu service. Used to hide the DOM element for the menubar
-  void SetXULMenuBarHidden(PRBool hidden);
+  void SetMenuBarRegistered(PRBool aRegistered);
 
 protected:
   void Focus();
@@ -133,6 +134,7 @@ private:
   void AppendMenuObject(uGlobalMenuObject *menu);
   PRBool ShouldParentStayVisible(nsIContent *aContent);
   PRBool IsParentOfMenuBar(nsIContent *aContent);
+  void SetXULMenuBarHidden(PRBool hidden);
 
   DbusmenuServer *mServer;
   GtkWidget *mTopLevel;
@@ -147,6 +149,7 @@ private:
   PRInt32 mAccessKey;
   PRUint32 mAccessKeyMask;
   PRBool mOpenedByKeyboard;
+  nsAutoPtr<uGlobalMenuRequestAutoCanceller> mCancellable;
 
   // Should probably have a container class and subclass that
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;

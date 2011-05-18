@@ -42,64 +42,151 @@
 
   function $(id) document.getElementById(id);
 
-  function Observer() {
+  function uGlobalMenuObserver() {
     this.init();
   }
-  Observer.prototype = {
+
+  uGlobalMenuObserver.prototype = {
     init: function() {
-      this.spinnerMoved = false;
-      var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(Ci.uIGlobalMenuService);
-      menuService.registerNotification(this);
-      if (menuService.online == true) {
-        this.maybeMoveSpinner();
+      this.savedThrobberPos = -1;
+      this.menuService = Cc["@canonical.com/globalmenu-service;1"].
+        getService(Ci.uIGlobalMenuService);
+      this.menuService.registerNotification(this);
+      if (this.menuService.online) {
+        this.fixupUI();
       }
     },
 
     observe: function(subject, topic, data) {
-      if(topic == "menuservice-online") {
-        this.maybeMoveSpinner();
+      if((topic == "native-menu-service:online") ||
+         (topic == "native-menu-service:offline")) {
+        this.fixupUI();
       }
     },
 
-    maybeMoveSpinner: function() {
-      if (this.spinnerMoved == true) {
-        return;
-      }
-
+    fixupUI: function() {
       var menuBar = $("mail-toolbar-menubar2");
-      if (!menuBar) {
-        return;
-      }
-
       var mailBar = $("mail-bar3");
-      if (!mailBar || mailBar.hidden == true) {
+      if (!mailBar || !menuBar) {
         return;
       }
 
-      var curSet = menuBar.currentSet;
-      var throbberPos = curSet.indexOf("throbber-box");
-      if (throbberPos == -1) {
-        return;
-      }
+      if (this.menuService.online) {
 
-      if (throbberPos == 0) {
-        var newSet = curSet.replace(/throbber-box,/,"");
+        if (mailBar.hidden) {
+          return;
+        }
+
+        let curSet = menuBar.currentSet.split(",");
+        this.savedThrobberPos = curSet.indexOf("throbber-box");
+        if (this.savedThrobberPos == -1) {
+          return;
+        }
+        this.savedThrobberPosLHS = null;
+        this.savedThrobberPosRHS = null;
+        if (this.savedThrobberPos > 0) {
+          this.savedThrobberPosLHS = curSet[this.savedThrobberPos - 1];
+        }
+        if (this.savedThrobberPos < (curSet.length - 1)) {
+          this.savedThrobberPosRHS = curSet[this.savedThrobberPos + 1];
+        }
+
+        curSet.splice(this.savedThrobberPos, 1);
+        menuBar.currentSet = curSet.join(",");
+        mailBar.currentSet += ",throbber-box";
+
+        this.spinnerMoved = true;
+
       } else {
-        var newSet = curSet.replace(/,throbber-box/,"");
+
+        if (this.savedThrobberPos == -1) {
+          return;
+        }
+
+        let curSet = mailBar.currentSet.split(",");
+        let throbberPos = curSet.indexOf("throbber-box");
+        if (throbberPos == -1) {
+          return;
+        }
+
+        curSet.splice(throbberPos, 1);
+        mailBar.currentSet = curSet.join(",");
+
+        // We try to restore the original position of the spinner now
+        curSet = menuBar.currentSet.split(",");
+        let newPos = 0;
+        // Get the indices of our former siblings
+        let lhsIndex = curSet.indexOf(this.savedThrobberPosLHS);
+        let rhsIndex = curSet.indexOf(this.savedThrobberPosRHS);
+        if (!this.savedThrobberPosLHS) {
+          // We were positioned on the LHS before, so stick the spinner
+          // at the beginning
+          newPos = 0;
+        } else if (!this.savedThrobberPosRHS) {
+          // We were positioned on the RHS before, so stick the spinner
+          // at the end
+          newPos = curSet.length;
+        } else {
+          // We were positioned somewhere in the middle if we get here
+          if (lhsIndex == -1 && rhsIndex == -1) {
+            // Neither of our former siblings exist any more, so insert
+            // the spinner at its former index
+            newPos = this.savedThrobberPos;
+          } else if (lhsIndex == -1) {
+            // We only have the former sibling from the RHS, so stick the
+            // spinner to the left of it
+            newPos = rhsIndex;
+          } else if (rhsIndex == -1) {
+            // We only have the former sibling from the LHS, so stick the
+            // spinner to the right of it
+            newPos = lhsIndex + 1;
+          } else {
+            // We have both former siblings
+            if ((rhsIndex - lhsIndex) == 1) {
+              // ...and they are adjacent to each other. Split them with
+              // the spinner
+              newPos = lhsIndex + 1;
+            } else {
+              // ...but they aren't adjacent to each other. Work out the
+              // closest one to our previous index and stick the spinner next
+              // to that
+              let lhsDist = Math.abs(this.savedThrobberPos - lhsIndex);
+              let rhsDist = Math.abs(this.savedThrobberPos - rhsIndex);
+              if (lhsDist < rhsDist) {
+                newPos = lhsIndex + 1;
+              } else {
+                newPos = rhsIndex;
+              }
+            }
+          }
+        }
+
+        // Make sure we stick the spinner within the bounds of the menubar
+        if (newPos < 0) {
+          newPos = 0;
+        } else if (newPos > curSet.length) {
+          newPos = curSet.length;
+        }
+
+        // If 1 of our former siblings was a spring and it has gone now, then
+        // bring it back
+        if ((lhsIndex == -1) && (this.savedThrobberPosLHS == "spring")) {
+          curSet.splice(newPos, 0, "spring");
+          newPos += 1;
+        } else if ((rhsIndex == -1) && (this.savedThrobberPosRHS == "spring")) {
+          curSet.splice(newPos, 0, "spring");
+        }
+        // Do it!
+        curSet.splice(newPos, 0, "throbber-box");
+        menuBar.currentSet = curSet.join(",");
+
+        this.savedThrobberPos = -1;
+        
       }
-
-      menuBar.currentSet = newSet;
-
-      curSet = mailBar.currentSet;
-      newSet = curSet + ",throbber-box";
-      mailBar.currentSet = newSet;
-
-      this.spinnerMoved = true;
     },
 
     shutdown: function() {
-      var menuService = Cc["@canonical.com/globalmenu-service;1"].getService(Ci.uIGlobalMenuService);
-      menuService.unregisterNotification(this);
+      this.menuService.unregisterNotification(this);
     }
   }
 
@@ -113,13 +200,14 @@
 
     // XXX: This is just to start the menu loader, I can't figure out a way
     //      to start it without this (eg, on component registration)
-    var loader = Cc["@canonical.com/globalmenu-loader;1"].getService(Ci.uIGlobalMenuLoader);
+    var loader = Cc["@canonical.com/globalmenu-loader;1"].
+      getService(Ci.uIGlobalMenuLoader);
     if (menuObserver == null) {
-      menuObserver = new Observer();
+      menuObserver = new uGlobalMenuObserver();
     }
   }, false);
 
-  addEventListener("load", function onUnload() {
+  addEventListener("unload", function onUnload() {
     removeEventListener("unload", onUnload, false);
     if (menuObserver) {
       menuObserver.shutdown();

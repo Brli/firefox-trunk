@@ -202,7 +202,7 @@ uGlobalMenuIconLoader::Run()
         domViewCSS = do_QueryInterface(domWin);
         if (domViewCSS) {
           nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
-          if (!domElement) {
+          if (domElement) {
             domViewCSS->GetComputedStyle(domElement, EmptyString(),
                                          getter_AddRefs(cssStyleDecl));
           }

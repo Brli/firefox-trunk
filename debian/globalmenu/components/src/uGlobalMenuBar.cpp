@@ -58,7 +58,7 @@
 
 #include "uGlobalMenuBar.h"
 #include "uGlobalMenu.h"
-#include "uGlobalMenuFactory.h"
+#include "uGlobalMenuUtils.h"
 #include "uIGlobalMenuService.h"
 #include "uWidgetAtoms.h"
 
@@ -217,6 +217,9 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   rv = Build();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mEventListener = new uGlobalMenuBarListener(this);
+  NS_ENSURE_TRUE(mEventListener, NS_ERROR_OUT_OF_MEMORY);
+
   // Find the top-level DOM window from our nsIWidget, so we
   // can register the menubar as a focus event listener, in order
   // for it to cancel menus when it the window gets focus
@@ -232,9 +235,6 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 
   nsCOMPtr<nsIDOMWindow> domWindow = do_GetInterface(docShell);
   mDOMWinTarget = do_QueryInterface(domWindow);
-
-  mEventListener = new uGlobalMenuBarListener(this);
-  NS_ENSURE_TRUE(mEventListener, NS_ERROR_OUT_OF_MEMORY);
 
   mDOMWinTarget->AddEventListener(NS_LITERAL_STRING("focus"),
                                   (nsIDOMFocusListener *)mEventListener,
@@ -277,7 +277,9 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     do_GetService("@canonical.com/globalmenu-service;1");
   NS_ENSURE_TRUE(service, NS_ERROR_FAILURE);
 
-  service->RegisterGlobalMenuBar(this);
+  mCancellable = uGlobalMenuRequestAutoCanceller::Create();
+  service->RegisterGlobalMenuBar(this, mCancellable);
+
   return NS_OK;
 }
 
@@ -366,6 +368,44 @@ uGlobalMenuBar::IsParentOfMenuBar(nsIContent *aContent)
   return PR_FALSE;
 }
 
+void
+uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
+{
+  mXULMenuHidden = hidden;
+
+  if (hidden) {
+    if (mHiddenElement) {
+      mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
+                              mRestoreHidden ? NS_LITERAL_STRING("true") :
+                              NS_LITERAL_STRING("false"), PR_TRUE);
+    }
+    nsIContent *tmp = mContent;
+
+    // Walk up the DOM tree until we find a node with siblings
+    while (tmp) {
+      if (ShouldParentStayVisible(tmp)) {
+        break;
+      }
+
+      tmp = tmp->GetParent();
+    }
+
+    mHiddenElement = tmp;
+    mRestoreHidden = mHiddenElement->AttrValueIs(kNameSpaceID_None,
+                                                 uWidgetAtoms::hidden,
+                                                 uWidgetAtoms::_true,
+                                                 eCaseMatters);
+
+    mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
+                            NS_LITERAL_STRING("true"), PR_TRUE);
+  } else if (mHiddenElement) {
+    mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
+                            mRestoreHidden ? NS_LITERAL_STRING("true") :
+                            NS_LITERAL_STRING("false"), PR_TRUE);
+    mHiddenElement = nsnull;
+  }
+}
+
 uGlobalMenuBar::uGlobalMenuBar():
   uGlobalMenuObject(MenuBar), mServer(nsnull), mTopLevel(nsnull),
   mOpenedByKeyboard(PR_FALSE)
@@ -375,29 +415,34 @@ uGlobalMenuBar::uGlobalMenuBar():
 
 uGlobalMenuBar::~uGlobalMenuBar()
 {
-  mListener->UnregisterForAllChanges(this);
-  mListener->UnregisterForContentChanges(mContent);
-
   SetXULMenuBarHidden(PR_FALSE);
 
-  mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
-                                     (nsIDOMFocusListener *)mEventListener,
-                                     PR_TRUE);
-  mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
-                                     (nsIDOMFocusListener *)mEventListener,
-                                     PR_FALSE);
+  if (mDOMWinTarget) {
+    mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
+                                       (nsIDOMFocusListener *)mEventListener,
+                                       PR_TRUE);
+    mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
+                                       (nsIDOMFocusListener *)mEventListener,
+                                       PR_FALSE);
+  }
 
-  mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
-                                  (nsIDOMKeyListener *)mEventListener,
-                                  PR_FALSE);
-  mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
-                                  (nsIDOMKeyListener *)mEventListener,
-                                  PR_FALSE);
-  mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
-                                  (nsIDOMKeyListener *)mEventListener,
-                                  PR_FALSE);
+  if (mDocTarget) {
+    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
+                                    (nsIDOMKeyListener *)mEventListener,
+                                    PR_FALSE);
+    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
+                                    (nsIDOMKeyListener *)mEventListener,
+                                    PR_FALSE);
+    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
+                                    (nsIDOMKeyListener *)mEventListener,
+                                    PR_FALSE);
+  }
 
-  mListener->Destroy();
+  if (mListener) {
+    mListener->UnregisterForAllChanges(this);
+    mListener->UnregisterForContentChanges(mContent);
+    mListener->Destroy();
+  }
 
   if (mTopLevel)
     g_object_unref(mTopLevel);
@@ -580,41 +625,14 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
 }
 
 void
-uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
+uGlobalMenuBar::SetMenuBarRegistered(PRBool aRegistered)
 {
-  mXULMenuHidden = hidden;
-
-  if (hidden) {
-    if (mHiddenElement) {
-      mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
-                              mRestoreHidden ? NS_LITERAL_STRING("true") :
-                              NS_LITERAL_STRING("false"), PR_TRUE);
-    }
-    nsIContent *tmp = mContent;
-
-    // Walk up the DOM tree until we find a node with siblings
-    while (tmp) {
-      if (ShouldParentStayVisible(tmp)) {
-        break;
-      }
-
-      tmp = tmp->GetParent();
-    }
-
-    mHiddenElement = tmp;
-    mRestoreHidden = mHiddenElement->AttrValueIs(kNameSpaceID_None,
-                                                 uWidgetAtoms::hidden,
-                                                 uWidgetAtoms::_true,
-                                                 eCaseMatters);
-
-    mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
-                            NS_LITERAL_STRING("true"), PR_TRUE);
-  } else if (mHiddenElement) {
-    mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
-                            mRestoreHidden ? NS_LITERAL_STRING("true") :
-                            NS_LITERAL_STRING("false"), PR_TRUE);
-    mHiddenElement = nsnull;
+  if (mCancellable) {
+    mCancellable->Destroy();
+    mCancellable = nsnull;
   }
+
+  SetXULMenuBarHidden(aRegistered);
 }
 
 PRUint32
