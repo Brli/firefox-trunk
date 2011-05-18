@@ -49,7 +49,7 @@ Forwarded: no
  #endif
  
  #include "nsProfileMigrator.h"
-@@ -83,8 +83,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(Directory
+@@ -77,8 +77,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(Directory
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsWindowsShellService)
  #elif defined(XP_MACOSX)
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsMacShellService)
@@ -57,8 +57,8 @@ Forwarded: no
 -NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsGNOMEShellService, Init)
  #endif
  
- NS_GENERIC_FACTORY_CONSTRUCTOR(nsDogbertProfileMigrator)
-@@ -140,7 +138,7 @@ static const mozilla::Module::CIDEntry k
+ #if !defined(XP_OS2)
+@@ -122,7 +120,7 @@ static const mozilla::Module::CIDEntry k
  #if defined(XP_WIN)
      { &kNS_SHELLSERVICE_CID, false, NULL, nsWindowsShellServiceConstructor },
  #elif defined(MOZ_WIDGET_GTK2)
@@ -442,7 +442,7 @@ Forwarded: no
 +#endif // nsunixshellservice_h____
 --- a/browser/installer/package-manifest.in
 +++ b/browser/installer/package-manifest.in
-@@ -442,6 +442,7 @@
+@@ -439,6 +439,7 @@
  @BINPATH@/@PREF_DIR@/firefox.js
  @BINPATH@/@PREF_DIR@/firefox-branding.js
  @BINPATH@/@PREF_DIR@/channel-prefs.js

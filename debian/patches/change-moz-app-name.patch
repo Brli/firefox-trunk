@@ -61,70 +61,6 @@
  
  pref("browser.search.param.ms-pc", "MOZI");
  pref("browser.search.param.yahoo-fr", "moz35");
---- a/browser/app/profile/firefox.js
-+++ b/browser/app/profile/firefox.js
-@@ -57,10 +57,10 @@ pref("extensions.logging.enabled", false
- // Preferences for AMO integration
- pref("extensions.getAddons.cache.enabled", true);
- pref("extensions.getAddons.maxResults", 15);
--pref("extensions.getAddons.get.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/search/guid:%IDS%?src=firefox&appOS=%OS%&appVersion=%VERSION%&tMain=%TIME_MAIN%&tFirstPaint=%TIME_FIRST_PAINT%&tSessionRestored=%TIME_SESSION_RESTORED%");
--pref("extensions.getAddons.search.browseURL", "https://addons.mozilla.org/%LOCALE%/%APP%/search?q=%TERMS%");
--pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/%APP%/api/%API_VERSION%/search/%TERMS%/all/%MAX_RESULTS%/%OS%/%VERSION%?src=firefox");
--pref("extensions.webservice.discoverURL", "https://services.addons.mozilla.org/%LOCALE%/%APP%/discovery/pane/%VERSION%/%OS%");
-+pref("extensions.getAddons.get.url", "https://services.addons.mozilla.org/%LOCALE%/firefox/api/%API_VERSION%/search/guid:%IDS%?src=firefox&appOS=%OS%&appVersion=%VERSION%&tMain=%TIME_MAIN%&tFirstPaint=%TIME_FIRST_PAINT%&tSessionRestored=%TIME_SESSION_RESTORED%");
-+pref("extensions.getAddons.search.browseURL", "https://addons.mozilla.org/%LOCALE%/firefox/search?q=%TERMS%");
-+pref("extensions.getAddons.search.url", "https://services.addons.mozilla.org/%LOCALE%/firefox/api/%API_VERSION%/search/%TERMS%/all/%MAX_RESULTS%/%OS%/%VERSION%?src=firefox");
-+pref("extensions.webservice.discoverURL", "https://services.addons.mozilla.org/%LOCALE%/firefox/discovery/pane/%VERSION%/%OS%");
- 
- // Blocklist preferences
- pref("extensions.blocklist.enabled", true);
-@@ -74,7 +74,7 @@ pref("extensions.blocklist.detailsURL",
- pref("extensions.update.autoUpdateDefault", true);
- 
- // Dictionary download preference
--pref("browser.dictionaries.download.url", "https://addons.mozilla.org/%LOCALE%/%APP%/dictionaries/");
-+pref("browser.dictionaries.download.url", "https://addons.mozilla.org/%LOCALE%/firefox/dictionaries/");
- 
- // The minimum delay in seconds for the timer to fire.
- // default=2 minutes
-@@ -199,7 +199,7 @@ pref("extensions.update.url", "https://v
- pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
-                                             // Themes every day
- // Non-symmetric (not shared by extensions) extension-specific [update] preferences
--pref("extensions.getMoreThemesURL", "https://addons.mozilla.org/%LOCALE%/%APP%/getpersonas");
-+pref("extensions.getMoreThemesURL", "https://addons.mozilla.org/%LOCALE%/firefox/getpersonas");
- pref("extensions.dss.enabled", false);          // Dynamic Skin Switching                                               
- pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
-                                                 // restart.
-@@ -321,7 +321,7 @@ pref("browser.download.manager.scanWhenD
- pref("browser.download.manager.resumeOnWakeDelay", 10000);
- 
- // search engines URL
--pref("browser.search.searchEnginesURL",      "https://addons.mozilla.org/%LOCALE%/%APP%/search-engines/");
-+pref("browser.search.searchEnginesURL",      "https://addons.mozilla.org/%LOCALE%/firefox/search-engines/");
- 
- // pointer to the default engine name
- pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
-@@ -714,8 +714,8 @@ pref("browser.safebrowsing.provider.0.re
- pref("browser.safebrowsing.provider.0.reportMalwareErrorURL", "http://{moz:locale}.malware-error.mozilla.com/?hl={moz:locale}");
- 
- // FAQ URLs
--pref("browser.safebrowsing.warning.infoURL", "http://www.mozilla.com/%LOCALE%/%APP%/phishing-protection/");
--pref("browser.geolocation.warning.infoURL", "http://www.mozilla.com/%LOCALE%/%APP%/geolocation/");
-+pref("browser.safebrowsing.warning.infoURL", "http://www.mozilla.com/%LOCALE%/firefox/phishing-protection/");
-+pref("browser.geolocation.warning.infoURL", "http://www.mozilla.com/%LOCALE%/firefox/geolocation/");
- 
- // Name of the about: page contributed by safebrowsing to handle display of error
- // pages on phishing/malware hits.  (bug 399233)
-@@ -861,7 +861,7 @@ pref("browser.zoom.updateBackgroundTabs"
- pref("breakpad.reportURL", "http://crash-stats.mozilla.com/report/index/");
- 
- // base URL for web-based support pages
--pref("app.support.baseURL", "http://support.mozilla.com/1/%APP%/%VERSION%/%OS%/%LOCALE%/");
-+pref("app.support.baseURL", "http://support.mozilla.com/1/firefox/%VERSION%/%OS%/%LOCALE%/");
- 
- // Name of alternate about: page for certificate errors (when undefined, defaults to about:neterror)
- pref("security.alternate_certificate_error_page", "certerror");
 --- a/browser/branding/nightly/pref/firefox-branding.js
 +++ b/browser/branding/nightly/pref/firefox-branding.js
 @@ -1,5 +1,5 @@
@@ -150,29 +86,6 @@
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
---- a/browser/app/application.ini
-+++ b/browser/app/application.ini
-@@ -38,7 +38,7 @@
- #filter substitution
- [App]
- Vendor=Mozilla
--Name=Firefox
-+Name=Firefox-Trunk
- Version=@APP_VERSION@
- BuildID=@GRE_BUILDID@
- #ifdef MOZ_SOURCE_REPO
---- a/browser/confvars.sh
-+++ b/browser/confvars.sh
-@@ -36,7 +36,8 @@
- #
- # ***** END LICENSE BLOCK *****
- 
--MOZ_APP_NAME=firefox
-+MOZ_APP_NAME=firefox-trunk
-+MOZ_APP_UA_NAME=Firefox
- MOZ_UPDATER=1
- MOZ_PHOENIX=1
- 
 --- a/browser/branding/aurora/pref/firefox-branding.js
 +++ b/browser/branding/aurora/pref/firefox-branding.js
 @@ -12,11 +12,11 @@ pref("app.update.download.backgroundInte
@@ -190,3 +103,16 @@
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
+--- a/browser/confvars.sh
++++ b/browser/confvars.sh
+@@ -36,8 +36,9 @@
+ #
+ # ***** END LICENSE BLOCK *****
+ 
+-MOZ_APP_BASENAME=Firefox
++MOZ_APP_BASENAME=Firefox-Trunk
+ MOZ_APP_VENDOR=Mozilla
++MOZ_APP_UA_NAME=Firefox
+ MOZ_UPDATER=1
+ MOZ_PHOENIX=1
+ 

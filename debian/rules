@@ -296,6 +296,9 @@ endif
 ifeq (official, $(BRANDING))
 	DEB_DEFINES += -DOFFICIAL_BRANDING
 endif
+ifneq ($(DEBIAN_NAME),$(DEBIAN_APP_NAME))
+	DEB_DEFINES += -DDEB_MOZ_APP_NAME="$(DEBIAN_NAME)"
+endif
 
 DEBIAN_EXECUTABLES = \
 	$(DEBIAN_NAME)$(FF_LIBDIR)/firefox.sh \
