@@ -171,7 +171,7 @@ BRANDING_DIR	= browser/branding/$(BRANDING)
 DISPLAY_NAME	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 		    | grep brandShortName | sed -e 's/brandShortName\=//')
 
-ifeq (nightly,$(BRANDING))
+ifeq (nightly,$(CHANNEL))
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1104" && echo "1"))
 	# Disable crashreporter on nightly builds older than Natty
 	DEB_ENABLE_BREAKPAD = 0
