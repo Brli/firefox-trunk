@@ -47,7 +47,6 @@ Depends: fontconfig,
 	psmisc,
 	lsb-release,
 	debianutils (>= 1.16),
-	python,
 	python-gtk2,
 	${misc:Depends},
 	${shlibs:Depends}

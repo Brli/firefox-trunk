@@ -73,39 +73,49 @@ if (defined($lpom_dir)) {
     close($file);
 }
 
-open($file, "$dir/debian/locales.shipped");
-while (<$file>) {
-    my $line = $_;
-    chomp($line);
-    my $langcode = $line;
-    my $pkgname = $line;
-    my $lang = $line;
-    $langcode =~ s/([^:]*):*([^:]*):*([^:]*)/$1/;
-    $pkgname =~ s/([^:]*):*([^:]*):*([^:]*)/$2/;
-    $lang =~ s/([^:]*):*([^:]*):*([^:]*)/$3/;
-    $languages{$pkgname} = $lang;
-    $oldsupported{$pkgname} = 1;
-    $locale2pkgname{lc($langcode)} = $pkgname;
+if (-e "$dir/debian/locales.shipped") {
+    open($file, "$dir/debian/locales.shipped");
+    while (<$file>) {
+        if ((not $_ =~ /^$/) && (not $_ =~ /^#.*/)) {
+            my $line = $_;
+            chomp($line);
+            my $langcode = $line;
+            my $pkgname = $line;
+            my $lang = $line;
+            $langcode =~ s/([^:]*):*([^:]*):*([^:]*)/$1/;
+            $pkgname =~ s/([^:]*):*([^:]*):*([^:]*)/$2/;
+            $lang =~ s/([^:]*):*([^:]*):*([^:]*)/$3/;
+            $languages{$pkgname} = $lang;
+            $oldsupported{$pkgname} = 1;
+            $locale2pkgname{lc($langcode)} = $pkgname;
+        }
+    }
+    close($file);
 }
-close($file);
 
 if (-e "$dir/debian/locales.unavailable") {
     open($file, "$dir/debian/locales.unavailable");
     while (<$file>) {
-        if (not $_ =~ /^$/) {
+        if ((not $_ =~ /^$/) && (not $_ =~ /^#.*/)) {
             $oldsupported{$_} = 1;
         }
     }
     close($file);
 }
 
-open($file, "$dir/debian/locales.blacklist");
-while (<$file>) {
-    my $line = $_;
-    chomp($line);
-    $blacklist{$line} = 1;
+if (-e "$dir/debian/locales.blacklist") {
+    open($file, "$dir/debian/locales.blacklist");
+    while (<$file>) {
+        if ((not $_ =~ /^$/) && (not $_ =~ /^#.*/)) {
+            my $line = $_;
+            chomp($line);
+            $blacklist{$line} = 1;
+        }
+    }
+    close($file);
 }
-close($file);
+
+my $have_language = 0;
 
 open($file, $moz_supported_file);
 open(my $outfile, ">$dir/debian/locales.shipped");
@@ -132,18 +142,26 @@ while (<$file>) {
             die "No description for $pkgname";
         }
     }
+    $have_language = 1;
     my $description = $languages{$pkgname};
     print $outfile "$langcode:$pkgname:$description\n";
     delete $oldsupported{$pkgname}
 }
+
+if ($have_language eq 0) {
+    print $outfile "# Placeholder file for the list of shipped languages. Do not delete";
+}
 close($file);
 close($outfile);
 
+open($outfile, ">$dir/debian/locales.unavailable");
 my @unavailable = keys(%oldsupported);
 if (scalar(@unavailable) gt 0) {
     @unavailable = sort(@unavailable);
-    open(my $outfile, ">$dir/debian/locales.unavailable");
     foreach my $lang (@unavailable) {
         print $outfile "$lang\n"
     }
+} else {
+    print $outfile "# Placeholder file for the list of unavailable languages. Do not delete";
 }
+close($outfile);
