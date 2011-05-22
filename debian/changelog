@@ -188,8 +188,11 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Add geolocation parameter to en-GB and en-ZA google search plugins. This
     will improve relevance of results for non-US English speaking users
     - update debian/ubuntu-codes-google.patch
+  * Ship channel-prefs.js. We used to ship this in Firefox 3.6, and it's
+    required by Test Pilot now
+    - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 20 May 2011 00:42:32 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 22 May 2011 07:23:37 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
