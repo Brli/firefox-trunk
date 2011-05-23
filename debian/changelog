@@ -194,7 +194,10 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     will be useful for translations which disappear temporarily
     - update debian/rules
     - update debian/refresh-supported-locales.pl
-  * 
+  * Add a global pref file again (/etc/firefox/syspref.js) 
+    - add debian/syspref.js
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 23 May 2011 16:20:58 +0100
 
