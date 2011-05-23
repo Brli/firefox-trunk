@@ -124,8 +124,6 @@ ifeq (,$(filter i386 amd64 armel,$(DEB_BUILD_ARCH)))
 	MOZ_ENABLE_BREAKPAD = 0
 endif
 
-VENDORPREF_DIST = $(CURDIR)/$(MOZ_DISTDIR)/bin/defaults/pref/distrib.js
-
 BRANDING	= $(CHANNEL)
 ifneq (,$(filter default beta, $(BRANDING)))
 	BRANDING = official
@@ -400,10 +398,7 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 
 	touch $@
 
-$(VENDORPREF_DIST):
-	cp debian/distrib.js $@
-
-common-build-arch:: $(VENDORPREF_DIST) debian/stamp-testsuite
+common-build-arch:: debian/stamp-testsuite
 
 common-build-indep:: debian/stamp-langpack-xpi-build
 

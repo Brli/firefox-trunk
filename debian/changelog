@@ -125,12 +125,11 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Revert a previous change to add vendor preferences to distribution.ini.
     The preferences there aren't read by the pref service, but loaded
     and set later on, after profile-initial-state, which is too late to
-    have any effect on the selected locale
+    have any effect on the selected locale. Ship them in $LIBDIR/defaults/pref
+    instead
     - add debian/vendor.js
     - update debian/distribution.ini
-    - update debian/rules
-    - add debian/patches/install-vendor-prefs.patch
-    - update debian/patches/series
+    - update debian/firefox.install.in
   * Ensure we set LD_LIBRARY_PATH before running "firefox -h"
     - update debian/firefox.sh.in
   * Add some missing options to the manpage
@@ -195,8 +194,9 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     will be useful for translations which disappear temporarily
     - update debian/rules
     - update debian/refresh-supported-locales.pl
+  * 
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 23 May 2011 12:09:46 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 23 May 2011 16:20:58 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 

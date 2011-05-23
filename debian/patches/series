@@ -13,6 +13,5 @@ mozilla-kde.patch
 firefox-kde.patch
 fix-sdk-bin-install.patch
 unity-globalmenu-build-support.patch
-install-vendor-prefs.patch
 fix-selection-drag-autoscroll.patch
 ubuntu-codes-baidu.patch

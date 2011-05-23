@@ -10,29 +10,25 @@ debian/tmp@MOZ_LIBDIR@/@MOZ_APP_NAME@-bin
 debian/tmp@MOZ_LIBDIR@/crashreporter
 %%endif
 debian/tmp@MOZ_LIBDIR@/plugin-container
+debian/tmp@MOZ_LIBDIR@/chrome.manifest
+debian/tmp@MOZ_LIBDIR@/searchplugins/* /usr/lib/@MOZ_APP_NAME@-addons/searchplugins/en-US
+debian/tmp@MOZ_LIBDIR@/blocklist.xml
+debian/tmp@MOZ_LIBDIR@/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} /usr/lib/@MOZ_APP_NAME@-addons/extensions
+%%if MOZ_UPDATE_CHANNEL == beta
+debian/tmp@MOZ_LIBDIR@/distribution/extensions/testpilot@labs.mozilla.com.xpi /usr/lib/@MOZ_APP_NAME@-addons/extensions
+%%endif
+debian/tmp@MOZ_LIBDIR@/*.ini
 
 debian/@MOZ_APP_NAME@.desktop /usr/share/applications
 
 %%ifdef MOZ_ENABLE_BREAKPAD
 debian/apport/@MOZ_APP_NAME@ /etc/apport/blacklist.d
 %%endif
-
-debian/tmp@MOZ_LIBDIR@/chrome.manifest
-debian/tmp@MOZ_LIBDIR@/searchplugins/* /usr/lib/@MOZ_APP_NAME@-addons/searchplugins/en-US
-debian/tmp@MOZ_LIBDIR@/blocklist.xml
+debian/apport/@MOZ_APP_NAME@.py /usr/share/apport/package-hooks/
 
 debian/firefox.sh @MOZ_LIBDIR@
 debian/migrator/xulapp-profilemigrator @MOZ_LIBDIR@
 debian/distribution.ini @MOZ_LIBDIR@/distribution
+debian/vendor.js @MOZ_LIBDIR@/defaults/pref
+
 debian/usr.bin.@MOZ_APP_NAME@ /etc/apparmor.d
-
-debian/tmp@MOZ_LIBDIR@/extensions/\{972ce4c6-7e08-4474-a285-3208198ce6fd\} /usr/lib/@MOZ_APP_NAME@-addons/extensions
-%%if MOZ_UPDATE_CHANNEL == beta
-debian/tmp@MOZ_LIBDIR@/distribution/extensions/testpilot@labs.mozilla.com.xpi /usr/lib/@MOZ_APP_NAME@-addons/extensions
-%%endif
-
-# debian/tmp@MOZ_LIBDIR@/plugins/*.so /usr/lib/@MOZ_APP_NAME@-addons/plugins
-
-debian/tmp@MOZ_LIBDIR@/*.ini
-
-debian/apport/@MOZ_APP_NAME@.py /usr/share/apport/package-hooks/
