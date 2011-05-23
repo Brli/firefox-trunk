@@ -336,7 +336,8 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
-			sed -e "s/@LANGCODE@/$$line/g" \
+			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
+			sed -e "s/@LANGCODE@/$$language/g" \
 			    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.langpacks.unavail >> debian/control ; \
 		fi \
 	done < debian/locales.unavailable ; \

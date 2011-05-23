@@ -44,7 +44,7 @@ if (defined($lpom_dir)) {
         my $lang = $line;
         $langcode =~ s/([^:]*):*([^:]*)/$1/;
         $lang =~ s/([^:]*):*([^:]*)/$2/;
-        $languages{$langcode} = $lang;
+        if ($lang ne "") { $languages{$langcode} = $lang; }
     }
     close($file);
 
@@ -56,7 +56,7 @@ if (defined($lpom_dir)) {
         my $pkgname = $line;
         $langcode =~ s/([^:]*):*([^:]*)/$1/;
         $pkgname =~ s/([^:]*):*([^:]*)/$2/;
-        $locale2pkgname{$langcode} = $pkgname;
+        if ($pkgname ne "") { $locale2pkgname{$langcode} = $pkgname; }
     }
     close($file);
 
@@ -68,7 +68,7 @@ if (defined($lpom_dir)) {
         my $lang = $line;
         $langcode =~ s/([^:]*):*([^:]*)/$1/;
         $lang =~ s/([^:]*):*([^:]*)/$2/;
-        $languages{$langcode} = $lang;
+        if ($lang ne "") { $languages{$langcode} = $lang; }
     }
     close($file);
 }
@@ -85,6 +85,7 @@ if (-e "$dir/debian/locales.shipped") {
             $langcode =~ s/([^:]*):*([^:]*):*([^:]*)/$1/;
             $pkgname =~ s/([^:]*):*([^:]*):*([^:]*)/$2/;
             $lang =~ s/([^:]*):*([^:]*):*([^:]*)/$3/;
+            if (($pkgname eq "") || ($lang eq "")) { die "Malformed locales.shipped file"; }
             $languages{$pkgname} = $lang;
             $oldsupported{$pkgname} = 1;
             $locale2pkgname{lc($langcode)} = $pkgname;
@@ -97,7 +98,14 @@ if (-e "$dir/debian/locales.unavailable") {
     open($file, "$dir/debian/locales.unavailable");
     while (<$file>) {
         if ((not $_ =~ /^$/) && (not $_ =~ /^#.*/)) {
-            $oldsupported{$_} = 1;
+            my $line = $_;
+            chomp($line);
+            my $pkgname = $line;
+            my $desc = $line;
+            $pkgname =~ s/([^:]*):*([^:]*)/$1/;
+            $desc =~ s/([^:]*):*([^:]*)/$2/;
+            $oldsupported{$pkgname} = 1;
+            if ($desc ne "") { $languages{$pkgname} = $desc; }
         }
     }
     close($file);
@@ -126,31 +134,21 @@ while (<$file>) {
     my $platforms = $line;
     $langcode =~ s/^([[:alnum:]\-]*)[[:space:]]*(.*)/$1/;
     $platforms =~ s/^([[:alnum:]\-]*)[[:space:]]*(.*)/$2/;
-    if (($langcode eq "en-US") || (($platforms ne "") && (rindex($platforms, "linux") eq -1)) || (exists $blacklist{$langcode})) {
-        next;
-    }
+    if (($langcode eq "en-US") || (($platforms ne "") && (rindex($platforms, "linux") eq -1)) || (exists $blacklist{$langcode})) { next; }
     my $llangcode = lc($langcode);
     my $pkgname = $llangcode;
-    if (exists $locale2pkgname{$llangcode}) {
-        $pkgname = $locale2pkgname{$llangcode};
-    }
+    if (exists $locale2pkgname{$llangcode}) { $pkgname = $locale2pkgname{$llangcode}; }
     if (not exists $languages{$pkgname}) {
-        if ($pkgname eq $llangcode) {
-            $pkgname =~ s/\-.*//;
-        }
-        if (not exists $languages{$pkgname}) {
-            die "No description for $pkgname";
-        }
+        if ($pkgname eq $llangcode) { $pkgname =~ s/\-.*//; }
+        if (not exists $languages{$pkgname}) { die "No description for $pkgname"; }
     }
     $have_language = 1;
     my $description = $languages{$pkgname};
     print $outfile "$langcode:$pkgname:$description\n";
-    delete $oldsupported{$pkgname}
+    delete $oldsupported{$pkgname};
 }
 
-if ($have_language eq 0) {
-    print $outfile "# Placeholder file for the list of shipped languages. Do not delete";
-}
+if ($have_language eq 0) { print $outfile "# Placeholder file for the list of shipped languages. Do not delete"; }
 close($file);
 close($outfile);
 
@@ -159,9 +157,10 @@ my @unavailable = keys(%oldsupported);
 if (scalar(@unavailable) gt 0) {
     @unavailable = sort(@unavailable);
     foreach my $lang (@unavailable) {
-        print $outfile "$lang\n"
+        if (exists $languages{$lang}) {
+            my $desc = $languages{$lang};
+            print $outfile "$lang:$desc\n";
+        } else { print $outfile "$lang\n"; }
     }
-} else {
-    print $outfile "# Placeholder file for the list of unavailable languages. Do not delete";
-}
+} else { print $outfile "# Placeholder file for the list of unavailable languages. Do not delete"; }
 close($outfile);
