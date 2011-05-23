@@ -125,7 +125,7 @@ ifeq (,$(filter i386 amd64 armel,$(DEB_BUILD_ARCH)))
 endif
 
 BRANDING	= $(CHANNEL)
-ifneq (,$(filter default beta, $(BRANDING)))
+ifneq (,$(filter release beta, $(BRANDING)))
 	BRANDING = official
 endif
 ifeq (1,$(MOZ_BUILD_UNOFFICIAL))

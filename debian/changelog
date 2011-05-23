@@ -204,8 +204,10 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     language packs
     - update debian/control.langpacks.unavail
     - refresh debian/control
+  * Ship testpilot on aurora too
+    - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 23 May 2011 16:44:45 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 23 May 2011 18:01:21 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
