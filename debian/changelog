@@ -1,6 +1,6 @@
-firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v6.0 A1 HG 20110518R69665
+  * New upstream snapshot v6.0 A1 HG 20110523R69965
 
   * Update globalmenu-extension code to 1.5 prerelease based on r165
 
@@ -207,7 +207,7 @@ firefox-trunk (6.0~a1~hg20110518r69665+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Ship testpilot on aurora too
     - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 23 May 2011 18:01:21 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 24 May 2011 22:58:20 +0100
 
 firefox-4.0 (4.0~b12+build1+nobinonly-0ubuntu1) natty; urgency=low
 
