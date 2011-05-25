@@ -39,7 +39,9 @@
 #include <nsDebug.h>
 #include <nsIXBLService.h>
 #include <nsIAtom.h>
-#include <nsIDOMDocumentEvent.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION < 7
+# include <nsIDOMDocumentEvent.h>
+#endif
 #include <nsIDOMEvent.h>
 #include <nsIDOMMouseEvent.h>
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
@@ -115,11 +117,15 @@ uGlobalMenu::Activate()
   nsIDocument *doc = mContent->GetOwnerDoc();
   nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
   if (doc && target) {
-    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
-    if (docEvent) {
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 7
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
+#endif
+    if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
-      docEvent->CreateEvent(NS_LITERAL_STRING("Events"),
-                            getter_AddRefs(event));
+      domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
+                          getter_AddRefs(event));
       if (event) {
         event->InitEvent(NS_LITERAL_STRING("DOMMenuItemActive"),
                          PR_TRUE, PR_TRUE);
@@ -141,11 +147,15 @@ uGlobalMenu::Deactivate()
 
   nsIDocument *doc = mContent->GetOwnerDoc();
   if (doc) {
-    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
-    if (docEvent) {
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 7
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
+#endif
+    if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
-      docEvent->CreateEvent(NS_LITERAL_STRING("Events"),
-                            getter_AddRefs(event));
+      domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
+                          getter_AddRefs(event));
       if (event) {
         event->InitEvent(NS_LITERAL_STRING("DOMMenuItemInactive"),
                          PR_TRUE, PR_TRUE);
@@ -199,16 +209,26 @@ uGlobalMenu::AboutToOpen()
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
   if (doc) {
-     nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 7
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+    if (domDoc) {
+      nsCOMPtr<nsIDOMEvent> event;
+      domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
+                          getter_AddRefs(event));
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
     if (docEvent) {
       nsCOMPtr<nsIDOMEvent> event;
       docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                             getter_AddRefs(event));
+#endif
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+#if MOZILLA_BRANCH_MAJOR_VERSION < 7
           nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#endif
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
 #else
@@ -260,16 +280,26 @@ uGlobalMenu::OnOpen()
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
   if (doc) {
-     nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 7
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+    if (domDoc) {
+      nsCOMPtr<nsIDOMEvent> event;
+      domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
+                          getter_AddRefs(event));
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
     if (docEvent) {
       nsCOMPtr<nsIDOMEvent> event;
       docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                             getter_AddRefs(event));
+#endif
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+#if MOZILLA_BRANCH_MAJOR_VERSION < 7
           nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#endif
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
 #else
@@ -311,16 +341,26 @@ uGlobalMenu::OnClose()
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
   if (doc) {
-     nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 7
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+    if (domDoc) {
+      nsCOMPtr<nsIDOMEvent> event;
+      domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
+                          getter_AddRefs(event));
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
     if (docEvent) {
       nsCOMPtr<nsIDOMEvent> event;
       docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                             getter_AddRefs(event));
+#endif
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+#if MOZILLA_BRANCH_MAJOR_VERSION < 7
           nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#endif
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
 #else
