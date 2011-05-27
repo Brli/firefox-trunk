@@ -5,11 +5,8 @@ firefox-trunk (7.0~a1~hg20110524r70123+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Update globalmenu-extension to 1.6 prerelease snapshot r169
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
-  * Drop cairo LCD filter patch now that cairo 1.10 has landed
-    - remove debian/patches/cairo-lcd-filter.patch
-    - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 26 May 2011 11:18:40 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 25 May 2011 10:08:29 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
