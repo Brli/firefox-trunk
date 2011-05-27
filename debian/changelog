@@ -2,14 +2,14 @@ firefox-trunk (7.0~a1~hg20110524r70123+nobinonly-0ubuntu1) UNRELEASED; urgency=l
 
   * New upstream snapshot v7.0 A1 HG 20110524R70123
 
-  * Update globalmenu-extension to 1.6 prerelease snapshot r169
+  * Update globalmenu-extension to 1.6 prerelease snapshot r170
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
   * Drop patches fixed upstream
     - remove debian/patches/fix-sdk-bin-install.patch
     - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 27 May 2011 13:29:04 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 27 May 2011 21:51:24 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 

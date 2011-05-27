@@ -44,9 +44,6 @@
 #include <nsIDOMKeyEvent.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 7
-# include <nsIDOMDocumentEvent.h>
-#endif
 #include <nsIDOMXULCommandEvent.h>
 #include <nsPIDOMWindow.h>
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
@@ -55,6 +52,7 @@
 #else
 # include <nsIDOMAbstractView.h>
 # include <nsIDOMDocumentView.h>
+# include <nsIDOMDocumentEvent.h>
 #endif
 #include <nsIPrivateDOMEvent.h>
 #include <nsIDOMEventTarget.h>
@@ -574,7 +572,7 @@ uGlobalMenuItem::Activate()
 
   nsIDocument *doc = mContent->GetOwnerDoc();
   if (doc) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 7
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
@@ -591,9 +589,6 @@ uGlobalMenuItem::Activate()
         nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
         if (cmdEvent) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
-#if MOZILLA_BRANCH_MAJOR_VERSION < 7
-          nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-#endif
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
 #else
