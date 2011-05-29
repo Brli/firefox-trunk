@@ -8,8 +8,11 @@ firefox-trunk (7.0~a1~hg20110524r70123+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Drop patches fixed upstream
     - remove debian/patches/fix-sdk-bin-install.patch
     - update debian/patches/series
+  * Drop most of cairo-lcd-filter.patch now that cairo 1.10 landed upstream.
+    Instead, just ship the autofoo magic required to turn on the LCD filter
+    - update debian/patches/cairo-lcd-filter.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 27 May 2011 21:51:24 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 29 May 2011 22:26:24 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
