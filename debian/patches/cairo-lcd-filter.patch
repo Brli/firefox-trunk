@@ -1,3 +1,24 @@
+--- a/config/system-headers
++++ b/config/system-headers
+@@ -264,16 +264,17 @@ Font.h
+ Fonts.h
+ fp.h
+ fpieee.h
+ frame/log.h
+ frame/req.h
+ freetype/freetype.h
+ freetype/ftcache.h
+ freetype/ftglyph.h
++freetype/ftlcdfil.h
+ freetype/ftsynth.h
+ freetype/ftoutln.h
+ freetype/ttnameid.h
+ freetype/tttables.h
+ freetype/t1tables.h
+ fribidi/fribidi.h
+ FSp_fopen.h
+ fstream
+
 --- a/configure.in
 +++ b/configure.in
 @@ -3424,17 +3424,17 @@ else
@@ -38,3 +59,23 @@
  case "$target_os" in
      aix*|solaris*|linux*|mingw*|os2*)
 
+--- a/js/src/config/system-headers
++++ b/js/src/config/system-headers
+@@ -264,16 +264,17 @@ Font.h
+ Fonts.h
+ fp.h
+ fpieee.h
+ frame/log.h
+ frame/req.h
+ freetype/freetype.h
+ freetype/ftcache.h
+ freetype/ftglyph.h
++freetype/ftlcdfil.h
+ freetype/ftsynth.h
+ freetype/ftoutln.h
+ freetype/ttnameid.h
+ freetype/tttables.h
+ freetype/t1tables.h
+ fribidi/fribidi.h
+ FSp_fopen.h
+ fstream
