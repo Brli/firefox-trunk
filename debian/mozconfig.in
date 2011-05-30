@@ -1,7 +1,7 @@
+%%ifdef DEB_BUILD_GNU_TYPE
 ac_add_options --build=@DEB_BUILD_GNU_TYPE@
-%%ifdef DEB_HOST_GNU_TYPE
-ac_add_options --host=@DEB_HOST_GNU_TYPE@
 %%endif
+ac_add_options --host=@DEB_HOST_GNU_TYPE@
 ac_add_options --prefix=@MOZ_PREFIX@
 ac_add_options --localstatedir=/var
 ac_add_options --libexecdir=@MOZ_LIBDIR@

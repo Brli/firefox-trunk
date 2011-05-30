@@ -15,7 +15,7 @@ debian/tmp@MOZ_INCDIR@/private
 debian/tmp@MOZ_INCDIR@/ogg
 debian/tmp@MOZ_INCDIR@/sydneyaudio
 debian/tmp@MOZ_INCDIR@/theora
-%%if DEB_BUILD_ARCH != armel
+%%if DEB_HOST_ARCH != armel
 debian/tmp@MOZ_INCDIR@/vorbis
 %%else
 debian/tmp@MOZ_INCDIR@/tremor
