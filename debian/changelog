@@ -1,6 +1,6 @@
-firefox-trunk (7.0~a1~hg20110524r70123+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v7.0 A1 HG 20110524R70123
+  * New upstream snapshot v7.0 A1 HG 20110529R70295
 
   * Update globalmenu-extension to 1.6 prerelease snapshot r170
   * Refresh patches
@@ -12,7 +12,7 @@ firefox-trunk (7.0~a1~hg20110524r70123+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     Instead, just ship the autofoo magic required to turn on the LCD filter
     - update debian/patches/cairo-lcd-filter.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sun, 29 May 2011 22:26:24 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 30 May 2011 12:57:50 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
