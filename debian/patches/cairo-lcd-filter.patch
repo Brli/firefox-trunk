@@ -1,5 +1,24 @@
 --- a/configure.in
 +++ b/configure.in
+@@ -3424,17 +3424,17 @@ else
+             HAVE_FT_BITMAP_SIZE_Y_PPEM=1
+         else
+             HAVE_FT_BITMAP_SIZE_Y_PPEM=0
+         fi
+         AC_DEFINE_UNQUOTED(HAVE_FT_BITMAP_SIZE_Y_PPEM,
+                            $HAVE_FT_BITMAP_SIZE_Y_PPEM,
+                            [FT_Bitmap_Size structure includes y_ppem field])
+ 
+-        AC_CHECK_FUNCS(FT_GlyphSlot_Embolden FT_Load_Sfnt_Table FT_Select_Size)
++        AC_CHECK_FUNCS(FT_GlyphSlot_Embolden FT_Load_Sfnt_Table FT_Select_Size FT_Library_SetLcdFilter)
+ 
+     	LIBS="$_SAVE_LIBS"
+     	CFLAGS="$_SAVE_CFLAGS"
+     fi
+ 
+ fi # $no_x
+ 
+ AC_SUBST(XCFLAGS)
 @@ -6463,16 +6463,17 @@ if test -n "$MOZ_TREE_FREETYPE"; then
     FT_FONT_FEATURE="#define CAIRO_HAS_FT_FONT 1"
     FT2_CFLAGS='-I$(topsrcdir)/modules/freetype2/include'
@@ -9,7 +28,7 @@
     AC_DEFINE(HAVE_FT_BITMAP_SIZE_Y_PPEM)
     AC_DEFINE(HAVE_FT_GLYPHSLOT_EMBOLDEN)
     AC_DEFINE(HAVE_FT_LOAD_SFNT_TABLE)
-+   AC_DEFINE(HAVE_FT_LIBRARY_SETLCDFILTER)
++   AC_DEFINE(HAVE_FT_LIBRARY_SET_LCDFILTER)
     AC_SUBST(CAIRO_FT_CFLAGS)
  fi
  
@@ -18,3 +37,4 @@
  dnl ========================================================
  case "$target_os" in
      aix*|solaris*|linux*|mingw*|os2*)
+
