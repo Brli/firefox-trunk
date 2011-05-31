@@ -19,8 +19,10 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/rules
     - update debian/mozconfig.in
     - update debian/firefox-dev.install.in
+  * Improve the description for unavailable language packs
+    - update debian/control.langpacks.unavail
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 30 May 2011 22:27:11 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 31 May 2011 14:38:04 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
