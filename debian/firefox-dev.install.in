@@ -1,30 +1,5 @@
-debian/tmp@MOZ_INCDIR@/angle
-%%ifndef MOZ_USE_SYSTEM_CAIRO
-debian/tmp@MOZ_INCDIR@/cairo
-%%endif
-debian/tmp@MOZ_INCDIR@/harfbuzz
-debian/tmp@MOZ_INCDIR@/IPC
-debian/tmp@MOZ_INCDIR@/mozilla
-debian/tmp@MOZ_INCDIR@/nestegg
-%%ifndef MOZ_USE_SYSTEM_NSPR
-debian/tmp@MOZ_INCDIR@/md
-debian/tmp@MOZ_INCDIR@/nspr
-debian/tmp@MOZ_INCDIR@/obsolete
-debian/tmp@MOZ_INCDIR@/private
-%%endif
-debian/tmp@MOZ_INCDIR@/ogg
-debian/tmp@MOZ_INCDIR@/sydneyaudio
-debian/tmp@MOZ_INCDIR@/theora
-%%if DEB_HOST_ARCH != armel
-debian/tmp@MOZ_INCDIR@/vorbis
-%%else
-debian/tmp@MOZ_INCDIR@/tremor
-%%endif
-debian/tmp@MOZ_INCDIR@/vpx
-debian/tmp@MOZ_INCDIR@/*.h
-debian/tmp@MOZ_INCDIR@/*.tbl
-debian/tmp@MOZ_INCDIR@/*.msg
-debian/tmp@MOZ_IDLDIR@/*.idl
+debian/tmp@MOZ_INCDIR@/
+debian/tmp@MOZ_IDLDIR@/
 
 debian/tmp@MOZ_SDKDIR@/sdk/lib/*.a
 debian/tmp@MOZ_SDKDIR@/*.h
@@ -32,13 +7,10 @@ debian/tmp@MOZ_SDKDIR@/bin
 debian/tmp@MOZ_SDKDIR@/idl
 debian/tmp@MOZ_SDKDIR@/include
 debian/tmp@MOZ_SDKDIR@/lib
+debian/tmp@MOZ_SDKDIR@/sdk/bin/
 
 %%ifndef MOZ_USE_SYSTEM_NSPR
-debian/tmp@MOZ_SDKDIR@/sdk/bin/nspr-config
 debian/pkgconfig/mozilla-nspr.pc /usr/lib/pkgconfig
 %%endif
-debian/tmp@MOZ_SDKDIR@/sdk/bin/xpidl
-debian/tmp@MOZ_SDKDIR@/sdk/bin/xpt.py
-
 debian/pkgconfig/mozilla-plugin.pc /usr/lib/pkgconfig
 debian/pkgconfig/libxul.pc /usr/lib/pkgconfig
