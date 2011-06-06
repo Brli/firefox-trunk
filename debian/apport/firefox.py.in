@@ -1,6 +1,6 @@
 '''firefox apport hook draft
 
-/usr/share/apport/package-hooks/firefox-4.0.py
+/usr/share/apport/package-hooks/firefox.py
 
 Appends to apport's firefox default report: the files pluginreg.dat and
 profiles.ini, and also a summary of all the extensions loaded on each firefox
