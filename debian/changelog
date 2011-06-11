@@ -28,8 +28,14 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/rules
   * Handle video/webm mimetypes
     - update debian/firefox.desktop.in
+  * Add a strict-ish firefox dependency on the language packs, to avoid issues
+    where users install the addon compatility reporter and run incompatible
+    language packs
+    - update debian/rules
+    - update debian/control.langpacks
+    - refresh debian/control
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 10 Jun 2011 14:28:17 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 11 Jun 2011 18:09:37 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
