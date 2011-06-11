@@ -31,7 +31,6 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Add a strict-ish firefox dependency on the language packs, to avoid issues
     where users install the addon compatility reporter and run incompatible
     language packs
-    - update debian/rules
     - update debian/control.langpacks
     - refresh debian/control
 

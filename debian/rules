@@ -103,8 +103,7 @@ MOZ_SERIES			= $(shell echo $(MOZ_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut 
 NSPR_DEPENDS		:= $(NULL)
 NSS_DEPENDS		:= $(NULL)
 CAIRO_DEPENDS		:= $(NULL)
-LANGPACK_DEPENDS	:= $(MOZ_APP_NAME) (>= ${source:Version}), $(MOZ_APP_NAME) (<< ${source:Version}.1~)
-DEB_DH_GENCONTROL_ARGS	= -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS) -Vlangpack:Depends=$(LANGPACK_DEPENDS)
+DEB_DH_GENCONTROL_ARGS	= -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS)
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
 MOZ_PYTHON		:= $(shell which python)
