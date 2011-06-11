@@ -33,8 +33,11 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     language packs
     - update debian/control.langpacks
     - refresh debian/control
+  * Fix check-sync-dirs.py test failure - ensure config/system-headers and
+    js/src/config/system-headers are kept in sync
+    - update debian/patches/unity-globalmenu-build-support-patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 11 Jun 2011 18:09:37 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 11 Jun 2011 22:31:10 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 

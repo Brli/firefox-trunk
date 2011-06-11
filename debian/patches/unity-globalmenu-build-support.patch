@@ -4,7 +4,7 @@ Forwarded: not-needed
 
 --- a/config/autoconf.mk.in
 +++ b/config/autoconf.mk.in
-@@ -555,6 +555,11 @@ MOZ_ENABLE_D3D10_LAYER  = @MOZ_ENABLE_D3
+@@ -546,6 +546,11 @@ MOZ_ENABLE_D3D10_LAYER  = @MOZ_ENABLE_D3
  MOZ_GTK2_CFLAGS		= @MOZ_GTK2_CFLAGS@
  MOZ_GTK2_LIBS		= @MOZ_GTK2_LIBS@
  
@@ -18,7 +18,7 @@ Forwarded: not-needed
  MOZ_ENABLE_QTNETWORK    = @MOZ_ENABLE_QTNETWORK@
 --- a/config/system-headers
 +++ b/config/system-headers
-@@ -395,6 +395,10 @@ LFocusBox.h
+@@ -391,6 +391,10 @@ LFocusBox.h
  LGrafPortView.h
  LHandleStream.h
  libc_r.h
@@ -29,7 +29,7 @@ Forwarded: not-needed
  libelf.h
  libelf/libelf.h
  libgen.h
-@@ -1030,6 +1034,11 @@ osso-mem.h
+@@ -1016,6 +1020,11 @@ osso-mem.h
  #ifdef MOZ_ENABLE_GIO
  gio/gio.h
  #endif
@@ -43,7 +43,7 @@ Forwarded: not-needed
  conic/conicconnectionevent.h
 --- a/configure.in
 +++ b/configure.in
-@@ -8810,6 +8810,20 @@ AC_SUBST(MOZ_CAIRO_LIBS)
+@@ -8600,6 +8600,20 @@ AC_SUBST(MOZ_CAIRO_LIBS)
  AC_SUBST(MOZ_TREE_PIXMAN)
  
  dnl ========================================================
@@ -64,3 +64,28 @@ Forwarded: not-needed
  dnl qcms
  dnl ========================================================
  
+--- a/js/src/config/system-headers
++++ b/js/src/config/system-headers
+@@ -391,6 +391,10 @@ LFocusBox.h
+ LGrafPortView.h
+ LHandleStream.h
+ libc_r.h
++#ifdef UNITY_GLOBALMENU
++libdbusmenu-glib/server.h
++libdbusmenu-gtk/menuitem.h
++#endif
+ libelf.h
+ libelf/libelf.h
+ libgen.h
+@@ -1016,6 +1020,11 @@ osso-mem.h
+ #ifdef MOZ_ENABLE_GIO
+ gio/gio.h
+ #endif
++#ifdef UNITY_GLOBALMENU
++#ifndef MOZ_ENABLE_GIO
++gio/gio.h
++#endif
++#endif
+ #ifdef MOZ_ENABLE_LIBCONIC
+ conic/conicconnection.h
+ conic/conicconnectionevent.h
