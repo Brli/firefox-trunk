@@ -14,3 +14,4 @@ firefox-kde.patch
 unity-globalmenu-build-support.patch
 fix-selection-drag-autoscroll.patch
 ubuntu-codes-baidu.patch
+xcpshell-instrumentation.patch
