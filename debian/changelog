@@ -36,10 +36,6 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Fix check-sync-dirs.py test failure - ensure config/system-headers and
     js/src/config/system-headers are kept in sync
     - update debian/patches/unity-globalmenu-build-support-patch
-  * Add some instrumentation to xpcshell so we can figure out why some
-    xpcshell tests are failing in load() with "cannot open file for reading"
-    - add debian/patches/xpcshell-instrumentation.patch
-    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Sun, 12 Jun 2011 17:13:33 +0100
 
