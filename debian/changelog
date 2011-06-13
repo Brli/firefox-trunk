@@ -5,12 +5,11 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Update globalmenu-extension to 1.6
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
+    - update debian/patches/reload-new-plugins.patch
   * Drop patches fixed upstream
     - remove debian/patches/fix-sdk-bin-install.patch
+    - remove debian/patches/cairo-lcd-filter.patch
     - update debian/patches/series
-  * Drop most of cairo-lcd-filter.patch now that cairo 1.10 landed upstream.
-    Instead, just ship the autofoo magic required to turn on the LCD filter
-    - update debian/patches/cairo-lcd-filter.patch
   * Look in the correct location for the staged langpack xpi's. They moved
     from dist/install to dist/linux-$(DEB_HOST_GNU_CPU)
     - update debian/rules

@@ -8,7 +8,7 @@ Forwarded: no
 
 --- a/modules/libpref/src/Makefile.in
 +++ b/modules/libpref/src/Makefile.in
-@@ -92,6 +92,8 @@ nsPrefService.$(OBJ_SUFFIX): nsPrefServi
+@@ -82,6 +82,8 @@ nsPrefService.$(OBJ_SUFFIX): nsPrefServi
  	$(ELOG) $(CCC) $(OUTOPTION)$@ -c $(COMPILE_CXXFLAGS:-O2=-O1) $(_VPATH_SRCS)
  endif
  
@@ -27,7 +27,7 @@ Forwarded: no
  
  #include "nsQuickSort.h"
  #include "prmem.h"
-@@ -827,6 +828,24 @@ static nsresult pref_LoadPrefsInDirList(
+@@ -964,6 +965,24 @@ static nsresult pref_LoadPrefsInDirList(
    nsCOMPtr<nsIProperties> dirSvc(do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv));
    if (NS_FAILED(rv)) return rv;
  
@@ -52,7 +52,7 @@ Forwarded: no
    nsCOMPtr<nsISimpleEnumerator> dirList;
    dirSvc->Get(listId,
                NS_GET_IID(nsISimpleEnumerator),
-@@ -840,7 +859,7 @@ static nsresult pref_LoadPrefsInDirList(
+@@ -977,7 +996,7 @@ static nsresult pref_LoadPrefsInDirList(
          nsCOMPtr<nsIFile> dir = do_QueryInterface(elem);
          if (dir) {
            // Do we care if a file provided by this process fails to load?
@@ -61,7 +61,7 @@ Forwarded: no
          }
        }
      }
-@@ -943,6 +962,7 @@ static nsresult pref_InitInitialObjects(
+@@ -1080,6 +1099,7 @@ static nsresult pref_InitInitialObjects(
        "winpref.js"
  #elif defined(XP_UNIX)
        "unix.js"
@@ -69,7 +69,7 @@ Forwarded: no
  #if defined(VMS)
        , "openvms.js"
  #elif defined(_AIX)
-@@ -955,6 +975,17 @@ static nsresult pref_InitInitialObjects(
+@@ -1092,6 +1112,17 @@ static nsresult pref_InitInitialObjects(
  #endif
      };
  
@@ -1122,7 +1122,7 @@ Forwarded: no
        return gnomeInfo;
 --- a/widget/src/gtk2/Makefile.in
 +++ b/widget/src/gtk2/Makefile.in
-@@ -163,6 +163,9 @@ INCLUDES	+= \
+@@ -139,6 +139,9 @@ INCLUDES	+= \
  		-I$(srcdir)/../shared \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
  		$(NULL)
@@ -1427,7 +1427,7 @@ Forwarded: no
  endif
 --- a/xpcom/io/Makefile.in
 +++ b/xpcom/io/Makefile.in
-@@ -197,7 +197,7 @@ DEFINES     += -DHAVE_USR_LIB64_DIR
+@@ -205,7 +205,7 @@ DEFINES     += -DHAVE_USR_LIB64_DIR
  endif
  endif
  
@@ -1514,14 +1514,6 @@ Forwarded: no
      nsCOMPtr<nsIGIOService> giovfs = do_GetService(NS_GIOSERVICE_CONTRACTID);
      nsCOMPtr<nsIGnomeVFSService> gnomevfs = do_GetService(NS_GNOMEVFSSERVICE_CONTRACTID);
      if (giovfs) {
---- a/toolkit/components/downloads/Makefile.in
-+++ b/toolkit/components/downloads/Makefile.in
-@@ -84,3 +84,5 @@ endif
- include $(topsrcdir)/config/rules.mk
- 
- EXTRA_DSO_LDOPTS += $(MOZ_COMPONENT_LIBS)
-+
-+LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
 --- a/toolkit/components/downloads/nsDownloadManager.cpp
 +++ b/toolkit/components/downloads/nsDownloadManager.cpp
 @@ -76,6 +76,10 @@
@@ -1535,7 +1527,7 @@ Forwarded: no
  #ifdef XP_MACOSX
  #include <CoreFoundation/CoreFoundation.h>
  #endif
-@@ -2195,6 +2199,15 @@ nsDownload::SetState(DownloadState aStat
+@@ -2197,6 +2201,15 @@ nsDownload::SetState(DownloadState aStat
          pref->GetBoolPref(PREF_BDM_SHOWALERTONCOMPLETE, &showTaskbarAlert);
  
        if (showTaskbarAlert) {
@@ -1551,7 +1543,7 @@ Forwarded: no
          PRInt32 alertInterval = 2000;
          if (pref)
            pref->GetIntPref(PREF_BDM_SHOWALERTINTERVAL, &alertInterval);
-@@ -2230,6 +2243,7 @@ nsDownload::SetState(DownloadState aStat
+@@ -2232,6 +2245,7 @@ nsDownload::SetState(DownloadState aStat
                    EmptyString());
              }
          }
@@ -1559,6 +1551,14 @@ Forwarded: no
        }
  
  #if defined(XP_WIN) || defined(XP_MACOSX) || defined(ANDROID)
+--- a/toolkit/components/downloads/Makefile.in
++++ b/toolkit/components/downloads/Makefile.in
+@@ -82,3 +82,5 @@ DIRS += test
+ endif
+ 
+ include $(topsrcdir)/config/rules.mk
++
++LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
 --- a/xpcom/components/ManifestParser.cpp
 +++ b/xpcom/components/ManifestParser.cpp
 @@ -64,6 +64,7 @@
