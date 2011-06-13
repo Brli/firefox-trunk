@@ -13,16 +13,16 @@ debian/stamp-testsuite: $(addprefix debian/stamp-,$(TESTS))
 $(addprefix debian/stamp-,$(TESTS)): debian/stamp-makefile-build
 
 # Required for js/src/trace-tests/sunspider/check-date-format-tofte.js
-$(addprefix debian/stamp-,check): export TZ = :/usr/share/zoneinfo/posix/US/Pacific
+$(addprefix debian/stamp-,check jstestbrowser): export TZ = :/usr/share/zoneinfo/posix/US/Pacific
 
 $(LOCDIR)/%:
 	mkdir -p $(LOCDIR)
 	localedef -f $(shell echo $(notdir $@) | cut -d '.' -f 2) -i $(shell echo $(notdir $@) | cut -d '.' -f 1) $@
 
 # Setup locales for tests which need it
-$(addprefix debian/stamp-,xpcshell-tests reftest): $(LOCDIR)/$(LOCALE)
-$(addprefix debian/stamp-,xpcshell-tests reftest): export LOCPATH=$(LOCDIR)
-$(addprefix debian/stamp-,xpcshell-tests reftest): export LC_ALL=$(LOCALE)
+$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest): $(LOCDIR)/$(LOCALE)
+$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest): export LOCPATH=$(LOCDIR)
+$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest): export LC_ALL=$(LOCALE)
 
 # Disable tests that are known to fail
 $(addprefix debian/stamp-,xpcshell-tests): debian/stamp-xpcshell-tests-disable
