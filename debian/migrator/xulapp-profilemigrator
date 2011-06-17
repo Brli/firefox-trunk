@@ -170,7 +170,7 @@ class ProfileFolder:
                     this.last_version_string = last_version_string
 
     def is_suitable (this, name, new_series, last_series=None):
-        basename = re.sub (r'-.*', '', os.path.basename (this.path))
+        basename = re.sub(r'^\.','',re.sub (r'-.*', '', os.path.basename (this.path)))
         if name != basename:
             return False
 

@@ -41,8 +41,10 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/patches/ubuntu-bookmarks.patch
   * Fix jsreftest failures by setting the correct timezone and locale
     - update debian/testsuite.mk
+  * Disable elfhack temporarily due to b.m.o #664366
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 13 Jun 2011 12:23:06 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 17 Jun 2011 18:14:58 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
