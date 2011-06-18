@@ -107,9 +107,7 @@ ac_add_options --enable-debug
 %%else
 ac_add_options --disable-debug
 %%endif
-%%ifdef MOZ_DISABLE_ELF_HACK
 ac_add_options --disable-elf-hack
-%%endif
 %%ifdef MOZ_ENABLE_GLOBALMENU
 ac_add_options --enable-extensions=default,globalmenu
 %%endif

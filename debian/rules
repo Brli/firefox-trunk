@@ -251,9 +251,6 @@ endif
 ifneq (,$(findstring armel,$(DEB_HOST_ARCH)))
 	DEB_DEFINES += -DDEB_ENABLE_THUMB2
 endif
-ifeq (,$(filter i386 amd64 armel,$(DEB_HOST_ARCH)))
-	DEB_DEFINES += -DMOZ_DISABLE_ELF_HACK
-endif
 ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
 	DEB_DEFINES += -DMOZ_ENABLE_GLOBALMENU
 endif
@@ -263,9 +260,6 @@ endif
 ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
 	DEB_DEFINES += -DMOZ_APP_RENAME
 endif
-
-# Disable elfhack (https://bugzilla.mozilla.org/show_bug.cgi?id=664366)
-DEB_DEFINES += -DMOZ_DISABLE_ELF_HACK
 
 DEBIAN_EXECUTABLES = \
 	$(MOZ_APP_NAME)$(MOZ_LIBDIR)/firefox.sh \

@@ -41,8 +41,10 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/patches/ubuntu-bookmarks.patch
   * Fix jsreftest failures by setting the correct timezone and locale
     - update debian/testsuite.mk
-  * Disable elfhack temporarily due to b.m.o #664366
+  * Disable elfhack permanently. It doesn't give us any of the performance
+    wins that the official mozilla.org builds get, due to -Wl,-z,relro
     - update debian/rules
+    - update debian/mozconfig.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 17 Jun 2011 18:14:58 +0100
 
