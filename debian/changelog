@@ -45,8 +45,16 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     wins that the official mozilla.org builds get, due to -Wl,-z,relro
     - update debian/rules
     - update debian/mozconfig.in
+  * Language packs shouldn't depend on firefox, as we have a transitional
+    recommends from the main language packs (which will go away after the next
+    LTS) which results in firefox being pulled in to server installs on upgrade.
+    Instead, add some Breaks to ensure that firefox + language packs *must*
+    be upgraded at the same time, rather than relying on a strict dependency
+    relationship to do this for us (LP: #800857)
+    - update debian/control.langpacks
+    - refresh debian/control
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 17 Jun 2011 18:14:58 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 22 Jun 2011 23:53:29 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 

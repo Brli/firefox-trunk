@@ -1,7 +1,7 @@
 
 Package: @MOZ_APP_NAME@-locale-@LANGCODE@
 Architecture: all
-Depends: @MOZ_APP_NAME@ (>= ${source:Version}), @MOZ_APP_NAME@ (<< ${source:Version}.1~), ${misc:Depends}
+Breaks: @MOZ_APP_NAME@ (<< ${source:Version}), @MOZ_APP_NAME@ (>> ${source:Version}.1~), ${misc:Depends}
 Description: @LANG@ language pack for Firefox
  This package contains @LANG@ translations and search plugins
  for Firefox
