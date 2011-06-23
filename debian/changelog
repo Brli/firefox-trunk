@@ -48,9 +48,7 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Language packs shouldn't depend on firefox, as we have a transitional
     recommends from the main language packs (which will go away after the next
     LTS) which results in firefox being pulled in to server installs on upgrade.
-    Instead, add some Breaks to ensure that firefox + language packs *must*
-    be upgraded at the same time, rather than relying on a strict dependency
-    relationship to do this for us (LP: #800857)
+    (LP: #800857)
     - update debian/control.langpacks
     - refresh debian/control
 
