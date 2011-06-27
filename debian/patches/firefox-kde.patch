@@ -8,7 +8,7 @@ Forwarded: no
 
 --- a/browser/app/Makefile.in
 +++ b/browser/app/Makefile.in
-@@ -49,6 +49,7 @@ DIRS		= profile/extensions
+@@ -50,6 +50,7 @@ DIRS		= profile/extensions
  
  PREF_JS_EXPORTS = $(srcdir)/profile/firefox.js \
  		  $(srcdir)/profile/channel-prefs.js \
@@ -18,7 +18,7 @@ Forwarded: no
  
 --- a/browser/base/content/browser-kde.xul
 +++ b/browser/base/content/browser-kde.xul
-@@ -199,7 +199,7 @@
+@@ -200,7 +200,7 @@
        </row>
        <vbox id="editBookmarkPanelContent" flex="1" hidden="true"/>
        <hbox id="editBookmarkPanelBottomButtons" pack="end">
@@ -29,7 +29,7 @@ Forwarded: no
                  label="&editBookmark.done.label;"
 --- a/browser/base/jar.mn
 +++ b/browser/base/jar.mn
-@@ -26,6 +26,8 @@ browser.jar:
+@@ -28,6 +28,8 @@ browser.jar:
  *       content/browser/browser.css                   (content/browser.css)
  *       content/browser/browser.js                    (content/browser.js)
  *       content/browser/browser.xul                   (content/browser.xul)
@@ -37,7 +37,7 @@ Forwarded: no
 +%       override chrome://browser/content/browser.xul chrome://browser/content/browser-kde.xul desktop=kde
  *       content/browser/browser-tabPreviews.xml       (content/browser-tabPreviews.xml)
  *       content/browser/fullscreen-video.xhtml        (content/fullscreen-video.xhtml)
- *       content/browser/inspector.html                (content/inspector.html)
+         content/browser/highlighter.xhtml             (content/highlighter.xhtml)
 --- a/browser/components/build/nsModule.cpp
 +++ b/browser/components/build/nsModule.cpp
 @@ -46,7 +46,7 @@
@@ -442,7 +442,7 @@ Forwarded: no
 +#endif // nsunixshellservice_h____
 --- a/browser/installer/package-manifest.in
 +++ b/browser/installer/package-manifest.in
-@@ -439,6 +439,7 @@
+@@ -440,6 +440,7 @@
  @BINPATH@/@PREF_DIR@/firefox.js
  @BINPATH@/@PREF_DIR@/firefox-branding.js
  @BINPATH@/@PREF_DIR@/channel-prefs.js

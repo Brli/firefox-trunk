@@ -1,9 +1,10 @@
-firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (7.0~a1~hg20110627r71824+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v7.0 A1 HG 20110529R70295
+  * New upstream snapshot v7.0 A1 HG 20110627R71824
 
   * Update globalmenu-extension to 1.6
   * Refresh patches
+    - update debian/firefox-kde.patch
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/reload-new-plugins.patch
   * Drop patches fixed upstream
@@ -51,8 +52,11 @@ firefox-trunk (7.0~a1~hg20110529r70295+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     (LP: #800857)
     - update debian/control.langpacks
     - refresh debian/control
+  * Switch off debian/patches/fix-selection-drag-autoscroll.patch for now. It
+    doesn't apply and needs a rethink
+    - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 22 Jun 2011 23:53:29 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 27 Jun 2011 17:37:05 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 

@@ -11,5 +11,5 @@ allow-lockPref-everywhere.patch
 mozilla-kde.patch
 firefox-kde.patch
 unity-globalmenu-build-support.patch
-fix-selection-drag-autoscroll.patch
+#fix-selection-drag-autoscroll.patch
 ubuntu-codes-baidu.patch
