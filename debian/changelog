@@ -58,6 +58,9 @@ firefox-trunk (7.0~a1~hg20110627r71824+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Fix "format not a string literal and no format arguments" error
    - add debian/patches/printf-fix.patch
    - update debian/patches/series
+  * Get rid of some more hanging IPC xpcshell tests
+    - update debian/testsuite.mk
+
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 27 Jun 2011 22:55:46 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
