@@ -1,6 +1,6 @@
 firefox-trunk (7.0~a1~hg20110630r72006+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v7.0 A1 HG 20110627R71824
+  * New upstream snapshot v7.0 A1 HG 20110630R72006
 
   * Update globalmenu-extension to 1.6
   * Refresh patches
