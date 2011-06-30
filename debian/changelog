@@ -1,4 +1,4 @@
-firefox-trunk (7.0~a1~hg20110627r71824+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (7.0~a1~hg20110630r72006+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream snapshot v7.0 A1 HG 20110627R71824
 
@@ -73,8 +73,11 @@ firefox-trunk (7.0~a1~hg20110627r71824+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/firefox.sh.in
     - update debian/rules
     - update debian/firefox.install.in
+  * Ensure we install dependentlibs.list so that Firefox knows which libs
+    to dlopen before libxul
+    - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 30 Jun 2011 11:19:00 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 30 Jun 2011 13:56:25 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
