@@ -67,6 +67,7 @@ firefox-trunk (7.0~a1~hg20110630r72006+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/firefox.sh.in
     - update debian/firefox.install.in
     - update debian/rules
+    - update debian/control{.in}
   * Now we have no profile migrator and upstream lazily load libxul, drop our
     shell wrapper for eveerything except firefox-trunk builds (where we want
     to clone the firefox profile)
