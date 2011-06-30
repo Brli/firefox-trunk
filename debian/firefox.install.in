@@ -5,7 +5,7 @@ debian/tmp@MOZ_LIBDIR@/components/*.so
 debian/tmp@MOZ_LIBDIR@/defaults
 debian/tmp@MOZ_LIBDIR@/omni.jar
 debian/tmp@MOZ_LIBDIR@/*.so
-debian/tmp@MOZ_LIBDIR@/@MOZ_APP_NAME@-bin
+debian/tmp@MOZ_LIBDIR@/@MOZ_APP_NAME@
 %%ifdef MOZ_ENABLE_BREAKPAD
 debian/tmp@MOZ_LIBDIR@/crashreporter
 %%endif
@@ -31,8 +31,9 @@ debian/apport/@MOZ_APP_NAME@ /etc/apport/blacklist.d
 %%endif
 debian/apport/@MOZ_APP_NAME@.py /usr/share/apport/package-hooks/
 
+%%ifdef MOZ_USE_SHELL_WRAPPER
 debian/firefox.sh @MOZ_LIBDIR@
-debian/migrator/xulapp-profilemigrator @MOZ_LIBDIR@
+%%endif
 debian/distribution.ini @MOZ_LIBDIR@/distribution
 debian/vendor.js @MOZ_LIBDIR@/defaults/pref
 

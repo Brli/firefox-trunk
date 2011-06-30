@@ -60,8 +60,21 @@ firefox-trunk (7.0~a1~hg20110627r71824+nobinonly-0ubuntu1) UNRELEASED; urgency=l
    - update debian/patches/series
   * Get rid of some more hanging IPC xpcshell tests
     - update debian/testsuite.mk
+  * Drop the profile migrator, as it doesn't really make any sense with the new
+    release cycle. Instead, just copy the firefox profile (if it exists) to
+    firefox-trunk (if it doesn't exist)
+    - remove debian/migrator/xulapp-profilemigrator
+    - update debian/firefox.sh.in
+    - update debian/firefox.install.in
+    - update debian/rules
+  * Now we have no profile migrator and upstream lazily load libxul, drop our
+    shell wrapper for eveerything except firefox-trunk builds (where we want
+    to clone the firefox profile)
+    - update debian/firefox.sh.in
+    - update debian/rules
+    - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 27 Jun 2011 22:55:46 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 30 Jun 2011 11:19:00 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
