@@ -273,15 +273,9 @@ uGlobalMenuIconLoader::Run()
   nsIDocument *doc = mContent->GetDocument();
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
 
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-  sLoader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
-                    nsnull, nsIRequest::LOAD_NORMAL, nsnull,
-                    nsnull, getter_AddRefs(mIconRequest));
-#else
   sLoader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
                     nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                     nsnull, nsnull, getter_AddRefs(mIconRequest));
-#endif
 
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
   mImageRect.SetEmpty();
@@ -327,9 +321,7 @@ uGlobalMenuIconLoader::OnStartDecode(imgIRequest *aRequest)
 NS_IMETHODIMP
 uGlobalMenuIconLoader::OnStartContainer(imgIRequest *aRequest, imgIContainer *aContainer)
 {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
   aContainer->RequestDecode();
-#endif
   return NS_OK;
 }
 
@@ -397,13 +389,8 @@ uGlobalMenuIconLoader::OnStopFrame(imgIRequest *aRequest, PRUint32 aFrame)
 
   nsCOMPtr<imgIContainer> clippedImg;
   if (needsClip) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-    nsresult rv = img->ExtractCurrentFrame(mImageRect,
-                                           getter_AddRefs(clippedImg));
-#else
     nsresult rv = img->ExtractFrame(0, mImageRect, 0,
                                     getter_AddRefs(clippedImg));
-#endif
     if (NS_FAILED(rv)) {
       return NS_ERROR_FAILURE;
     }
@@ -454,21 +441,15 @@ uGlobalMenuIconLoader::OnStopRequest(imgIRequest *aRequest, PRBool aIsLastPart)
   return NS_OK;
 }
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 NS_IMETHODIMP
 uGlobalMenuIconLoader::OnDiscard(imgIRequest *aRequest)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
-#endif
 
 NS_IMETHODIMP
 uGlobalMenuIconLoader::FrameChanged(imgIContainer *aContainer,
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-                                    nsIntRect *aDirtyRect)
-#else
                                     const nsIntRect *aDirtyRect)
-#endif
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

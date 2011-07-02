@@ -51,9 +51,6 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsPIDOMWindow.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-# include <nsIDocumentViewer.h>
-#endif
 
 #include "uIGlobalMenuService.h"
 #include "uIGlobalMenuLoader.h"
@@ -108,34 +105,37 @@ uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
   if (!cv)
     return PR_FALSE;
 
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-  nsCOMPtr<nsIDocumentViewer> docv(do_QueryInterface(cv));
-  if (!docv)
-    return PR_FALSE;
-
-  nsCOMPtr<nsIDocument> doc;
-  docv->GetDocument(getter_AddRefs(doc));
-#else
   nsIDocument *doc = cv->GetDocument();
-#endif
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
   if (!domDoc)
     return PR_FALSE;
 
+  nsresult rv;
   nsCOMPtr<nsIDOMNodeList> elements;
-  domDoc->GetElementsByTagNameNS(NS_LITERAL_STRING("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"),
-                                 NS_LITERAL_STRING("menubar"),
-                                 getter_AddRefs(elements));
+  rv = domDoc->GetElementsByTagNameNS(NS_LITERAL_STRING("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"),
+                                      NS_LITERAL_STRING("menubar"),
+                                      getter_AddRefs(elements));
+  if (NS_FAILED(rv) || !elements)
+    return PR_FALSE;
 
-  if (elements) {
-    nsCOMPtr<nsIDOMNode> menubar;
-    elements->Item(0, getter_AddRefs(menubar));
-    if (menubar) {
-      nsCOMPtr<nsIContent> menubarContent = do_QueryInterface(menubar);
-      // XXX: Should we do anything with errors here?
-      mService->CreateGlobalMenuBar(aWindow, menubarContent);
-    }
+  PRUint32 length;
+  elements->GetLength(&length);
+  if (length == 0)
+    return PR_FALSE;
+  
+  nsCOMPtr<nsIDOMNode> menubar;
+  elements->Item(0, getter_AddRefs(menubar));
+  if (!menubar) {
+    NS_WARNING("NULL node in nsIDOMNodeList. Should this even happen?");
+    // Return success here so we don't keep getting state change
+    // notifications from the doc shell
+    return PR_TRUE;
   }
+
+  nsCOMPtr<nsIContent> menubarContent = do_QueryInterface(menubar);
+  // XXX: Should we do anything with errors here?
+  mService->CreateGlobalMenuBar(aWindow, menubarContent);
+
   return PR_TRUE;
 }
 

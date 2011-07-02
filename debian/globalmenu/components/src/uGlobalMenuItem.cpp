@@ -56,14 +56,8 @@
 #endif
 #include <nsIPrivateDOMEvent.h>
 #include <nsIDOMEventTarget.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
-# include <mozilla/dom/Element.h>
-#endif
+#include <mozilla/dom/Element.h>
 #include <nsIContent.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-# include <nsIDOMDocument.h>
-# include <nsIDOMElement.h>
-#endif
 
 #include <glib-object.h>
 #include <gdk/gdk.h>
@@ -254,7 +248,6 @@ static struct nsKeyConverter nsKeycodes[] = {
     { nsIDOMKeyEvent::DOM_VK_META,       GDK_Meta_R },
     { nsIDOMKeyEvent::DOM_VK_PAUSE,      GDK_Pause },
     { nsIDOMKeyEvent::DOM_VK_CAPS_LOCK,  GDK_Caps_Lock },
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
     { nsIDOMKeyEvent::DOM_VK_KANA,       GDK_Kana_Lock },
     { nsIDOMKeyEvent::DOM_VK_KANA,       GDK_Kana_Shift },
     { nsIDOMKeyEvent::DOM_VK_HANGUL,     GDK_Hangul },
@@ -262,14 +255,11 @@ static struct nsKeyConverter nsKeycodes[] = {
     // { nsIDOMKeyEvent::DOM_VK_FINAL,      GDK_XXX },
     { nsIDOMKeyEvent::DOM_VK_HANJA,      GDK_Hangul_Hanja },
     { nsIDOMKeyEvent::DOM_VK_KANJI,      GDK_Kanji },
-#endif
     { nsIDOMKeyEvent::DOM_VK_ESCAPE,     GDK_Escape },
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
     { nsIDOMKeyEvent::DOM_VK_CONVERT,    GDK_Henkan },
     { nsIDOMKeyEvent::DOM_VK_NONCONVERT, GDK_Muhenkan },
     // { nsIDOMKeyEvent::DOM_VK_ACCEPT,     GDK_XXX },
     { nsIDOMKeyEvent::DOM_VK_MODECHANGE, GDK_Mode_switch },
-#endif
     { nsIDOMKeyEvent::DOM_VK_SPACE,      GDK_space },
     { nsIDOMKeyEvent::DOM_VK_PAGE_UP,    GDK_Page_Up },
     { nsIDOMKeyEvent::DOM_VK_PAGE_DOWN,  GDK_Page_Down },
@@ -279,11 +269,9 @@ static struct nsKeyConverter nsKeycodes[] = {
     { nsIDOMKeyEvent::DOM_VK_UP,         GDK_Up },
     { nsIDOMKeyEvent::DOM_VK_RIGHT,      GDK_Right },
     { nsIDOMKeyEvent::DOM_VK_DOWN,       GDK_Down },
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
     { nsIDOMKeyEvent::DOM_VK_SELECT,     GDK_Select },
     { nsIDOMKeyEvent::DOM_VK_PRINT,      GDK_Print },
     { nsIDOMKeyEvent::DOM_VK_EXECUTE,    GDK_Execute },
-#endif
     { nsIDOMKeyEvent::DOM_VK_PRINTSCREEN, GDK_Print },
     { nsIDOMKeyEvent::DOM_VK_INSERT,     GDK_Insert },
     { nsIDOMKeyEvent::DOM_VK_DELETE,     GDK_Delete },
@@ -329,9 +317,7 @@ static struct nsKeyConverter nsKeycodes[] = {
     // context menu key, keysym 0xff67, typically keycode 117 on 105-key (Microsoft) 
     // x86 keyboards, located between right 'Windows' key and right Ctrl key
     { nsIDOMKeyEvent::DOM_VK_CONTEXT_MENU, GDK_Menu },
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
     { nsIDOMKeyEvent::DOM_VK_SLEEP,      GDK_Sleep },
-#endif
 
     // NS doesn't have dash or equals distinct from the numeric keypad ones,
     // so we'll use those for now.  See bug 17008:
@@ -654,33 +640,13 @@ uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
   if (doc) {
     nsAutoString attr;
     mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, attr);
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-    nsCOMPtr<nsIDOMDocument> domDoc(do_QueryInterface(doc));
-    nsCOMPtr<nsIDOMElement> domElmt;
-#endif
     if (!attr.IsEmpty()) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-      if (domDoc) {
-        domDoc->GetElementById(attr, getter_AddRefs(domElmt));
-      }
-
-      mCommandContent = do_QueryInterface(domElmt);
-#else
       mCommandContent = doc->GetElementById(attr);
-#endif
     }
 
     mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, attr);
     if (!attr.IsEmpty()) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-      if (domDoc) {
-        domDoc->GetElementById(attr, getter_AddRefs(domElmt));
-      }
-
-      mKeyContent = do_QueryInterface(domElmt);
-#else
       mKeyContent = doc->GetElementById(attr);
-#endif
     }
   }
 
@@ -796,18 +762,7 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     nsAutoString command;
     mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, command);
     if (!command.IsEmpty()) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-      nsCOMPtr<nsIDOMDocument> domDoc(do_QueryInterface(doc));
-      nsCOMPtr<nsIDOMElement> domElmt;
-
-      if (domDoc) {
-        domDoc->GetElementById(command, getter_AddRefs(domElmt));
-      }
-
-      mCommandContent = do_QueryInterface(domElmt);
-#else
       mCommandContent = doc->GetElementById(command);
-#endif
       if (mCommandContent) {
         mListener->RegisterForContentChanges(mCommandContent, this);
       }
@@ -822,18 +777,7 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     nsAutoString key;
     mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, key);
     if (!key.IsEmpty()) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-      nsCOMPtr<nsIDOMDocument> domDoc(do_QueryInterface(doc));
-      nsCOMPtr<nsIDOMElement> domElmt;
-
-      if (domDoc) {
-        domDoc->GetElementById(key, getter_AddRefs(domElmt));
-      }
-
-      mKeyContent = do_QueryInterface(domElmt);
-#else
       mKeyContent = doc->GetElementById(key);
-#endif
       if (mKeyContent) {
         mListener->RegisterForContentChanges(mKeyContent, this);
       }

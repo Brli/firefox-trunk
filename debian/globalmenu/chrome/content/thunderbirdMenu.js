@@ -198,10 +198,6 @@
   addEventListener("load", function onLoad() {
     removeEventListener("load", onLoad, false);
 
-    // XXX: This is just to start the menu loader, I can't figure out a way
-    //      to start it without this (eg, on component registration)
-    var loader = Cc["@canonical.com/globalmenu-loader;1"].
-      getService(Ci.uIGlobalMenuLoader);
     if (menuObserver == null) {
       menuObserver = new uGlobalMenuObserver();
     }

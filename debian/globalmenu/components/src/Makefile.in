@@ -103,3 +103,6 @@ CXXFLAGS += -DMOZILLA_BRANCH_MAJOR_VERSION="$(MOZILLA_BRANCH_MAJOR_VERSION)" \
 	    -DMOZILLA_BRANCH_MINOR_VERSION="$(MOZILLA_BRANCH_MINOR_VERSION)" \
 	    -DMOZILLA_BRANCH_MICRO_VERSION="$(MOZILLA_BRANCH_MICRO_VERSION)"
 endif
+
+libs::
+	@$(PYTHON) $(MOZILLA_DIR)/config/buildlist.py $(FINAL_TARGET)/components/components.manifest "category profile-after-change uGlobalMenuLoader @canonical.com/globalmenu-loader;1"

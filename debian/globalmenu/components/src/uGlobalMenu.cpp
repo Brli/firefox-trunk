@@ -60,9 +60,7 @@
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptContext.h>
 #include <jsapi.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
-# include <mozilla/dom/Element.h>
-#endif
+#include <mozilla/dom/Element.h>
 
 #include <glib-object.h>
 
@@ -566,20 +564,8 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
   if (doc) {
     nsAutoString attr;
     mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, attr);
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-    nsCOMPtr<nsIDOMDocument> domDoc(do_QueryInterface(doc));
-    nsCOMPtr<nsIDOMElement> domElmt;
-#endif
     if (!attr.IsEmpty()) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-      if (domDoc) {
-        domDoc->GetElementById(attr, getter_AddRefs(domElmt));
-      }
-
-      mCommandContent = do_QueryInterface(domElmt);
-#else
       mCommandContent = doc->GetElementById(attr);
-#endif
     }
   }
 

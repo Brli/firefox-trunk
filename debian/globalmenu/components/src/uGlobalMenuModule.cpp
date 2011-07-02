@@ -38,18 +38,12 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include "nsIClassInfoImpl.h"
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-#include "nsIGenericFactory.h"
-#else
 #include "mozilla/ModuleUtils.h"
-#endif
 #include "uGlobalMenuService.h"
 #include "uGlobalMenuLoader.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(uGlobalMenuService, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(uGlobalMenuLoader, Init)
-
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 
 NS_DEFINE_NAMED_CID(U_GLOBALMENUSERVICE_CID);
 NS_DEFINE_NAMED_CID(U_GLOBALMENULOADER_CID);
@@ -75,30 +69,3 @@ static const mozilla::Module kGlobalMenuModule = {
 // The following line implements the one-and-only "NSModule" symbol exported from this
 // shared library.
 NSMODULE_DEFN(uGlobalMenuModule) = &kGlobalMenuModule;
-
-#else
-
-// For each class that wishes to support nsIClassInfo, add a line like this
-NS_DECL_CLASSINFO(uGlobalMenuService)
-NS_DECL_CLASSINFO(uGlobalMenuLoader)
-
-static const nsModuleComponentInfo components[] =
-{
-  { "Global Menu Service",
-    U_GLOBALMENUSERVICE_CID,
-    U_GLOBALMENUSERVICE_CONTRACTID,
-    uGlobalMenuServiceConstructor,
-    NULL, NULL
-  },
-
-  { "Global Menu Loader",
-    U_GLOBALMENULOADER_CID,
-    U_GLOBALMENULOADER_CONTRACTID,
-    uGlobalMenuLoaderConstructor,
-    NULL, NULL
-  }
-};
-
-NS_IMPL_NSGETMODULE(uGlobalMenuModule, components)
-
-#endif

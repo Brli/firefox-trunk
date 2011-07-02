@@ -42,9 +42,7 @@
 #include <nsIDocument.h>
 #include <nsIAtom.h>
 #include <nsINode.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
 #include <mozilla/dom/Element.h>
-#endif
 #include <nsIContent.h>
 #include <nsIDocument.h>
 
@@ -97,11 +95,7 @@ uGlobalMenuDocListener::CharacterDataChanged(nsIDocument *aDocument,
 
 void
 uGlobalMenuDocListener::AttributeWillChange(nsIDocument *aDocument,
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-                                            nsIContent *aContent,
-#else
                                             mozilla::dom::Element *aElement,
-#endif
                                             PRInt32 aNameSpaceID,
                                             nsIAtom *aAttribute,
                                             PRInt32 aModType)
@@ -111,19 +105,10 @@ uGlobalMenuDocListener::AttributeWillChange(nsIDocument *aDocument,
 
 void
 uGlobalMenuDocListener::AttributeChanged(nsIDocument *aDocument,
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-                                         nsIContent *aElement,
-#else
                                          mozilla::dom::Element *aElement,
-#endif
                                          PRInt32 aNameSpaceID,
                                          nsIAtom *aAttribute,
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-                                         PRInt32 aModType,
-                                         PRUint32 aStateMask)
-#else
                                          PRInt32 aModType)
-#endif
 {
   if (!aElement)
     return;
@@ -136,18 +121,10 @@ uGlobalMenuDocListener::AttributeChanged(nsIDocument *aDocument,
 void
 uGlobalMenuDocListener::ContentAppended(nsIDocument *aDocument,
                                         nsIContent *aContainer,
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 2
                                         nsIContent *aFirstNewContent,
-#endif
                                         PRInt32 aNewIndexInContainer)
 {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-  PRUint32 count = aContainer->GetChildCount();
-  while ((PRUint32)aNewIndexInContainer < count) {
-    nsIContent *cur = aContainer->GetChildAt(aNewIndexInContainer);
-#else
   for (nsIContent* cur = aFirstNewContent; cur; cur = cur->GetNextSibling()) {
-#endif
     ContentInserted(aDocument, aContainer, cur, aNewIndexInContainer);
     aNewIndexInContainer++;
   }
@@ -180,12 +157,8 @@ void
 uGlobalMenuDocListener::ContentRemoved(nsIDocument *aDocument,
                                        nsIContent *aContainer,
                                        nsIContent *aChild,
-#if MOZILLA_BRANCH_MAJOR_VERSION < 2
-                                       PRInt32 aIndexInContainer)
-#else
                                        PRInt32 aIndexInContainer,
                                        nsIContent *aPreviousSibling)
-#endif
 {
   if (!aContainer)
     return;
