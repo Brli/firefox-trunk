@@ -1,6 +1,6 @@
-firefox-trunk (7.0~a1~hg20110630r72006+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
-  * New upstream snapshot v7.0 A1 HG 20110630R72006
+  * New upstream snapshot v7.0 A1 HG 20110704R72289
 
   * Update globalmenu-extension to 1.7
     - Fixes LP: #779905 - menubar sometimes appears inside the window rather
@@ -80,7 +80,7 @@ firefox-trunk (7.0~a1~hg20110630r72006+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     to dlopen before libxul
     - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 02 Jul 2011 20:23:41 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 05 Jul 2011 18:54:03 +0100
 
 firefox-trunk (6.0~a1~hg20110523r69965+nobinonly-0ubuntu1) oneiric; urgency=low
 
