@@ -262,9 +262,10 @@ ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
 	DEB_DEFINES += -DMOZ_USE_SHELL_WRAPPER
 endif
 
-DEBIAN_EXECUTABLES = \
-	$(MOZ_APP_NAME)$(MOZ_LIBDIR)/firefox.sh \
-	$(NULL)
+DEBIAN_EXECUTABLES = $(NULL)
+ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
+	DEBIAN_EXECUTABLES += $(MOZ_APP_NAME)$(MOZ_LIBDIR)/firefox.sh
+endif
 
 subst_files = \
 	debian/usr.bin.$(MOZ_APP_NAME) \
