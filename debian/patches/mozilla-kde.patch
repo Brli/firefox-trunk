@@ -17,76 +17,6 @@ Forwarded: no
  
  greprefs.js: $(GREPREF_FILES)
  	$(PYTHON) $(topsrcdir)/config/Preprocessor.py $(PREF_PPFLAGS) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $^ > $@
---- a/modules/libpref/src/Preferences.cpp
-+++ b/modules/libpref/src/Preferences.cpp
-@@ -58,6 +58,7 @@
- #include "nsCOMArray.h"
- #include "nsXPCOMCID.h"
- #include "nsAutoPtr.h"
-+#include "nsKDEUtils.h"
- 
- #include "nsQuickSort.h"
- #include "prmem.h"
-@@ -964,6 +965,24 @@ static nsresult pref_LoadPrefsInDirList(
-   nsCOMPtr<nsIProperties> dirSvc(do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv));
-   if (NS_FAILED(rv)) return rv;
- 
-+  // make sure we load these special files after all the others
-+  static const char* specialFiles[] = {
-+#if defined(XP_UNIX)
-+    ""
-+#endif
-+  };
-+
-+  if (nsKDEUtils::kdeSession()) {
-+    for(int i = 0;
-+        i < NS_ARRAY_LENGTH(specialFiles);
-+        ++i ) {
-+      if (*specialFiles[ i ] == '\0') {
-+        specialFiles[ i ] = "kde.js";
-+        break;
-+      }
-+    }
-+  }
-+
-   nsCOMPtr<nsISimpleEnumerator> dirList;
-   dirSvc->Get(listId,
-               NS_GET_IID(nsISimpleEnumerator),
-@@ -977,7 +996,7 @@ static nsresult pref_LoadPrefsInDirList(
-         nsCOMPtr<nsIFile> dir = do_QueryInterface(elem);
-         if (dir) {
-           // Do we care if a file provided by this process fails to load?
--          pref_LoadPrefsInDir(dir, nsnull, 0); 
-+          pref_LoadPrefsInDir(dir, specialFiles, NS_ARRAY_LENGTH(specialFiles)); 
-         }
-       }
-     }
-@@ -1080,6 +1099,7 @@ static nsresult pref_InitInitialObjects(
-       "winpref.js"
- #elif defined(XP_UNIX)
-       "unix.js"
-+      , "" // placeholder for KDE  (empty is otherwise harmless)
- #if defined(VMS)
-       , "openvms.js"
- #elif defined(_AIX)
-@@ -1092,6 +1112,17 @@ static nsresult pref_InitInitialObjects(
- #endif
-     };
- 
-+  if(nsKDEUtils::kdeSession()) { // TODO what if some setup actually requires the helper?
-+    for( int i = 0;
-+         i < NS_ARRAY_LENGTH(specialFiles);
-+         ++i ) {
-+      if( *specialFiles[ i ] == '\0' ) {
-+        specialFiles[ i ] = "kde.js";
-+        break;
-+      }
-+    }
-+  }
-+
-     rv = pref_LoadPrefsInDir(defaultPrefDir, specialFiles, NS_ARRAY_LENGTH(specialFiles));
-     if (NS_FAILED(rv))
-       NS_WARNING("Error parsing application default preferences.");
 --- a/toolkit/content/jar.mn
 +++ b/toolkit/content/jar.mn
 @@ -45,6 +45,8 @@ toolkit.jar:
@@ -223,7 +153,7 @@ Forwarded: no
         {0x91, 0x81, 0xa2, 0x85, 0xe7, 0x4c, 0xf1, 0xd4 } }
 --- a/toolkit/xre/Makefile.in
 +++ b/toolkit/xre/Makefile.in
-@@ -102,7 +102,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
+@@ -103,7 +103,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
  CPPSRCS += nsNativeAppSupportOS2.cpp
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
@@ -1084,7 +1014,7 @@ Forwarded: no
  #endif
  #include "nsISupports.h"
  #include "nsString.h"
-@@ -1224,7 +1224,7 @@ nsresult nsOSHelperAppService::OSProtoco
+@@ -1196,7 +1196,7 @@ nsresult nsOSHelperAppService::OSProtoco
  
  #ifdef MOZ_WIDGET_GTK2
    // Check the GConf registry for a protocol handler
@@ -1093,7 +1023,7 @@ Forwarded: no
  #if (MOZ_PLATFORM_MAEMO == 5) && defined (MOZ_ENABLE_GNOMEVFS)
    *aHandlerExists = nsMIMEInfoUnix::HandlerExists(aProtocolScheme);
  #endif
-@@ -1236,7 +1236,7 @@ nsresult nsOSHelperAppService::OSProtoco
+@@ -1208,7 +1208,7 @@ nsresult nsOSHelperAppService::OSProtoco
  NS_IMETHODIMP nsOSHelperAppService::GetApplicationDescription(const nsACString& aScheme, nsAString& _retval)
  {
  #ifdef MOZ_WIDGET_GTK2
@@ -1102,7 +1032,7 @@ Forwarded: no
    return _retval.IsEmpty() ? NS_ERROR_NOT_AVAILABLE : NS_OK;
  #else
    return NS_ERROR_NOT_AVAILABLE;
-@@ -1332,7 +1332,7 @@ nsOSHelperAppService::GetFromExtension(c
+@@ -1304,7 +1304,7 @@ nsOSHelperAppService::GetFromExtension(c
      
  #ifdef MOZ_WIDGET_GTK2
      LOG(("Looking in GNOME registry\n"));
@@ -1111,7 +1041,7 @@ Forwarded: no
      if (gnomeInfo) {
        LOG(("Got MIMEInfo from GNOME registry\n"));
        return gnomeInfo;
-@@ -1458,7 +1458,7 @@ nsOSHelperAppService::GetFromType(const
+@@ -1430,7 +1430,7 @@ nsOSHelperAppService::GetFromType(const
      // get back a MIMEInfo without any extensions set.  In that case we'll have
      // to look in our mime.types files for the extensions.    
      LOG(("Looking in GNOME registry\n"));
@@ -1150,7 +1080,7 @@ Forwarded: no
  
  #if (MOZ_PLATFORM_MAEMO == 5)
  #include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
-@@ -276,7 +278,9 @@ nsFilePicker::AppendFilter(const nsAStri
+@@ -287,7 +289,9 @@ nsFilePicker::AppendFilter(const nsAStri
  {
    if (aFilter.EqualsLiteral("..apps")) {
      // No platform specific thing we can do here, really....
@@ -1161,7 +1091,7 @@ Forwarded: no
    }
  
    nsCAutoString filter, name;
-@@ -424,6 +428,9 @@ confirm_overwrite_file(GtkWidget *parent
+@@ -435,6 +439,9 @@ confirm_overwrite_file(GtkWidget *parent
  NS_IMETHODIMP
  nsFilePicker::Show(PRInt16 *aReturn)
  {
@@ -1171,7 +1101,7 @@ Forwarded: no
    NS_ENSURE_ARG_POINTER(aReturn);
  
    nsXPIDLCString title;
-@@ -574,3 +581,229 @@ nsFilePicker::Show(PRInt16 *aReturn)
+@@ -585,3 +592,229 @@ nsFilePicker::Show(PRInt16 *aReturn)
  
    return NS_OK;
  }
@@ -1427,7 +1357,7 @@ Forwarded: no
  endif
 --- a/xpcom/io/Makefile.in
 +++ b/xpcom/io/Makefile.in
-@@ -205,7 +205,7 @@ DEFINES     += -DHAVE_USR_LIB64_DIR
+@@ -195,7 +195,7 @@ DEFINES     += -DHAVE_USR_LIB64_DIR
  endif
  endif
  
@@ -1446,7 +1376,7 @@ Forwarded: no
  #endif
  
  #ifdef XP_MACOSX
-@@ -1735,21 +1736,13 @@ NS_IMETHODIMP
+@@ -1774,21 +1775,13 @@ NS_IMETHODIMP
  nsLocalFile::Reveal()
  {
  #ifdef MOZ_WIDGET_GTK2
@@ -1470,7 +1400,7 @@ Forwarded: no
      } else {
          nsCOMPtr<nsIFile> parentDir;
          nsCAutoString dirPath;
-@@ -1758,11 +1751,25 @@ nsLocalFile::Reveal()
+@@ -1797,11 +1790,25 @@ nsLocalFile::Reveal()
          if (NS_FAILED(parentDir->GetNativePath(dirPath)))
              return NS_ERROR_FAILURE;
  
@@ -1500,7 +1430,7 @@ Forwarded: no
  #elif defined(XP_MACOSX)
      CFURLRef url;
      if (NS_SUCCEEDED(GetCFURL(&url))) {
-@@ -1798,6 +1805,13 @@ nsLocalFile::Launch()
+@@ -1837,6 +1844,13 @@ nsLocalFile::Launch()
        return NS_ERROR_FAILURE;
      return NS_OK;
  #else
@@ -1527,7 +1457,7 @@ Forwarded: no
  #ifdef XP_MACOSX
  #include <CoreFoundation/CoreFoundation.h>
  #endif
-@@ -2197,6 +2201,15 @@ nsDownload::SetState(DownloadState aStat
+@@ -2206,6 +2210,15 @@ nsDownload::SetState(DownloadState aStat
          pref->GetBoolPref(PREF_BDM_SHOWALERTONCOMPLETE, &showTaskbarAlert);
  
        if (showTaskbarAlert) {
@@ -1543,7 +1473,7 @@ Forwarded: no
          PRInt32 alertInterval = 2000;
          if (pref)
            pref->GetIntPref(PREF_BDM_SHOWALERTINTERVAL, &alertInterval);
-@@ -2232,6 +2245,7 @@ nsDownload::SetState(DownloadState aStat
+@@ -2241,6 +2254,7 @@ nsDownload::SetState(DownloadState aStat
                    EmptyString());
              }
          }

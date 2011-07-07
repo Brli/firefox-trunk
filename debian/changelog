@@ -5,8 +5,17 @@ firefox-trunk (8.0~a1~hg20110704r72289+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Update globalmenu-extension to 1.8 prerelease r176
   * Don't try to set the shell wrapper executable when we don't install it
     - update debian/rules
+  * Drop the special "kde.js" file handling from the pref service. It hasn't
+    had the desired effect since Firefox 4, as the specialfile handling
+    doesn't apply to pref files inside the omni.jar. Moving kde.js back in to
+    defaults/pref isn't an option, as these are always read after the prefs
+    in the omni.jar, which would mean that all users would get the KDE
+    specific prefs. Note, we only override one pref in kde.js anyway, it can
+    go elsewhere if really required
+    - update debian/patches/mozilla-kde.patch
+    - update debian/patches/firefox-kde.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Jul 2011 21:48:56 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jul 2011 12:09:34 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
