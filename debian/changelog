@@ -14,8 +14,12 @@ firefox-trunk (8.0~a1~hg20110704r72289+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     go elsewhere if really required
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/firefox-kde.patch
+  * Fix LP: #807805 - invalid language packs created because get-xpi-id.py
+    exits with "xml.parsers.expat.ExpatError: XML or text declaration not at
+    start of entity" exception when the install.rdf starts with empty lines
+    - update debian/get-xpi-id.py
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jul 2011 12:09:34 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 11 Jul 2011 20:37:52 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
