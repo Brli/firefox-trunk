@@ -6,21 +6,21 @@ MOZ_MOZDIR		:=
 
 # Various build options
 # 1 = Use bundled libs
-MOZ_MIN_SYSDEPS		?= 1
+MOZ_MIN_SYSDEPS			?= 1
 # 1 = Enable crashreporter (if supported)
-MOZ_ENABLE_BREAKPAD	?= 1
+MOZ_ENABLE_BREAKPAD		?= 1
 # 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
-MOZ_BUILD_UNOFFICIAL	?= 0
+MOZ_BUILD_UNOFFICIAL		?= 0
 # 1 = Build without jemalloc suitable for valgrind debugging
-MOZ_VALGRIND		?= 0
+MOZ_VALGRIND			?= 0
 # 1 = Profile guided build
-MOZ_BUILD_PGO		?= 0
+MOZ_BUILD_PGO			?= 0
 # 1 = Build and run the testsuite
-MOZ_WANT_UNIT_TESTS	?= 1
+MOZ_WANT_UNIT_TESTS		?= 1
 # 1 = Turn on debugging bits and disable optimizations
-MOZ_DEBUG		?= 0
+MOZ_DEBUG			?= 0
 # 1 = Disable optimizations
-MOZ_NO_OPTIMIZE		?= 0
+MOZ_NO_OPTIMIZE			?= 0
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
@@ -147,6 +147,11 @@ ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "110
 	# Disable crashreporter on nightly builds older than Natty
 	MOZ_ENABLE_BREAKPAD = 0
 endif
+endif
+
+NO_AUTO_REFRESH_LOCALES=1
+ifneq (,$(filter release beta, $(CHANNEL)))
+	NO_AUTO_REFRESH_LOCALES=0
 endif
 
 CFLAGS		= -g
@@ -336,15 +341,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 			sed -e "s/@LANGCODE@/$$language/g" \
 			    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.langpacks.unavail >> debian/control ; \
 		fi \
-	done < debian/locales.unavailable ; \
-
-	if ! cmp -s debian/control debian/control.old ; \
-	then \
-		echo "debian/control file is out of date" ; \
-		rm debian/control.old ; \
-		exit 1 ; \
-	fi
-	rm debian/control.old
+	done < debian/locales.unavailable
 
 BRANCH	:=
 ifneq (,$(MOZ_APP_NAME_SUFFIX))
@@ -481,16 +478,66 @@ endif
 	rm -rf debian/compare-locales
 	mv compare-locales-tmp debian/compare-locales
 
-refresh-supported-locales: pre-build
+refresh-supported-locales:
+	if [ ! -f $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales ] ; \
+	then \
+		if [ ! -z $(TARBALL) ] ; \
+		then \
+			tarball_opts="-o $(TARBALL)" ; \
+		else \
+			tarball_opts="" ; \
+		fi ; \
+		python debian/extract-file.py -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
+	fi
 ifdef LANGPACK_O_MATIC
 	perl debian/refresh-supported-locales.pl -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC)
 else
 	perl debian/refresh-supported-locales.pl -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales
 endif
 
-clean::
+pre-auto-refresh-supported-locales:
+	cp debian/locales.shipped debian/locales.shipped.old
+
+auto-refresh-supported-locales: pre-auto-refresh-supported-locales refresh-supported-locales
+	if ! cmp -s debian/locales.shipped debian/locales.shipped.old ; \
+	then \
+		echo "" ; \
+		echo "******************************************************************************" ; \
+		echo "* List of shipped locales is out of date. Please refresh and try again       *" ; \
+		echo "* To refresh, run \"debian/rules refresh-supported-locales\" in the source   *" ; \
+		echo "* directory. If you are in bzr, you will need to pass the location of the    *" ; \
+		echo "* upstream tarball, using \"TARBALL=/path/to/tarball\". If extra information *" ; \
+		echo "* is required for new locales, you will also need to pass the location of    *" ; \
+		echo "* langpack-o-matic, using \"LANGPACK_O_MATIC=/path/to/langpack-o-matic\"     *" ; \
+		echo "******************************************************************************" ; \
+		echo "" ; \
+		rm debian/locales.shipped.old ; \
+		exit 1 ; \
+	fi
+	rm debian/locales.shipped.old
+
+post-auto-update-debian-control:
+	if ! cmp -s debian/control debian/control.old ; \
+	then \
+		echo "" ; \
+		echo "***************************************************************************" ; \
+		echo "* debian/control file is out of date. Please refresh and try again        *" ; \
+		echo "* To refresh, run \"debian/rules debian/control\" in the source directory *" ; \
+		echo "***************************************************************************" ; \
+		echo "" ; \
+		rm debian/control.old ; \
+		exit 1 ; \
+	fi
+	rm debian/control.old
+
+ifeq (1, $(NO_AUTO_REFRESH_LOCALES))
+clean:: post-auto-update-debian-control
+else
+clean:: auto-refresh-supported-locales post-auto-update-debian-control
+endif
 	rm -f $(subst_files)
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
 	rm -rf compare-locales
+	rm -rf $(DEB_BUILDDIR)/browser/locales
