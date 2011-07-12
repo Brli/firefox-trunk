@@ -6,21 +6,21 @@ MOZ_MOZDIR		:=
 
 # Various build options
 # 1 = Use bundled libs
-MOZ_MIN_SYSDEPS			?= 1
+MOZ_MIN_SYSDEPS		?= 1
 # 1 = Enable crashreporter (if supported)
-MOZ_ENABLE_BREAKPAD		?= 1
+MOZ_ENABLE_BREAKPAD	?= 1
 # 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
-MOZ_BUILD_UNOFFICIAL		?= 0
+MOZ_BUILD_UNOFFICIAL	?= 0
 # 1 = Build without jemalloc suitable for valgrind debugging
-MOZ_VALGRIND			?= 0
+MOZ_VALGRIND		?= 0
 # 1 = Profile guided build
-MOZ_BUILD_PGO			?= 0
+MOZ_BUILD_PGO		?= 0
 # 1 = Build and run the testsuite
-MOZ_WANT_UNIT_TESTS		?= 1
+MOZ_WANT_UNIT_TESTS	?= 1
 # 1 = Turn on debugging bits and disable optimizations
-MOZ_DEBUG			?= 0
+MOZ_DEBUG		?= 0
 # 1 = Disable optimizations
-MOZ_NO_OPTIMIZE			?= 0
+MOZ_NO_OPTIMIZE		?= 0
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
