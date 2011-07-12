@@ -41,6 +41,9 @@ ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	MOZ_WANT_UNIT_TESTS=0
 endif
 
+# We need this to execute before the debian/control target gets called
+clean:: pre-auto-update-debian-control
+
 include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
@@ -309,7 +312,6 @@ EXTRA_BD = $(NULL)
 endif
 
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/locales.shipped debian/locales.unavailable
-	mv debian/control debian/control.old
 	sed -e 's/@EXTRA_BD@/$(EXTRA_BD)/g' \
 	    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.in > debian/control
 
@@ -512,10 +514,13 @@ auto-refresh-supported-locales: pre-auto-refresh-supported-locales refresh-suppo
 		echo "* langpack-o-matic, using \"LANGPACK_O_MATIC=/path/to/langpack-o-matic\"     *" ; \
 		echo "******************************************************************************" ; \
 		echo "" ; \
-		rm debian/locales.shipped.old ; \
+		rm -f debian/locales.shipped.old ; \
 		exit 1 ; \
 	fi
-	rm debian/locales.shipped.old
+	rm -f debian/locales.shipped.old
+
+pre-auto-update-debian-control:
+	cp debian/control debian/control.old
 
 post-auto-update-debian-control:
 	if ! cmp -s debian/control debian/control.old ; \
@@ -526,10 +531,10 @@ post-auto-update-debian-control:
 		echo "* To refresh, run \"debian/rules debian/control\" in the source directory *" ; \
 		echo "***************************************************************************" ; \
 		echo "" ; \
-		rm debian/control.old ; \
+		rm -f debian/control.old ; \
 		exit 1 ; \
 	fi
-	rm debian/control.old
+	rm -f debian/control.old
 
 ifeq (1, $(NO_AUTO_REFRESH_LOCALES))
 clean:: post-auto-update-debian-control
