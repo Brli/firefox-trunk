@@ -32,8 +32,11 @@ firefox-trunk (8.0~a1~hg20110711r72585+nobinonly-0ubuntu1) UNRELEASED; urgency=l
        debian/scripts/refresh-supported-locales
     - move debian/extract-file.py to debian/scripts/extract-file
     - update debian/rules
+  * Ensure that various failures which might occur when building the language
+    packs are fatal. This should catch issues like LP: #807805
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 12 Jul 2011 14:19:19 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 12 Jul 2011 14:41:45 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

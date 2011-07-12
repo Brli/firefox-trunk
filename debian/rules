@@ -386,8 +386,8 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 		if [ ! -z "$$line" ] ; \
 		then \
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
-			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language ; \
-			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language ; \
+			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1 ; \
+			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1; \
 		fi \
 	done < $(CURDIR)/debian/locales.shipped
 
@@ -408,6 +408,7 @@ common-binary-post-install-indep::
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
 			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\2/'` ; \
 			id=`python $(CURDIR)/debian/scripts/get-xpi-id $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
+			[ $$? -eq 0 ] || exit 1 ; \
 			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} usr/lib/$(MOZ_APP_NAME)-addons/extensions ; \
 			cp $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi \
 			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/usr/lib/$(MOZ_APP_NAME)-addons/extensions/$${id}.xpi ; \
