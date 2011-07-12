@@ -26,8 +26,14 @@ firefox-trunk (8.0~a1~hg20110711r72585+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     nightly and aurora
     - update debian/rules
     - add debian/extract-file.py
+  * Move custom scripts to debian/scripts
+    - move debian/get-xpi-id.py to debian/scripts/get-xpi-id
+    - move debian/refresh-supported-locales.pl to
+       debian/scripts/refresh-supported-locales
+    - move debian/extract-file.py to debian/scripts/extract-file
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 12 Jul 2011 14:09:16 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 12 Jul 2011 14:19:19 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
