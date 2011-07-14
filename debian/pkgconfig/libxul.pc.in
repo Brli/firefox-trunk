@@ -12,4 +12,4 @@ Requires: nspr
 Requires: mozilla-nspr
 %%endif
 Libs: -L${sdkdir}/lib -lxpcomglue_s -lxul -lxpcom -lmozalloc
-Cflags: -I${includedir} -fshort-wchar
+Cflags: -I${includedir} @WCHAR_CFLAGS@

@@ -35,8 +35,13 @@ firefox-trunk (8.0~a1~hg20110711r72585+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Ensure that various failures which might occur when building the language
     packs are fatal. This should catch issues like LP: #807805
     - update debian/rules
+  * Don't unconditionally set -fshort-wchar in the libxul.pc pkgconfig file.
+    It's no longer needed with newer toolchains which support gnu++0x, and
+    defining it breaks the mozvoikko build
+    - update debian/pkgconfig/libxul.pc.in
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 12 Jul 2011 14:41:45 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Jul 2011 16:04:43 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

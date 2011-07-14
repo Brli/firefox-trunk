@@ -299,10 +299,13 @@ subst_files = \
 	debian/$(MOZ_APP_NAME)-dev.links \
 	debian/$(MOZ_APP_NAME).lintian-overrides \
 	debian/$(MOZ_APP_NAME)-globalmenu.dirs \
+	debian/mozconfig \
+	$(NULL)
+
+pkgconfig_files = \
 	debian/pkgconfig/mozilla-plugin.pc \
 	debian/pkgconfig/libxul.pc \
 	debian/pkgconfig/mozilla-nspr.pc \
-	debian/mozconfig \
 	$(NULL)
 
 ifneq (1, $(MOZ_MIN_SYSDEPS))
@@ -352,6 +355,10 @@ endif
 $(subst_files): $(foreach file, $(subst_files), $(subst $(BRANCH),,$(file).in))
 	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst $(BRANCH),,$@.in) > $(CURDIR)/$@
 
+%.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
+%.pc: %.pc.in debian/stamp-makefile-build
+	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
+
 debian/usr.bin.firefox.in:
 	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1104' ]; then \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.11.04 $(CURDIR)/debian/usr.bin.firefox.in ; \
@@ -395,7 +402,7 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 
 	touch $@
 
-common-build-arch:: debian/stamp-testsuite
+common-build-arch:: debian/stamp-testsuite $(pkgconfig_files)
 
 common-build-indep:: debian/stamp-langpack-xpi-build
 
