@@ -40,8 +40,12 @@ firefox-trunk (8.0~a1~hg20110711r72585+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     defining it breaks the mozvoikko build
     - update debian/pkgconfig/libxul.pc.in
     - update debian/rules
+  * Refresh patches:
+    - update debian/patches/ubuntu-codes-google.patch
+    - update debian/patches/mozilla-kde.patch
+    - update debian/patches/firefox-kde.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Jul 2011 16:04:43 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Jul 2011 20:40:53 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

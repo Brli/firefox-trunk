@@ -1052,8 +1052,8 @@ Forwarded: no
        return gnomeInfo;
 --- a/widget/src/gtk2/Makefile.in
 +++ b/widget/src/gtk2/Makefile.in
-@@ -139,6 +139,9 @@ INCLUDES	+= \
- 		-I$(srcdir)/../shared \
+@@ -140,6 +140,9 @@ INCLUDES	+= \
+ 		-I$(topsrcdir)/layout/xul/base/src \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
  		$(NULL)
 +
@@ -1072,15 +1072,15 @@ Forwarded: no
  
  #include "nsIFileURL.h"
  #include "nsIURI.h"
-@@ -55,6 +56,7 @@
+@@ -54,6 +55,7 @@
+ #include "prlink.h"
  
  #include "nsFilePicker.h"
- #include "nsAccessibilityHelper.h"
 +#include "nsKDEUtils.h"
  
  #if (MOZ_PLATFORM_MAEMO == 5)
  #include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
-@@ -287,7 +289,9 @@ nsFilePicker::AppendFilter(const nsAStri
+@@ -286,7 +288,9 @@ nsFilePicker::AppendFilter(const nsAStri
  {
    if (aFilter.EqualsLiteral("..apps")) {
      // No platform specific thing we can do here, really....
@@ -1091,7 +1091,7 @@ Forwarded: no
    }
  
    nsCAutoString filter, name;
-@@ -435,6 +439,9 @@ confirm_overwrite_file(GtkWidget *parent
+@@ -434,6 +438,9 @@ confirm_overwrite_file(GtkWidget *parent
  NS_IMETHODIMP
  nsFilePicker::Show(PRInt16 *aReturn)
  {
@@ -1101,7 +1101,7 @@ Forwarded: no
    NS_ENSURE_ARG_POINTER(aReturn);
  
    nsXPIDLCString title;
-@@ -585,3 +592,229 @@ nsFilePicker::Show(PRInt16 *aReturn)
+@@ -584,3 +591,229 @@ nsFilePicker::Show(PRInt16 *aReturn)
  
    return NS_OK;
  }
@@ -1483,7 +1483,7 @@ Forwarded: no
  #if defined(XP_WIN) || defined(XP_MACOSX) || defined(ANDROID)
 --- a/toolkit/components/downloads/Makefile.in
 +++ b/toolkit/components/downloads/Makefile.in
-@@ -82,3 +82,5 @@ DIRS += test
+@@ -80,3 +80,5 @@ DIRS += test
  endif
  
  include $(topsrcdir)/config/rules.mk
