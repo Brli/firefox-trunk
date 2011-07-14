@@ -1,6 +1,6 @@
-firefox-trunk (8.0~a1~hg20110711r72585+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v8.0 A1 HG 20110711R72585
+  * New upstream snapshot v8.0 A1 HG 20110714R72763
 
   * Update globalmenu-extension to 1.8 prerelease r176
   * Don't try to set the shell wrapper executable when we don't install it
@@ -59,7 +59,7 @@ firefox-trunk (8.0~a1~hg20110711r72585+nobinonly-0ubuntu1) UNRELEASED; urgency=l
       Ubuntu versions which don't have a new enough toolchain
       - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Jul 2011 20:46:18 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Jul 2011 20:49:45 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
