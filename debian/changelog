@@ -44,8 +44,22 @@ firefox-trunk (8.0~a1~hg20110711r72585+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/patches/ubuntu-codes-google.patch
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/firefox-kde.patch
+  * Update support for doing PGO builds:
+    - Add "mk_add_options MOZ_PGO=1" to mozconfig when doing a PGO build,
+      rather than changing the make target to "profiledbuild"
+      - update debian/mozconfig.in
+      - update debian/rules
+    - Run the profiling 10 times
+      - update debian/mozconfig.in
+    - Don't turn off the crash reporter or force unofficial branding for PGO
+      builds
+      - update debian/rules
+    - Don't force the compiler to gcc-4.5 when doing PGO builds. Instead,
+      we will just rely on the default compiler and not enable PGO on
+      Ubuntu versions which don't have a new enough toolchain
+      - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Jul 2011 20:40:53 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Jul 2011 20:46:18 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

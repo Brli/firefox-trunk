@@ -90,7 +90,8 @@ ac_add_options --disable-crashreporter
 %%endif
 ac_add_options @MOZ_BRANDING_OPTION@
 %%ifdef MOZ_BUILD_PGO
-mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py'
+mk_add_options MOZ_PGO=1
+mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'
 %%endif
 %%ifdef MOZ_DISABLE_GNOMEVFS
 ac_add_options --disable-gnomevfs

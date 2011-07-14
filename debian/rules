@@ -68,14 +68,6 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	MOZ_BUILD_UNOFFICIAL = 1
 endif
 
-ifeq (1, $(MOZ_BUILD_PGO))
-	# See https://bugzilla.mozilla.org/show_bug.cgi?id=602245
-	MOZ_WANT_UNIT_TESTS = 0
-	# We don't really want the crash reporter on for PGO builds yet
-	MOZ_ENABLE_BREAKPAD = 0
-	MOZ_BUILD_UNOFFICIAL = 1
-endif
-
 include $(CURDIR)/debian/testsuite.mk
 
 # Define other variables used throughout the build
@@ -89,9 +81,6 @@ DEB_MAKE_EXTRA_ARGS		:=
 
 # These normally come from autotools.mk, which we no longer include (because we
 # don't want to run configure)
-ifeq (1, $(MOZ_BUILD_PGO))
-	DEB_MAKE_BUILD_TARGET	:= profiledbuild
-endif
 DEB_MAKE_INSTALL_TARGET		:= install DESTDIR=$(CURDIR)/debian/tmp
 DEB_MAKE_CLEAN_TARGET		:= distclean
 
@@ -178,12 +167,6 @@ endif
 ifeq (1,$(MOZ_ENABLE_BREAKPAD))
 	# Needed to enable crashreported in application.ini
 	export MOZILLA_OFFICIAL=1
-endif
-ifeq (1,$(MOZ_BUILD_PGO))
-	CC	= $(shell which gcc-4.5)
-	CXX	= $(shell which g++-4.5)
-	export CC
-	export CXX
 endif
 
 ifneq (1, $(MOZ_MIN_SYSDEPS))
