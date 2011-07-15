@@ -61,12 +61,24 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
       - update debian/rules
   * Turn on PGO for Oneiric and newer
     - update debian/rules
+  * Shrink the default mozconfig right down, by using defaults rather than
+    forcing things like --disable-system-cairo and friends. We still retain
+    the ability to override the defaults though by setting MOZ_OVERRIDE_SHLIBS
+    to either "tree" or "system", but we use upstream defaults now. We also
+    drop the pkg-config checks in debian/rules which allowed a fallback build
+    configuration when dependencies aren't satisfied. Really, the build should
+    just fail here rather than continuing in some undesirable fallback mode
+    - update debian/firefox-dev.install.in
+    - update debian/firefox-dev.links.in 
+    - update debian/mozconfig.in
+    - update debian/pkgconfig/libxul.pc.in
+    - update debian/rules
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 15 Jul 2011 01:38:50 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 15 Jul 2011 13:16:44 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

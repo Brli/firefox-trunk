@@ -5,8 +5,8 @@ CHANNEL			:= nightly
 MOZ_MOZDIR		:=
 
 # Various build options
-# 1 = Use bundled libs
-MOZ_MIN_SYSDEPS		?= 1
+# tree = use in-tree libs, system = use system libs
+MOZ_OVERRIDE_SHLIBS	?=
 # 1 = Enable crashreporter (if supported)
 MOZ_ENABLE_BREAKPAD	?= 1
 # 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
@@ -21,6 +21,15 @@ MOZ_WANT_UNIT_TESTS	?= 1
 MOZ_DEBUG		?= 0
 # 1 = Disable optimizations
 MOZ_NO_OPTIMIZE		?= 0
+
+# Whether to use in-tree or system libs
+# tree = force in-tree, system = force system, default = use upstream default
+MOZ_USE_CAIRO		?= default
+MOZ_USE_NSPR		?= default
+MOZ_USE_NSS		?= default
+
+UPSTREAM_TREE_LIBS = CAIRO NSPR NSS
+UPSTREAM_SYSTEM_LIBS =
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
@@ -172,30 +181,24 @@ ifeq (1,$(MOZ_ENABLE_BREAKPAD))
 	export MOZILLA_OFFICIAL=1
 endif
 
-ifneq (1, $(MOZ_MIN_SYSDEPS))
-ifneq (1, $(MOZ_DEBUG))
-	MOZ_USE_SYSTEM_NSPR := $(shell pkg-config --exists 'nspr >= 4.8.7'; a=$$?; if test $$a != 1; then echo 1; fi)
-	MOZ_USE_SYSTEM_CAIRO := $(shell pkg-config --exists 'cairo >= 1.8.8'; a=$$?; if test $$a != 1; then echo 1; fi)
-	MOZ_USE_SYSTEM_SQLITE :=  $(shell pkg-config --exists 'sqlite3 >= 3.7.1'; a=$$?; if test $$a != 1; then echo 1; fi)
-	MOZ_USE_SYSTEM_NSS := $(shell pkg-config --exists 'nss >= 3.12.9'; a=$$?; if test $$a != 1; then echo 1; fi)
-	MOZ_USE_SYSTEM_HUNSPELL := $(shell pkg-config --exists 'hunspell >= 1.2' && echo 1)
-ifeq (1, $(MOZ_USE_SYSTEM_CAIRO))
-	MOZ_USE_SYSTEM_CAIRO := $(shell printf "\#include <cairo-tee.h>\nint main(int argc, char *argv[]) { return 0; }" > test.c && \
-			      gcc `pkg-config --cflags --libs cairo` -lc -o test test.c > /dev/null 2>&1 && echo "1"; rm -f test test.c)
-endif
-endif
-endif
-
 # Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_SERIES="$(MOZ_SERIES)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)"\
 		-DMOZ_INCDIR="$(MOZ_INCDIR)" -DMOZ_IDLDIR="$(MOZ_IDLDIR)" -DMOZ_VERSION="$(MOZ_VERSION)" -DDEB_HOST_ARCH="$(DEB_HOST_ARCH)" \
-		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_SYSTEM_DICTDIR="$(MOZ_SYSTEM_DICTDIR)" \
+		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_SYSTEM_DICTDIR="$(MOZ_SYSTEM_DICTDIR)" -DMOZ_OVERRIDE_SHLIBS="$(MOZ_OVERRIDE_SHLIBS)" \
 		-DMOZ_BRANDING_OPTION="$(MOZ_BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)" \
 		-DMOZ_PREFIX="$(MOZ_PREFIX)" -DMOZ_SDKDIR="$(MOZ_SDKDIR)" -DMOZ_DISTDIR="$(MOZ_DISTDIR)" \
 		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILE_PREFIX=".mozilla/"
-ifeq (1, $(MOZ_MIN_SYSDEPS))
-	DEB_DEFINES += -DMOZ_MIN_SYSDEPS
-endif
+
+SHLIB_OVERRIDE = $(if $(shell if [ "system" = "$(MOZ_OVERRIDE_SHLIBS)" ] ; then echo "1" ; fi), $(eval MOZ_USE_$(1) = system), \
+	$(if $(shell if [ "tree" = "$(MOZ_OVERRIDE_SHLIBS)" ] ; then echo "1" ; fi), $(eval MOZ_USE_$(1) = tree),))
+DEFINE_TREE = $(if $(shell if [ "system" != "$(MOZ_USE_$(1))" ] ; then echo "1" ; fi), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
+DEFINE_SYSTEM = $(if $(shell if [ "tree" = "$(MOZ_USE_$(1))" ] ; then echo "1" ; fi), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
+
+$(foreach lib, $(UPSTREAM_TREE_LIBS) $(UPSTREAM_SYSTEM_LIBS), $(call SHLIB_OVERRIDE,$(lib)))
+$(foreach lib, $(UPSTREAM_TREE_LIBS) $(UPSTREAM_SYSTEM_LIBS), $(eval DEB_DEFINES += -DMOZ_USE_$(lib)="$(MOZ_USE_$(lib))"))
+$(foreach lib, $(UPSTREAM_TREE_LIBS), $(call DEFINE_TREE,$(lib)))
+$(foreach lib, $(UPSTREAM_SYSTEM_LIBS), $(call DEFINE_SYSTEM,$(lib)))
+
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 	DEB_DEFINES += -DMOZ_ENABLE_BREAKPAD
 endif
@@ -204,24 +207,6 @@ ifeq (1, $(MOZ_VALGRIND))
 endif
 ifeq (1,$(MOZ_NO_OPTIMIZE))
 	DEB_DEFINES += -DMOZ_NO_OPTIMIZE
-endif
-ifeq (1, $(MOZ_USE_SYSTEM_NSPR))
-	DEB_DEFINES += -DMOZ_USE_SYSTEM_NSPR
-	NSPR_DEPENDS = libnspr4-dev
-endif
-ifeq (1, $(MOZ_USE_SYSTEM_CAIRO))
-	DEB_DEFINES += -DMOZ_USE_SYSTEM_CAIRO
-	CAIRO_DEPENDS = libcairo2-dev
-endif
-ifeq (1, $(MOZ_USE_SYSTEM_SQLITE))
-	DEB_DEFINES += -DMOZ_USE_SYSTEM_SQLITE
-endif
-ifeq (1, $(MOZ_USE_SYSTEM_NSS))
-	DEB_DEFINES += -DMOZ_USE_SYSTEM_NSS
-	NSS_DEPENDS = libnss3-dev
-endif
-ifeq (1,$(MOZ_USE_SYSTEM_HUNSPELL))
-	DEB_DEFINES += -DMOZ_USE_SYSTEM_HUNSPELL
 endif
 ifeq (1,$(MOZ_WANT_UNIT_TESTS))
 	DEB_DEFINES += -DMOZ_WANT_UNIT_TESTS
@@ -254,6 +239,16 @@ endif
 ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
 	DEB_DEFINES += -DMOZ_APP_RENAME
 	DEB_DEFINES += -DMOZ_USE_SHELL_WRAPPER
+endif
+
+ifneq (1, $(MOZ_TREE_NSPR))
+	NSPR_DEPENDS = libnspr4-dev
+endif
+ifneq (1, $(MOZ_TREE_CAIRO))
+	CAIRO_DEPENDS = libcairo2-dev
+endif
+ifneq (1, $(MOZ_TREE_NSS))
+	NSS_DEPENDS = libnss3-dev
 endif
 
 DEBIAN_EXECUTABLES = $(NULL)
@@ -294,10 +289,12 @@ pkgconfig_files = \
 	debian/pkgconfig/mozilla-nspr.pc \
 	$(NULL)
 
-ifneq (1, $(MOZ_MIN_SYSDEPS))
-EXTRA_BD = \n\tlibnspr4-dev,\n\tlibnss3-dev,\n\tlibcairo2-dev,\n\tlibsqlite3-dev,\n\tlibpixman-1-dev,\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibhunspell-dev,
-else
 EXTRA_BD = $(NULL)
+ifneq (1, $(MOZ_TREE_NSPR))
+EXTRA_BD += \n\tlibnspr4-dev,
+endif
+ifneq (1, $(MOZ_TREE_CAIRO))
+EXTRA_BD += \n\tlibcairo2-dev,
 endif
 
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/locales.shipped debian/locales.unavailable
@@ -427,7 +424,7 @@ GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
 binary-post-install/$(MOZ_APP_NAME):: compare
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(MOZ_APP_NAME)/usr/lib/firefox-*/components/$(file);) true
 
-ifneq (1, $(MOZ_USE_SYSTEM_NSPR))
+ifeq (1, $(MOZ_TREE_NSPR))
 binary-post-install/$(MOZ_APP_NAME)-dev::
 	rm -f debian/$(MOZ_APP_NAME)-dev$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_APP_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
@@ -440,7 +437,7 @@ common-binary-predeb-arch::
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_APP_NAME)-gnome-support$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_APP_NAME)$(MOZ_LIBDIR)/components/;) true
 	touch $@
 
-ifneq (1, $(MOZ_USE_SYSTEM_NSS))
+ifeq (1, $(MOZ_TREE_NSS))
 binary-predeb/$(MOZ_APP_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(MOZ_APP_NAME)$(MOZ_LIBDIR):$$LD_LIBRARY_PATH \
