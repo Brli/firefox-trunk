@@ -33,7 +33,7 @@ Build-Depends: cdbs,
 	lsb-release,
 	libiw-dev,
 	mesa-common-dev,
-	libnotify-dev (>= 0.4), @EXTRA_BD@
+	libnotify-dev (>= 0.4), @SYSLIBS_BD@
 	libgnomevfs2-dev, 
         yasm,
 	xvfb,

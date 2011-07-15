@@ -27,8 +27,20 @@ MOZ_NO_OPTIMIZE		?= 0
 MOZ_USE_CAIRO		?= default
 MOZ_USE_NSPR		?= default
 MOZ_USE_NSS		?= default
+MOZ_USE_SQLITE		?= default
+MOZ_USE_HUNSPELL	?= default
+MOZ_USE_VPX		?= default
 
-UPSTREAM_TREE_LIBS = CAIRO NSPR NSS
+# Build-dependencies for system libraries, if we want them
+NSPR_BD		= libnspr4-dev
+CAIRO_BD	= libcairo2-dev
+SQLITE_BD	= libsqlite3-dev
+HUNSPELL_BD	= libhunspell-dev
+VPX_BD		= libvpx-dev
+NSS_BD		= libnss3-dev
+EXTRA_BD	= libpixman-1-dev libjpeg62-dev libpng12-dev zlib1g-dev libbz2-dev libevent-dev libfreetype6-dev
+
+UPSTREAM_TREE_LIBS = CAIRO NSPR NSS SQLITE HUNSPELL VPX
 UPSTREAM_SYSTEM_LIBS =
 
 # These are used for cross-compiling and for saving the configure script
@@ -289,16 +301,14 @@ pkgconfig_files = \
 	debian/pkgconfig/mozilla-nspr.pc \
 	$(NULL)
 
-EXTRA_BD = $(NULL)
-ifneq (1, $(MOZ_TREE_NSPR))
-EXTRA_BD += \n\tlibnspr4-dev,
-endif
-ifneq (1, $(MOZ_TREE_CAIRO))
-EXTRA_BD += \n\tlibcairo2-dev,
+SYSLIBS_BD = $(NULL)
+$(foreach lib, $(UPSTREAM_TREE_LIBS) $(UPSTREAM_SYSTEM_LIBS), $(if $(shell if [ "$(MOZ_TREE_$(lib))" != "1" ] ; then echo "1" ; fi), $(eval SYSLIBS_BD += \n\t$($(lib)_BD),),))
+ifeq (system, $(MOZ_OVERRIDE_SHLIBS))
+$(foreach lib, $(EXTRA_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
 endif
 
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/locales.shipped debian/locales.unavailable
-	sed -e 's/@EXTRA_BD@/$(EXTRA_BD)/g' \
+	sed -e 's/@SYSLIBS_BD@/$(SYSLIBS_BD)/g' \
 	    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.in > debian/control
 
 	while read line ; \

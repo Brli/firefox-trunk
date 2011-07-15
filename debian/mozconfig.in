@@ -20,21 +20,17 @@ ac_add_options --with-system-jpeg=/usr
 ac_add_options --with-system-png=/usr
 ac_add_options --with-system-zlib=/usr
 ac_add_options --with-system-bz2=/usr
-ac_add_options --with-system-libvpx=/usr
 ac_add_options --with-system-libevent=/usr
-ac_add_options --enable-system-sqlite
-ac_add_options --enable-system-hunspell
 ac_add_options --enable-system-pixman
+ac_add_options --disable-tree-freetype
 %%elif MOZ_OVERRIDE_SHLIBS == tree
 ac_add_options --without-system-jpeg
 ac_add_options --without-system-png
 ac_add_options --without-system-zlib
 ac_add_options --without-system-bz2
-ac_add_options --without-system-libvpx
 ac_add_options --without-system-libevent
-ac_add_options --disable-system-sqlite
-ac_add_options --disable-system-hunspell
 ac_add_options --disable-system-pixman
+ac_add_options --enable-tree-freetype
 %%endif
 %%ifdef MOZ_NO_OPTIMIZE
 ac_add_options --disable-optimize
@@ -71,6 +67,21 @@ ac_add_options --without-system-nspr
 ac_add_options --with-system-nss
 %%elif MOZ_USE_NSS == tree
 ac_add_options --without-system-nss
+%%endif
+%%if MOZ_USE_SQLITE == tree
+ac_add_options --disable-system-sqlite
+%%elif MOZ_USE_SQLITE == system
+ac_add_options --enable-system-sqlite
+%%endif
+%%if MOZ_USE_HUNSPELL == tree
+ac_add_options --disable-system-hunspell
+%%elif MOZ_USE_HUNSPELL == system
+ac_add_options --enable-system-hunspell
+%%endif
+%%if MOZ_USE_VPX == tree
+ac_add_options --without-system-libvpx
+%%elif MOZ_USE_VPX == system
+ac_add_options --with-system-libvpx=/usr
 %%endif
 %%ifdef MOZ_ENABLE_BREAKPAD
 ac_add_options --enable-crashreporter
