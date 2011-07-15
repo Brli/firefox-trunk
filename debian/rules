@@ -14,7 +14,7 @@ MOZ_BUILD_UNOFFICIAL	?= 0
 # 1 = Build without jemalloc suitable for valgrind debugging
 MOZ_VALGRIND		?= 0
 # 1 = Profile guided build
-MOZ_BUILD_PGO		?= 0
+MOZ_BUILD_PGO		?= 1
 # 1 = Build and run the testsuite
 MOZ_WANT_UNIT_TESTS	?= 1
 # 1 = Turn on debugging bits and disable optimizations
@@ -152,6 +152,9 @@ CXXFLAGS	= -g
 LDFLAGS = $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1110" && echo "1"))
+	MOZ_BUILD_PGO := 0
+endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
 	MOZ_ENABLE_GLOBALMENU := 1
 endif

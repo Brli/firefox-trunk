@@ -59,12 +59,14 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
       we will just rely on the default compiler and not enable PGO on
       Ubuntu versions which don't have a new enough toolchain
       - update debian/rules
+  * Turn on PGO for Oneiric and newer
+    - update debian/rules
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Brian Murray <brian@ubuntu.com>  Thu, 14 Jul 2011 15:07:57 -0700
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 15 Jul 2011 01:38:50 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
