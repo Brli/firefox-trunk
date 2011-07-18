@@ -59,8 +59,6 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
       we will just rely on the default compiler and not enable PGO on
       Ubuntu versions which don't have a new enough toolchain
       - update debian/rules
-  * Turn on PGO for Oneiric and newer
-    - update debian/rules
   * Shrink the default mozconfig right down, by using defaults rather than
     forcing things like --disable-system-cairo and friends. We still retain
     the ability to override the defaults though by setting MOZ_OVERRIDE_SHLIBS
@@ -79,7 +77,7 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 15 Jul 2011 14:08:52 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Jul 2011 09:01:37 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
