@@ -72,12 +72,22 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/pkgconfig/libxul.pc.in
     - update debian/control.in
     - update debian/rules
+  * Refresh build-depends, as this hasn't been done for a while:
+    - Drop patchutils, libxft-dev, libxinerama-dev, libgnome2-dev and bzip2.
+      These don't appear to be needed
+    - Drop liborbit2-dev - only appears to be required if there is no libidl
+    - Add libglib2.0-dev, libext-dev, libfontconfig1-dev and libpango1.0-dev,
+      as the configure script checks for these directly
+    - Add minimum versions to libgconf2-dev, libgnomevfs2-dev, yasm and
+      libgnomeui-dev
+    - Specify minimum versions for libnspr4-dev, libcairo2-dev, libsqlite3-dev
+      and libnss3-dev when using system versions of those libs
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Jul 2011 09:01:37 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 18 Jul 2011 15:27:04 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

@@ -31,17 +31,26 @@ MOZ_USE_SQLITE		?= default
 MOZ_USE_HUNSPELL	?= default
 MOZ_USE_VPX		?= default
 
-# Build-dependencies for system libraries, if we want them
-NSPR_BD		= libnspr4-dev
-CAIRO_BD	= libcairo2-dev
-SQLITE_BD	= libsqlite3-dev
-HUNSPELL_BD	= libhunspell-dev
-VPX_BD		= libvpx-dev
-NSS_BD		= libnss3-dev
-EXTRA_BD	= libpixman-1-dev libjpeg62-dev libpng12-dev zlib1g-dev libbz2-dev libevent-dev libfreetype6-dev
+# Build-dependencies when using system libraries
+NSPR_SYSTEM_BD		= libnspr4-dev (>= 4.8.8)
+CAIRO_SYSTEM_BD		= libcairo2-dev (>= 1.10.0), libfreetype6-dev, libpixman-1-dev (>= 0.19.2)
+SQLITE_SYSTEM_BD	= libsqlite3-dev (>= 3.7.5)
+HUNSPELL_SYSTEM_BD	= libhunspell-dev
+VPX_SYSTEM_BD		= libvpx-dev
+NSS_SYSTEM_BD		= libnss3-dev (>= 3.12.10)
 
-UPSTREAM_TREE_LIBS = CAIRO NSPR NSS SQLITE HUNSPELL VPX
-UPSTREAM_SYSTEM_LIBS =
+# Build-dependencies when using in-tree libraries
+CAIRO_TREE_BD		= libxrender-dev
+
+# Additional build-dependencies
+# Need a way to add versioned build-deps here
+#EXTRA_SYSTEM_BD	= libfreetype6-dev (>= 6.1.0) libjpeg62-dev libpng12-dev zlib1g-dev libbz2-dev libevent-dev
+EXTRA_SYSTEM_BD		= libfreetype6-dev libjpeg62-dev libpng12-dev zlib1g-dev libbz2-dev libevent-dev
+#EXTRA_DEFAULT_BD	= libfreetype6-dev (>= 6.1.0)
+EXTRA_DEFAULT_BD	= libfreetype6-dev
+
+UPSTREAM_TREE_DEFAULTS		= CAIRO NSPR NSS SQLITE HUNSPELL VPX
+UPSTREAM_SYSTEM_DEFAULTS	=
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
@@ -206,10 +215,10 @@ SHLIB_OVERRIDE = $(if $(shell if [ "system" = "$(MOZ_OVERRIDE_SHLIBS)" ] ; then 
 DEFINE_TREE = $(if $(shell if [ "system" != "$(MOZ_USE_$(1))" ] ; then echo "1" ; fi), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
 DEFINE_SYSTEM = $(if $(shell if [ "tree" = "$(MOZ_USE_$(1))" ] ; then echo "1" ; fi), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
 
-$(foreach lib, $(UPSTREAM_TREE_LIBS) $(UPSTREAM_SYSTEM_LIBS), $(call SHLIB_OVERRIDE,$(lib)))
-$(foreach lib, $(UPSTREAM_TREE_LIBS) $(UPSTREAM_SYSTEM_LIBS), $(eval DEB_DEFINES += -DMOZ_USE_$(lib)="$(MOZ_USE_$(lib))"))
-$(foreach lib, $(UPSTREAM_TREE_LIBS), $(call DEFINE_TREE,$(lib)))
-$(foreach lib, $(UPSTREAM_SYSTEM_LIBS), $(call DEFINE_SYSTEM,$(lib)))
+$(foreach lib, $(UPSTREAM_TREE_DEFAULTS) $(UPSTREAM_SYSTEM_DEFAULTS), $(call SHLIB_OVERRIDE,$(lib)))
+$(foreach lib, $(UPSTREAM_TREE_DEFAULTS) $(UPSTREAM_SYSTEM_DEFAULTS), $(eval DEB_DEFINES += -DMOZ_USE_$(lib)="$(MOZ_USE_$(lib))"))
+$(foreach lib, $(UPSTREAM_TREE_DEFAULTS), $(call DEFINE_TREE,$(lib)))
+$(foreach lib, $(UPSTREAM_SYSTEM_DEFAULTS), $(call DEFINE_SYSTEM,$(lib)))
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 	DEB_DEFINES += -DMOZ_ENABLE_BREAKPAD
@@ -302,9 +311,12 @@ pkgconfig_files = \
 	$(NULL)
 
 SYSLIBS_BD = $(NULL)
-$(foreach lib, $(UPSTREAM_TREE_LIBS) $(UPSTREAM_SYSTEM_LIBS), $(if $(shell if [ "$(MOZ_TREE_$(lib))" != "1" ] ; then echo "1" ; fi), $(eval SYSLIBS_BD += \n\t$($(lib)_BD),),))
+APPEND_BDS = $(if $(shell if [ "x$(1)" != "x" ] ; then echo "1" ; fi), $(eval SYSLIBS_BD += \n\t$(1),),)
+$(foreach lib, $(UPSTREAM_TREE_DEFAULTS) $(UPSTREAM_SYSTEM_DEFAULTS), $(if $(shell if [ "$(MOZ_TREE_$(lib))" != "1" ] ; then echo "1" ; fi), $(call APPEND_BDS,$($(lib)_SYSTEM_BD)),$(call APPEND_BDS,$($(lib)_TREE_BD))))
 ifeq (system, $(MOZ_OVERRIDE_SHLIBS))
-$(foreach lib, $(EXTRA_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
+$(foreach lib, $(EXTRA_SYSTEM_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
+else ifneq (tree, $(MOZ_OVERRIDE_SHLIBS))
+$(foreach lib, $(EXTRA_DEFAULT_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
 endif
 
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/locales.shipped debian/locales.unavailable
