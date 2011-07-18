@@ -273,7 +273,11 @@ uGlobalMenuIconLoader::Run()
   nsIDocument *doc = mContent->GetDocument();
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
 
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 8
+  sLoader->LoadImage(uri, nsnull, nsnull, nsnull, loadGroup, this,
+#else
   sLoader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
+#endif
                     nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                     nsnull, nsnull, getter_AddRefs(mIconRequest));
 

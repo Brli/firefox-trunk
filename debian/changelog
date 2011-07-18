@@ -3,7 +3,7 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * New upstream snapshot v8.0 A1 HG 20110714R72763
 
-  * Update globalmenu-extension to 1.8 prerelease r176
+  * Update globalmenu-extension to 1.8 prerelease r178
   * Don't try to set the shell wrapper executable when we don't install it
     - update debian/rules
   * Drop the special "kde.js" file handling from the pref service. It hasn't
