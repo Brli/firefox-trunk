@@ -323,10 +323,16 @@ $(foreach lib, $(EXTRA_DEFAULT_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
 endif
 
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/locales.shipped debian/locales.unavailable
-	sed -e 's/@SYSLIBS_BD@/$(SYSLIBS_BD)/g' \
-	    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.in > debian/control
+	@echo ""
+	@echo "*****************************"
+	@echo "* Refreshing debian/control *"
+	@echo "*****************************"
+	@echo ""
 
-	while read line ; \
+	@sed -e 's/@SYSLIBS_BD@/$(SYSLIBS_BD)/g' \
+	     -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.in > debian/control
+
+	@while read line ; \
 	do \
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
@@ -337,6 +343,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 			eval b=\$$$$tmp ; \
 			if [ -z $$b ] ; \
 			then \
+				echo "Adding language pack for $${language} - $${desc}" ; \
 				sed -e "s/@LANGCODE@/$$language/g" \
 				    -e "s/@LANG@/$$desc/g" \
 				    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.langpacks >> debian/control ; \
@@ -345,12 +352,13 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 		fi \
 	done < debian/locales.shipped
 
-	while read line ; \
+	@while read line ; \
 	do \
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
+			echo "Adding transitional package for unavailable language $${language}" ; \
 			sed -e "s/@LANGCODE@/$$language/g" \
 			    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.langpacks.unavail >> debian/control ; \
 		fi \
@@ -391,10 +399,16 @@ compare-locales/scripts/compare-locales:
 	chmod +x $(CURDIR)/compare-locales/scripts/*
 
 debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
+	@echo ""
+	@echo "********************************"
+	@echo "* Building language pack xpi's *"
+	@echo "********************************"
+	@echo ""
+
 	rm -rf $(CURDIR)/debian/l10n-mergedirs
 	mkdir $(CURDIR)/debian/l10n-mergedirs
 
-	export PATH=$(CURDIR)/compare-locales/scripts/:$$PATH ; \
+	@export PATH=$(CURDIR)/compare-locales/scripts/:$$PATH ; \
 	export PYTHONPATH=$(CURDIR)/compare-locales/lib ; \
 	cd $(MOZ_OBJDIR)/browser/locales ; \
 	while read line ; \
@@ -403,6 +417,10 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 		if [ ! -z "$$line" ] ; \
 		then \
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
+			echo "" ; \
+			echo "*************************" ; \
+			echo "* Building $${language} *" ; \
+			echo "*************************" ; \
 			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1 ; \
 			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1; \
 		fi \
@@ -417,7 +435,13 @@ common-build-indep:: debian/stamp-langpack-xpi-build
 common-binary-arch:: debian/stamp-buildsymbols
 
 common-binary-post-install-indep::
-	while read line ; \
+	@echo ""
+	@echo "**********************************"
+	@echo "* Installing language pack xpi's *"
+	@echo "**********************************"
+	@echo ""
+
+	@while read line ; \
 	do \
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
@@ -426,6 +450,7 @@ common-binary-post-install-indep::
 			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\2/'` ; \
 			id=`python $(CURDIR)/debian/scripts/get-xpi-id $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
 			[ $$? -eq 0 ] || exit 1 ; \
+			echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi to $${id}.xpi in $(MOZ_APP_NAME)-locale-$${pkgname}" ; \
 			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} usr/lib/$(MOZ_APP_NAME)-addons/extensions ; \
 			cp $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi \
 			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/usr/lib/$(MOZ_APP_NAME)-addons/extensions/$${id}.xpi ; \
@@ -497,7 +522,13 @@ endif
 	mv compare-locales-tmp debian/compare-locales
 
 refresh-supported-locales:
-	if [ ! -f $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales ] ; \
+	@echo ""
+	@echo "****************************************"
+	@echo "* Refreshing list of shipped languages *"
+	@echo "****************************************"
+	@echo ""
+
+	@if [ ! -f $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales ] ; \
 	then \
 		if [ ! -z $(TARBALL) ] ; \
 		then \
@@ -508,16 +539,17 @@ refresh-supported-locales:
 		python debian/scripts/extract-file -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	perl debian/scripts/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC)
+	@perl debian/scripts/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC)
 else
-	perl debian/scripts/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales
+	@perl debian/scripts/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales
 endif
+	
 
 pre-auto-refresh-supported-locales:
 	cp debian/locales.shipped debian/locales.shipped.old
 
 auto-refresh-supported-locales: pre-auto-refresh-supported-locales refresh-supported-locales
-	if ! cmp -s debian/locales.shipped debian/locales.shipped.old ; \
+	@if ! cmp -s debian/locales.shipped debian/locales.shipped.old ; \
 	then \
 		echo "" ; \
 		echo "******************************************************************************" ; \
@@ -538,7 +570,7 @@ pre-auto-update-debian-control:
 	cp debian/control debian/control.old
 
 post-auto-update-debian-control:
-	if ! cmp -s debian/control debian/control.old ; \
+	@if ! cmp -s debian/control debian/control.old ; \
 	then \
 		echo "" ; \
 		echo "***************************************************************************" ; \
