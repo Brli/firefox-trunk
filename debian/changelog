@@ -96,6 +96,11 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Disable gconf support on >= 11.10
     - update debian//rules
     - update debian/mozconfig.in
+  * Refresh binary dependencies:
+    - Change ubufox recommends to xul-ext-ubufox
+    - Drop psmisc and fontconfig depends. We don't appear to use any binaries
+      from either of these packages
+    - Drop debianutils dependency. This is an essential package
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan

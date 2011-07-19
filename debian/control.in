@@ -10,7 +10,7 @@ Build-Depends: cdbs,
 	autoconf2.13,
 	quilt,
 	zip,
-	libx11-dev, 
+	libx11-dev,
 	libxt-dev,
 	libxext-dev,
 	libgtk2.0-dev (>= 2.10),
@@ -39,13 +39,10 @@ Standards-Version: 3.9.1
 
 Package: @MOZ_APP_NAME@
 Architecture: any
-Depends: fontconfig,
-	psmisc,
-	lsb-release,
-	debianutils (>= 1.16),
+Depends: lsb-release,
 	${misc:Depends},
 	${shlibs:Depends}
-Recommends: ubufox,
+Recommends: xul-ext-ubufox,
 	@MOZ_APP_NAME@-globalmenu
 Provides: www-browser,
 	iceweasel,
