@@ -546,13 +546,14 @@ uGlobalMenuItem::Activate()
   if (!mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::autocheck,
                              uWidgetAtoms::_false, eCaseMatters) && 
       mType != Normal) {
+    nsIContent *content = mCommandContent ? mCommandContent : mContent;
     if (!mToggleState) {
       // We're currently not checked, so check now
-      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                        NS_LITERAL_STRING("true"), PR_TRUE);
+      content->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                       NS_LITERAL_STRING("true"), PR_TRUE);
     } else if (mToggleState && mType == CheckBox) {
       // We're currently checked, so uncheck now. Don't do this for radio buttons
-      mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, PR_TRUE);
+      content->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, PR_TRUE);
     }
   }
 
@@ -560,17 +561,13 @@ uGlobalMenuItem::Activate()
   if (doc) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
+#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
                           getter_AddRefs(event));
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
-    if (docEvent) {
-      nsCOMPtr<nsIDOMEvent> event;
-      docEvent->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
-                            getter_AddRefs(event));
-#endif
       if (event) {
         nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
         if (cmdEvent) {

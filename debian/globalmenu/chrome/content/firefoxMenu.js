@@ -109,12 +109,27 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
       }
     },
 
+    handleEvent: function(aEvent) {
+      let target = aEvent.target;
+      let id = target.id;
+      if ((aEvent.type == "DOMAttrModified") && (id == "toolbar-menubar") &&
+          (target.getAttribute("autohide") != "false")) {
+        this.autohideSaved = target.getAttribute("autohide");
+        target.setAttribute("autohide", "false");
+      }
+    },
+
     fixupUI: function(online) {
       if (online == true) {
+        // XXX: localstore.rdf is re-applied when additional overlays are loaded
+        //      (https://bugzilla.mozilla.org/show_bug.cgi?id=640158), which
+        //      causes this to be undone and the bookmark button to reappear
+        $("toolbar-menubar").addEventListener("DOMAttrModified", this);
         this.autohideSaved = $("toolbar-menubar").getAttribute("autohide");
         $("toolbar-menubar").setAttribute("autohide", "false");
         $("toolbar-menubar").removeAttribute("toolbarname");
       } else {
+        $("toolbar-menubar").removeEventListener("DOMAttrModified", this);
         $("toolbar-menubar").setAttribute("autohide", this.autohideSaved);
         $("toolbar-menubar").setAttribute("toolbarname", "&menubarCmd.label;");
       }
@@ -126,7 +141,6 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
       this._menuService.unregisterNotification(this);
     }
   }
-
 
   var menuObserver = null;
 

@@ -178,38 +178,33 @@ uGlobalMenuIconLoader::Run()
   if (!hasImage) {
     nsCOMPtr<nsIDOMCSSStyleDeclaration> cssStyleDecl;
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
+    nsCOMPtr<nsIDOMWindow> domWin;
     nsCOMPtr<nsIDOMDocument> domDoc =
       do_QueryInterface(mContent->GetDocument());
+#else
+    nsCOMPtr<nsIDOMAbstractView> domWin;
+    nsCOMPtr<nsIDOMDocumentView> domDoc =
+      do_QueryInterface(mContent->GetDocument());
+#endif
     if (domDoc) {
-      nsCOMPtr<nsIDOMWindow> domWin;
       domDoc->GetDefaultView(getter_AddRefs(domWin));
       if (domWin) {
         nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
         if (domElement) {
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
           domWin->GetComputedStyle(domElement, EmptyString(),
                                    getter_AddRefs(cssStyleDecl));
-        }
-      }
-    }
 #else
-    nsCOMPtr<nsIDOMDocumentView> domDocView =
-      do_QueryInterface(mContent->GetDocument());
-    if (domDocView) {
-      nsCOMPtr<nsIDOMAbstractView> domWin;
-      domDocView->GetDefaultView(getter_AddRefs(domWin));
-      if (domWin) {
-        nsCOMPtr<nsIDOMViewCSS> domViewCSS;
-        domViewCSS = do_QueryInterface(domWin);
-        if (domViewCSS) {
-          nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
-          if (domElement) {
+          nsCOMPtr<nsIDOMViewCSS> domViewCSS;
+          domViewCSS = do_QueryInterface(domWin);
+          if (domViewCSS) {
             domViewCSS->GetComputedStyle(domElement, EmptyString(),
                                          getter_AddRefs(cssStyleDecl));
           }
+#endif
         }
       }
     }
-#endif
 
     if (!cssStyleDecl) {
       return NS_ERROR_FAILURE;

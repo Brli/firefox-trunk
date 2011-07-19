@@ -207,17 +207,13 @@ uGlobalMenu::AboutToOpen()
   if (doc) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
+#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                           getter_AddRefs(event));
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
-    if (docEvent) {
-      nsCOMPtr<nsIDOMEvent> event;
-      docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"),
-                            getter_AddRefs(event));
-#endif
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
@@ -275,17 +271,13 @@ uGlobalMenu::OnOpen()
   if (doc) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
+#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                           getter_AddRefs(event));
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
-    if (docEvent) {
-      nsCOMPtr<nsIDOMEvent> event;
-      docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"),
-                            getter_AddRefs(event));
-#endif
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
@@ -333,17 +325,13 @@ uGlobalMenu::OnClose()
   if (doc) {
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+#else
+    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
+#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
                           getter_AddRefs(event));
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(doc);
-    if (docEvent) {
-      nsCOMPtr<nsIDOMEvent> event;
-      docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"),
-                            getter_AddRefs(event));
-#endif
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
@@ -619,6 +607,7 @@ uGlobalMenu::~uGlobalMenu()
 
   if (mDbusMenuItem) {
     g_signal_handler_disconnect(mDbusMenuItem, mOpenHandlerID);
+    g_signal_handler_disconnect(mDbusMenuItem, mEventHandlerID);
     g_object_unref(mDbusMenuItem);
   }
 
