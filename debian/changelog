@@ -93,12 +93,15 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
       libgnomeui-dev
     - Specify minimum versions for libnspr4-dev, libcairo2-dev, libsqlite3-dev
       and libnss3-dev when using system versions of those libs
+  * Disable gconf support on >= 11.10
+    - update debian//rules
+    - update debian/mozconfig.in
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 19 Jul 2011 11:49:45 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 19 Jul 2011 12:06:19 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
