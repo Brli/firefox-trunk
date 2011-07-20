@@ -50,8 +50,6 @@ Provides: www-browser,
 Suggests: @MOZ_APP_NAME@-gnome-support | firefox-kde-support,
 	latex-xft-fonts,
 	libthai0
-Breaks: firefox-4.0 (<< 4.2~a1~hg20110401r64633)
-Replaces: firefox-4.0
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: Safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -64,8 +62,6 @@ Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	@MOZ_APP_NAME@
-Breaks: firefox-4.0-gnome-support (<< 4.2~a1~hg20110401r64633)
-Replaces: firefox-4.0-gnome-support
 Description: Safe and easy web browser from Mozilla - GNOME support
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -81,8 +77,6 @@ Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	@MOZ_APP_NAME@ (= ${binary:Version})
-Breaks: firefox-4.0-dbg (<< 4.2~a1~hg20110401r64633)
-Replaces: firefox-4.0-dbg
 Description: Safe and easy web browser from Mozilla - debug symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -101,8 +95,6 @@ Depends: ${shlibs:Depends},
 	${nspr:Depends},
 	${nss:Depends},
 	${cairo:Depends}
-Breaks: firefox-4.0-dev (<< 4.2~a1~hg20110401r64633)
-Replaces: firefox-4.0-dev
 Conflicts: xulrunner-2.0-dev,
 	xulrunner-1.9.2-dev
 Description: Safe and easy web browser from Mozilla - development files
@@ -132,91 +124,8 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	@MOZ_APP_NAME@ (= ${binary:Version})
-Breaks: firefox-4.0-globalmenu (<< 4.2~a1~hg20110401r64633)
-Replaces: firefox-4.0-globalmenu
 Description: Unity appmenu integration for Firefox
  This package provides an extension which adds support for the Unity
  appmenu to Firefox 
-
-# Transitional packages below here
-
-Package: firefox-4.0
-Architecture: any
-Depends: firefox-trunk, ${misc:Depends}
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: firefox-4.0-gnome-support
-Architecture: any
-Depends: firefox-trunk-gnome-support, ${misc:Depends}
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: firefox-4.0-dbg
-Architecture: any
-Depends: firefox-trunk-dbg, ${misc:Depends}
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: firefox-4.0-dev
-Architecture: any
-Depends: firefox-trunk-dev, ${misc:Depends}
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: firefox-4.0-globalmenu
-Architecture: any
-Depends: firefox-trunk-globalmenu, ${misc:Depends}
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: firefox-4.0-branding
-Architecture: any
-Depends: firefox-trunk, ${misc:Depends}
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: abrowser-4.0-branding
-Architecture: all
-Depends: firefox-trunk, ${misc:Depends}
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: firefox-trunk-gnome-support-dbg
-Architecture: any
-Section: debug
-Priority: extra
-Depends: ${misc:Depends}, firefox-trunk-dbg (= ${binary:Version})
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: abrowser-4.0
-Architecture: any
-Depends: ${misc:Depends}, firefox-trunk
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: firefox-4.0-core
-Architecture: any
-Depends: ${misc:Depends}, firefox-trunk
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-Package: abrowser-4.0-gnome-support
-Architecture: any
-Depends: ${misc:Depends}, firefox-trunk-gnome-support
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
 
 # Language packs below here

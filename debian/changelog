@@ -124,12 +124,13 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - move debian/mozclient/firefox.mk => debian/build/mozclient.mk
     - update debian/rules
   * Move debian/testsuite.mk to debian/build
+  * Drop transitional firefox-4.0 packages
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 Jul 2011 12:46:05 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 Jul 2011 13:39:00 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
