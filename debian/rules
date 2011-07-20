@@ -1,22 +1,23 @@
 #!/usr/bin/make -f
 
+include $(CURDIR)/debian/config/branch.mk
+
 MOZ_APP_BASENAME	:= firefox
-CHANNEL			:= nightly
 MOZ_MOZDIR		:=
 
-# Various build options
+# Various build defaults
 # tree = use in-tree libs, system = use system libs
 MOZ_OVERRIDE_SHLIBS	?=
 # 1 = Enable crashreporter (if supported)
-MOZ_ENABLE_BREAKPAD	?= 1
+MOZ_ENABLE_BREAKPAD	?= 0
 # 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
-MOZ_BUILD_UNOFFICIAL	?= 0
+MOZ_BUILD_UNOFFICIAL	?= 1
 # 1 = Build without jemalloc suitable for valgrind debugging
 MOZ_VALGRIND		?= 0
 # 1 = Profile guided build
 MOZ_BUILD_PGO		?= 0
 # 1 = Build and run the testsuite
-MOZ_WANT_UNIT_TESTS	?= 1
+MOZ_WANT_UNIT_TESTS	?= 0
 # 1 = Turn on debugging bits and disable optimizations
 MOZ_DEBUG		?= 0
 # 1 = Disable optimizations
@@ -54,22 +55,15 @@ UPSTREAM_SYSTEM_DEFAULTS	=
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
-DEB_HOST_GNU_TYPE		?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE		?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-DEB_HOST_ARCH			?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
-DEB_HOST_GNU_CPU		?= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
+DEB_HOST_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE	?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_HOST_ARCH		?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_GNU_CPU	?= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
 # Other things which should be defined before including the CDBS rules
-DEB_TAR_SRCDIR			:= mozilla
-DEB_DH_STRIP_ARGS		= --dbg-package=$(MOZ_APP_NAME)-dbg
-# We don't want build-tree/mozilla/README to be shipped as a doc
-DEB_INSTALL_DOCS_ALL 		:= $(NULL)
+DEB_TAR_SRCDIR		:= mozilla
 # Needed for mozclient
-MOZCLIENT_PROJECTNAME		:= $(MOZ_APP_BASENAME)
-MOZCLIENT_PROJECTDIR		:= $(CURDIR)/debian/mozclient
-
-ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
-	MOZ_WANT_UNIT_TESTS=0
-endif
+MOZCLIENT_PROJECTNAME	:= $(MOZ_APP_BASENAME)
+MOZCLIENT_PROJECTDIR	:= $(CURDIR)/debian/mozclient
 
 # We need this to execute before the debian/control target gets called
 clean:: pre-auto-update-debian-control
@@ -82,6 +76,51 @@ include $(CURDIR)/debian/mozclient/$(MOZ_APP_BASENAME).mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
+
+# Define other variables used throughout the build
+MOZ_APP_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+MOZ_APP_NAME_SUFFIX	:= $(shell echo $(MOZ_APP_NAME) | sed 's/\($(MOZ_APP_BASENAME)\)\-*\(.*\)/\2/' )
+
+DEB_MAKE_MAKEFILE	:= client.mk
+# Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
+DEB_MAKE_EXTRA_ARGS	:=
+# These normally come from autotools.mk, which we no longer include (because we
+# don't want to run configure)
+DEB_MAKE_INSTALL_TARGET	:= install DESTDIR=$(CURDIR)/debian/tmp
+DEB_MAKE_CLEAN_TARGET	:= distclean
+DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_APP_NAME)-dbg
+# We don't want build-tree/mozilla/README to be shipped as a doc
+DEB_INSTALL_DOCS_ALL 	:= $(NULL)
+
+MOZ_VERSION		= $(shell cat $(DEB_BUILDDIR)/browser/config/version.txt)
+MOZ_PREFIX		:= /usr
+MOZ_LIBDIR		= $(MOZ_PREFIX)/lib/$(MOZ_APP_NAME)-$(MOZ_VERSION)
+MOZ_INCDIR		= $(MOZ_PREFIX)/include/$(MOZ_APP_NAME)-$(MOZ_VERSION)
+MOZ_IDLDIR		= $(MOZ_PREFIX)/share/idl/$(MOZ_APP_NAME)-$(MOZ_VERSION)
+MOZ_SDKDIR		= $(MOZ_PREFIX)/lib/$(MOZ_APP_NAME)-devel-$(MOZ_VERSION)
+MOZ_SERIES		= $(shell echo $(MOZ_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
+
+NSPR_DEPENDS		:= $(NULL)
+NSS_DEPENDS		:= $(NULL)
+CAIRO_DEPENDS		:= $(NULL)
+DEB_DH_GENCONTROL_ARGS	= -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS)
+DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
+
+MOZ_PYTHON		:= $(shell which python)
+DISTRIB 		:= $(shell lsb_release -i -s)
+
+DISTRIB_VERSION_MAJOR 	= $(shell lsb_release -s -r | cut -d '.' -f 1)
+DISTRIB_VERSION_MINOR 	= $(shell lsb_release -s -r | cut -d '.' -f 2)
+
+NO_AUTO_REFRESH_LOCALES	?= 0
+
+CFLAGS			= -g
+CXXFLAGS		= -g
+LDFLAGS 		= $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
+
+ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	MOZ_WANT_UNIT_TESTS=0
+endif
 
 ifeq (1,$(MOZ_VALGRIND))
 	MOZ_BUILD_UNOFFICIAL = 1
@@ -99,42 +138,6 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 endif
 
 include $(CURDIR)/debian/testsuite.mk
-
-# Define other variables used throughout the build
-MOZ_APP_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
-MOZ_APP_NAME_SUFFIX	:= $(shell echo $(MOZ_APP_NAME) | sed 's/\($(MOZ_APP_BASENAME)\)\-*\(.*\)/\2/' )
-
-DEB_MAKE_MAKEFILE		:= client.mk
-
-# Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
-DEB_MAKE_EXTRA_ARGS		:=
-
-# These normally come from autotools.mk, which we no longer include (because we
-# don't want to run configure)
-DEB_MAKE_INSTALL_TARGET		:= install DESTDIR=$(CURDIR)/debian/tmp
-DEB_MAKE_CLEAN_TARGET		:= distclean
-
-MOZ_VERSION			= $(shell cat $(DEB_BUILDDIR)/browser/config/version.txt)
-MOZ_PREFIX			:= /usr
-MOZ_LIBDIR			= $(MOZ_PREFIX)/lib/$(MOZ_APP_NAME)-$(MOZ_VERSION)
-MOZ_INCDIR			= $(MOZ_PREFIX)/include/$(MOZ_APP_NAME)-$(MOZ_VERSION)
-MOZ_IDLDIR			= $(MOZ_PREFIX)/share/idl/$(MOZ_APP_NAME)-$(MOZ_VERSION)
-MOZ_SDKDIR			= $(MOZ_PREFIX)/lib/$(MOZ_APP_NAME)-devel-$(MOZ_VERSION)
-MOZ_SERIES			= $(shell echo $(MOZ_VERSION) | sed -e 's/pre//; s/[ab].*//' | cut -d '.' -f 1,2)
-
-NSPR_DEPENDS		:= $(NULL)
-NSS_DEPENDS		:= $(NULL)
-CAIRO_DEPENDS		:= $(NULL)
-DEB_DH_GENCONTROL_ARGS	= -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS)
-DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
-
-MOZ_PYTHON		:= $(shell which python)
-DISTRIB 		:= $(shell lsb_release -i -s)
-
-ifneq (,$(filter $(DISTRIB),Ubuntu))
-	DISTRIB_VERSION_MAJOR := $(shell lsb_release -s -r | cut -d '.' -f 1)
-	DISTRIB_VERSION_MINOR := $(shell lsb_release -s -r | cut -d '.' -f 2)
-endif
 
 ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
 	# We don't want to make builds which change MOZ_APP_NAME official
@@ -164,22 +167,6 @@ BRANDING_DIR		= browser/branding/$(BRANDING)
 MOZ_DISPLAY_NAME	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 			    | grep brandShortName | sed -e 's/brandShortName\=//')
 
-ifeq (nightly,$(CHANNEL))
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1104" && echo "1"))
-	# Disable crashreporter on nightly builds older than Natty
-	MOZ_ENABLE_BREAKPAD = 0
-endif
-endif
-
-NO_AUTO_REFRESH_LOCALES=1
-ifneq (,$(filter release beta, $(CHANNEL)))
-	NO_AUTO_REFRESH_LOCALES=0
-endif
-
-CFLAGS		= -g
-CXXFLAGS	= -g
-
-LDFLAGS = $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1110" && echo "1"))
@@ -193,7 +180,7 @@ ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "101
 else
 	MOZ_SYSTEM_DICTDIR = /usr/share/myspell/dicts
 endif
-export MOZCONFIG=$(CURDIR)/debian/mozconfig
+export MOZCONFIG=$(CURDIR)/debian/config/mozconfig
 ifneq (1,$(MOZ_BUILD_UNOFFICIAL))
 	export BUILD_OFFICIAL=1
 endif
@@ -245,7 +232,7 @@ endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1110" && echo "1"))
 	DEB_DEFINES += -DMOZ_DISABLE_GCONF
 endif
-ifneq (default,$(CHANNEL))
+ifneq (release,$(CHANNEL))
 	DEB_DEFINES += -DMOZ_UPDATE_CHANNEL="$(CHANNEL)"
 endif
 ifeq (1,$(MOZ_DEBUG))
@@ -304,7 +291,7 @@ subst_files = \
 	debian/$(MOZ_APP_NAME)-dev.links \
 	debian/$(MOZ_APP_NAME).lintian-overrides \
 	debian/$(MOZ_APP_NAME)-globalmenu.dirs \
-	debian/mozconfig \
+	debian/config/mozconfig \
 	$(NULL)
 
 pkgconfig_files = \
@@ -322,7 +309,7 @@ else ifneq (tree, $(MOZ_OVERRIDE_SHLIBS))
 $(foreach lib, $(EXTRA_DEFAULT_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
 endif
 
-debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/locales.shipped debian/locales.unavailable
+debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/config/locales.shipped debian/config/locales.unavailable
 	@echo ""
 	@echo "*****************************"
 	@echo "* Refreshing debian/control *"
@@ -350,7 +337,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 				eval $$tmp=1 ; \
 			fi \
 		fi \
-	done < debian/locales.shipped
+	done < debian/config/locales.shipped
 
 	@while read line ; \
 	do \
@@ -362,7 +349,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 			sed -e "s/@LANGCODE@/$$language/g" \
 			    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.langpacks.unavail >> debian/control ; \
 		fi \
-	done < debian/locales.unavailable
+	done < debian/config/locales.unavailable
 
 BRANCH	:=
 ifneq (,$(MOZ_APP_NAME_SUFFIX))
@@ -424,7 +411,7 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1 ; \
 			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1; \
 		fi \
-	done < $(CURDIR)/debian/locales.shipped
+	done < $(CURDIR)/debian/config/locales.shipped
 
 	touch $@
 
@@ -448,7 +435,7 @@ common-binary-post-install-indep::
 		then \
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
 			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\2/'` ; \
-			id=`python $(CURDIR)/debian/scripts/get-xpi-id $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
+			id=`python $(CURDIR)/debian/build/get-xpi-id $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
 			[ $$? -eq 0 ] || exit 1 ; \
 			echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi to $${id}.xpi in $(MOZ_APP_NAME)-locale-$${pkgname}" ; \
 			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} usr/lib/$(MOZ_APP_NAME)-addons/extensions ; \
@@ -458,7 +445,7 @@ common-binary-post-install-indep::
 			cp -r $(CURDIR)/$(MOZ_DISTDIR)/xpi-stage/locale-$${language}/searchplugins/*.xml \
 			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/usr/lib/$(MOZ_APP_NAME)-addons/searchplugins/$${language}/. ; \
 		fi \
-	done < $(CURDIR)/debian/locales.shipped
+	done < $(CURDIR)/debian/config/locales.shipped
 
 binary-install/$(MOZ_APP_NAME)::
 	convert -resize 32x32 debian/$(MOZ_APP_NAME)/usr/share/pixmaps/$(MOZ_APP_NAME).png debian/$(MOZ_APP_NAME)/usr/share/pixmaps/$(MOZ_APP_NAME).xpm
@@ -536,35 +523,35 @@ refresh-supported-locales:
 		else \
 			tarball_opts="" ; \
 		fi ; \
-		python debian/scripts/extract-file -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
+		python debian/build/extract-file -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	@perl debian/scripts/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC)
+	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC)
 else
-	@perl debian/scripts/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales
+	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales
 endif
 	
 
 pre-auto-refresh-supported-locales:
-	cp debian/locales.shipped debian/locales.shipped.old
+	cp debian/config/locales.shipped debian/config/locales.shipped.old
 
 auto-refresh-supported-locales: pre-auto-refresh-supported-locales refresh-supported-locales
-	@if ! cmp -s debian/locales.shipped debian/locales.shipped.old ; \
+	@if ! cmp -s debian/config/locales.shipped debian/config/locales.shipped.old ; \
 	then \
 		echo "" ; \
-		echo "******************************************************************************" ; \
-		echo "* List of shipped locales is out of date. Please refresh and try again       *" ; \
+		echo "****************************************************************************" ; \
+		echo "* List of shipped locales is out of date. Please refresh and try again     *" ; \
 		echo "* To refresh, run \"debian/rules refresh-supported-locales\" in the source   *" ; \
-		echo "* directory. If you are in bzr, you will need to pass the location of the    *" ; \
+		echo "* directory. If you are in bzr, you will need to pass the location of the  *" ; \
 		echo "* upstream tarball, using \"TARBALL=/path/to/tarball\". If extra information *" ; \
-		echo "* is required for new locales, you will also need to pass the location of    *" ; \
+		echo "* is required for new locales, you will also need to pass the location of  *" ; \
 		echo "* langpack-o-matic, using \"LANGPACK_O_MATIC=/path/to/langpack-o-matic\"     *" ; \
-		echo "******************************************************************************" ; \
+		echo "****************************************************************************" ; \
 		echo "" ; \
-		rm -f debian/locales.shipped.old ; \
+		rm -f debian/config/locales.shipped.old ; \
 		exit 1 ; \
 	fi
-	rm -f debian/locales.shipped.old
+	rm -f debian/config/locales.shipped.old
 
 pre-auto-update-debian-control:
 	cp debian/control debian/control.old
@@ -573,10 +560,10 @@ post-auto-update-debian-control:
 	@if ! cmp -s debian/control debian/control.old ; \
 	then \
 		echo "" ; \
-		echo "***************************************************************************" ; \
-		echo "* debian/control file is out of date. Please refresh and try again        *" ; \
+		echo "*************************************************************************" ; \
+		echo "* debian/control file is out of date. Please refresh and try again      *" ; \
 		echo "* To refresh, run \"debian/rules debian/control\" in the source directory *" ; \
-		echo "***************************************************************************" ; \
+		echo "*************************************************************************" ; \
 		echo "" ; \
 		rm -f debian/control.old ; \
 		exit 1 ; \

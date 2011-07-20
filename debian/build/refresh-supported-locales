@@ -73,8 +73,8 @@ if (defined($lpom_dir)) {
     close($file);
 }
 
-if (-e "$dir/debian/locales.shipped") {
-    open($file, "$dir/debian/locales.shipped");
+if (-e "$dir/debian/config/locales.shipped") {
+    open($file, "$dir/debian/config/locales.shipped");
     while (<$file>) {
         if ((not $_ =~ /^$/) && (not $_ =~ /^#.*/)) {
             my $line = $_;
@@ -94,8 +94,8 @@ if (-e "$dir/debian/locales.shipped") {
     close($file);
 }
 
-if (-e "$dir/debian/locales.unavailable") {
-    open($file, "$dir/debian/locales.unavailable");
+if (-e "$dir/debian/config/locales.unavailable") {
+    open($file, "$dir/debian/config/locales.unavailable");
     while (<$file>) {
         if ((not $_ =~ /^$/) && (not $_ =~ /^#.*/)) {
             my $line = $_;
@@ -111,8 +111,8 @@ if (-e "$dir/debian/locales.unavailable") {
     close($file);
 }
 
-if (-e "$dir/debian/locales.blacklist") {
-    open($file, "$dir/debian/locales.blacklist");
+if (-e "$dir/debian/config/locales.blacklist") {
+    open($file, "$dir/debian/config/locales.blacklist");
     while (<$file>) {
         if ((not $_ =~ /^$/) && (not $_ =~ /^#.*/)) {
             my $line = $_;
@@ -126,7 +126,7 @@ if (-e "$dir/debian/locales.blacklist") {
 my $have_language = 0;
 
 open($file, $moz_supported_file);
-open(my $outfile, ">$dir/debian/locales.shipped");
+open(my $outfile, ">$dir/debian/config/locales.shipped");
 while (<$file>) {
     my $line = $_;
     chomp($line);
@@ -152,7 +152,7 @@ if ($have_language eq 0) { print $outfile "# Placeholder file for the list of sh
 close($file);
 close($outfile);
 
-open($outfile, ">$dir/debian/locales.unavailable");
+open($outfile, ">$dir/debian/config/locales.unavailable");
 my @unavailable = keys(%oldsupported);
 if (scalar(@unavailable) gt 0) {
     @unavailable = sort(@unavailable);
