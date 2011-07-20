@@ -63,7 +63,7 @@ DEB_HOST_GNU_CPU	?= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
 DEB_TAR_SRCDIR		:= mozilla
 # Needed for mozclient
 MOZCLIENT_PROJECTNAME	:= $(MOZ_APP_BASENAME)
-MOZCLIENT_PROJECTDIR	:= $(CURDIR)/debian/mozclient
+MOZCLIENT_PROJECTDIR	:= $(CURDIR)/debian/config
 
 # We need this to execute before the debian/control target gets called
 clean:: pre-auto-update-debian-control
@@ -72,7 +72,7 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/makefile.mk
-include $(CURDIR)/debian/mozclient/$(MOZ_APP_BASENAME).mk
+include $(CURDIR)/debian/build/mozclient.mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
@@ -137,7 +137,7 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	MOZ_BUILD_UNOFFICIAL = 1
 endif
 
-include $(CURDIR)/debian/testsuite.mk
+include $(CURDIR)/debian/build/testsuite.mk
 
 ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
 	# We don't want to make builds which change MOZ_APP_NAME official

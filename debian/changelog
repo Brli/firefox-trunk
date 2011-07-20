@@ -117,6 +117,13 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - move debian/locales.blacklist => debian/config/locales.blacklist
     - update debian/rules
     - update debian/build/refresh-supported-locales
+  * Move config from debian/mozclient in to debian/config
+    - move debian/mozclient/firefox.conf => debian/config/firefox.conf
+    - update debian/rules
+  * Move firefox.mk from debian/mozclient in to debian/build
+    - move debian/mozclient/firefox.mk => debian/build/mozclient.mk
+    - update debian/rules
+  * Move debian/testsuite.mk to debian/build
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
