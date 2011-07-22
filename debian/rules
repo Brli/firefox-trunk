@@ -309,7 +309,7 @@ else ifneq (tree, $(MOZ_OVERRIDE_SHLIBS))
 $(foreach lib, $(EXTRA_DEFAULT_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
 endif
 
-debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/config/locales.shipped debian/config/locales.unavailable
+debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/config/locales.shipped debian/config/locales.all
 	@echo ""
 	@echo "*****************************"
 	@echo "* Refreshing debian/control *"
@@ -319,37 +319,9 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@sed -e 's/@SYSLIBS_BD@/$(SYSLIBS_BD)/g' \
 	     -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.in > debian/control
 
-	@while read line ; \
-	do \
-		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
-		if [ ! -z "$$line" ] ; \
-		then \
-			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\2/'` ; \
-			desc=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\3/'` ; \
-			tmp=`echo $$language | sed 's/\-/_/'` ; \
-			eval b=\$$$$tmp ; \
-			if [ -z $$b ] ; \
-			then \
-				echo "Adding language pack for $${language} - $${desc}" ; \
-				sed -e "s/@LANGCODE@/$$language/g" \
-				    -e "s/@LANG@/$$desc/g" \
-				    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.langpacks >> debian/control ; \
-				eval $$tmp=1 ; \
-			fi \
-		fi \
-	done < debian/config/locales.shipped
+	@perl debian/build/dump-langpack-control-entries -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
 
-	@while read line ; \
-	do \
-		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
-		if [ ! -z "$$line" ] ; \
-		then \
-			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
-			echo "Adding transitional package for unavailable language $${language}" ; \
-			sed -e "s/@LANGCODE@/$$language/g" \
-			    -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.langpacks.unavail >> debian/control ; \
-		fi \
-	done < debian/config/locales.unavailable
+	@sed -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
 BRANCH	:=
 ifneq (,$(MOZ_APP_NAME_SUFFIX))
@@ -403,7 +375,7 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
-			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
+			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
 			echo "" ; \
 			echo "*************************" ; \
 			echo "* Building $${language} *" ; \
@@ -433,8 +405,8 @@ common-binary-post-install-indep::
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
 		if [ ! -z "$$line" ] ; \
 		then \
-			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\1/'` ; \
-			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\):*\([^:]*\)/\2/'` ; \
+			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
+			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
 			id=`python $(CURDIR)/debian/build/get-xpi-id $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
 			[ $$? -eq 0 ] || exit 1 ; \
 			echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi to $${id}.xpi in $(MOZ_APP_NAME)-locale-$${pkgname}" ; \
@@ -526,9 +498,9 @@ refresh-supported-locales:
 		python debian/build/extract-file -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC)
+	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config
 else
-	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales
+	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -o $(CURDIR)/debian/config
 endif
 	
 

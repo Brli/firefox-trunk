@@ -127,12 +127,30 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Drop transitional firefox-4.0 packages
   * Don't open about:blank from the New Window quicklist entry
     - update debian/firefox.desktop.in
+  * We need to keep the complete list of language packs (shipped and
+    transitional) in sync between branches. However, this was proving to be
+    difficult because the list was split across 2 files (locales.shipped
+    and locales.unavailable). Rework this so that we have a locales.all
+    (containing the list of current and past language packs), and a
+    locales.shipped. The locales.all can be easily kept in sync between
+    branches now, so we end up with the correct transitional language packs
+    on branches which have some languages disabled. This also makes it
+    more complicated to add the language packs to debian/control though, so
+    we offload this to a new perl script now rather than trying to do it all
+    in bash
+    - add debian/build/dump-langpack-control-entries
+    - update debian/build/refresh-supported-locales
+    - add debian/config/locales.all
+    - update debian/config/locales.shipped
+    - remove debian/config/locales.unavailable
+    - update debian/control
+    - update debian/rules
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 22 Jul 2011 14:25:53 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 22 Jul 2011 19:55:24 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
