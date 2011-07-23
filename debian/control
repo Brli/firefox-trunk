@@ -138,12 +138,6 @@ Description: Afrikaans language pack for Firefox
  This package contains Afrikaans translations and search plugins
  for Firefox
 
-Package: firefox-trunk-locale-ak
-Architecture: all
-Description: Akan language pack for Firefox
- This package contains Akan translations and search plugins
- for Firefox
-
 Package: firefox-trunk-locale-ar
 Architecture: all
 Description: Arabic language pack for Firefox
@@ -468,12 +462,6 @@ Description: Portuguese language pack for Firefox
  This package contains Portuguese translations and search plugins
  for Firefox
 
-Package: firefox-trunk-locale-rm
-Architecture: all
-Description: Romansh language pack for Firefox
- This package contains Romansh translations and search plugins
- for Firefox
-
 Package: firefox-trunk-locale-ro
 Architecture: all
 Description: Romanian language pack for Firefox
@@ -502,12 +490,6 @@ Package: firefox-trunk-locale-sl
 Architecture: all
 Description: Slovenian language pack for Firefox
  This package contains Slovenian translations and search plugins
- for Firefox
-
-Package: firefox-trunk-locale-son
-Architecture: all
-Description: Songhai languages language pack for Firefox
- This package contains Songhai languages translations and search plugins
  for Firefox
 
 Package: firefox-trunk-locale-sq

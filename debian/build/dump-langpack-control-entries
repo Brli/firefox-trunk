@@ -71,7 +71,7 @@ my @pkglist = keys(%all);
 foreach my $pkg (@pkglist) {
     my $desc = $all{$pkg};
     my $entry;
-    if (exists $shipped{$pkg}) { $entry = $lp_avail_desc; } else { $entry = $lp_unavail_desc; }
+    $entry = exists $shipped{$pkg} ? $lp_avail_desc : $lp_unavail_desc;
     $entry =~ s/\@LANGCODE\@/$pkg/g;
     $entry =~ s/\@LANG\@/$desc/g;
     print $entry;

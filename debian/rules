@@ -498,9 +498,9 @@ refresh-supported-locales:
 		python debian/build/extract-file -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config
+	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 else
-	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -o $(CURDIR)/debian/config
+	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 endif
 	
 
