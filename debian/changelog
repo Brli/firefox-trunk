@@ -145,17 +145,12 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - remove debian/config/locales.unavailable
     - update debian/control
     - update debian/rules
-  * $PYTHONPATH is ignored now since bmo #585015 landed. We need to be able
-    to set this so the interpreter can find the compare-locales libs to
-    build the language packs. Add patch to enable this to work again
-    - add debian/patches/allow-pythonpath.patch
-    - update debian/patches/series
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 26 Jul 2011 19:02:11 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 26 Jul 2011 23:55:16 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
