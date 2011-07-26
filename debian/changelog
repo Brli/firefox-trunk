@@ -3,7 +3,7 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * New upstream snapshot v8.0 A1 HG 20110714R72763
 
-  * Update globalmenu-extension to 1.8 prerelease r182
+  * Update globalmenu-extension to 1.8
     - Update for imgILoader changes in Firefox 8
     - Fix LP: #810489 - Inconsistent behaviour if extension is enabled
       after turning off the menubar, which will affect Lucid -> P upgrades
@@ -155,7 +155,7 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 23 Jul 2011 17:25:47 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 26 Jul 2011 19:02:11 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

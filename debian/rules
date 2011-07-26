@@ -377,9 +377,9 @@ debian/stamp-langpack-xpi-build: compare-locales/scripts/compare-locales
 		then \
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
 			echo "" ; \
-			echo "*************************" ; \
-			echo "* Building $${language} *" ; \
-			echo "*************************" ; \
+			echo "" ; \
+			echo "* Building $${language}" ; \
+			echo "" ; \
 			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1 ; \
 			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1; \
 		fi \
