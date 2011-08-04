@@ -147,12 +147,24 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/rules
   * Drop a distro pref that should have gone a long time ago
     - update debian/vendor.js
+  * Add the ability to maintain branch-specific package relationships,
+    added to the control file using substvars. This solves a couple of problems.
+    Firstly, it makes it possible to have different pacakge relationships across
+    binaries created from the same source branch (eg, aurora), where each build
+    may need different conflicts/replaces/breaks/provides etc depending on the
+    target distro version. Secondly, it makes it easier to merge control file
+    changes between branches, without losing branch/distro-version specific
+    customisations
+    - update debian/control.in
+    - refresh debian/control
+    - add debian/build/create-branch-substvars
+    - update debian/rules
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 28 Jul 2011 00:28:15 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 04 Aug 2011 18:06:19 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

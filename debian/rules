@@ -112,6 +112,7 @@ DISTRIB 		:= $(shell lsb_release -i -s)
 DISTRIB_VERSION_MAJOR 	= $(shell lsb_release -s -r | cut -d '.' -f 1)
 DISTRIB_VERSION_MINOR 	= $(shell lsb_release -s -r | cut -d '.' -f 2)
 
+$(foreach pkg, APP GS DEV DBG, $(foreach rel, PROVIDES BREAKS REPLACES CONFLICTS, $(eval BRANCH_SUBSTVARS += -D$(pkg)_$(rel)="$($(pkg)_$(rel))$($(pkg)_$(rel)_$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR))")))
 NO_AUTO_REFRESH_LOCALES	?= 0
 
 CFLAGS			= -g
@@ -444,7 +445,8 @@ common-binary-predeb-arch::
 	# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_APP_NAME)-gnome-support$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_APP_NAME)$(MOZ_LIBDIR)/components/;) true
-	touch $@
+
+	@perl debian/build/create-branch-substvars -a $(MOZ_APP_NAME) -o $(CURDIR)/debian $(BRANCH_SUBSTVARS)
 
 ifeq (1, $(MOZ_TREE_NSS))
 binary-predeb/$(MOZ_APP_NAME)::

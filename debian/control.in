@@ -46,10 +46,14 @@ Recommends: xul-ext-ubufox,
 	@MOZ_APP_NAME@-globalmenu
 Provides: www-browser,
 	iceweasel,
-	gnome-www-browser
+	gnome-www-browser,
+	${app:Provides}
 Suggests: @MOZ_APP_NAME@-gnome-support | firefox-kde-support,
 	latex-xft-fonts,
 	libthai0
+Breaks: ${app:Breaks}
+Replaces: ${app:Replaces}
+Conflicts: {app:Conflicts}
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: Safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -62,6 +66,10 @@ Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	@MOZ_APP_NAME@
+Provides: {gs:Provides}
+Breaks: {gs:Breaks}
+Replaces: {gs:Replaces}
+Conflicts: {gs:Conflicts}
 Description: Safe and easy web browser from Mozilla - GNOME support
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -77,6 +85,10 @@ Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	@MOZ_APP_NAME@ (= ${binary:Version})
+Provides: {dbg:Provides}
+Replaces: ${dbg:Replaces}
+Breaks: ${dbg:Breaks}
+Conflicts: {dbg:Conflicts}
 Description: Safe and easy web browser from Mozilla - debug symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -95,8 +107,12 @@ Depends: ${shlibs:Depends},
 	${nspr:Depends},
 	${nss:Depends},
 	${cairo:Depends}
+Provides: ${dev:Provides}
 Conflicts: xulrunner-2.0-dev,
-	xulrunner-1.9.2-dev
+	xulrunner-1.9.2-dev,
+	${dev:Conflicts}
+Replaces: ${dev:Replaces}
+Breaks: ${dev:Breaks}
 Description: Safe and easy web browser from Mozilla - development files
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
