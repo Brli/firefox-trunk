@@ -55,7 +55,7 @@ Suggests: firefox-trunk-gnome-support | firefox-kde-support,
 	libthai0
 Breaks: ${app:Breaks}
 Replaces: ${app:Replaces}
-Conflicts: {app:Conflicts}
+Conflicts: ${app:Conflicts}
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: Safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -68,10 +68,10 @@ Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	firefox-trunk
-Provides: {gs:Provides}
-Breaks: {gs:Breaks}
-Replaces: {gs:Replaces}
-Conflicts: {gs:Conflicts}
+Provides: ${gs:Provides}
+Breaks: ${gs:Breaks}
+Replaces: ${gs:Replaces}
+Conflicts: ${gs:Conflicts}
 Description: Safe and easy web browser from Mozilla - GNOME support
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -87,10 +87,10 @@ Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	firefox-trunk (= ${binary:Version})
-Provides: {dbg:Provides}
+Provides: ${dbg:Provides}
 Replaces: ${dbg:Replaces}
 Breaks: ${dbg:Breaks}
-Conflicts: {dbg:Conflicts}
+Conflicts: ${dbg:Conflicts}
 Description: Safe and easy web browser from Mozilla - debug symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
