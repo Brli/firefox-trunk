@@ -159,12 +159,15 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - refresh debian/control
     - add debian/build/create-branch-substvars
     - update debian/rules
+  * Touch debian/control.in during clean to force a refresh of debian/control,
+    so we can check if it is out-of-date and fail if it is
+    - update debian/rules
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 04 Aug 2011 18:06:19 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 05 Aug 2011 22:31:55 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 

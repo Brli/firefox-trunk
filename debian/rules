@@ -529,6 +529,7 @@ auto-refresh-supported-locales: pre-auto-refresh-supported-locales refresh-suppo
 
 pre-auto-update-debian-control:
 	cp debian/control debian/control.old
+	touch debian/control.in
 
 post-auto-update-debian-control:
 	@if ! cmp -s debian/control debian/control.old ; \
