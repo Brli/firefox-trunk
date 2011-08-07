@@ -103,24 +103,25 @@ public:
                                              mListener(nsnull),
                                              mParent(nsnull),
                                              mType(aType),
-                                             mLabelContent(nsnull),
-                                             mLabelSyncGuard(PR_FALSE),
-                                             mSensitivitySyncGuard(PR_FALSE)
+                                             mHalted(PR_FALSE)
                                              { };
   DbusmenuMenuitem* GetDbusMenuItem() { return mDbusMenuItem; }
   uGlobalMenuObject* GetParent() { return mParent; }
   uMenuObjectType GetType() { return mType; }
   void GetContent(nsIContent **_retval);
-  void UpdateVisibility();
+  void AboutToShowNotify();
+  virtual void Halt() { mHalted = PR_TRUE; }
   virtual ~uGlobalMenuObject() { };
 
 protected:
   void SyncLabelFromContent();
-  void SyncLabelFromContent(nsIContent *aCommandContent);
+  void SyncLabelFromContent(nsIContent *aContent);
   void SyncVisibilityFromContent();
   void SyncSensitivityFromContent();
-  void SyncSensitivityFromContent(nsIContent *aCommandContent);
+  void SyncSensitivityFromContent(nsIContent *aContent);
   void SyncIconFromContent();
+  PRBool SyncLabelFromCommand(nsIContent *aContent);
+  PRBool SyncSensitivityFromCommand(nsIContent *aContent);
   void UpdateInfoFromContentClass();
   void DestroyIconLoader();
   PRBool WithFavicon() { return mWithFavicon; }
@@ -130,16 +131,14 @@ protected:
   nsRefPtr<uGlobalMenuDocListener> mListener;
   uGlobalMenuObject *mParent;
   uMenuObjectType mType;
-  PRBool mContentVisible;
   uGlobalMenuBar *mMenuBar;
+  PRPackedBool mContentVisible;
+  PRPackedBool mHalted;
 
 private:
   nsRefPtr<uGlobalMenuIconLoader> mIconLoader;
   PRBool mWithFavicon;
   PRBool mShowOnlyForKb;
-  nsIContent *mLabelContent;
-  PRBool mLabelSyncGuard;
-  PRBool mSensitivitySyncGuard;
 };
 
 #endif

@@ -46,7 +46,6 @@ MODULE		= globalmenu
 XPI_NAME	= globalmenu
 
 XPIDLSRCS	= \
-		  uIGlobalMenuLoader.idl \
 		  uIGlobalMenuService.idl \
 		  $(NULL)
 

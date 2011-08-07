@@ -217,8 +217,8 @@ uGlobalMenuService::DestroyMenuForWidget(nsIWidget *aWidget)
 void
 uGlobalMenuService::SetOnline(PRBool aOnline)
 {
-  if (mOnline != aOnline) {
-    mOnline = aOnline;
+  if (mOnline != !!aOnline) {
+    mOnline = !!aOnline;
     nsCOMPtr<nsIObserverService> os =
       do_GetService("@mozilla.org/observer-service;1");
     if (os) {
@@ -394,7 +394,7 @@ NS_IMETHODIMP
 uGlobalMenuService::GetOnline(PRBool *online)
 {
   NS_ENSURE_ARG_POINTER(online);
-  *online = mOnline;
+  *online = !!mOnline;
   return NS_OK;
 }
 

@@ -68,6 +68,7 @@ public:
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
+  void Halt();
 
 private:
   uGlobalMenuItem();
@@ -83,6 +84,7 @@ private:
   void SyncAccelFromContent();
   void SyncProperties();
   void SyncTypeAndStateFromContent();
+  PRBool SyncStateFromCommand();
   nsresult ConstructDbusMenuItem();
   static void ItemActivatedCallback(DbusmenuMenuitem *menuItem,
                                     PRUint32 timeStamp,
@@ -93,8 +95,8 @@ private:
   nsCOMPtr<nsIContent> mCommandContent;
   nsCOMPtr<nsIContent> mKeyContent;
   PRUint32 mHandlerID;
-  PRBool mIsToggle;
-  PRBool mToggleState;
+  PRPackedBool mIsToggle;
+  PRPackedBool mToggleState;
   uMenuItemType mType;
 };
 

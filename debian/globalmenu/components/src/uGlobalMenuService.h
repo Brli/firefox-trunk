@@ -73,9 +73,6 @@ public:
 
   ~uGlobalMenuService();
 
-protected:
-  GDBusProxy* GetDbusProxy() { return mDbusProxy; }
-
 private:
   void SetOnline(PRBool aOnline);
   static void ProxyCreatedCallback(GObject *object,
@@ -91,7 +88,7 @@ private:
   void DestroyMenus();
   void DestroyMenuForWidget(nsIWidget *aWidget);
 
-  PRBool  mOnline;
+  PRPackedBool mOnline;
   GDBusProxy *mDbusProxy;
   nsAutoPtr<uGlobalMenuRequestAutoCanceller> mCancellable;
   PRUint32 mNOCHandlerID;

@@ -48,14 +48,8 @@
 #include <nsIDOMNSElement.h>
 #include <nsIDOMDOMTokenList.h>
 #include <nsILookAndFeel.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
-# include <nsIDOMDocument.h>
-# include <nsIDOMWindow.h>
-#else
-# include <nsIDOMDocumentView.h>
-# include <nsIDOMAbstractView.h>
-# include <nsIDOMViewCSS.h>
-#endif
+#include <nsIDOMDocument.h>
+#include <nsIDOMWindow.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMCSSStyleDeclaration.h>
 #include <nsIDOMCSSValue.h>
@@ -161,6 +155,13 @@ uGlobalMenuIconLoader::Run()
 
   mMenuItem->GetContent(getter_AddRefs(mContent));
 
+  nsIDocument *doc = mContent->GetCurrentDoc();
+  if (!doc) {
+    // We might have been removed from the menu, in which case we will
+    // no longer be in a document
+    return NS_OK;
+  }
+
   if (!ShouldShowIcon()) {
     ClearIcon();
     return NS_OK;
@@ -177,31 +178,15 @@ uGlobalMenuIconLoader::Run()
 
   if (!hasImage) {
     nsCOMPtr<nsIDOMCSSStyleDeclaration> cssStyleDecl;
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMWindow> domWin;
-    nsCOMPtr<nsIDOMDocument> domDoc =
-      do_QueryInterface(mContent->GetDocument());
-#else
-    nsCOMPtr<nsIDOMAbstractView> domWin;
-    nsCOMPtr<nsIDOMDocumentView> domDoc =
-      do_QueryInterface(mContent->GetDocument());
-#endif
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
     if (domDoc) {
       domDoc->GetDefaultView(getter_AddRefs(domWin));
       if (domWin) {
         nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
         if (domElement) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
           domWin->GetComputedStyle(domElement, EmptyString(),
                                    getter_AddRefs(cssStyleDecl));
-#else
-          nsCOMPtr<nsIDOMViewCSS> domViewCSS;
-          domViewCSS = do_QueryInterface(domWin);
-          if (domViewCSS) {
-            domViewCSS->GetComputedStyle(domElement, EmptyString(),
-                                         getter_AddRefs(cssStyleDecl));
-          }
-#endif
         }
       }
     }
@@ -265,7 +250,6 @@ uGlobalMenuIconLoader::Run()
     return NS_OK;
   }
 
-  nsIDocument *doc = mContent->GetDocument();
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
 
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 8
@@ -276,11 +260,7 @@ uGlobalMenuIconLoader::Run()
                     nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                     nsnull, nsnull, getter_AddRefs(mIconRequest));
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
   mImageRect.SetEmpty();
-#else
-  mImageRect.Empty();
-#endif
 
   if (domRect) {
     PRInt32 bottom = GetDOMRectSide(domRect, &nsIDOMRect::GetBottom);
@@ -477,14 +457,17 @@ uGlobalMenuObject::GetContent(nsIContent **_retval)
 // Synchronize the 'label' and 'accesskey' attributes on the DOM node
 // with the 'label' property on the dbusmenu node
 void
-uGlobalMenuObject::SyncLabelFromContent()
+uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
 {
   // Gecko stores the label and access key in separate attributes
   // so we need to convert label="Foo"/accesskey="F" in to
   // label="_Foo" for dbusmenu
 
   nsAutoString label;
-  mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
+  if (!aContent || !aContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label,
+                                      label)) {
+    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
+  }
 
   nsAutoString accesskey;
   mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::accesskey, accesskey);
@@ -561,31 +544,9 @@ uGlobalMenuObject::SyncLabelFromContent()
 }
 
 void
-uGlobalMenuObject::SyncLabelFromContent(nsIContent *aCommandContent)
+uGlobalMenuObject::SyncLabelFromContent()
 {
-  if (mLabelSyncGuard) {
-    return;
-  }
-
-  mLabelSyncGuard = PR_TRUE;
-
-  if (aCommandContent) {
-    nsAutoString label;
-    aCommandContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
-    if (!label.IsEmpty() || aCommandContent == mLabelContent) {
-      // If the command content node has a label, or we previously mirrored a
-      // label from it, then mirror its label again to the menuitem content node.
-      // If it doesn't have a label and never did, then we just fall back to
-      // the label from the menuitem content node
-      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label,
-                        label, PR_TRUE);
-      mLabelContent = aCommandContent;
-    }
-  }
-
-  SyncLabelFromContent();
-
-  mLabelSyncGuard = PR_FALSE;
+  SyncLabelFromContent(nsnull);
 }
 
 // Synchronize the 'hidden' attribute on the DOM node with the
@@ -593,10 +554,14 @@ uGlobalMenuObject::SyncLabelFromContent(nsIContent *aCommandContent)
 void
 uGlobalMenuObject::SyncVisibilityFromContent()
 {
-  mContentVisible = !mContent->AttrValueIs(kNameSpaceID_None,
-                                           uWidgetAtoms::hidden,
-                                           uWidgetAtoms::_true,
-                                           eCaseMatters);
+  mContentVisible = (!mContent->AttrValueIs(kNameSpaceID_None,
+                                            uWidgetAtoms::hidden,
+                                            uWidgetAtoms::_true,
+                                            eCaseMatters) &&
+                     !mContent->AttrValueIs(kNameSpaceID_None,
+                                            uWidgetAtoms::collapsed,
+                                            uWidgetAtoms::_true,
+                                            eCaseMatters));
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
                                       mContentVisible);
@@ -605,44 +570,69 @@ uGlobalMenuObject::SyncVisibilityFromContent()
 // Synchronize the 'disabled' attribute on the DOM node with the
 // 'sensitivity' property on the dbusmenu node
 void
-uGlobalMenuObject::SyncSensitivityFromContent()
+uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aContent)
 {
+  nsIContent *content;
+  if (aContent) {
+    content = aContent;
+  } else {
+    content = mContent;
+  }
+
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_ENABLED,
-                                      !mContent->AttrValueIs(kNameSpaceID_None,
-                                                             uWidgetAtoms::disabled,
-                                                             uWidgetAtoms::_true,
-                                                             eCaseMatters));
+                                      !content->AttrValueIs(kNameSpaceID_None,
+                                                            uWidgetAtoms::disabled,
+                                                            uWidgetAtoms::_true,
+                                                            eCaseMatters));
 }
 
-// Synchronize the 'disabled' attribute on the specified command content
-// node with the menuitem content node and the 'sensitivity' property on 
-// the dbusmenu node
 void
-uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aCommandContent)
+uGlobalMenuObject::SyncSensitivityFromContent()
 {
-  if (mSensitivitySyncGuard) {
-    return;
+  SyncSensitivityFromContent(nsnull);
+}
+
+// Synchronize the 'label' attribute on our content node with that from
+// the specified command node. Returns false if nothing was synchronized,
+// else it returns true and the document is notified
+PRBool
+uGlobalMenuObject::SyncLabelFromCommand(nsIContent *aContent)
+{
+  if (!aContent) {
+    return PR_FALSE;
   }
 
-  mSensitivitySyncGuard = PR_TRUE;
-
-  if (aCommandContent) {
-    PRBool disabled = aCommandContent->AttrValueIs(kNameSpaceID_None,
-                                                   uWidgetAtoms::disabled,
-                                                   uWidgetAtoms::_true,
-                                                   eCaseMatters);
-    if (disabled) {
-      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
-                        NS_LITERAL_STRING("true"), PR_TRUE);
-    } else {
-      mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, PR_TRUE);
-    }
+  nsAutoString label;
+  if (aContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label)) {
+    nsresult rv;
+    rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label, label, PR_TRUE);
+    return NS_FAILED(rv) ? PR_FALSE : PR_TRUE;
   }
 
-  SyncSensitivityFromContent();
+  return PR_FALSE;
+}
 
-  mSensitivitySyncGuard = PR_FALSE;
+// Synchronize the 'disabled' attribute on our content node with that from
+// the specified command node. Returns false if nothing was synchronized,
+// else it returns true and the document is notified
+PRBool
+uGlobalMenuObject::SyncSensitivityFromCommand(nsIContent *aContent)
+{
+  if (!aContent) {
+    return PR_FALSE;
+  }
+
+  nsresult rv;
+  if (aContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::disabled,
+                            uWidgetAtoms::_true, eCaseMatters)) {
+    rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
+                           NS_LITERAL_STRING("true"), PR_TRUE);
+  } else {
+    rv = mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, PR_TRUE);
+  }
+
+  return NS_FAILED(rv) ? PR_FALSE : PR_TRUE;
 }
 
 void
@@ -666,8 +656,10 @@ uGlobalMenuObject::UpdateInfoFromContentClass()
 }
 
 void
-uGlobalMenuObject::UpdateVisibility()
+uGlobalMenuObject::AboutToShowNotify()
 {
+  NS_ASSERTION(!mHalted, "Showing a menuitem that should have been destroyed already");
+
   if (!mMenuBar) {
     return;
   }

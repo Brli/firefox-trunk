@@ -46,14 +46,8 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIDOMXULCommandEvent.h>
 #include <nsPIDOMWindow.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
-# include <nsIDOMWindow.h>
-# include <nsIDOMDocument.h>
-#else
-# include <nsIDOMAbstractView.h>
-# include <nsIDOMDocumentView.h>
-# include <nsIDOMDocumentEvent.h>
-#endif
+#include <nsIDOMWindow.h>
+#include <nsIDOMDocument.h>
 #include <nsIPrivateDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #include <mozilla/dom/Element.h>
@@ -379,6 +373,12 @@ uGlobalMenuItem::MozKeyCodeToGdkKeyCode(PRUint32 aMozKeyCode)
 void
 uGlobalMenuItem::SyncAccelFromContent()
 {
+  if (!mKeyContent) {
+    dbusmenu_menuitem_property_remove(mDbusMenuItem,
+                                      DBUSMENU_MENUITEM_PROP_SHORTCUT);
+    return;
+  }
+
   nsAutoString modStr;
   mKeyContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::modifiers, modStr);
 
@@ -476,9 +476,7 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
       mType = Radio;
     }
 
-    nsIContent *content = mCommandContent ? mCommandContent : mContent;
-    PRBool lastToggleState = mToggleState;
-    mToggleState = content->AttrValueIs(kNameSpaceID_None, 
+    mToggleState = mContent->AttrValueIs(kNameSpaceID_None, 
                                         uWidgetAtoms::checked,
                                         uWidgetAtoms::_true,
                                         eCaseMatters);
@@ -487,12 +485,6 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
                                        mToggleState ?
                                        DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED : 
                                         DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED);
-
-    if (mCommandContent && lastToggleState != mToggleState) {
-      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                        mToggleState ? NS_LITERAL_STRING("true") :
-                         NS_LITERAL_STRING("false"), PR_TRUE);
-    }
 
     mIsToggle = PR_TRUE;
   } else {
@@ -505,19 +497,40 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
   }
 }
 
+PRBool
+uGlobalMenuItem::SyncStateFromCommand()
+{
+  if (!mCommandContent) {
+    return PR_FALSE;
+  }
+
+  nsresult rv;
+  if (mCommandContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
+                                   uWidgetAtoms::_true, eCaseMatters)) {
+    rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                           NS_LITERAL_STRING("true"), PR_TRUE);
+  } else {
+    rv = mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                             PR_TRUE);
+  }
+
+  return NS_FAILED(rv) ? PR_FALSE : PR_TRUE;
+}
+
 void
 uGlobalMenuItem::SyncProperties()
 {
-  SyncVisibilityFromContent();
-  SyncSensitivityFromContent(mCommandContent);
-  SyncLabelFromContent(mCommandContent);
-  SyncTypeAndStateFromContent();
-  if (mKeyContent) {
-    SyncAccelFromContent();
-  } else {
-    dbusmenu_menuitem_property_remove(mDbusMenuItem,
-                                      DBUSMENU_MENUITEM_PROP_SHORTCUT);
+  if (!SyncLabelFromCommand(mCommandContent)) {
+    SyncLabelFromContent(nsnull);
   }
+  if (!SyncSensitivityFromCommand(mCommandContent)) {
+    SyncSensitivityFromContent(nsnull);
+  }
+  SyncVisibilityFromContent();
+  if (!SyncStateFromCommand()) {
+    SyncTypeAndStateFromContent();
+  }
+  SyncAccelFromContent();
   SyncIconFromContent();
   UpdateInfoFromContentClass();
 }
@@ -559,11 +572,7 @@ uGlobalMenuItem::Activate()
 
   nsIDocument *doc = mContent->GetOwnerDoc();
   if (doc) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
-#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
@@ -571,14 +580,8 @@ uGlobalMenuItem::Activate()
       if (event) {
         nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
         if (cmdEvent) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
-#else
-          nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
-          nsCOMPtr<nsIDOMAbstractView> window;
-          domDocView->GetDefaultView(getter_AddRefs(window));
-#endif
           if (window) {
             cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
                                        PR_TRUE, PR_TRUE, window, 0,
@@ -685,11 +688,10 @@ uGlobalMenuItem::UncheckSiblings()
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *sibling = parent->GetChildAt(i);
     if (sibling->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::name,
-        name, eCaseMatters) && sibling != mContent) {
-      if (sibling->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::type,
-          uWidgetAtoms::radio, eCaseMatters)) {
-        sibling->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, PR_TRUE);
-      }
+        name, eCaseMatters) && sibling != mContent &&
+        sibling->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::type,
+                             uWidgetAtoms::radio, eCaseMatters)) {
+      sibling->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, PR_TRUE);
     }
   }
 }
@@ -702,7 +704,7 @@ uGlobalMenuItem::uGlobalMenuItem():
 
 uGlobalMenuItem::~uGlobalMenuItem()
 {
-  if (mListener) {
+  if (mListener && !mHalted) {
     mListener->UnregisterForContentChanges(mContent);
     if (mCommandContent) {
       mListener->UnregisterForContentChanges(mCommandContent);
@@ -742,6 +744,25 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
 }
 
 void
+uGlobalMenuItem::Halt()
+{
+  if (!mHalted) {
+    mHalted = PR_TRUE;
+    if (mListener) {
+      mListener->UnregisterForContentChanges(mContent);
+      if (mCommandContent) {
+        mListener->UnregisterForContentChanges(mCommandContent);
+      }
+      if (mKeyContent) {
+        mListener->UnregisterForContentChanges(mKeyContent);
+      }
+    }
+
+    DestroyIconLoader();
+  }
+}
+
+void
 uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
                                          nsIContent *aContent,
                                          nsIAtom *aAttribute)
@@ -752,59 +773,68 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
 
   nsIDocument *doc = mContent->GetCurrentDoc();
 
-  if (aAttribute == uWidgetAtoms::command && doc && aContent == mContent) {
-    if (mCommandContent) {
-      mListener->UnregisterForContentChanges(mCommandContent);
-    }
-    nsAutoString command;
-    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, command);
-    if (!command.IsEmpty()) {
-      mCommandContent = doc->GetElementById(command);
+  if (aContent == mContent) {
+    if (aAttribute == uWidgetAtoms::command) {
       if (mCommandContent) {
-        mListener->RegisterForContentChanges(mCommandContent, this);
+        mListener->UnregisterForContentChanges(mCommandContent);
       }
-    } else {
-      mCommandContent = nsnull;
-    }
-    SyncProperties();
-  } else if (aAttribute == uWidgetAtoms::key && doc && aContent == mContent) {
-    if (mKeyContent) {
-      mListener->UnregisterForContentChanges(mKeyContent);
-    }
-    nsAutoString key;
-    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, key);
-    if (!key.IsEmpty()) {
-      mKeyContent = doc->GetElementById(key);
+      nsAutoString command;
+      mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, command);
+      if (!command.IsEmpty()) {
+        mCommandContent = doc->GetElementById(command);
+        if (mCommandContent) {
+          mListener->RegisterForContentChanges(mCommandContent, this);
+        }
+      } else {
+        mCommandContent = nsnull;
+      }
+      SyncProperties();
+    } else if (aAttribute == uWidgetAtoms::key) {
       if (mKeyContent) {
-        mListener->RegisterForContentChanges(mKeyContent, this);
+        mListener->UnregisterForContentChanges(mKeyContent);
       }
-    } else {
-      mKeyContent = nsnull;
+      nsAutoString key;
+      mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, key);
+      if (!key.IsEmpty()) {
+        mKeyContent = doc->GetElementById(key);
+        if (mKeyContent) {
+          mListener->RegisterForContentChanges(mKeyContent, this);
+        }
+      } else {
+        mKeyContent = nsnull;
+      }
+      SyncProperties();
+    } else if (aAttribute == uWidgetAtoms::label ||
+               aAttribute == uWidgetAtoms::accesskey) {
+      SyncLabelFromContent(mCommandContent);
+    } else if (aAttribute == uWidgetAtoms::hidden ||
+               aAttribute == uWidgetAtoms::collapsed) {
+      SyncVisibilityFromContent();
+    } else if (aAttribute == uWidgetAtoms::disabled) {
+      SyncSensitivityFromContent(mCommandContent);
+    } else if (aAttribute == uWidgetAtoms::checked) {
+      SyncTypeAndStateFromContent();
+      if (mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
+          uWidgetAtoms::_true, eCaseMatters)) {
+        UncheckSiblings();
+      }
+    } else if (aAttribute == uWidgetAtoms::type) {
+      SyncTypeAndStateFromContent();
+    } else if (aAttribute == uWidgetAtoms::image) {
+      SyncIconFromContent();
+    } else if (aAttribute == uWidgetAtoms::_class) {
+      UpdateInfoFromContentClass();
     }
-    SyncProperties();
-  } else if (aAttribute == uWidgetAtoms::label ||
-             aAttribute == uWidgetAtoms::accesskey) {
-    SyncLabelFromContent(mCommandContent);
-  } else if (aAttribute == uWidgetAtoms::hidden) {
-    SyncVisibilityFromContent();
-  } else if (aAttribute == uWidgetAtoms::disabled) {
-    SyncSensitivityFromContent(mCommandContent);
-  } else if (aAttribute == uWidgetAtoms::keycode ||
-             aAttribute == uWidgetAtoms::key ||
-             aAttribute == uWidgetAtoms::modifiers) {
+  } else if (aContent == mCommandContent) {
+    if (aAttribute == uWidgetAtoms::label) {
+      SyncLabelFromCommand(mCommandContent);
+    } else if (aAttribute == uWidgetAtoms::disabled) {
+      SyncSensitivityFromCommand(mCommandContent);
+    } else if (aAttribute == uWidgetAtoms::checked) {
+      SyncStateFromCommand();
+    }
+  } else if (aContent == mKeyContent) {
     SyncAccelFromContent();
-  } else if (aAttribute == uWidgetAtoms::checked) {
-    SyncTypeAndStateFromContent();
-    if (mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
-        uWidgetAtoms::_true, eCaseMatters)) {
-      UncheckSiblings();
-    }
-  } else if (aAttribute == uWidgetAtoms::type) {
-    SyncTypeAndStateFromContent();
-  } else if (aAttribute == uWidgetAtoms::image) {
-    SyncIconFromContent();
-  } else if (aAttribute == uWidgetAtoms::_class) {
-    UpdateInfoFromContentClass();
   }
 }
 

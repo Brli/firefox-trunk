@@ -106,7 +106,7 @@ public:
   // specified nsIWidget
   PRBool WidgetHasSameToplevelWindow(nsIWidget *aWidget);
 
-  PRBool OpenedByKeyboard() { return mOpenedByKeyboard; }
+  PRBool OpenedByKeyboard() { return !!mOpenedByKeyboard; }
 
   // Called from the menu service. Used to hide the DOM element for the menubar
   void SetMenuBarRegistered(PRBool aRegistered);
@@ -143,12 +143,12 @@ private:
   nsCOMPtr<nsIDOMEventTarget> mDOMWinTarget;
   nsCOMPtr<nsIContent> mHiddenElement;
   nsCOMPtr<nsIDOMEventTarget> mDocTarget;
-  PRBool mRestoreHidden;
-  PRBool mXULMenuHidden;
+  PRPackedBool mRestoreHidden;
+  PRPackedBool mXULMenuHidden;
   nsRefPtr<uGlobalMenuBarListener> mEventListener;
   PRInt32 mAccessKey;
   PRUint32 mAccessKeyMask;
-  PRBool mOpenedByKeyboard;
+  PRPackedBool mOpenedByKeyboard;
   nsAutoPtr<uGlobalMenuRequestAutoCanceller> mCancellable;
 
   // Should probably have a container class and subclass that

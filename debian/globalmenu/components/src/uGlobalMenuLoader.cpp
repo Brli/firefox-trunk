@@ -53,7 +53,6 @@
 #include <nsPIDOMWindow.h>
 
 #include "uIGlobalMenuService.h"
-#include "uIGlobalMenuLoader.h"
 #include "uGlobalMenuLoader.h"
 
 // XXX: The sole purpose of this class is to listen for new nsIXULWindows
@@ -172,7 +171,7 @@ uGlobalMenuLoader::RegisterAllMenus()
   }
 }
 
-NS_IMPL_ISUPPORTS4(uGlobalMenuLoader, nsIObserver, uIGlobalMenuLoader, nsIWebProgressListener, nsISupportsWeakReference)
+NS_IMPL_ISUPPORTS3(uGlobalMenuLoader, nsIObserver, nsIWebProgressListener, nsISupportsWeakReference)
 
 nsresult
 uGlobalMenuLoader::Init()

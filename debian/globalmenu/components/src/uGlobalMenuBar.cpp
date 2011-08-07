@@ -243,7 +243,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
                                   (nsIDOMFocusListener *)mEventListener,
                                   PR_FALSE);
 
-  mDocTarget = do_QueryInterface(mContent->GetDocument());
+  mDocTarget = do_QueryInterface(mContent->GetCurrentDoc());
 
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keypress"),
                                (nsIDOMKeyListener *)mEventListener,

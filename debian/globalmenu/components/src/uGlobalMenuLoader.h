@@ -42,7 +42,6 @@
 #include <nsWeakReference.h>
 
 #include "uIGlobalMenuService.h"
-#include "uIGlobalMenuLoader.h"
 
 #define U_GLOBALMENULOADER_CID \
 { 0x1e8f2f48, 0xe0a8, 0x4649, { 0x98, 0xef, 0x13, 0x22, 0xc0, 0x3f, 0xf0, 0x8e } }
@@ -55,7 +54,6 @@ class nsIWidget;
 
 class uGlobalMenuLoader: public nsIObserver,
                          public nsIWindowMediatorListener,
-                         public uIGlobalMenuLoader,
                          public nsIWebProgressListener,
                          public nsSupportsWeakReference
 {

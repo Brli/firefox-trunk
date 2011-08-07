@@ -41,14 +41,8 @@
 #include <nsIAtom.h>
 #include <nsIDOMEvent.h>
 #include <nsIDOMMouseEvent.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
-# include <nsIDOMWindow.h>
-# include <nsIDOMDocument.h>
-#else
-# include <nsIDOMAbstractView.h>
-# include <nsIDOMDocumentView.h>
-# include <nsIDOMDocumentEvent.h>
-#endif
+#include <nsIDOMWindow.h>
+#include <nsIDOMDocument.h>
 #include <nsStringAPI.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIPrivateDOMEvent.h>
@@ -113,11 +107,7 @@ uGlobalMenu::Activate()
   nsIDocument *doc = mContent->GetOwnerDoc();
   nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
   if (doc && target) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
-#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
@@ -143,11 +133,7 @@ uGlobalMenu::Deactivate()
 
   nsIDocument *doc = mContent->GetOwnerDoc();
   if (doc) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
-#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
@@ -187,15 +173,23 @@ uGlobalMenu::CanOpen()
 void
 uGlobalMenu::AboutToOpen()
 {
+  NS_ASSERTION(!mHalted, "Showing a menu that should have been destroyed already");
+
+  if (mDirty) {
+    Build();
+  }
+
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
     return;
   }
 
+  mOpening = PR_TRUE;
+
   PRUint32 count = mMenuObjects.Length();
   for (PRUint32 i = 0; i < count; i++) {
-    mMenuObjects[i]->UpdateVisibility();
+    mMenuObjects[i]->AboutToShowNotify();
   }
 
   // XXX: This should happen when the pointer hovers over the menu entry,
@@ -205,11 +199,7 @@ uGlobalMenu::AboutToOpen()
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
   if (doc) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
-#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
@@ -217,14 +207,8 @@ uGlobalMenu::AboutToOpen()
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
-#else
-          nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
-          nsCOMPtr<nsIDOMAbstractView> window;
-          domDocView->GetDefaultView(getter_AddRefs(window));
-#endif
           if (window) {
             mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popupshowing"),
                                        PR_TRUE, PR_TRUE, window, nsnull,
@@ -254,6 +238,8 @@ uGlobalMenu::AboutToOpen()
     mPopupContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, popupID);
     os->NotifyObservers(nsnull, "native-menu-service:popup-open", popupID.get());
   }
+
+  mOpening = PR_FALSE;
 }
 
 void
@@ -269,11 +255,7 @@ uGlobalMenu::OnOpen()
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
   if (doc) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
-#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
@@ -281,14 +263,8 @@ uGlobalMenu::OnOpen()
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
-#else
-          nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
-          nsCOMPtr<nsIDOMAbstractView> window;
-          domDocView->GetDefaultView(getter_AddRefs(window));
-#endif
           if (window) {
             mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popupshown"),
                                        PR_TRUE, PR_TRUE, window, nsnull,
@@ -323,11 +299,7 @@ uGlobalMenu::OnClose()
 
   nsIDocument *doc = mPopupContent->GetOwnerDoc();
   if (doc) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-#else
-    nsCOMPtr<nsIDOMDocumentEvent> domDoc = do_QueryInterface(doc);
-#endif
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
@@ -335,14 +307,8 @@ uGlobalMenu::OnClose()
       if (event) {
         nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
         if (mouseEvent) {
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 6
           nsCOMPtr<nsIDOMWindow> window;
           domDoc->GetDefaultView(getter_AddRefs(window));
-#else
-          nsCOMPtr<nsIDOMDocumentView> domDocView = do_QueryInterface(doc);
-          nsCOMPtr<nsIDOMAbstractView> window;
-          domDocView->GetDefaultView(getter_AddRefs(window));
-#endif
           if (window) {
             mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popuphiding"),
                                        PR_TRUE, PR_TRUE, window, nsnull,
@@ -395,8 +361,8 @@ uGlobalMenu::ConstructDbusMenuItem()
                                      G_CALLBACK(MenuEventCallback),
                                      this);
 
-  SyncLabelFromContent(mCommandContent);
-  SyncSensitivityFromContent(mCommandContent);
+  SyncLabelFromContent();
+  SyncSensitivityFromContent();
   SyncVisibilityFromContent();
   SyncIconFromContent();
   UpdateInfoFromContentClass();
@@ -449,8 +415,6 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
   PRBool res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                     menuObj->GetDbusMenuItem(),
                                                     index);
-  NS_ASSERTION(res, "Failed to add child to menu. Everything will go horribly wrong now");
-
   mMenuObjects.InsertElementAt(index, menuObj);
 }
 
@@ -459,8 +423,6 @@ uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 {
   PRBool res = dbusmenu_menuitem_child_append(mDbusMenuItem,
                                               menuObj->GetDbusMenuItem());
-  NS_ASSERTION(res, "Failed to append child to menu. Everything will go horribly wrong now");
-
   mMenuObjects.AppendElement(menuObj);
 }
 
@@ -469,14 +431,17 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
 {
   PRBool res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
                                        mMenuObjects[index]->GetDbusMenuItem());
-  NS_ASSERTION(res, "Failed to delete child from menu. Everything will go horribly wrong now");
-
   mMenuObjects.RemoveElementAt(index);
 }
 
 nsresult
 uGlobalMenu::Build()
 {
+  PRUint32 count = mMenuObjects.Length();
+  for (PRUint32 i = 0; i < count; i++) {
+    RemoveMenuObjectAt(0);
+  }
+
   GetMenuPopupFromMenu(getter_AddRefs(mPopupContent));
 
   if (!mPopupContent) {
@@ -487,26 +452,23 @@ uGlobalMenu::Build()
   // Manually wrap the menupopup node to make sure it's bounded
   // Borrowed from widget/src/cocoa/nsMenuX.mm, we need this to make
   // some menus in Thunderbird work
-  if (!mPopupBound) {
-    nsIDocument *doc = mPopupContent->GetCurrentDoc();
-    if (doc) {
-      nsresult rv;
-      nsCOMPtr<nsIXPConnect> xpconnect =
-        do_GetService(nsIXPConnect::GetCID(), &rv);
-      if (NS_SUCCEEDED(rv)) {
-        nsIScriptGlobalObject *sgo = doc->GetScriptGlobalObject();
-        nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
-        JSObject *global = sgo->GetGlobalJSObject();
-        if (scriptContext && global) {
-          JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
-          if (cx) {
-            nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
-            xpconnect->WrapNative(cx, global,
-                                  mPopupContent, NS_GET_IID(nsISupports),
-                                  getter_AddRefs(wrapper));
-            mPopupBound = PR_TRUE;
-          }
-        } 
+  nsIDocument *doc = mPopupContent->GetCurrentDoc();
+  if (doc) {
+    nsresult rv;
+    nsCOMPtr<nsIXPConnect> xpconnect =
+      do_GetService(nsIXPConnect::GetCID(), &rv);
+    if (NS_SUCCEEDED(rv)) {
+      nsIScriptGlobalObject *sgo = doc->GetScriptGlobalObject();
+      nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
+      JSObject *global = sgo->GetGlobalJSObject();
+      if (scriptContext && global) {
+        JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
+        if (cx) {
+          nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
+          xpconnect->WrapNative(cx, global,
+                                mPopupContent, NS_GET_IID(nsISupports),
+                                getter_AddRefs(wrapper));
+        }
       }
     }
   }
@@ -515,7 +477,9 @@ uGlobalMenu::Build()
     mListener->RegisterForContentChanges(mPopupContent, this);
   }
 
-  PRUint32 count = mPopupContent->GetChildCount();
+  mDirty = PR_FALSE;
+
+  count = mPopupContent->GetChildCount();
 
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *child = mPopupContent->GetChildAt(i);
@@ -530,6 +494,23 @@ uGlobalMenu::Build()
   }
 
   return NS_OK;
+}
+
+void
+uGlobalMenu::Invalidate()
+{
+  if (!mDirty) {
+    mDirty = PR_TRUE;
+
+    if (mListener && mContent != mPopupContent) {
+      mListener->UnregisterForContentChanges(mPopupContent);
+    }
+
+    PRUint32 count = mMenuObjects.Length();
+    for (PRUint32 i = 0; i < count; i++) {
+      mMenuObjects[i]->Halt();
+    }
+  }
 }
 
 nsresult
@@ -548,45 +529,16 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
   mContent = aContent;
   mMenuBar = aMenuBar;
 
-  nsIDocument *doc = mContent->GetCurrentDoc();
-  if (doc) {
-    nsAutoString attr;
-    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, attr);
-    if (!attr.IsEmpty()) {
-      mCommandContent = doc->GetElementById(attr);
-    }
-  }
-
   nsresult rv = ConstructDbusMenuItem();
   NS_ENSURE_SUCCESS(rv, rv);
 
   mListener->RegisterForContentChanges(mContent, this);
-  if (mCommandContent) {
-    mListener->RegisterForContentChanges(mCommandContent, this);
-  }
 
-  return Build();
-}
-
-void
-uGlobalMenu::Rebuild()
-{
-  PRUint32 count = mMenuObjects.Length();
-  for (PRUint32 i = 0; i < count; i++) {
-    RemoveMenuObjectAt(0);
-  }
-
-  if (mContent != mPopupContent) {
-    mListener->UnregisterForContentChanges(mPopupContent);
-  }
-
-  mPopupBound = PR_FALSE;
-
-  Build();
+  return NS_OK;
 }
 
 uGlobalMenu::uGlobalMenu():
-  uGlobalMenuObject(Menu), mPopupBound(PR_FALSE)
+  uGlobalMenuObject(Menu), mOpening(PR_FALSE), mDirty(PR_TRUE)
 {
   MOZ_COUNT_CTOR(uGlobalMenu);
 }
@@ -594,12 +546,11 @@ uGlobalMenu::uGlobalMenu():
 uGlobalMenu::~uGlobalMenu()
 {
   if (mListener) {
-    mListener->UnregisterForContentChanges(mContent);
-    if (mContent != mPopupContent) {
-      mListener->UnregisterForContentChanges(mPopupContent);
+    if (!mHalted) {
+      mListener->UnregisterForContentChanges(mContent);
     }
-    if (mCommandContent) {
-      mListener->UnregisterForContentChanges(mCommandContent);
+    if (mContent != mPopupContent && !mDirty) {
+      mListener->UnregisterForContentChanges(mPopupContent);
     }
   }
 
@@ -634,6 +585,20 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
 }
 
 void
+uGlobalMenu::Halt()
+{
+  if (!mHalted) {
+    mHalted = PR_TRUE;
+
+    if (mListener) {
+      mListener->UnregisterForContentChanges(mContent);
+    }
+
+    Invalidate();
+  }
+}
+
+void
 uGlobalMenu::OpenMenu()
 {
   if (!CanOpen()) {
@@ -651,16 +616,18 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
 
-  if (aAttribute == uWidgetAtoms::open)
+  if (aAttribute == uWidgetAtoms::open) {
     return;
+  }
 
   if (aAttribute == uWidgetAtoms::disabled) {
-    SyncSensitivityFromContent(mCommandContent);
-  } else if (aAttribute == uWidgetAtoms::hidden) {
+    SyncSensitivityFromContent();
+  } else if (aAttribute == uWidgetAtoms::hidden ||
+             aAttribute == uWidgetAtoms::collapsed) {
     SyncVisibilityFromContent();
   } else if (aAttribute == uWidgetAtoms::label || 
              aAttribute == uWidgetAtoms::accesskey) {
-    SyncLabelFromContent(mCommandContent);
+    SyncLabelFromContent();
   } else if (aAttribute == uWidgetAtoms::image) {
     SyncIconFromContent();
   } else if (aAttribute == uWidgetAtoms::_class) {
@@ -677,12 +644,10 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
-  if (aContainer == mContent) {
-    // Should only get this when a menupopup is removed, in
-    // which case, we need to rebuild the whole menu
-    Rebuild();
-  } else if (aContainer == mPopupContent) {
+  if (mOpening && aContainer == mPopupContent) {
     RemoveMenuObjectAt(aIndexInContainer);
+  } else {
+    Invalidate();
   }
 }
 
@@ -695,16 +660,14 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
-  if (aContainer == mContent) {
-    // Should only get this when a menupopup is inserted, in
-    // which case, we need to rebuild the whole menu
-    Rebuild();
-  } else if (aContainer == mPopupContent) {
+  if (mOpening && aContainer == mPopupContent) {
     uGlobalMenuObject *newItem =
       NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                         mListener, aChild, mMenuBar);
     if (newItem) {
       InsertMenuObjectAt(newItem, aIndexInContainer);
     }
+  } else {
+    Invalidate();
   }
 }

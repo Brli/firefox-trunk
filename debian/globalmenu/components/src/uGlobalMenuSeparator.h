@@ -56,6 +56,7 @@ public:
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
+  void Halt();
 
 private:
   uGlobalMenuSeparator();

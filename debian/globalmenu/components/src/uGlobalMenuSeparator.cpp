@@ -97,7 +97,7 @@ uGlobalMenuSeparator::uGlobalMenuSeparator():
 
 uGlobalMenuSeparator::~uGlobalMenuSeparator()
 {
-  if (mListener) {
+  if (!mHalted && mListener) {
     mListener->UnregisterForContentChanges(mContent);
   }
 
@@ -127,11 +127,23 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
 }
 
 void
+uGlobalMenuSeparator::Halt()
+{
+  if (!mHalted) {
+    mHalted = PR_TRUE;
+    if (mListener) {
+      mListener->UnregisterForContentChanges(mContent);
+    }
+  }
+}
+
+void
 uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
                                               nsIContent *aContent,
                                               nsIAtom *aAttribute)
 {
-  if (aAttribute == uWidgetAtoms::hidden) {
+  if (aAttribute == uWidgetAtoms::hidden ||
+      aAttribute == uWidgetAtoms::collapsed) {
     SyncVisibilityFromContent();
   } else if (aAttribute == uWidgetAtoms::_class) {
     UpdateInfoFromContentClass();
