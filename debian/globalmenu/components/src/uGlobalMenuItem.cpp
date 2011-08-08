@@ -650,18 +650,19 @@ uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
     }
   }
 
-  mListener->RegisterForContentChanges(mContent, this);
+  nsresult rv;
+  rv = mListener->RegisterForContentChanges(mContent, this);
+  NS_ENSURE_SUCCESS(rv, rv);
   if (mCommandContent) {
-    mListener->RegisterForContentChanges(mCommandContent, this);
+    rv = mListener->RegisterForContentChanges(mCommandContent, this);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   if (mKeyContent) {
-    mListener->RegisterForContentChanges(mKeyContent, this);
+    rv = mListener->RegisterForContentChanges(mKeyContent, this);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsresult rv = ConstructDbusMenuItem();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return ConstructDbusMenuItem();
 }
 
 void
@@ -705,12 +706,12 @@ uGlobalMenuItem::uGlobalMenuItem():
 uGlobalMenuItem::~uGlobalMenuItem()
 {
   if (mListener && !mHalted) {
-    mListener->UnregisterForContentChanges(mContent);
+    mListener->UnregisterForContentChanges(mContent, this);
     if (mCommandContent) {
-      mListener->UnregisterForContentChanges(mCommandContent);
+      mListener->UnregisterForContentChanges(mCommandContent, this);
     }
     if (mKeyContent) {
-      mListener->UnregisterForContentChanges(mKeyContent);
+      mListener->UnregisterForContentChanges(mKeyContent, this);
     }
   }
 
@@ -749,12 +750,12 @@ uGlobalMenuItem::Halt()
   if (!mHalted) {
     mHalted = PR_TRUE;
     if (mListener) {
-      mListener->UnregisterForContentChanges(mContent);
+      mListener->UnregisterForContentChanges(mContent, this);
       if (mCommandContent) {
-        mListener->UnregisterForContentChanges(mCommandContent);
+        mListener->UnregisterForContentChanges(mCommandContent, this);
       }
       if (mKeyContent) {
-        mListener->UnregisterForContentChanges(mKeyContent);
+        mListener->UnregisterForContentChanges(mKeyContent, this);
       }
     }
 
@@ -770,13 +771,14 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
   NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
                aContent == mKeyContent,
                "Received an event that wasn't meant for us!");
+  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
 
   nsIDocument *doc = mContent->GetCurrentDoc();
 
   if (aContent == mContent) {
     if (aAttribute == uWidgetAtoms::command) {
       if (mCommandContent) {
-        mListener->UnregisterForContentChanges(mCommandContent);
+        mListener->UnregisterForContentChanges(mCommandContent, this);
       }
       nsAutoString command;
       mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, command);
@@ -791,7 +793,7 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
       SyncProperties();
     } else if (aAttribute == uWidgetAtoms::key) {
       if (mKeyContent) {
-        mListener->UnregisterForContentChanges(mKeyContent);
+        mListener->UnregisterForContentChanges(mKeyContent, this);
       }
       nsAutoString key;
       mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, key);

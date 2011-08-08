@@ -128,10 +128,10 @@ private:
   PRUint32 GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent);
   PRBool ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent);
 
-  void RemoveMenuObjectAt(PRUint32 index);
-  void InsertMenuObjectAt(uGlobalMenuObject *menu,
-                          PRUint32 index);
-  void AppendMenuObject(uGlobalMenuObject *menu);
+  PRBool RemoveMenuObjectAt(PRUint32 index);
+  PRBool InsertMenuObjectAt(uGlobalMenuObject *menu,
+                            PRUint32 index);
+  PRBool AppendMenuObject(uGlobalMenuObject *menu);
   PRBool ShouldParentStayVisible(nsIContent *aContent);
   PRBool IsParentOfMenuBar(nsIContent *aContent);
   void SetXULMenuBarHidden(PRBool hidden);

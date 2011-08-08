@@ -125,6 +125,7 @@ protected:
   void UpdateInfoFromContentClass();
   void DestroyIconLoader();
   PRBool WithFavicon() { return mWithFavicon; }
+  PRBool IsHidden();
 
   nsCOMPtr<nsIContent> mContent;
   DbusmenuMenuitem *mDbusMenuItem;

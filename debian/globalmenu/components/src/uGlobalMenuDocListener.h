@@ -43,7 +43,7 @@
 #include <nsIMutationObserver.h>
 #include <nsAutoPtr.h>
 #include <nsHashKeys.h>
-#include <nsDataHashtable.h>
+#include <nsClassHashtable.h>
 
 #include "uMenuChangeObserver.h"
 
@@ -58,19 +58,20 @@ public:
 
   uGlobalMenuDocListener();
   nsresult Init(nsIContent *rootNode);
-  void RegisterForContentChanges(nsIContent *aContent,
-                                 uMenuChangeObserver *aMenuObject);
-  void UnregisterForContentChanges(nsIContent *aContent);
-  void RegisterForAllChanges(uMenuChangeObserver *aMenuObject);
-  void UnregisterForAllChanges(uMenuChangeObserver *aMenuObject);
+  nsresult RegisterForContentChanges(nsIContent *aContent,
+                                     uMenuChangeObserver *aMenuObject);
+  nsresult UnregisterForContentChanges(nsIContent *aContent,
+                                       uMenuChangeObserver *aMenuObject);
+  nsresult RegisterForAllChanges(uMenuChangeObserver *aMenuObject);
+  nsresult UnregisterForAllChanges(uMenuChangeObserver *aMenuObject);
   void Destroy();
   ~uGlobalMenuDocListener() { };
 
 private:
-  uMenuChangeObserver* LookupContentChangeObserver(nsIContent *aContent);
+  void GetListeners(nsIContent *aContent, nsTArray<uMenuChangeObserver *>& _result);
 
   nsIDocument *mDocument;
-  nsDataHashtable<nsPtrHashKey<nsIContent>, uMenuChangeObserver *> mContentToObserverTable;
+  nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uMenuChangeObserver *>> mContentToObserverTable;
   nsTArray<uMenuChangeObserver *> mGlobalObservers;
 };
 

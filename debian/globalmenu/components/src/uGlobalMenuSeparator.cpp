@@ -81,12 +81,10 @@ uGlobalMenuSeparator::Init(uGlobalMenuObject *aParent,
   mContent = aContent;
   mMenuBar = aMenuBar;
 
-  nsresult rv = ConstructDbusMenuItem();
+  nsresult rv = mListener->RegisterForContentChanges(mContent, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mListener->RegisterForContentChanges(mContent, this);
-
-  return NS_OK;
+  return ConstructDbusMenuItem();
 }
 
 uGlobalMenuSeparator::uGlobalMenuSeparator():
@@ -98,7 +96,7 @@ uGlobalMenuSeparator::uGlobalMenuSeparator():
 uGlobalMenuSeparator::~uGlobalMenuSeparator()
 {
   if (!mHalted && mListener) {
-    mListener->UnregisterForContentChanges(mContent);
+    mListener->UnregisterForContentChanges(mContent, this);
   }
 
   if (mDbusMenuItem)
@@ -132,7 +130,7 @@ uGlobalMenuSeparator::Halt()
   if (!mHalted) {
     mHalted = PR_TRUE;
     if (mListener) {
-      mListener->UnregisterForContentChanges(mContent);
+      mListener->UnregisterForContentChanges(mContent, this);
     }
   }
 }
@@ -142,6 +140,9 @@ uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
                                               nsIContent *aContent,
                                               nsIAtom *aAttribute)
 {
+  NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");
+  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
+
   if (aAttribute == uWidgetAtoms::hidden ||
       aAttribute == uWidgetAtoms::collapsed) {
     SyncVisibilityFromContent();
@@ -156,7 +157,7 @@ uGlobalMenuSeparator::ObserveContentRemoved(nsIDocument *aDocument,
                                             nsIContent *aChild,
                                             PRInt32 aIndexInContainer)
 {
-
+  NS_ASSERTION(0, "We can't remove content from a menuseparator!");
 }
 
 void
@@ -165,5 +166,5 @@ uGlobalMenuSeparator::ObserveContentInserted(nsIDocument *aDocument,
                                              nsIContent *aChild,
                                              PRInt32 aIndexInContainer)
 {
-
+  NS_ASSERTION(0, "We can't insert content in to a menuseparator!");
 }

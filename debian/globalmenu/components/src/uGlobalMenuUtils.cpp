@@ -55,19 +55,24 @@ NewGlobalMenuItem(uGlobalMenuObject *aParent,
                   uGlobalMenuBar *aMenuBar)
 {
   if (!aContent->IsXUL()) {
-    return uGlobalMenuDummy::Create(aParent, aListener, aContent);
+    return uGlobalMenuDummy::Create();
   }
 
+  uGlobalMenuObject *menuitem;
   if (aContent->Tag() == uWidgetAtoms::menu) {
-    return uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
+    menuitem = uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
   } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
-    return uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
+    menuitem = uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
   } else if (aContent->Tag() == uWidgetAtoms::menuseparator) {
-    return uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
-  } else {
-    // We didn't recognize the tag.  We'll insert an invisible
-    // dummy node so that the indices between the hidden XUL menu
-    // and the GlobalMenu stay in sync.
-    return uGlobalMenuDummy::Create(aParent, aListener, aContent);
+    menuitem = uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
   }
+
+  if (!menuitem) {
+    // We didn't recognize the tag, or initialization failed. We'll
+    // insert an invisible dummy node so that the indices between the
+    // XUL menuand the GlobalMenu stay in sync.
+    menuitem = uGlobalMenuDummy::Create();
+  }
+
+  return menuitem;
 }

@@ -158,10 +158,7 @@ uGlobalMenu::Deactivate()
 PRBool
 uGlobalMenu::CanOpen()
 {
-    PRBool isHidden = mContent->AttrValueIs(kNameSpaceID_None,
-                                           uWidgetAtoms::hidden,
-                                           uWidgetAtoms::_true,
-                                           eCaseMatters);
+    PRBool isHidden = IsHidden();
     PRBool isDisabled = mContent->AttrValueIs(kNameSpaceID_None,
                                              uWidgetAtoms::disabled,
                                              uWidgetAtoms::_true,
@@ -173,7 +170,7 @@ uGlobalMenu::CanOpen()
 void
 uGlobalMenu::AboutToOpen()
 {
-  NS_ASSERTION(!mHalted, "Showing a menu that should have been destroyed already");
+  NS_WARN_IF_FALSE(!mHalted, "Showing a menu that should have been destroyed already");
 
   if (mDirty) {
     Build();
@@ -238,8 +235,6 @@ uGlobalMenu::AboutToOpen()
     mPopupContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, popupID);
     os->NotifyObservers(nsnull, "native-menu-service:popup-open", popupID.get());
   }
-
-  mOpening = PR_FALSE;
 }
 
 void
@@ -248,6 +243,7 @@ uGlobalMenu::OnOpen()
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
+    mOpening = PR_FALSE;
     return;
   }
 
@@ -284,11 +280,14 @@ uGlobalMenu::OnOpen()
       }
     }
   }
+
+  mOpening = PR_FALSE;
 }
 
 void
 uGlobalMenu::OnClose()
 {
+  mOpening = PR_FALSE;
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
@@ -408,30 +407,32 @@ uGlobalMenu::GetMenuPopupFromMenu(nsIContent **aResult)
   }
 }
 
-void
+PRBool
 uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                                 PRUint32 index)
 {
-  PRBool res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
+  gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                     menuObj->GetDbusMenuItem(),
                                                     index);
-  mMenuObjects.InsertElementAt(index, menuObj);
+  return res && mMenuObjects.InsertElementAt(index, menuObj);
 }
 
-void
+PRBool
 uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 {
-  PRBool res = dbusmenu_menuitem_child_append(mDbusMenuItem,
-                                              menuObj->GetDbusMenuItem());
-  mMenuObjects.AppendElement(menuObj);
+  gboolean res = dbusmenu_menuitem_child_append(mDbusMenuItem,
+                                                menuObj->GetDbusMenuItem());
+  return res && mMenuObjects.AppendElement(menuObj);
 }
 
-void
+PRBool
 uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
 {
-  PRBool res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
+  gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
                                        mMenuObjects[index]->GetDbusMenuItem());
   mMenuObjects.RemoveElementAt(index);
+
+  return !!res;
 }
 
 nsresult
@@ -474,7 +475,9 @@ uGlobalMenu::Build()
   }
 
   if (mContent != mPopupContent) {
-    mListener->RegisterForContentChanges(mPopupContent, this);
+    nsresult rv;
+    rv = mListener->RegisterForContentChanges(mPopupContent, this);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   mDirty = PR_FALSE;
@@ -486,11 +489,15 @@ uGlobalMenu::Build()
     uGlobalMenuObject *menuObject =
       NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                         mListener, child, mMenuBar);
-    if (!menuObject) {
+    PRBool res = PR_FALSE;
+    if (menuObject) {
+      res = AppendMenuObject(menuObject);
+    }
+    NS_WARN_IF_FALSE(res, "Failed to append menuitem. Marking menu invalid");
+    if (!res) {
+      Invalidate();
       return NS_ERROR_FAILURE;
     }
-
-    AppendMenuObject(menuObject);
   }
 
   return NS_OK;
@@ -503,7 +510,7 @@ uGlobalMenu::Invalidate()
     mDirty = PR_TRUE;
 
     if (mListener && mContent != mPopupContent) {
-      mListener->UnregisterForContentChanges(mPopupContent);
+      mListener->UnregisterForContentChanges(mPopupContent, this);
     }
 
     PRUint32 count = mMenuObjects.Length();
@@ -529,12 +536,10 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
   mContent = aContent;
   mMenuBar = aMenuBar;
 
-  nsresult rv = ConstructDbusMenuItem();
+  nsresult rv = mListener->RegisterForContentChanges(mContent, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mListener->RegisterForContentChanges(mContent, this);
-
-  return NS_OK;
+  return ConstructDbusMenuItem();
 }
 
 uGlobalMenu::uGlobalMenu():
@@ -547,10 +552,10 @@ uGlobalMenu::~uGlobalMenu()
 {
   if (mListener) {
     if (!mHalted) {
-      mListener->UnregisterForContentChanges(mContent);
+      mListener->UnregisterForContentChanges(mContent, this);
     }
     if (mContent != mPopupContent && !mDirty) {
-      mListener->UnregisterForContentChanges(mPopupContent);
+      mListener->UnregisterForContentChanges(mPopupContent, this);
     }
   }
 
@@ -591,7 +596,7 @@ uGlobalMenu::Halt()
     mHalted = PR_TRUE;
 
     if (mListener) {
-      mListener->UnregisterForContentChanges(mContent);
+      mListener->UnregisterForContentChanges(mContent, this);
     }
 
     Invalidate();
@@ -615,6 +620,7 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
 {
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
+  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
 
   if (aAttribute == uWidgetAtoms::open) {
     return;
@@ -643,9 +649,18 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
 {
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
+  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
+
+  if (mDirty) {
+    return;
+  }
 
   if (mOpening && aContainer == mPopupContent) {
-    RemoveMenuObjectAt(aIndexInContainer);
+    PRBool res = RemoveMenuObjectAt(aIndexInContainer);
+    NS_WARN_IF_FALSE(res, "Failed to remove menuitem. Marking menu invalid");
+    if (!res) {
+      Invalidate();
+    }
   } else {
     Invalidate();
   }
@@ -659,14 +674,24 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
 {
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
+  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
+
+  if (mDirty) {
+    return;
+  }
 
   if (mOpening && aContainer == mPopupContent) {
     uGlobalMenuObject *newItem =
       NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                         mListener, aChild, mMenuBar);
+    PRBool res = PR_FALSE;
     if (newItem) {
-      InsertMenuObjectAt(newItem, aIndexInContainer);
+      res = InsertMenuObjectAt(newItem, aIndexInContainer);
     }
+    NS_WARN_IF_FALSE(res, "Failed to insert menuitem. Marking menu invalid");
+    if (!res) {
+      Invalidate();
+    }    
   } else {
     Invalidate();
   }

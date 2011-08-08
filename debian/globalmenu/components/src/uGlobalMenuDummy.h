@@ -52,16 +52,12 @@ class uGlobalMenuDummy: public uGlobalMenuObject,
 public:
   NS_DECL_UMENUCHANGEOBSERVER
 
-  static uGlobalMenuObject* Create(uGlobalMenuObject *aParent,
-                                   uGlobalMenuDocListener *aListener,
-                                   nsIContent *aContent);
+  static uGlobalMenuObject* Create();
 
 private:
   uGlobalMenuDummy();
 
-  nsresult Init(uGlobalMenuObject *aParent,
-                uGlobalMenuDocListener *aListener,
-                nsIContent *aContent);
+  nsresult Init();
 
   ~uGlobalMenuDummy();
 

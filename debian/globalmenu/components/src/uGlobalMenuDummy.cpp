@@ -79,36 +79,23 @@ uGlobalMenuDummy::~uGlobalMenuDummy()
 }
 
 nsresult
-uGlobalMenuDummy::Init(uGlobalMenuObject *aParent,
-                       uGlobalMenuDocListener *aListener,
-                       nsIContent *aContent)
+uGlobalMenuDummy::Init()
 {
-  NS_ENSURE_ARG(aParent);
-  NS_ENSURE_ARG(aListener);
-  NS_ENSURE_ARG(aContent);
-
-  mParent = aParent;
-  mListener = aListener;
-  mContent = aContent;
+  mParent = nsnull;
   mMenuBar = nsnull;
 
-  nsresult rv = ConstructDbusMenuItem();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return ConstructDbusMenuItem();
 }
 
 /*static*/ uGlobalMenuObject*
-uGlobalMenuDummy::Create(uGlobalMenuObject *aParent,
-                         uGlobalMenuDocListener *aListener,
-                         nsIContent *aContent)
+uGlobalMenuDummy::Create()
 {
   uGlobalMenuDummy *menuitem = new uGlobalMenuDummy();
   if (!menuitem) {
     return nsnull;
   }
 
-  if (NS_FAILED(menuitem->Init(aParent, aListener, aContent))) {
+  if (NS_FAILED(menuitem->Init())) {
     delete menuitem;
     return nsnull;
   }

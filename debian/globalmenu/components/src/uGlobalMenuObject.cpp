@@ -554,14 +554,7 @@ uGlobalMenuObject::SyncLabelFromContent()
 void
 uGlobalMenuObject::SyncVisibilityFromContent()
 {
-  mContentVisible = (!mContent->AttrValueIs(kNameSpaceID_None,
-                                            uWidgetAtoms::hidden,
-                                            uWidgetAtoms::_true,
-                                            eCaseMatters) &&
-                     !mContent->AttrValueIs(kNameSpaceID_None,
-                                            uWidgetAtoms::collapsed,
-                                            uWidgetAtoms::_true,
-                                            eCaseMatters));
+  mContentVisible = !IsHidden();
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
                                       mContentVisible);
@@ -655,10 +648,19 @@ uGlobalMenuObject::UpdateInfoFromContentClass()
                     &mWithFavicon);
 }
 
+PRBool
+uGlobalMenuObject::IsHidden()
+{
+  return mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::hidden,
+                               uWidgetAtoms::_true, eCaseMatters) ||
+         mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::collapsed,
+                               uWidgetAtoms::_true, eCaseMatters);
+}
+
 void
 uGlobalMenuObject::AboutToShowNotify()
 {
-  NS_ASSERTION(!mHalted, "Showing a menuitem that should have been destroyed already");
+  NS_WARN_IF_FALSE(!mHalted, "Showing a menuitem that should have been destroyed already");
 
   if (!mMenuBar) {
     return;

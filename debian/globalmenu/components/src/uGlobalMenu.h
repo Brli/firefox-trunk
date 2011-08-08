@@ -80,10 +80,10 @@ private:
                 uGlobalMenuDocListener *aListener,
                 nsIContent *aContent,
                 uGlobalMenuBar *aMenuBar);
-  void InsertMenuObjectAt(uGlobalMenuObject *menuObj,
-                          PRUint32 index);
-  void AppendMenuObject(uGlobalMenuObject *menuObj);
-  void RemoveMenuObjectAt(PRUint32 index);
+  PRBool InsertMenuObjectAt(uGlobalMenuObject *menuObj,
+                            PRUint32 index);
+  PRBool AppendMenuObject(uGlobalMenuObject *menuObj);
+  PRBool RemoveMenuObjectAt(PRUint32 index);
   nsresult ConstructDbusMenuItem();
   nsresult Build();
   void GetMenuPopupFromMenu(nsIContent **aResult);

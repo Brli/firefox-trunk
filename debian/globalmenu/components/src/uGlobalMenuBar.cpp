@@ -128,33 +128,32 @@ uGlobalMenuBar::WidgetToGTKWindow(nsIWidget *aWidget)
   return gtk_widget_get_toplevel(GTK_WIDGET(user_data));
 }
 
-void
+PRBool
 uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
 {
-  dbusmenu_menuitem_child_append(mDbusMenuItem,
-                                 menu->GetDbusMenuItem());
-
-  mMenuObjects.AppendElement(menu);
+  gboolean res = dbusmenu_menuitem_child_append(mDbusMenuItem,
+                                                menu->GetDbusMenuItem());
+  return res && mMenuObjects.AppendElement(menu);
 }
 
-void
+PRBool
 uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
                                    PRUint32 index)
 {
-  dbusmenu_menuitem_child_add_position(mDbusMenuItem,
-                                       menu->GetDbusMenuItem(),
-                                       index);
-
-  mMenuObjects.InsertElementAt(index, menu);
+  gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
+                                                      menu->GetDbusMenuItem(),
+                                                      index);
+  return res && mMenuObjects.InsertElementAt(index, menu);
 }
 
-void
+PRBool
 uGlobalMenuBar::RemoveMenuObjectAt(PRUint32 index)
 {
-  dbusmenu_menuitem_child_delete(mDbusMenuItem,
-                                 mMenuObjects[index]->GetDbusMenuItem());
-
+  gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
+                                       mMenuObjects[index]->GetDbusMenuItem());
   mMenuObjects.RemoveElementAt(index);
+
+  return !!res;
 }
 
 nsresult
@@ -167,11 +166,17 @@ uGlobalMenuBar::Build()
     uGlobalMenuObject *newItem =
       NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                         mListener, menuContent, this);
-    if (!newItem) {
+    PRBool res = PR_FALSE;
+    if (newItem) {
+      res = AppendMenuObject(newItem);
+    }
+    NS_ASSERTION(res, "Failed to append menuitem. Our menu representation is out-of-sync with reality");
+    if (!res) {
+      // XXX: Is there anything else we should do here?
       return NS_ERROR_FAILURE;
     }
-    AppendMenuObject(newItem);
   }
+
   return NS_OK;
 }
 
@@ -212,7 +217,8 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   nsresult rv = mListener->Init(mContent);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mListener->RegisterForContentChanges(mContent, this);
+  rv = mListener->RegisterForContentChanges(mContent, this);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = Build();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -271,7 +277,8 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     mAccessKeyMask = MODIFIER_ALT;
   }
 
-  mListener->RegisterForAllChanges(this);
+  rv = mListener->RegisterForAllChanges(this);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<uIGlobalMenuService> service =
     do_GetService("@canonical.com/globalmenu-service;1");
@@ -440,7 +447,7 @@ uGlobalMenuBar::~uGlobalMenuBar()
 
   if (mListener) {
     mListener->UnregisterForAllChanges(this);
-    mListener->UnregisterForContentChanges(mContent);
+    mListener->UnregisterForContentChanges(mContent, this);
     mListener->Destroy();
   }
 
@@ -677,7 +684,9 @@ uGlobalMenuBar::ObserveContentRemoved(nsIDocument *aDocument,
     return;
   }
 
-  RemoveMenuObjectAt(aIndexInContainer);
+  PRBool res = RemoveMenuObjectAt(aIndexInContainer);
+  NS_ASSERTION(res, "Failed to remove menuitem. Our menu representation is out-of-sync with reality");
+  // XXX: Is there anything else we can do if removal fails?
 }
 
 void
@@ -698,7 +707,10 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
   uGlobalMenuObject *newItem =
     NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                       mListener, aChild, this);
+  PRBool res = PR_FALSE;
   if (newItem) {
-    InsertMenuObjectAt(newItem, aIndexInContainer);
+    res = InsertMenuObjectAt(newItem, aIndexInContainer);
   }
+  NS_ASSERTION(res, "Failed to insert menuitem. Our menu representation is out-of-sync with reality");
+  // XXX: Is there anything else we can do if insertion fails?
 }
