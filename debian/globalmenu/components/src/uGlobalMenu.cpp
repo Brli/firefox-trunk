@@ -475,8 +475,7 @@ uGlobalMenu::Build()
   }
 
   if (mContent != mPopupContent) {
-    nsresult rv;
-    rv = mListener->RegisterForContentChanges(mPopupContent, this);
+    nsresult rv = mListener->RegisterForContentChanges(mPopupContent, this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -509,7 +508,7 @@ uGlobalMenu::Invalidate()
   if (!mDirty) {
     mDirty = PR_TRUE;
 
-    if (mListener && mContent != mPopupContent) {
+    if (mContent != mPopupContent) {
       mListener->UnregisterForContentChanges(mPopupContent, this);
     }
 
@@ -595,9 +594,7 @@ uGlobalMenu::Halt()
   if (!mHalted) {
     mHalted = PR_TRUE;
 
-    if (mListener) {
-      mListener->UnregisterForContentChanges(mContent, this);
-    }
+    mListener->UnregisterForContentChanges(mContent, this);
 
     Invalidate();
   }

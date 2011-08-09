@@ -749,14 +749,12 @@ uGlobalMenuItem::Halt()
 {
   if (!mHalted) {
     mHalted = PR_TRUE;
-    if (mListener) {
-      mListener->UnregisterForContentChanges(mContent, this);
-      if (mCommandContent) {
-        mListener->UnregisterForContentChanges(mCommandContent, this);
-      }
-      if (mKeyContent) {
-        mListener->UnregisterForContentChanges(mKeyContent, this);
-      }
+    mListener->UnregisterForContentChanges(mContent, this);
+    if (mCommandContent) {
+      mListener->UnregisterForContentChanges(mCommandContent, this);
+    }
+    if (mKeyContent) {
+      mListener->UnregisterForContentChanges(mKeyContent, this);
     }
 
     DestroyIconLoader();

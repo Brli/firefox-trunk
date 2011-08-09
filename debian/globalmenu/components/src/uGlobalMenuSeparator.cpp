@@ -129,9 +129,7 @@ uGlobalMenuSeparator::Halt()
 {
   if (!mHalted) {
     mHalted = PR_TRUE;
-    if (mListener) {
-      mListener->UnregisterForContentChanges(mContent, this);
-    }
+    mListener->UnregisterForContentChanges(mContent, this);
   }
 }
 
