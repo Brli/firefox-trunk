@@ -71,7 +71,7 @@ private:
   void GetListeners(nsIContent *aContent, nsTArray<uMenuChangeObserver *>& _result);
 
   nsIDocument *mDocument;
-  nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uMenuChangeObserver *>> mContentToObserverTable;
+  nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uMenuChangeObserver *> > mContentToObserverTable;
   nsTArray<uMenuChangeObserver *> mGlobalObservers;
 };
 
