@@ -58,7 +58,7 @@ NewGlobalMenuItem(uGlobalMenuObject *aParent,
     return uGlobalMenuDummy::Create();
   }
 
-  uGlobalMenuObject *menuitem;
+  uGlobalMenuObject *menuitem = nsnull;
   if (aContent->Tag() == uWidgetAtoms::menu) {
     menuitem = uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
   } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
