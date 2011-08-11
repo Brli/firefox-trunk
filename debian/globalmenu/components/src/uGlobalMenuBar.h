@@ -45,8 +45,7 @@
 #include <nsStringAPI.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIContent.h>
-#include <nsIDOMFocusListener.h>
-#include <nsIDOMKeyListener.h>
+#include <nsIDOMEventListener.h>
 
 #include <libdbusmenu-glib/server.h>
 #include <gtk/gtk.h>
@@ -54,6 +53,11 @@
 #include "uMenuChangeObserver.h"
 #include "uGlobalMenuObject.h"
 #include "uGlobalMenuUtils.h"
+
+// Meh. X.h defines this
+#ifdef KeyPress
+# undef KeyPress
+#endif
 
 class nsIObserver;
 class nsIWidget;
@@ -63,19 +67,11 @@ class uGlobalMenu;
 class uGlobalMenuBar;
 class nsIDOMKeyEvent;
 
-class uGlobalMenuBarListener: public nsIDOMKeyListener,
-                              public nsIDOMFocusListener
+class uGlobalMenuBarListener: public nsIDOMEventListener
 {
 public:
   NS_DECL_ISUPPORTS
-
-  NS_IMETHOD KeyPress(nsIDOMEvent *aKeyEvent);
-  NS_IMETHOD KeyUp(nsIDOMEvent *aKeyEvent);
-  NS_IMETHOD KeyDown(nsIDOMEvent *aKeyEvent);
-
-  NS_IMETHOD Focus(nsIDOMEvent *aEvent);
-  NS_IMETHOD Blur(nsIDOMEvent *aEvent);
-  NS_IMETHOD HandleEvent(nsIDOMEvent *aEvent) { return NS_OK; }
+  NS_DECL_NSIDOMEVENTLISTENER
 
   uGlobalMenuBarListener(uGlobalMenuBar *aMenuBar):
                          mMenuBar(aMenuBar) { };
@@ -140,7 +136,6 @@ private:
   GtkWidget *mTopLevel;
   nsCString mPath;
 
-  nsCOMPtr<nsIDOMEventTarget> mDOMWinTarget;
   nsCOMPtr<nsIContent> mHiddenElement;
   nsCOMPtr<nsIDOMEventTarget> mDocTarget;
   PRPackedBool mRestoreHidden;

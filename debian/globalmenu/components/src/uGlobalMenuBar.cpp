@@ -67,48 +67,28 @@
 #define MODIFIER_ALT      4
 #define MODIFIER_META     8
 
-NS_IMPL_ADDREF(uGlobalMenuBarListener)
-NS_IMPL_RELEASE(uGlobalMenuBarListener)
-NS_INTERFACE_MAP_BEGIN(uGlobalMenuBarListener)
-  NS_INTERFACE_MAP_ENTRY(nsIDOMKeyListener)
-  NS_INTERFACE_MAP_ENTRY(nsIDOMFocusListener)
-  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsIDOMEventListener,nsIDOMKeyListener)
-NS_INTERFACE_MAP_END
+NS_IMPL_ISUPPORTS1(uGlobalMenuBarListener, nsIDOMEventListener)
 
 NS_IMETHODIMP
-uGlobalMenuBarListener::KeyPress(nsIDOMEvent *aKeyEvent)
+uGlobalMenuBarListener::HandleEvent(nsIDOMEvent *aEvent)
 {
-  return mMenuBar->KeyPress(aKeyEvent);
-}
+  nsAutoString type;
+  nsresult rv = aEvent->GetType(type);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-NS_IMETHODIMP
-uGlobalMenuBarListener::KeyUp(nsIDOMEvent *aKeyEvent)
-{
-  return mMenuBar->KeyUp(aKeyEvent);
-}
-
-NS_IMETHODIMP
-uGlobalMenuBarListener::KeyDown(nsIDOMEvent *aKeyEvent)
-{
-  return mMenuBar->KeyDown(aKeyEvent);
-}
-
-NS_IMETHODIMP
-uGlobalMenuBarListener::Blur(nsIDOMEvent *aEvent)
-{
-  if (mMenuBar) {
-    mMenuBar->Blur();
-  }
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-uGlobalMenuBarListener::Focus(nsIDOMEvent *aEvent)
-{
-  if (mMenuBar) {
+  if (type.EqualsLiteral("focus")) {
     mMenuBar->Focus();
+  } else if (type.EqualsLiteral("blur")) {
+    mMenuBar->Blur();
+  } else if (type.EqualsLiteral("keypress")) {
+    rv = mMenuBar->KeyPress(aEvent);
+  } else if (type.EqualsLiteral("keydown")) {
+    rv = mMenuBar->KeyDown(aEvent);
+  } else if (type.EqualsLiteral("keyup")) {
+    rv = mMenuBar->KeyUp(aEvent);
   }
-  return NS_OK;
+
+  return rv;
 }
 
 GtkWidget*
@@ -226,39 +206,22 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   mEventListener = new uGlobalMenuBarListener(this);
   NS_ENSURE_TRUE(mEventListener, NS_ERROR_OUT_OF_MEMORY);
 
-  // Find the top-level DOM window from our nsIWidget, so we
-  // can register the menubar as a focus event listener, in order
-  // for it to cancel menus when it the window gets focus
-  void *clientData;
-  aWindow->GetClientData(clientData);
-  nsISupports *data = static_cast<nsISupports *>(clientData);
-  nsCOMPtr<nsIXULWindow> xulWindow = do_QueryInterface(data);
-  NS_ENSURE_TRUE(xulWindow, NS_ERROR_FAILURE);
-
-  nsCOMPtr<nsIDocShell> docShell;
-  xulWindow->GetDocShell(getter_AddRefs(docShell));
-  NS_ENSURE_TRUE(docShell, NS_ERROR_FAILURE);
-
-  nsCOMPtr<nsIDOMWindow> domWindow = do_GetInterface(docShell);
-  mDOMWinTarget = do_QueryInterface(domWindow);
-
-  mDOMWinTarget->AddEventListener(NS_LITERAL_STRING("focus"),
-                                  (nsIDOMFocusListener *)mEventListener,
-                                  PR_TRUE);
-  mDOMWinTarget->AddEventListener(NS_LITERAL_STRING("blur"),
-                                  (nsIDOMFocusListener *)mEventListener,
-                                  PR_FALSE);
-
   mDocTarget = do_QueryInterface(mContent->GetCurrentDoc());
 
+  mDocTarget->AddEventListener(NS_LITERAL_STRING("focus"),
+                               mEventListener,
+                               PR_TRUE);
+  mDocTarget->AddEventListener(NS_LITERAL_STRING("blur"),
+                               mEventListener,
+                               PR_TRUE);
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keypress"),
-                               (nsIDOMKeyListener *)mEventListener,
+                               mEventListener,
                                PR_FALSE);
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keydown"),
-                               (nsIDOMKeyListener *)mEventListener,
+                               mEventListener,
                                PR_FALSE);
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keyup"),
-                               (nsIDOMKeyListener *)mEventListener,
+                               mEventListener,
                                PR_FALSE);
 
   nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID);
@@ -424,24 +387,21 @@ uGlobalMenuBar::~uGlobalMenuBar()
 {
   SetXULMenuBarHidden(PR_FALSE);
 
-  if (mDOMWinTarget) {
-    mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
-                                       (nsIDOMFocusListener *)mEventListener,
-                                       PR_TRUE);
-    mDOMWinTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
-                                       (nsIDOMFocusListener *)mEventListener,
-                                       PR_FALSE);
-  }
-
   if (mDocTarget) {
+    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
+                                    mEventListener,
+                                    PR_TRUE);
+    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
+                                    mEventListener,
+                                    PR_TRUE);
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
-                                    (nsIDOMKeyListener *)mEventListener,
+                                    mEventListener,
                                     PR_FALSE);
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
-                                    (nsIDOMKeyListener *)mEventListener,
+                                    mEventListener,
                                     PR_FALSE);
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
-                                    (nsIDOMKeyListener *)mEventListener,
+                                    mEventListener,
                                     PR_FALSE);
   }
 
