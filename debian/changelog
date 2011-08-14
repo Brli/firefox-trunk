@@ -190,12 +190,14 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Touch debian/control.in during clean to force a refresh of debian/control,
     so we can check if it is out-of-date and fail if it is
     - update debian/rules
+  * Update the apport blacklist file now the binary name has changed
+    - update debian/apport/firefox.in
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 11 Aug 2011 13:06:16 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 14 Aug 2011 16:01:17 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
