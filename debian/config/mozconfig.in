@@ -96,7 +96,6 @@ mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJ
 %%ifdef MOZ_DISABLE_GNOMEVFS
 ac_add_options --disable-gnomevfs
 ac_add_options --enable-gio
-%%define GIO gio
 %%endif
 %%ifdef MOZ_DISABLE_GCONF
 ac_add_options --disable-gconf
@@ -111,9 +110,8 @@ ac_add_options --disable-debug
 %%endif
 ac_add_options --disable-elf-hack
 %%ifdef MOZ_ENABLE_GLOBALMENU
-%%define GLOBALMENU globalmenu
+ac_add_options --enable-extensions=default,globalmenu
 %%endif
-ac_add_options --enable-extensions=default,@GLOBALMENU@,@GIO@
 %%ifdef MOZ_APP_RENAME
 ac_add_options --with-app-name=@MOZ_APP_NAME@
 %%endif
