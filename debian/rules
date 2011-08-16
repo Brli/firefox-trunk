@@ -47,8 +47,8 @@ CAIRO_TREE_BD		= libxrender-dev
 EXTRA_SYSTEM_BD		= \n\tlibfreetype6-dev (>= 6.1.0),\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibbz2-dev,\n\tlibevent-dev,
 EXTRA_DEFAULT_BD	= \n\tlibfreetype6-dev (>= 6.1.0),
 
-UPSTREAM_TREE_DEFAULTS		= CAIRO NSPR NSS SQLITE HUNSPELL VPX
-UPSTREAM_SYSTEM_DEFAULTS	=
+DEFAULT_TREE_LIBS	= CAIRO NSPR NSS SQLITE HUNSPELL VPX
+DEFAULT_SYSTEM_LIBS	=
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
@@ -197,13 +197,13 @@ DEB_DEFINES = 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DM
 
 SHLIB_OVERRIDE = $(if $(shell test "system" = "$(MOZ_OVERRIDE_SHLIBS)" && echo "1"), $(eval MOZ_USE_$(1) = system), \
 	$(if $(shell test "tree" = "$(MOZ_OVERRIDE_SHLIBS)" && echo "1"), $(eval MOZ_USE_$(1) = tree),))
-DEFINE_TREE = $(if $(shell test "system" != "$(MOZ_USE_$(1))" && echo "1"), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
-DEFINE_SYSTEM = $(if $(shell test "tree" = "$(MOZ_USE_$(1))" && echo "1"), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
+DEFINE_DEFAULT_TREE_LIB = $(if $(shell test "system" != "$(MOZ_USE_$(1))" && echo "1"), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
+DEFINE_DEFAULT_SYSTEM_LIB = $(if $(shell test "tree" = "$(MOZ_USE_$(1))" && echo "1"), $(eval DEB_DEFINES += -DMOZ_TREE_$(1)); $(eval MOZ_TREE_$(1) = 1),)
 
-$(foreach lib, $(UPSTREAM_TREE_DEFAULTS) $(UPSTREAM_SYSTEM_DEFAULTS), $(call SHLIB_OVERRIDE,$(lib)))
-$(foreach lib, $(UPSTREAM_TREE_DEFAULTS) $(UPSTREAM_SYSTEM_DEFAULTS), $(eval DEB_DEFINES += -DMOZ_USE_$(lib)="$(MOZ_USE_$(lib))"))
-$(foreach lib, $(UPSTREAM_TREE_DEFAULTS), $(call DEFINE_TREE,$(lib)))
-$(foreach lib, $(UPSTREAM_SYSTEM_DEFAULTS), $(call DEFINE_SYSTEM,$(lib)))
+$(foreach lib, $(DEFAULT_TREE_LIBS) $(DEFAULT_SYSTEM_LIBS), $(call SHLIB_OVERRIDE,$(lib)))
+$(foreach lib, $(DEFAULT_TREE_LIBS) $(DEFAULT_SYSTEM_LIBS), $(eval DEB_DEFINES += -DMOZ_USE_$(lib)="$(MOZ_USE_$(lib))"))
+$(foreach lib, $(DEFAULT_TREE_LIBS), $(call DEFINE_DEFAULT_TREE_LIB,$(lib)))
+$(foreach lib, $(DEFAULT_SYSTEM_LIBS), $(call DEFINE_DEFAULT_SYSTEM_LIB,$(lib)))
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 	DEB_DEFINES += -DMOZ_ENABLE_BREAKPAD
@@ -297,7 +297,7 @@ pkgconfig_files = \
 
 SYSLIBS_BD = $(NULL)
 APPEND_BDS = $(if $(shell test "x$(1)" != "x" && echo "1" ), $(eval SYSLIBS_BD += \n\t$(1),),)
-$(foreach lib, $(UPSTREAM_TREE_DEFAULTS) $(UPSTREAM_SYSTEM_DEFAULTS), $(if $(shell test "$(MOZ_TREE_$(lib))" != "1" && echo "1"), $(call APPEND_BDS,$($(lib)_SYSTEM_BD)),$(call APPEND_BDS,$($(lib)_TREE_BD))))
+$(foreach lib, $(DEFAULT_TREE_LIBS) $(DEFAULT_SYSTEM_LIBS), $(if $(shell test "$(MOZ_TREE_$(lib))" != "1" && echo "1"), $(call APPEND_BDS,$($(lib)_SYSTEM_BD)),$(call APPEND_BDS,$($(lib)_TREE_BD))))
 ifeq (system, $(MOZ_OVERRIDE_SHLIBS))
 SYSLIBS_BD += $(EXTRA_SYSTEM_BD)
 else ifneq (tree, $(MOZ_OVERRIDE_SHLIBS))
