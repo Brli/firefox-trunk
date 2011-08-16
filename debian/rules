@@ -7,7 +7,7 @@ MOZ_MOZDIR		:=
 
 # Various build defaults
 # tree = use in-tree libs, system = use system libs
-MOZ_OVERRIDE_SHLIBS	?=
+MOZ_OVERRIDE_SHLIBS	?= 
 # 1 = Enable crashreporter (if supported)
 MOZ_ENABLE_BREAKPAD	?= 0
 # 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
@@ -44,11 +44,8 @@ NSS_SYSTEM_BD		= libnss3-dev (>= 3.12.10)
 CAIRO_TREE_BD		= libxrender-dev
 
 # Additional build-dependencies
-# Need a way to add versioned build-deps here
-#EXTRA_SYSTEM_BD	= libfreetype6-dev (>= 6.1.0) libjpeg62-dev libpng12-dev zlib1g-dev libbz2-dev libevent-dev
-EXTRA_SYSTEM_BD		= libfreetype6-dev libjpeg62-dev libpng12-dev zlib1g-dev libbz2-dev libevent-dev
-#EXTRA_DEFAULT_BD	= libfreetype6-dev (>= 6.1.0)
-EXTRA_DEFAULT_BD	= libfreetype6-dev
+EXTRA_SYSTEM_BD		= \n\tlibfreetype6-dev (>= 6.1.0),\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibbz2-dev,\n\tlibevent-dev,
+EXTRA_DEFAULT_BD	= \n\tlibfreetype6-dev (>= 6.1.0),
 
 UPSTREAM_TREE_DEFAULTS		= CAIRO NSPR NSS SQLITE HUNSPELL VPX
 UPSTREAM_SYSTEM_DEFAULTS	=
@@ -302,9 +299,9 @@ SYSLIBS_BD = $(NULL)
 APPEND_BDS = $(if $(shell test "x$(1)" != "x" && echo "1" ), $(eval SYSLIBS_BD += \n\t$(1),),)
 $(foreach lib, $(UPSTREAM_TREE_DEFAULTS) $(UPSTREAM_SYSTEM_DEFAULTS), $(if $(shell test "$(MOZ_TREE_$(lib))" != "1" && echo "1"), $(call APPEND_BDS,$($(lib)_SYSTEM_BD)),$(call APPEND_BDS,$($(lib)_TREE_BD))))
 ifeq (system, $(MOZ_OVERRIDE_SHLIBS))
-$(foreach lib, $(EXTRA_SYSTEM_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
+SYSLIBS_BD += $(EXTRA_SYSTEM_BD)
 else ifneq (tree, $(MOZ_OVERRIDE_SHLIBS))
-$(foreach lib, $(EXTRA_DEFAULT_BD), $(eval SYSLIBS_BD += \n\t$(lib),))
+SYSLIBS_BD += $(EXTRA_DEFAULT_BD)
 endif
 
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/config/locales.shipped debian/config/locales.all
