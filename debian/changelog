@@ -195,12 +195,14 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/firefox.install.in
     - update debian/firefox.links.in
     - update debian/rules
+  * Readd the debug hooks to the shell wrapper script
+    - update debian/firefox.sh.in
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Aug 2011 12:19:21 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Aug 2011 12:45:24 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
