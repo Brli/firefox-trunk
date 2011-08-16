@@ -1,7 +1,7 @@
-firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * New upstream snapshot v8.0 A1 HG 20110714R72763
+  * New upstream snapshot v8.0 A1 HG 20110815R75289
 
   * Update globalmenu-extension to 2.0 prerelease r222
     - Update for imgILoader changes in Firefox 8
@@ -205,7 +205,7 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Aug 2011 21:35:33 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Aug 2011 23:44:11 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
