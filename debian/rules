@@ -250,7 +250,6 @@ ifeq (official, $(BRANDING))
 endif
 ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
 	DEB_DEFINES += -DMOZ_APP_RENAME
-	DEB_DEFINES += -DMOZ_USE_SHELL_WRAPPER
 endif
 
 ifneq (1, $(MOZ_TREE_NSPR))
@@ -263,10 +262,8 @@ ifneq (1, $(MOZ_TREE_NSS))
 	NSS_DEPENDS = libnss3-dev
 endif
 
-DEBIAN_EXECUTABLES = $(NULL)
-ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
-	DEBIAN_EXECUTABLES += $(MOZ_APP_NAME)$(MOZ_LIBDIR)/firefox.sh
-endif
+DEBIAN_EXECUTABLES = $(MOZ_APP_NAME)$(MOZ_LIBDIR)/firefox.sh \
+		     $(NULL)
 
 subst_files = \
 	debian/usr.bin.$(MOZ_APP_NAME) \

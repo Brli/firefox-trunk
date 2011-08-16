@@ -30,10 +30,12 @@ while [ ! -x $MOZ_LIBDIR/$MOZ_APP_NAME ] ; do
     fi
 done
 
+%%if MOZ_APP_NAME != MOZ_APP_BASENAME
 if [ $MOZ_APP_NAME != $MOZ_APP_BASENAME ] &&
    [ ! -e ${HOME}/${MOZ_PROFILE_PREFIX}${MOZ_APP_NAME} ] &&
    [ -d ${HOME}/${MOZ_PROFILE_PREFIX}${MOZ_APP_BASENAME} ] ; then
     cp -r ${HOME}/${MOZ_PROFILE_PREFIX}${MOZ_APP_BASENAME} ${HOME}/${MOZ_PROFILE_PREFIX}${MOZ_APP_NAME}
 fi
+%%endif
 
 exec $MOZ_LIBDIR/$MOZ_APP_NAME "$@"

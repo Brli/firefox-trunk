@@ -43,8 +43,6 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
       menu nodes, with each one interested in receiving events. Previously, we
       just erased the first listener if a second menu node tried to register
       (discovered after adding error checking around uGlobalMenuDocListener)
-  * Don't try to set the shell wrapper executable when we don't install it
-    - update debian/rules
   * Drop the special "kde.js" file handling from the pref service. It hasn't
     had the desired effect since Firefox 4, as the specialfile handling
     doesn't apply to pref files inside the omni.jar. Moving kde.js back in to
@@ -192,12 +190,17 @@ firefox-trunk (8.0~a1~hg20110714r72763+nobinonly-0ubuntu1) UNRELEASED; urgency=l
     - update debian/rules
   * Update the apport blacklist file now the binary name has changed
     - update debian/apport/firefox.in
+  * Drop the changes to not install the shell wrapper script. This is still
+    needed for setting MOZ_APP_LAUNCHER
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/rules
 
   [ Brian Murray <brian@ubuntu.com> ]
   * Fix LP: #758111 - update ubuntulinux.org bookmark - thanks to Jonathan
     Rothwell for the patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Aug 2011 12:06:20 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 16 Aug 2011 12:19:21 +0100
 
 firefox-trunk (7.0~a1~hg20110704r72289+nobinonly-0ubuntu1) oneiric; urgency=low
 
