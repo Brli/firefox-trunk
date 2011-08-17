@@ -44,8 +44,8 @@ NSS_SYSTEM_BD		= libnss3-dev (>= 3.12.10)
 CAIRO_TREE_BD		= libxrender-dev
 
 # Additional build-dependencies
-EXTRA_SYSTEM_BD		= \n\tlibfreetype6-dev (>= 6.1.0),\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibbz2-dev,\n\tlibevent-dev,
-EXTRA_DEFAULT_BD	= \n\tlibfreetype6-dev (>= 6.1.0),
+EXTRA_SYSTEM_BD		= \n\tlibfreetype6-dev (>= 2.0.1),\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibbz2-dev,\n\tlibevent-dev,
+EXTRA_DEFAULT_BD	= \n\tlibfreetype6-dev (>= 2.0.1),
 
 DEFAULT_TREE_LIBS	= CAIRO NSPR NSS SQLITE HUNSPELL VPX
 DEFAULT_SYSTEM_LIBS	=
