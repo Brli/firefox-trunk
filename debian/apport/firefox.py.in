@@ -34,6 +34,14 @@ class PrefParseError(Exception):
     def __str__(self):
         return self.msg
 
+class PluginRegParseError(Exception):
+    def __init__(self, msg):
+        super(PluginRegParseError, self).__init__(msg)
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
 
 class ExtensionTypeNotRecognised(Exception):
     def __init__(self, ext_type, ext_id):
@@ -92,6 +100,22 @@ class CompatINIParser(ConfigParser):
         if not self.has_section("Compatibility") or not self.has_option("Compatibility", "LastVersion"):
             return None
         return re.sub(r'([^_]*)_([^/]*)/(.*)', r'\2', self.get("Compatibility", "LastVersion"))
+
+
+class AppINIParser(ConfigParser):
+    def __init__(self, path):
+        ConfigParser.__init__(self)
+        self.read(os.path.join(path, "application.ini"))
+
+    def get_buildid(self):
+        if not self.has_section('App') or not self.has_option('App', 'BuildID'):
+            return None
+        return self.get('App', 'BuildID')
+
+    def get_appid(self):
+        if not self.has_section('App') or not self.has_option('App', 'ID'):
+            return None
+        return self.get('App', 'ID')
 
 
 def compare_versions(a, b):
@@ -234,7 +258,7 @@ class PluginRegistry:
     def _parseline(self, line):
         line = line.strip()
         if line != '' and line[0] == '[' and self._state != PluginRegistry.STATE_START and self._state != PluginRegistry.STATE_PENDING:
-            raise RuntimeError
+            raise PluginRegParseError('Unexpected section header')
 
         if self._state == PluginRegistry.STATE_PENDING:
             if line == '[PLUGINS]':
@@ -252,17 +276,21 @@ class PluginRegistry:
             return 0
         elif self._state == PluginRegistry.STATE_PROCESSING_1:
             self._current_plugin.path = line.split(':')[0]
+            if self._current_plugin.path[0] != '/':
+                raise PluginRegParseError("Invalid path %s" % self._current_plugin.path)
             self._state += 1
             return 3
         elif self._state == PluginRegistry.STATE_PROCESSING_2:
             self._current_plugin.desc = line.split(':')[0]
             self._state += 1
             return 0
-        elif self._state == 4:
+        elif self._state == PluginRegistry.STATE_PROCESSING_3:
             self.plugins[self._count] = self._current_plugin
             self._count += 1
             self._state = PluginRegistry.STATE_START
             return int(line.strip())
+        else:
+            return -1
 
     def __getitem__(self, key):
         if not key in self.plugins:
@@ -486,7 +514,7 @@ class Extension:
 
 class Profile:
     '''Container to represent a profile'''
-    def __init__(self, id, name, path, is_default, current_buildid):
+    def __init__(self, id, name, path, is_default, appini):
         self.extensions = {}
         self.locales = {}
         self.themes = {}
@@ -496,7 +524,7 @@ class Profile:
         self.path = path
         self.is_default = is_default
         self.compatini = CompatINIParser(path)
-        self.current_buildid = current_buildid
+        self.appini = appini
 
         self._detect_running()
         try:
@@ -540,7 +568,7 @@ class Profile:
 
             cur = conn.cursor()
             cur.execute("select minVersion, maxVersion from targetApplication where addon_internal_id=:id and (id=:appid or id=:tkid)", \
-                        { "id": row[0], "appid": "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}", "tkid": "toolkit@mozilla.org" })
+                        { "id": row[0], "appid": self.appini.get_appid(), "tkid": "toolkit@mozilla.org" })
             (min_ver, max_ver) = cur.fetchone()
 
             return Extension(ext_id, location, ext_ver, ext_type, active, desc, min_ver, max_ver, self.get_last_version())
@@ -633,7 +661,7 @@ class Profile:
                 pkglist.append(package)
             
     def is_current(self):
-        return True if self.current_buildid == self.get_last_buildid() or self.current_buildid == None else False
+        return True if self.appini.get_buildid() == self.get_last_buildid() or self.appini.get_buildid() == None else False
 
     def has_active_but_incompatible_extensions(self):
         if self.get_last_version() == None:
@@ -675,7 +703,7 @@ class Profile:
 class Profiles:
     '''Small class to build an array of profiles from a profile.ini.
        Can be accessed like a normal array'''
-    def __init__(self, ini_file, buildid):
+    def __init__(self, ini_file, appini):
         self.profiles = {}
 
         parser = ConfigParser()
@@ -689,7 +717,7 @@ class Profiles:
             path = parser.get(section, "Path")
             name = parser.get(section, "Name")
             is_default = True if parser.has_option(section, "Default") and parser.getint(section, "Default") == 1 else False
-            self.profiles[i] = Profile(section, name, os.path.join(profile_folder, path), is_default, buildid)
+            self.profiles[i] = Profile(section, name, os.path.join(profile_folder, path), is_default, appini)
             i += 1
 
     def __getitem__(self, key):
@@ -784,10 +812,10 @@ def add_info(report, ui):
         return
 
     conf_dir = os.path.join(os.environ["HOME"], ".mozilla", "@MOZ_APP_NAME@")
-    buildid = get_buildid()
-    populate_item("BuildID", buildid)
+    appini = AppINIParser('@MOZ_LIBDIR@')
+    populate_item("BuildID", appini.get_buildid())
     try:
-        profiles = Profiles(os.path.join(conf_dir, "profiles.ini"), buildid)
+        profiles = Profiles(os.path.join(conf_dir, "profiles.ini"), appini)
         populate_item("Profiles", profiles.dump_profile_summaries())
     except:
         report["NoProfiles"] = 'True'
