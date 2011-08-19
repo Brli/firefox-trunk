@@ -266,7 +266,8 @@ subst_files = \
 	debian/usr.bin.$(MOZ_APP_NAME) \
 	debian/README.Debian \
 	debian/firefox.sh \
-	debian/apport/$(MOZ_APP_NAME) \
+	debian/apport/blacklist \
+	debian/apport/native-origins \
 	debian/apport/$(MOZ_APP_NAME).py \
 	debian/$(MOZ_APP_NAME).desktop \
 	debian/$(MOZ_APP_NAME).xml \
@@ -416,6 +417,10 @@ common-binary-post-install-indep::
 
 binary-install/$(MOZ_APP_NAME)::
 	convert -resize 32x32 debian/$(MOZ_APP_NAME)/usr/share/pixmaps/$(MOZ_APP_NAME).png debian/$(MOZ_APP_NAME)/usr/share/pixmaps/$(MOZ_APP_NAME).xpm
+ifeq (1,$(MOZ_ENABLE_BREAKPAD))
+	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_APP_NAME)/etc/apport/blacklist.d/$(MOZ_APP_NAME)
+endif
+	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_APP_NAME)/etc/apport/native-origins.d/$(MOZ_APP_NAME)
 
 ifeq (1, $(MOZ_ENABLE_GLOBALMENU))
 binary-install/$(MOZ_APP_NAME)-globalmenu::

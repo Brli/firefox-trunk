@@ -341,7 +341,7 @@ class PrefFile:
         r'places\.*',
         r'plugin\.*',
         r'plugins\.*',
-        r'print\,*',
+        r'print\.*',
         r'privacy\.*',
         r'security\.*',
         r'webgl\.*'
@@ -349,7 +349,9 @@ class PrefFile:
 
     PREF_BLACKLIST = [
         r'^network.*proxy\.*',
-        r'.*print_to_filename$'
+        r'.*print_to_filename$',
+        r'print\.tmp\.',
+        r'print\.printer_*'
     ]
 
     def __init__(self, filename, whitelist=None, blacklist=None):
@@ -518,11 +520,11 @@ class Profile:
         self.extensions = {}
         self.locales = {}
         self.themes = {}
-        self.is_running = False
+        self.running = False
         self.id = id
         self.name = name
         self.path = path
-        self.is_default = is_default
+        self.default = is_default
         self.compatini = CompatINIParser(path)
         self.appini = appini
 
@@ -543,9 +545,9 @@ class Profile:
         lock = struct.pack("hhqqi", 1, 0, 0, 0, 0)
         try:
             fcntl.fcntl(fd, fcntl.F_SETLK, lock)
-            self.is_running = False
+            self.running = False
         except:
-            self.is_running = True
+            self.running = True
 
     def _populate_extensions(self):
         # We copy the db as it's locked whilst Firefox is open. This is still racy
@@ -699,6 +701,14 @@ class Profile:
     def get_last_buildid(self):
         return self.compatini.get_last_buildid()
 
+    def is_addon_compat_check_disabled(self):
+        is_nightly = re.sub(r'^[^\.]+\.[0-9]+([a-z0-9]*).*', r'\1', self.get_last_version()) == 'a1'
+        if is_nightly == True:
+            pref = "extensions.checkCompatibility.nightly"
+        else:
+            pref = "extensions.checkCompatibility.%s" % re.sub(r'(^[^\.]+\.[0-9]+[a-z]*).*', r'\1', self.get_last_version())
+        return pref in self.prefs and self.prefs[pref] == 'false'
+
 
 class Profiles:
     '''Small class to build an array of profiles from a profile.ini.
@@ -743,11 +753,10 @@ class Profiles:
     def dump_profile_summaries(self):
         res = ''
         for profile in self:
-            running = " (Running)" if profile.is_running == True else ""
-            if profile.is_default:
-                res += "%s (Default) - LastVersion=%s/%s%s\n" % (profile.id, profile.get_last_version(), profile.get_last_buildid(), running)
-            else:
-                res += "%s - LastVersion=%s/%s%s\n" % (profile.id, profile.get_last_version(), profile.get_last_buildid(), running)
+            running = " (Running)" if profile.running == True else ""
+            default = " (Default)" if profile.default else ""
+            outdated = " (Out of date)" if not profile.is_current() else ""
+            res += "%s%s - LastVersion=%s/%s%s%s\n" % (profile.id, default, profile.get_last_version(), profile.get_last_buildid(), running, outdated)
         return res
 
 
@@ -785,17 +794,10 @@ def recent_auditlog(pattern):
 
 def add_info(report, ui):
     '''Entry point for apport'''
+
     def populate_item(key, data):
         if data != None and data.strip() != '':
             report[key] = data
-
-    def get_buildid():
-        try:
-            parser = ConfigParser()
-            parser.read("@MOZ_LIBDIR@/application.ini")
-            return parser.get("App", "BuildID")
-        except:
-            return None
 
     def append_tag(tag):
         tags = report.get('Tags', '')
@@ -822,14 +824,16 @@ def add_info(report, ui):
         profiles = []
 
     for profile in profiles:
-        if profile.is_running and not profile.is_current():
-            report["UnreportableReason"] = "Please restart all instances of Firefox and try again"
+        if profile.running and not profile.is_current():
+            report["UnreportableReason"] = "Firefox has been upgraded since you started it. Please restart all instances of Firefox and try again"
             return
 
     seen_default = False
     running_incompatible_addons = False
+    forced_layers_accel = False
+    addon_compat_check_disabled = False
     for profile in profiles:
-        if profile.is_default and not seen_default:
+        if profile.default and not seen_default:
             populate_item("DefaultProfileExtensions", profile.dump_extensions())
             populate_item("DefaultProfileLocales", profile.dump_locales())
             populate_item("DefaultProfileThemes", profile.dump_themes())
@@ -837,8 +841,6 @@ def add_info(report, ui):
             populate_item("DefaultProfileIncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
             populate_item("DefaultProfilePrefs", profile.dump_prefs())
             populate_item("DefaultProfileUserJS", profile.dump_user_js())
-            if profile.has_forced_layers_acceleration():
-                report["DefaultProfile_UserForcedLayersAcceleration"] = 'True'
             seen_default = True
         else:
             populate_item(profile.id + "Extensions", profile.dump_extensions())
@@ -848,11 +850,13 @@ def add_info(report, ui):
             populate_item(profile.id + "IncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
             populate_item(profile.id + "Prefs", profile.dump_prefs())
             populate_item(profile.id + "UserJS", profile.dump_user_js())
-            if profile.has_forced_layers_acceleration():
-                report[profile.id + "_UserForcedLayersAcceleration"] = 'True'
 
-        if profile.is_current() and profile.has_active_but_incompatible_extensions():
+        if (profile.is_current() or profile.default) and profile.has_active_but_incompatible_extensions():
             running_incompatible_addons = True
+        if (profile.is_current() or profile.default) and profile.has_forced_layers_acceleration():
+            forced_layers_accel = True
+        if (profile.is_current() or profile.default) and profile.is_addon_compat_check_disabled():
+            addon_compat_check_disabled = True
 
     plugin_packages = []
     for profile in profiles:
@@ -860,19 +864,27 @@ def add_info(report, ui):
     attach_related_packages(report, plugin_packages)
 
     report["RunningIncompatibleAddons"] = 'True' if running_incompatible_addons == True else 'False'
+    report["ForcedLayersAccel"] = 'True' if forced_layers_accel == True else 'False'
+    report["AddonCompatCheckDisabled"] = 'True' if addon_compat_check_disabled == True else 'False'
+
     syspref = PrefFile("/etc/@MOZ_APP_NAME@/syspref.js")
     if syspref.available == False:
         report["EtcFirefoxSyspref"] = "Cannot parse /etc/@MOZ_APP_NAME@/syspref.js - %s" % syspref.parse_error
     for pref in syspref:
         report["EtcFirefoxSyspref"] += "%s - %s" % (pref, syspref[pref])
 
-    channelpref = PrefFile("@MOZ_LIBDIR@/defaults/pref/channel-prefs.js", whitelist = [ r'app\.update\.channel' ])
-    if channelpref.available == False:
-        report["Channel"] = "Unavailable - " + channelpref.parse_error
+    if '@MOZ_APP_NAME@' == 'firefox-trunk':
+        report["Channel"] = 'nightly'
+        append_tag('nightly-channel')
+        report["SourcePackage"] = 'firefox'
     else:
-        if "app.update.channel" in channelpref:
-            report["Channel"] = channelpref["app.update.channel"]
-            append_tag("firefox-" + channelpref["app.update.channel"])
+        channelpref = PrefFile("@MOZ_LIBDIR@/defaults/pref/channel-prefs.js", whitelist = [ r'app\.update\.channel' ])
+        if channelpref.available == False:
+            report["Channel"] = "Unavailable - %s" % channelpref.parse_error
+        else:
+            if "app.update.channel" in channelpref:
+                report["Channel"] = channelpref["app.update.channel"]
+                append_tag(channelpref["app.update.channel"] + '-channel')
 
     if os.path.exists('/sys/bus/pci'):
         report['Lspci'] = command_output(['lspci','-vvnn'])

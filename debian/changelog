@@ -7,8 +7,14 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     - refresh debian/control
   * Rewrite the apport hook to be more useful
     - update debian/apport/firefox.py.in
+  * Ship a file in /etc/apport/native-origins.d to enable bug reporting
+    on PPA branches
+    - add debian/apport/native-origins.in
+    - rename debian/apport/firefox.in => debian/apport/blacklist.in
+    - update debian/rules
+    - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 19 Aug 2011 00:55:53 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 19 Aug 2011 13:29:32 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 

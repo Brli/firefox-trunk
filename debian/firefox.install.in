@@ -27,9 +27,6 @@ debian/tmp@MOZ_LIBDIR@/*.ini
 
 debian/@MOZ_APP_NAME@.desktop /usr/share/applications
 
-%%ifdef MOZ_ENABLE_BREAKPAD
-debian/apport/@MOZ_APP_NAME@ /etc/apport/blacklist.d
-%%endif
 debian/apport/@MOZ_APP_NAME@.py /usr/share/apport/package-hooks/
 
 debian/firefox.sh @MOZ_LIBDIR@
