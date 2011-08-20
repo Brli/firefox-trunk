@@ -329,6 +329,7 @@ class PrefFile:
         r'extensions\.checkCompatibility\.*',
         r'extensions\.lastAppVersion\.*',
         r'font\.*',
+        r'general\.skins\.*',
         r'general\.useragent\.*',
         r'gfx\.*',
         r'html5\.*',
