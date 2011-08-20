@@ -833,15 +833,16 @@ def add_info(report, ui):
     running_incompatible_addons = False
     forced_layers_accel = False
     addon_compat_check_disabled = False
+    default_prefix = "DefaultProfile" if len(profiles) > 1 else ""
     for profile in profiles:
         if profile.default and not seen_default:
-            populate_item("DefaultProfileExtensions", profile.dump_extensions())
-            populate_item("DefaultProfileLocales", profile.dump_locales())
-            populate_item("DefaultProfileThemes", profile.dump_themes())
-            populate_item("DefaultProfilePlugins", profile.dump_plugins())
-            populate_item("DefaultProfileIncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
-            populate_item("DefaultProfilePrefs", profile.dump_prefs())
-            populate_item("DefaultProfileUserJS", profile.dump_user_js())
+            populate_item(default_prefix + "Extensions", profile.dump_extensions())
+            populate_item(default_prefix + "Locales", profile.dump_locales())
+            populate_item(default_prefix + "Themes", profile.dump_themes())
+            populate_item(default_prefix + "Plugins", profile.dump_plugins())
+            populate_item(default_prefix + "IncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
+            populate_item(default_prefix + "Prefs", profile.dump_prefs())
+            populate_item(default_prefix + "UserJS", profile.dump_user_js())
             seen_default = True
         else:
             populate_item(profile.id + "Extensions", profile.dump_extensions())
