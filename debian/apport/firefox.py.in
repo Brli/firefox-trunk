@@ -91,12 +91,14 @@ class CompatINIParser(ConfigParser):
         ConfigParser.__init__(self)
         self.read(os.path.join(path, "compatibility.ini"))
 
-    def get_last_version(self):
+    @property
+    def last_version(self):
         if not self.has_section("Compatibility") or not self.has_option("Compatibility", "LastVersion"):
             return None
         return re.sub(r'([^_]*)(.*)', r'\1', self.get("Compatibility", "LastVersion"))
 
-    def get_last_buildid(self):
+    @property
+    def last_buildid(self):
         if not self.has_section("Compatibility") or not self.has_option("Compatibility", "LastVersion"):
             return None
         return re.sub(r'([^_]*)_([^/]*)/(.*)', r'\2', self.get("Compatibility", "LastVersion"))
@@ -107,12 +109,14 @@ class AppINIParser(ConfigParser):
         ConfigParser.__init__(self)
         self.read(os.path.join(path, "application.ini"))
 
-    def get_buildid(self):
+    @property
+    def buildid(self):
         if not self.has_section('App') or not self.has_option('App', 'BuildID'):
             return None
         return self.get('App', 'BuildID')
 
-    def get_appid(self):
+    @property
+    def appid(self):
         if not self.has_section('App') or not self.has_option('App', 'ID'):
             return None
         return self.get('App', 'ID')
@@ -218,13 +222,13 @@ class Plugin:
         else:
             location = os.path.dirname(self.path)
 
-        package = self.get_package()
-        return "%s - Lib=%s, Location=%s%s" % (self.desc, self.lib, location, " (%s)" % package if package != None else "")
+        return "%s - Lib=%s, Location=%s%s" % (self.desc, self.lib, location, " (%s)" % self.package if self.package != None else "")
 
-    def get_package(self):
-        if self.package == None:
-            self.package = apport.packaging.get_file_package(self.path)
-        return self.package
+    @property
+    def package(self):
+        if self._package == None:
+            self._package = apport.packaging.get_file_package(self.path)
+        return self._package
 
 class PluginRegistry:
 
@@ -511,7 +515,8 @@ class Extension:
         active = "Yes" if self.active == 1 else "No"
         return "%s - ID=%s, Version=%s, minVersion=%s, maxVersion=%s, Location=%s, Type=%s, Active=%s" % (self.desc, self.ext_id, self.ver, self.min_appver, self.max_appver, self.location, self.ext_type, active)
 
-    def is_active_but_incompatible(self):
+    @property
+    def active_but_incompatible(self):
         return self.active and (self.cur_appver != None and compare_versions(self.cur_appver, self.min_appver) == -1 or compare_versions(self.cur_appver, self.max_appver) == 1)
 
 
@@ -521,15 +526,12 @@ class Profile:
         self.extensions = {}
         self.locales = {}
         self.themes = {}
-        self.running = False
         self.id = id
         self.name = name
         self.path = path
         self.default = is_default
-        self.compatini = CompatINIParser(path)
         self.appini = appini
 
-        self._detect_running()
         try:
             self._populate_extensions()
         except:
@@ -538,20 +540,6 @@ class Profile:
         self.prefs = PrefFile(os.path.join(path, "prefs.js"))
         self.userjs = PrefFile(os.path.join(path, "user.js"))
         self.plugins = PluginRegistry(os.path.join(path, "pluginreg.dat"))
-
-    def _detect_running(self):
-        # We detect if this profile is running or not by trying to lock the lockfile
-        # If we can't lock it, then Firefox is running
-        fd = os.open(os.path.join(self.path, ".parentlock"), os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0666)
-        lock = struct.pack("hhqqi", 1, 0, 0, 0, 0)
-        try:
-            fcntl.fcntl(fd, fcntl.F_SETLK, lock)
-            self.running = False
-            # If we acquired the lock, ensure that we unlock again immediately
-            lock = struct.pack("hhqqi", 2, 0, 0, 0, 0)
-            fcntl.fcntl(fd, fcntl.F_SETLK, lock)
-        except:
-            self.running = True
 
     def _populate_extensions(self):
         # We copy the db as it's locked whilst Firefox is open. This is still racy
@@ -574,10 +562,10 @@ class Profile:
 
             cur = conn.cursor()
             cur.execute("select minVersion, maxVersion from targetApplication where addon_internal_id=:id and (id=:appid or id=:tkid)", \
-                        { "id": row[0], "appid": self.appini.get_appid(), "tkid": "toolkit@mozilla.org" })
+                        { "id": row[0], "appid": self.appini.appid, "tkid": "toolkit@mozilla.org" })
             (min_ver, max_ver) = cur.fetchone()
 
-            return Extension(ext_id, location, ext_ver, ext_type, active, desc, min_ver, max_ver, self.get_last_version())
+            return Extension(ext_id, location, ext_ver, ext_type, active, desc, min_ver, max_ver, self.last_version)
 
         cur = conn.cursor()
         cur.execute("select internal_id, id, location, version, type, defaultLocale, active from addon")
@@ -611,6 +599,24 @@ class Profile:
                 ret += "\t%s%s = ID=%s, Version=%s, minVersion=%s, maxVersion=%s\n" % (prefix, extension.desc, extension.ext_id, extension.ver, extension.min_appver, extension.max_appver)
             ret += "\n\n\n"
         return ret
+
+    @property
+    def running(self):
+        if not hasattr(self, '_running'):
+            # We detect if this profile is running or not by trying to lock the lockfile
+            # If we can't lock it, then Firefox is running
+            fd = os.open(os.path.join(self.path, ".parentlock"), os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0666)
+            lock = struct.pack("hhqqi", 1, 0, 0, 0, 0)
+            try:
+                fcntl.fcntl(fd, fcntl.F_SETLK, lock)
+                self._running = False
+                # If we acquired the lock, ensure that we unlock again immediately
+                lock = struct.pack("hhqqi", 2, 0, 0, 0, 0)
+                fcntl.fcntl(fd, fcntl.F_SETLK, lock)
+            except:
+                self._running = True
+
+        return self._running
 
     def dump_extensions(self):
         return self._do_dump(self.extensions)
@@ -662,34 +668,36 @@ class Profile:
             return None
 
         for plugin in self.plugins:
-            package = plugin.get_package()
-            if package != None and package not in pkglist:
-                pkglist.append(package)
-            
-    def is_current(self):
-        return True if self.appini.get_buildid() == self.get_last_buildid() or self.appini.get_buildid() == None else False
+            if plugin.package != None and plugin.package not in pkglist:
+                pkglist.append(plugin.package)
 
+    @property
+    def current(self):
+        return True if self.appini.buildid == self.last_buildid or self.appini.buildid == None else False
+
+    @property
     def has_active_but_incompatible_extensions(self):
-        if self.get_last_version() == None:
+        if self.last_version == None:
             return False
         for storage_array in self.extensions, self.locales, self.themes:
             for location in storage_array:
                 for extension in storage_array[location]:
-                    if extension.is_active_but_incompatible():
+                    if extension.active_but_incompatible:
                         return True
         return False
 
     def dump_active_but_incompatible_extensions(self):
-        if self.get_last_version() == None:
+        if self.last_version == None:
             return "Unavailable (corrupt or non-existant compatibility.ini)"
         res = ''
         for storage_array in self.extensions, self.locales, self.themes:
             for location in storage_array:
                 for extension in storage_array[location]:
-                    if extension.is_active_but_incompatible():
+                    if extension.active_but_incompatible:
                         res += extension.dump() + "\n"
         return res
 
+    @property
     def has_forced_layers_acceleration(self):
         if self.prefs != None and "layers.acceleration.force-enabled" in self.prefs and self.prefs["layers.acceleration.force-enabled"] == "true":
             return True
@@ -699,18 +707,27 @@ class Profile:
 
         return False
 
-    def get_last_version(self):
-        return self.compatini.get_last_version()
+    @property
+    def compatini(self):
+        if not hasattr(self, '_compatini'):
+            self._compatini = CompatINIParser(self.path)
+        return self._compatini
 
-    def get_last_buildid(self):
-        return self.compatini.get_last_buildid()
+    @property
+    def last_version(self):
+        return self.compatini.last_version
 
-    def is_addon_compat_check_disabled(self):
-        is_nightly = re.sub(r'^[^\.]+\.[0-9]+([a-z0-9]*).*', r'\1', self.get_last_version()) == 'a1'
+    @property
+    def last_buildid(self):
+        return self.compatini.last_buildid
+
+    @property
+    def addon_compat_check_disabled(self):
+        is_nightly = re.sub(r'^[^\.]+\.[0-9]+([a-z0-9]*).*', r'\1', self.last_version) == 'a1'
         if is_nightly == True:
             pref = "extensions.checkCompatibility.nightly"
         else:
-            pref = "extensions.checkCompatibility.%s" % re.sub(r'(^[^\.]+\.[0-9]+[a-z]*).*', r'\1', self.get_last_version())
+            pref = "extensions.checkCompatibility.%s" % re.sub(r'(^[^\.]+\.[0-9]+[a-z]*).*', r'\1', self.last_version)
         return pref in self.prefs and self.prefs[pref] == 'false'
 
 
@@ -762,8 +779,8 @@ class Profiles:
         for profile in self:
             running = " (Running)" if profile.running == True else ""
             default = " (Default)" if profile.default else ""
-            outdated = " (Out of date)" if not profile.is_current() else ""
-            res += "%s%s - LastVersion=%s/%s%s%s\n" % (profile.id, default, profile.get_last_version(), profile.get_last_buildid(), running, outdated)
+            outdated = " (Out of date)" if not profile.current else ""
+            res += "%s%s - LastVersion=%s/%s%s%s\n" % (profile.id, default, profile.last_version, profile.last_buildid, running, outdated)
         return res
 
 
@@ -822,7 +839,7 @@ def add_info(report, ui):
 
     conf_dir = os.path.join(os.environ["HOME"], ".mozilla", "@MOZ_APP_NAME@")
     appini = AppINIParser('@MOZ_LIBDIR@')
-    populate_item("BuildID", appini.get_buildid())
+    populate_item("BuildID", appini.buildid)
     try:
         profiles = Profiles(os.path.join(conf_dir, "profiles.ini"), appini)
         populate_item("Profiles", profiles.dump_profile_summaries())
@@ -832,7 +849,7 @@ def add_info(report, ui):
         if len(profiles) == 0: report["NoProfiles"] = 'True'
 
     for profile in profiles:
-        if profile.running and not profile.is_current():
+        if profile.running and not profile.current:
             report["UnreportableReason"] = "Firefox has been upgraded since you started it. Please restart all instances of Firefox and try again"
             return
 
@@ -857,11 +874,11 @@ def add_info(report, ui):
         populate_item(prefix + "Prefs", profile.dump_prefs())
         populate_item(prefix + "UserJS", profile.dump_user_js())
 
-        if (profile.is_current() or profile.default) and profile.has_active_but_incompatible_extensions():
+        if (profile.current or profile.default) and profile.has_active_but_incompatible_extensions:
             running_incompatible_addons = True
-        if (profile.is_current() or profile.default) and profile.has_forced_layers_acceleration():
+        if (profile.current or profile.default) and profile.has_forced_layers_acceleration:
             forced_layers_accel = True
-        if (profile.is_current() or profile.default) and profile.is_addon_compat_check_disabled():
+        if (profile.current or profile.default) and profile.addon_compat_check_disabled:
             addon_compat_check_disabled = True
 
     plugin_packages = []
