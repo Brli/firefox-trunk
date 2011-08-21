@@ -547,6 +547,9 @@ class Profile:
         try:
             fcntl.fcntl(fd, fcntl.F_SETLK, lock)
             self.running = False
+            # If we acquired the lock, ensure that we unlock again immediately
+            lock = struct.pack("hhqqi", 2, 0, 0, 0, 0)
+            fcntl.fcntl(fd, fcntl.F_SETLK, lock)
         except:
             self.running = True
 
