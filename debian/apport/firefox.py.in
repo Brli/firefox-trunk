@@ -734,6 +734,9 @@ class Profiles:
             self.profiles[i] = Profile(section, name, os.path.join(profile_folder, path), is_default, appini)
             i += 1
 
+        # No "Default" entry when there is one profile
+        if len(self) == 1: self[0].default = True
+
     def __getitem__(self, key):
         if not key in self.profiles:
             raise IndexError
@@ -866,7 +869,7 @@ def add_info(report, ui):
     plugin_packages = []
     for profile in profiles:
         profile.get_plugin_packages(plugin_packages)
-    attach_related_packages(report, plugin_packages)
+    if len(plugin_packages) > 0: attach_related_packages(report, plugin_packages)
 
     report["RunningIncompatibleAddons"] = 'True' if running_incompatible_addons == True else 'False'
     report["ForcedLayersAccel"] = 'True' if forced_layers_accel == True else 'False'
