@@ -827,8 +827,11 @@ def add_info(report, ui):
         profiles = Profiles(os.path.join(conf_dir, "profiles.ini"), appini)
         populate_item("Profiles", profiles.dump_profile_summaries())
     except:
-        report["NoProfiles"] = 'True'
-        profiles = []
+        pass
+    finally:
+        if len(profiles) == 0:
+            report["NoProfiles"] = 'True'
+            profiles = []
 
     for profile in profiles:
         if profile.running and not profile.is_current():
