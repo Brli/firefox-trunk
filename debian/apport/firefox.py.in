@@ -453,7 +453,7 @@ class PrefFile:
 
     def _parseline(self, line):
         line = line.strip()
-        if line == '' or line[0] == '#' or (len(line) > 1 and line[0]+line[1] == '//'):
+        if line == '' or line[0] == '#' or line.startswith('//'):
             return
 
         if line.startswith('/*'):
@@ -829,9 +829,7 @@ def add_info(report, ui):
     except:
         pass
     finally:
-        if len(profiles) == 0:
-            report["NoProfiles"] = 'True'
-            profiles = []
+        if len(profiles) == 0: report["NoProfiles"] = 'True'
 
     for profile in profiles:
         if profile.running and not profile.is_current():
@@ -842,25 +840,22 @@ def add_info(report, ui):
     running_incompatible_addons = False
     forced_layers_accel = False
     addon_compat_check_disabled = False
-    default_prefix = "DefaultProfile" if len(profiles) > 1 else ""
     for profile in profiles:
-        if profile.default and not seen_default:
-            populate_item(default_prefix + "Extensions", profile.dump_extensions())
-            populate_item(default_prefix + "Locales", profile.dump_locales())
-            populate_item(default_prefix + "Themes", profile.dump_themes())
-            populate_item(default_prefix + "Plugins", profile.dump_plugins())
-            populate_item(default_prefix + "IncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
-            populate_item(default_prefix + "Prefs", profile.dump_prefs())
-            populate_item(default_prefix + "UserJS", profile.dump_user_js())
+        if profile.default and not seen_default and len(profiles) > 1:
+            prefix = 'DefaultProfile'
             seen_default = True
+        elif len(profiles) > 1:
+            prefix = profile.id
         else:
-            populate_item(profile.id + "Extensions", profile.dump_extensions())
-            populate_item(profile.id + "Locales", profile.dump_locales())
-            populate_item(profile.id + "Themes", profile.dump_themes())
-            populate_item(profile.id + "Plugins", profile.dump_plugins())
-            populate_item(profile.id + "IncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
-            populate_item(profile.id + "Prefs", profile.dump_prefs())
-            populate_item(profile.id + "UserJS", profile.dump_user_js())
+            profile = ''
+
+        populate_item(prefix + "Extensions", profile.dump_extensions())
+        populate_item(prefix + "Locales", profile.dump_locales())
+        populate_item(prefix + "Themes", profile.dump_themes())
+        populate_item(prefix + "Plugins", profile.dump_plugins())
+        populate_item(prefix + "IncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
+        populate_item(prefix + "Prefs", profile.dump_prefs())
+        populate_item(prefix + "UserJS", profile.dump_user_js())
 
         if (profile.is_current() or profile.default) and profile.has_active_but_incompatible_extensions():
             running_incompatible_addons = True
