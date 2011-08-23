@@ -864,7 +864,7 @@ def add_info(report, ui):
         elif len(profiles) > 1:
             prefix = profile.id
         else:
-            profile = ''
+            prefix = ''
 
         populate_item(prefix + "Extensions", profile.dump_extensions())
         populate_item(prefix + "Locales", profile.dump_locales())
@@ -894,7 +894,7 @@ def add_info(report, ui):
     if syspref.available == False:
         report["EtcFirefoxSyspref"] = "Cannot parse /etc/@MOZ_APP_NAME@/syspref.js - %s" % syspref.parse_error
     for pref in syspref:
-        report["EtcFirefoxSyspref"] += "%s - %s" % (pref, syspref[pref])
+        report["EtcFirefoxSyspref"] += "%s - %s\n" % (pref, syspref[pref])
 
     if '@MOZ_APP_NAME@' == 'firefox-trunk':
         report["Channel"] = 'nightly'
