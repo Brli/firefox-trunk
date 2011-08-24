@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 
+DISTRIB_VERSION_MAJOR 	= $(shell lsb_release -s -r | cut -d '.' -f 1)
+DISTRIB_VERSION_MINOR 	= $(shell lsb_release -s -r | cut -d '.' -f 2)
+
 include $(CURDIR)/debian/config/branch.mk
 
 MOZ_APP_BASENAME	:= firefox
@@ -106,10 +109,7 @@ DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 MOZ_PYTHON		:= $(shell which python)
 DISTRIB 		:= $(shell lsb_release -i -s)
 
-DISTRIB_VERSION_MAJOR 	= $(shell lsb_release -s -r | cut -d '.' -f 1)
-DISTRIB_VERSION_MINOR 	= $(shell lsb_release -s -r | cut -d '.' -f 2)
-
-$(foreach pkg, APP GS DEV DBG, $(foreach rel, PROVIDES BREAKS REPLACES CONFLICTS, $(eval BRANCH_SUBSTVARS += -D$(pkg)_$(rel)="$($(pkg)_$(rel))$($(pkg)_$(rel)_$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR))")))
+$(foreach pkg, APP GS DEV DBG, $(foreach rel, PROVIDES BREAKS REPLACES CONFLICTS, $(eval BRANCH_SUBSTVARS += -D$(pkg)_$(rel)="$($(pkg)_$(rel))")))
 NO_AUTO_REFRESH_LOCALES	?= 0
 
 CFLAGS			= -g
