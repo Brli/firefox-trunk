@@ -153,7 +153,7 @@ Forwarded: no
         {0x91, 0x81, 0xa2, 0x85, 0xe7, 0x4c, 0xf1, 0xd4 } }
 --- a/toolkit/xre/Makefile.in
 +++ b/toolkit/xre/Makefile.in
-@@ -103,7 +103,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
+@@ -99,7 +99,8 @@ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
  CPPSRCS += nsNativeAppSupportOS2.cpp
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
@@ -162,7 +162,7 @@ Forwarded: no
 +EXPORTS += nsKDEUtils.h
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),qt)
- CPPSRCS += nsNativeAppSupportQt.cpp
+ MOCSRCS += moc_nsNativeAppSupportQt.cpp
 --- /dev/null
 +++ b/toolkit/xre/nsKDEUtils.cpp
 @@ -0,0 +1,334 @@
@@ -1368,7 +1368,7 @@ Forwarded: no
  CFLAGS          += $(MOZ_DBUS_CFLAGS)
 --- a/xpcom/io/nsLocalFileUnix.cpp
 +++ b/xpcom/io/nsLocalFileUnix.cpp
-@@ -93,6 +93,7 @@
+@@ -92,6 +92,7 @@
  #ifdef MOZ_WIDGET_GTK2
  #include "nsIGIOService.h"
  #include "nsIGnomeVFSService.h"
@@ -1376,7 +1376,7 @@ Forwarded: no
  #endif
  
  #ifdef XP_MACOSX
-@@ -1774,21 +1775,13 @@ NS_IMETHODIMP
+@@ -1790,21 +1791,13 @@ NS_IMETHODIMP
  nsLocalFile::Reveal()
  {
  #ifdef MOZ_WIDGET_GTK2
@@ -1400,7 +1400,7 @@ Forwarded: no
      } else {
          nsCOMPtr<nsIFile> parentDir;
          nsCAutoString dirPath;
-@@ -1797,11 +1790,25 @@ nsLocalFile::Reveal()
+@@ -1813,11 +1806,25 @@ nsLocalFile::Reveal()
          if (NS_FAILED(parentDir->GetNativePath(dirPath)))
              return NS_ERROR_FAILURE;
  
@@ -1430,7 +1430,7 @@ Forwarded: no
  #elif defined(XP_MACOSX)
      CFURLRef url;
      if (NS_SUCCEEDED(GetCFURL(&url))) {
-@@ -1837,6 +1844,13 @@ nsLocalFile::Launch()
+@@ -1853,6 +1860,13 @@ nsLocalFile::Launch()
        return NS_ERROR_FAILURE;
      return NS_OK;
  #else
@@ -1491,7 +1491,7 @@ Forwarded: no
 +LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
 --- a/xpcom/components/ManifestParser.cpp
 +++ b/xpcom/components/ManifestParser.cpp
-@@ -64,6 +64,7 @@
+@@ -65,6 +65,7 @@
  #include "nsIScriptError.h"
  #include "nsIXULAppInfo.h"
  #include "nsIXULRuntime.h"
@@ -1499,7 +1499,7 @@ Forwarded: no
  
  struct ManifestDirective
  {
-@@ -431,6 +432,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -435,6 +436,7 @@ ParseManifestCommon(NSLocationType aType
    NS_NAMED_LITERAL_STRING(kOs, "os");
    NS_NAMED_LITERAL_STRING(kOsVersion, "osversion");
    NS_NAMED_LITERAL_STRING(kABI, "abi");
@@ -1507,7 +1507,7 @@ Forwarded: no
  
    // Obsolete
    NS_NAMED_LITERAL_STRING(kXPCNativeWrappers, "xpcnativewrappers");
-@@ -470,6 +472,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -479,6 +481,7 @@ ParseManifestCommon(NSLocationType aType
    }
  
    nsAutoString osVersion;
@@ -1515,15 +1515,15 @@ Forwarded: no
  #if defined(XP_WIN)
    OSVERSIONINFO info = { sizeof(OSVERSIONINFO) };
    if (GetVersionEx(&info)) {
-@@ -477,6 +480,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -486,6 +489,7 @@ ParseManifestCommon(NSLocationType aType
                                           info.dwMajorVersion,
                                           info.dwMinorVersion);
    }
 +  desktop = NS_LITERAL_STRING("win");
- #elif defined(XP_MACOSX)
+ #elif defined(MOZ_WIDGET_COCOA)
    SInt32 majorVersion, minorVersion;
    if ((Gestalt(gestaltSystemVersionMajor, &majorVersion) == noErr) &&
-@@ -485,14 +489,17 @@ ParseManifestCommon(NSLocationType aType
+@@ -494,14 +498,17 @@ ParseManifestCommon(NSLocationType aType
                                           majorVersion,
                                           minorVersion);
    }
@@ -1541,7 +1541,7 @@ Forwarded: no
  #endif
  
    // Because contracts must be registered after CIDs, we save and process them
-@@ -571,6 +578,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -590,6 +597,7 @@ ParseManifestCommon(NSLocationType aType
      TriState stABI = eUnspecified;
      bool platform = false;
      bool contentAccessible = false;
@@ -1549,16 +1549,16 @@ Forwarded: no
  
      while (NULL != (token = nsCRT::strtok(whitespace, kWhitespace, &whitespace)) && ok) {
        ToLowerCase(token);
-@@ -579,6 +587,7 @@ ParseManifestCommon(NSLocationType aType
+@@ -598,6 +606,7 @@ ParseManifestCommon(NSLocationType aType
        if (CheckStringFlag(kApplication, wtoken, appID, stApp) ||
            CheckStringFlag(kOs, wtoken, osTarget, stOs) ||
            CheckStringFlag(kABI, wtoken, abi, stABI) ||
 +          CheckStringFlag(kDesktop, wtoken, desktop, stDesktop) ||
            CheckVersionFlag(kOsVersion, wtoken, osVersion, stOsVersion) ||
-           CheckVersionFlag(kAppVersion, wtoken, appVersion, stAppVersion))
-         continue;
-@@ -607,6 +616,7 @@ ParseManifestCommon(NSLocationType aType
-         stAppVersion == eBad ||
+           CheckVersionFlag(kAppVersion, wtoken, appVersion, stAppVersion) ||
+           CheckVersionFlag(kGeckoVersion, wtoken, geckoVersion, stGeckoVersion))
+@@ -628,6 +637,7 @@ ParseManifestCommon(NSLocationType aType
+         stGeckoVersion == eBad ||
          stOs == eBad ||
          stOsVersion == eBad ||
 +        stDesktop == eBad ||

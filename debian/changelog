@@ -15,8 +15,12 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     - update debian/rules
     - update debian/firefox.install.in
     - update debian/firefox.dirs.in
+  * Refresh patches
+    - update debian/patches/change-moz-app-name.patch
+    - update debian/patches/mozilla-kde.patch
+    - update debian/patches/firefox-kde.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 20 Aug 2011 20:25:32 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 25 Aug 2011 11:40:05 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 

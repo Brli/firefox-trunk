@@ -26,8 +26,8 @@ Forwarded: no
 +*       content/browser/browser-kde.xul               (content/browser-kde.xul)
 +%       override chrome://browser/content/browser.xul chrome://browser/content/browser-kde.xul desktop=kde
  *       content/browser/browser-tabPreviews.xml       (content/browser-tabPreviews.xml)
+ *       content/browser/content.js                    (content/content.js)
  *       content/browser/fullscreen-video.xhtml        (content/fullscreen-video.xhtml)
- *       content/browser/inspector.html                (content/inspector.html)
 --- a/browser/components/build/nsModule.cpp
 +++ b/browser/components/build/nsModule.cpp
 @@ -46,7 +46,7 @@
@@ -39,7 +39,7 @@ Forwarded: no
  #endif
  
  #include "nsProfileMigrator.h"
-@@ -77,8 +77,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(Directory
+@@ -76,8 +76,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(Directory
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsWindowsShellService)
  #elif defined(XP_MACOSX)
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsMacShellService)
@@ -48,7 +48,7 @@ Forwarded: no
  #endif
  
  #if !defined(XP_OS2)
-@@ -122,7 +120,7 @@ static const mozilla::Module::CIDEntry k
+@@ -119,7 +117,7 @@ static const mozilla::Module::CIDEntry k
  #if defined(XP_WIN)
      { &kNS_SHELLSERVICE_CID, false, NULL, nsWindowsShellServiceConstructor },
  #elif defined(MOZ_WIDGET_GTK2)
