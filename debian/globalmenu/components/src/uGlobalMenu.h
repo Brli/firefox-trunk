@@ -70,7 +70,8 @@ public:
   ~uGlobalMenu();
 
   void OpenMenu();
-  void Halt();
+  void AboutToShowNotify();
+  PRBool IsOpening() { return !!mOpening; }
 
 private:
   uGlobalMenu();
@@ -86,6 +87,7 @@ private:
   PRBool RemoveMenuObjectAt(PRUint32 index);
   nsresult ConstructDbusMenuItem();
   nsresult Build();
+  void SyncProperties();
   void GetMenuPopupFromMenu(nsIContent **aResult);
   static PRBool MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
                                         void *data);
@@ -100,13 +102,13 @@ private:
   void OnClose();
   void Activate();
   void Deactivate();
-  void Invalidate();
 
   nsCOMPtr<nsIContent> mPopupContent;
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
   PRUint32 mOpenHandlerID;
   PRUint32 mEventHandlerID;
   PRPackedBool mOpening;
+  PRPackedBool mNeedsRebuild;
   PRPackedBool mDirty;
 };
 

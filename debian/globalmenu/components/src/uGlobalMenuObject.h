@@ -102,27 +102,24 @@ public:
   uGlobalMenuObject (uMenuObjectType aType): mDbusMenuItem(nsnull),
                                              mListener(nsnull),
                                              mParent(nsnull),
-                                             mType(aType),
-                                             mHalted(PR_FALSE)
+                                             mType(aType)
                                              { };
   DbusmenuMenuitem* GetDbusMenuItem() { return mDbusMenuItem; }
   uGlobalMenuObject* GetParent() { return mParent; }
   uMenuObjectType GetType() { return mType; }
   void GetContent(nsIContent **_retval);
-  void AboutToShowNotify();
-  virtual void Halt() { mHalted = PR_TRUE; }
+  virtual void AboutToShowNotify() { };
   virtual ~uGlobalMenuObject() { };
 
 protected:
   void SyncLabelFromContent();
-  void SyncLabelFromContent(nsIContent *aContent);
   void SyncVisibilityFromContent();
   void SyncSensitivityFromContent();
-  void SyncSensitivityFromContent(nsIContent *aContent);
   void SyncIconFromContent();
   PRBool SyncLabelFromCommand(nsIContent *aContent);
   PRBool SyncSensitivityFromCommand(nsIContent *aContent);
   void UpdateInfoFromContentClass();
+  void UpdateVisibility();
   void DestroyIconLoader();
   PRBool WithFavicon() { return mWithFavicon; }
   PRBool IsHidden();
@@ -134,7 +131,6 @@ protected:
   uMenuObjectType mType;
   uGlobalMenuBar *mMenuBar;
   PRPackedBool mContentVisible;
-  PRPackedBool mHalted;
 
 private:
   nsRefPtr<uGlobalMenuIconLoader> mIconLoader;

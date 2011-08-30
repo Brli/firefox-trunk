@@ -520,11 +520,38 @@ uGlobalMenuItem::SyncStateFromCommand()
 void
 uGlobalMenuItem::SyncProperties()
 {
+  if (mCommandContent) {
+    mListener->UnregisterForContentChanges(mCommandContent, this);
+    mCommandContent = nsnull;
+  }
+  if (mKeyContent) {
+    mListener->UnregisterForContentChanges(mKeyContent, this);
+    mKeyContent = nsnull;
+  }
+
+  nsIDocument *doc = mContent->GetCurrentDoc();
+  nsAutoString value;
+  mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, value);
+  if (!value.IsEmpty()) {
+    mCommandContent = doc->GetElementById(value);
+    if (mCommandContent) {
+      mListener->RegisterForContentChanges(mCommandContent, this);
+    }
+  }
+  mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, value);
+  if (!value.IsEmpty()) {
+    mKeyContent = doc->GetElementById(value);
+    if (mKeyContent) {
+      mListener->RegisterForContentChanges(mKeyContent, this);
+    }
+  }
+
+  UpdateInfoFromContentClass();
   if (!SyncLabelFromCommand(mCommandContent)) {
-    SyncLabelFromContent(nsnull);
+    SyncLabelFromContent();
   }
   if (!SyncSensitivityFromCommand(mCommandContent)) {
-    SyncSensitivityFromContent(nsnull);
+    SyncSensitivityFromContent();
   }
   SyncVisibilityFromContent();
   if (!SyncStateFromCommand()) {
@@ -532,7 +559,8 @@ uGlobalMenuItem::SyncProperties()
   }
   SyncAccelFromContent();
   SyncIconFromContent();
-  UpdateInfoFromContentClass();
+
+  mDirty = PR_FALSE;
 }
 
 /*static*/ void
@@ -636,31 +664,9 @@ uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
   mContent = aContent;
   mMenuBar = aMenuBar;
 
-  nsIDocument *doc = mContent->GetCurrentDoc();
-  if (doc) {
-    nsAutoString attr;
-    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, attr);
-    if (!attr.IsEmpty()) {
-      mCommandContent = doc->GetElementById(attr);
-    }
-
-    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, attr);
-    if (!attr.IsEmpty()) {
-      mKeyContent = doc->GetElementById(attr);
-    }
-  }
-
   nsresult rv;
   rv = mListener->RegisterForContentChanges(mContent, this);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (mCommandContent) {
-    rv = mListener->RegisterForContentChanges(mCommandContent, this);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  if (mKeyContent) {
-    rv = mListener->RegisterForContentChanges(mKeyContent, this);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return ConstructDbusMenuItem();
 }
@@ -698,14 +704,14 @@ uGlobalMenuItem::UncheckSiblings()
 }
 
 uGlobalMenuItem::uGlobalMenuItem():
-  uGlobalMenuObject(MenuItem)
+  uGlobalMenuObject(MenuItem), mDirty(PR_FALSE)
 {
   MOZ_COUNT_CTOR(uGlobalMenuItem);
 }
 
 uGlobalMenuItem::~uGlobalMenuItem()
 {
-  if (mListener && !mHalted) {
+  if (mListener) {
     mListener->UnregisterForContentChanges(mContent, this);
     if (mCommandContent) {
       mListener->UnregisterForContentChanges(mCommandContent, this);
@@ -745,19 +751,12 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
 }
 
 void
-uGlobalMenuItem::Halt()
+uGlobalMenuItem::AboutToShowNotify()
 {
-  if (!mHalted) {
-    mHalted = PR_TRUE;
-    mListener->UnregisterForContentChanges(mContent, this);
-    if (mCommandContent) {
-      mListener->UnregisterForContentChanges(mCommandContent, this);
-    }
-    if (mKeyContent) {
-      mListener->UnregisterForContentChanges(mKeyContent, this);
-    }
-
-    DestroyIconLoader();
+  if (mDirty) {
+    SyncProperties();
+  } else {
+    UpdateVisibility();
   }
 }
 
@@ -769,49 +768,31 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
   NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
                aContent == mKeyContent,
                "Received an event that wasn't meant for us!");
-  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
+
+  if (mDirty) {
+    return;
+  }
+
+  if (mParent->GetType() == Menu &&
+      !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
+    mDirty = PR_TRUE;
+    return;
+  }
 
   nsIDocument *doc = mContent->GetCurrentDoc();
 
   if (aContent == mContent) {
-    if (aAttribute == uWidgetAtoms::command) {
-      if (mCommandContent) {
-        mListener->UnregisterForContentChanges(mCommandContent, this);
-      }
-      nsAutoString command;
-      mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, command);
-      if (!command.IsEmpty()) {
-        mCommandContent = doc->GetElementById(command);
-        if (mCommandContent) {
-          mListener->RegisterForContentChanges(mCommandContent, this);
-        }
-      } else {
-        mCommandContent = nsnull;
-      }
-      SyncProperties();
-    } else if (aAttribute == uWidgetAtoms::key) {
-      if (mKeyContent) {
-        mListener->UnregisterForContentChanges(mKeyContent, this);
-      }
-      nsAutoString key;
-      mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, key);
-      if (!key.IsEmpty()) {
-        mKeyContent = doc->GetElementById(key);
-        if (mKeyContent) {
-          mListener->RegisterForContentChanges(mKeyContent, this);
-        }
-      } else {
-        mKeyContent = nsnull;
-      }
+    if (aAttribute == uWidgetAtoms::command ||
+        aAttribute == uWidgetAtoms::key) {
       SyncProperties();
     } else if (aAttribute == uWidgetAtoms::label ||
                aAttribute == uWidgetAtoms::accesskey) {
-      SyncLabelFromContent(mCommandContent);
+      SyncLabelFromContent();
     } else if (aAttribute == uWidgetAtoms::hidden ||
                aAttribute == uWidgetAtoms::collapsed) {
       SyncVisibilityFromContent();
     } else if (aAttribute == uWidgetAtoms::disabled) {
-      SyncSensitivityFromContent(mCommandContent);
+      SyncSensitivityFromContent();
     } else if (aAttribute == uWidgetAtoms::checked) {
       SyncTypeAndStateFromContent();
       if (mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
@@ -824,6 +805,8 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
       SyncIconFromContent();
     } else if (aAttribute == uWidgetAtoms::_class) {
       UpdateInfoFromContentClass();
+      SyncVisibilityFromContent();
+      SyncIconFromContent();
     }
   } else if (aContent == mCommandContent) {
     if (aAttribute == uWidgetAtoms::label) {

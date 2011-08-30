@@ -45,6 +45,7 @@
 
 #include "uGlobalMenuSeparator.h"
 #include "uGlobalMenuBar.h"
+#include "uGlobalMenu.h"
 #include "uWidgetAtoms.h"
 
 
@@ -59,8 +60,8 @@ uGlobalMenuSeparator::ConstructDbusMenuItem()
                                  DBUSMENU_MENUITEM_PROP_TYPE,
                                  "separator");
 
-  SyncVisibilityFromContent();
   UpdateInfoFromContentClass();
+  SyncVisibilityFromContent();
 
   return NS_OK;
 }
@@ -88,14 +89,14 @@ uGlobalMenuSeparator::Init(uGlobalMenuObject *aParent,
 }
 
 uGlobalMenuSeparator::uGlobalMenuSeparator():
-  uGlobalMenuObject(MenuSeparator)
+  uGlobalMenuObject(MenuSeparator), mDirty(PR_FALSE)
 {
   MOZ_COUNT_CTOR(uGlobalMenuSeparator);
 }
 
 uGlobalMenuSeparator::~uGlobalMenuSeparator()
 {
-  if (!mHalted && mListener) {
+  if (mListener) {
     mListener->UnregisterForContentChanges(mContent, this);
   }
 
@@ -125,11 +126,15 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
 }
 
 void
-uGlobalMenuSeparator::Halt()
+uGlobalMenuSeparator::AboutToShowNotify()
 {
-  if (!mHalted) {
-    mHalted = PR_TRUE;
-    mListener->UnregisterForContentChanges(mContent, this);
+  if (mDirty) {
+    UpdateInfoFromContentClass();
+    SyncVisibilityFromContent();
+
+    mDirty = PR_FALSE;
+  } else {
+    UpdateVisibility();
   }
 }
 
@@ -139,13 +144,23 @@ uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
                                               nsIAtom *aAttribute)
 {
   NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");
-  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
+
+  if (mDirty) {
+    return;
+  }
+
+  if (mParent->GetType() == Menu &&
+      !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
+    mDirty = PR_TRUE;
+    return;
+  }
 
   if (aAttribute == uWidgetAtoms::hidden ||
       aAttribute == uWidgetAtoms::collapsed) {
     SyncVisibilityFromContent();
   } else if (aAttribute == uWidgetAtoms::_class) {
     UpdateInfoFromContentClass();
+    SyncVisibilityFromContent();
   }
 }
 

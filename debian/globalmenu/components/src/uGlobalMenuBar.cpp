@@ -44,7 +44,9 @@
 #include <nsIXULWindow.h>
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDocShell.h>
-#include <nsIDOMNSEvent.h>
+#if 1
+# include <nsIDOMNSEvent.h>
+#endif
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIDOMKeyEvent.h>
@@ -455,14 +457,22 @@ uGlobalMenuBar::Focus()
 PRBool
 uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
 {
+#if 0
+# define nsEvent aKeyEvent
+#else
   nsCOMPtr<nsIDOMNSEvent> nsEvent = do_QueryInterface(aKeyEvent);
   if (!nsEvent) {
     return PR_FALSE;
   }
+#endif
 
   PRBool handled, trusted;
   nsEvent->GetPreventDefault(&handled);
   nsEvent->GetIsTrusted(&trusted);
+
+#if 0
+# undef nsEvent
+#endif
 
   if (handled || !trusted) {
     return PR_FALSE;

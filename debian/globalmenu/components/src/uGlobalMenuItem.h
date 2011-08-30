@@ -68,7 +68,8 @@ public:
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
-  void Halt();
+
+  void AboutToShowNotify();
 
 private:
   uGlobalMenuItem();
@@ -97,6 +98,7 @@ private:
   PRUint32 mHandlerID;
   PRPackedBool mIsToggle;
   PRPackedBool mToggleState;
+  PRPackedBool mDirty;
   uMenuItemType mType;
 };
 

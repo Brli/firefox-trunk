@@ -170,9 +170,7 @@ uGlobalMenu::CanOpen()
 void
 uGlobalMenu::AboutToOpen()
 {
-  NS_WARN_IF_FALSE(!mHalted, "Showing a menu that should have been destroyed already");
-
-  if (mDirty) {
+  if (mNeedsRebuild) {
     Build();
   }
 
@@ -337,6 +335,18 @@ uGlobalMenu::OnClose()
   Deactivate();
 }
 
+void
+uGlobalMenu::SyncProperties()
+{
+  UpdateInfoFromContentClass();
+  SyncLabelFromContent();
+  SyncSensitivityFromContent();
+  SyncVisibilityFromContent();
+  SyncIconFromContent();
+
+  mDirty = PR_FALSE;
+}
+
 nsresult
 uGlobalMenu::ConstructDbusMenuItem()
 {
@@ -360,11 +370,7 @@ uGlobalMenu::ConstructDbusMenuItem()
                                      G_CALLBACK(MenuEventCallback),
                                      this);
 
-  SyncLabelFromContent();
-  SyncSensitivityFromContent();
-  SyncVisibilityFromContent();
-  SyncIconFromContent();
-  UpdateInfoFromContentClass();
+  SyncProperties();
 
   return NS_OK;
 }
@@ -443,6 +449,10 @@ uGlobalMenu::Build()
     RemoveMenuObjectAt(0);
   }
 
+  if (mPopupContent && mPopupContent != mContent) {
+    mListener->UnregisterForContentChanges(mPopupContent, this);
+  }
+
   GetMenuPopupFromMenu(getter_AddRefs(mPopupContent));
 
   if (!mPopupContent) {
@@ -479,7 +489,7 @@ uGlobalMenu::Build()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  mDirty = PR_FALSE;
+  mNeedsRebuild = PR_FALSE;
 
   count = mPopupContent->GetChildCount();
 
@@ -494,29 +504,12 @@ uGlobalMenu::Build()
     }
     NS_WARN_IF_FALSE(res, "Failed to append menuitem. Marking menu invalid");
     if (!res) {
-      Invalidate();
+      mNeedsRebuild = PR_TRUE;
       return NS_ERROR_FAILURE;
     }
   }
 
   return NS_OK;
-}
-
-void
-uGlobalMenu::Invalidate()
-{
-  if (!mDirty) {
-    mDirty = PR_TRUE;
-
-    if (mContent != mPopupContent) {
-      mListener->UnregisterForContentChanges(mPopupContent, this);
-    }
-
-    PRUint32 count = mMenuObjects.Length();
-    for (PRUint32 i = 0; i < count; i++) {
-      mMenuObjects[i]->Halt();
-    }
-  }
 }
 
 nsresult
@@ -542,7 +535,8 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
 }
 
 uGlobalMenu::uGlobalMenu():
-  uGlobalMenuObject(Menu), mOpening(PR_FALSE), mDirty(PR_TRUE)
+  uGlobalMenuObject(Menu), mOpening(PR_FALSE),
+  mNeedsRebuild(PR_TRUE), mDirty(PR_FALSE)
 {
   MOZ_COUNT_CTOR(uGlobalMenu);
 }
@@ -550,10 +544,8 @@ uGlobalMenu::uGlobalMenu():
 uGlobalMenu::~uGlobalMenu()
 {
   if (mListener) {
-    if (!mHalted) {
-      mListener->UnregisterForContentChanges(mContent, this);
-    }
-    if (mContent != mPopupContent && !mDirty) {
+    mListener->UnregisterForContentChanges(mContent, this);
+    if (mContent != mPopupContent) {
       mListener->UnregisterForContentChanges(mPopupContent, this);
     }
   }
@@ -589,14 +581,12 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
 }
 
 void
-uGlobalMenu::Halt()
+uGlobalMenu::AboutToShowNotify()
 {
-  if (!mHalted) {
-    mHalted = PR_TRUE;
-
-    mListener->UnregisterForContentChanges(mContent, this);
-
-    Invalidate();
+  if (mDirty) {
+    SyncProperties();
+  } else {
+    UpdateVisibility();
   }
 }
 
@@ -617,7 +607,16 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
 {
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
-  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
+
+  if (mDirty) {
+    return;
+  }
+
+  if (mParent->GetType() == Menu &&
+      !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
+    mDirty = PR_TRUE;
+    return;
+  }
 
   if (aAttribute == uWidgetAtoms::open) {
     return;
@@ -635,6 +634,8 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
     SyncIconFromContent();
   } else if (aAttribute == uWidgetAtoms::_class) {
     UpdateInfoFromContentClass();
+    SyncVisibilityFromContent();
+    SyncIconFromContent();
   }
 }
 
@@ -646,9 +647,8 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
 {
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
-  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
 
-  if (mDirty) {
+  if (mNeedsRebuild) {
     return;
   }
 
@@ -656,10 +656,10 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
     PRBool res = RemoveMenuObjectAt(aIndexInContainer);
     NS_WARN_IF_FALSE(res, "Failed to remove menuitem. Marking menu invalid");
     if (!res) {
-      Invalidate();
+      mNeedsRebuild = PR_TRUE;
     }
   } else {
-    Invalidate();
+    mNeedsRebuild = PR_TRUE;
   }
 }
 
@@ -671,9 +671,8 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
 {
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
-  NS_WARN_IF_FALSE(mHalted, "Received an event after we disconnected");
 
-  if (mDirty) {
+  if (mNeedsRebuild) {
     return;
   }
 
@@ -687,9 +686,9 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
     }
     NS_WARN_IF_FALSE(res, "Failed to insert menuitem. Marking menu invalid");
     if (!res) {
-      Invalidate();
+      mNeedsRebuild = PR_TRUE;
     }    
   } else {
-    Invalidate();
+    mNeedsRebuild = PR_TRUE;
   }
 }

@@ -56,7 +56,8 @@ public:
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
-  void Halt();
+
+  void AboutToShowNotify();
 
 private:
   uGlobalMenuSeparator();
@@ -68,6 +69,8 @@ private:
   ~uGlobalMenuSeparator();
 
   nsresult ConstructDbusMenuItem(); 
+
+  PRPackedBool mDirty;
 };
 
 

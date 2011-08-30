@@ -457,17 +457,14 @@ uGlobalMenuObject::GetContent(nsIContent **_retval)
 // Synchronize the 'label' and 'accesskey' attributes on the DOM node
 // with the 'label' property on the dbusmenu node
 void
-uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
+uGlobalMenuObject::SyncLabelFromContent()
 {
   // Gecko stores the label and access key in separate attributes
   // so we need to convert label="Foo"/accesskey="F" in to
   // label="_Foo" for dbusmenu
 
   nsAutoString label;
-  if (!aContent || !aContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label,
-                                      label)) {
-    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
-  }
+  mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
 
   nsAutoString accesskey;
   mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::accesskey, accesskey);
@@ -543,47 +540,32 @@ uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
                                  clabel.get());
 }
 
-void
-uGlobalMenuObject::SyncLabelFromContent()
-{
-  SyncLabelFromContent(nsnull);
-}
-
 // Synchronize the 'hidden' attribute on the DOM node with the
 // 'visible' property on the dbusmenu node
 void
 uGlobalMenuObject::SyncVisibilityFromContent()
 {
   mContentVisible = !IsHidden();
+  PRBool realVis = (!mMenuBar || mShowOnlyForKb == PR_FALSE ||
+                    mMenuBar->OpenedByKeyboard()) ?
+                    mContentVisible : PR_FALSE;
+
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
-                                      mContentVisible);
+                                      realVis);
 }
 
 // Synchronize the 'disabled' attribute on the DOM node with the
 // 'sensitivity' property on the dbusmenu node
 void
-uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aContent)
-{
-  nsIContent *content;
-  if (aContent) {
-    content = aContent;
-  } else {
-    content = mContent;
-  }
-
-  dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
-                                      DBUSMENU_MENUITEM_PROP_ENABLED,
-                                      !content->AttrValueIs(kNameSpaceID_None,
-                                                            uWidgetAtoms::disabled,
-                                                            uWidgetAtoms::_true,
-                                                            eCaseMatters));
-}
-
-void
 uGlobalMenuObject::SyncSensitivityFromContent()
 {
-  SyncSensitivityFromContent(nsnull);
+  dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
+                                      DBUSMENU_MENUITEM_PROP_ENABLED,
+                                      !mContent->AttrValueIs(kNameSpaceID_None,
+                                                             uWidgetAtoms::disabled,
+                                                             uWidgetAtoms::_true,
+                                                             eCaseMatters));
 }
 
 // Synchronize the 'label' attribute on our content node with that from
@@ -658,10 +640,8 @@ uGlobalMenuObject::IsHidden()
 }
 
 void
-uGlobalMenuObject::AboutToShowNotify()
+uGlobalMenuObject::UpdateVisibility()
 {
-  NS_WARN_IF_FALSE(!mHalted, "Showing a menuitem that should have been destroyed already");
-
   if (!mMenuBar) {
     return;
   }
