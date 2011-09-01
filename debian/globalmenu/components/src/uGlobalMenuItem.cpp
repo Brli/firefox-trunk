@@ -63,6 +63,8 @@
 #include "uGlobalMenu.h"
 #include "uWidgetAtoms.h"
 
+#include "uDebug.h"
+
 // XXX: Borrowed from content/xbl/src/nsXBLPrototypeHandler.cpp. This doesn't
 // seem to be publicly available, and we need a way to map key names
 // to key codes (so we can then map them to GDK key codes)
@@ -546,6 +548,11 @@ uGlobalMenuItem::SyncProperties()
     }
   }
 
+  // We need to do this first, as some of the next functions may
+  // trigger mutation events, which we want to handle if we our parent
+  // is opening
+  ClearInvalid();
+
   UpdateInfoFromContentClass();
   if (!SyncLabelFromCommand(mCommandContent)) {
     SyncLabelFromContent();
@@ -559,8 +566,6 @@ uGlobalMenuItem::SyncProperties()
   }
   SyncAccelFromContent();
   SyncIconFromContent();
-
-  mDirty = PR_FALSE;
 }
 
 /*static*/ void
@@ -704,7 +709,7 @@ uGlobalMenuItem::UncheckSiblings()
 }
 
 uGlobalMenuItem::uGlobalMenuItem():
-  uGlobalMenuObject(MenuItem), mDirty(PR_FALSE)
+  uGlobalMenuObject(MenuItem)
 {
   MOZ_COUNT_CTOR(uGlobalMenuItem);
 }
@@ -753,7 +758,7 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
 void
 uGlobalMenuItem::AboutToShowNotify()
 {
-  if (mDirty) {
+  if (IsDirty()) {
     SyncProperties();
   } else {
     UpdateVisibility();
@@ -769,13 +774,13 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
                aContent == mKeyContent,
                "Received an event that wasn't meant for us!");
 
-  if (mDirty) {
+  if (IsDirty()) {
     return;
   }
 
   if (mParent->GetType() == Menu &&
       !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
-    mDirty = PR_TRUE;
+    Invalidate();
     return;
   }
 

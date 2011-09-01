@@ -102,7 +102,8 @@ public:
   uGlobalMenuObject (uMenuObjectType aType): mDbusMenuItem(nsnull),
                                              mListener(nsnull),
                                              mParent(nsnull),
-                                             mType(aType)
+                                             mType(aType),
+                                             mDirty(PR_FALSE)
                                              { };
   DbusmenuMenuitem* GetDbusMenuItem() { return mDbusMenuItem; }
   uGlobalMenuObject* GetParent() { return mParent; }
@@ -121,8 +122,11 @@ protected:
   void UpdateInfoFromContentClass();
   void UpdateVisibility();
   void DestroyIconLoader();
-  PRBool WithFavicon() { return mWithFavicon; }
+  PRBool WithFavicon() { return !!mWithFavicon; }
   PRBool IsHidden();
+  void Invalidate() { mDirty = PR_TRUE; }
+  void ClearInvalid() { mDirty = PR_FALSE; }
+  PRBool IsDirty() { return !!mDirty; }
 
   nsCOMPtr<nsIContent> mContent;
   DbusmenuMenuitem *mDbusMenuItem;
@@ -133,9 +137,12 @@ protected:
   PRPackedBool mContentVisible;
 
 private:
+  PRBool ShouldShowOnlyForKb() { return !!mShowOnlyForKb; }
+
   nsRefPtr<uGlobalMenuIconLoader> mIconLoader;
-  PRBool mWithFavicon;
-  PRBool mShowOnlyForKb;
+  PRPackedBool mWithFavicon;
+  PRPackedBool mShowOnlyForKb;
+  PRPackedBool mDirty;
 };
 
 #endif

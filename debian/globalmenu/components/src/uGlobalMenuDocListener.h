@@ -47,6 +47,10 @@
 
 #include "uMenuChangeObserver.h"
 
+#ifdef DEBUG
+#define DEBUG_chrisccoulson
+#endif
+
 class nsIContent;
 class nsIDocument;
 
@@ -65,7 +69,7 @@ public:
   nsresult RegisterForAllChanges(uMenuChangeObserver *aMenuObject);
   nsresult UnregisterForAllChanges(uMenuChangeObserver *aMenuObject);
   void Destroy();
-  ~uGlobalMenuDocListener() { };
+  ~uGlobalMenuDocListener();
 
 private:
   void GetListeners(nsIContent *aContent, nsTArray<uMenuChangeObserver *>& _result);
@@ -73,6 +77,9 @@ private:
   nsIDocument *mDocument;
   nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uMenuChangeObserver *> > mContentToObserverTable;
   nsTArray<uMenuChangeObserver *> mGlobalObservers;
+#ifdef DEBUG_chrisccoulson
+  PRUint32 mCount;
+#endif
 };
 
 #endif

@@ -64,6 +64,8 @@
 #include "uIGlobalMenuService.h"
 #include "uWidgetAtoms.h"
 
+#include "uDebug.h"
+
 #define MODIFIER_SHIFT    1
 #define MODIFIER_CONTROL  2
 #define MODIFIER_ALT      4
@@ -131,6 +133,11 @@ uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
 PRBool
 uGlobalMenuBar::RemoveMenuObjectAt(PRUint32 index)
 {
+  NS_ASSERTION(index < mMenuObjects.Length(), "Invalid index");
+  if (index >= mMenuObjects.Length()) {
+    return PR_FALSE;
+  }
+
   gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
                                        mMenuObjects[index]->GetDbusMenuItem());
   mMenuObjects.RemoveElementAt(index);
@@ -168,6 +175,9 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 {
   NS_ENSURE_ARG(aWindow);
   NS_ENSURE_ARG(aMenuBar);
+
+  // We create this early so that IsRegistered() works
+  mCancellable = uGlobalMenuRequestAutoCanceller::Create();
 
   mContent = aMenuBar;
 
@@ -249,7 +259,6 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     do_GetService("@canonical.com/globalmenu-service;1");
   NS_ENSURE_TRUE(service, NS_ERROR_FAILURE);
 
-  mCancellable = uGlobalMenuRequestAutoCanceller::Create();
   service->RegisterGlobalMenuBar(this, mCancellable);
 
   return NS_OK;

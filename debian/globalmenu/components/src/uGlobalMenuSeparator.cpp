@@ -48,6 +48,7 @@
 #include "uGlobalMenu.h"
 #include "uWidgetAtoms.h"
 
+#include "uDebug.h"
 
 nsresult
 uGlobalMenuSeparator::ConstructDbusMenuItem()
@@ -88,8 +89,7 @@ uGlobalMenuSeparator::Init(uGlobalMenuObject *aParent,
   return ConstructDbusMenuItem();
 }
 
-uGlobalMenuSeparator::uGlobalMenuSeparator():
-  uGlobalMenuObject(MenuSeparator), mDirty(PR_FALSE)
+uGlobalMenuSeparator::uGlobalMenuSeparator(): uGlobalMenuObject(MenuSeparator)
 {
   MOZ_COUNT_CTOR(uGlobalMenuSeparator);
 }
@@ -128,11 +128,11 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
 void
 uGlobalMenuSeparator::AboutToShowNotify()
 {
-  if (mDirty) {
+  if (IsDirty()) {
     UpdateInfoFromContentClass();
     SyncVisibilityFromContent();
 
-    mDirty = PR_FALSE;
+    ClearInvalid();
   } else {
     UpdateVisibility();
   }
@@ -145,13 +145,13 @@ uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
 {
   NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");
 
-  if (mDirty) {
+  if (IsDirty()) {
     return;
   }
 
   if (mParent->GetType() == Menu &&
       !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
-    mDirty = PR_TRUE;
+    Invalidate();
     return;
   }
 

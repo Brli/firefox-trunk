@@ -64,6 +64,8 @@
 #include "uGlobalMenuBar.h"
 #include "uWidgetAtoms.h"
 
+#include "uDebug.h"
+
 #define MAX_LABEL_NCHARS 40
 
 typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
@@ -227,8 +229,6 @@ uGlobalMenuIconLoader::Run()
         primitiveValue->GetPrimitiveType(&primitiveType);
         if (primitiveType == nsIDOMCSSPrimitiveValue::CSS_RECT) {
           primitiveValue->GetRectValue(getter_AddRefs(domRect));
-        } else {
-          NS_WARNING("-moz-image-region has wrong primitive type");
         }
       }
     }
@@ -546,7 +546,7 @@ void
 uGlobalMenuObject::SyncVisibilityFromContent()
 {
   mContentVisible = !IsHidden();
-  PRBool realVis = (!mMenuBar || mShowOnlyForKb == PR_FALSE ||
+  PRBool realVis = (!mMenuBar || !ShouldShowOnlyForKb() ||
                     mMenuBar->OpenedByKeyboard()) ?
                     mContentVisible : PR_FALSE;
 
@@ -624,10 +624,14 @@ uGlobalMenuObject::UpdateInfoFromContentClass()
     return;
   }
 
+  PRBool tmp;
   classes->Contains(NS_LITERAL_STRING("show-only-for-keyboard"),
-                    &mShowOnlyForKb);
+                    &tmp);
+  mShowOnlyForKb = !!tmp;
+
   classes->Contains(NS_LITERAL_STRING("menuitem-with-favicon"),
-                    &mWithFavicon);
+                    &tmp);
+  mWithFavicon = !!tmp;
 }
 
 PRBool
@@ -646,7 +650,7 @@ uGlobalMenuObject::UpdateVisibility()
     return;
   }
 
-  PRBool newVis = (mShowOnlyForKb == PR_FALSE || mMenuBar->OpenedByKeyboard()) ?
+  PRBool newVis = (!ShouldShowOnlyForKb() || mMenuBar->OpenedByKeyboard()) ?
                    mContentVisible : PR_FALSE;
 
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,

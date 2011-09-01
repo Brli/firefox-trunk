@@ -48,6 +48,7 @@
 #include "uGlobalMenuBar.h"
 #include "uWidgetAtoms.h"
 
+#include "uDebug.h"
 
 nsresult
 uGlobalMenuDummy::ConstructDbusMenuItem()

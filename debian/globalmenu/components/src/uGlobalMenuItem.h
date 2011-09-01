@@ -98,7 +98,6 @@ private:
   PRUint32 mHandlerID;
   PRPackedBool mIsToggle;
   PRPackedBool mToggleState;
-  PRPackedBool mDirty;
   uMenuItemType mType;
 };
 

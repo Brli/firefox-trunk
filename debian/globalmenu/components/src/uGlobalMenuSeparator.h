@@ -68,9 +68,7 @@ private:
                 uGlobalMenuBar *aMenuBar);
   ~uGlobalMenuSeparator();
 
-  nsresult ConstructDbusMenuItem(); 
-
-  PRPackedBool mDirty;
+  nsresult ConstructDbusMenuItem();
 };
 
 

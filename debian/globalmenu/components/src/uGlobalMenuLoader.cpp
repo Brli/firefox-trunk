@@ -55,6 +55,8 @@
 #include "uIGlobalMenuService.h"
 #include "uGlobalMenuLoader.h"
 
+#include "uDebug.h"
+
 // XXX: The sole purpose of this class is to listen for new nsIXULWindows
 //      and do the task that xpfe/appshell/src/nsWebShellWindow.cpp
 //      would be doing if this extension were part of Mozilla core. The reason
@@ -78,20 +80,17 @@ uGlobalMenuLoader::RegisterMenuForWindow(nsIXULWindow *aWindow)
   if (!docShell)
     return;
 
-  nsCOMPtr<nsIWebProgress> progress;
-  progress = do_GetInterface(docShell);
-  if (progress) {
+  PRBool res = RegisterMenu(mainWidget, docShell);
+
+  if (!res) {
     // If we've been called off a window open event from the window mediator,
     // then the document probably hasn't loaded yet. To fix this, we set up a progress
     // listener on the docshell, so we can do the actual menu load once the
     // document has finished loading
-    nsresult rv = progress->AddProgressListener(this, nsIWebProgress::NOTIFY_STATE_NETWORK);
-  }
-
-  PRBool res = RegisterMenu(mainWidget, docShell);
-
-  if (res && progress) {
-    progress->RemoveProgressListener(this);
+    nsCOMPtr<nsIWebProgress> progress = do_GetInterface(docShell);
+    if (progress) {
+       progress->AddProgressListener(this, nsIWebProgress::NOTIFY_STATE_NETWORK);
+    }
   }
 }
 
@@ -115,21 +114,12 @@ uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
                                       NS_LITERAL_STRING("menubar"),
                                       getter_AddRefs(elements));
   if (NS_FAILED(rv) || !elements)
-    return PR_FALSE;
+    return PR_TRUE;
 
-  PRUint32 length;
-  elements->GetLength(&length);
-  if (length == 0)
-    return PR_FALSE;
-  
   nsCOMPtr<nsIDOMNode> menubar;
   elements->Item(0, getter_AddRefs(menubar));
-  if (!menubar) {
-    NS_WARNING("NULL node in nsIDOMNodeList. Should this even happen?");
-    // Return success here so we don't keep getting state change
-    // notifications from the doc shell
+  if (!menubar)
     return PR_TRUE;
-  }
 
   nsCOMPtr<nsIContent> menubarContent = do_QueryInterface(menubar);
   // XXX: Should we do anything with errors here?
@@ -268,6 +258,8 @@ uGlobalMenuLoader::OnStateChange(nsIWebProgress *aWebProgress,
       return NS_OK;
   }
 
+  aWebProgress->RemoveProgressListener(this);
+
   nsCOMPtr<nsIBaseWindow> baseWindow = do_GetInterface(aWebProgress);
   if (baseWindow) {
     nsCOMPtr<nsIWidget> parentWidget;
@@ -275,10 +267,7 @@ uGlobalMenuLoader::OnStateChange(nsIWebProgress *aWebProgress,
 
     nsCOMPtr<nsIDocShell> docShell = do_GetInterface(aWebProgress);
     if (docShell && parentWidget) {
-      PRBool res = RegisterMenu(parentWidget, docShell);
-      if (res) {
-        aWebProgress->RemoveProgressListener(this);
-      }
+      RegisterMenu(parentWidget, docShell);
     }
   }
 

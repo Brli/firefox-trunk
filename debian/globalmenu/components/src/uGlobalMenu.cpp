@@ -63,6 +63,8 @@
 #include "uGlobalMenuUtils.h"
 #include "uWidgetAtoms.h"
 
+#include "uDebug.h"
+
 /*static*/ PRBool
 uGlobalMenu::MenuEventCallback(DbusmenuMenuitem *menu,
                                const gchar *name,
@@ -170,7 +172,21 @@ uGlobalMenu::CanOpen()
 void
 uGlobalMenu::AboutToOpen()
 {
-  if (mNeedsRebuild) {
+  // XXX: HACK, HACK, HACK ALERT!!
+  //      We ignore the first AboutToOpen on top-level menus, because Unity
+  //      stupidly sends this signal on all top-levels when the window opens.
+  //      This isn't useful at all for us, and leaves the menu in a partially
+  //      open state (it doesn't finish the job by sending open/close events),
+  //      where we sit unnecessarily keeping our menu in-sync with the DOM
+  //      (we do think it is in the middle of opening, after all) until after
+  //      the menu is first opened, when sanity returns again
+  //      YUCK!
+  if (!mPrimed) {
+    mPrimed = PR_TRUE;
+    return;
+  }
+
+  if (DoesNeedRebuild()) {
     Build();
   }
 
@@ -238,6 +254,10 @@ uGlobalMenu::AboutToOpen()
 void
 uGlobalMenu::OnOpen()
 {
+  if (!mOpening) {
+    AboutToOpen();
+  }
+
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
@@ -344,7 +364,7 @@ uGlobalMenu::SyncProperties()
   SyncVisibilityFromContent();
   SyncIconFromContent();
 
-  mDirty = PR_FALSE;
+  ClearInvalid();
 }
 
 nsresult
@@ -434,6 +454,11 @@ uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 PRBool
 uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
 {
+  NS_ASSERTION(index < mMenuObjects.Length(), "Invalid index");
+  if (index >= mMenuObjects.Length()) {
+    return PR_FALSE;
+  }
+
   gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
                                        mMenuObjects[index]->GetDbusMenuItem());
   mMenuObjects.RemoveElementAt(index);
@@ -489,7 +514,7 @@ uGlobalMenu::Build()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  mNeedsRebuild = PR_FALSE;
+  ClearNeedsRebuild();
 
   count = mPopupContent->GetChildCount();
 
@@ -504,7 +529,7 @@ uGlobalMenu::Build()
     }
     NS_WARN_IF_FALSE(res, "Failed to append menuitem. Marking menu invalid");
     if (!res) {
-      mNeedsRebuild = PR_TRUE;
+      SetNeedsRebuild();
       return NS_ERROR_FAILURE;
     }
   }
@@ -528,6 +553,11 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
   mContent = aContent;
   mMenuBar = aMenuBar;
 
+  // See the hack comment above for why this workaround is here
+  if (mParent->GetType() != MenuBar || mMenuBar->IsRegistered()) {
+    mPrimed = PR_TRUE;
+  }
+
   nsresult rv = mListener->RegisterForContentChanges(mContent, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -535,8 +565,8 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
 }
 
 uGlobalMenu::uGlobalMenu():
-  uGlobalMenuObject(Menu), mOpening(PR_FALSE),
-  mNeedsRebuild(PR_TRUE), mDirty(PR_FALSE)
+  uGlobalMenuObject(Menu), mOpening(PR_FALSE), mNeedsRebuild(PR_TRUE),
+  mPrimed(PR_FALSE)
 {
   MOZ_COUNT_CTOR(uGlobalMenu);
 }
@@ -545,7 +575,7 @@ uGlobalMenu::~uGlobalMenu()
 {
   if (mListener) {
     mListener->UnregisterForContentChanges(mContent, this);
-    if (mContent != mPopupContent) {
+    if (mPopupContent && mContent != mPopupContent) {
       mListener->UnregisterForContentChanges(mPopupContent, this);
     }
   }
@@ -583,7 +613,7 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
 void
 uGlobalMenu::AboutToShowNotify()
 {
-  if (mDirty) {
+  if (IsDirty()) {
     SyncProperties();
   } else {
     UpdateVisibility();
@@ -608,13 +638,13 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
 
-  if (mDirty) {
+  if (IsDirty()) {
     return;
   }
 
   if (mParent->GetType() == Menu &&
       !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
-    mDirty = PR_TRUE;
+    Invalidate();
     return;
   }
 
@@ -648,18 +678,23 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
-  if (mNeedsRebuild) {
+  if (DoesNeedRebuild()) {
     return;
   }
 
-  if (mOpening && aContainer == mPopupContent) {
+  if (!IsOpening()) {
+    SetNeedsRebuild();
+    return;
+  }
+
+  if (aContainer == mPopupContent) {
     PRBool res = RemoveMenuObjectAt(aIndexInContainer);
     NS_WARN_IF_FALSE(res, "Failed to remove menuitem. Marking menu invalid");
     if (!res) {
-      mNeedsRebuild = PR_TRUE;
+      SetNeedsRebuild();
     }
   } else {
-    mNeedsRebuild = PR_TRUE;
+    Build();
   }
 }
 
@@ -672,11 +707,16 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
-  if (mNeedsRebuild) {
+  if (DoesNeedRebuild()) {
     return;
   }
 
-  if (mOpening && aContainer == mPopupContent) {
+  if (!IsOpening()) {
+    SetNeedsRebuild();
+    return;
+  }
+
+  if (aContainer == mPopupContent) {
     uGlobalMenuObject *newItem =
       NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                         mListener, aChild, mMenuBar);
@@ -686,9 +726,9 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
     }
     NS_WARN_IF_FALSE(res, "Failed to insert menuitem. Marking menu invalid");
     if (!res) {
-      mNeedsRebuild = PR_TRUE;
+      SetNeedsRebuild();
     }    
   } else {
-    mNeedsRebuild = PR_TRUE;
+    Build();
   }
 }

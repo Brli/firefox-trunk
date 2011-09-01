@@ -36,45 +36,27 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#include <nsIContent.h>
-#include <nsIAtom.h>
+#ifndef _U_DEBUG_H
+#define _U_DEBUG_H
 
-#include "uGlobalMenuObject.h"
-#include "uGlobalMenu.h"
-#include "uGlobalMenuItem.h"
-#include "uGlobalMenuSeparator.h"
-#include "uGlobalMenuDummy.h"
-#include "uGlobalMenuDocListener.h"
-#include "uGlobalMenuBar.h"
-#include "uWidgetAtoms.h"
+#ifdef DEBUG_chrisccoulson
+#include <nsXPCOM.h>
+#define NS_ASSERTION(expr, str)                               \
+  do {                                                        \
+    if (!(expr)) {                                            \
+      NS_DebugBreak(NS_DEBUG_ASSERTION, str, #expr, __FILE__, __LINE__); \
+    }                                                         \
+  } while(0)
 
-#include "uDebug.h"
+#define NS_WARN_IF_FALSE(_expr,_msg)                          \
+  do {                                                        \
+    if (!(_expr)) {                                           \
+      NS_DebugBreak(NS_DEBUG_WARNING, _msg, #_expr, __FILE__, __LINE__); \
+    }                                                         \
+  } while(0)
 
-uGlobalMenuObject*
-NewGlobalMenuItem(uGlobalMenuObject *aParent,
-                  uGlobalMenuDocListener *aListener,
-                  nsIContent *aContent,
-                  uGlobalMenuBar *aMenuBar)
-{
-  if (!aContent->IsXUL()) {
-    return uGlobalMenuDummy::Create();
-  }
+#define NS_WARNING(str)                                       \
+  NS_DebugBreak(NS_DEBUG_WARNING, str, nsnull, __FILE__, __LINE__)
+#endif
 
-  uGlobalMenuObject *menuitem = nsnull;
-  if (aContent->Tag() == uWidgetAtoms::menu) {
-    menuitem = uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
-  } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
-    menuitem = uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
-  } else if (aContent->Tag() == uWidgetAtoms::menuseparator) {
-    menuitem = uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
-  }
-
-  if (!menuitem) {
-    // We didn't recognize the tag, or initialization failed. We'll
-    // insert an invisible dummy node so that the indices between the
-    // XUL menuand the GlobalMenu stay in sync.
-    menuitem = uGlobalMenuDummy::Create();
-  }
-
-  return menuitem;
-}
+#endif

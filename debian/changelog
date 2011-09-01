@@ -2,7 +2,7 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
 
   * New upstream snapshot v9.0 A1 HG20110816R75392
 
-  * Update globalmenu-extension to 2.0 prerelease r230
+  * Update globalmenu-extension to 2.0 prerelease r245
   * Correct the minimum freetype version
     - update debian/rules
     - refresh debian/control
@@ -20,7 +20,7 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/firefox-kde.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 30 Aug 2011 18:00:00 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 01 Sep 2011 10:28:23 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 

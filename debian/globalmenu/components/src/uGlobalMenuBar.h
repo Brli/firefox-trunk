@@ -102,10 +102,13 @@ public:
   // specified nsIWidget
   PRBool WidgetHasSameToplevelWindow(nsIWidget *aWidget);
 
+  // Returns whether the menu was opened via a keyboard shortcut
   PRBool OpenedByKeyboard() { return !!mOpenedByKeyboard; }
 
   // Called from the menu service. Used to hide the DOM element for the menubar
   void SetMenuBarRegistered(PRBool aRegistered);
+
+  PRBool IsRegistered() { return mCancellable == nsnull; }
 
 protected:
   void Focus();

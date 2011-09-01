@@ -57,8 +57,6 @@ class uGlobalMenuDocListener;
 class uGlobalMenu: public uGlobalMenuObject,
                    public uMenuChangeObserver
 {
-  friend class uGlobalMenuItem;
-  friend class uGlobalMenuBar;
 public:
   NS_DECL_UMENUCHANGEOBSERVER
 
@@ -69,6 +67,7 @@ public:
 
   ~uGlobalMenu();
 
+  PRBool CanOpen();
   void OpenMenu();
   void AboutToShowNotify();
   PRBool IsOpening() { return !!mOpening; }
@@ -96,12 +95,14 @@ private:
                                   GVariant *value,
                                   guint timestamp,
                                   void *data);
-  PRBool CanOpen();
   void AboutToOpen();
   void OnOpen();
   void OnClose();
   void Activate();
   void Deactivate();
+  void SetNeedsRebuild() { mNeedsRebuild = PR_TRUE; }
+  void ClearNeedsRebuild() { mNeedsRebuild = PR_FALSE; }
+  PRBool DoesNeedRebuild() { return !!mNeedsRebuild; }
 
   nsCOMPtr<nsIContent> mPopupContent;
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
@@ -109,7 +110,7 @@ private:
   PRUint32 mEventHandlerID;
   PRPackedBool mOpening;
   PRPackedBool mNeedsRebuild;
-  PRPackedBool mDirty;
+  PRPackedBool mPrimed;
 };
 
 #endif

@@ -55,6 +55,8 @@
 #include "uGlobalMenuService.h"
 #include "uWidgetAtoms.h"
 
+#include "uDebug.h"
+
 class RegisterWindowCbData
 {
 public:

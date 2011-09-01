@@ -48,6 +48,8 @@
 
 #include "uGlobalMenuDocListener.h"
 
+#include "uDebug.h"
+
 NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, nsIMutationObserver)
 
 nsresult
@@ -72,9 +74,17 @@ uGlobalMenuDocListener::Destroy()
 }
 
 uGlobalMenuDocListener::uGlobalMenuDocListener() :
+#ifdef DEBUG_chrisccoulson
+  mCount(0),
+#endif
   mDocument(nsnull)
 {
   mContentToObserverTable.Init();
+}
+
+uGlobalMenuDocListener::~uGlobalMenuDocListener()
+{
+  NS_ASSERTION(mCount == 0, "Some nodes forgot to unregister listeners");
 }
 
 void
@@ -216,6 +226,9 @@ uGlobalMenuDocListener::RegisterForContentChanges(nsIContent *aContent,
   }
 
   listeners->AppendElement(aMenuObject);
+#ifdef DEBUG_chrisccoulson
+  mCount++;
+#endif
   return NS_OK;
 }
 
@@ -235,6 +248,9 @@ uGlobalMenuDocListener::UnregisterForContentChanges(nsIContent *aContent,
   for (PRUint32 i = 0; i < length; i++) {
     if (listeners->ElementAt(i) == aMenuObject) {
       listeners->RemoveElementAt(i);
+#ifdef DEBUG_chrisccoulson
+      mCount--;
+#endif
     }
   }
 
