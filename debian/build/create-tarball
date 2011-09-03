@@ -115,9 +115,8 @@ def do_exec(args, quiet=False, ignore_error=False, cwd=None):
 
 def pack_orig_source(name, version, destdir):
     os.chdir('..')
-    full_version = '%s+nobinonly' % version
-    os.rename(name, '%s-%s' % (name, full_version))
-    args = ['tar', '-zcf', os.path.join(destdir, '%s_%s.orig.tar.gz' % (name, full_version)), '%s-%s' % (name, full_version)]
+    os.rename(name, '%s-%s' % (name, version))
+    args = ['tar', '-zcf', os.path.join(destdir, '%s_%s.orig.tar.gz' % (name, version)), '%s-%s' % (name, version)]
 
     do_exec(args)
 

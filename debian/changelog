@@ -34,8 +34,16 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     - update debian/config/branch.mk
     - add debian/build/create-source
     - add debian/build/get-orig-source.mk
+  * Drop the 'nobinonly' suffix from the version number. All this really does
+    is make the version number longer without adding any useful information,
+    because:
+    - We don't strip all binary files as there are a lot remaining which are
+      used by the test-suite (eg, images, fonts, videos, sqlite dbs, extensions)
+    - Stripping binary files from the source tarball isn't the only change we
+      make to it. We also merge in the upstream l10n data, but we don't
+      indicate that in the version number
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 03 Sep 2011 16:23:35 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 03 Sep 2011 21:15:04 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
