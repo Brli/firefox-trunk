@@ -34,6 +34,8 @@ EXCLUDE = [
     'l10n/*/extensions',
     'l10n/*/mail',
     'l10n/*/mobile',
+    'l10n/*/other-licenses/sunbird',
+    'l10n/*/other-licenses/thunderbird',
     'l10n/*/suite',
     'netwerk/protocol/ftp/doc/rfc959.txt',
     'other-licenses/7zstub',
