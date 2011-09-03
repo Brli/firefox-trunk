@@ -196,14 +196,15 @@ def determine_upstream_version(tag):
 
 def ensure_cache(repo, cache):
     dest = os.path.join(cache, os.path.basename(repo))
-    (ret, out) = do_exec(['hg', 'summary'], cwd=dest, quiet=True, ignore_error=True)
-    if ret == 0:
-        do_exec(['hg', 'pull', repo], cwd=dest)
-        do_exec(['hg', 'update'], cwd=dest)
-        return
+    if os.path.isdir(dest):
+        (ret, out) = do_exec(['hg', 'summary'], cwd=dest, quiet=True, ignore_error=True)
+        if ret == 0:
+            do_exec(['hg', 'pull', repo], cwd=dest)
+            do_exec(['hg', 'update'], cwd=dest)
+            return
 
     if not os.path.isdir(cache):
-        os.mkdir(cache)
+        os.makedirs(cache)
 
     do_exec(['hg', 'clone', repo, dest])
 
@@ -321,9 +322,10 @@ def checkout_upstream_l10n(base, cache, tag, all_locales):
             except:
                 # checkout_locale will throw if the specified revision isn't found
                 # In this case, omit it from the tarball
-                shutil.rmtree(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n', locale))
+                if os.path.exists(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n', locale)):
+                    shutil.rmtree(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n', locale))
                 raise
-    except:
+    except RevisionNotFound:
         pass
     finally:
         al.close()
