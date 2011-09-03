@@ -69,6 +69,7 @@ include /usr/share/cdbs/1/rules/tarball.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/class/makefile.mk
+include $(CURDIR)/debian/build/get-orig-source.mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist

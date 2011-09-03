@@ -23,8 +23,19 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     need this to be configurable, so just hard-code it all in debian/rules instead
     - remove debian/build/create-branch-substvars
     - update debian/rules
+  * Drop the mozilla-devscripts dependency. We were only using this for creating
+    tarballs anyway. Instead, implement our own get-orig-source target, which
+    also fixes some problems we were having
+    - update debian/control.in
+    - remove debian/moz-rev.sh
+    - update debian/rules
+    - remove debian/build/mozclient.mk
+    - remove debian/config/firefox.conf
+    - update debian/config/branch.mk
+    - add debian/build/create-source
+    - add debian/build/get-orig-source.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 01 Sep 2011 12:08:29 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 03 Sep 2011 16:23:35 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 

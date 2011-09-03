@@ -6,3 +6,6 @@ ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "110
 # Enable crashreporter on nightly builds newer than Maverick
 MOZ_ENABLE_BREAKPAD = 1
 endif
+
+MOZILLA_REPO = http://hg.mozilla.org/mozilla-central
+L10N_REPO = http://hg.mozilla.org/l10n-central
