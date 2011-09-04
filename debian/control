@@ -35,7 +35,8 @@ Build-Depends: cdbs,
         yasm (>= 1.1),
 	xvfb,
 	imagemagick,
-	libdbusmenu-gtk-dev
+	libdbusmenu-gtk-dev,
+	unzip
 Standards-Version: 3.9.1
 
 Package: firefox-trunk
