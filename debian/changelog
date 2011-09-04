@@ -42,8 +42,11 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     - Stripping binary files from the source tarball isn't the only change we
       make to it. We also merge in the upstream l10n data, but we don't
       indicate that in the version number
+  * Don't error out whilst building the source package if cdbs isn't installed.
+    This enables us to create source packages on lillypilly
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 03 Sep 2011 21:15:04 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 04 Sep 2011 15:09:45 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
