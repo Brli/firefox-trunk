@@ -45,8 +45,13 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
   * Don't error out whilst building the source package if cdbs isn't installed.
     This enables us to create source packages on lillypilly
     - update debian/rules
+  * Only install channel-prefs.js on aurora/beta, where we need it for
+    Test Pilot
+    - update debian/rules
+    - update debian/firefox.install.in
+    - update debian/apport/firefox.py.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 05 Sep 2011 13:25:01 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 06 Sep 2011 13:22:03 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 

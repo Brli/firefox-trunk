@@ -903,7 +903,7 @@ def add_info(report, ui):
     else:
         channelpref = PrefFile("@MOZ_LIBDIR@/defaults/pref/channel-prefs.js", whitelist = [ r'app\.update\.channel' ])
         if channelpref.available == False:
-            report["Channel"] = "Unavailable - %s" % channelpref.parse_error
+            report["Channel"] = 'release'
         else:
             if "app.update.channel" in channelpref:
                 report["Channel"] = channelpref["app.update.channel"]

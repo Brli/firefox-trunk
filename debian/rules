@@ -255,7 +255,7 @@ endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1110" && echo "1"))
 	DEB_DEFINES += -DMOZ_DISABLE_GCONF
 endif
-ifneq (release,$(CHANNEL))
+ifneq (,$(filter aurora beta, $(CHANNEL)))
 	DEB_DEFINES += -DMOZ_UPDATE_CHANNEL="$(CHANNEL)"
 endif
 ifeq (1,$(MOZ_DEBUG))
