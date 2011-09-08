@@ -50,8 +50,12 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     - update debian/rules
     - update debian/firefox.install.in
     - update debian/apport/firefox.py.in
+  * Install the Apport hook as a source package hook
+    - rename debian/apport/firefox.py.in => debian/apport/source_firefox.py.in
+    - update debian/firefox.install.in
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 06 Sep 2011 13:22:03 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 08 Sep 2011 20:45:38 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 

@@ -293,7 +293,7 @@ subst_files = \
 	debian/firefox.sh \
 	debian/apport/blacklist \
 	debian/apport/native-origins \
-	debian/apport/$(MOZ_APP_NAME).py \
+	debian/apport/source_$(MOZ_APP_NAME).py \
 	debian/$(MOZ_APP_NAME).desktop \
 	debian/$(MOZ_APP_NAME).xml \
 	debian/$(MOZ_APP_NAME)-gnome-support.install \

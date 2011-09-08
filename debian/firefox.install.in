@@ -30,7 +30,7 @@ debian/tmp@MOZ_LIBDIR@/defaults/pref/channel-prefs.js
 
 debian/@MOZ_APP_NAME@.desktop /usr/share/applications
 
-debian/apport/@MOZ_APP_NAME@.py /usr/share/apport/package-hooks/
+debian/apport/source_@MOZ_APP_NAME@.py /usr/share/apport/package-hooks/
 
 debian/firefox.sh @MOZ_LIBDIR@
 debian/distribution.ini @MOZ_LIBDIR@/distribution
