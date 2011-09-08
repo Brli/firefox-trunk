@@ -315,9 +315,10 @@ def checkout_locale(base, cache, locale, tag, changesets):
 
 def checkout_upstream_l10n(base, cache, tag, all_locales):
     al = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, ALL_LOCALES), 'r')
-    if not os.path.isdir(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n')):
-        os.makedirs(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n'))
-    changesets = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n', 'changesets'), 'w')
+    l10ndir = os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n')
+    if not os.path.isdir(l10ndir):
+        os.makedirs(l10ndir)
+    changesets = open(os.path.join(l10ndir, 'changesets'), 'w')
     try:
         for line in al:
             locale = line.strip()
@@ -327,14 +328,15 @@ def checkout_upstream_l10n(base, cache, tag, all_locales):
             try:
                 checkout_locale(base, cache, locale, tag, changesets)
                 all_locales[locale] = 1
-            except:
+            except Exception as e:
                 # checkout_locale will throw if the specified revision isn't found
                 # In this case, omit it from the tarball
-                if os.path.exists(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n', locale)):
-                    shutil.rmtree(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n', locale))
-                raise
-    except RevisionNotFound:
-        pass
+                localedir = os.path.join(l10ndir, locale)
+                if os.path.exists(localedir):
+                    shutil.rmtree(localedir)
+                if type(e) != RevisionNotFound:
+                    # Re-raise any unexpected exceptions
+                    raise
     finally:
         al.close()
         changesets.close()
