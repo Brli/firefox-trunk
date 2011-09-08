@@ -298,10 +298,10 @@ def do_checkout(source, dest, tag):
 def checkout_locale(base, cache, locale, tag, changesets):
     local_source = None
     remote_source = os.path.join(base, locale)
-    l10n_cache_top = os.path.join(cache, 'l10n')
     destdir = os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n', locale)
 
     if cache != None:
+        l10n_cache_top = os.path.join(cache, 'l10n')
         ensure_cache(remote_source, l10n_cache_top)
         local_source = os.path.join(l10n_cache_top, locale)
     source = remote_source if local_source == None else local_source

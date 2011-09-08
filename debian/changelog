@@ -60,8 +60,10 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
   * Set "Channel = Unavailable" if channel-prefs.js doesn't contain a
     channel name
     - update debian/apport/source_firefox.py.in
+  * Fix an exception when creating a tarball without a local cache
+    - update debian/build/create-tarball
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 08 Sep 2011 20:53:15 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 08 Sep 2011 22:44:03 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
