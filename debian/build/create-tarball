@@ -183,7 +183,7 @@ def determine_upstream_version(repo, tag):
             else:
                 if upstream_version != '':
                     upstream_version += '.'
-                upstream_version += re.sub(r'~$', '', re.sub(r'([0-9]*)(.*)', r'\2', comp))
+                upstream_version += re.sub(r'~$', '', re.sub(r'([0-9]*)(.*)', r'\1~\2', comp))
 
             if parsed == True and upstream_version == '':
                 raise InvalidTagError(tag)
