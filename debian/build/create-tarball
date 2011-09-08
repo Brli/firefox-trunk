@@ -142,10 +142,11 @@ def pack_embedded_tar(version, name):
             shutil.rmtree(os.path.join(DEB_TAR_SRCDIR, include))
 
 def determine_upstream_version(repo, tag):
+    vf = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, VERSION_FILE), 'r')
+    upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
+    vf.close()
+
     if tag == None:
-        vf = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, VERSION_FILE), 'r')
-        upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
-        vf.close()
         (ret, out) = do_exec(['hg', 'tip'], cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR), quiet=True)
         for line in out.split('\n'):
             if line.startswith('changeset:'):
@@ -169,6 +170,7 @@ def determine_upstream_version(repo, tag):
                     break
     else:
         parsed = False
+        version_from_upstream = upstream_version
         upstream_version = ''
         build = None
         for comp in tag.split('_')[1:]:
@@ -193,6 +195,9 @@ def determine_upstream_version(repo, tag):
 
         if build != None:
             upstream_version += '+build%s' % build
+
+        if not upstream_version.startswith(version_from_upstream):
+            raise InvalidTagError(tag)
 
     print '\n\nUpstream version is %s\n' % upstream_version
     return upstream_version
