@@ -8,6 +8,8 @@ import shutil
 import subprocess
 import sys
 import time
+import urllib
+import xml.dom.minidom
 
 ALL_LOCALES = 'browser/locales/all-locales'
 SHIPPED_LOCALES = 'browser/locales/shipped-locales'
@@ -139,27 +141,28 @@ def pack_embedded_tar(version, name):
         if os.path.exists(os.path.join(DEB_TAR_SRCDIR, include)):
             shutil.rmtree(os.path.join(DEB_TAR_SRCDIR, include))
 
-def determine_upstream_version(tag):
+def determine_upstream_version(repo, tag):
     if tag == None:
         vf = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, VERSION_FILE), 'r')
         upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
         vf.close()
-        # XXX: Is this locale sensitive?
-        (ret, out) = do_exec(['hg', 'log', '-l1'], cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR), quiet=True)
+        (ret, out) = do_exec(['hg', 'tip'], cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR), quiet=True)
         for line in out.split('\n'):
-            if line.startswith('date:'):
-                tstr = ''
-                for field in line.split()[1:6]:
-                    tstr += ' ' + field
-                t = time.strptime(tstr.strip())
-            elif line.startswith('changeset:'):
+            if line.startswith('changeset:'):
                 rev = line.split()[1].split(':')[0].strip()
+                changeset = line.split()[1].split(':')[1].strip()
+                break
+
+        u = urllib.urlopen('%s/pushlog?changeset=%s' % (repo, changeset))
+        dom = xml.dom.minidom.parseString(u.read())
+        t = time.strptime(dom.getElementsByTagName('updated')[0].firstChild.nodeValue.strip(), '%Y-%m-%dT%H:%M:%SZ')
         upstream_version += '~hg%s%s%sr%s' % ('%02d' % t.tm_year, '%02d' % t.tm_mon, '%02d' % t.tm_mday, rev)
+        u.close()
 
         if NEED_POST_CHECKOUT == 1:
             # Embed the moz revision in the version number too. Allows us to respin dailies for comm-central
             # even if the only changes landed in mozilla-central
-            (ret, out) = do_exec(['hg', 'log', '-l1'], cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'mozilla'), quiet=True)
+            (ret, out) = do_exec(['hg', 'tip'], cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'mozilla'), quiet=True)
             for line in out.split('\n'):
                 if line.startswith('changeset:'):
                     upstream_version += '.%s' % line.split()[1].split(':')[0].strip()
@@ -299,10 +302,10 @@ def checkout_locale(base, cache, locale, tag, changesets):
     source = remote_source if local_source == None else local_source
     do_checkout(source, destdir, tag)
 
-    (ret, out) = do_exec(['hg', 'log', '-l1'], cwd=destdir, quiet=True)
+    (ret, out) = do_exec(['hg', 'tip'], cwd=destdir, quiet=True)
     for line in out.split('\n'):
         if line.startswith('changeset:'):
-            changesets.write('%s=%s\n' % (locale, line.split()[1].strip()))
+            changesets.write('%s %s\n' % (locale, line.split()[1].strip()))
             break
 
 def checkout_upstream_l10n(base, cache, tag, all_locales):
@@ -408,7 +411,7 @@ if __name__ == '__main__':
     checkout_upstream_l10n(options.l10nbase, options.cache, options.tag, all_locales)
     verify_all_locales(all_locales, options.blacklist)
 
-    version = determine_upstream_version(options.tag)
+    version = determine_upstream_version(options.repo, options.tag)
     pack_embedded_tar(version, os.path.basename(options.repo))
     pack_orig_source(options.name, version, saved_cwd)
 
