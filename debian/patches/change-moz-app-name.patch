@@ -15,9 +15,9 @@
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
- // nightly=8 hours, official=24 hours
- pref("app.update.interval", 28800);
-@@ -8,14 +8,14 @@ pref("app.update.interval", 28800);
+ pref("app.update.interval", 86400); // 24 hours
+ // The time interval between the downloading of mar file chunks in the
+@@ -7,14 +7,14 @@ pref("app.update.interval", 86400); // 2
  pref("app.update.download.backgroundInterval", 60);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
@@ -38,15 +38,15 @@
  pref("browser.search.param.yahoo-fr", "");
 --- a/browser/branding/official/pref/firefox-branding.js
 +++ b/browser/branding/official/pref/firefox-branding.js
-@@ -1,5 +1,5 @@
--pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
+@@ -1,6 +1,6 @@
+ // Fight update fatigue by suppressing whatsnew tab opening after update (bug 685727)
+ pref("startup.homepage_override_url","");
 -pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
  // Interval: Time between checks for a new version (in seconds)
  // nightly=6 hours, official=24 hours
  pref("app.update.interval", 86400);
-@@ -11,11 +11,11 @@ pref("app.update.download.backgroundInte
+@@ -12,11 +12,11 @@ pref("app.update.download.backgroundInte
  pref("app.update.url.manual", "http://www.firefox.com");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -69,9 +69,9 @@
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
- // nightly=8 hours, official=24 hours
- pref("app.update.interval", 28800);
-@@ -11,11 +11,11 @@ pref("app.update.download.backgroundInte
+ pref("app.update.interval", 7200); // 2 hours
+ // The time interval between the downloading of mar file chunks in the
+@@ -10,11 +10,11 @@ pref("app.update.download.backgroundInte
  pref("app.update.url.manual", "http://nightly.mozilla.org/");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
