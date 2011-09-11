@@ -172,6 +172,7 @@ uGlobalMenu::CanOpen()
 void
 uGlobalMenu::AboutToOpen()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   // XXX: HACK, HACK, HACK ALERT!!
   //      We ignore the first AboutToOpen on top-level menus, because Unity
   //      stupidly sends this signal on all top-levels when the window opens.
@@ -182,9 +183,12 @@ uGlobalMenu::AboutToOpen()
   //      the menu is first opened, when sanity returns again
   //      YUCK!
   if (!mPrimed) {
+    DEBUG_WITH_THIS_MENUOBJECT("Ignoring first AboutToOpen");
     mPrimed = PR_TRUE;
     return;
   }
+
+  mOpening = PR_TRUE;
 
   if (DoesNeedRebuild()) {
     Build();
@@ -193,10 +197,10 @@ uGlobalMenu::AboutToOpen()
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
+    DEBUG_WITH_THIS_MENUOBJECT("Menu has no popup content");
+    mOpening = PR_FALSE;
     return;
   }
-
-  mOpening = PR_TRUE;
 
   PRUint32 count = mMenuObjects.Length();
   for (PRUint32 i = 0; i < count; i++) {
@@ -358,6 +362,8 @@ uGlobalMenu::OnClose()
 void
 uGlobalMenu::SyncProperties()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
+
   UpdateInfoFromContentClass();
   SyncLabelFromContent();
   SyncSensitivityFromContent();
@@ -469,6 +475,8 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
 nsresult
 uGlobalMenu::Build()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
+
   PRUint32 count = mMenuObjects.Length();
   for (PRUint32 i = 0; i < count; i++) {
     RemoveMenuObjectAt(0);
@@ -597,6 +605,8 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
                     nsIContent *aContent,
                     uGlobalMenuBar *aMenuBar)
 {
+  TRACE_WITH_CONTENT(aContent);
+
   uGlobalMenu *menu = new uGlobalMenu();
   if (!menu) {
     return nsnull;
@@ -613,6 +623,8 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
 void
 uGlobalMenu::AboutToShowNotify()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
+
   if (IsDirty()) {
     SyncProperties();
   } else {
@@ -635,15 +647,18 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
                                      nsIContent *aContent,
                                      nsIAtom *aAttribute)
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
 
   if (IsDirty()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as invalid");
     return;
   }
 
   if (mParent->GetType() == Menu &&
       !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't opening. Marking invalid");
     Invalidate();
     return;
   }
@@ -675,14 +690,17 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
                                    nsIContent *aChild,
                                    PRInt32 aIndexInContainer)
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
   if (DoesNeedRebuild()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as needing a rebuild");
     return;
   }
 
   if (!IsOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Parent not opening - Marking as needing a rebuild");
     SetNeedsRebuild();
     return;
   }
@@ -704,14 +722,17 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
                                     nsIContent *aChild,
                                     PRInt32 aIndexInContainer)
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
   if (DoesNeedRebuild()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as needing a rebuild");
     return;
   }
 
   if (!IsOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Parent not opening - Marking as needing a rebuild");
     SetNeedsRebuild();
     return;
   }

@@ -64,6 +64,7 @@ CPPSRCS		= \
 		  uGlobalMenuDocListener.cpp \
 		  uGlobalMenuObject.cpp \
 		  uWidgetAtoms.cpp \
+		  uDebug.cpp \
 		  $(NULL)
 
 ifneq (extensions, $(MOZ_BUILD_APP))

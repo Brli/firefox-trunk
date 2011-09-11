@@ -112,6 +112,8 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
                              nsIContent *aContent,
                              uGlobalMenuBar *aMenuBar)
 {
+  TRACE_WITH_CONTENT(aContent);
+
   uGlobalMenuSeparator *menuitem = new uGlobalMenuSeparator();
   if (!menuitem) {
     return nsnull;

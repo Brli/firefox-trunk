@@ -36,47 +36,8 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#include <nsIContent.h>
-#include <nsIAtom.h>
-
-#include "uGlobalMenuObject.h"
-#include "uGlobalMenu.h"
-#include "uGlobalMenuItem.h"
-#include "uGlobalMenuSeparator.h"
-#include "uGlobalMenuDummy.h"
-#include "uGlobalMenuDocListener.h"
-#include "uGlobalMenuBar.h"
-#include "uWidgetAtoms.h"
-
 #include "uDebug.h"
 
-uGlobalMenuObject*
-NewGlobalMenuItem(uGlobalMenuObject *aParent,
-                  uGlobalMenuDocListener *aListener,
-                  nsIContent *aContent,
-                  uGlobalMenuBar *aMenuBar)
-{
-  TRACE_WITH_CONTENT(aContent);
-
-  if (!aContent->IsXUL()) {
-    return uGlobalMenuDummy::Create();
-  }
-
-  uGlobalMenuObject *menuitem = nsnull;
-  if (aContent->Tag() == uWidgetAtoms::menu) {
-    menuitem = uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
-  } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
-    menuitem = uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
-  } else if (aContent->Tag() == uWidgetAtoms::menuseparator) {
-    menuitem = uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
-  }
-
-  if (!menuitem) {
-    // We didn't recognize the tag, or initialization failed. We'll
-    // insert an invisible dummy node so that the indices between the
-    // XUL menuand the GlobalMenu stay in sync.
-    menuitem = uGlobalMenuDummy::Create();
-  }
-
-  return menuitem;
-}
+#ifdef DEBUG_chrisccoulson
+PRUint32 FunctionTracer::sDepth = 0;
+#endif

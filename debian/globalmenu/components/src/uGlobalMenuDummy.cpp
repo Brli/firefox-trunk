@@ -91,6 +91,8 @@ uGlobalMenuDummy::Init()
 /*static*/ uGlobalMenuObject*
 uGlobalMenuDummy::Create()
 {
+  TRACE();
+
   uGlobalMenuDummy *menuitem = new uGlobalMenuDummy();
   if (!menuitem) {
     return nsnull;

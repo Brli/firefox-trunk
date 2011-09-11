@@ -91,7 +91,7 @@ private:
   nsCOMPtr<nsIContent> mContent;
   nsCOMPtr<imgIRequest> mIconRequest;
   nsIntRect mImageRect;
-  static PRInt32 sImagesInMenus;
+  static PRPackedBool sImagesInMenus;
   static nsCOMPtr<imgILoader> sLoader;
 };
 

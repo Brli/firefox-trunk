@@ -522,6 +522,8 @@ uGlobalMenuItem::SyncStateFromCommand()
 void
 uGlobalMenuItem::SyncProperties()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
+
   if (mCommandContent) {
     mListener->UnregisterForContentChanges(mCommandContent, this);
     mCommandContent = nsnull;
@@ -742,6 +744,8 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
                         nsIContent *aContent,
                         uGlobalMenuBar *aMenuBar)
 {
+  TRACE_WITH_CONTENT(aContent);
+
   uGlobalMenuItem *menuitem = new uGlobalMenuItem();
   if (!menuitem) {
     return nsnull;
@@ -758,6 +762,8 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
 void
 uGlobalMenuItem::AboutToShowNotify()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
+
   if (IsDirty()) {
     SyncProperties();
   } else {
@@ -770,16 +776,19 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
                                          nsIContent *aContent,
                                          nsIAtom *aAttribute)
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
                aContent == mKeyContent,
                "Received an event that wasn't meant for us!");
 
   if (IsDirty()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as invalid");
     return;
   }
 
   if (mParent->GetType() == Menu &&
       !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't opening. Marking invalid");
     Invalidate();
     return;
   }

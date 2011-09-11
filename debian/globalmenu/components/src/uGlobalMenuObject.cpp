@@ -47,7 +47,6 @@
 #include <nsIImageToPixbuf.h>
 #include <nsIDOMNSElement.h>
 #include <nsIDOMDOMTokenList.h>
-#include <nsILookAndFeel.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMElement.h>
@@ -59,6 +58,7 @@
 #include <nsUnicharUtilCIID.h>
 
 #include <libdbusmenu-gtk/menuitem.h>
+#include <gtk/gtk.h>
 
 #include "uGlobalMenuObject.h"
 #include "uGlobalMenuBar.h"
@@ -72,7 +72,10 @@ typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 
 NS_IMPL_ISUPPORTS3(uGlobalMenuIconLoader, imgIDecoderObserver, imgIContainerObserver, nsIRunnable)
 
-PRInt32 uGlobalMenuIconLoader::sImagesInMenus = -1;
+// Yes, we're abusing PRPackedBool a bit here. We initialize it to a value
+// that is neither true or false, so that we don't need another static member
+// to indicate the intialization status of it.
+PRPackedBool uGlobalMenuIconLoader::sImagesInMenus = -1;
 nsCOMPtr<imgILoader> uGlobalMenuIconLoader::sLoader = 0;
 
 PRBool
@@ -88,22 +91,15 @@ uGlobalMenuIconLoader::ShouldShowIcon()
   // which should work in most cases. But, I guess a theme could override this,
   // and then we ignore the users theme settings. Oh well......
 
-  nsresult rv;
+  if (sImagesInMenus == static_cast<PRPackedBool>(-1)) {
+    // We could get the correct GtkSettings by getting the GdkScreen that our
+    // top-level window is on. However, I don't think this matters, as
+    // nsILookAndFeel never had per-screen settings
+    GtkSettings *settings = gtk_settings_get_default();
+    gboolean menus_have_icons;
+    g_object_get(settings, "gtk-menu-images", &menus_have_icons, NULL);
 
-  if (sImagesInMenus == -1) {
-    nsCOMPtr<nsILookAndFeel> laf =
-      do_GetService("@mozilla.org/widget/lookandfeel;1");
-    if (laf) {
-      rv = laf->GetMetric(nsILookAndFeel::eMetric_ImagesInMenus,
-                          sImagesInMenus);
-      if (NS_FAILED(rv)) {
-        NS_WARNING("Failed to get ImagesInMenus metric from nsILookAndFeel");
-        sImagesInMenus = 0;
-      }
-    } else {
-      NS_WARNING("No nsILookAndFeel service?");
-      sImagesInMenus = 0;
-    }
+    sImagesInMenus = !!menus_have_icons;
   }
 
   if (sImagesInMenus) {
@@ -459,6 +455,7 @@ uGlobalMenuObject::GetContent(nsIContent **_retval)
 void
 uGlobalMenuObject::SyncLabelFromContent()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   // Gecko stores the label and access key in separate attributes
   // so we need to convert label="Foo"/accesskey="F" in to
   // label="_Foo" for dbusmenu
@@ -535,6 +532,7 @@ uGlobalMenuObject::SyncLabelFromContent()
 
   nsCAutoString clabel;
   CopyUTF16toUTF8(label, clabel);
+  DEBUG_WITH_THIS_MENUOBJECT("Setting label to \"%s\"", clabel.get());
   dbusmenu_menuitem_property_set(mDbusMenuItem,
                                  DBUSMENU_MENUITEM_PROP_LABEL,
                                  clabel.get());
@@ -545,11 +543,13 @@ uGlobalMenuObject::SyncLabelFromContent()
 void
 uGlobalMenuObject::SyncVisibilityFromContent()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   mContentVisible = !IsHidden();
   PRBool realVis = (!mMenuBar || !ShouldShowOnlyForKb() ||
                     mMenuBar->OpenedByKeyboard()) ?
                     mContentVisible : PR_FALSE;
 
+  DEBUG_WITH_THIS_MENUOBJECT("Setting %s", realVis ? "visible" : "hidden");
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
                                       realVis);
@@ -560,6 +560,13 @@ uGlobalMenuObject::SyncVisibilityFromContent()
 void
 uGlobalMenuObject::SyncSensitivityFromContent()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
+  DEBUG_WITH_THIS_MENUOBJECT("Setting %s", mContent->AttrValueIs(kNameSpaceID_None,
+                                                       uWidgetAtoms::disabled,
+                                                       uWidgetAtoms::_true,
+                                                       eCaseMatters) ?
+                   "disabled" : "enabled");
+
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_ENABLED,
                                       !mContent->AttrValueIs(kNameSpaceID_None,
@@ -574,12 +581,14 @@ uGlobalMenuObject::SyncSensitivityFromContent()
 PRBool
 uGlobalMenuObject::SyncLabelFromCommand(nsIContent *aContent)
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   if (!aContent) {
     return PR_FALSE;
   }
 
   nsAutoString label;
   if (aContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label)) {
+    DEBUG_WITH_THIS_MENUOBJECT("Got label from command: \"%s\"", DEBUG_CSTR_FROM_UTF16(label));
     nsresult rv;
     rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label, label, PR_TRUE);
     return NS_FAILED(rv) ? PR_FALSE : PR_TRUE;
@@ -594,6 +603,7 @@ uGlobalMenuObject::SyncLabelFromCommand(nsIContent *aContent)
 PRBool
 uGlobalMenuObject::SyncSensitivityFromCommand(nsIContent *aContent)
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   if (!aContent) {
     return PR_FALSE;
   }
@@ -601,9 +611,11 @@ uGlobalMenuObject::SyncSensitivityFromCommand(nsIContent *aContent)
   nsresult rv;
   if (aContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::disabled,
                             uWidgetAtoms::_true, eCaseMatters)) {
+    DEBUG_WITH_THIS_MENUOBJECT("Got disabled from command");
     rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
                            NS_LITERAL_STRING("true"), PR_TRUE);
   } else {
+    DEBUG_WITH_THIS_MENUOBJECT("Got enabled from command");
     rv = mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, PR_TRUE);
   }
 
@@ -646,6 +658,7 @@ uGlobalMenuObject::IsHidden()
 void
 uGlobalMenuObject::UpdateVisibility()
 {
+  TRACE_WITH_THIS_MENUOBJECT();
   if (!mMenuBar) {
     return;
   }
@@ -653,6 +666,7 @@ uGlobalMenuObject::UpdateVisibility()
   PRBool newVis = (!ShouldShowOnlyForKb() || mMenuBar->OpenedByKeyboard()) ?
                    mContentVisible : PR_FALSE;
 
+  DEBUG_WITH_THIS_MENUOBJECT("Setting %s", newVis ? "visible" : "hidden");
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
                                       newVis);
