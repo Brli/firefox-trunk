@@ -164,7 +164,7 @@ private:
 #define TRACE()                                               \
   FunctionTracer _marker(__PRETTY_FUNCTION__);
 #else
-#define DEBUG_WITH_THIS_MENUOBJECT(str)
+#define DEBUG_WITH_THIS_MENUOBJECT(format...)
 #define DEBUG_WITH_CONTENT(content, format...)
 #define DEBUG_CSTR_FROM_UTF16(str)
 #define TRACE_WITH_THIS_MENUOBJECT()
