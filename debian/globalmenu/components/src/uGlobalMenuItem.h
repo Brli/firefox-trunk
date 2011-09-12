@@ -85,7 +85,6 @@ private:
   void SyncAccelFromContent();
   void SyncProperties();
   void SyncTypeAndStateFromContent();
-  PRBool SyncStateFromCommand();
   nsresult ConstructDbusMenuItem();
   static void ItemActivatedCallback(DbusmenuMenuitem *menuItem,
                                     PRUint32 timeStamp,

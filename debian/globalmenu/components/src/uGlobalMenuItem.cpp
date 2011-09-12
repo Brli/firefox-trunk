@@ -478,7 +478,8 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
       mType = Radio;
     }
 
-    mToggleState = mContent->AttrValueIs(kNameSpaceID_None, 
+    nsIContent *content = mCommandContent ? mCommandContent : mContent;
+    mToggleState = content->AttrValueIs(kNameSpaceID_None, 
                                         uWidgetAtoms::checked,
                                         uWidgetAtoms::_true,
                                         eCaseMatters);
@@ -487,6 +488,17 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
                                        mToggleState ?
                                        DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED : 
                                         DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED);
+
+    if (mCommandContent) {
+      UGM_BLOCK_EVENTS_FOR_CURRENT_SCOPE();
+      if (mToggleState) {
+        mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                          NS_LITERAL_STRING("true"), PR_TRUE);
+      } else {
+        mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                            PR_TRUE);
+      }
+    }
 
     mIsToggle = PR_TRUE;
   } else {
@@ -497,26 +509,6 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
     mIsToggle = PR_FALSE;
     mType = Normal;
   }
-}
-
-PRBool
-uGlobalMenuItem::SyncStateFromCommand()
-{
-  if (!mCommandContent) {
-    return PR_FALSE;
-  }
-
-  nsresult rv;
-  if (mCommandContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
-                                   uWidgetAtoms::_true, eCaseMatters)) {
-    rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                           NS_LITERAL_STRING("true"), PR_TRUE);
-  } else {
-    rv = mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                             PR_TRUE);
-  }
-
-  return NS_FAILED(rv) ? PR_FALSE : PR_TRUE;
 }
 
 void
@@ -556,16 +548,10 @@ uGlobalMenuItem::SyncProperties()
   ClearInvalid();
 
   UpdateInfoFromContentClass();
-  if (!SyncLabelFromCommand(mCommandContent)) {
-    SyncLabelFromContent();
-  }
-  if (!SyncSensitivityFromCommand(mCommandContent)) {
-    SyncSensitivityFromContent();
-  }
+  SyncLabelFromContent(mCommandContent);
+  SyncSensitivityFromContent(mCommandContent);
   SyncVisibilityFromContent();
-  if (!SyncStateFromCommand()) {
-    SyncTypeAndStateFromContent();
-  }
+  SyncTypeAndStateFromContent();
   SyncAccelFromContent();
   SyncIconFromContent();
 }
@@ -777,9 +763,17 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
                                          nsIAtom *aAttribute)
 {
   TRACE_WITH_THIS_MENUOBJECT();
+  UGM_ENSURE_EVENTS_UNBLOCKED();
   NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
                aContent == mKeyContent,
                "Received an event that wasn't meant for us!");
+
+  if ((aContent == mContent || aContent == mCommandContent) &&
+      aAttribute == uWidgetAtoms::checked &&
+      aContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
+                            uWidgetAtoms::_true, eCaseMatters)) {
+    UncheckSiblings();
+  }
 
   if (IsDirty()) {
     DEBUG_WITH_THIS_MENUOBJECT("Previously marked as invalid");
@@ -793,27 +787,20 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  nsIDocument *doc = mContent->GetCurrentDoc();
-
   if (aContent == mContent) {
     if (aAttribute == uWidgetAtoms::command ||
         aAttribute == uWidgetAtoms::key) {
       SyncProperties();
     } else if (aAttribute == uWidgetAtoms::label ||
                aAttribute == uWidgetAtoms::accesskey) {
-      SyncLabelFromContent();
+      SyncLabelFromContent(mCommandContent);
     } else if (aAttribute == uWidgetAtoms::hidden ||
                aAttribute == uWidgetAtoms::collapsed) {
       SyncVisibilityFromContent();
     } else if (aAttribute == uWidgetAtoms::disabled) {
-      SyncSensitivityFromContent();
-    } else if (aAttribute == uWidgetAtoms::checked) {
-      SyncTypeAndStateFromContent();
-      if (mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
-          uWidgetAtoms::_true, eCaseMatters)) {
-        UncheckSiblings();
-      }
-    } else if (aAttribute == uWidgetAtoms::type) {
+      SyncSensitivityFromContent(mCommandContent);
+    } else if (aAttribute == uWidgetAtoms::checked ||
+               aAttribute == uWidgetAtoms::type) {
       SyncTypeAndStateFromContent();
     } else if (aAttribute == uWidgetAtoms::image) {
       SyncIconFromContent();
@@ -824,11 +811,11 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     }
   } else if (aContent == mCommandContent) {
     if (aAttribute == uWidgetAtoms::label) {
-      SyncLabelFromCommand(mCommandContent);
+      SyncLabelFromContent(mCommandContent);
     } else if (aAttribute == uWidgetAtoms::disabled) {
-      SyncSensitivityFromCommand(mCommandContent);
+      SyncSensitivityFromContent(mCommandContent);
     } else if (aAttribute == uWidgetAtoms::checked) {
-      SyncStateFromCommand();
+      SyncTypeAndStateFromContent();
     }
   } else if (aContent == mKeyContent) {
     SyncAccelFromContent();

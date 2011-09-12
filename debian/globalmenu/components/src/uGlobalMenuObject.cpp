@@ -450,10 +450,8 @@ uGlobalMenuObject::GetContent(nsIContent **_retval)
   NS_IF_ADDREF(*_retval);
 }
 
-// Synchronize the 'label' and 'accesskey' attributes on the DOM node
-// with the 'label' property on the dbusmenu node
 void
-uGlobalMenuObject::SyncLabelFromContent()
+uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
 {
   TRACE_WITH_THIS_MENUOBJECT();
   // Gecko stores the label and access key in separate attributes
@@ -461,7 +459,14 @@ uGlobalMenuObject::SyncLabelFromContent()
   // label="_Foo" for dbusmenu
 
   nsAutoString label;
-  mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
+  if (aContent && aContent->GetAttr(kNameSpaceID_None,
+                                    uWidgetAtoms::label, label)) {
+    UGM_BLOCK_EVENTS_FOR_CURRENT_SCOPE();
+    DEBUG_WITH_CONTENT(aContent, "Content has label \"%s\"", DEBUG_CSTR_FROM_UTF16(label));
+    mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label, label, PR_TRUE);
+  } else {
+    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
+  }
 
   nsAutoString accesskey;
   mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::accesskey, accesskey);
@@ -538,6 +543,12 @@ uGlobalMenuObject::SyncLabelFromContent()
                                  clabel.get());
 }
 
+void
+uGlobalMenuObject::SyncLabelFromContent()
+{
+  SyncLabelFromContent(nsnull);
+}
+
 // Synchronize the 'hidden' attribute on the DOM node with the
 // 'visible' property on the dbusmenu node
 void
@@ -548,78 +559,49 @@ uGlobalMenuObject::SyncVisibilityFromContent()
   PRBool realVis = (!mMenuBar || !ShouldShowOnlyForKb() ||
                     mMenuBar->OpenedByKeyboard()) ?
                     mContentVisible : PR_FALSE;
-
   DEBUG_WITH_THIS_MENUOBJECT("Setting %s", realVis ? "visible" : "hidden");
+
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
                                       realVis);
 }
 
-// Synchronize the 'disabled' attribute on the DOM node with the
-// 'sensitivity' property on the dbusmenu node
 void
-uGlobalMenuObject::SyncSensitivityFromContent()
+uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aContent)
 {
   TRACE_WITH_THIS_MENUOBJECT();
-  DEBUG_WITH_THIS_MENUOBJECT("Setting %s", mContent->AttrValueIs(kNameSpaceID_None,
-                                                       uWidgetAtoms::disabled,
-                                                       uWidgetAtoms::_true,
-                                                       eCaseMatters) ?
-                   "disabled" : "enabled");
+
+  nsIContent *content;
+  if (aContent) {
+    content = aContent;
+  } else {
+    content = mContent;
+  }
+  PRBool disabled = content->AttrValueIs(kNameSpaceID_None,
+                                         uWidgetAtoms::disabled,
+                                         uWidgetAtoms::_true,
+                                         eCaseMatters);
+  DEBUG_WITH_THIS_MENUOBJECT("Setting %s", disabled ? "disabled" : "enabled");
+
+  if (aContent) {
+    UGM_BLOCK_EVENTS_FOR_CURRENT_SCOPE();
+    if (disabled) {
+      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
+                        NS_LITERAL_STRING("true"), PR_TRUE);
+    } else {
+      mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, PR_TRUE);
+    }
+  }
 
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_ENABLED,
-                                      !mContent->AttrValueIs(kNameSpaceID_None,
-                                                             uWidgetAtoms::disabled,
-                                                             uWidgetAtoms::_true,
-                                                             eCaseMatters));
+                                      !disabled);
 }
 
-// Synchronize the 'label' attribute on our content node with that from
-// the specified command node. Returns false if nothing was synchronized,
-// else it returns true and the document is notified
-PRBool
-uGlobalMenuObject::SyncLabelFromCommand(nsIContent *aContent)
+void
+uGlobalMenuObject::SyncSensitivityFromContent()
 {
-  TRACE_WITH_THIS_MENUOBJECT();
-  if (!aContent) {
-    return PR_FALSE;
-  }
-
-  nsAutoString label;
-  if (aContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label)) {
-    DEBUG_WITH_THIS_MENUOBJECT("Got label from command: \"%s\"", DEBUG_CSTR_FROM_UTF16(label));
-    nsresult rv;
-    rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label, label, PR_TRUE);
-    return NS_FAILED(rv) ? PR_FALSE : PR_TRUE;
-  }
-
-  return PR_FALSE;
-}
-
-// Synchronize the 'disabled' attribute on our content node with that from
-// the specified command node. Returns false if nothing was synchronized,
-// else it returns true and the document is notified
-PRBool
-uGlobalMenuObject::SyncSensitivityFromCommand(nsIContent *aContent)
-{
-  TRACE_WITH_THIS_MENUOBJECT();
-  if (!aContent) {
-    return PR_FALSE;
-  }
-
-  nsresult rv;
-  if (aContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::disabled,
-                            uWidgetAtoms::_true, eCaseMatters)) {
-    DEBUG_WITH_THIS_MENUOBJECT("Got disabled from command");
-    rv = mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
-                           NS_LITERAL_STRING("true"), PR_TRUE);
-  } else {
-    DEBUG_WITH_THIS_MENUOBJECT("Got enabled from command");
-    rv = mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, PR_TRUE);
-  }
-
-  return NS_FAILED(rv) ? PR_FALSE : PR_TRUE;
+  SyncSensitivityFromContent(nsnull);
 }
 
 void

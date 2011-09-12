@@ -63,6 +63,14 @@ enum uMenuObjectType {
 class uGlobalMenuObject;
 class uGlobalMenuBar;
 
+#define UGM_BLOCK_EVENTS_FOR_CURRENT_SCOPE()                       \
+  uGlobalMenuObjectEventBlocker _event_blocker(this);
+#define UGM_ENSURE_EVENTS_UNBLOCKED()                              \
+  if (mEventsBlocked) {                                            \
+    DEBUG_WITH_THIS_MENUOBJECT("Events are blocked on this node"); \
+    return;                                                        \
+  }
+
 class uGlobalMenuIconLoader: public imgIDecoderObserver,
                              public nsRunnable
 {
@@ -98,11 +106,13 @@ private:
 class uGlobalMenuObject
 {
   friend class uGlobalMenuIconLoader;
+  friend class uGlobalMenuObjectEventBlocker;
 public:
   uGlobalMenuObject (uMenuObjectType aType): mDbusMenuItem(nsnull),
                                              mListener(nsnull),
                                              mParent(nsnull),
                                              mType(aType),
+                                             mEventsBlocked(PR_FALSE),
                                              mDirty(PR_FALSE)
                                              { };
   DbusmenuMenuitem* GetDbusMenuItem() { return mDbusMenuItem; }
@@ -113,12 +123,12 @@ public:
   virtual ~uGlobalMenuObject() { };
 
 protected:
+  void SyncLabelFromContent(nsIContent *aContent);
   void SyncLabelFromContent();
   void SyncVisibilityFromContent();
+  void SyncSensitivityFromContent(nsIContent *aContent);
   void SyncSensitivityFromContent();
   void SyncIconFromContent();
-  PRBool SyncLabelFromCommand(nsIContent *aContent);
-  PRBool SyncSensitivityFromCommand(nsIContent *aContent);
   void UpdateInfoFromContentClass();
   void UpdateVisibility();
   void DestroyIconLoader();
@@ -135,6 +145,7 @@ protected:
   uMenuObjectType mType;
   uGlobalMenuBar *mMenuBar;
   PRPackedBool mContentVisible;
+  PRPackedBool mEventsBlocked;
 
 private:
   PRBool ShouldShowOnlyForKb() { return !!mShowOnlyForKb; }
@@ -143,6 +154,21 @@ private:
   PRPackedBool mWithFavicon;
   PRPackedBool mShowOnlyForKb;
   PRPackedBool mDirty;
+};
+
+class uGlobalMenuObjectEventBlocker
+{
+public:
+  uGlobalMenuObjectEventBlocker(uGlobalMenuObject *aMenuObject):
+                                mMenuObject(aMenuObject)
+  {
+    mMenuObject->mEventsBlocked = PR_TRUE;
+  }
+
+  ~uGlobalMenuObjectEventBlocker() { mMenuObject->mEventsBlocked = PR_FALSE; }
+
+private:
+  uGlobalMenuObject *mMenuObject;
 };
 
 #endif
