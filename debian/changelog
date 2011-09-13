@@ -64,8 +64,13 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     - update debian/build/create-tarball
   * Properly handle missing revisions in locales
     - update debian/build/create-tarball
+  * Wildcards match the directory separator by default with tar, causing some
+    l10n folders to be unintentionally excluded from the tarball. For each
+    exclude entry, specify whether we want wildcards to match the directory
+    separator (fixes LP: #848211)
+    - update debian/build/create-tarball
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 12 Sep 2011 14:48:52 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 13 Sep 2011 09:18:19 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 

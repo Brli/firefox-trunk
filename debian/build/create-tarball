@@ -22,42 +22,40 @@ INCLUDE = [
 ]
 
 EXCLUDE = [
-    'build/mobile/sutagent/android',
-    'build/package/mac_osx/mozilla.dsstore',
-    'config/*.exe',
-    'config/*.pyc',
-    'gfx/angle/samples/gles2_book',
-    'intl/unicharutil/tools/data',
-    'layout/doc/object_diagram_template.sda',
-    'layout/doc/SpaceMgr_BlockReflSt_OD.sda',
-    'l10n/*/calendar',
-    'l10n/*/editor',
-    'l10n/*/embedding',
-    'l10n/*/extensions',
-    'l10n/*/mail',
-    'l10n/*/mobile',
-    'l10n/*/other-licenses/sunbird',
-    'l10n/*/other-licenses/thunderbird',
-    'l10n/*/suite',
-    'netwerk/protocol/ftp/doc/rfc959.txt',
-    'other-licenses/7zstub',
-    'other-licenses/nsis',
-    'security/nss/cmd/samples',
-    'testing/extensions/community',
-    'testing/mozmill/mozmill/docs/_build/doctrees',
-    'testing/mozmill/virtualenv/virtualenv_support',
-    'toolkit/crashreporter/client/macbuild/Contents/Resources/crashreporter.icns',
-    'toolkit/crashreporter/client/macbuild/Contents/Resources/English.lproj/MainMenu.nib/keyedobjects.nib',
-    'toolkit/crashreporter/client/macbuild/Contents/Resources/English.lproj/MainMenuRTL.nib/keyedobjects.nib',
-    'toolkit/crashreporter/google-breakpad/src/client/mac',
-    'toolkit/crashreporter/google-breakpad/src/tools/windows',
-    'toolkit/crashreporter/tools/win32/*.exe',
-    'toolkit/mozapps/update/test/unit/data/*.exe',
-    'toolkit/mozapps/update/updater/macbuild/Contents/Resources/updater.icns',
-    'toolkit/mozapps/update/updater/macbuild/Contents/Resources/English.lproj/MainMenu.nib/keyedobjects.nib',
-    'widget/src/cocoa/resources/MainMenu.nib',
-    'xpcom/tests/unit/data/presentation.key',
-    'xpcom/tests/unit/data/SmallApp.app'
+    ['build/mobile/sutagent/android', False],
+    ['build/package/mac_osx/mozilla.dsstore', False],
+    ['*.exe', True],
+    ['*.pyc', True],
+    ['gfx/angle/samples/gles2_book', False],
+    ['intl/unicharutil/tools/data', False],
+    ['layout/doc/object_diagram_template.sda', False],
+    ['layout/doc/SpaceMgr_BlockReflSt_OD.sda', False],
+    ['l10n/*/calendar', False],
+    ['l10n/*/editor', False],
+    ['l10n/*/embedding', False],
+    ['l10n/*/extensions', False],
+    ['l10n/*/mail', False],
+    ['l10n/*/mobile', False],
+    ['l10n/*/other-licenses/sunbird', False],
+    ['l10n/*/other-licenses/thunderbird', False],
+    ['l10n/*/suite', False],
+    ['netwerk/protocol/ftp/doc/rfc959.txt', False],
+    ['other-licenses/7zstub', False],
+    ['other-licenses/nsis', False],
+    ['security/nss/cmd/samples', False],
+    ['testing/extensions/community', False],
+    ['testing/mozmill/mozmill/docs/_build/doctrees', False],
+    ['testing/mozmill/virtualenv/virtualenv_support', False],
+    ['toolkit/crashreporter/client/macbuild/Contents/Resources/crashreporter.icns', False],
+    ['toolkit/crashreporter/client/macbuild/Contents/Resources/English.lproj/MainMenu.nib/keyedobjects.nib', False],
+    ['toolkit/crashreporter/client/macbuild/Contents/Resources/English.lproj/MainMenuRTL.nib/keyedobjects.nib', False],
+    ['toolkit/crashreporter/google-breakpad/src/client/mac', False],
+    ['toolkit/crashreporter/google-breakpad/src/tools/windows', False],
+    ['toolkit/mozapps/update/updater/macbuild/Contents/Resources/updater.icns', False],
+    ['toolkit/mozapps/update/updater/macbuild/Contents/Resources/English.lproj/MainMenu.nib/keyedobjects.nib', False],
+    ['widget/src/cocoa/resources/MainMenu.nib', False],
+    ['xpcom/tests/unit/data/presentation.key', False],
+    ['xpcom/tests/unit/data/SmallApp.app', False]
 ]
 
 class DependencyNotFound(Exception):
@@ -125,8 +123,9 @@ def pack_orig_source(name, version, destdir):
 def pack_embedded_tar(version, name):
     args = ['tar', '-jvc', '--exclude-vcs']
     for exclude in EXCLUDE:
+        args.append('--no-wildcards-match-slash') if exclude[1] == False else args.append('--wildcards-match-slash')
         args.append('--exclude')
-        args.append(os.path.join(DEB_TAR_SRCDIR, exclude))
+        args.append(os.path.join(DEB_TAR_SRCDIR, exclude[0]))
     args.append('-f')
     args.append('%s-%s-source.tar.bz2' % (name, version))
     for include in INCLUDE:
