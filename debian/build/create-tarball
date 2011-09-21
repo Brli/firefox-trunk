@@ -233,14 +233,15 @@ def verify_all_locales(all_locales, blfile):
     print '\n\n***Checking that required locales are present***\n'
 
     blacklist = {}
-    bl = open(blfile, 'r')
-    for line in bl:
-        locale = line.strip()
-        if locale.startswith('#'):
-            continue
+    if blfile:
+        bl = open(blfile, 'r')
+        for line in bl:
+            locale = line.strip()
+            if locale.startswith('#'):
+                continue
 
-        blacklist[locale] = 1
-    bl.close()
+            blacklist[locale] = 1
+        bl.close()
 
     sl = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, SHIPPED_LOCALES), 'r')
     for line in sl:
@@ -400,6 +401,9 @@ if __name__ == '__main__':
 
     if not options.l10nbase and ALL_LOCALES != None:
         parser.error('Must specify a base repository for l10n data')
+
+    if options.blacklist and not os.path.exists(options.blacklist):
+        parser.error('Locale blacklist file does not exist')
 
     saved_cwd = os.getcwd()
     check_dependencies()

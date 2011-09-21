@@ -69,8 +69,13 @@ firefox-trunk (9.0~a1~hg20110816r75392+nobinonly+nobinonly-0ubuntu1) UNRELEASED;
     exclude entry, specify whether we want wildcards to match the directory
     separator (fixes LP: #848211)
     - update debian/build/create-tarball
+  * Ensure that create-tarball can handle there not being a locale blacklist
+    - update debian/build/create-tarball
+  * Drop xpt.py and xpidl from $LIBDIR. xpidl is gone, and xpt.py isn't included
+    there in the upstream SDK
+    - update debian/firefox-dev.links.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 13 Sep 2011 09:18:19 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 21 Sep 2011 16:42:27 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
