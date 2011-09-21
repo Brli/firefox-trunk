@@ -340,7 +340,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@sed -e 's/@SYSLIBS_BD@/$(SYSLIBS_BD)/g' \
 	     -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.in > debian/control
 
-	@perl debian/build/dump-langpack-control-entries -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
+	@perl debian/build/dump-langpack-control-entries.pl -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
 
 	@sed -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
@@ -428,7 +428,7 @@ common-binary-post-install-indep::
 		then \
 			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
 			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
-			id=`python $(CURDIR)/debian/build/get-xpi-id $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
+			id=`python $(CURDIR)/debian/build/get-xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
 			[ $$? -eq 0 ] || exit 1 ; \
 			echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi to $${id}.xpi in $(MOZ_APP_NAME)-locale-$${pkgname}" ; \
 			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} usr/lib/$(MOZ_APP_NAME)-addons/extensions ; \
@@ -519,12 +519,12 @@ refresh-supported-locales:
 		else \
 			tarball_opts="" ; \
 		fi ; \
-		python debian/build/extract-file -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
+		python debian/build/extract-file.py -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 else
-	@perl debian/build/refresh-supported-locales -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 endif
 	
 

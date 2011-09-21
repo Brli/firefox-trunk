@@ -11,4 +11,4 @@ ARGS += -c $(LOCAL_BRANCH)
 endif
 
 get-orig-source:
-	python $(CURDIR)/debian/build/create-tarball $(ARGS)
+	python $(CURDIR)/debian/build/create-tarball.py $(ARGS)
