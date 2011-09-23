@@ -504,14 +504,16 @@ endif
 	rm -rf debian/compare-locales
 	mv compare-locales-tmp debian/compare-locales
 
-refresh-supported-locales:
+refresh-supported-locales: real-refresh-supported-locales debian/control
+
+real-refresh-supported-locales:
 	@echo ""
 	@echo "****************************************"
 	@echo "* Refreshing list of shipped languages *"
 	@echo "****************************************"
 	@echo ""
 
-	@if [ ! -f $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales ] ; \
+	@if [ ! -f $(CURDIR)/upstream-shipped-locales ] ; \
 	then \
 		if [ ! -z $(TARBALL) ] ; \
 		then \
@@ -519,19 +521,24 @@ refresh-supported-locales:
 		else \
 			tarball_opts="" ; \
 		fi ; \
-		python debian/build/extract-file.py -d $(CURDIR)/$(DEB_BUILDDIR)/browser/locales $$tarball_opts $(DEB_TAR_SRCDIR)/browser/locales/shipped-locales ; \
+		python debian/build/extract-file.py -d $(CURDIR) $$tarball_opts upstream-shipped-locales ; \
+		touch $(CURDIR)/upstream-shipped-locales.stamp ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/upstream-shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 else
-	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/$(DEB_BUILDDIR)/browser/locales/shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/upstream-shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 endif
+	@if [ -f $(CURDIR)/upstream-shipped-locales.stamp ] ; \
+	then \
+		rm -f $(CURDIR)/upstream-shipped-locales $(CURDIR)/upstream-shipped-locales.stamp ; \
+	fi
 	
 
 pre-auto-refresh-supported-locales:
 	cp debian/config/locales.shipped debian/config/locales.shipped.old
 
-auto-refresh-supported-locales: pre-auto-refresh-supported-locales refresh-supported-locales
+auto-refresh-supported-locales: pre-auto-refresh-supported-locales real-refresh-supported-locales
 	@if ! cmp -s debian/config/locales.shipped debian/config/locales.shipped.old ; \
 	then \
 		echo "" ; \

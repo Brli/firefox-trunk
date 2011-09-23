@@ -72,13 +72,15 @@ if __name__ == '__main__':
 
     filename = args[0]
 
-    if os.path.abspath(filename) == dest:
-        print >> sys.stderr, "Input and destination filenames shouldn't be the same"
+    if os.path.exists(os.path.join(dest, filename)):
+        exit(0)
+
+    if filename.startswith('/'):
+        print >> sys.stderr, "Input filename shouldn't be absolute"
         exit(1)
 
-    if os.path.exists(os.path.abspath(filename)):
-        shutil.copyfile(os.path.abspath(filename), dest)
-        exit(0)
+    if not os.path.isdir(dest):
+        os.makedirs(dest)
 
     if tarball == None:
         try:
@@ -97,31 +99,27 @@ if __name__ == '__main__':
 
             tb = tarfile.open(tarball, 'r')
             names = tb.getnames()
-            bz2file = None
-            for name in names:
-                (root, ext) = os.path.splitext(name)
-                if ext == '.bz2':
-                    bz2file = name
-                    break
-            if bz2file:
-                tb.extract(bz2file, temp)
-            else:
-                print >> sys.stderr, "File not found and no valid embedded tar file found in source tarball"
-                exit(1)
 
-            extract_file_from_archive(filename, dest, os.path.join(temp, bz2file))
+            if os.path.join(names[0], filename) in names:
+                tb.extract(os.path.join(names[0], filename), temp)
+                shutil.copyfile(os.path.join(temp, names[0], filename), os.path.join(dest, filename))
+            else:
+                bz2file = None
+                for name in names:
+                    (root, ext) = os.path.splitext(name)
+                    if ext == '.bz2':
+                        bz2file = name
+                        break
+                if bz2file:
+                    tb.extract(bz2file, temp)
+                else:
+                    print >> sys.stderr, "File not found and no valid embedded tar file found in source tarball"
+                    exit(1)
+
+                extract_file_from_archive(filename, dest, os.path.join(temp, bz2file))
 
         except FileExtractException as e:
             print >> sys.stderr, str(e)
-            exit(1)
-
-        except IOError as e:
-            filename = ": '" + e.filename + "'" if e.filename != None else ""
-            print >> sys.stderr, "IOError: [Errno: " + str(e.errno) + "] " + e.strerror + filename
-            exit(1)
-
-        except:
-            print >> sys.stderr, "Unexpected error"
             exit(1)
 
         finally:

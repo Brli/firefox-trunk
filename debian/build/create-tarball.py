@@ -133,6 +133,10 @@ def pack_embedded_tar(version, name):
 
     do_exec(args)
 
+    # Keep a copy of shipped-locales outside of the embedded tar, so we
+    # can access this quickly in the packaging
+    shutil.copy(os.path.join(DEB_TAR_SRCDIR, SHIPPED_LOCALES), 'upstream-shipped-locales')
+
     # We need to manually clean up the files we packed now. We
     # can't pass --remove-files to tar, because it uses rmdir, which
     # fails because we exclude some files
