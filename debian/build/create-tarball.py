@@ -216,6 +216,7 @@ def ensure_cache(repo, cache):
     do_exec(['hg', 'clone', repo, dest])
 
 def post_checkout(repo, cache, tag):
+    moz_local = None
     moz_repo = os.path.join(os.path.dirname(repo), os.path.basename(repo).replace('comm', 'mozilla'))
     if cache != None:
         ensure_cache(moz_repo, cache)
