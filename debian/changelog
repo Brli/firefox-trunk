@@ -89,8 +89,11 @@ firefox-trunk (9.0~a1~hg20110923r77387-0ubuntu1) UNRELEASED; urgency=low
   * Language packs depend on ${misc:Depends} to quieten a lintian warning
     - update debian/control.langpacks
     - refresh debian/control
+  * Move distribution.ini to a stable install path in Oneiric for now, so it
+    can be diverted. Need to find a nicer way to do this
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 23 Sep 2011 23:42:00 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 24 Sep 2011 02:02:41 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
