@@ -93,7 +93,7 @@ firefox-trunk (9.0~a1~hg20110923r77387-0ubuntu1) UNRELEASED; urgency=low
     can be diverted. Need to find a nicer way to do this
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 24 Sep 2011 02:02:41 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 24 Sep 2011 19:18:45 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
@@ -216,7 +216,7 @@ firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; ur
       libgnomeui-dev
     - Specify minimum versions for libnspr4-dev, libcairo2-dev, libsqlite3-dev
       and libnss3-dev when using system versions of those libs
-  * Disable gconf support on >= 11.10
+  * Disable gconf support on >=12.04 
     - update debian//rules
     - update debian/mozconfig.in
   * Refresh binary dependencies:
