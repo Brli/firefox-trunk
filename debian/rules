@@ -588,4 +588,3 @@ endif
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
 	rm -rf compare-locales
-	rm -rf $(DEB_BUILDDIR)/browser/locales
