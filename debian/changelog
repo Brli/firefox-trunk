@@ -1,6 +1,6 @@
-firefox-trunk (9.0~a1~hg20110923r77387-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v9.0 A1 HG20110923R77387
+  * New upstream snapshot v9.0 A1 HG20110925R77515
 
   * Update globalmenu-extension to 2.0.1
   * Correct the minimum freetype version
@@ -90,7 +90,7 @@ firefox-trunk (9.0~a1~hg20110923r77387-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control.langpacks
     - refresh debian/control
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sun, 25 Sep 2011 08:23:35 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 26 Sep 2011 21:19:35 +0100
 
 firefox-trunk (8.0~a1~hg20110815r75289+nobinonly+nobinonly-0ubuntu1) oneiric; urgency=low
 
