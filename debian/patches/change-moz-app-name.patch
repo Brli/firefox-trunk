@@ -7,8 +7,10 @@
  other-licenses/branding/firefox/pref/firefox-branding.js  |    8 +++---
  6 files changed, 29 insertions(+), 29 deletions(-)
 
---- a/browser/branding/unofficial/pref/firefox-branding.js
-+++ b/browser/branding/unofficial/pref/firefox-branding.js
+Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
++++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -17,7 +19,7 @@
  // The time interval between checks for a new version (in seconds)
  pref("app.update.interval", 86400); // 24 hours
  // The time interval between the downloading of mar file chunks in the
-@@ -7,14 +7,14 @@ pref("app.update.interval", 86400); // 2
+@@ -7,14 +7,14 @@
  pref("app.update.download.backgroundInterval", 60);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
@@ -36,8 +38,10 @@
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
---- a/browser/branding/official/pref/firefox-branding.js
-+++ b/browser/branding/official/pref/firefox-branding.js
+Index: mozilla/browser/branding/official/pref/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/branding/official/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
++++ mozilla/browser/branding/official/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
 @@ -1,6 +1,6 @@
  // Fight update fatigue by suppressing whatsnew tab opening after update (bug 685727)
  pref("startup.homepage_override_url","");
@@ -46,7 +50,7 @@
  // Interval: Time between checks for a new version (in seconds)
  // nightly=6 hours, official=24 hours
  pref("app.update.interval", 86400);
-@@ -12,11 +12,11 @@ pref("app.update.download.backgroundInte
+@@ -12,11 +12,11 @@
  pref("app.update.url.manual", "http://www.firefox.com");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -61,8 +65,10 @@
  
  pref("browser.search.param.ms-pc", "MOZI");
  pref("browser.search.param.yahoo-fr", "moz35");
---- a/browser/branding/nightly/pref/firefox-branding.js
-+++ b/browser/branding/nightly/pref/firefox-branding.js
+Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
++++ mozilla/browser/branding/nightly/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -71,7 +77,7 @@
  // The time interval between checks for a new version (in seconds)
  pref("app.update.interval", 7200); // 2 hours
  // The time interval between the downloading of mar file chunks in the
-@@ -10,11 +10,11 @@ pref("app.update.download.backgroundInte
+@@ -10,11 +10,11 @@
  pref("app.update.url.manual", "http://nightly.mozilla.org/");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -86,9 +92,11 @@
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
---- a/browser/branding/aurora/pref/firefox-branding.js
-+++ b/browser/branding/aurora/pref/firefox-branding.js
-@@ -12,11 +12,11 @@ pref("app.update.download.backgroundInte
+Index: mozilla/browser/branding/aurora/pref/firefox-branding.js
+===================================================================
+--- mozilla.orig/browser/branding/aurora/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
++++ mozilla/browser/branding/aurora/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
+@@ -12,11 +12,11 @@
  pref("app.update.url.manual", "http://www.mozilla.com/firefox/channel/");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -103,8 +111,10 @@
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
---- a/browser/confvars.sh
-+++ b/browser/confvars.sh
+Index: mozilla/browser/confvars.sh
+===================================================================
+--- mozilla.orig/browser/confvars.sh	2011-09-25 03:03:29.000000000 +0100
++++ mozilla/browser/confvars.sh	2011-09-27 14:00:29.477966049 +0100
 @@ -36,8 +36,9 @@
  #
  # ***** END LICENSE BLOCK *****
@@ -116,3 +126,16 @@
  MOZ_UPDATER=1
  MOZ_PHOENIX=1
  
+Index: mozilla/Makefile.in
+===================================================================
+--- mozilla.orig/Makefile.in	2011-09-27 14:00:34.997965951 +0100
++++ mozilla/Makefile.in	2011-09-27 14:01:07.377965376 +0100
+@@ -161,7 +161,7 @@
+ endif
+ 
+ SYMBOL_INDEX_NAME = \
+-  $(MOZ_APP_NAME)-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
++  firefox-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
+ 
+ buildsymbols:
+ ifdef MOZ_CRASHREPORTER
