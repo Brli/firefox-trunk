@@ -6,8 +6,12 @@ firefox-trunk (10.0~a1~hg20110925r77515-0ubuntu1) UNRELEASED; urgency=low
   * Make sure the filename of our symbol index is of the format that
     upstream expects
     - update debian/patches/change-moz-app-name.patch
+  * Don't fail to create the tarball if locales listed in all-locales don't
+    really exist upstream. We already check that everything in shipped-locales
+    exists
+    - update debian/create-tarball.py
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 27 Sep 2011 18:57:25 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 29 Sep 2011 00:46:31 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 

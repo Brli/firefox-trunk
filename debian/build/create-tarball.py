@@ -339,9 +339,6 @@ def checkout_upstream_l10n(base, cache, tag, all_locales):
                 localedir = os.path.join(l10ndir, locale)
                 if os.path.exists(localedir):
                     shutil.rmtree(localedir)
-                if type(e) != RevisionNotFound:
-                    # Re-raise any unexpected exceptions
-                    raise
     finally:
         al.close()
         changesets.close()
