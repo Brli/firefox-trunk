@@ -229,6 +229,7 @@ def post_checkout(repo, cache, tag):
     if moz_local != None:
         args.append('--mozilla-repo=%s' % moz_local)
     if tag != None:
+        args.append('--comm-rev=%s' % tag)
         args.append('--mozilla-rev=%s' % tag)
     do_exec(args, cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR))
 
