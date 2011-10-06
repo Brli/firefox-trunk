@@ -16,6 +16,10 @@ firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
   * Rebase patches for PRBool -> bool transition (bmo: 675553)
     - update debian/patches/allow-lockPref-everywhere.patch
     - update debian/patches/mozilla-kde.patch
+  * Drop patch after upstream landing of (bmo: 690432) aka Logging.h passes a
+    string directly to printf
+    - drop debian/patches/printf-fix.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 05 Oct 2011 20:28:51 -0500
 
