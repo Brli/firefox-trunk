@@ -13,8 +13,9 @@ firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
     - update debian/create-tarball.py
 
   [ Micah Gersten <micahg@ubuntu.com> ]
-  * Rebase patch for PRBool -> bool transition (bmo: 675553)
+  * Rebase patches for PRBool -> bool transition (bmo: 675553)
     - update debian/patches/allow-lockPref-everywhere.patch
+    - update debian/patches/mozilla-kde.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 05 Oct 2011 20:28:51 -0500
 
