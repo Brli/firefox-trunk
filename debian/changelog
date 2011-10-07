@@ -3,7 +3,7 @@ firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
   * New upstream snapshot v10.0 A1 HG20110925R77515
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * Update globalmenu-extension to 2.0.2 prerelease r256
+  * Update globalmenu-extension to 2.0.2 prerelease r257
   * Make sure the filename of our symbol index is of the format that
     upstream expects
     - update debian/patches/change-moz-app-name.patch
@@ -21,7 +21,8 @@ firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/printf-fix.patch
     - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 05 Oct 2011 20:28:51 -0500
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 07 Oct 2011 19:24:37 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 
