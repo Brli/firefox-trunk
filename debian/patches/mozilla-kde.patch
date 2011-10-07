@@ -35,8 +35,8 @@ Forwarded: no
 
 Index: mozilla/modules/libpref/src/Makefile.in
 ===================================================================
---- mozilla.orig/modules/libpref/src/Makefile.in
-+++ mozilla/modules/libpref/src/Makefile.in
+--- mozilla.orig/modules/libpref/src/Makefile.in	2011-10-07 03:07:14.000000000 +0100
++++ mozilla/modules/libpref/src/Makefile.in	2011-10-07 21:09:40.617829391 +0100
 @@ -82,6 +82,8 @@
  	$(ELOG) $(CCC) $(OUTOPTION)$@ -c $(COMPILE_CXXFLAGS:-O2=-O1) $(_VPATH_SRCS)
  endif
@@ -48,8 +48,8 @@ Index: mozilla/modules/libpref/src/Makefile.in
  	$(PYTHON) $(topsrcdir)/config/Preprocessor.py $(PREF_PPFLAGS) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $^ > $@
 Index: mozilla/toolkit/content/jar.mn
 ===================================================================
---- mozilla.orig/toolkit/content/jar.mn
-+++ mozilla/toolkit/content/jar.mn
+--- mozilla.orig/toolkit/content/jar.mn	2011-10-07 03:08:13.000000000 +0100
++++ mozilla/toolkit/content/jar.mn	2011-10-07 21:09:40.617829391 +0100
 @@ -45,6 +45,8 @@
  *+ content/global/bindings/colorpicker.xml     (widgets/colorpicker.xml)
  *+ content/global/bindings/datetimepicker.xml  (widgets/datetimepicker.xml)
@@ -70,8 +70,8 @@ Index: mozilla/toolkit/content/jar.mn
  *+ content/global/bindings/resizer.xml         (widgets/resizer.xml)
 Index: mozilla/toolkit/content/widgets/dialog-kde.xml
 ===================================================================
---- mozilla.orig/toolkit/content/widgets/dialog-kde.xml
-+++ mozilla/toolkit/content/widgets/dialog-kde.xml
+--- mozilla.orig/toolkit/content/widgets/dialog-kde.xml	2011-10-07 21:06:22.000000000 +0100
++++ mozilla/toolkit/content/widgets/dialog-kde.xml	2011-10-07 21:09:40.617829391 +0100
 @@ -16,7 +16,7 @@
            
        <xul:hbox class="dialog-button-box" anonid="buttons"
@@ -99,8 +99,8 @@ Index: mozilla/toolkit/content/widgets/dialog-kde.xml
          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
 Index: mozilla/toolkit/content/widgets/preferences-kde.xml
 ===================================================================
---- mozilla.orig/toolkit/content/widgets/preferences-kde.xml
-+++ mozilla/toolkit/content/widgets/preferences-kde.xml
+--- mozilla.orig/toolkit/content/widgets/preferences-kde.xml	2011-10-07 21:06:22.000000000 +0100
++++ mozilla/toolkit/content/widgets/preferences-kde.xml	2011-10-07 21:09:40.617829391 +0100
 @@ -573,7 +573,7 @@
          </xul:deck>
        </xul:hbox>
@@ -128,8 +128,8 @@ Index: mozilla/toolkit/content/widgets/preferences-kde.xml
          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
 Index: mozilla/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
 ===================================================================
---- mozilla.orig/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
-+++ mozilla/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
+--- mozilla.orig/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2011-10-07 03:08:29.000000000 +0100
++++ mozilla/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2011-10-07 21:09:40.617829391 +0100
 @@ -49,6 +49,8 @@
  #include "nsPrintfCString.h"
  #include "nsNetUtil.h"
@@ -190,8 +190,8 @@ Index: mozilla/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
         {0x91, 0x81, 0xa2, 0x85, 0xe7, 0x4c, 0xf1, 0xd4 } }
 Index: mozilla/toolkit/xre/Makefile.in
 ===================================================================
---- mozilla.orig/toolkit/xre/Makefile.in
-+++ mozilla/toolkit/xre/Makefile.in
+--- mozilla.orig/toolkit/xre/Makefile.in	2011-10-07 03:08:41.000000000 +0100
++++ mozilla/toolkit/xre/Makefile.in	2011-10-07 21:09:40.621829390 +0100
 @@ -99,7 +99,8 @@
  CPPSRCS += nsNativeAppSupportOS2.cpp
  else
@@ -204,8 +204,8 @@ Index: mozilla/toolkit/xre/Makefile.in
  MOCSRCS += moc_nsNativeAppSupportQt.cpp
 Index: mozilla/toolkit/xre/nsKDEUtils.cpp
 ===================================================================
---- /dev/null
-+++ mozilla/toolkit/xre/nsKDEUtils.cpp
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ mozilla/toolkit/xre/nsKDEUtils.cpp	2011-10-07 21:09:40.621829390 +0100
 @@ -0,0 +1,334 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -543,8 +543,8 @@ Index: mozilla/toolkit/xre/nsKDEUtils.cpp
 +    }
 Index: mozilla/toolkit/xre/nsKDEUtils.h
 ===================================================================
---- /dev/null
-+++ mozilla/toolkit/xre/nsKDEUtils.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ mozilla/toolkit/xre/nsKDEUtils.h	2011-10-07 21:09:40.621829390 +0100
 @@ -0,0 +1,77 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-
 + *
@@ -625,8 +625,8 @@ Index: mozilla/toolkit/xre/nsKDEUtils.h
 +#endif // nsKDEUtils
 Index: mozilla/uriloader/exthandler/Makefile.in
 ===================================================================
---- mozilla.orig/uriloader/exthandler/Makefile.in
-+++ mozilla/uriloader/exthandler/Makefile.in
+--- mozilla.orig/uriloader/exthandler/Makefile.in	2011-10-07 03:08:43.000000000 +0100
++++ mozilla/uriloader/exthandler/Makefile.in	2011-10-07 21:09:40.621829390 +0100
 @@ -93,8 +93,9 @@
              -I$(topsrcdir)/netwerk/protocol/http
  
@@ -640,8 +640,8 @@ Index: mozilla/uriloader/exthandler/Makefile.in
  ifeq ($(MOZ_WIDGET_TOOLKIT),android)
 Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.cpp
 ===================================================================
---- /dev/null
-+++ mozilla/uriloader/exthandler/unix/nsCommonRegistry.cpp
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ mozilla/uriloader/exthandler/unix/nsCommonRegistry.cpp	2011-10-07 21:09:40.621829390 +0100
 @@ -0,0 +1,87 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -689,7 +689,7 @@ Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.cpp
 +#include "nsVoidArray.h"
 +#include "nsKDEUtils.h"
 +
-+/* static */ PRBool
++/* static */ bool
 +nsCommonRegistry::HandlerExists(const char *aProtocolScheme)
 +{
 +    if( nsKDEUtils::kdeSupport())
@@ -732,8 +732,8 @@ Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.cpp
 +}
 Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.h
 ===================================================================
---- /dev/null
-+++ mozilla/uriloader/exthandler/unix/nsCommonRegistry.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ mozilla/uriloader/exthandler/unix/nsCommonRegistry.h	2011-10-07 21:09:40.621829390 +0100
 @@ -0,0 +1,56 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -780,7 +780,7 @@ Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.h
 +class nsCommonRegistry
 +{
 + public:
-+  static PRBool HandlerExists(const char *aProtocolScheme);
++  static bool HandlerExists(const char *aProtocolScheme);
 +
 +  static nsresult LoadURL(nsIURI *aURL);
 +
@@ -793,8 +793,8 @@ Index: mozilla/uriloader/exthandler/unix/nsCommonRegistry.h
 +};
 Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.cpp
 ===================================================================
---- /dev/null
-+++ mozilla/uriloader/exthandler/unix/nsKDERegistry.cpp
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ mozilla/uriloader/exthandler/unix/nsKDERegistry.cpp	2011-10-07 21:09:40.621829390 +0100
 @@ -0,0 +1,119 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -843,7 +843,7 @@ Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.cpp
 +#include "nsAutoPtr.h"
 +#include "nsKDEUtils.h"
 +
-+/* static */ PRBool
++/* static */ bool
 +nsKDERegistry::HandlerExists(const char *aProtocolScheme)
 +{
 +    nsCStringArray command;
@@ -917,8 +917,8 @@ Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.cpp
 +}
 Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.h
 ===================================================================
---- /dev/null
-+++ mozilla/uriloader/exthandler/unix/nsKDERegistry.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ mozilla/uriloader/exthandler/unix/nsKDERegistry.h	2011-10-07 21:09:40.621829390 +0100
 @@ -0,0 +1,61 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -967,7 +967,7 @@ Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.h
 +class nsKDERegistry
 +{
 + public:
-+  static PRBool HandlerExists(const char *aProtocolScheme);
++  static bool HandlerExists(const char *aProtocolScheme);
 +
 +  static nsresult LoadURL(nsIURI *aURL);
 +
@@ -983,8 +983,8 @@ Index: mozilla/uriloader/exthandler/unix/nsKDERegistry.h
 +};
 Index: mozilla/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
 ===================================================================
---- mozilla.orig/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
-+++ mozilla/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
+--- mozilla.orig/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2011-10-07 03:08:44.000000000 +0100
++++ mozilla/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2011-10-07 21:09:40.621829390 +0100
 @@ -55,7 +55,7 @@
  #endif
  
@@ -1030,7 +1030,7 @@ Index: mozilla/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
  #endif
  
 +  if( nsKDEUtils::kdeSupport()) {
-+    PRBool supports;
++    bool supports;
 +    if( NS_SUCCEEDED( GetHasDefaultHandler( &supports )) && supports ) {
 +      nsCStringArray command;
 +      command.AppendCString( NS_LITERAL_CSTRING( "OPEN" ));
@@ -1060,8 +1060,8 @@ Index: mozilla/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
      mimeInfo->GetType(type);
 Index: mozilla/uriloader/exthandler/unix/nsOSHelperAppService.cpp
 ===================================================================
---- mozilla.orig/uriloader/exthandler/unix/nsOSHelperAppService.cpp
-+++ mozilla/uriloader/exthandler/unix/nsOSHelperAppService.cpp
+--- mozilla.orig/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2011-10-07 03:08:44.000000000 +0100
++++ mozilla/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2011-10-07 21:09:40.621829390 +0100
 @@ -49,7 +49,7 @@
  #include "nsOSHelperAppService.h"
  #include "nsMIMEInfoUnix.h"
@@ -1109,8 +1109,8 @@ Index: mozilla/uriloader/exthandler/unix/nsOSHelperAppService.cpp
        return gnomeInfo;
 Index: mozilla/widget/src/gtk2/Makefile.in
 ===================================================================
---- mozilla.orig/widget/src/gtk2/Makefile.in
-+++ mozilla/widget/src/gtk2/Makefile.in
+--- mozilla.orig/widget/src/gtk2/Makefile.in	2011-10-07 03:08:47.000000000 +0100
++++ mozilla/widget/src/gtk2/Makefile.in	2011-10-07 21:09:40.621829390 +0100
 @@ -140,6 +140,9 @@
  		-I$(topsrcdir)/layout/xul/base/src \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
@@ -1123,8 +1123,8 @@ Index: mozilla/widget/src/gtk2/Makefile.in
  endif
 Index: mozilla/widget/src/gtk2/nsFilePicker.cpp
 ===================================================================
---- mozilla.orig/widget/src/gtk2/nsFilePicker.cpp
-+++ mozilla/widget/src/gtk2/nsFilePicker.cpp
+--- mozilla.orig/widget/src/gtk2/nsFilePicker.cpp	2011-10-07 03:08:47.000000000 +0100
++++ mozilla/widget/src/gtk2/nsFilePicker.cpp	2011-10-07 21:09:40.625829389 +0100
 @@ -36,6 +36,7 @@
   * ***** END LICENSE BLOCK ***** */
  
@@ -1347,7 +1347,7 @@ Index: mozilla/widget/src/gtk2/nsFilePicker.cpp
 +            GetFile(getter_AddRefs(file));
 +            if (file)
 +                {
-+                PRBool exists = PR_FALSE;
++                bool exists = PR_FALSE;
 +                file->Exists(&exists);
 +                if (exists) // TODO do overwrite check in the helper app
 +                    *aReturn = nsIFilePicker::returnReplace;
@@ -1394,8 +1394,8 @@ Index: mozilla/widget/src/gtk2/nsFilePicker.cpp
 +    }
 Index: mozilla/widget/src/gtk2/nsFilePicker.h
 ===================================================================
---- mozilla.orig/widget/src/gtk2/nsFilePicker.h
-+++ mozilla/widget/src/gtk2/nsFilePicker.h
+--- mozilla.orig/widget/src/gtk2/nsFilePicker.h	2011-10-07 03:08:47.000000000 +0100
++++ mozilla/widget/src/gtk2/nsFilePicker.h	2011-10-07 21:09:40.625829389 +0100
 @@ -94,6 +94,12 @@
  
  private:
@@ -1411,8 +1411,8 @@ Index: mozilla/widget/src/gtk2/nsFilePicker.h
  #endif
 Index: mozilla/xpcom/components/Makefile.in
 ===================================================================
---- mozilla.orig/xpcom/components/Makefile.in
-+++ mozilla/xpcom/components/Makefile.in
+--- mozilla.orig/xpcom/components/Makefile.in	2011-10-07 03:08:51.000000000 +0100
++++ mozilla/xpcom/components/Makefile.in	2011-10-07 21:09:40.625829389 +0100
 @@ -99,5 +99,6 @@
  DEFINES	+= -D_IMPL_NS_COM
  
@@ -1422,8 +1422,8 @@ Index: mozilla/xpcom/components/Makefile.in
  endif
 Index: mozilla/xpcom/io/Makefile.in
 ===================================================================
---- mozilla.orig/xpcom/io/Makefile.in
-+++ mozilla/xpcom/io/Makefile.in
+--- mozilla.orig/xpcom/io/Makefile.in	2011-10-07 03:08:52.000000000 +0100
++++ mozilla/xpcom/io/Makefile.in	2011-10-07 21:09:40.625829389 +0100
 @@ -195,7 +195,7 @@
  endif
  endif
@@ -1435,8 +1435,8 @@ Index: mozilla/xpcom/io/Makefile.in
  CFLAGS          += $(MOZ_DBUS_CFLAGS)
 Index: mozilla/xpcom/io/nsLocalFileUnix.cpp
 ===================================================================
---- mozilla.orig/xpcom/io/nsLocalFileUnix.cpp
-+++ mozilla/xpcom/io/nsLocalFileUnix.cpp
+--- mozilla.orig/xpcom/io/nsLocalFileUnix.cpp	2011-10-07 03:08:52.000000000 +0100
++++ mozilla/xpcom/io/nsLocalFileUnix.cpp	2011-10-07 21:09:40.625829389 +0100
 @@ -93,6 +93,7 @@
  #ifdef MOZ_WIDGET_GTK2
  #include "nsIGIOService.h"
@@ -1515,8 +1515,8 @@ Index: mozilla/xpcom/io/nsLocalFileUnix.cpp
      if (giovfs) {
 Index: mozilla/toolkit/components/downloads/nsDownloadManager.cpp
 ===================================================================
---- mozilla.orig/toolkit/components/downloads/nsDownloadManager.cpp
-+++ mozilla/toolkit/components/downloads/nsDownloadManager.cpp
+--- mozilla.orig/toolkit/components/downloads/nsDownloadManager.cpp	2011-10-07 03:08:06.000000000 +0100
++++ mozilla/toolkit/components/downloads/nsDownloadManager.cpp	2011-10-07 21:09:40.625829389 +0100
 @@ -76,6 +76,10 @@
  #endif
  #endif
@@ -1554,8 +1554,8 @@ Index: mozilla/toolkit/components/downloads/nsDownloadManager.cpp
  #if defined(XP_WIN) || defined(XP_MACOSX) || defined(ANDROID)
 Index: mozilla/toolkit/components/downloads/Makefile.in
 ===================================================================
---- mozilla.orig/toolkit/components/downloads/Makefile.in
-+++ mozilla/toolkit/components/downloads/Makefile.in
+--- mozilla.orig/toolkit/components/downloads/Makefile.in	2011-10-07 03:08:06.000000000 +0100
++++ mozilla/toolkit/components/downloads/Makefile.in	2011-10-07 21:09:40.625829389 +0100
 @@ -80,3 +80,5 @@
  endif
  
@@ -1564,8 +1564,8 @@ Index: mozilla/toolkit/components/downloads/Makefile.in
 +LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
 Index: mozilla/xpcom/components/ManifestParser.cpp
 ===================================================================
---- mozilla.orig/xpcom/components/ManifestParser.cpp
-+++ mozilla/xpcom/components/ManifestParser.cpp
+--- mozilla.orig/xpcom/components/ManifestParser.cpp	2011-10-07 21:09:48.297829254 +0100
++++ mozilla/xpcom/components/ManifestParser.cpp	2011-10-07 21:12:16.313826623 +0100
 @@ -65,6 +65,7 @@
  #include "nsIScriptError.h"
  #include "nsIXULAppInfo.h"
