@@ -42,8 +42,6 @@ while (<$all_file>) {
     my $line = $_;
     chomp($line);
     $line =~ /^([^:#]*):([^:]*)$/ && do {
-        my $line = $_;
-        chomp($line);
         my $pkgname = $1;
         my $desc = $2;
         if ($desc eq "") { die "Malformed locales.all"; }
