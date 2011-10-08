@@ -14,6 +14,8 @@ firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
   * Update patches for PRBool -> bool transition
     - refresh debian/patches/firefox-kde.patch
     - refresh debian/patches/mozilla-kde.patch
+  * Drop some more hanging IPC xpcshell tests
+    - update debian/build/testsuite.mk
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * Rebase patches for PRBool -> bool transition (bmo: 675553)
@@ -24,7 +26,7 @@ firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/printf-fix.patch
     - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 07 Oct 2011 23:04:40 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 08 Oct 2011 08:29:44 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 
