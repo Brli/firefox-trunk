@@ -422,11 +422,6 @@ NS_IMETHODIMP
 uGlobalMenuIconLoader::OnStopRequest(imgIRequest *aRequest, MOZ_API_BOOL aIsLastPart)
 {
   TRACE_WITH_MENUOBJECT(mMenuItem);
-  if (mIconRequest) {
-    mIconRequest->Cancel(NS_BINDING_ABORTED);
-    mIconRequest = nsnull;
-  }
-
   return NS_OK;
 }
 
