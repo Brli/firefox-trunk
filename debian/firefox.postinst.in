@@ -117,7 +117,9 @@ EOM
     # End AppArmor
     #
 
+%%ifdef MOZ_NEW_SYSPREF
     finish_mv_conffile "/etc/${MOZ_APP_NAME}/pref/firefox.js" "/etc/${MOZ_APP_NAME}/syspref.js"
+%%endif
 fi
 echo "Please restart all running instances of $MOZ_APP_NAME, or you will experience problems."
 

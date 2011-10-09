@@ -276,6 +276,9 @@ endif
 ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
 	DEB_DEFINES += -DMOZ_APP_RENAME
 endif
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
+	DEB_DEFINES += -DMOZ_NEW_SYSPREF
+endif
 
 ifneq (1, $(MOZ_TREE_NSPR))
 	NSPR_DEPENDS = libnspr4-dev
@@ -481,11 +484,13 @@ binary-predeb/$(MOZ_APP_NAME)::
 endif
 
 pre-build:: $(subst_files)
+	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_APP_BASENAME).js
 
 	# KDE integration
 	cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
 	cp $(DEB_SRCDIR)/toolkit/content/widgets/preferences.xml $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
 	cp $(DEB_SRCDIR)/browser/base/content/browser.xul $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
+
 	mkdir -p $(DEB_SRCDIR)/extensions/globalmenu
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -) 
 
@@ -597,3 +602,4 @@ endif
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
 	rm -rf compare-locales
+	rm -f debian/$(MOZ_APP_BASENAME).js

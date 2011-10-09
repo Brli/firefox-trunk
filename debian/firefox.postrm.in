@@ -22,8 +22,10 @@ if [ "$1" = "purge" ]; then
     rmdir /etc/apparmor.d/local 2>/dev/null || true
 fi
 
+%%ifdef MOZ_NEW_SYSPREF
 if [ "$1" = "abort-install" -o "$1" = "abort-upgrade" ] ; then
     abort_mv_conffile "/etc/${APP_NAME}/pref/firefox.js"
 fi
+%%endif
 
 #DEBHELPER#

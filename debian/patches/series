@@ -11,3 +11,4 @@ mozilla-kde.patch
 firefox-kde.patch
 ubuntu-codes-baidu.patch
 #@DIST:!lucid,maverick@unity-globalmenu-build-support.patch
+#@DIST:lucid,maverick@add-syspref-dir.patch
