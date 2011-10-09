@@ -9,8 +9,4 @@ if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
     update-alternatives --remove x-www-browser /usr/bin/$MOZ_APP_NAME
 fi
 
-if [ -f /usr/share/apport/package-hooks/$MOZ_APP_NAME.pyc ] ; then
-    rm -f /usr/share/apport/package-hooks/$MOZ_APP_NAME.pyc
-fi
-
 #DEBHELPER#
