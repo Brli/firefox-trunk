@@ -112,7 +112,17 @@ EOM
 %%ifdef MOZ_NEW_SYSPREF
     finish_mv_conffile "/etc/${MOZ_APP_NAME}/pref/firefox.js" "/etc/${MOZ_APP_NAME}/syspref.js"
 %%endif
+
+%%ifdef MOZ_SYMLINKED_DIST
+    if [ -d $MOZ_LIBDIR/distribution ] && [ ! -h $MOZ_LIBDIR/distribution ]; then \
+        rmdir --ignore-fail-on-non-empty $MOZ_LIBDIR/distribution
+    fi
+    if [ ! -e $MOZ_LIBDIR/distribution ]; then
+        ln -s /usr/lib/$MOZ_APP_NAME-addons/distribution $MOZ_LIBDIR/distribution
+    fi
+%%endif
 fi
+
 echo "Please restart all running instances of $MOZ_APP_NAME, or you will experience problems."
 
 if [ -d /var/run ] ; then

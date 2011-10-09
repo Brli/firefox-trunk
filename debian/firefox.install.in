@@ -33,7 +33,11 @@ debian/@MOZ_APP_NAME@.desktop /usr/share/applications
 debian/apport/source_@MOZ_APP_NAME@.py /usr/share/apport/package-hooks/
 
 debian/firefox.sh @MOZ_LIBDIR@
+%%ifdef MOZ_SYMLINKED_DIST
+debian/distribution.ini /usr/lib/@MOZ_APP_NAME@-addons/distribution
+%%else
 debian/distribution.ini @MOZ_LIBDIR@/distribution
+%%endif
 debian/vendor.js @MOZ_LIBDIR@/defaults/pref
 
 %%ifdef MOZ_NEW_SYSPREF
