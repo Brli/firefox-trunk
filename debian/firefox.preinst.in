@@ -9,7 +9,7 @@ APP_DISABLE="$APP_DIR/disable/$APP_PROFILE"
 APP_NAME=@MOZ_APP_NAME@
 
 # Prepare to move a conffile without triggering a dpkg question
-prep_mv_conffile() {
+prepare_mv_conffile() {
     local PKGNAME="$1"
     local CONFFILE="$2"
 
@@ -20,6 +20,25 @@ prep_mv_conffile() {
             sed -n -e "\' $CONFFILE ' { s/ obsolete$//; s/.* //; p }")"
 	#'
     if [ "$md5sum" = "$old_md5sum" ]; then
+        mv -f "$CONFFILE" "$CONFFILE.dpkg-remove"
+    fi
+}
+
+prepare_rm_conffile() {
+    local PACKAGE="$1"
+    local CONFFILE="$2"
+
+    [ -e "$CONFFILE" ] || return 0
+
+    local md5sum="$(md5sum $CONFFILE | sed -e 's/ .*//')"
+    local old_md5sum="$(dpkg-query -W -f='${Conffiles}' $PACKAGE | \
+        sed -n -e "\' $CONFFILE ' { s/ obsolete$//; s/.* //; p }")"
+    if [ "$md5sum" != "$old_md5sum" ]; then
+        echo "Obsolete conffile $CONFFILE has been modified by you."
+        echo "Saving as $CONFFILE.dpkg-bak ..."
+        mv -f "$CONFFILE" "$CONFFILE.dpkg-backup"
+    else
+        echo "Moving obsolete conffile $CONFFILE out of the way..."
         mv -f "$CONFFILE" "$CONFFILE.dpkg-remove"
     fi
 }
@@ -62,8 +81,15 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
         fi
     fi
 
+    prepare_rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/bookmarks.html"
+    prepare_rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/localstore.rdf"
+    prepare_rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/mimeTypes.rdf"
+    prepare_rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/prefs.js"
+    prepare_rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/chrome/userChrome-example.css"
+    prepare_rm_conffile "${APP_NAME}" "/etc/${APP_NAME}/profile/chrome/userContent-example.css"
+
 %%ifdef MOZ_NEW_SYSPREF
-    prep_mv_conffile "${APP_NAME}" "/etc/${APP_NAME}/pref/firefox.js"
+    prepare_mv_conffile "${APP_NAME}" "/etc/${APP_NAME}/pref/firefox.js"
 %%endif
 fi
 

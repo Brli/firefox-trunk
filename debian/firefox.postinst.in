@@ -19,6 +19,18 @@ finish_mv_conffile() {
     mv -f "$OLDCONFFILE" "$NEWCONFFILE"
 }
 
+finish_rm_conffile() {
+    local CONFFILE="$1"
+
+    if [ -e "$CONFFILE.dpkg-backup" ]; then
+        mv -f "$CONFFILE.dpkg-backup" "$CONFFILE.dpkg-bak"
+    fi
+    if [ -e "$CONFFILE.dpkg-remove" ]; then
+        echo "Removing obsolete conffile $CONFFILE ..."
+        rm -f "$CONFFILE.dpkg-remove"
+    fi
+}
+
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-remove" ] ; then
     update-alternatives --install /usr/bin/gnome-www-browser \
         gnome-www-browser /usr/bin/$MOZ_APP_NAME 40
@@ -89,6 +101,13 @@ EOM
     #
     # End AppArmor
     #
+
+    finish_rm_conffile "/etc/${APP_NAME}/profile/bookmarks.html"
+    finish_rm_conffile "/etc/${APP_NAME}/profile/localstore.rdf"
+    finish_rm_conffile "/etc/${APP_NAME}/profile/mimeTypes.rdf"
+    finish_rm_conffile "/etc/${APP_NAME}/profile/prefs.js"
+    finish_rm_conffile "/etc/${APP_NAME}/profile/chrome/userChrome-example.css"
+    finish_rm_conffile "/etc/${APP_NAME}/profile/chrome/userContent-example.css"
 
 %%ifdef MOZ_NEW_SYSPREF
     finish_mv_conffile "/etc/${MOZ_APP_NAME}/pref/firefox.js" "/etc/${MOZ_APP_NAME}/syspref.js"
