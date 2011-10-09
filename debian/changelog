@@ -1,6 +1,6 @@
-firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v10.0 A1 HG20110925R77515
+  * New upstream snapshot v10.0 A1 HG20111008R78356
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Update globalmenu-extension to 2.0.2 prerelease r258
@@ -67,7 +67,7 @@ firefox-trunk (10.0~a1~hg20111004r78117-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/printf-fix.patch
     - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 10 Oct 2011 00:20:49 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 10 Oct 2011 00:22:03 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 
