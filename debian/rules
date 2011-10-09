@@ -2,6 +2,7 @@
 
 DISTRIB_VERSION_MAJOR 	= $(shell lsb_release -s -r | cut -d '.' -f 1)
 DISTRIB_VERSION_MINOR 	= $(shell lsb_release -s -r | cut -d '.' -f 2)
+DISTRIB_CODENAME	= $(shell lsb_release -s -c)
 
 include $(CURDIR)/debian/config/branch.mk
 
@@ -64,6 +65,9 @@ DEB_TAR_SRCDIR		:= mozilla
 
 # We need this to execute before the debian/control target gets called
 clean:: pre-auto-update-debian-control
+
+# We need this to run before apply-patches
+post-patches:: enable-dist-patches
 
 -include /usr/share/cdbs/1/rules/tarball.mk
 -include /usr/share/cdbs/1/rules/debhelper.mk
@@ -573,11 +577,21 @@ post-auto-update-debian-control:
 	fi
 	rm -f debian/control.old
 
+ifdef PATCHES_DIST
+CODENAME = $(PATCHES_DIST)
+else
+CODENAME = $(DISTRIB_CODENAME)
+endif
+
+enable-dist-patches:
+	perl $(CURDIR)/debian/enable-dist-patches.pl $(CODENAME) $(CURDIR)/debian/patches/series
+
 ifeq (1, $(NO_AUTO_REFRESH_LOCALES))
 clean:: post-auto-update-debian-control
 else
 clean:: auto-refresh-supported-locales post-auto-update-debian-control
 endif
+	perl $(CURDIR)/debian/build/enable-dist-patches.pl --clean $(CURDIR)/debian/patches/series
 	rm -f $(subst_files)
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
