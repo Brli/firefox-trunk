@@ -67,6 +67,11 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/printf-fix.patch
     - update debian/patches/series
 
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
+  * add debian/usr.bin.firefox.apparmor.12.04 and adjust it to declare a
+    @{MOZ_LIBDIR} which will help with overrides
+  * debian/rules: adjust to install the profile on 12.04
+
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 10 Oct 2011 00:22:03 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
