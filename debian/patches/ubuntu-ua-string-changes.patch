@@ -59,7 +59,7 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
  #endif
  
 +#ifdef MOZ_UA_VENDOR
-+    mVendor.Assign(MOZ_UA_VENDOR);
++    mVendor.AssignLiteral(MOZ_UA_VENDOR);
 +#endif
 +
      mUserAgentIsDirty = PR_TRUE;
