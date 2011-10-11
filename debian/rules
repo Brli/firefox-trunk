@@ -366,7 +366,9 @@ $(subst_files): $(foreach file, $(subst_files), $(subst $(BRANCH),,$(file).in))
 	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
 
 debian/usr.bin.firefox.in:
-	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1104' ]; then \
+	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1204' ]; then \
+		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.12.04 $(CURDIR)/debian/usr.bin.firefox.in ; \
+	elif [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1104' ]; then \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.11.04 $(CURDIR)/debian/usr.bin.firefox.in ; \
 	elif [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1010' ]; then \
 		cp $(CURDIR)/debian/usr.bin.firefox.apparmor.10.10 $(CURDIR)/debian/usr.bin.firefox.in ; \
