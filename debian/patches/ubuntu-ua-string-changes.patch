@@ -1,0 +1,85 @@
+Description: Add "Ubuntu" to the platform part of the UA string
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: not-needed
+
+Index: mozilla/netwerk/protocol/http/Makefile.in
+===================================================================
+--- mozilla.orig/netwerk/protocol/http/Makefile.in	2011-10-11 10:00:01.464944758 +0100
++++ mozilla/netwerk/protocol/http/Makefile.in	2011-10-11 10:02:20.400949672 +0100
+@@ -124,3 +124,7 @@
+ include $(topsrcdir)/config/rules.mk
+ 
+ DEFINES += -DIMPL_NS_NET
++
++ifdef MOZ_UA_VENDOR
++DEFINES += -DMOZ_UA_VENDOR="$(MOZ_UA_VENDOR)"
++endif
+Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
+===================================================================
+--- mozilla.orig/netwerk/protocol/http/nsHttpHandler.cpp	2011-10-11 09:41:39.936905803 +0100
++++ mozilla/netwerk/protocol/http/nsHttpHandler.cpp	2011-10-11 10:05:04.556955477 +0100
+@@ -285,6 +285,9 @@
+     LOG(("> misc = %s\n", mMisc.get()));
+     LOG(("> product = %s\n", mProduct.get()));
+     LOG(("> product-sub = %s\n", mProductSub.get()));
++#ifdef MOZ_UA_VENDOR
++    LOG(("> vendor = %s\n", mVendor.get()));
++#endif
+     LOG(("> app-name = %s\n", mAppName.get()));
+     LOG(("> app-version = %s\n", mAppVersion.get()));
+     LOG(("> compat-firefox = %s\n", mCompatFirefox.get()));
+@@ -603,6 +606,9 @@
+     // than if we didn't preallocate at all.
+     mUserAgent.SetCapacity(mLegacyAppName.Length() + 
+                            mLegacyAppVersion.Length() + 
++#ifdef MOZ_UA_VENDOR
++                           mVendor.Length() + 
++#endif
+ #ifndef UA_SPARE_PLATFORM
+                            mPlatform.Length() + 
+ #endif
+@@ -613,7 +619,7 @@
+                            mAppName.Length() +
+                            mAppVersion.Length() +
+                            mCompatFirefox.Length() +
+-                           13);
++                           15);
+ 
+     // Application portion
+     mUserAgent.Assign(mLegacyAppName);
+@@ -623,6 +629,10 @@
+ 
+     // Application comment
+     mUserAgent += '(';
++#ifdef MOZ_UA_VENDOR
++    mUserAgent += mVendor;
++    mUserAgent.AppendLiteral("; ");
++#endif
+ #ifndef UA_SPARE_PLATFORM
+     mUserAgent += mPlatform;
+     mUserAgent.AppendLiteral("; ");
+@@ -770,6 +780,10 @@
+     }
+ #endif
+ 
++#ifdef MOZ_UA_VENDOR
++    mVendor.Assign(MOZ_UA_VENDOR);
++#endif
++
+     mUserAgentIsDirty = PR_TRUE;
+ }
+ 
+Index: mozilla/netwerk/protocol/http/nsHttpHandler.h
+===================================================================
+--- mozilla.orig/netwerk/protocol/http/nsHttpHandler.h	2011-10-11 10:03:39.364952465 +0100
++++ mozilla/netwerk/protocol/http/nsHttpHandler.h	2011-10-11 10:04:20.760953929 +0100
+@@ -305,6 +305,9 @@
+     // useragent components
+     nsCString      mLegacyAppName;
+     nsCString      mLegacyAppVersion;
++#ifdef MOZ_UA_VENDOR
++    nsCString      mVendor;
++#endif
+     nsCString      mPlatform;
+     nsCString      mOscpu;
+     nsCString      mMisc;

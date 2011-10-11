@@ -165,6 +165,7 @@ MOZ_DISPLAY_NAME	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/bra
 
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
+export MOZ_UA_VENDOR=Ubuntu
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1110" && echo "1"))
 	MOZ_BUILD_PGO := 0
 endif

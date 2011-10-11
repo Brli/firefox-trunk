@@ -57,6 +57,10 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.install.in
     - update debian/firefox.links.in
     - update debian/rules
+  * Modify the UA string to add "Ubuntu" to the platform component
+    - add debian/patches/ubuntu-ua-string-changes.patch
+    - update debian/patches/series
+    - update debian/rules
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * Rebase patches for PRBool -> bool transition (bmo: 675553)
@@ -67,7 +71,7 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     - drop debian/patches/printf-fix.patch
     - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 10 Oct 2011 00:22:03 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 11 Oct 2011 10:55:26 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 
