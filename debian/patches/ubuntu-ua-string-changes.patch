@@ -1,20 +1,32 @@
-Index: mozilla/netwerk/protocol/http/Makefile.in
-===================================================================
---- mozilla.orig/netwerk/protocol/http/Makefile.in	2011-10-11 10:00:01.464944758 +0100
-+++ mozilla/netwerk/protocol/http/Makefile.in	2011-10-11 10:02:20.400949672 +0100
+Description: Add "Ubuntu" to the platform part of the UA string
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: not-needed
+
+diff -r bd1411e362fb netwerk/protocol/http/Makefile.in
+--- a/netwerk/protocol/http/Makefile.in	Fri Oct 07 11:37:04 2011 +0100
++++ b/netwerk/protocol/http/Makefile.in	Wed Oct 12 13:00:13 2011 +0100
 @@ -124,3 +124,7 @@
  include $(topsrcdir)/config/rules.mk
  
  DEFINES += -DIMPL_NS_NET
 +
 +ifdef MOZ_UA_VENDOR
-+DEFINES += -DMOZ_UA_VENDOR=\"$(MOZ_UA_VENDOR)\"
++DEFINES += -DMOZ_UA_VENDOR=\""$(MOZ_UA_VENDOR)"\"
 +endif
-Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
-===================================================================
---- mozilla.orig/netwerk/protocol/http/nsHttpHandler.cpp	2011-10-11 09:41:39.936905803 +0100
-+++ mozilla/netwerk/protocol/http/nsHttpHandler.cpp	2011-10-11 10:05:04.556955477 +0100
-@@ -285,6 +285,9 @@
+diff -r bd1411e362fb netwerk/protocol/http/nsHttpHandler.cpp
+--- a/netwerk/protocol/http/nsHttpHandler.cpp	Fri Oct 07 11:37:04 2011 +0100
++++ b/netwerk/protocol/http/nsHttpHandler.cpp	Wed Oct 12 13:00:13 2011 +0100
+@@ -190,6 +190,9 @@
+     , mLegacyAppName("Mozilla")
+     , mLegacyAppVersion("5.0")
+     , mProduct("Gecko")
++#ifdef MOZ_UA_VENDOR
++    , mVendor(MOZ_UA_VENDOR)
++#endif
+     , mUserAgentIsDirty(PR_TRUE)
+     , mUseCache(PR_TRUE)
+     , mPromptTempRedirect(PR_TRUE)
+@@ -285,6 +288,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
      LOG(("> product-sub = %s\n", mProductSub.get()));
@@ -24,7 +36,7 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
      LOG(("> app-name = %s\n", mAppName.get()));
      LOG(("> app-version = %s\n", mAppVersion.get()));
      LOG(("> compat-firefox = %s\n", mCompatFirefox.get()));
-@@ -603,6 +606,9 @@
+@@ -603,6 +609,9 @@
      // than if we didn't preallocate at all.
      mUserAgent.SetCapacity(mLegacyAppName.Length() + 
                             mLegacyAppVersion.Length() + 
@@ -34,7 +46,7 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
  #ifndef UA_SPARE_PLATFORM
                             mPlatform.Length() + 
  #endif
-@@ -613,7 +619,7 @@
+@@ -613,7 +622,7 @@
                             mAppName.Length() +
                             mAppVersion.Length() +
                             mCompatFirefox.Length() +
@@ -43,7 +55,7 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
  
      // Application portion
      mUserAgent.Assign(mLegacyAppName);
-@@ -623,6 +629,10 @@
+@@ -623,6 +632,10 @@
  
      // Application comment
      mUserAgent += '(';
@@ -54,28 +66,22 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
  #ifndef UA_SPARE_PLATFORM
      mUserAgent += mPlatform;
      mUserAgent.AppendLiteral("; ");
-@@ -770,6 +780,10 @@
-     }
- #endif
- 
-+#ifdef MOZ_UA_VENDOR
-+    mVendor.AssignLiteral(MOZ_UA_VENDOR);
-+#endif
-+
-     mUserAgentIsDirty = PR_TRUE;
- }
- 
-Index: mozilla/netwerk/protocol/http/nsHttpHandler.h
-===================================================================
---- mozilla.orig/netwerk/protocol/http/nsHttpHandler.h	2011-10-11 10:03:39.364952465 +0100
-+++ mozilla/netwerk/protocol/http/nsHttpHandler.h	2011-10-11 10:04:20.760953929 +0100
-@@ -305,6 +305,9 @@
+@@ -661,7 +674,6 @@
+ void
+ nsHttpHandler::InitUserAgentComponents()
+ {
+-
+       // Gather platform.
+     mPlatform.AssignLiteral(
+ #if defined(ANDROID)
+diff -r bd1411e362fb netwerk/protocol/http/nsHttpHandler.h
+--- a/netwerk/protocol/http/nsHttpHandler.h	Fri Oct 07 11:37:04 2011 +0100
++++ b/netwerk/protocol/http/nsHttpHandler.h	Wed Oct 12 13:00:13 2011 +0100
+@@ -305,6 +305,7 @@
      // useragent components
      nsCString      mLegacyAppName;
      nsCString      mLegacyAppVersion;
-+#ifdef MOZ_UA_VENDOR
 +    nsCString      mVendor;
-+#endif
      nsCString      mPlatform;
      nsCString      mOscpu;
      nsCString      mMisc;
