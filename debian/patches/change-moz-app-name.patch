@@ -9,8 +9,8 @@
 
 Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
-+++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
+--- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2011-10-14 03:04:07.000000000 +0100
++++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2011-10-14 14:30:30.328860276 +0100
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -19,8 +19,8 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
  // The time interval between checks for a new version (in seconds)
  pref("app.update.interval", 86400); // 24 hours
  // The time interval between the downloading of mar file chunks in the
-@@ -7,14 +7,14 @@
- pref("app.update.download.backgroundInterval", 60);
+@@ -9,14 +9,14 @@
+ pref("app.update.promptWaitTime", 86400);
  // URL user can browse to manually if for some reason all update installation
  // attempts fail.
 -pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
@@ -40,17 +40,17 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
 Index: mozilla/browser/branding/official/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/official/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
-+++ mozilla/browser/branding/official/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
-@@ -1,6 +1,6 @@
- // Fight update fatigue by suppressing whatsnew tab opening after update (bug 685727)
- pref("startup.homepage_override_url","");
+--- mozilla.orig/browser/branding/official/pref/firefox-branding.js	2011-10-14 03:04:07.000000000 +0100
++++ mozilla/browser/branding/official/pref/firefox-branding.js	2011-10-14 14:30:58.912861288 +0100
+@@ -1,5 +1,5 @@
+-pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
++pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
  // Interval: Time between checks for a new version (in seconds)
  // nightly=6 hours, official=24 hours
  pref("app.update.interval", 86400);
-@@ -12,11 +12,11 @@
+@@ -13,11 +13,11 @@
  pref("app.update.url.manual", "http://www.firefox.com");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -67,8 +67,8 @@ Index: mozilla/browser/branding/official/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "moz35");
 Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
-+++ mozilla/browser/branding/nightly/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
+--- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js	2011-10-14 03:04:06.000000000 +0100
++++ mozilla/browser/branding/nightly/pref/firefox-branding.js	2011-10-14 14:30:30.332860277 +0100
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -77,7 +77,7 @@ Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
  // The time interval between checks for a new version (in seconds)
  pref("app.update.interval", 7200); // 2 hours
  // The time interval between the downloading of mar file chunks in the
-@@ -10,11 +10,11 @@
+@@ -12,11 +12,11 @@
  pref("app.update.url.manual", "http://nightly.mozilla.org/");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -94,9 +94,9 @@ Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
 Index: mozilla/browser/branding/aurora/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/aurora/pref/firefox-branding.js	2011-09-25 03:03:22.000000000 +0100
-+++ mozilla/browser/branding/aurora/pref/firefox-branding.js	2011-09-27 14:00:29.477966049 +0100
-@@ -12,11 +12,11 @@
+--- mozilla.orig/browser/branding/aurora/pref/firefox-branding.js	2011-10-14 03:04:06.000000000 +0100
++++ mozilla/browser/branding/aurora/pref/firefox-branding.js	2011-10-14 14:30:30.332860277 +0100
+@@ -14,11 +14,11 @@
  pref("app.update.url.manual", "http://www.mozilla.com/firefox/channel/");
  // A default value for the "More information about this update" link
  // supplied in the "An update is available" page of the update wizard. 
@@ -113,8 +113,8 @@ Index: mozilla/browser/branding/aurora/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
 Index: mozilla/browser/confvars.sh
 ===================================================================
---- mozilla.orig/browser/confvars.sh	2011-09-25 03:03:29.000000000 +0100
-+++ mozilla/browser/confvars.sh	2011-09-27 14:00:29.477966049 +0100
+--- mozilla.orig/browser/confvars.sh	2011-10-14 03:04:16.000000000 +0100
++++ mozilla/browser/confvars.sh	2011-10-14 14:30:30.332860277 +0100
 @@ -36,8 +36,9 @@
  #
  # ***** END LICENSE BLOCK *****
@@ -128,8 +128,8 @@ Index: mozilla/browser/confvars.sh
  
 Index: mozilla/Makefile.in
 ===================================================================
---- mozilla.orig/Makefile.in	2011-09-27 14:00:34.997965951 +0100
-+++ mozilla/Makefile.in	2011-09-27 14:01:07.377965376 +0100
+--- mozilla.orig/Makefile.in	2011-10-14 03:03:49.000000000 +0100
++++ mozilla/Makefile.in	2011-10-14 14:30:30.332860277 +0100
 @@ -161,7 +161,7 @@
  endif
  
