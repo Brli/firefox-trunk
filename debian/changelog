@@ -63,6 +63,7 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Refresh patches
     - update debian/patches/change-moz-app-name.patch
+    - update debian/patches/mozilla-kde.patch
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * Rebase patches for PRBool -> bool transition (bmo: 675553)
@@ -78,7 +79,7 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     @{MOZ_LIBDIR} which will help with overrides
   * debian/rules: adjust to install the profile on 12.04
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 14 Oct 2011 14:32:18 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 17 Oct 2011 13:42:54 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 
