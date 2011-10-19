@@ -23,9 +23,9 @@ diff -r bd1411e362fb netwerk/protocol/http/nsHttpHandler.cpp
 +#ifdef MOZ_UA_VENDOR
 +    , mVendor(MOZ_UA_VENDOR)
 +#endif
-     , mUserAgentIsDirty(PR_TRUE)
-     , mUseCache(PR_TRUE)
-     , mPromptTempRedirect(PR_TRUE)
+     , mUserAgentIsDirty(true)
+     , mUseCache(true)
+     , mPromptTempRedirect(true)
 @@ -285,6 +288,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
