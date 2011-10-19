@@ -28,14 +28,14 @@ Index: mozilla/modules/libpref/src/prefread.cpp
      }
 -    (*ps->reader)(ps->closure, ps->lb, value, ps->vtype, ps->fdefault);
 +    (*ps->reader)(ps->closure, ps->lb, value, ps->vtype, ps->fdefault, ps->flock);
-     return PR_TRUE;
+     return true;
  }
  
 @@ -220,6 +221,7 @@
                  ps->vb    = NULL;
                  ps->vtype = PREF_INVALID;
-                 ps->fdefault = PR_FALSE;
-+                ps->flock = PR_FALSE;
+                 ps->fdefault = false;
++                ps->flock = false;
              }
              switch (c) {
              case '/':       /* begin comment block or line? */
@@ -96,7 +96,7 @@ Index: mozilla/modules/libpref/src/prefapi.cpp
  {
      pref_HashPref(pref, value, type, isDefault);
 +    if (isLocked)
-+       PREF_LockPref(pref, PR_TRUE);
++       PREF_LockPref(pref, true);
  }
 Index: mozilla/modules/libpref/src/prefapi.h
 ===================================================================
