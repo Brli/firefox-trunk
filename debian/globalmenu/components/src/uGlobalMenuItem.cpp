@@ -592,32 +592,33 @@ uGlobalMenuItem::Activate()
     }
   }
 
-  nsIDocument *doc = mContent->GetOwnerDoc();
-  if (doc) {
-    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-    if (domDoc) {
-      nsCOMPtr<nsIDOMEvent> event;
-      domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
-                          getter_AddRefs(event));
-      if (event) {
-        nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
-        if (cmdEvent) {
-          nsCOMPtr<nsIDOMWindow> window;
-          domDoc->GetDefaultView(getter_AddRefs(window));
-          if (window) {
-            cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
-                                       MOZ_API_TRUE, MOZ_API_TRUE, window, 0,
-                                       MOZ_API_FALSE, MOZ_API_FALSE, MOZ_API_FALSE,
-                                       MOZ_API_FALSE, nsnull);
-            nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
-            if (target) {
-              nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-              if (priv) {
-                priv->SetTrusted(MOZ_API_TRUE);
-              }
-              MOZ_API_BOOL dummy;
-              target->DispatchEvent(event, &dummy);
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 10
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->OwnerDoc());
+#else
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->GetOwnerDoc());
+#endif
+  if (domDoc) {
+    nsCOMPtr<nsIDOMEvent> event;
+    domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
+                        getter_AddRefs(event));
+    if (event) {
+      nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
+      if (cmdEvent) {
+        nsCOMPtr<nsIDOMWindow> window;
+        domDoc->GetDefaultView(getter_AddRefs(window));
+        if (window) {
+          cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
+                                     MOZ_API_TRUE, MOZ_API_TRUE, window, 0,
+                                     MOZ_API_FALSE, MOZ_API_FALSE, MOZ_API_FALSE,
+                                     MOZ_API_FALSE, nsnull);
+          nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
+          if (target) {
+            nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
+            if (priv) {
+              priv->SetTrusted(MOZ_API_TRUE);
             }
+            MOZ_API_BOOL dummy;
+            target->DispatchEvent(event, &dummy);
           }
         }
       }
