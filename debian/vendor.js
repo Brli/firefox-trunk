@@ -9,5 +9,5 @@ pref("browser.shell.checkDefaultBrowser", false);
 pref("distribution.searchplugins.defaultLocale", "en-US");
 
 // Enable the NetworkManager integration
-pref("network.manage-offline-status", true);
+//pref("network.manage-offline-status", true);
 

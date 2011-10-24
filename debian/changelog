@@ -65,6 +65,10 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/change-moz-app-name.patch
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/allow-lockPref-everywhere.patch
+  * Turn off Network Manager integration for now, as it causes Firefox to
+    always start in offline mode. In any case, probing Network Manager isn't
+    the most reliable way to test if there is a connection
+    - update debian/vendor.js
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * Rebase patches for PRBool -> bool transition (bmo: 675553)
@@ -80,10 +84,7 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     @{MOZ_LIBDIR} which will help with overrides
   * debian/rules: adjust to install the profile on 12.04
 
-  [ Chris Coulson ]
-  * 
-
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 19 Oct 2011 13:23:46 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 24 Oct 2011 21:51:05 +0100
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 
