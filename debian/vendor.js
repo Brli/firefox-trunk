@@ -11,3 +11,5 @@ pref("distribution.searchplugins.defaultLocale", "en-US");
 // Enable the NetworkManager integration
 //pref("network.manage-offline-status", true);
 
+// Don't disable our bundled extensions in the application directory
+pref("extensions.autoDisableScopes", 11);
