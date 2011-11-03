@@ -71,6 +71,8 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     - update debian/vendor.js
   * Don't disable our bundled addons on upgrade
     - update debian/vendor.js
+  * Refresh patches
+    - update debian/patches/ubuntu_bookmarks.patch
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * Rebase patches for PRBool -> bool transition (bmo: 675553)
@@ -86,7 +88,7 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     @{MOZ_LIBDIR} which will help with overrides
   * debian/rules: adjust to install the profile on 12.04
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 28 Oct 2011 16:56:55 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 03 Nov 2011 13:41:17 -0400
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 

@@ -2,11 +2,13 @@ Description: Customize the default bookmarks for Ubuntu
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: not-needed
 
---- a/browser/locales/generic/profile/bookmarks.html.in
-+++ b/browser/locales/generic/profile/bookmarks.html.in
-@@ -14,6 +14,16 @@
+Index: mozilla/browser/locales/generic/profile/bookmarks.html.in
+===================================================================
+--- mozilla.orig/browser/locales/generic/profile/bookmarks.html.in	2011-11-03 13:36:54.183651943 -0400
++++ mozilla/browser/locales/generic/profile/bookmarks.html.in	2011-11-03 13:37:03.012064096 -0400
+@@ -13,6 +13,16 @@
+     <DL><p>
          <DT><A HREF="http://www.mozilla.com/@AB_CD@/firefox/central/" ID="rdf:#$GvPhC3">@getting_started@</A>
-         <DT><A HREF="http://fxfeeds.mozilla.com/@AB_CD@/firefox/livebookmarks/" FEEDURL="http://fxfeeds.mozilla.com/@AB_CD@/firefox/headlines.xml" ID="rdf:#$HvPhC3">@latest_headlines@</A>
      </DL><p>
 +    <DT><H3 ADD_DATE="1181129907" LAST_MODIFIED="1180687506" ID="rdf:#$jYrW.3">Ubuntu and Free Software links</H3>
 +<DD>Information and resources about Ubuntu, Debian and Free Software in general
@@ -21,11 +23,13 @@ Forwarded: not-needed
      <DT><H3 ID="rdf:#$ZvPhC3">@firefox_heading@</H3>
      <DL><p>
          <DT><A HREF="http://www.mozilla.com/@AB_CD@/firefox/help/" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHWSURBVHjaYvz//z8DJQAggJiQOe/fv2fv7Oz8rays/N+VkfG/iYnJfyD/1+rVq7ffu3dPFpsBAAHEAHIBCJ85c8bN2Nj4vwsDw/8zQLwKiO8CcRoQu0DxqlWrdsHUwzBAAIGJmTNnPgYa9j8UqhFElwPxf2MIDeIrKSn9FwSJoRkAEEAM0DD4DzMAyPi/G+QKY4hh5WAXGf8PDQ0FGwJ22d27CjADAAIIrLmjo+MXA9R2kAHvGBA2wwx6B8W7od6CeQcggKCmCEL8bgwxYCbUIGTDVkHDBia+CuotgACCueD3TDQN75D4xmAvCoK9ARMHBzAw0AECiBHkAlC0Mdy7x9ABNA3obAZXIAa6iKEcGlMVQHwWyjYuL2d4v2cPg8vZswx7gHyAAAK7AOif7SAbOqCmn4Ha3AHFsIDtgPq/vLz8P4MSkJ2W9h8ggBjevXvHDo4FQUQg/kdypqCg4H8lUIACnQ/SOBMYI8bAsAJFPcj1AAEEjwVQqLpAbXmH5BJjqI0gi9DTAAgDBBCcAVLkgmQ7yKCZxpCQxqUZhAECCJ4XgMl493ug21ZD+aDAXH0WLM4A9MZPXJkJIIAwTAR5pQMalaCABQUULttBGCCAGCnNzgABBgAMJ5THwGvJLAAAAABJRU5ErkJggg==" ID="rdf:#$22iCK1">@firefox_help@</A>
---- a/browser/components/places/tests/unit/head_bookmarks.js
-+++ b/browser/components/places/tests/unit/head_bookmarks.js
-@@ -108,4 +108,4 @@ const SMART_BOOKMARKS_ON_MENU = 3; // Ta
+Index: mozilla/browser/components/places/tests/unit/head_bookmarks.js
+===================================================================
+--- mozilla.orig/browser/components/places/tests/unit/head_bookmarks.js	2011-11-03 13:37:59.036063068 -0400
++++ mozilla/browser/components/places/tests/unit/head_bookmarks.js	2011-11-03 13:39:34.191618720 -0400
+@@ -108,4 +108,4 @@
  
  // Default bookmarks constants.
- const DEFAULT_BOOKMARKS_ON_TOOLBAR = 2;
+ const DEFAULT_BOOKMARKS_ON_TOOLBAR = 1;
 -const DEFAULT_BOOKMARKS_ON_MENU = 1;
 +const DEFAULT_BOOKMARKS_ON_MENU = 2;
