@@ -7,8 +7,8 @@ normalize-distribution-searchplugins.patch
 ubuntu-codes-google.patch
 plugin-for-mimetype-pref.patch
 allow-lockPref-everywhere.patch
-mozilla-kde.patch
-firefox-kde.patch
+#mozilla-kde.patch
+#firefox-kde.patch
 ubuntu-codes-baidu.patch
 #@DIST:!lucid,maverick@unity-globalmenu-build-support.patch
 #@DIST:lucid,maverick@add-syspref-dir.patch
