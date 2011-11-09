@@ -1,6 +1,6 @@
-firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 
-  * New upstream snapshot v10.0 A1 HG20111008R78356
+  * New upstream snapshot v10.0 A1 HG20111108R79928
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Update globalmenu-extension to 2.5 prerelease r264
@@ -91,7 +91,7 @@ firefox-trunk (10.0~a1~hg20111008r78356-0ubuntu1) UNRELEASED; urgency=low
     @{MOZ_LIBDIR} which will help with overrides
   * debian/rules: adjust to install the profile on 12.04
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 03 Nov 2011 14:14:22 -0400
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 09 Nov 2011 13:08:02 +0000
 
 firefox-trunk (9.0~a1~hg20110925r77515-0ubuntu1) oneiric; urgency=low
 
