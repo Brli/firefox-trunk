@@ -1,8 +1,10 @@
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu2) UNRELEASED; urgency=low
 
   * Update globalmenu-extension to 2.5 prerelease r265
+  * Turn off the one-time addon selection dialog (LP: #888307)
+    - update debian/vendor.js
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 09 Nov 2011 14:53:31 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 10 Nov 2011 19:55:51 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 

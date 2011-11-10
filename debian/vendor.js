@@ -13,3 +13,4 @@ pref("distribution.searchplugins.defaultLocale", "en-US");
 
 // Don't disable our bundled extensions in the application directory
 pref("extensions.autoDisableScopes", 11);
+pref("extensions.shownSelectionUI", true);
