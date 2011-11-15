@@ -1,6 +1,6 @@
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 2.5 prerelease r265
+  * Update globalmenu-extension to 2.5 prerelease r266
   * Turn off the one-time addon selection dialog (LP: #888307)
     - update debian/vendor.js
 
