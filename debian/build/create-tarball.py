@@ -321,27 +321,32 @@ def checkout_locale(base, cache, locale, tag, changesets):
 
 def checkout_upstream_l10n(base, cache, tag, all_locales):
     al = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, ALL_LOCALES), 'r')
+    sl = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, SHIPPED_LOCALES), 'r')
     l10ndir = os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n')
     if not os.path.isdir(l10ndir):
         os.makedirs(l10ndir)
     changesets = open(os.path.join(l10ndir, 'changesets'), 'w')
     try:
-        for line in al:
-            locale = line.strip()
-            if locale.startswith('#'):
-                continue
+        for l10nlist in al, sl:
+            for line in l10nlist:
+                locale = line.strip()
+                if locale.startswith('#') or locale in all_locales:
+                    continue
 
-            try:
-                checkout_locale(base, cache, locale, tag, changesets)
-                all_locales[locale] = 1
-            except Exception as e:
-                # checkout_locale will throw if the specified revision isn't found
-                # In this case, omit it from the tarball
-                localedir = os.path.join(l10ndir, locale)
-                if os.path.exists(localedir):
-                    shutil.rmtree(localedir)
+                if l10nlist != al: print 'WARNING: Locale %s is not in all-locales. This is an upstream oversight' % locale
+
+                try:
+                    checkout_locale(base, cache, locale, tag, changesets)
+                    all_locales[locale] = 1
+                except Exception as e:
+                    # checkout_locale will throw if the specified revision isn't found
+                    # In this case, omit it from the tarball
+                    localedir = os.path.join(l10ndir, locale)
+                    if os.path.exists(localedir):
+                        shutil.rmtree(localedir)
     finally:
         al.close()
+        sl.close()
         changesets.close()
 
 def checkout_source(repo, cache, tag):
