@@ -438,6 +438,14 @@ uGlobalMenuIconLoader::FrameChanged(imgIContainer *aContainer,
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 11
+NS_IMETHODIMP
+uGlobalMenuIconLoader::OnImageIsAnimated(imgIRequest* aRequest)
+{
+  return NS_OK;
+}
+#endif
+
 void
 uGlobalMenuIconLoader::Destroy()
 {
