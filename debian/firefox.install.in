@@ -2,7 +2,7 @@ debian/tmp@MOZ_LIBDIR@/icons
 debian/tmp@MOZ_LIBDIR@/chrome/icons
 debian/tmp@MOZ_LIBDIR@/components/*.manifest
 debian/tmp@MOZ_LIBDIR@/components/*.so
-debian/tmp@MOZ_LIBDIR@/omni.jar
+debian/tmp@MOZ_LIBDIR@/omni.ja
 debian/tmp@MOZ_LIBDIR@/*.so
 debian/tmp@MOZ_LIBDIR@/@MOZ_APP_NAME@
 %%ifdef MOZ_ENABLE_BREAKPAD

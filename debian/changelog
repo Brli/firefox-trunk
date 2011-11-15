@@ -6,6 +6,8 @@ firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu2) UNRELEASED; urgency=low
   * Ensure we include locales in the tarball if they are in shipped-locales
     but not in all-locales
     - update debian/build/create-tarball.py
+  * Update after landing of bmo: #701875 - Rename omni.jar to omni.ja
+    - update debian/firefox.install.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 15 Nov 2011 18:34:00 +0000
 
