@@ -145,6 +145,11 @@ ifeq (,$(filter i386 amd64 armel,$(DEB_HOST_ARCH)))
 	MOZ_ENABLE_BREAKPAD = 0
 endif
 
+# Ensure the crash reporter gets disabled for derivatives
+ifneq (Ubuntu, $(DISTRIB))
+	MOZ_ENABLE_BREAKPAD = 0
+endif
+
 BRANDING	= $(CHANNEL)
 ifneq (,$(filter release beta, $(BRANDING)))
 	BRANDING = official
@@ -165,7 +170,9 @@ MOZ_DISPLAY_NAME	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/bra
 
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
+ifeq (Ubuntu, $(DISTRIB))
 export MOZ_UA_VENDOR=Ubuntu
+endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1110" && echo "1"))
 	MOZ_BUILD_PGO := 0
 endif
