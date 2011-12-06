@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Ubuntu Mozilla Team <ubuntu-mozillateam@lists.ubuntu.com>
 Vcs-Bzr: https://code.launchpad.net/~mozillateam/firefox/firefox-trunk.head
 Build-Depends: cdbs,
+	locales,
 	debhelper (>= 5),
 	m4,
 	autotools-dev,
