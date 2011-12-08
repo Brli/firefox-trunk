@@ -35,7 +35,6 @@ Build-Depends: cdbs,
 	libgnomevfs2-dev (>= 1:2.0),
         yasm (>= 1.1),
 	xvfb,
-	imagemagick,
 	libdbusmenu-gtk-dev,
 	unzip
 Standards-Version: 3.9.1

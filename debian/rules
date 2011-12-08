@@ -318,7 +318,6 @@ subst_files = \
 	debian/$(MOZ_APP_NAME).install \
 	debian/$(MOZ_APP_NAME).links \
 	debian/$(MOZ_APP_NAME).manpages \
-	debian/$(MOZ_APP_NAME).menu \
 	debian/$(MOZ_APP_NAME).postinst \
 	debian/$(MOZ_APP_NAME).postrm \
 	debian/$(MOZ_APP_NAME).preinst \
@@ -460,7 +459,6 @@ common-binary-post-install-indep::
 	done < $(CURDIR)/debian/config/locales.shipped
 
 binary-install/$(MOZ_APP_NAME)::
-	convert -resize 32x32 debian/$(MOZ_APP_NAME)/usr/share/pixmaps/$(MOZ_APP_NAME).png debian/$(MOZ_APP_NAME)/usr/share/pixmaps/$(MOZ_APP_NAME).xpm
 ifeq (1,$(MOZ_ENABLE_BREAKPAD))
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_APP_NAME)/etc/apport/blacklist.d/$(MOZ_APP_NAME)
 endif
