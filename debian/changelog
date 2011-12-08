@@ -18,12 +18,15 @@ firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu2) UNRELEASED; urgency=low
     - remove debian/firefox.menu.in
     - don't create a 32x32 xpm icon in debian/rules
     - drop the imagemagick build-depend in debian/control
+  * Temporarily disable ipdl tests due to build failures. These aren't
+    enabled upstream, anyway
+    - update debian/config/mozconfig.in
 
   [ Adam Conrad <adconrad@ubuntu.com> ]
   * Add missing build-dep on non-essential locales, since we use it.
     - update debian/control{,.in}
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 08 Dec 2011 12:46:35 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 08 Dec 2011 22:19:11 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 
