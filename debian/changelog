@@ -15,7 +15,7 @@ firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu2) UNRELEASED; urgency=low
   * Only add "Ubuntu" to the UA string when being built for Ubuntu
     - update debian/rules
   * Drop obsolete Debian menu file
-    - remove debian/firefox.install.in
+    - remove debian/firefox.menu.in
     - don't create a 32x32 xpm icon in debian/rules
     - drop the imagemagick build-depend in debian/control
 
