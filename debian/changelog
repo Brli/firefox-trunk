@@ -26,6 +26,10 @@ firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu2) UNRELEASED; urgency=low
   * Add missing build-dep on non-essential locales, since we use it.
     - update debian/control{,.in}
 
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
+  * debian/usr.bin.firefox.apparmor.12.04: don't use @{MOZ_LIBDIR} variable
+    for the binary names
+
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 08 Dec 2011 22:19:11 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
