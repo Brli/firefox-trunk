@@ -47,8 +47,8 @@ ac_add_options --enable-valgrind
 mk_add_options MOZ_MAKE_FLAGS=-j4
 %%endif
 %%ifdef MOZ_WANT_UNIT_TESTS
-# ac_add_options --enable-tests
-ac_add_options --enable-ipdl-tests
+ac_add_options --enable-tests
+# ac_add_options --enable-ipdl-tests
 %%else
 ac_add_options --disable-tests
 ac_add_options --disable-ipdl-tests
