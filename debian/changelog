@@ -38,6 +38,9 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
     directly there instead
     - update debian/rules
     - update debian/config/mozconfig.in
+  * Refresh KDE patch and reenable on lucid-oneiric only
+    - update debian/patches/mozilla-kde.patch
+    - update debian/patches/series
 
   [ Adam Conrad <adconrad@ubuntu.com> ]
   * Add missing build-dep on non-essential locales, since we use it.
@@ -47,7 +50,7 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
   * debian/usr.bin.firefox.apparmor.12.04: don't use @{MOZ_LIBDIR} variable
     for the binary names
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 13 Dec 2011 14:16:45 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 13 Dec 2011 14:19:52 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 
