@@ -41,6 +41,11 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
   * Refresh KDE patch and reenable on lucid-oneiric only
     - update debian/patches/mozilla-kde.patch
     - update debian/patches/series
+  * Fix LP: #898883 - IPC xpcshell tests hang the buildd's. Give all
+    xpcshell tests an X display, as plugin-container won't work without one
+    - update debian/build/testsuite.mk
+  * Turn on all IPC xpcshell tests again
+    - update debian/build/testsute.mk
 
   [ Adam Conrad <adconrad@ubuntu.com> ]
   * Add missing build-dep on non-essential locales, since we use it.
@@ -50,7 +55,7 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
   * debian/usr.bin.firefox.apparmor.12.04: don't use @{MOZ_LIBDIR} variable
     for the binary names
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 13 Dec 2011 14:19:52 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 14 Dec 2011 22:09:02 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 
