@@ -46,6 +46,13 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
     - update debian/build/testsuite.mk
   * Turn on all IPC xpcshell tests again
     - update debian/build/testsute.mk
+  * Drop the default-apps xml file from lucid and maverick - there is
+    already one provided by gnome-control-center, which means that ours
+    is only relevant for nightly builds. It's not worth the extra
+    complexity for this
+    - remove debian/firefox.xml.in
+    - update debian/firefox-gnome-support.install.in
+    - update debian/rules
 
   [ Adam Conrad <adconrad@ubuntu.com> ]
   * Add missing build-dep on non-essential locales, since we use it.
@@ -55,7 +62,7 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
   * debian/usr.bin.firefox.apparmor.12.04: don't use @{MOZ_LIBDIR} variable
     for the binary names
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 14 Dec 2011 22:09:02 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 15 Dec 2011 12:14:55 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 
