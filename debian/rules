@@ -308,7 +308,6 @@ subst_files = \
 	debian/apport/native-origins \
 	debian/apport/source_$(MOZ_APP_NAME).py \
 	debian/$(MOZ_APP_NAME).desktop \
-	debian/$(MOZ_APP_NAME).xml \
 	debian/$(MOZ_APP_NAME)-gnome-support.install \
 	debian/$(MOZ_APP_NAME).dirs \
 	debian/$(MOZ_APP_NAME).install \
