@@ -3,7 +3,7 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
   * New upstream snapshot v11.0 A1 HG20111208R82182
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * Update globalmenu-extension to 2.5 prerelease r267
+  * Update globalmenu-extension to 2.5 prerelease r269
   * Turn off the one-time addon selection dialog (LP: #888307)
     - update debian/vendor.js
   * Ensure we include locales in the tarball if they are in shipped-locales
@@ -69,7 +69,7 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
   * debian/usr.bin.firefox.apparmor.12.04: don't use @{MOZ_LIBDIR} variable
     for the binary names
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Dec 2011 00:59:32 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Dec 2011 22:59:31 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 
