@@ -50,9 +50,9 @@ Provides: www-browser,
 	iceweasel,
 	gnome-www-browser,
 	${app:Provides}
-Suggests: firefox-trunk-gnome-support | firefox-kde-support,
-	latex-xft-fonts,
-	libthai0
+Suggests: latex-xft-fonts,
+	libthai0,
+	${app:Suggests}
 Breaks: ${app:Breaks}
 Replaces: ${app:Replaces}
 Conflicts: ${app:Conflicts}
@@ -69,7 +69,6 @@ Depends: ${shlibs:Depends},
 	${misc:Depends}, 
 	firefox-trunk
 Provides: ${gs:Provides}
-Breaks: ${gs:Breaks}
 Replaces: ${gs:Replaces}
 Conflicts: ${gs:Conflicts}
 Description: Safe and easy web browser from Mozilla - GNOME support
@@ -89,7 +88,6 @@ Depends: ${shlibs:Depends},
 	firefox-trunk (= ${binary:Version})
 Provides: ${dbg:Provides}
 Replaces: ${dbg:Replaces}
-Breaks: ${dbg:Breaks}
 Conflicts: ${dbg:Conflicts}
 Description: Safe and easy web browser from Mozilla - debug symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -114,7 +112,6 @@ Conflicts: xulrunner-2.0-dev,
 	xulrunner-1.9.2-dev,
 	${dev:Conflicts}
 Replaces: ${dev:Replaces}
-Breaks: ${dev:Breaks}
 Description: Safe and easy web browser from Mozilla - development files
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
