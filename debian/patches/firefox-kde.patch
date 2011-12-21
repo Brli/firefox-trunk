@@ -8,9 +8,9 @@ Forwarded: no
 
 Index: mozilla/browser/base/content/browser-kde.xul
 ===================================================================
---- mozilla.orig/browser/base/content/browser-kde.xul	2011-10-07 21:13:31.053825295 +0100
-+++ mozilla/browser/base/content/browser-kde.xul	2011-10-07 21:13:32.969825261 +0100
-@@ -200,7 +200,7 @@
+--- mozilla.orig/browser/base/content/browser-kde.xul	2011-12-21 00:50:07.985722205 +0000
++++ mozilla/browser/base/content/browser-kde.xul	2011-12-21 01:00:23.133697213 +0000
+@@ -201,7 +201,7 @@
        </row>
        <vbox id="editBookmarkPanelContent" flex="1" hidden="true"/>
        <hbox id="editBookmarkPanelBottomButtons" pack="end">
@@ -21,8 +21,8 @@ Index: mozilla/browser/base/content/browser-kde.xul
                  label="&editBookmark.done.label;"
 Index: mozilla/browser/base/jar.mn
 ===================================================================
---- mozilla.orig/browser/base/jar.mn	2011-10-07 03:03:11.000000000 +0100
-+++ mozilla/browser/base/jar.mn	2011-10-07 21:13:32.969825261 +0100
+--- mozilla.orig/browser/base/jar.mn	2011-12-20 02:04:11.000000000 +0000
++++ mozilla/browser/base/jar.mn	2011-12-21 01:00:23.133697213 +0000
 @@ -28,6 +28,8 @@
  *       content/browser/browser.css                   (content/browser.css)
  *       content/browser/browser.js                    (content/browser.js)
@@ -34,8 +34,8 @@ Index: mozilla/browser/base/jar.mn
  *       content/browser/fullscreen-video.xhtml        (content/fullscreen-video.xhtml)
 Index: mozilla/browser/components/build/nsModule.cpp
 ===================================================================
---- mozilla.orig/browser/components/build/nsModule.cpp	2011-10-07 03:03:14.000000000 +0100
-+++ mozilla/browser/components/build/nsModule.cpp	2011-10-07 21:13:32.969825261 +0100
+--- mozilla.orig/browser/components/build/nsModule.cpp	2011-12-20 02:04:15.000000000 +0000
++++ mozilla/browser/components/build/nsModule.cpp	2011-12-21 01:00:23.133697213 +0000
 @@ -46,7 +46,7 @@
  #elif defined(XP_MACOSX)
  #include "nsMacShellService.h"
@@ -45,7 +45,7 @@ Index: mozilla/browser/components/build/nsModule.cpp
  #endif
  
  #include "nsProfileMigrator.h"
-@@ -76,8 +76,6 @@
+@@ -73,8 +73,6 @@
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsWindowsShellService)
  #elif defined(XP_MACOSX)
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsMacShellService)
@@ -53,8 +53,8 @@ Index: mozilla/browser/components/build/nsModule.cpp
 -NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsGNOMEShellService, Init)
  #endif
  
- #if !defined(XP_OS2)
-@@ -119,7 +117,7 @@
+ NS_GENERIC_FACTORY_CONSTRUCTOR(nsProfileMigrator)
+@@ -110,7 +108,7 @@
  #if defined(XP_WIN)
      { &kNS_SHELLSERVICE_CID, false, NULL, nsWindowsShellServiceConstructor },
  #elif defined(MOZ_WIDGET_GTK2)
@@ -65,9 +65,9 @@ Index: mozilla/browser/components/build/nsModule.cpp
      { &kNS_BROWSER_ABOUT_REDIRECTOR_CID, false, NULL, AboutRedirector::Create },
 Index: mozilla/browser/components/shell/src/Makefile.in
 ===================================================================
---- mozilla.orig/browser/components/shell/src/Makefile.in	2011-10-07 03:03:17.000000000 +0100
-+++ mozilla/browser/components/shell/src/Makefile.in	2011-10-07 21:13:32.969825261 +0100
-@@ -57,7 +57,8 @@
+--- mozilla.orig/browser/components/shell/src/Makefile.in	2011-12-20 02:04:20.000000000 +0000
++++ mozilla/browser/components/shell/src/Makefile.in	2011-12-21 01:00:23.133697213 +0000
+@@ -56,7 +56,8 @@
  CPPSRCS = nsMacShellService.cpp
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT), gtk2)
@@ -80,7 +80,7 @@ Index: mozilla/browser/components/shell/src/Makefile.in
 Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsKDEShellService.cpp	2011-10-07 22:09:00.493766135 +0100
++++ mozilla/browser/components/shell/src/nsKDEShellService.cpp	2011-12-21 01:00:23.133697213 +0000
 @@ -0,0 +1,193 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -145,8 +145,8 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 +    *aIsDefaultBrowser = PR_FALSE;
 +    if (aStartupCheck)
 +        mCheckedThisSession = PR_TRUE;
-+    nsCStringArray command;
-+    command.AppendCString( NS_LITERAL_CSTRING( "ISDEFAULTBROWSER" ));
++    nsTArray<nsCString> command;
++    command.AppendElement( NS_LITERAL_CSTRING( "ISDEFAULTBROWSER" ));
 +    if( nsKDEUtils::command( command ))
 +        *aIsDefaultBrowser = PR_TRUE;
 +    return NS_OK;
@@ -156,9 +156,9 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 +nsKDEShellService::SetDefaultBrowser(bool aClaimAllTypes,
 +                                     bool aForAllUsers)
 +    {
-+    nsCStringArray command;
-+    command.AppendCString( NS_LITERAL_CSTRING( "SETDEFAULTBROWSER" ));
-+    command.AppendCString( aClaimAllTypes ? NS_LITERAL_CSTRING( "ALLTYPES" ) : NS_LITERAL_CSTRING( "NORMAL" ));
++    nsTArray<nsCString> command;
++    command.AppendElement( NS_LITERAL_CSTRING( "SETDEFAULTBROWSER" ));
++    command.AppendElement( aClaimAllTypes ? NS_LITERAL_CSTRING( "ALLTYPES" ) : NS_LITERAL_CSTRING( "NORMAL" ));
 +    return nsKDEUtils::command( command ) ? NS_OK : NS_ERROR_FAILURE;
 +    }
 +
@@ -219,11 +219,11 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 +NS_IMETHODIMP
 +nsKDEShellService::OpenApplication(PRInt32 aApplication)
 +    {
-+    nsCStringArray command;
++    nsTArray<nsCString> command;
 +    if( aApplication == APPLICATION_MAIL )
-+        command.AppendCString( NS_LITERAL_CSTRING( "OPENMAIL" ));
++        command.AppendElement( NS_LITERAL_CSTRING( "OPENMAIL" ));
 +    else if( aApplication == APPLICATION_NEWS )
-+        command.AppendCString( NS_LITERAL_CSTRING( "OPENNEWS" ));
++        command.AppendElement( NS_LITERAL_CSTRING( "OPENNEWS" ));
 +    else
 +        return NS_ERROR_NOT_IMPLEMENTED;
 +    return nsKDEUtils::command( command ) ? NS_OK : NS_ERROR_FAILURE;
@@ -232,13 +232,13 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 +NS_IMETHODIMP
 +nsKDEShellService::OpenApplicationWithURI(nsILocalFile* aApplication, const nsACString& aURI)
 +    {
-+    nsCStringArray command;
-+    command.AppendCString( NS_LITERAL_CSTRING( "RUN" ));
++    nsTArray<nsCString> command;
++    command.AppendElement( NS_LITERAL_CSTRING( "RUN" ));
 +    nsCString app;
 +    nsresult rv = aApplication->GetNativePath( app );
 +    NS_ENSURE_SUCCESS( rv, rv );
-+    command.AppendCString( app );
-+    command.AppendCString( aURI );
++    command.AppendElement( app );
++    command.AppendElement( aURI );
 +    return nsKDEUtils::command( command ) ? NS_OK : NS_ERROR_FAILURE;
 +    }
 +
@@ -247,14 +247,14 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 +    {
 +    *_retval = nsnull;
 +
-+    nsCStringArray command;
-+    command.AppendCString( NS_LITERAL_CSTRING( "GETDEFAULTFEEDREADER" ));
-+    nsCStringArray output;
-+    if( !nsKDEUtils::command( command, &output ) || output.Count() != 1 )
++    nsTArray<nsCString> command;
++    command.AppendElement( NS_LITERAL_CSTRING( "GETDEFAULTFEEDREADER" ));
++    nsTArray<nsCString> output;
++    if( !nsKDEUtils::command( command, &output ) || output.Length() != 1 )
 +        return NS_ERROR_FAILURE;
 +
 +    nsCString path;
-+    path = *output[ 0 ];
++    path = output[ 0 ];
 +    if (path.IsEmpty())
 +        return NS_ERROR_FAILURE;
 +
@@ -278,7 +278,7 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 Index: mozilla/browser/components/shell/src/nsKDEShellService.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsKDEShellService.h	2011-10-07 21:13:32.969825261 +0100
++++ mozilla/browser/components/shell/src/nsKDEShellService.h	2011-12-21 01:00:23.133697213 +0000
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -342,7 +342,7 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.h
 Index: mozilla/browser/components/shell/src/nsUnixShellService.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsUnixShellService.cpp	2011-10-07 21:13:32.969825261 +0100
++++ mozilla/browser/components/shell/src/nsUnixShellService.cpp	2011-12-21 01:00:23.133697213 +0000
 @@ -0,0 +1,52 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -399,7 +399,7 @@ Index: mozilla/browser/components/shell/src/nsUnixShellService.cpp
 Index: mozilla/browser/components/shell/src/nsUnixShellService.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsUnixShellService.h	2011-10-07 21:13:32.973825262 +0100
++++ mozilla/browser/components/shell/src/nsUnixShellService.h	2011-12-21 01:00:23.133697213 +0000
 @@ -0,0 +1,45 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****

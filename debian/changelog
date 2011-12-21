@@ -58,8 +58,8 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
     remain installed in users profiles if they try the beta or aurora
     builds, but the Feedback button is disabled on release builds
     - update debian/firefox.install.in
-  * Update mozilla-kde.patch to remove the use of nsCStringArray, which was
-    dropped from Firefox ages ago
+  * Update mozilla-kde.patch and firefox-kde.patch to remove the use of
+    nsCStringArray, which was dropped from Firefox 10 
 
   [ Adam Conrad <adconrad@ubuntu.com> ]
   * Add missing build-dep on non-essential locales, since we use it.
@@ -69,7 +69,7 @@ firefox-trunk (11.0~a1~hg20111208r82182-0ubuntu2) UNRELEASED; urgency=low
   * debian/usr.bin.firefox.apparmor.12.04: don't use @{MOZ_LIBDIR} variable
     for the binary names
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Dec 2011 22:59:31 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 21 Dec 2011 01:01:53 +0000
 
 firefox-trunk (10.0~a1~hg20111108r79928-0ubuntu1) oneiric; urgency=low
 
