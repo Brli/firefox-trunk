@@ -1,3 +1,15 @@
+firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu2) UNRELEASED; urgency=low
+
+  * Keep the firefox-kde-support suggest on releases older than precise
+    for now
+    - update debian/rules
+  * Ensure that we suggest kmozillahelper on lucid
+    - update debian/rules
+  * Ensure that we replace kubuntu-firefox-installer on lucid
+    - update debian/rules
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 22 Dec 2011 23:18:48 +0000
+
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
   * New upstream snapshot v11.0 A1 HG20111220R83015
