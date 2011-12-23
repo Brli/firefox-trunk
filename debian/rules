@@ -145,6 +145,11 @@ ifeq (,$(filter i386 amd64 armel,$(DEB_HOST_ARCH)))
 	MOZ_ENABLE_BREAKPAD = 0
 endif
 
+# powerpc sucks
+ifneq (,$(filter powerpc,$(DEB_BUILD_ARCH))
+	MOZ_WANT_UNIT_TESTS = 0
+endif
+
 # Ensure the crash reporter gets disabled for derivatives
 ifneq (Ubuntu, $(DISTRIB))
 	MOZ_ENABLE_BREAKPAD = 0
