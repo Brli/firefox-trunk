@@ -146,7 +146,7 @@ ifeq (,$(filter i386 amd64 armel,$(DEB_HOST_ARCH)))
 endif
 
 # powerpc sucks
-ifneq (,$(filter powerpc,$(DEB_BUILD_ARCH))
+ifneq (,$(filter powerpc,$(DEB_BUILD_ARCH)))
 	MOZ_WANT_UNIT_TESTS = 0
 endif
 
