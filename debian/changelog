@@ -9,8 +9,11 @@ firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu2) UNRELEASED; urgency=low
     - update debian/rules
   * Disable the tests on powerpc, because it sucks too much to run them
     - update debian/rules
+  * "Fix" LP: #897794 - some websites expect "X11" to be the first token of
+    the platform component in the UA string
+    - update debian/patches/ubuntu-ua-string-changes.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 23 Dec 2011 14:43:23 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Jan 2012 00:34:21 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
