@@ -12,8 +12,11 @@ firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu2) UNRELEASED; urgency=low
   * "Fix" LP: #897794 - some websites expect "X11" to be the first token of
     the platform component in the UA string
     - update debian/patches/ubuntu-ua-string-changes.patch
+  * Call xvfb-run with "-a" in case there are other servers running on the
+    builder
+    - update debian/build/testsuite.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Jan 2012 00:34:21 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Jan 2012 19:28:40 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
