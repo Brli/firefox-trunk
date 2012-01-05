@@ -68,7 +68,7 @@ Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends},
 	${gconf:Depends},
-	firefox-trunk,
+	firefox-trunk
 Provides: ${gs:Provides}
 Replaces: ${gs:Replaces}
 Conflicts: ${gs:Conflicts}
