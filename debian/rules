@@ -198,52 +198,60 @@ ifeq (1,$(MOZ_ENABLE_BREAKPAD))
 	export MOZILLA_OFFICIAL=1
 endif
 
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1010" && echo "1"))
-APP_SUGGEST_ARGS := -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support, kmozillahelper (>= 0.6)"
-else
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1210" && echo "1"))
-APP_SUGGEST_ARGS := -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support | firefox-kde-support"
-else
-APP_SUGGEST_ARGS := -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support"
-endif
-endif
-
 ifeq ($(MOZ_APP_BASENAME), $(MOZ_APP_NAME))
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1010" && echo "1"))
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Replaces="abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer" \
-					     -Vapp:Breaks="abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
-					 		   firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1)" $(APP_SUGGEST_ARGS)
-DEV_CONTROL_ARGS :=
+APP_CONTROL_ARGS := -Vapp:Replaces="abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer" \
+		    -Vapp:Breaks="abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
+				  firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1)"
 else
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Provides="firefox-3.6, firefox-3.5, firefox-3.0, firefox-2, firefox-2-dom-inspector, firefox-2-libthai" \
-					     -Vapp:Conflicts="firefox-3.6 (<< 3.6~hg20100117r33523), firefox-3.5 (<< 3.6~hg20100117r33523), \
-							      firefox-3.0 (<< 3.6~hg20100117r33523), firefox-3.6-gnome-support (<< 3.6~hg20100117r33523), \
-							      firefox-2 (<< 3), firefox-2-libthai (<< 3), firefox-2-dom-inspector (<< 3), \
-							      abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
-							      firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1)" \
-					     -Vapp:Replaces="firefox-3.6, firefox-3.5, firefox-3.0, firefox-3.6-gnome-support, firefox-2, firefox-2-libthai, \
-							     firefox-2-dom-inspector, abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer" \
-					     $(APP_SUGGEST_ARGS)
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-gnome-support := \
-					-- -Vgs:Provides="firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2" \
-					   -Vgs:Conflicts="firefox-3.6-gnome-support (<< 3.6~hg20100117r33523+nobinonly), \
-							   firefox-3.5-gnome-support (<< 3.6~hg20100117r33523), firefox-3.0-gnome-support (<< 3.6~hg20100117r33523), \
-							   firefox-2 (<< 3)" \
-					   -Vgs:Replaces="firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2-gnome-support"
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dbg := -- -Vdbg:Conflicts="firefox-3.6-dbg (<< 3.6~hg20100117r33523+nobinonly), firefox-3.5-dbg (<< 3.6~hg20100117r33523), \
-							          firefox-2-dbg (<< 3)" \
-						 -Vdbg:Replaces="firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg" -Vdbg:Provides="firefox-3.6-dbg, \
-								 firefox-3.5-dbg, firefox-2-dbg"
+APP_CONTROL_ARGS := -Vapp:Provides="firefox-3.6, firefox-3.5, firefox-3.0, firefox-2, firefox-2-dom-inspector, firefox-2-libthai" \
+		    -Vapp:Conflicts="firefox-3.6 (<< 3.6~hg20100117r33523), firefox-3.5 (<< 3.6~hg20100117r33523), \
+				     firefox-3.0 (<< 3.6~hg20100117r33523), firefox-3.6-gnome-support (<< 3.6~hg20100117r33523), \
+				     firefox-2 (<< 3), firefox-2-libthai (<< 3), firefox-2-dom-inspector (<< 3), \
+				     abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
+				     firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1)" \
+		    -Vapp:Replaces="firefox-3.6, firefox-3.5, firefox-3.0, firefox-3.6-gnome-support, firefox-2, firefox-2-libthai, \
+				    firefox-2-dom-inspector, abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer"
 DEV_CONTROL_ARGS := -Vdev:Provides="firefox-3.6-dev, firefox-3.5-dev, firefox-3.0-dev, firefox-2-dev" \
 		    -Vdev:Replaces="firefox-3.6-dev, firefox-3.5-dev, firefox-3.0-dev, firefox-2-dev" \
 		    -Vdev:Conflicts="firefox-3.6-dev (<< 3.6~hg20100117r33523+nobinonly), firefox-3.5-dev (<< 3.6~hg20100117r33523), \
 				     firefox-3.0-dev (<< 3.6~hg20100117r33523), firefox-2-dev (<< 3)"
+GS_CONTROL_ARGS := -Vgs:Provides="firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2" \
+		   -Vgs:Conflicts="firefox-3.6-gnome-support (<< 3.6~hg20100117r33523+nobinonly), \
+				   firefox-3.5-gnome-support (<< 3.6~hg20100117r33523), firefox-3.0-gnome-support (<< 3.6~hg20100117r33523), \
+				   firefox-2 (<< 3)" \
+		   -Vgs:Replaces="firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2-gnome-support"
+DBG_CONTROL_ARGS := -Vdbg:Conflicts="firefox-3.6-dbg (<< 3.6~hg20100117r33523+nobinonly), firefox-3.5-dbg (<< 3.6~hg20100117r33523), \
+				     firefox-2-dbg (<< 3)" \
+		    -Vdbg:Replaces="firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg" \
+		    -Vdbg:Provides="firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg"
+
 endif
-else
-DEV_CONTROL_ARGS :=
 endif
 
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dev	= -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS) $(DEV_CONTROL_ARGS)
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1010" && echo "1"))
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support, kmozillahelper (>= 0.6)" $(APP_CONTROL_ARGS)
+else
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1210" && echo "1"))
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support | firefox-kde-support" $(APP_CONTROL_ARGS)
+else
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support" $(APP_CONTROL_ARGS)
+endif
+endif
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dev := -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS) $(DEV_CONTROL_ARGS)
+#ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1204" && echo "1"))
+GCONF_DEPENDS := libgconf2-4
+#endif
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-gnome-support := -- -Vgs:Depends="$(GCONF_DEPENDS)" $(GS_CONTROL_ARGS)
+ifneq (,$(DBG_CONTROL_ARGS))
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dbg := -- $(DBG_CONTROL_ARGS)
+endif
+
+print-control-args:
+	$(info App = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)))
+	$(info Gnome Support = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-gnome-support))
+	$(info Dev = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dev))
+	$(info Dbg = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dbg))
 
 # Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)"\
@@ -283,9 +291,6 @@ ifeq (1,$(MOZ_BUILD_PGO))
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
 	DEB_DEFINES += -DMOZ_DISABLE_GNOMEVFS
-endif
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1204" && echo "1"))
-	DEB_DEFINES += -DMOZ_DISABLE_GCONF
 endif
 ifeq (1,$(MOZ_DEBUG))
 	DEB_DEFINES += -DMOZ_DEBUG

@@ -66,8 +66,9 @@ Package: firefox-trunk-gnome-support
 Architecture: any
 Section: gnome
 Depends: ${shlibs:Depends}, 
-	${misc:Depends}, 
-	firefox-trunk
+	${misc:Depends},
+	${gs:Depends},
+	firefox-trunk,
 Provides: ${gs:Provides}
 Replaces: ${gs:Replaces}
 Conflicts: ${gs:Conflicts}

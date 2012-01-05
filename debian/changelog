@@ -15,8 +15,19 @@ firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu2) UNRELEASED; urgency=low
   * Call xvfb-run with "-a" in case there are other servers running on the
     builder
     - update debian/build/testsuite.mk
+  * Don't build with --disable-gconf on precise and newer. There is no hard
+    run-time requirement on gconf when enabled now, after bmo: 713827 landed.
+    This keeps us closer to the upstream configuration
+    - update debian/config/mozconfig.in
+    - update debian/rules
+  * Make sure to add a binary libgconf2-4 dependency for now, as dpkg-shlibdeps
+    won't do this for us. Note, this dependency should be dropped from oneiric
+    and precise once that bmo: 693343 lands, as that is the only thing in the
+    tree still relying on gconf
+    - update debian/rules
+    - update debian/control{,.in}
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Jan 2012 19:28:40 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Jan 2012 13:22:13 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 

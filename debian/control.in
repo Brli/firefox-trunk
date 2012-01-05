@@ -64,8 +64,9 @@ Package: @MOZ_APP_NAME@-gnome-support
 Architecture: any
 Section: gnome
 Depends: ${shlibs:Depends}, 
-	${misc:Depends}, 
-	@MOZ_APP_NAME@
+	${misc:Depends},
+	${gs:Depends},
+	@MOZ_APP_NAME@,
 Provides: ${gs:Provides}
 Replaces: ${gs:Replaces}
 Conflicts: ${gs:Conflicts}
