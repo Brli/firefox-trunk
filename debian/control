@@ -33,10 +33,11 @@ Build-Depends: cdbs,
 	libxrender-dev, 
 	libfreetype6-dev (>= 2.0.1),
 	libgnomevfs2-dev (>= 1:2.0),
-        yasm (>= 1.1) | yasm-1 (>= 1.1),
+	yasm (>= 1.1) | yasm-1 (>= 1.1),
 	xvfb,
 	libdbusmenu-gtk-dev,
-	unzip
+	unzip,
+	dbus-x11
 Standards-Version: 3.9.1
 
 Package: firefox-trunk

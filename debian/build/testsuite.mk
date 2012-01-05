@@ -28,7 +28,7 @@ $(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest): export LC_ALL=$
 $(addprefix debian/stamp-,xpcshell-tests): debian/stamp-xpcshell-tests-disable
 
 # Tests that need a X server
-$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest crashtest mochitest): WRAPPER = xvfb-run -a -s "-screen 0 1024x768x24"
+$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest crashtest mochitest): WRAPPER = xvfb-run -a -s "-screen 0 1024x768x24" dbus-launch --exit-with-session
 
 # Run the test!
 $(addprefix debian/stamp-,$(TESTS)):
