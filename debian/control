@@ -52,7 +52,7 @@ Provides: www-browser,
 	${app:Provides}
 Suggests: latex-xft-fonts,
 	libthai0,
-	${app:Suggests}
+	${support:Suggests}
 Breaks: ${app:Breaks}
 Replaces: ${app:Replaces}
 Conflicts: ${app:Conflicts}
@@ -67,7 +67,7 @@ Architecture: any
 Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends},
-	${gs:Depends},
+	${gconf:Depends},
 	firefox-trunk,
 Provides: ${gs:Provides}
 Replaces: ${gs:Replaces}

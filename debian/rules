@@ -230,28 +230,22 @@ endif
 endif
 
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1010" && echo "1"))
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support, kmozillahelper (>= 0.6)" $(APP_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vsupport:Suggests="$(MOZ_APP_NAME)-gnome-support, kmozillahelper (>= 0.6)" $(APP_CONTROL_ARGS)
 else
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1210" && echo "1"))
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support | firefox-kde-support" $(APP_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vsupport:Suggests="$(MOZ_APP_NAME)-gnome-support | firefox-kde-support" $(APP_CONTROL_ARGS)
 else
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vapp:Suggests="$(MOZ_APP_NAME)-gnome-support" $(APP_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vsupport:Suggests="$(MOZ_APP_NAME)-gnome-support" $(APP_CONTROL_ARGS)
 endif
 endif
 DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dev := -- -Vnspr:Depends=$(NSPR_DEPENDS) -Vnss:Depends=$(NSS_DEPENDS) -Vcairo:Depends=$(CAIRO_DEPENDS) $(DEV_CONTROL_ARGS)
 #ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1204" && echo "1"))
 GCONF_DEPENDS := libgconf2-4
 #endif
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-gnome-support := -- -Vgs:Depends="$(GCONF_DEPENDS)" $(GS_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-gnome-support := -- -Vgconf:Depends="$(GCONF_DEPENDS)" $(GS_CONTROL_ARGS)
 ifneq (,$(DBG_CONTROL_ARGS))
 DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dbg := -- $(DBG_CONTROL_ARGS)
 endif
-
-print-control-args:
-	$(info App = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)))
-	$(info Gnome Support = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-gnome-support))
-	$(info Dev = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dev))
-	$(info Dbg = $(DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dbg))
 
 # Defines used for the Mozilla text preprocessor
 DEB_DEFINES = 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)"\
