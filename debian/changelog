@@ -26,8 +26,13 @@ firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu2) UNRELEASED; urgency=low
     tree still relying on gconf
     - update debian/rules
     - update debian/control{,.in}
+  * Ensure that daily builds on Lucid use the renamed yasm-1, to ensure that
+    this gets daily test converage
+    - add debian/patches/use-new-yasm-in-lucid.patch
+    - update debian/patches/series
+    - update debian/control{,.in}
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Jan 2012 13:22:13 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Jan 2012 13:45:43 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
