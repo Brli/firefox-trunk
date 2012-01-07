@@ -255,11 +255,7 @@ uGlobalMenuIconLoader::Run()
 
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 8
   rv = sLoader->LoadImage(uri, nsnull, nsnull, nsnull, loadGroup, this,
-#else
-  rv = sLoader->LoadImage(uri, nsnull, nsnull, loadGroup, this,
-#endif
                           nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                           nsnull, nsnull, getter_AddRefs(mIconRequest));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -442,7 +438,12 @@ uGlobalMenuIconLoader::OnDiscard(imgIRequest *aRequest)
 }
 
 NS_IMETHODIMP
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 12
+uGlobalMenuIconLoader::FrameChanged(imgIRequest *aRequest,
+                                    imgIContainer *aContainer,
+#else
 uGlobalMenuIconLoader::FrameChanged(imgIContainer *aContainer,
+#endif
                                     const nsIntRect *aDirtyRect)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
