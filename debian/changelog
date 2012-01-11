@@ -51,11 +51,12 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
   * Firefox recommends libcanberra0 now that bmo: #635918 has landed
     - update debian/control{,in}
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Jan 2012 10:48:53 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Jan 2012 10:53:59 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
   * New upstream snapshot v11.0 A1 HG20111220R83015
+    - Fix LP: #875266 - Firefox ignores GNOME3 proxy settings
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Update globalmenu-extension to 2.5 prerelease r270
