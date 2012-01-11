@@ -44,7 +44,8 @@ Depends: lsb-release,
 	${misc:Depends},
 	${shlibs:Depends}
 Recommends: xul-ext-ubufox,
-	@MOZ_APP_NAME@-globalmenu
+	@MOZ_APP_NAME@-globalmenu,
+	libcanberra0
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser,
