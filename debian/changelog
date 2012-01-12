@@ -1,5 +1,6 @@
 firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Chris Coulson <chris.coulson@canonical.com> ]
   * New upstream snapshot v12.0 A1 HG20120109r84044
     - Fix LP: #857153 - Needs to get accessibility settings from GSettings
 
@@ -50,6 +51,9 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
   * Firefox recommends libcanberra0 now that bmo: #635918 has landed
     - update debian/control{,in}
+
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
+  * debian/usr.bin.firefox.apparmor.12.04: update comment for Ux rules
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Jan 2012 10:53:59 +0000
 
