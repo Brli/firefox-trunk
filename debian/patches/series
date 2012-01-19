@@ -14,3 +14,4 @@ ubuntu-codes-baidu.patch
 #@DIST:lucid,maverick@add-syspref-dir.patch
 #@DIST:lucid@use-new-yasm-in-lucid.patch
 ubuntu-ua-string-changes.patch
+autocomplete-theme-tweak.patch

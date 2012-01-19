@@ -51,11 +51,15 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
   * Firefox recommends libcanberra0 now that bmo: #635918 has landed
     - update debian/control{,in}
+  * Drop the solid white separators from the addressbar autocomplete dropdown,
+    and increase padding so that it doesn't look so bad with dark themes
+    - add debian/patches/autocomplete-theme-tweak.patch
+    - update debian/patches/series
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * debian/usr.bin.firefox.apparmor.12.04: update comment for Ux rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Jan 2012 10:53:59 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 19 Jan 2012 16:10:12 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
