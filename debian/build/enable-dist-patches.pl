@@ -30,8 +30,21 @@
 
 use strict;
 
-my $dist = shift;
-my $file = shift;
+my $tmp = shift;
+
+my $cleanup = ($tmp eq "--cleanup") ? 1 : 0;
+
+my $dist = "";
+my $arch = "";
+my $file = "";
+
+$cleanup && do {
+  $file = shift;
+} || do {
+  $dist = $tmp;
+  $arch = shift;
+  $file = shift;
+};
 
 open(I, $file) || do {
   print "Usage: $0 dist series_file\n";
@@ -43,14 +56,35 @@ open(O, "> $file.new") || do {
 };
 my $line;
 while (defined ($line = <I>)) {
-  $line =~ m/^#\@DIST:(.*?)\@\s*(.*)/ && do {
-    my ($d, $r) = ($1, $2);
+  $line =~ m/^#\@(.*)\@\s*(.*)/ && do {
+    my ($c, $p) = ($1, $2);
     print O $line;
-    print O "$r\n" if ((($d =~ m/(^|,)$dist($|,)/i && not $d =~ m/^!/i) || ($d =~ m/^!/i && not $d =~ m/(^|,|!)$dist($|,)/i)) && $dist ne "--cleanup");
+    my @cs = split(':', $c);
+    my $matches = not $cleanup;
+    $matches && do {
+      foreach my $condition (@cs) {
+        $condition =~ m/^DIST\=(.*)/ && do {
+          my $v = $1;
+          if (not (($v =~ m/(^|,)$dist($|,)/i && $v !~ m/^!/i) ||
+                   ($v =~ m/^!/i && $v !~ m/(^|,|!)$dist($|,)/i))) {
+            $matches = 0;
+          }
+          1;
+        } || $condition =~ m/^ARCH\=(.*)/ && do {
+          my $v = $1;
+          if (not (($v =~ m/(^|,)$arch($|,)/i && $v !~ m/^!/i) ||
+                   ($v =~ m/^!/i && $v !~ m/(^|,|!)$arch($|,)/i))) {
+             $matches = 0;
+          }
+          1;
+        } || die "Invalid syntax";
+      }
+    };
+    print O "$p\n" if $matches;
     # check if the next line is also the same
     $line = <I>;
     last unless defined $line;
-    redo unless $line eq "$r\n";
+    redo unless $line eq "$p\n";
     1;
   } ||
   do {

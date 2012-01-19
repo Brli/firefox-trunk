@@ -55,11 +55,14 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
     and increase padding so that it doesn't look so bad with dark themes
     - add debian/patches/autocomplete-theme-tweak.patch
     - update debian/patches/series
+  * Make it possible to do per-arch patches too
+    - update debian/build/enable-dist-patches.pl
+    - update debian/patches/series
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * debian/usr.bin.firefox.apparmor.12.04: update comment for Ux rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 19 Jan 2012 16:10:12 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 19 Jan 2012 18:24:18 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 

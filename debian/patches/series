@@ -7,11 +7,11 @@ normalize-distribution-searchplugins.patch
 ubuntu-codes-google.patch
 plugin-for-mimetype-pref.patch
 allow-lockPref-everywhere.patch
-#@DIST:lucid,maverick,natty,oneiric@mozilla-kde.patch
-#@DIST:lucid,maverick,natty,oneiric@firefox-kde.patch
+#@DIST=lucid,maverick,natty,oneiric@mozilla-kde.patch
+#@DIST=lucid,maverick,natty,oneiric@firefox-kde.patch
 ubuntu-codes-baidu.patch
-#@DIST:!lucid,maverick@unity-globalmenu-build-support.patch
-#@DIST:lucid,maverick@add-syspref-dir.patch
-#@DIST:lucid@use-new-yasm-in-lucid.patch
+#@DIST=!lucid,maverick@unity-globalmenu-build-support.patch
+#@DIST=lucid,maverick@add-syspref-dir.patch
+#@DIST=lucid@use-new-yasm-in-lucid.patch
 ubuntu-ua-string-changes.patch
 autocomplete-theme-tweak.patch
