@@ -32,7 +32,7 @@ use strict;
 
 my $tmp = shift;
 
-my $cleanup = ($tmp eq "--cleanup") ? 1 : 0;
+my $cleanup = ($tmp eq "--clean") ? 1 : 0;
 
 my $dist = "";
 my $arch = "";
@@ -40,6 +40,7 @@ my $file = "";
 
 $cleanup && do {
   $file = shift;
+  1;
 } || do {
   $dist = $tmp;
   $arch = shift;
