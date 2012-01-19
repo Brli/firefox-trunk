@@ -57,6 +57,7 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
   * Make it possible to do per-arch patches too
     - update debian/build/enable-dist-patches.pl
+    - update debian/rules
     - update debian/patches/series
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
