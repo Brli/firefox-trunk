@@ -15,3 +15,4 @@ ubuntu-codes-baidu.patch
 #@DIST=lucid@use-new-yasm-in-lucid.patch
 ubuntu-ua-string-changes.patch
 autocomplete-theme-tweak.patch
+revert-bmo621446-investigation.patch

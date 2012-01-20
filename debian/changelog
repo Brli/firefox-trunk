@@ -59,11 +59,15 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/enable-dist-patches.pl
     - update debian/rules
     - update debian/patches/series
+  * Fix LP: #918763 - Revert the temporary investigation patch for
+    bmo: #621446, as it breaks GCC4.4
+    - add debian/patches/revert-bmo621446-investigation.patch
+    - update debian/patches/series
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * debian/usr.bin.firefox.apparmor.12.04: update comment for Ux rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 19 Jan 2012 18:24:18 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 20 Jan 2012 12:03:00 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
