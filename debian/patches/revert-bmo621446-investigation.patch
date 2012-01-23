@@ -2,15 +2,11 @@
 # Parent 28613a5ff81bf1e4fd203655a9db50eea22dd912
 # User Chris Coulson <chris.coulson@canonical.com>
 
-diff --git a/netwerk/protocol/http/HttpChannelParent.cpp b/netwerk/protocol/http/HttpChannelParent.cpp
---- a/netwerk/protocol/http/HttpChannelParent.cpp
-+++ b/netwerk/protocol/http/HttpChannelParent.cpp
-@@ -52,30 +52,26 @@
- #include "nsIBadCertListener2.h"
- #include "nsICacheEntryDescriptor.h"
- #include "nsSerializationHelper.h"
- #include "nsISerializable.h"
- #include "nsIAssociatedContentSecurity.h"
+Index: mozilla/netwerk/protocol/http/HttpChannelParent.cpp
+===================================================================
+--- mozilla.orig/netwerk/protocol/http/HttpChannelParent.cpp	2012-01-23 02:08:29.000000000 +0000
++++ mozilla/netwerk/protocol/http/HttpChannelParent.cpp	2012-01-23 14:23:35.799182395 +0000
+@@ -57,7 +57,6 @@
  #include "nsIApplicationCacheService.h"
  #include "nsIOfflineCacheUpdate.h"
  #include "nsIRedirectChannelRegistrar.h"
@@ -18,30 +14,17 @@ diff --git a/netwerk/protocol/http/HttpChannelParent.cpp b/netwerk/protocol/http
  
  namespace mozilla {
  namespace net {
- 
- HttpChannelParent::HttpChannelParent(PBrowserParent* iframeEmbedding)
-   : mIPCClosed(false)
+@@ -67,9 +66,6 @@
    , mStoredStatus(0)
    , mStoredProgress(0)
    , mStoredProgressMax(0)
-   , mHeadersToSyncToChild(nsnull)
 -  , mSentRedirect1Begin(false)
 -  , mSentRedirect1BeginFailed(false)
 -  , mReceivedRedirect2Verify(false)
  {
    // Ensure gHttpHandler is initialized: we need the atom table up and running.
    nsIHttpProtocolHandler* handler;
-   CallGetService(NS_NETWORK_PROTOCOL_CONTRACTID_PREFIX "http", &handler);
-   NS_ASSERTION(handler, "no http handler");
- 
-   mTabParent = do_QueryObject(static_cast<TabParent*>(iframeEmbedding));
- }
-@@ -328,21 +324,16 @@ HttpChannelParent::RecvUpdateAssociatedC
-     mAssociatedContentSecurity->SetCountSubRequestsHighSecurity(high);
-     mAssociatedContentSecurity->SetCountSubRequestsLowSecurity(low);
-     mAssociatedContentSecurity->SetCountSubRequestsBrokenSecurity(broken);
-     mAssociatedContentSecurity->SetCountSubRequestsNoSecurity(no);
-   }
+@@ -331,11 +327,6 @@
    return true;
  }
  
@@ -53,17 +36,7 @@ diff --git a/netwerk/protocol/http/HttpChannelParent.cpp b/netwerk/protocol/http
  bool
  HttpChannelParent::RecvRedirect2Verify(const nsresult& result, 
                                         const RequestHeaderTuples& changedHeaders)
- {
-   if (NS_SUCCEEDED(result)) {
-     nsCOMPtr<nsIHttpChannel> newHttpChannel =
-         do_QueryInterface(mRedirectChannel);
- 
-@@ -350,40 +341,21 @@ HttpChannelParent::RecvRedirect2Verify(c
-       for (PRUint32 i = 0; i < changedHeaders.Length(); i++) {
-         newHttpChannel->SetRequestHeader(changedHeaders[i].mHeader,
-                                          changedHeaders[i].mValue,
-                                          changedHeaders[i].mMerge);
-       }
+@@ -353,30 +344,11 @@
      }
    }
  
@@ -94,17 +67,7 @@ diff --git a/netwerk/protocol/http/HttpChannelParent.cpp b/netwerk/protocol/http
  bool
  HttpChannelParent::RecvDocumentChannelCleanup()
  {
-   // From now on only using mAssociatedContentSecurity.  Free everything else.
-   mChannel = 0;          // Reclaim some memory sooner.
-   mCacheDescriptor = 0;  // Else we'll block other channels reading same URI
-   return true;
- }
-@@ -591,24 +563,18 @@ HttpChannelParent::StartRedirect(PRUint3
- 
-   nsHttpChannel *httpChan = static_cast<nsHttpChannel *>(mChannel.get());
-   nsHttpResponseHead *responseHead = httpChan->GetResponseHead();
-   bool result = SendRedirect1Begin(newChannelId,
-                                    IPC::URI(newURI),
+@@ -588,14 +560,8 @@
                                     redirectFlags,
                                     responseHead ? *responseHead
                                                  : nsHttpResponseHead());
@@ -120,23 +83,14 @@ diff --git a/netwerk/protocol/http/HttpChannelParent.cpp b/netwerk/protocol/http
  
    // Result is handled in RecvRedirect2Verify above
  
-   mRedirectChannel = newChannel;
-   mRedirectCallback = callback;
-   return NS_OK;
- }
- 
-diff --git a/netwerk/protocol/http/HttpChannelParent.h b/netwerk/protocol/http/HttpChannelParent.h
---- a/netwerk/protocol/http/HttpChannelParent.h
-+++ b/netwerk/protocol/http/HttpChannelParent.h
-@@ -133,18 +133,14 @@ private:
-   // state for combining OnStatus/OnProgress with OnDataAvailable
-   // into one IPDL call to child.
+Index: mozilla/netwerk/protocol/http/HttpChannelParent.h
+===================================================================
+--- mozilla.orig/netwerk/protocol/http/HttpChannelParent.h	2012-01-23 02:08:29.000000000 +0000
++++ mozilla/netwerk/protocol/http/HttpChannelParent.h	2012-01-23 14:24:01.663183457 +0000
+@@ -133,10 +133,6 @@
    nsresult mStoredStatus;
    PRUint64 mStoredProgress;
    PRUint64 mStoredProgressMax;
- 
-   // used while visiting headers, to send them to child: else null
-   RequestHeaderTuples *mHeadersToSyncToChild;
 -
 -  bool mSentRedirect1Begin : 1;
 -  bool mSentRedirect1BeginFailed : 1;
@@ -144,6 +98,3 @@ diff --git a/netwerk/protocol/http/HttpChannelParent.h b/netwerk/protocol/http/H
  };
  
  } // namespace net
- } // namespace mozilla
- 
- #endif // mozilla_net_HttpChannelParent_h
