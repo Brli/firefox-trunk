@@ -63,11 +63,30 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
     bmo: #621446, as it breaks GCC4.4
     - add debian/patches/revert-bmo621446-investigation.patch
     - update debian/patches/series
+  * Clean up search plugin installation now that we build our own
+    language packs:
+    - Drop the recursive symlink from /usr/lib/firefox-addons/searchplugins,
+      which lintian kept complaining about
+    - Don't effectively symlink distribution/searchplugins to searchplugins,
+      as they have different layouts and this avoids the same data being
+      iterated over twice
+    - Revert more to the upstream layout in distribution/searchplugins
+    - Fix an edge-case bug in our DirectoryProvider patch which would omit
+      the "common" subfolder if an error occurred when determining the
+      locale-specific subfolder
+      - add debian/firefox-locale.preinst.in, which will end up in all
+        language packs to assist the symlink -> folder transition
+      - update debian/firefox.dirs.in
+      - update debian/firefox.install.in
+      - update debian/firefox.links.in
+      - update debian/firefox.preinst.in
+      - update debian/patches/distro-locale-searchplugins.patch
+      - update debian/rules
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * debian/usr.bin.firefox.apparmor.12.04: update comment for Ux rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 20 Jan 2012 12:03:00 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 30 Jan 2012 21:21:39 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 

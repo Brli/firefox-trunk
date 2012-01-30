@@ -189,6 +189,11 @@ ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "101
 else
 	MOZ_SYSTEM_DICTDIR = /usr/share/myspell/dicts
 endif
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1110" && echo "1"))
+	DIST_SEARCHPLUGIN_DIR = usr/lib/$(MOZ_APP_NAME)-addons/distribution/searchplugins
+else
+	DIST_SEARCHPLUGIN_DIR = usr/lib/$(MOZ_APP_NAME)-$(MOZ_VERSION)/distribution/searchplugins
+endif
 export MOZCONFIG=$(CURDIR)/debian/config/mozconfig
 ifneq (1,$(MOZ_BUILD_UNOFFICIAL))
 	export BUILD_OFFICIAL=1
@@ -346,6 +351,7 @@ subst_files = \
 	debian/$(MOZ_APP_NAME).lintian-overrides \
 	debian/$(MOZ_APP_NAME)-globalmenu.dirs \
 	debian/config/mozconfig \
+	debian/$(MOZ_APP_NAME)-locale.preinst \
 	$(NULL)
 
 pkgconfig_files = \
@@ -469,9 +475,9 @@ common-binary-post-install-indep::
 			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} usr/lib/$(MOZ_APP_NAME)-addons/extensions ; \
 			cp $(CURDIR)/$(MOZ_DISTDIR)/linux-$(DEB_HOST_GNU_CPU)/xpi/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi \
 			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/usr/lib/$(MOZ_APP_NAME)-addons/extensions/$${id}.xpi ; \
-			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} usr/lib/$(MOZ_APP_NAME)-addons/searchplugins/$${language} ; \
+			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} $(DIST_SEARCHPLUGIN_DIR)/locale/$${language} ; \
 			cp -r $(CURDIR)/$(MOZ_DISTDIR)/xpi-stage/locale-$${language}/searchplugins/*.xml \
-			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/usr/lib/$(MOZ_APP_NAME)-addons/searchplugins/$${language}/. ; \
+			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/$(DIST_SEARCHPLUGIN_DIR)/locale/$${language}/. ; \
 		fi \
 	done < $(CURDIR)/debian/config/locales.shipped
 
@@ -497,6 +503,17 @@ binary-post-install/$(MOZ_APP_NAME)-dev::
 	rm -f debian/$(MOZ_APP_NAME)-dev$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_APP_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 endif
+
+common-binary-fixup-indep::
+	@while read line ; \
+	do \
+		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
+		if [ ! -z "$$line" ] ; \
+		then \
+			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
+			cp $(CURDIR)/debian/$(MOZ_APP_NAME)-locale.preinst $(CURDIR)/debian/(MOZ_APP_NAME)-locale-$${pkgname}.preinst \
+		fi \
+	done < $(CURDIR)/debian/config/locales.shipped
 
 common-binary-predeb-arch::
 	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
@@ -632,6 +649,7 @@ clean:: auto-refresh-supported-locales post-auto-update-debian-control
 endif
 	perl $(CURDIR)/debian/build/enable-dist-patches.pl --clean $(CURDIR)/debian/patches/series
 	rm -f $(subst_files)
+	rm -f debian/$(MOZ_APP_NAME)-locale-*.preinst
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
