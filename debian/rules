@@ -511,7 +511,7 @@ common-binary-fixup-indep::
 		if [ ! -z "$$line" ] ; \
 		then \
 			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
-			cp $(CURDIR)/debian/$(MOZ_APP_NAME)-locale.preinst $(CURDIR)/debian/(MOZ_APP_NAME)-locale-$${pkgname}.preinst ; \
+			cp $(CURDIR)/debian/$(MOZ_APP_NAME)-locale.preinst $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}.preinst ; \
 		fi \
 	done < $(CURDIR)/debian/config/locales.shipped
 
