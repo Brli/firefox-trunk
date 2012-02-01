@@ -22,7 +22,7 @@ ac_add_options --with-system-zlib=/usr
 ac_add_options --with-system-bz2=/usr
 ac_add_options --with-system-libevent=/usr
 ac_add_options --enable-system-pixman
-ac_add_options --disable-tree-freetype
+ac_add_options --enable-system-ffi
 %%elif MOZ_OVERRIDE_SHLIBS == tree
 ac_add_options --without-system-jpeg
 ac_add_options --without-system-png
@@ -30,7 +30,7 @@ ac_add_options --without-system-zlib
 ac_add_options --without-system-bz2
 ac_add_options --without-system-libevent
 ac_add_options --disable-system-pixman
-ac_add_options --enable-tree-freetype
+ac_add_options --disable-system-ffi
 %%endif
 %%ifdef MOZ_NO_OPTIMIZE
 ac_add_options --disable-optimize

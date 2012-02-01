@@ -2,7 +2,16 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
 
   * Update globalmenu-extension to 2.5 prerelease r276
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 01 Feb 2012 15:50:13 +0000
+  * Refresh build-depends:
+    - Bump minimum GTK version to 2.14 as we build with GIO support
+    - Add minimum requirement for glib (2.18)
+    - Drop libidl-dev, this doesn't appear to be needed now
+    - Bump minimum NSPR version to 4.9.0 for --enable-system-nspr builds
+    - Bump minimum sqlite version to 3.7.10 for --enable-system-sqlite
+      builds
+    - Bump minimum NSS version to 3.13.2 for --enable-system-nss builds
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 01 Feb 2012 23:40:38 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 

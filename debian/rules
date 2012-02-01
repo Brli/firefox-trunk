@@ -37,19 +37,19 @@ MOZ_USE_HUNSPELL	?= default
 MOZ_USE_VPX		?= default
 
 # Build-dependencies when using system libraries
-NSPR_SYSTEM_BD		= libnspr4-dev (>= 4.8.8)
-CAIRO_SYSTEM_BD		= libcairo2-dev (>= 1.10.0), libfreetype6-dev, libpixman-1-dev (>= 0.19.2)
-SQLITE_SYSTEM_BD	= libsqlite3-dev (>= 3.7.5)
+NSPR_SYSTEM_BD		= libnspr4-dev (>= 4.9.0)
+CAIRO_SYSTEM_BD		= libcairo2-dev (>= 1.10.0), libpixman-1-dev (>= 0.19.2)
+SQLITE_SYSTEM_BD	= libsqlite3-dev (>= 3.7.10)
 HUNSPELL_SYSTEM_BD	= libhunspell-dev
 VPX_SYSTEM_BD		= libvpx-dev
-NSS_SYSTEM_BD		= libnss3-dev (>= 3.12.10)
+NSS_SYSTEM_BD		= libnss3-dev (>= 3.13.2)
 
 # Build-dependencies when using in-tree libraries
 CAIRO_TREE_BD		= libxrender-dev
 
 # Additional build-dependencies
-EXTRA_SYSTEM_BD		= \n\tlibfreetype6-dev (>= 2.0.1),\n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibbz2-dev,\n\tlibevent-dev,
-EXTRA_DEFAULT_BD	= \n\tlibfreetype6-dev (>= 2.0.1),
+EXTRA_SYSTEM_BD		= \n\tlibjpeg62-dev,\n\tlibpng12-dev,\n\tzlib1g-dev,\n\tlibbz2-dev,\n\tlibevent-dev,\n\tlibffi-dev (>= 3.0.9)
+EXTRA_DEFAULT_BD	= 
 
 DEFAULT_TREE_LIBS	= CAIRO NSPR NSS SQLITE HUNSPELL VPX
 DEFAULT_SYSTEM_LIBS	=
