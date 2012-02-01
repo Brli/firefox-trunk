@@ -1,7 +1,7 @@
-firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * New upstream snapshot v12.0 A1 HG20120109r84044
+  * New upstream snapshot v12.0 A1 HG20120131r85707
     - Fix LP: #857153 - Needs to get accessibility settings from GSettings
 
   * Update globalmenu-extension to 2.5 prerelease r275
@@ -86,7 +86,7 @@ firefox-trunk (12.0~a1~hg20120109r84044-0ubuntu1) UNRELEASED; urgency=low
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * debian/usr.bin.firefox.apparmor.12.04: update comment for Ux rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 30 Jan 2012 21:21:39 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 01 Feb 2012 00:20:40 +0000
 
 firefox-trunk (11.0~a1~hg20111220r83015-0ubuntu1) precise; urgency=low
 
