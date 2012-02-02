@@ -10,8 +10,11 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - Bump minimum sqlite version to 3.7.10 for --enable-system-sqlite
       builds
     - Bump minimum NSS version to 3.13.2 for --enable-system-nss builds
+  * Refresh patches:
+    - update debian/patches/ubuntu-ua-string-changes.patch
+    - update debian/patches/change-moz-app-name.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 01 Feb 2012 23:40:38 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 02 Feb 2012 23:28:28 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 

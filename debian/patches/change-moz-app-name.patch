@@ -9,8 +9,8 @@
 
 Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2011-10-14 03:04:07.000000000 +0100
-+++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2011-10-14 14:30:30.328860276 +0100
+--- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2012-02-02 09:54:47.000000000 +0000
++++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2012-02-02 23:23:02.316701558 +0000
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
@@ -40,8 +40,8 @@ Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
 Index: mozilla/browser/branding/official/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/official/pref/firefox-branding.js	2011-10-14 03:04:07.000000000 +0100
-+++ mozilla/browser/branding/official/pref/firefox-branding.js	2011-10-14 14:30:58.912861288 +0100
+--- mozilla.orig/browser/branding/official/pref/firefox-branding.js	2012-02-02 09:54:46.000000000 +0000
++++ mozilla/browser/branding/official/pref/firefox-branding.js	2012-02-02 23:23:02.320701558 +0000
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
@@ -67,15 +67,15 @@ Index: mozilla/browser/branding/official/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "moz35");
 Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js	2011-10-14 03:04:06.000000000 +0100
-+++ mozilla/browser/branding/nightly/pref/firefox-branding.js	2011-10-14 14:30:30.332860277 +0100
+--- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js	2012-02-02 09:54:45.000000000 +0000
++++ mozilla/browser/branding/nightly/pref/firefox-branding.js	2012-02-02 23:23:02.320701558 +0000
 @@ -1,5 +1,5 @@
 -pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
 +pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
 +pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
- pref("app.update.interval", 7200); // 2 hours
+ pref("app.update.interval", 3600); // 1 hour
  // The time interval between the downloading of mar file chunks in the
 @@ -12,11 +12,11 @@
  pref("app.update.url.manual", "http://nightly.mozilla.org/");
@@ -94,8 +94,8 @@ Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
 Index: mozilla/browser/branding/aurora/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/aurora/pref/firefox-branding.js	2011-10-14 03:04:06.000000000 +0100
-+++ mozilla/browser/branding/aurora/pref/firefox-branding.js	2011-10-14 14:30:30.332860277 +0100
+--- mozilla.orig/browser/branding/aurora/pref/firefox-branding.js	2012-02-02 09:54:43.000000000 +0000
++++ mozilla/browser/branding/aurora/pref/firefox-branding.js	2012-02-02 23:23:02.320701558 +0000
 @@ -14,11 +14,11 @@
  pref("app.update.url.manual", "http://www.mozilla.com/firefox/channel/");
  // A default value for the "More information about this update" link
@@ -113,8 +113,8 @@ Index: mozilla/browser/branding/aurora/pref/firefox-branding.js
  pref("browser.search.param.yahoo-fr", "");
 Index: mozilla/browser/confvars.sh
 ===================================================================
---- mozilla.orig/browser/confvars.sh	2011-10-14 03:04:16.000000000 +0100
-+++ mozilla/browser/confvars.sh	2011-10-14 14:30:30.332860277 +0100
+--- mozilla.orig/browser/confvars.sh	2012-02-02 09:55:24.000000000 +0000
++++ mozilla/browser/confvars.sh	2012-02-02 23:23:02.320701558 +0000
 @@ -36,8 +36,9 @@
  #
  # ***** END LICENSE BLOCK *****
@@ -128,9 +128,9 @@ Index: mozilla/browser/confvars.sh
  
 Index: mozilla/Makefile.in
 ===================================================================
---- mozilla.orig/Makefile.in	2011-10-14 03:03:49.000000000 +0100
-+++ mozilla/Makefile.in	2011-10-14 14:30:30.332860277 +0100
-@@ -161,7 +161,7 @@
+--- mozilla.orig/Makefile.in	2012-02-02 09:53:57.000000000 +0000
++++ mozilla/Makefile.in	2012-02-02 23:23:02.320701558 +0000
+@@ -171,7 +171,7 @@
  endif
  
  SYMBOL_INDEX_NAME = \

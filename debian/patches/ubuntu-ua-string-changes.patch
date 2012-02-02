@@ -4,8 +4,8 @@ Forwarded: not-needed
 
 Index: mozilla/netwerk/protocol/http/Makefile.in
 ===================================================================
---- mozilla.orig/netwerk/protocol/http/Makefile.in	2012-01-03 02:09:16.000000000 +0000
-+++ mozilla/netwerk/protocol/http/Makefile.in	2012-01-04 00:18:41.514892835 +0000
+--- mozilla.orig/netwerk/protocol/http/Makefile.in	2012-02-02 10:13:40.000000000 +0000
++++ mozilla/netwerk/protocol/http/Makefile.in	2012-02-02 23:24:01.764700501 +0000
 @@ -126,3 +126,7 @@
  include $(topsrcdir)/config/rules.mk
  
@@ -16,9 +16,9 @@ Index: mozilla/netwerk/protocol/http/Makefile.in
 +endif
 Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
 ===================================================================
---- mozilla.orig/netwerk/protocol/http/nsHttpHandler.cpp	2012-01-03 02:09:17.000000000 +0000
-+++ mozilla/netwerk/protocol/http/nsHttpHandler.cpp	2012-01-04 00:27:56.814882968 +0000
-@@ -193,6 +193,9 @@
+--- mozilla.orig/netwerk/protocol/http/nsHttpHandler.cpp	2012-02-02 10:13:40.000000000 +0000
++++ mozilla/netwerk/protocol/http/nsHttpHandler.cpp	2012-02-02 23:27:38.164696657 +0000
+@@ -194,6 +194,9 @@
      , mLegacyAppName("Mozilla")
      , mLegacyAppVersion("5.0")
      , mProduct("Gecko")
@@ -28,7 +28,7 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
      , mUserAgentIsDirty(true)
      , mUseCache(true)
      , mPromptTempRedirect(true)
-@@ -291,6 +294,9 @@
+@@ -293,6 +296,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
      LOG(("> product-sub = %s\n", mProductSub.get()));
@@ -38,7 +38,7 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
      LOG(("> app-name = %s\n", mAppName.get()));
      LOG(("> app-version = %s\n", mAppVersion.get()));
      LOG(("> compat-firefox = %s\n", mCompatFirefox.get()));
-@@ -590,6 +596,9 @@
+@@ -596,6 +602,9 @@
      // than if we didn't preallocate at all.
      mUserAgent.SetCapacity(mLegacyAppName.Length() + 
                             mLegacyAppVersion.Length() + 
@@ -48,39 +48,31 @@ Index: mozilla/netwerk/protocol/http/nsHttpHandler.cpp
  #ifndef UA_SPARE_PLATFORM
                             mPlatform.Length() + 
  #endif
-@@ -600,7 +609,7 @@
-                            mAppName.Length() +
+@@ -607,7 +616,7 @@
                             mAppVersion.Length() +
                             mCompatFirefox.Length() +
+                            mCompatDevice.Length() +
 -                           13);
 +                           15);
  
      // Application portion
      mUserAgent.Assign(mLegacyAppName);
-@@ -614,6 +623,10 @@
-     mUserAgent += mPlatform;
-     mUserAgent.AppendLiteral("; ");
- #endif
+@@ -627,6 +636,10 @@
+         mUserAgent.AppendLiteral("; ");
+     }
+ #else
 +#ifdef MOZ_UA_VENDOR
 +    mUserAgent += mVendor;
 +    mUserAgent.AppendLiteral("; ");
 +#endif
      mUserAgent += mOscpu;
      mUserAgent.AppendLiteral("; ");
-     mUserAgent += mMisc;
-@@ -648,7 +661,6 @@
- void
- nsHttpHandler::InitUserAgentComponents()
- {
--
-       // Gather platform.
-     mPlatform.AssignLiteral(
- #if defined(ANDROID)
+ #endif
 Index: mozilla/netwerk/protocol/http/nsHttpHandler.h
 ===================================================================
---- mozilla.orig/netwerk/protocol/http/nsHttpHandler.h	2012-01-03 02:09:17.000000000 +0000
-+++ mozilla/netwerk/protocol/http/nsHttpHandler.h	2012-01-04 00:18:41.514892835 +0000
-@@ -312,6 +312,7 @@
+--- mozilla.orig/netwerk/protocol/http/nsHttpHandler.h	2012-02-02 10:13:40.000000000 +0000
++++ mozilla/netwerk/protocol/http/nsHttpHandler.h	2012-02-02 23:24:01.768700502 +0000
+@@ -313,6 +313,7 @@
      // useragent components
      nsCString      mLegacyAppName;
      nsCString      mLegacyAppVersion;
