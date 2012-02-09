@@ -91,6 +91,8 @@
   owner @{PROC}/[0-9]*/auxv r,
   /etc/lsb-release r,
   /usr/bin/expr ix,
+  /sys/devices/system/cpu/ r,
+  /sys/devices/system/cpu/** r,
 
   # Needed for container to work in xul builds
   /usr/lib/xulrunner-*/plugin-container ixr,
