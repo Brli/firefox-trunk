@@ -2,9 +2,11 @@ Description: Use the renamed yasm in Lucid
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
---- a/configure.in
-+++ b/configure.in
-@@ -4735,7 +4735,7 @@ dnl Detect yasm
+Index: mozilla/configure.in
+===================================================================
+--- mozilla.orig/configure.in	2012-02-21 02:49:33.000000000 +0000
++++ mozilla/configure.in	2012-02-21 20:55:05.000791187 +0000
+@@ -4403,7 +4403,7 @@
  dnl ======================
  
  AC_MSG_CHECKING([for YASM assembler])
@@ -13,7 +15,7 @@ Forwarded: not-needed
  
  if test -n "$YASM"; then
    dnl Pull out yasm's version string
-@@ -4743,7 +4743,7 @@ if test -n "$YASM"; then
+@@ -4411,7 +4411,7 @@
    _YASM_VER_FILTER='s|.* \([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*|\1|p'
    changequote([,])
  
@@ -22,12 +24,12 @@ Forwarded: not-needed
    _YASM_MAJOR_VERSION=`echo ${YASM_VERSION} | $AWK -F\. '{ print $1 }'`
    _YASM_MINOR_VERSION=`echo ${YASM_VERSION} | $AWK -F\. '{ print $2 }'`
    _YASM_RELEASE=`      echo ${YASM_VERSION} | $AWK -F\. '{ print $3 }'`
-@@ -6425,7 +6425,7 @@ dnl --disable-libjpeg-turbo wasn't passe
- dnl doesn't exist or we have too old of a version.
+@@ -6235,7 +6235,7 @@
+ dnl it doesn't exist or we have too old of a version.
  if test -n "$LIBJPEG_TURBO_X86_ASM" -o -n "$LIBJPEG_TURBO_X64_ASM" ; then
-     AC_MSG_CHECKING([for YASM assembler])
+     AC_MSG_CHECKING([for Yasm assembler])
 -    AC_CHECK_PROGS(LIBJPEG_TURBO_AS, yasm, "")
 +    AC_CHECK_PROGS(LIBJPEG_TURBO_AS, yasm-1, "")
  
      if test -z "$LIBJPEG_TURBO_AS" ; then
-         AC_MSG_ERROR([yasm is required to build with libjpeg-turbo's optimized JPEG decoding routines, but you do not appear to have yasm installed.  Either install it or configure with --disable-libjpeg-turbo to use the pure C JPEG decoder.  See https://developer.mozilla.org/en/YASM for more details.])
+         AC_MSG_ERROR([Yasm is required to build with libjpeg-turbo's optimized JPEG decoding routines, but you do not appear to have Yasm installed.  Either install it or configure with --disable-libjpeg-turbo to use the pure C JPEG decoder.  See https://developer.mozilla.org/en/YASM for more details.])

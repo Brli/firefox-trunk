@@ -16,6 +16,7 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - update debian/patches/change-moz-app-name.patch
     - update debian/patches/ubuntu-codes-google.patch
     - update debian/patches/revert-bmo621446-investigation.patch
+    - update debian/patches/use-new-yasm-in-lucid.patch
   * Clean up the file exclude list and add comments for excluded files
     - update debian/build/create-tarball.py
   * Make it easy to run Firefox in valgrind for builds that are compiled
@@ -27,7 +28,7 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - update debian/usr.bin.firefox.apparmor.10.04
     - update debian/usr.bin.firefox.apparmor.10.10
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 21 Feb 2012 16:09:33 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 21 Feb 2012 21:00:07 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 
