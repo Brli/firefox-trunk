@@ -4,8 +4,8 @@ Forwarded: not-needed
 
 Index: mozilla/l10n/bg/browser/searchplugins/google.xml
 ===================================================================
---- mozilla.orig/l10n/bg/browser/searchplugins/google.xml	2012-02-10 02:12:55.000000000 +0000
-+++ mozilla/l10n/bg/browser/searchplugins/google.xml	2012-02-10 12:47:19.259278914 +0000
+--- mozilla.orig/l10n/bg/browser/searchplugins/google.xml	2012-02-21 02:13:04.000000000 +0000
++++ mozilla/l10n/bg/browser/searchplugins/google.xml	2012-02-21 15:55:11.429110911 +0000
 @@ -5,13 +5,11 @@
  <Image width="16" height="16">data:image/png;base64,AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADs9Pt8xetPtu9FsfFNtu%2BTzvb2%2B%2Fne4dFJeBw0egA%2FfAJAfAA8ewBBegAAAAD%2B%2FPtft98Mp%2BwWsfAVsvEbs%2FQeqvF8xO7%2F%2F%2F63yqkxdgM7gwE%2FggM%2BfQA%2BegBDeQDe7PIbotgQufcMufEPtfIPsvAbs%2FQvq%2Bfz%2Bf%2F%2B%2B%2FZKhR05hgBBhQI8hgBAgAI9ewD0%2B%2Fg3pswAtO8Cxf4Kw%2FsJvvYAqupKsNv%2B%2Fv7%2F%2FP5VkSU0iQA7jQA9hgBDgQU%2BfQH%2F%2Ff%2FQ6fM4sM4KsN8AteMCruIqqdbZ7PH8%2Fv%2Fg6Nc%2Fhg05kAA8jAM9iQI%2BhQA%2BgQDQu6b97uv%2F%2F%2F7V8Pqw3eiWz97q8%2Ff%2F%2F%2F%2F7%2FPptpkkqjQE4kwA7kAA5iwI8iAA8hQCOSSKdXjiyflbAkG7u2s%2F%2B%2F%2F39%2F%2F7r8utrqEYtjQE8lgA7kwA7kwA9jwA9igA9hACiWSekVRyeSgiYSBHx6N%2F%2B%2Fv7k7OFRmiYtlAA5lwI7lwI4lAA7kgI9jwE9iwI4iQCoVhWcTxCmb0K%2BooT8%2Fv%2F7%2F%2F%2FJ2r8fdwI1mwA3mQA3mgA8lAE8lAE4jwA9iwE%2BhwGfXifWvqz%2B%2Ff%2F58u%2Fev6Dt4tr%2B%2F%2F2ZuIUsggA7mgM6mAM3lgA5lgA6kQE%2FkwBChwHt4dv%2F%2F%2F728ei1bCi7VAC5XQ7kz7n%2F%2F%2F6bsZkgcB03lQA9lgM7kwA2iQktZToPK4r9%2F%2F%2F9%2F%2F%2FSqYK5UwDKZAS9WALIkFn%2B%2F%2F3%2F%2BP8oKccGGcIRJrERILYFEMwAAuEAAdX%2F%2Ff7%2F%2FP%2B%2BfDvGXQLIZgLEWgLOjlf7%2F%2F%2F%2F%2F%2F9QU90EAPQAAf8DAP0AAfMAAOUDAtr%2F%2F%2F%2F7%2B%2Fu2bCTIYwDPZgDBWQDSr4P%2F%2Fv%2F%2F%2FP5GRuABAPkAA%2FwBAfkDAPAAAesAAN%2F%2F%2B%2Fz%2F%2F%2F64g1C5VwDMYwK8Yg7y5tz8%2Fv%2FV1PYKDOcAAP0DAf4AAf0AAfYEAOwAAuAAAAD%2F%2FPvi28ymXyChTATRrIb8%2F%2F3v8fk6P8MAAdUCAvoAAP0CAP0AAfYAAO4AAACAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAA</Image>
  <Url type="application/x-suggestions+json" method="GET" template="http://suggestqueries.google.com/complete/search?output=firefox&amp;client=firefox&amp;hl={moz:locale}&amp;q={searchTerms}"/>
@@ -24,8 +24,8 @@ Index: mozilla/l10n/bg/browser/searchplugins/google.xml
  </SearchPlugin>
 Index: mozilla/l10n/ja/browser/searchplugins/google-jp.xml
 ===================================================================
---- mozilla.orig/l10n/ja/browser/searchplugins/google-jp.xml	2012-02-10 02:18:56.000000000 +0000
-+++ mozilla/l10n/ja/browser/searchplugins/google-jp.xml	2012-02-10 12:47:19.259278914 +0000
+--- mozilla.orig/l10n/ja/browser/searchplugins/google-jp.xml	2012-02-21 02:19:41.000000000 +0000
++++ mozilla/l10n/ja/browser/searchplugins/google-jp.xml	2012-02-21 15:55:11.429110911 +0000
 @@ -6,16 +6,14 @@
  <Image width="16" height="16">data:image/png;base64,AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADs9Pt8xetPtu9FsfFNtu%2BTzvb2%2B%2Fne4dFJeBw0egA%2FfAJAfAA8ewBBegAAAAD%2B%2FPtft98Mp%2BwWsfAVsvEbs%2FQeqvF8xO7%2F%2F%2F63yqkxdgM7gwE%2FggM%2BfQA%2BegBDeQDe7PIbotgQufcMufEPtfIPsvAbs%2FQvq%2Bfz%2Bf%2F%2B%2B%2FZKhR05hgBBhQI8hgBAgAI9ewD0%2B%2Fg3pswAtO8Cxf4Kw%2FsJvvYAqupKsNv%2B%2Fv7%2F%2FP5VkSU0iQA7jQA9hgBDgQU%2BfQH%2F%2Ff%2FQ6fM4sM4KsN8AteMCruIqqdbZ7PH8%2Fv%2Fg6Nc%2Fhg05kAA8jAM9iQI%2BhQA%2BgQDQu6b97uv%2F%2F%2F7V8Pqw3eiWz97q8%2Ff%2F%2F%2F%2F7%2FPptpkkqjQE4kwA7kAA5iwI8iAA8hQCOSSKdXjiyflbAkG7u2s%2F%2B%2F%2F39%2F%2F7r8utrqEYtjQE8lgA7kwA7kwA9jwA9igA9hACiWSekVRyeSgiYSBHx6N%2F%2B%2Fv7k7OFRmiYtlAA5lwI7lwI4lAA7kgI9jwE9iwI4iQCoVhWcTxCmb0K%2BooT8%2Fv%2F7%2F%2F%2FJ2r8fdwI1mwA3mQA3mgA8lAE8lAE4jwA9iwE%2BhwGfXifWvqz%2B%2Ff%2F58u%2Fev6Dt4tr%2B%2F%2F2ZuIUsggA7mgM6mAM3lgA5lgA6kQE%2FkwBChwHt4dv%2F%2F%2F728ei1bCi7VAC5XQ7kz7n%2F%2F%2F6bsZkgcB03lQA9lgM7kwA2iQktZToPK4r9%2F%2F%2F9%2F%2F%2FSqYK5UwDKZAS9WALIkFn%2B%2F%2F3%2F%2BP8oKccGGcIRJrERILYFEMwAAuEAAdX%2F%2Ff7%2F%2FP%2B%2BfDvGXQLIZgLEWgLOjlf7%2F%2F%2F%2F%2F%2F9QU90EAPQAAf8DAP0AAfMAAOUDAtr%2F%2F%2F%2F7%2B%2Fu2bCTIYwDPZgDBWQDSr4P%2F%2Fv%2F%2F%2FP5GRuABAPkAA%2FwBAfkDAPAAAesAAN%2F%2F%2B%2Fz%2F%2F%2F64g1C5VwDMYwK8Yg7y5tz8%2Fv%2FV1PYKDOcAAP0DAf4AAf0AAfYEAOwAAuAAAAD%2F%2FPvi28ymXyChTATRrIb8%2F%2F3v8fk6P8MAAdUCAvoAAP0CAP0AAfYAAO4AAACAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAA</Image>
  <Url type="application/x-suggestions+json" method="GET" template="http://suggestqueries.google.com/complete/search?output=firefox&amp;client=firefox&amp;hl=ja&amp;qu={searchTerms}"/><!-- suggestqueries.google.co.jp doesn't exist and suggestqueries.google.com can handle Japanese too -->
@@ -47,8 +47,8 @@ Index: mozilla/l10n/ja/browser/searchplugins/google-jp.xml
  </SearchPlugin>
 Index: mozilla/l10n/ku/browser/searchplugins/google-ku.xml
 ===================================================================
---- mozilla.orig/l10n/ku/browser/searchplugins/google-ku.xml	2012-02-10 02:20:03.000000000 +0000
-+++ mozilla/l10n/ku/browser/searchplugins/google-ku.xml	2012-02-10 12:47:19.259278914 +0000
+--- mozilla.orig/l10n/ku/browser/searchplugins/google-ku.xml	2012-02-21 02:21:20.000000000 +0000
++++ mozilla/l10n/ku/browser/searchplugins/google-ku.xml	2012-02-21 15:55:11.429110911 +0000
 @@ -5,14 +5,12 @@
  <Image width="16" height="16">data:image/png;base64,AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADs9Pt8xetPtu9FsfFNtu%2BTzvb2%2B%2Fne4dFJeBw0egA%2FfAJAfAA8ewBBegAAAAD%2B%2FPtft98Mp%2BwWsfAVsvEbs%2FQeqvF8xO7%2F%2F%2F63yqkxdgM7gwE%2FggM%2BfQA%2BegBDeQDe7PIbotgQufcMufEPtfIPsvAbs%2FQvq%2Bfz%2Bf%2F%2B%2B%2FZKhR05hgBBhQI8hgBAgAI9ewD0%2B%2Fg3pswAtO8Cxf4Kw%2FsJvvYAqupKsNv%2B%2Fv7%2F%2FP5VkSU0iQA7jQA9hgBDgQU%2BfQH%2F%2Ff%2FQ6fM4sM4KsN8AteMCruIqqdbZ7PH8%2Fv%2Fg6Nc%2Fhg05kAA8jAM9iQI%2BhQA%2BgQDQu6b97uv%2F%2F%2F7V8Pqw3eiWz97q8%2Ff%2F%2F%2F%2F7%2FPptpkkqjQE4kwA7kAA5iwI8iAA8hQCOSSKdXjiyflbAkG7u2s%2F%2B%2F%2F39%2F%2F7r8utrqEYtjQE8lgA7kwA7kwA9jwA9igA9hACiWSekVRyeSgiYSBHx6N%2F%2B%2Fv7k7OFRmiYtlAA5lwI7lwI4lAA7kgI9jwE9iwI4iQCoVhWcTxCmb0K%2BooT8%2Fv%2F7%2F%2F%2FJ2r8fdwI1mwA3mQA3mgA8lAE8lAE4jwA9iwE%2BhwGfXifWvqz%2B%2Ff%2F58u%2Fev6Dt4tr%2B%2F%2F2ZuIUsggA7mgM6mAM3lgA5lgA6kQE%2FkwBChwHt4dv%2F%2F%2F728ei1bCi7VAC5XQ7kz7n%2F%2F%2F6bsZkgcB03lQA9lgM7kwA2iQktZToPK4r9%2F%2F%2F9%2F%2F%2FSqYK5UwDKZAS9WALIkFn%2B%2F%2F3%2F%2BP8oKccGGcIRJrERILYFEMwAAuEAAdX%2F%2Ff7%2F%2FP%2B%2BfDvGXQLIZgLEWgLOjlf7%2F%2F%2F%2F%2F%2F9QU90EAPQAAf8DAP0AAfMAAOUDAtr%2F%2F%2F%2F7%2B%2Fu2bCTIYwDPZgDBWQDSr4P%2F%2Fv%2F%2F%2FP5GRuABAPkAA%2FwBAfkDAPAAAesAAN%2F%2F%2B%2Fz%2F%2F%2F64g1C5VwDMYwK8Yg7y5tz8%2Fv%2FV1PYKDOcAAP0DAf4AAf0AAfYEAOwAAuAAAAD%2F%2FPvi28ymXyChTATRrIb8%2F%2F3v8fk6P8MAAdUCAvoAAP0CAP0AAfYAAO4AAACAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAA</Image>
  <Url type="application/x-suggestions+json" method="GET" template="http://suggestqueries.google.com/complete/search?output=firefox&amp;client=firefox&amp;hl=en&amp;q={searchTerms}"/>
@@ -69,7 +69,7 @@ Index: mozilla/l10n/ku/browser/searchplugins/google-ku.xml
 Index: mozilla/l10n/en-GB/browser/searchplugins/google-en-GB.xml
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/l10n/en-GB/browser/searchplugins/google-en-GB.xml	2012-02-10 12:47:19.259278914 +0000
++++ mozilla/l10n/en-GB/browser/searchplugins/google-en-GB.xml	2012-02-21 15:55:11.429110911 +0000
 @@ -0,0 +1,16 @@
 +<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
 +<ShortName>Google</ShortName>
@@ -89,8 +89,8 @@ Index: mozilla/l10n/en-GB/browser/searchplugins/google-en-GB.xml
 +</SearchPlugin>
 Index: mozilla/l10n/en-GB/browser/searchplugins/list.txt
 ===================================================================
---- mozilla.orig/l10n/en-GB/browser/searchplugins/list.txt	2012-02-10 02:14:37.000000000 +0000
-+++ mozilla/l10n/en-GB/browser/searchplugins/list.txt	2012-02-10 12:47:19.259278914 +0000
+--- mozilla.orig/l10n/en-GB/browser/searchplugins/list.txt	2012-02-21 02:14:57.000000000 +0000
++++ mozilla/l10n/en-GB/browser/searchplugins/list.txt	2012-02-21 15:55:11.429110911 +0000
 @@ -2,6 +2,6 @@
  bing
  chambers-en-GB
@@ -102,7 +102,7 @@ Index: mozilla/l10n/en-GB/browser/searchplugins/list.txt
 Index: mozilla/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml	2012-02-10 12:47:19.259278914 +0000
++++ mozilla/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml	2012-02-21 15:55:11.429110911 +0000
 @@ -0,0 +1,16 @@
 +<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
 +<ShortName>Google</ShortName>
@@ -122,8 +122,8 @@ Index: mozilla/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml
 +</SearchPlugin>
 Index: mozilla/l10n/en-ZA/browser/searchplugins/list.txt
 ===================================================================
---- mozilla.orig/l10n/en-ZA/browser/searchplugins/list.txt	2012-02-10 02:14:45.000000000 +0000
-+++ mozilla/l10n/en-ZA/browser/searchplugins/list.txt	2012-02-10 12:47:19.259278914 +0000
+--- mozilla.orig/l10n/en-ZA/browser/searchplugins/list.txt	2012-02-21 02:15:10.000000000 +0000
++++ mozilla/l10n/en-ZA/browser/searchplugins/list.txt	2012-02-21 15:55:11.429110911 +0000
 @@ -1,6 +1,6 @@
  amazondotcom
  bing
@@ -134,29 +134,41 @@ Index: mozilla/l10n/en-ZA/browser/searchplugins/list.txt
  yahoo
 Index: mozilla/browser/locales/en-US/searchplugins/google.xml
 ===================================================================
---- mozilla.orig/browser/locales/en-US/searchplugins/google.xml	2012-02-10 02:03:49.000000000 +0000
-+++ mozilla/browser/locales/en-US/searchplugins/google.xml	2012-02-10 12:51:35.423274362 +0000
-@@ -5,21 +5,11 @@
- <Image width="16" height="16">data:image/png;base64,AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADs9Pt8xetPtu9FsfFNtu%2BTzvb2%2B%2Fne4dFJeBw0egA%2FfAJAfAA8ewBBegAAAAD%2B%2FPtft98Mp%2BwWsfAVsvEbs%2FQeqvF8xO7%2F%2F%2F63yqkxdgM7gwE%2FggM%2BfQA%2BegBDeQDe7PIbotgQufcMufEPtfIPsvAbs%2FQvq%2Bfz%2Bf%2F%2B%2B%2FZKhR05hgBBhQI8hgBAgAI9ewD0%2B%2Fg3pswAtO8Cxf4Kw%2FsJvvYAqupKsNv%2B%2Fv7%2F%2FP5VkSU0iQA7jQA9hgBDgQU%2BfQH%2F%2Ff%2FQ6fM4sM4KsN8AteMCruIqqdbZ7PH8%2Fv%2Fg6Nc%2Fhg05kAA8jAM9iQI%2BhQA%2BgQDQu6b97uv%2F%2F%2F7V8Pqw3eiWz97q8%2Ff%2F%2F%2F%2F7%2FPptpkkqjQE4kwA7kAA5iwI8iAA8hQCOSSKdXjiyflbAkG7u2s%2F%2B%2F%2F39%2F%2F7r8utrqEYtjQE8lgA7kwA7kwA9jwA9igA9hACiWSekVRyeSgiYSBHx6N%2F%2B%2Fv7k7OFRmiYtlAA5lwI7lwI4lAA7kgI9jwE9iwI4iQCoVhWcTxCmb0K%2BooT8%2Fv%2F7%2F%2F%2FJ2r8fdwI1mwA3mQA3mgA8lAE8lAE4jwA9iwE%2BhwGfXifWvqz%2B%2Ff%2F58u%2Fev6Dt4tr%2B%2F%2F2ZuIUsggA7mgM6mAM3lgA5lgA6kQE%2FkwBChwHt4dv%2F%2F%2F728ei1bCi7VAC5XQ7kz7n%2F%2F%2F6bsZkgcB03lQA9lgM7kwA2iQktZToPK4r9%2F%2F%2F9%2F%2F%2FSqYK5UwDKZAS9WALIkFn%2B%2F%2F3%2F%2BP8oKccGGcIRJrERILYFEMwAAuEAAdX%2F%2Ff7%2F%2FP%2B%2BfDvGXQLIZgLEWgLOjlf7%2F%2F%2F%2F%2F%2F9QU90EAPQAAf8DAP0AAfMAAOUDAtr%2F%2F%2F%2F7%2B%2Fu2bCTIYwDPZgDBWQDSr4P%2F%2Fv%2F%2F%2FP5GRuABAPkAA%2FwBAfkDAPAAAesAAN%2F%2F%2B%2Fz%2F%2F%2F64g1C5VwDMYwK8Yg7y5tz8%2Fv%2FV1PYKDOcAAP0DAf4AAf0AAfYEAOwAAuAAAAD%2F%2FPvi28ymXyChTATRrIb8%2F%2F3v8fk6P8MAAdUCAvoAAP0CAP0AAfYAAO4AAACAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAA</Image>
- <Url type="application/x-suggestions+json" method="GET" template="http://suggestqueries.google.com/complete/search?output=firefox&amp;client=firefox&amp;hl={moz:locale}&amp;q={searchTerms}"/>
- <Url type="text/html" method="GET" template="http://www.google.com/search">
-+  <Param name="client" value="ubuntu"/>
-+  <Param name="channel" value="fs"/>
-   <Param name="q" value="{searchTerms}"/>
-   <Param name="ie" value="utf-8"/>
-   <Param name="oe" value="utf-8"/>
--  <Param name="aq" value="t"/>
--  <!-- Dynamic parameters -->
--  <Param name="rls" value="{moz:distributionID}:{moz:locale}:{moz:official}"/>
+--- mozilla.orig/browser/locales/en-US/searchplugins/google.xml	2012-02-21 02:03:44.000000000 +0000
++++ mozilla/browser/locales/en-US/searchplugins/google.xml	2012-02-21 16:00:28.789105271 +0000
+@@ -1,13 +1,5 @@
+-#define GOOGLE_PARAMS <Param name="q" value="{searchTerms}"/><Param name="ie" value="utf-8"/><Param name="oe" value="utf-8"/><Param name="aq" value="t"/><Param name="rls" value="{moz:distributionID}:{moz:locale}:{moz:official}"/>
 -#if MOZ_UPDATE_CHANNEL == beta
--  <MozParam name="client" condition="defaultEngine" trueValue="firefox-beta" falseValue="firefox"/>
+-#define GOOGLE_CLIENT_PARAM <MozParam name="client" condition="defaultEngine" trueValue="firefox-beta" falseValue="firefox"/>
 -#elif MOZ_UPDATE_CHANNEL == aurora
--  <MozParam name="client" condition="defaultEngine" trueValue="firefox-aurora" falseValue="firefox"/>
+-#define GOOGLE_CLIENT_PARAM <MozParam name="client" condition="defaultEngine" trueValue="firefox-aurora" falseValue="firefox"/>
 -#elif MOZ_UPDATE_CHANNEL == nightly
--  <MozParam name="client" condition="defaultEngine" trueValue="firefox-nightly" falseValue="firefox"/>
+-#define GOOGLE_CLIENT_PARAM <MozParam name="client" condition="defaultEngine" trueValue="firefox-nightly" falseValue="firefox"/>
 -#else
--  <MozParam name="client" condition="defaultEngine" trueValue="firefox-a" falseValue="firefox"/>
+-#define GOOGLE_CLIENT_PARAM <MozParam name="client" condition="defaultEngine" trueValue="firefox-a" falseValue="firefox"/>
 -#endif
++#define GOOGLE_PARAMS <Param name="q" value="{searchTerms}"/><Param name="ie" value="utf-8"/><Param name="oe" value="utf-8"/>
++#define GOOGLE_CLIENT_PARAM <Param name="client" value="ubuntu"/>
+ <SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+ <ShortName>Google</ShortName>
+ <Description>Google Search</Description>
+@@ -17,18 +9,7 @@
+ <Url type="text/html" method="GET" template="http://www.google.com/search">
+ #expand   __GOOGLE_PARAMS__
+ #expand   __GOOGLE_CLIENT_PARAM__
+-</Url>
+-<!-- Keyword search URL is the same as the default, but with an additional parameter -->
+-<Url type="application/x-moz-keywordsearch" method="GET" template="http://www.google.com/search">
+-#expand   __GOOGLE_PARAMS__
+-#expand   __GOOGLE_CLIENT_PARAM__
+-  <Param name="channel" value="fflb"/>
+-</Url>
+-<!-- Context/Right-click search URL is the same as the default, but with an additional parameter -->
+-<Url type="application/x-moz-contextsearch" method="GET" template="http://www.google.com/search">
+-#expand   __GOOGLE_PARAMS__
+-#expand   __GOOGLE_CLIENT_PARAM__
+-  <Param name="channel" value="rcs"/>
++<Param name="channel" value="fs"/>
  </Url>
  <SearchForm>http://www.google.com/</SearchForm>
  </SearchPlugin>
