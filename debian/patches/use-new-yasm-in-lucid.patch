@@ -4,8 +4,8 @@ Forwarded: not-needed
 
 Index: mozilla/configure.in
 ===================================================================
---- mozilla.orig/configure.in	2012-02-21 02:49:33.000000000 +0000
-+++ mozilla/configure.in	2012-02-21 20:55:05.000791187 +0000
+--- mozilla.orig/configure.in	2012-02-21 02:03:59.000000000 +0000
++++ mozilla/configure.in	2012-02-21 21:23:28.896760911 +0000
 @@ -4403,7 +4403,7 @@
  dnl ======================
  
@@ -33,3 +33,29 @@ Index: mozilla/configure.in
  
      if test -z "$LIBJPEG_TURBO_AS" ; then
          AC_MSG_ERROR([Yasm is required to build with libjpeg-turbo's optimized JPEG decoding routines, but you do not appear to have Yasm installed.  Either install it or configure with --disable-libjpeg-turbo to use the pure C JPEG decoder.  See https://developer.mozilla.org/en/YASM for more details.])
+Index: mozilla/config/config.mk
+===================================================================
+--- mozilla.orig/config/config.mk	2012-02-21 02:03:58.000000000 +0000
++++ mozilla/config/config.mk	2012-02-21 21:23:28.896760911 +0000
+@@ -176,7 +176,7 @@
+ endif
+ 
+ ifneq (,$(MOZ_DEBUG)$(MOZ_DEBUG_SYMBOLS))
+-  ifeq ($(AS),yasm)
++  ifeq ($(AS),yasm-1)
+     ifeq ($(OS_ARCH)_$(GNU_CC),WINNT_)
+       _DEBUG_ASFLAGS += -g cv8
+     else
+Index: mozilla/js/src/config/config.mk
+===================================================================
+--- mozilla.orig/js/src/config/config.mk	2012-02-21 21:26:52.224757298 +0000
++++ mozilla/js/src/config/config.mk	2012-02-21 21:27:13.112756927 +0000
+@@ -176,7 +176,7 @@
+ endif
+ 
+ ifneq (,$(MOZ_DEBUG)$(MOZ_DEBUG_SYMBOLS))
+-  ifeq ($(AS),yasm)
++  ifeq ($(AS),yasm-1)
+     ifeq ($(OS_ARCH)_$(GNU_CC),WINNT_)
+       _DEBUG_ASFLAGS += -g cv8
+     else
