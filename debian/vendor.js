@@ -12,5 +12,5 @@ pref("distribution.searchplugins.defaultLocale", "en-US");
 //pref("network.manage-offline-status", true);
 
 // Don't disable our bundled extensions in the application directory
-pref("extensions.autoDisableScopes", 11);
+pref("extensions.autoDisableScopes", 0);
 pref("extensions.shownSelectionUI", true);

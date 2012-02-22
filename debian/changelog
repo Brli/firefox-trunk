@@ -22,13 +22,18 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
   * Make it easy to run Firefox in valgrind for builds that are compiled
     with explicit valgrind support
     - update debian/firefox.sh.in
+  * Fix LP: #915895 - Just set autoDisableScopes to 0. Other distributions
+    are already doing this, and we already made this feature pretty much
+    useless by allowing extensions in the application directory, so that our
+    language packs aren't disabled by default
+    - update debian/vendor.js
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * fix LP: #926347 - Fix apparmor denial on Lucid and Maverick
     - update debian/usr.bin.firefox.apparmor.10.04
     - update debian/usr.bin.firefox.apparmor.10.10
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 21 Feb 2012 21:00:07 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 22 Feb 2012 13:11:48 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 
