@@ -18,3 +18,4 @@ autocomplete-theme-tweak.patch
 revert-bmo621446-investigation.patch
 dont-include-hyphenation-patterns.patch
 #@ARCH=powerpc@fix-build-failure-without-yarr-jit.patch
+#@DIST=!lucid,maverick,natty@avoid-dbus-roundtrip-for-httpchannel.patch
