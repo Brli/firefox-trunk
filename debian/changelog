@@ -32,13 +32,16 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - update debian/vendor.js
     - add debian/patches/dont-include-hyphenation-patterns.patch
     - update debian/patches/series
+  * Add patch based on one from bmo: #691898 to enable building on ppc
+    - add debian/patches/fix-build-failure-without-yarr-jit.patch
+    - update debian/patches/series
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * fix LP: #926347 - Fix apparmor denial on Lucid and Maverick
     - update debian/usr.bin.firefox.apparmor.10.04
     - update debian/usr.bin.firefox.apparmor.10.10
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 22 Feb 2012 16:51:27 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 23 Feb 2012 13:45:22 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 
