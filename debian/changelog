@@ -35,11 +35,6 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
   * Add patch based on one from bmo: #691898 to enable building on ppc
     - add debian/patches/fix-build-failure-without-yarr-jit.patch
     - update debian/patches/series
-  * Fix LP: #939657 - Don't call g_settings_new each time we create a HTTP
-    channel. Doing this causes a dbus roundtrip, and results in us spamming
-    the session bus unnecessarily
-    - add debian/patches/avoid-dbus-roundtrip-for-httpchannel.patch
-    - update debian/patches/series
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * fix LP: #926347 - Fix apparmor denial on Lucid and Maverick
@@ -50,7 +45,7 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
   * debian/usr.bin.firefox.apparmor.12.04: include p11-kit abstraction (only
     needed on 12.04). LP: #918973
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 23 Feb 2012 22:47:52 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 27 Feb 2012 10:40:57 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 
