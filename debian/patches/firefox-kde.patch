@@ -8,9 +8,9 @@ Forwarded: no
 
 Index: mozilla/browser/base/content/browser-kde.xul
 ===================================================================
---- mozilla.orig/browser/base/content/browser-kde.xul	2012-01-19 15:18:58.000000000 +0000
-+++ mozilla/browser/base/content/browser-kde.xul	2012-01-19 15:58:10.668990320 +0000
-@@ -202,7 +202,7 @@
+--- mozilla.orig/browser/base/content/browser-kde.xul	2012-02-27 10:49:06.822166162 +0000
++++ mozilla/browser/base/content/browser-kde.xul	2012-02-27 11:32:06.550120323 +0000
+@@ -203,7 +203,7 @@
        </row>
        <vbox id="editBookmarkPanelContent" flex="1" hidden="true"/>
        <hbox id="editBookmarkPanelBottomButtons" pack="end">
@@ -21,8 +21,8 @@ Index: mozilla/browser/base/content/browser-kde.xul
                  label="&editBookmark.done.label;"
 Index: mozilla/browser/base/jar.mn
 ===================================================================
---- mozilla.orig/browser/base/jar.mn	2012-01-19 02:04:11.000000000 +0000
-+++ mozilla/browser/base/jar.mn	2012-01-19 15:58:10.668990320 +0000
+--- mozilla.orig/browser/base/jar.mn	2012-02-27 02:03:31.000000000 +0000
++++ mozilla/browser/base/jar.mn	2012-02-27 11:32:06.550120323 +0000
 @@ -28,6 +28,8 @@
  *       content/browser/browser.css                   (content/browser.css)
  *       content/browser/browser.js                    (content/browser.js)
@@ -31,11 +31,11 @@ Index: mozilla/browser/base/jar.mn
 +%       override chrome://browser/content/browser.xul chrome://browser/content/browser-kde.xul desktop=kde
  *       content/browser/browser-tabPreviews.xml       (content/browser-tabPreviews.xml)
  *       content/browser/content.js                    (content/content.js)
- *       content/browser/fullscreen-video.xhtml        (content/fullscreen-video.xhtml)
+ *       content/browser/newtab/newTab.xul             (content/newtab/newTab.xul)
 Index: mozilla/browser/components/build/nsModule.cpp
 ===================================================================
---- mozilla.orig/browser/components/build/nsModule.cpp	2012-01-19 02:04:15.000000000 +0000
-+++ mozilla/browser/components/build/nsModule.cpp	2012-01-19 15:59:52.364994498 +0000
+--- mozilla.orig/browser/components/build/nsModule.cpp	2012-02-27 02:03:34.000000000 +0000
++++ mozilla/browser/components/build/nsModule.cpp	2012-02-27 11:32:06.550120323 +0000
 @@ -46,7 +46,7 @@
  #elif defined(XP_MACOSX)
  #include "nsMacShellService.h"
@@ -65,8 +65,8 @@ Index: mozilla/browser/components/build/nsModule.cpp
      { &kNS_BROWSER_ABOUT_REDIRECTOR_CID, false, NULL, AboutRedirector::Create },
 Index: mozilla/browser/components/shell/src/Makefile.in
 ===================================================================
---- mozilla.orig/browser/components/shell/src/Makefile.in	2012-01-19 02:04:17.000000000 +0000
-+++ mozilla/browser/components/shell/src/Makefile.in	2012-01-19 15:58:10.668990320 +0000
+--- mozilla.orig/browser/components/shell/src/Makefile.in	2012-02-27 02:03:39.000000000 +0000
++++ mozilla/browser/components/shell/src/Makefile.in	2012-02-27 11:32:06.550120323 +0000
 @@ -56,7 +56,8 @@
  CPPSRCS = nsMacShellService.cpp
  else
@@ -80,7 +80,7 @@ Index: mozilla/browser/components/shell/src/Makefile.in
 Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsKDEShellService.cpp	2012-01-19 15:58:10.668990320 +0000
++++ mozilla/browser/components/shell/src/nsKDEShellService.cpp	2012-02-27 11:32:06.550120323 +0000
 @@ -0,0 +1,258 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -343,7 +343,7 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.cpp
 Index: mozilla/browser/components/shell/src/nsKDEShellService.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsKDEShellService.h	2012-01-19 15:58:10.668990320 +0000
++++ mozilla/browser/components/shell/src/nsKDEShellService.h	2012-02-27 11:32:06.550120323 +0000
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -407,7 +407,7 @@ Index: mozilla/browser/components/shell/src/nsKDEShellService.h
 Index: mozilla/browser/components/shell/src/nsUnixShellService.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsUnixShellService.cpp	2012-01-19 15:58:10.668990320 +0000
++++ mozilla/browser/components/shell/src/nsUnixShellService.cpp	2012-02-27 11:32:06.550120323 +0000
 @@ -0,0 +1,52 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -464,7 +464,7 @@ Index: mozilla/browser/components/shell/src/nsUnixShellService.cpp
 Index: mozilla/browser/components/shell/src/nsUnixShellService.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/browser/components/shell/src/nsUnixShellService.h	2012-01-19 15:58:10.668990320 +0000
++++ mozilla/browser/components/shell/src/nsUnixShellService.h	2012-02-27 11:32:06.550120323 +0000
 @@ -0,0 +1,45 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
