@@ -93,6 +93,13 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
     prepare_mv_conffile "${APP_NAME}" "/etc/${APP_NAME}/pref/firefox.js"
 %%endif
 
+%%ifdef MOZ_NO_MORE_SYMLINKED_DIST
+# ${LIBDIR}/distribution was a symlink in 11.10
+    if [ -h ${MOZ_LIBDIR}/distribution ] ; then
+        rm -f ${MOZ_LIBDIR}/distribution
+    fi
+%%endif
+
 # This used to be a symlink
 %%ifdef MOZ_SYMLINKED_DIST
     if [ -h /usr/lib/${APP_NAME}-addons/distribution/searchplugins ]; then

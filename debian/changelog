@@ -37,6 +37,26 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
   * Add patch based on one from bmo: #691898 to enable building on ppc
     - add debian/patches/fix-build-failure-without-yarr-jit.patch
     - update debian/patches/series
+  * Fix LP: #807733 - Firefox doesn't restart after upgrades where the version
+    changes. Don't include the version number in the install path, as Firefox
+    cannot re-exec itself. In doing this, we also move the distribution.ini
+    back in to our installation directory, as that never made sense in
+    /usr/lib/firefox-addons
+    - update debian/firefox-dev.install.in
+    - update debian/firefox-dev.links.in
+    - update debian/firefox-locale.preinst.in
+    - update debian/firefox.lintian-overrides.in
+    - update debian/firefox.preinst.in
+    - update debian/rules
+  * Expose distribution/extensions in /usr/lib/firefox-addons, to allow
+    administrators to add extensions that they want to add to default user
+    profiles, and that they want the addon manager to keep updated. We lost
+    this functionality when upgrading from Firefox 3.6, due to the loss of
+    /etc/firefox/profile
+    - update debian/firefox.dirs.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/firefox.postinst.in
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * fix LP: #926347 - Fix apparmor denial on Lucid and Maverick
@@ -50,7 +70,7 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - allow access to statm and smaps for about:memory. LP: #911494
     - allow read access to files in /opt. LP: #728485
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 27 Feb 2012 11:34:10 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 06 Mar 2012 18:30:40 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 
