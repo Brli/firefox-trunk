@@ -57,6 +57,10 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox.install.in
     - update debian/firefox.links.in
     - update debian/firefox.postinst.in
+  * Don't build with gnomevfs anywhere anymore
+    - update debian/config/mozconfig.in
+    - update debian/control.in
+    - update debian/rules
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * fix LP: #926347 - Fix apparmor denial on Lucid and Maverick
@@ -70,7 +74,7 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - allow access to statm and smaps for about:memory. LP: #911494
     - allow read access to files in /opt. LP: #728485
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 06 Mar 2012 18:30:40 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 06 Mar 2012 20:37:05 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 

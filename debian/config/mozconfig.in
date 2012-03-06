@@ -93,10 +93,8 @@ ac_add_options @MOZ_BRANDING_OPTION@
 mk_add_options MOZ_PGO=1
 mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'
 %%endif
-%%ifdef MOZ_DISABLE_GNOMEVFS
 ac_add_options --disable-gnomevfs
 ac_add_options --enable-gio
-%%endif
 %%ifdef MOZ_UPDATE_CHANNEL
 ac_add_options --enable-update-channel=@MOZ_UPDATE_CHANNEL@
 %%endif

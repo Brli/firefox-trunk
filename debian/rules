@@ -289,9 +289,6 @@ endif
 ifeq (1,$(MOZ_BUILD_PGO))
 	DEB_DEFINES += -DMOZ_BUILD_PGO
 endif
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
-	DEB_DEFINES += -DMOZ_DISABLE_GNOMEVFS
-endif
 ifeq (1,$(MOZ_DEBUG))
 	DEB_DEFINES += -DMOZ_DEBUG
 endif
@@ -478,7 +475,7 @@ binary-install/$(MOZ_APP_NAME)-globalmenu::
 	find debian/$(MOZ_APP_NAME)-globalmenu$(MOZ_PREFIX)/lib/$(MOZ_APP_NAME)-addons/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
 endif
 
-GNOME_SUPPORT_FILES = libmozgnome.so libnkgnomevfs.so
+GNOME_SUPPORT_FILES = libmozgnome.so
 
 binary-post-install/$(MOZ_APP_NAME)::
 	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(MOZ_APP_NAME)/usr/lib/firefox-*/components/$(file);) true
