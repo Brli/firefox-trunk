@@ -48,6 +48,7 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - include p11-kit abstraction (only needed on 12.04). LP: #918973
   * debian/usr.bin.firefox.apparmor.*:
     - allow access to statm and smaps for about:memory. LP: #911494
+    - allow read access to files in /opt. LP: #728485
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 27 Feb 2012 11:34:10 +0000
 

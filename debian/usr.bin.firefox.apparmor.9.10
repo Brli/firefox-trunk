@@ -91,9 +91,11 @@
   @{PROC}/[0-9]*/maps r,
 
   # allow access to documentation and other files the user may want to look
-  # at in /usr
+  # at in /usr and /opt
   /usr/ r,
   /usr/** r,
+  /opt/ r,
+  /opt/** r,
 
   # so browsing directories works
   / r,
