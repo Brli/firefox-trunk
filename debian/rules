@@ -478,7 +478,7 @@ endif
 GNOME_SUPPORT_FILES = libmozgnome.so
 
 binary-post-install/$(MOZ_APP_NAME)::
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(MOZ_APP_NAME)/usr/lib/firefox-*/components/$(file);) true
+	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(MOZ_APP_NAME)$(MOZ_LIBDIR)/components/$(file);) true
 
 ifeq (1, $(MOZ_TREE_NSPR))
 binary-post-install/$(MOZ_APP_NAME)-dev::
