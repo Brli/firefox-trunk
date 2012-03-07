@@ -452,7 +452,7 @@ debian/stamp-make-langpack-xpis: compare-locales/scripts/compare-locales
 
 	touch $@
 
-common-build-arch:: make-buildsymbols run-tests $(pkgconfig_files)
+common-build-arch:: run-tests $(pkgconfig_files)
 
 common-build-indep:: make-langpack-xpis
 
@@ -462,6 +462,8 @@ common-install-arch common-install-indep::
 		then \
 			mv debian/tmp$(dir)-$(MOZ_VERSION) debian/tmp$(dir); \
 		fi; )
+
+common-binary-arch:: make-buildsymbols
 
 binary-install/$(MOZ_APP_NAME)::
 ifeq (1,$(MOZ_ENABLE_BREAKPAD))
