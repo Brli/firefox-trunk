@@ -7,7 +7,7 @@ APP_PROFILE="usr.bin.@MOZ_APP_NAME@"
 APP_CONFFILE="$APP_DIR/$APP_PROFILE"
 APP_DISABLE="$APP_DIR/disable/$APP_PROFILE"
 APP_NAME=@MOZ_APP_NAME@
-MOZ_LIBDIR=@MOZ_LIBDIR@
+MOZ_LIBDIR=/@MOZ_LIBDIR@
 
 # Prepare to move a conffile without triggering a dpkg question
 prepare_mv_conffile() {

@@ -69,6 +69,31 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     locale-specific plugins to override common ones. They already override
     those in $LIBDIR/searchplugins
     - update debian/patches/distro-locale-searchplugins.patch
+  * Bump debhelper compat to 7
+    - update debian/apport/blacklist.in
+    - update debian/apport/source_firefox.py.in
+    - update debian/compat
+    - update debian/config/mozconfig.in
+    - update debian/control.in
+    - update debian/firefox-dev.install.in
+    - update debian/firefox-dev.links.in
+    - update debian/firefox-globalmenu.dirs.in
+    - update debian/firefox-gnome-support.install.in
+    - update debian/firefox.dirs.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/firefox.postinst.in
+    - update debian/firefox.preinst.in
+    - update debian/firefox.sh.in
+    - update debian/pkgconfig/libxul.pc.in
+    - update debian/pkgconfig/mozilla-nspr.pc.in
+    - update debian/pkgconfig/mozilla-plugin.pc.in
+    - update debian/rules
+    - update debian/usr.bin.firefox.apparmor.10.04
+    - update debian/usr.bin.firefox.apparmor.10.10
+    - update debian/usr.bin.firefox.apparmor.11.04
+    - update debian/usr.bin.firefox.apparmor.12.04
+    - update debian/usr.bin.firefox.apparmor.9.10
 
   [ Micah Gersten <micahg@ubuntu.com> ]
   * fix LP: #926347 - Fix apparmor denial on Lucid and Maverick
@@ -82,7 +107,7 @@ firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu2) UNRELEASED; urgency=low
     - allow access to statm and smaps for about:memory. LP: #911494
     - allow read access to files in /opt. LP: #728485
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 07 Mar 2012 19:57:41 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 08 Mar 2012 01:20:07 +0000
 
 firefox-trunk (12.0~a1~hg20120131r85707-0ubuntu1) precise; urgency=low
 

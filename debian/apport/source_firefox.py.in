@@ -838,7 +838,7 @@ def add_info(report, ui):
         return
 
     conf_dir = os.path.join(os.environ["HOME"], ".mozilla", "@MOZ_APP_NAME@")
-    appini = AppINIParser('@MOZ_LIBDIR@')
+    appini = AppINIParser('/@MOZ_LIBDIR@')
     populate_item("BuildID", appini.buildid)
     try:
         profiles = Profiles(os.path.join(conf_dir, "profiles.ini"), appini)
@@ -902,7 +902,7 @@ def add_info(report, ui):
         if report["SourcePackage"] == 'firefox-trunk':
             report["SourcePackage"] = 'firefox'
     else:
-        channelpref = PrefFile("@MOZ_LIBDIR@/defaults/pref/channel-prefs.js", whitelist = [ r'app\.update\.channel' ])
+        channelpref = PrefFile("/@MOZ_LIBDIR@/defaults/pref/channel-prefs.js", whitelist = [ r'app\.update\.channel' ])
         if channelpref.available == False:
             report["Channel"] = 'release'
         else:

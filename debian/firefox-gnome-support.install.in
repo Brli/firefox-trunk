@@ -1,1 +1,1 @@
-debian/tmp@MOZ_LIBDIR@/components/libmozgnome.so
+@MOZ_LIBDIR@/components/libmozgnome.so

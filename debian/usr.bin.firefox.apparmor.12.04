@@ -2,16 +2,16 @@
 # Author: Jamie Strandboge <jamie@canonical.com>
 
 # Declare an apparmor variable to help with overrides
-@{MOZ_LIBDIR}=@MOZ_LIBDIR@
+@{MOZ_LIBDIR}=/@MOZ_LIBDIR@
 
 #include <tunables/global>
 
 # We want to confine the binaries that match:
-#  @MOZ_LIBDIR@/@MOZ_APP_NAME@
-#  @MOZ_LIBDIR@/firefox
+#  /@MOZ_LIBDIR@/@MOZ_APP_NAME@
+#  /@MOZ_LIBDIR@/firefox
 # but not:
-#  @MOZ_LIBDIR@/firefox.sh
-@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
+#  /@MOZ_LIBDIR@/firefox.sh
+/@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
   #include <abstractions/audio>
   #include <abstractions/cups-client>
   #include <abstractions/dbus-session>
