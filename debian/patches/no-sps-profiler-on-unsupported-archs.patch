@@ -1,0 +1,26 @@
+Index: mozilla/tools/profiler/Makefile.in
+===================================================================
+--- mozilla.orig/tools/profiler/Makefile.in	2012-03-07 02:11:41.000000000 +0000
++++ mozilla/tools/profiler/Makefile.in	2012-03-08 15:33:02.506149247 +0000
+@@ -74,7 +74,7 @@
+   Profiler.jsm \
+   $(NULL)
+ 
+-ifneq (,$(filter Android Linux,$(OS_TARGET)))
++ifeq ($(filter-out Android Linux, $(OS_TARGET)),$(filter-out arm% %86 x86_64, $(TARGET_CPU)))
+ 
+ DEFINES += -DMOZ_ENABLE_PROFILER_SPS
+ 
+Index: mozilla/tools/profiler/sampler.h
+===================================================================
+--- mozilla.orig/tools/profiler/sampler.h	2012-03-07 02:11:41.000000000 +0000
++++ mozilla/tools/profiler/sampler.h	2012-03-08 15:34:03.002148172 +0000
+@@ -83,7 +83,7 @@
+ #define SAMPLER_H
+ 
+ // Redefine the macros for platforms where SPS is supported.
+-#if defined(ANDROID) || defined(__linux__) || defined(XP_MACOSX) || defined(XP_WIN)
++#if defined(ANDROID) || (defined(__linux__) && (defined(__i386__) || defined(__x86_64__) || defined(__arm__))) || defined(XP_MACOSX) || defined(XP_WIN)
+ 
+ #include "sps_sampler.h"
+ 
