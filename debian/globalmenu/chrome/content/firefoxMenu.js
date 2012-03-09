@@ -38,9 +38,12 @@
  * ***** END LICENSE BLOCK ***** */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 (function unity_overrides() {
   "use strict";
+
+  var fx13 = Services.vc.compare(Services.appinfo.version, "13.0a1") >= 0;
 
   function enablePlacesNativeViewMenu(name) {
     // store the original ctor
@@ -50,12 +53,13 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
     // Note that somebody might have had the same stupid idea to override the ctor. ;)
     // So, try to interfere the least
     window[name] = function(aEvent) {
-      var rootElt = aEvent.target;
-      var viewElt = rootElt.parentNode;
-      if (viewElt.parentNode.localName == "menubar") {
+      let rootElt = aEvent.target;
+      if (rootElt.parentNode.parentNode.localName == "menubar") {
         this._nativeView = true;
-        rootElt._startMarker = -1;
-        rootElt._endMarker = -1;
+        if (!fx13) {
+          rootElt._startMarker = -1;
+          rootElt._endMarker = -1;
+        }
       }
       menuCtor.apply(this, arguments);
     }
