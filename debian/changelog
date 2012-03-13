@@ -1,3 +1,9 @@
+firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
+
+  * Update globalmenu-extension to 2.5 prerelease r279
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 13 Mar 2012 22:11:13 +0000
+
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
   * New upstream snapshot v13.0 A1 HG20120313R88815
