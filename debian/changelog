@@ -4,8 +4,17 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
   * Drop patches fixed upstream
     - remove debian/patches/no-sps-profiler-on-unsupported-archs.patch
     - update debian/patches/series
+  * Switch from conflicts to breaks for all plugin packages. This sort-of sucks,
+    but update-manager doesn't handle this well (it offers a partial upgrade),
+    whereas "apt-get upgrade" seems to do the right thing and upgrade
+    everything together. Breaks should still be strong enough, as we don't
+    actually have any conflicting files. What we want to ensure is that
+    /usr/lib/firefox/plugins is empty by the time firefox is configured, and
+    a breaks should be sufficient to ensure that the new plugin packages are
+    unpacked before Firefox is configured
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 14 Mar 2012 09:15:19 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 15 Mar 2012 10:39:43 +0000
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
