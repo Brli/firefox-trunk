@@ -39,7 +39,6 @@
 #include <nsDebug.h>
 #include <nsIObserver.h>
 #include <nsIWidget.h>
-#include <nsServiceManagerUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsIXULWindow.h>
 #include <nsIInterfaceRequestorUtils.h>
@@ -48,11 +47,9 @@
 # include <nsIDOMNSEvent.h>
 #endif
 #include <nsIPrefBranch.h>
-#include <nsIPrefService.h>
 #include <nsIDOMKeyEvent.h>
 #include <nsIDOMEventListener.h>
 #include <nsICaseConversion.h>
-#include <nsUnicharUtilCIID.h>
 
 #include <glib-object.h>
 #include <gdk/gdk.h>
@@ -61,11 +58,10 @@
 #include "uGlobalMenuBar.h"
 #include "uGlobalMenu.h"
 #include "uGlobalMenuUtils.h"
-#include "uIGlobalMenuService.h"
+#include "uGlobalMenuService.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 #define MODIFIER_SHIFT    1
 #define MODIFIER_CONTROL  2
@@ -113,7 +109,7 @@ uGlobalMenuBar::WidgetToGTKWindow(nsIWidget *aWidget)
   return gtk_widget_get_toplevel(GTK_WIDGET(user_data));
 }
 
-PRBool
+bool
 uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
 {
   gboolean res = dbusmenu_menuitem_child_append(mDbusMenuItem,
@@ -121,7 +117,7 @@ uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
   return res && mMenuObjects.AppendElement(menu);
 }
 
-PRBool
+bool
 uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
                                    PRUint32 index)
 {
@@ -131,12 +127,12 @@ uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
   return res && mMenuObjects.InsertElementAt(index, menu);
 }
 
-PRBool
+bool
 uGlobalMenuBar::RemoveMenuObjectAt(PRUint32 index)
 {
   NS_ASSERTION(index < mMenuObjects.Length(), "Invalid index");
   if (index >= mMenuObjects.Length()) {
-    return PR_FALSE;
+    return false;
   }
 
   gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
@@ -156,7 +152,7 @@ uGlobalMenuBar::Build()
     uGlobalMenuObject *newItem =
       NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                         mListener, menuContent, this);
-    PRBool res = PR_FALSE;
+    bool res = false;
     if (newItem) {
       res = AppendMenuObject(newItem);
     }
@@ -223,21 +219,21 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 
   mDocTarget->AddEventListener(NS_LITERAL_STRING("focus"),
                                mEventListener,
-                               MOZ_API_TRUE);
+                               true);
   mDocTarget->AddEventListener(NS_LITERAL_STRING("blur"),
                                mEventListener,
-                               MOZ_API_TRUE);
+                               true);
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keypress"),
                                mEventListener,
-                               MOZ_API_FALSE);
+                               false);
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keydown"),
                                mEventListener,
-                               MOZ_API_FALSE);
+                               false);
   mDocTarget->AddEventListener(NS_LITERAL_STRING("keyup"),
                                mEventListener,
-                               MOZ_API_FALSE);
+                               false);
 
-  nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID);
+  nsIPrefBranch *prefs = uGlobalMenuService::GetPrefService();
   NS_ENSURE_TRUE(prefs, NS_ERROR_FAILURE);
 
   prefs->GetIntPref("ui.key.menuAccessKey", &mAccessKey);
@@ -256,16 +252,12 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   rv = mListener->RegisterForAllChanges(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<uIGlobalMenuService> service =
-    do_GetService("@canonical.com/globalmenu-service;1");
-  NS_ENSURE_TRUE(service, NS_ERROR_FAILURE);
-
-  service->RegisterGlobalMenuBar(this, mCancellable);
+  uGlobalMenuService::RegisterGlobalMenuBar(this, mCancellable);
 
   return NS_OK;
 }
 
-PRBool
+bool
 uGlobalMenuBar::ShouldParentStayVisible(nsIContent *aContent)
 {
   static nsIAtom *blacklist[] =
@@ -273,14 +265,14 @@ uGlobalMenuBar::ShouldParentStayVisible(nsIContent *aContent)
 
   nsIContent *parent = aContent->GetParent();
   if (!parent) {
-    return PR_TRUE;
+    return true;
   }
 
   PRUint32 count = parent->GetChildCount();
 
   if (count <= 1) {
     // It's just us
-    return PR_FALSE;
+    return false;
   }
 
   for (PRUint32 i = 0 ; i < count ; i++) {
@@ -289,27 +281,27 @@ uGlobalMenuBar::ShouldParentStayVisible(nsIContent *aContent)
       continue;
     }
 
-    PRBool found = PR_FALSE;
+    bool found = false;
     for (PRUint32 j = 0 ; blacklist[j] != nsnull ; j++) {
       if (child->Tag() == blacklist[j]) {
-        found = PR_TRUE;
+        found = true;
         break;
       }
     }
 
     if (!found) {
-      return PR_TRUE;
+      return true;
     }
   }
 
-  return PR_FALSE;
+  return false;
 }
 
 PRUint32
 uGlobalMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent)
 {
   PRUint32 modifiers = 0;
-  MOZ_API_BOOL modifier;
+  bool modifier;
 
   aKeyEvent->GetAltKey(&modifier);
   if (modifier) {
@@ -334,24 +326,24 @@ uGlobalMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent)
   return modifiers;
 }
 
-PRBool
+bool
 uGlobalMenuBar::IsParentOfMenuBar(nsIContent *aContent)
 {
   nsIContent *tmp = mContent->GetParent();
 
   while (tmp) {
     if (tmp == aContent) {
-      return PR_TRUE;
+      return true;
     }
 
     tmp = tmp->GetParent();
   }
 
-  return PR_FALSE;
+  return false;
 }
 
 void
-uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
+uGlobalMenuBar::SetXULMenuBarHidden(bool hidden)
 {
   mXULMenuHidden = hidden;
 
@@ -359,7 +351,7 @@ uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
     if (mHiddenElement) {
       mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
                               mRestoreHidden ? NS_LITERAL_STRING("true") :
-                              NS_LITERAL_STRING("false"), MOZ_API_TRUE);
+                              NS_LITERAL_STRING("false"), true);
     }
     nsIContent *tmp = mContent;
 
@@ -379,42 +371,42 @@ uGlobalMenuBar::SetXULMenuBarHidden(PRBool hidden)
                                                  eCaseMatters);
 
     mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
-                            NS_LITERAL_STRING("true"), MOZ_API_TRUE);
+                            NS_LITERAL_STRING("true"), true);
   } else if (mHiddenElement) {
     mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
                             mRestoreHidden ? NS_LITERAL_STRING("true") :
-                            NS_LITERAL_STRING("false"), MOZ_API_TRUE);
+                            NS_LITERAL_STRING("false"), true);
     mHiddenElement = nsnull;
   }
 }
 
 uGlobalMenuBar::uGlobalMenuBar():
   uGlobalMenuObject(MenuBar), mServer(nsnull), mTopLevel(nsnull),
-  mOpenedByKeyboard(PR_FALSE)
+  mOpenedByKeyboard(false)
 {
   MOZ_COUNT_CTOR(uGlobalMenuBar);
 }
 
 uGlobalMenuBar::~uGlobalMenuBar()
 {
-  SetXULMenuBarHidden(PR_FALSE);
+  SetXULMenuBarHidden(false);
 
   if (mDocTarget) {
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
                                     mEventListener,
-                                    MOZ_API_TRUE);
+                                    true);
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
                                     mEventListener,
-                                    MOZ_API_TRUE);
+                                    true);
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
                                     mEventListener,
-                                    MOZ_API_FALSE);
+                                    false);
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
                                     mEventListener,
-                                    MOZ_API_FALSE);
+                                    false);
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
                                     mEventListener,
-                                    MOZ_API_FALSE);
+                                    false);
   }
 
   if (mListener) {
@@ -461,10 +453,10 @@ uGlobalMenuBar::Blur()
 void
 uGlobalMenuBar::Focus()
 {
-  mOpenedByKeyboard = PR_FALSE;
+  mOpenedByKeyboard = false;
 }
 
-PRBool
+bool
 uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
 {
 #if 0
@@ -472,11 +464,11 @@ uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
 #else
   nsCOMPtr<nsIDOMNSEvent> nsEvent = do_QueryInterface(aKeyEvent);
   if (!nsEvent) {
-    return PR_FALSE;
+    return false;
   }
 #endif
 
-  MOZ_API_BOOL handled, trusted;
+  bool handled, trusted;
   nsEvent->GetPreventDefault(&handled);
   nsEvent->GetIsTrusted(&trusted);
 
@@ -485,10 +477,10 @@ uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
 #endif
 
   if (handled || !trusted) {
-    return PR_FALSE;
+    return false;
   }
 
-  return PR_TRUE;
+  return true;
 }
 
 nsresult
@@ -552,23 +544,18 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
       keyEvent->GetCharCode(&charCode);
       if (charCode != 0) {
         PRUnichar ch = PRUnichar(charCode);
-        PRUnichar chl;
+
+        nsICaseConversion *converter= uGlobalMenuService::GetCaseConverter();
+
         PRUnichar chu;
-        // XXX: I think we need to link against libxul.so to get ToLowerCase
-        //      and ToUpperCase from nsUnicharUtils.h
-        nsCOMPtr<nsICaseConversion> converter =
-          do_GetService(NS_UNICHARUTIL_CONTRACTID);
+        PRUnichar chl;
         if (converter) {
           converter->ToUpper(ch, &chu);
           converter->ToLower(ch, &chl);
         } else {
-          if (ch < 256) {
-            chu = toupper(char(ch));
-            chl = tolower(char(ch));
-          } else {
-            chu = ch;
-            chl = ch;
-          }
+          NS_WARNING("No case converter");
+          chu = ch;
+          chl = ch;
         }
 
         for (PRUint32 i = 0; i < count; i++) {
@@ -601,7 +588,7 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
   }
 
   if (found) {
-    mOpenedByKeyboard = PR_TRUE;
+    mOpenedByKeyboard = true;
     uGlobalMenu *menu = static_cast<uGlobalMenu *>(found);
     menu->OpenMenu();
     aKeyEvent->StopPropagation();
@@ -612,7 +599,7 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
 }
 
 void
-uGlobalMenuBar::SetMenuBarRegistered(PRBool aRegistered)
+uGlobalMenuBar::SetMenuBarRegistered(bool aRegistered)
 {
   if (mCancellable) {
     mCancellable->Destroy();
@@ -634,7 +621,7 @@ uGlobalMenuBar::GetMenuPath()
   return mPath.get();
 }
 
-PRBool
+bool
 uGlobalMenuBar::WidgetHasSameToplevelWindow(nsIWidget *aWidget)
 {
   GtkWidget *topLevel = WidgetToGTKWindow(aWidget);
@@ -664,7 +651,7 @@ uGlobalMenuBar::ObserveContentRemoved(nsIDocument *aDocument,
     return;
   }
 
-  PRBool res = RemoveMenuObjectAt(aIndexInContainer);
+  bool res = RemoveMenuObjectAt(aIndexInContainer);
   NS_ASSERTION(res, "Failed to remove menuitem. Our menu representation is out-of-sync with reality");
   // XXX: Is there anything else we can do if removal fails?
 }
@@ -687,7 +674,7 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
   uGlobalMenuObject *newItem =
     NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
                       mListener, aChild, this);
-  PRBool res = PR_FALSE;
+  bool res = false;
   if (newItem) {
     res = InsertMenuObjectAt(newItem, aIndexInContainer);
   }

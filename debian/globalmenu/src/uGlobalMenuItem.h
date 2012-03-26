@@ -91,13 +91,49 @@ private:
                                     void *data);
   void Activate();
   void UncheckSiblings();
+  void SetMenuItemType(uMenuItemType aType)
+  {
+    switch(aType) {
+      case Normal:
+        ClearFlags(UNITY_MENUITEM_IS_CHECKBOX | UNITY_MENUITEM_IS_RADIO);
+        break;
+
+      case CheckBox:
+        ClearFlags(UNITY_MENUITEM_IS_RADIO);
+        SetFlags(UNITY_MENUITEM_IS_CHECKBOX);
+        break;
+
+      case Radio:
+        ClearFlags(UNITY_MENUITEM_IS_CHECKBOX);
+        SetFlags(UNITY_MENUITEM_IS_RADIO);
+        break;
+
+      default:
+        NS_NOTREACHED("Invalid menuitem type");
+    }
+  }
+
+  bool IsCheckboxOrRadioItem()
+  {
+    return (mFlags & UNITY_MENUITEM_IS_CHECKBOX) ||
+           (mFlags & UNITY_MENUITEM_IS_RADIO);
+  }
+
+  void SetCheckState(bool aChecked)
+  {
+    NS_ASSERTION(IsCheckboxOrRadioItem(), "Not a checkbox or radio item");
+    SetOrClearFlags(aChecked, UNITY_MENUITEM_TOGGLE_IS_ACTIVE);
+  }
+
+  bool IsChecked()
+  {
+    NS_ASSERTION(IsCheckboxOrRadioItem(), "Not a checkbox or radio item");
+    return !!(mFlags & UNITY_MENUITEM_TOGGLE_IS_ACTIVE);
+  }
 
   nsCOMPtr<nsIContent> mCommandContent;
   nsCOMPtr<nsIContent> mKeyContent;
   PRUint32 mHandlerID;
-  PRPackedBool mIsToggle;
-  PRPackedBool mToggleState;
-  uMenuItemType mType;
 };
 
 

@@ -92,21 +92,7 @@ Components.utils.import("resource://gre/modules/Services.jsm");
     },
 
     observe: function(subject, topic, data) {
-      if (topic == "native-menu-service:popup-open") {
-        if (data == "menu_EditPopup") {
-          // This is really hacky, but the edit menu items only set the correct
-          // sensitivity when the menupopup state == showing or open, which is
-          // a read only property set in layout/xul/base/src/nsMenuPopupFrame.cpp
-          // We can't do this off the popupshowing event, because we might run
-          // before the handler hanging off the onpopupshowing attribute, which
-          // will set the wrong sensitivity again, so we have our own notification
-          // Uuuurgh! :(
-          var saved_gEditUIVisible = gEditUIVisible;
-          gEditUIVisible = true;
-          goUpdateGlobalEditMenuItems();
-          gEditUIVisible = saved_gEditUIVisible;
-        }
-      } else if (topic == "native-menu-service:online") {
+      if (topic == "native-menu-service:online") {
         this.fixupUI(true);
       } else if (topic == "native-menu-service:offline") {
         this.fixupUI(false);

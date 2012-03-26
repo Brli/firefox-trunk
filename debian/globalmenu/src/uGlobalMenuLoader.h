@@ -36,16 +36,42 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 10
-# define MOZ_API_BOOL bool
-# define MOZ_API_TRUE true
-# define MOZ_API_FALSE false
-#else
-# define MOZ_API_BOOL PRBool
-# define MOZ_API_TRUE PR_TRUE
-# define MOZ_API_FALSE PR_FALSE
-#endif
+#include <nsIObserver.h>
+#include <nsIWindowMediatorListener.h>
+#include <nsIWebProgressListener.h>
+#include <nsWeakReference.h>
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 11
-# define nsIDOMNSElement nsIDOMElement
-#endif
+#include "uIGlobalMenuService.h"
+
+#define U_GLOBALMENULOADER_CID \
+{ 0x1e8f2f48, 0xe0a8, 0x4649, { 0x98, 0xef, 0x13, 0x22, 0xc0, 0x3f, 0xf0, 0x8e } }
+
+#define U_GLOBALMENULOADER_CONTRACTID "@canonical.com/globalmenu-loader;1"
+
+class nsIXULWindow;
+class nsIDocShell;
+class nsIWidget;
+
+class uGlobalMenuLoader: public nsIObserver,
+                         public nsIWindowMediatorListener,
+                         public nsIWebProgressListener,
+                         public nsSupportsWeakReference
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
+  NS_DECL_NSIWINDOWMEDIATORLISTENER
+  NS_DECL_NSIWEBPROGRESSLISTENER
+
+  uGlobalMenuLoader() { };
+  ~uGlobalMenuLoader();
+  nsresult Init();
+
+private:
+  void RegisterAllMenus();
+  void RegisterMenuForWindow(nsIXULWindow *aWindow);
+  bool RegisterMenu(nsIWidget *aWindow,
+                    nsIDocShell *aDocShell);
+
+  nsCOMPtr<uIGlobalMenuService> mService;
+};

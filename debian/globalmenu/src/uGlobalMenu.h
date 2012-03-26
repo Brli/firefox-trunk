@@ -67,10 +67,10 @@ public:
 
   ~uGlobalMenu();
 
-  PRBool CanOpen();
+  bool CanOpen();
   void OpenMenu();
   void AboutToShowNotify();
-  PRBool IsOpening() { return !!mOpening; }
+  bool IsOpening() { return !!(mFlags & UNITY_MENU_IS_OPENING); }
 
 private:
   uGlobalMenu();
@@ -80,37 +80,34 @@ private:
                 uGlobalMenuDocListener *aListener,
                 nsIContent *aContent,
                 uGlobalMenuBar *aMenuBar);
-  PRBool InsertMenuObjectAt(uGlobalMenuObject *menuObj,
-                            PRUint32 index);
-  PRBool AppendMenuObject(uGlobalMenuObject *menuObj);
-  PRBool RemoveMenuObjectAt(PRUint32 index);
+  bool InsertMenuObjectAt(uGlobalMenuObject *menuObj,
+                          PRUint32 index);
+  bool AppendMenuObject(uGlobalMenuObject *menuObj);
+  bool RemoveMenuObjectAt(PRUint32 index);
   nsresult ConstructDbusMenuItem();
   nsresult Build();
   void SyncProperties();
   void GetMenuPopupFromMenu(nsIContent **aResult);
-  static PRBool MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
-                                        void *data);
-  static PRBool MenuEventCallback(DbusmenuMenuitem *menu,
-                                  const gchar *name,
-                                  GVariant *value,
-                                  guint timestamp,
-                                  void *data);
+  static bool MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
+                                      void *data);
+  static bool MenuEventCallback(DbusmenuMenuitem *menu,
+                                const gchar *name,
+                                GVariant *value,
+                                guint timestamp,
+                                void *data);
   void AboutToOpen();
   void OnOpen();
   void OnClose();
   void Activate();
   void Deactivate();
-  void SetNeedsRebuild() { mNeedsRebuild = PR_TRUE; }
-  void ClearNeedsRebuild() { mNeedsRebuild = PR_FALSE; }
-  PRBool DoesNeedRebuild() { return !!mNeedsRebuild; }
+  void SetNeedsRebuild() { mFlags = mFlags | UNITY_MENU_NEEDS_REBUILDING; }
+  void ClearNeedsRebuild() { mFlags = mFlags & ~UNITY_MENU_NEEDS_REBUILDING; }
+  bool DoesNeedRebuild() { return !!(mFlags & UNITY_MENU_NEEDS_REBUILDING); }
 
   nsCOMPtr<nsIContent> mPopupContent;
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
   PRUint32 mOpenHandlerID;
   PRUint32 mEventHandlerID;
-  PRPackedBool mOpening;
-  PRPackedBool mNeedsRebuild;
-  PRPackedBool mPrimed;
 };
 
 #endif

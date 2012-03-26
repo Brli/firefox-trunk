@@ -38,7 +38,6 @@
 
 #include <nsCOMPtr.h>
 #include <nsIContent.h>
-#include <nsIObserverService.h>
 #include <nsStringAPI.h>
 #include <nsDebug.h>
 #include <nsComponentManagerUtils.h>
@@ -48,6 +47,14 @@
 #include <nsIWindowMediator.h>
 #include <nsIBaseWindow.h>
 #include <nsIXULWindow.h>
+#include <nsICaseConversion.h>
+#include <nsUnicharUtilCIID.h>
+#include <imgILoader.h>
+#include <nsIImageToPixbuf.h>
+#include <nsIPrefService.h>
+#include <nsIPrefBranch2.h>
+#include <nsIXBLService.h>
+#include <nsIXPConnect.h>
 #include <prenv.h>
 
 #include <glib-object.h>
@@ -56,7 +63,6 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 class RegisterWindowCbData
 {
@@ -80,7 +86,8 @@ public:
       static_cast<RegisterWindowCbData *>(userdata);
 
     // If the request was cancelled, then invalidate pointers to objects
-    // that might not exist anymore
+    // that might not exist anymore, as we don't assume that GDBus
+    // cancellation is reliable (see https://launchpad.net/bugs/953562)
 
     cbdata->mMenu = nsnull;
     cbdata->mCanceller = nsnull;
@@ -105,39 +112,126 @@ private:
 
 NS_IMPL_ISUPPORTS2(uGlobalMenuService, uIGlobalMenuService, nsIWindowMediatorListener)
 
+uGlobalMenuService* uGlobalMenuService::sService = nsnull;
+#define SERVICE(Name, Interface, CID) \
+Interface* uGlobalMenuService::s##Name = nsnull;
+#include "uGlobalMenuServiceList.h"
+#undef SERVICE
+bool uGlobalMenuService::sShutdown = false;
+
+/*static*/ uGlobalMenuService*
+uGlobalMenuService::GetInstanceForService()
+{
+  if (sService) {
+    NS_ADDREF(sService);
+    return sService;
+  }
+
+  NS_ENSURE_TRUE(!sShutdown, nsnull);
+
+  sService = new uGlobalMenuService();
+  NS_ADDREF(sService);
+
+  if (NS_FAILED(sService->Init())) {
+    NS_RELEASE(sService);
+    sService = nsnull;
+    return nsnull;
+  }
+
+  NS_ADDREF(sService);
+  return sService;
+}
+
+#define SERVICE(Name, Interface, CID) \
+Interface* \
+uGlobalMenuService::Get##Name() \
+{ \
+  if (s##Name) { \
+    return s##Name; \
+  } \
+  NS_ENSURE_TRUE(!sShutdown, nsnull); \
+  nsCOMPtr<Interface> tmp = do_GetService(CID); \
+  s##Name = tmp; \
+  NS_ADDREF(s##Name); \
+  return s##Name; \
+}
+#include "uGlobalMenuServiceList.h"
+#undef SERVICE
+
+/*static*/ void
+uGlobalMenuService::Shutdown()
+{
+  if (!sShutdown) {
+    sShutdown = true;
+
+    if (sService) {
+      if (sService->mCancellable) {
+        g_cancellable_cancel(sService->mCancellable);
+      }
+      NS_RELEASE(sService);
+      sService = nsnull;
+    }
+
+#define SERVICE(Name, Interface, CID) \
+    if (s##Name) { \
+      NS_RELEASE(s##Name); \
+      s##Name = nsnull; \
+    }
+#include "uGlobalMenuServiceList.h"
+#undef SERVICE
+  }
+}
+
+/*static*/ bool
+uGlobalMenuService::InitService()
+{
+  if (sShutdown) {
+    return false;
+  }
+
+  if (!sService) {
+    nsCOMPtr<uIGlobalMenuService> service =
+      do_GetService(U_GLOBALMENUSERVICE_CONTRACTID);
+  }
+
+  return sService != nsnull;
+}
+
 /*static*/ void
 uGlobalMenuService::ProxyCreatedCallback(GObject *object,
                                          GAsyncResult *res,
                                          gpointer userdata)
 {
-  uGlobalMenuService *self = static_cast<uGlobalMenuService *>(userdata);
-
   GError *error = NULL;
   GDBusProxy *proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
-
   if (error && g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-    // We should only get cancelled if the service was destroyed.
-    // In this case, it is no longer safe to proceed
     return;
   }
 
-  self->mCancellable->Destroy();
-  self->mCancellable = nsnull;
+  if (!sService) {
+    // We don't assume that GDbus cancellation is reliable
+    // see https://launchpad.net/bugs/953562
+    return;
+  }
 
-  self->mDbusProxy = proxy;
+  g_object_unref(sService->mCancellable);
+  sService->mCancellable = nsnull;
+
+  sService->mDbusProxy = proxy;
 
   if (!proxy) {
     NS_WARNING("Failed to create proxy for AppMenu registrar");
-    self->SetOnline(PR_FALSE);
+    sService->SetOnline(false);
     return;
   }
 
-  self->mNOCHandlerID = g_signal_connect(self->mDbusProxy, "notify::g-name-owner",
-                                         G_CALLBACK(NameOwnerChangedCallback),
-                                         userdata);
+  sService->mNOCHandlerID = g_signal_connect(sService->mDbusProxy,
+                                             "notify::g-name-owner",
+                                             G_CALLBACK(NameOwnerChangedCallback),
+                                             NULL);
 
-  char *owner = g_dbus_proxy_get_name_owner(self->mDbusProxy);
-  self->SetOnline(owner ? PR_TRUE : PR_FALSE);
+  char *owner = g_dbus_proxy_get_name_owner(sService->mDbusProxy);
+  sService->SetOnline(owner ? true : false);
 
   if (error) {
     g_error_free(error);
@@ -150,10 +244,12 @@ uGlobalMenuService::NameOwnerChangedCallback(GObject *object,
                                              GParamSpec *pspec,
                                              gpointer userdata)
 {
-  uGlobalMenuService *self = static_cast<uGlobalMenuService *>(userdata);
+  if (!sService) {
+    return;
+  }
 
-  char *owner = g_dbus_proxy_get_name_owner(self->mDbusProxy);
-  self->SetOnline(owner ? PR_TRUE : PR_FALSE);
+  char *owner = g_dbus_proxy_get_name_owner(sService->mDbusProxy);
+  sService->SetOnline(owner ? true : false);
   g_free(owner);
 }
 
@@ -162,32 +258,22 @@ uGlobalMenuService::RegisterWindowCallback(GObject *object,
                                            GAsyncResult *res,
                                            gpointer userdata)
 {
-  RegisterWindowCbData *data =
-    static_cast<RegisterWindowCbData *>(userdata);
-
-  uGlobalMenuBar *menu = data->GetMenuBar();
-  GDBusProxy *proxy = G_DBUS_PROXY(object);
-
   GError *error = NULL;
-  // RegisterWindowCbData owns a reference to the proxy
-  GVariant *result = g_dbus_proxy_call_finish(proxy, res, &error);
+  GVariant *result = g_dbus_proxy_call_finish(G_DBUS_PROXY(object), res, &error);
   if (result) {
     g_variant_unref(result);
   }
 
+
   if (error && g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-    // The call is cancelled if uGlobalMenuService goes away or the
-    // panel service goes offline. In either case, the menu has now
-    // been destroyed
-    delete data;
     return;
   }
 
+  RegisterWindowCbData *data = static_cast<RegisterWindowCbData *>(userdata);
+  uGlobalMenuBar *menu = data->GetMenuBar();
+
   if (menu && !PR_GetEnv("GLOBAL_MENU_DEBUG")) {
-    // This check is probably bogus. menu should only be invalid if
-    // the request was cancelled, in which case, we should have
-    // returned already
-    menu->SetMenuBarRegistered(error ? PR_FALSE : PR_TRUE);
+    menu->SetMenuBarRegistered(error ? false : true);
   }
 
   if (error) {
@@ -218,15 +304,18 @@ uGlobalMenuService::DestroyMenuForWidget(nsIWidget *aWidget)
 }
 
 void
-uGlobalMenuService::SetOnline(PRBool aOnline)
+uGlobalMenuService::SetOnline(bool aOnline)
 {
   if (mOnline != !!aOnline) {
     mOnline = !!aOnline;
-    nsCOMPtr<nsIObserverService> os =
-      do_GetService("@mozilla.org/observer-service;1");
-    if (os) {
-      os->NotifyObservers(nsnull, mOnline ? "native-menu-service:online" : "native-menu-service:offline", 0);
+
+    for (PRUint32 i = mListeners.Length(); i > 0; --i) {
+      mListeners[i - 1]->Observe(nsnull,
+                                 mOnline ? "native-menu-service:online" :
+                                           "native-menu-service:offline",
+                                 nsnull);
     }
+
 
     if (!mOnline) {
       DestroyMenus();
@@ -234,14 +323,14 @@ uGlobalMenuService::SetOnline(PRBool aOnline)
   }
 }
 
-PRBool
+bool
 uGlobalMenuService::WidgetHasGlobalMenu(nsIWidget *aWidget)
 {
   for (PRUint32 i = 0; i < mMenus.Length(); i++) {
     if (mMenus[i]->WidgetHasSameToplevelWindow(aWidget))
-      return PR_TRUE;
+      return true;
   }
-  return PR_FALSE;
+  return false;
 }
 
 nsresult
@@ -251,22 +340,20 @@ uGlobalMenuService::Init()
   rv = uWidgetAtoms::RegisterAtoms();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mCancellable = uGlobalMenuRequestAutoCanceller::Create();
-
-  GDBusProxyFlags flags = static_cast<GDBusProxyFlags>(
-                          G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES |
-                          G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | 
-                          G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START);
+  mCancellable = g_cancellable_new();
 
   g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION,
-                           flags,
+                           static_cast<GDBusProxyFlags>(
+                           G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES |
+                           G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | 
+                           G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START),
                            NULL,
                            "com.canonical.AppMenu.Registrar",
                            "/com/canonical/AppMenu/Registrar",
                            "com.canonical.AppMenu.Registrar",
-                           mCancellable->GetCancellable(),
+                           mCancellable,
                            ProxyCreatedCallback,
-                           this);
+                           NULL);
 
   nsCOMPtr<nsIWindowMediator> wm =
       do_GetService("@mozilla.org/appshell/window-mediator;1");
@@ -283,6 +370,10 @@ uGlobalMenuService::~uGlobalMenuService()
  
   if (wm) {
     wm->RemoveListener(this);
+  }
+
+  if (mCancellable) {
+    g_object_unref(mCancellable);
   }
 
   if (mDbusProxy) {
@@ -313,34 +404,29 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
   return NS_OK;
 }
 
-/* [noscript, notxpcom] void registerGlobalMenuBar (in uGlobalMenuBarPtr menuBar); */
-NS_IMETHODIMP_(void)
+/*static*/ bool
 uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
                                           uGlobalMenuRequestAutoCanceller *aCanceller)
 {
-  if (mOnline != PR_TRUE)
-    return;
+  if (!InitService()) {
+    NS_ERROR("Failed to register menubar - service not initialized");
+    return false;
+  }
 
-  if (!aMenuBar)
-    return;
-
-  if (!aCanceller) {
-    return;
+  NS_ASSERTION(sService->mOnline, "Trying to register menubar when service is offline");
+  if (sService->mOnline != true) {
+    return false;
   }
 
   PRUint32 xid = aMenuBar->GetWindowID();
   nsCAutoString path(aMenuBar->GetMenuPath());
-  if (xid == 0 || path.IsEmpty())
-    return;
-
-  RegisterWindowCbData *data =
-    new RegisterWindowCbData(aMenuBar,
-                             aCanceller);
-  if (!data) {
-    return;
+  if (xid == 0 || path.IsEmpty()) {
+    return false;
   }
 
-  g_dbus_proxy_call(mDbusProxy,
+  RegisterWindowCbData *data = new RegisterWindowCbData(aMenuBar, aCanceller);
+
+  g_dbus_proxy_call(sService->mDbusProxy,
                     "RegisterWindow",
                     g_variant_new("(uo)", xid, path.get()),
                     G_DBUS_CALL_FLAGS_NONE,
@@ -348,6 +434,8 @@ uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
                     aCanceller->GetCancellable(),
                     RegisterWindowCallback,
                     data);
+
+  return true;
 }
 
 /* void registerNotification (in nsIObserver observer); */
@@ -356,19 +444,7 @@ uGlobalMenuService::RegisterNotification(nsIObserver *aObserver)
 {
   NS_ENSURE_ARG(aObserver);
 
-  nsCOMPtr<nsIObserverService> os = 
-    do_GetService("@mozilla.org/observer-service;1");
-  NS_ENSURE_TRUE(os, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv;
-  rv = os->AddObserver(aObserver, "native-menu-service:online", MOZ_API_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = os->AddObserver(aObserver, "native-menu-service:offline", MOZ_API_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = os->AddObserver(aObserver, "native-menu-service:popup-open", MOZ_API_FALSE);
-  return rv;
+  return mListeners.AppendElement(aObserver) ? NS_OK : NS_ERROR_FAILURE;
 }
 
 /* void unregisterNotification (in nsIObserver observer); */
@@ -377,27 +453,15 @@ uGlobalMenuService::UnregisterNotification(nsIObserver *aObserver)
 {
   NS_ENSURE_ARG(aObserver);
 
-  nsCOMPtr<nsIObserverService> os = 
-    do_GetService("@mozilla.org/observer-service;1");
-  NS_ENSURE_TRUE(os, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv;
-  rv = os->RemoveObserver(aObserver, "native-menu-service:online");
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = os->RemoveObserver(aObserver, "native-menu-service:offline");
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = os->RemoveObserver(aObserver, "native-menu-service:popup-open");
-  return rv;
+  return mListeners.RemoveElement(aObserver) ? NS_OK : NS_ERROR_FAILURE;
 }
 
 /* readonly attribute boolean online; */
 NS_IMETHODIMP
-uGlobalMenuService::GetOnline(MOZ_API_BOOL *online)
+uGlobalMenuService::GetOnline(bool *online)
 {
   NS_ENSURE_ARG_POINTER(online);
-  *online = !!mOnline;
+  *online = mOnline;
   return NS_OK;
 }
 

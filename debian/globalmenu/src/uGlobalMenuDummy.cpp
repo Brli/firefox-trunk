@@ -111,26 +111,26 @@ uGlobalMenuDummy::Create()
 // the interface.
 void
 uGlobalMenuDummy::ObserveAttributeChanged(nsIDocument *aDocument,
-                                              nsIContent *aContent,
-                                              nsIAtom *aAttribute)
+                                          nsIContent *aContent,
+                                          nsIAtom *aAttribute)
 {
 
 }
 
 void
 uGlobalMenuDummy::ObserveContentRemoved(nsIDocument *aDocument,
-                                            nsIContent *aContainer,
-                                            nsIContent *aChild,
-                                            PRInt32 aIndexInContainer)
+                                        nsIContent *aContainer,
+                                        nsIContent *aChild,
+                                        PRInt32 aIndexInContainer)
 {
 
 }
 
 void
 uGlobalMenuDummy::ObserveContentInserted(nsIDocument *aDocument,
-                                             nsIContent *aContainer,
-                                             nsIContent *aChild,
-                                             PRInt32 aIndexInContainer)
+                                         nsIContent *aContainer,
+                                         nsIContent *aChild,
+                                         PRInt32 aIndexInContainer)
 {
 
 }

@@ -39,11 +39,9 @@
 #include <nsDebug.h>
 #include <nsIDocument.h>
 #include <nsIAtom.h>
-#include <nsIPrefService.h>
 #include <nsIPrefBranch2.h>
 #include <nsIDOMKeyEvent.h>
 #include <nsCOMPtr.h>
-#include <nsServiceManagerUtils.h>
 #include <nsIDOMXULCommandEvent.h>
 #include <nsPIDOMWindow.h>
 #include <nsIDOMWindow.h>
@@ -58,13 +56,13 @@
 #include <gdk/gdkkeysyms.h>
 #include <libdbusmenu-gtk/menuitem.h>
 
+#include "uGlobalMenuService.h"
 #include "uGlobalMenuItem.h"
 #include "uGlobalMenuBar.h"
 #include "uGlobalMenu.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 // XXX: Borrowed from content/xbl/src/nsXBLPrototypeHandler.cpp. This doesn't
 // seem to be publicly available, and we need a way to map key names
@@ -400,7 +398,7 @@ uGlobalMenuItem::SyncAccelFromContent()
       } else if (strcmp(token, "control") == 0) {
         modifier |= GDK_CONTROL_MASK;
       } else if (strcmp(token, "accel") == 0) {
-        nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID);
+        nsIPrefBranch *prefs = uGlobalMenuService::GetPrefService();
         if (prefs) {
           PRInt32 accel;
           prefs->GetIntPref("ui.key.accelKey", &accel);
@@ -471,44 +469,40 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
       dbusmenu_menuitem_property_set(mDbusMenuItem,
                                      DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
                                      DBUSMENU_MENUITEM_TOGGLE_CHECK);
-      mType = CheckBox;
+      SetMenuItemType(CheckBox);
     } else if (type == 1) {
       dbusmenu_menuitem_property_set(mDbusMenuItem,
                                      DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
                                      DBUSMENU_MENUITEM_TOGGLE_RADIO);
-      mType = Radio;
+      SetMenuItemType(Radio);
     }
 
     nsIContent *content = mCommandContent ? mCommandContent : mContent;
-    mToggleState = content->AttrValueIs(kNameSpaceID_None, 
-                                        uWidgetAtoms::checked,
-                                        uWidgetAtoms::_true,
-                                        eCaseMatters);
+    SetCheckState(content->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
+                                       uWidgetAtoms::_true, eCaseMatters));
     dbusmenu_menuitem_property_set_int(mDbusMenuItem,
                                        DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
-                                       mToggleState ?
+                                       IsChecked() ?
                                        DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED : 
                                         DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED);
 
     if (mCommandContent) {
-      UGM_BLOCK_EVENTS_FOR_CURRENT_SCOPE();
-      if (mToggleState) {
+      UNITY_MENU_BLOCK_EVENTS_FOR_CURRENT_SCOPE();
+      if (IsChecked()) {
         mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                          NS_LITERAL_STRING("true"), MOZ_API_TRUE);
+                          NS_LITERAL_STRING("true"), true);
       } else {
         mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                            MOZ_API_TRUE);
+                            true);
       }
     }
 
-    mIsToggle = PR_TRUE;
   } else {
     dbusmenu_menuitem_property_remove(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE);
     dbusmenu_menuitem_property_remove(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_TOGGLE_STATE);
-    mIsToggle = PR_FALSE;
-    mType = Normal;
+    SetMenuItemType(Normal);
   }
 }
 
@@ -579,24 +573,20 @@ uGlobalMenuItem::Activate()
   // XXX: it is important to update the checkbox state before dispatching
   //      the event, as the handler might check the new state
   if (!mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::autocheck,
-                             uWidgetAtoms::_false, eCaseMatters) && 
-      mType != Normal) {
+                             uWidgetAtoms::_false, eCaseMatters) &&
+      IsCheckboxOrRadioItem()) {
     nsIContent *content = mCommandContent ? mCommandContent : mContent;
-    if (!mToggleState) {
+    if (!IsChecked()) {
       // We're currently not checked, so check now
       content->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                       NS_LITERAL_STRING("true"), MOZ_API_TRUE);
-    } else if (mToggleState && mType == CheckBox) {
+                       NS_LITERAL_STRING("true"), true);
+    } else if (IsChecked() && (mFlags & UNITY_MENUITEM_IS_CHECKBOX)) {
       // We're currently checked, so uncheck now. Don't do this for radio buttons
-      content->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, MOZ_API_TRUE);
+      content->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, true);
     }
   }
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 10
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->OwnerDoc());
-#else
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->GetOwnerDoc());
-#endif
   if (domDoc) {
     nsCOMPtr<nsIDOMEvent> event;
     domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
@@ -608,16 +598,16 @@ uGlobalMenuItem::Activate()
         domDoc->GetDefaultView(getter_AddRefs(window));
         if (window) {
           cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
-                                     MOZ_API_TRUE, MOZ_API_TRUE, window, 0,
-                                     MOZ_API_FALSE, MOZ_API_FALSE, MOZ_API_FALSE,
-                                     MOZ_API_FALSE, nsnull);
+                                     true, true, window, 0,
+                                     false, false, false,
+                                     false, nsnull);
           nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
           if (target) {
             nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
             if (priv) {
-              priv->SetTrusted(MOZ_API_TRUE);
+              priv->SetTrusted(true);
             }
-            MOZ_API_BOOL dummy;
+            bool dummy;
             target->DispatchEvent(event, &dummy);
           }
         }
@@ -669,7 +659,7 @@ uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
 void
 uGlobalMenuItem::UncheckSiblings()
 {
-  if (mType != Radio) {
+  if (!(mFlags & UNITY_MENUITEM_IS_RADIO)) {
     // If we're not a radio button, we don't care
     return;
   }
@@ -693,7 +683,7 @@ uGlobalMenuItem::UncheckSiblings()
         name, eCaseMatters) && sibling != mContent &&
         sibling->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::type,
                              uWidgetAtoms::radio, eCaseMatters)) {
-      sibling->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, MOZ_API_TRUE);
+      sibling->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, true);
     }
   }
 }
@@ -765,7 +755,7 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
                                          nsIAtom *aAttribute)
 {
   TRACE_WITH_THIS_MENUOBJECT();
-  UGM_ENSURE_EVENTS_UNBLOCKED();
+  UNITY_MENU_ENSURE_EVENTS_UNBLOCKED();
   NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
                aContent == mKeyContent,
                "Received an event that wasn't meant for us!");
