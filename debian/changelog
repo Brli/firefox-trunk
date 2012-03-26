@@ -7,10 +7,11 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
   * Refresh patches
     - update debian/patches/ubuntu-codes-google.patch
     - update debian/patches/revert-bmo621446-investigation.patch
+    - update debian/patches/dont-include-hyphenation-patterns.patch
   * Install pdf.js
     - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 16 Mar 2012 23:14:04 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 26 Mar 2012 16:48:45 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
