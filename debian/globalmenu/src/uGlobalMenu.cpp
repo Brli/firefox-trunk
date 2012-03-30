@@ -64,6 +64,49 @@
 
 #include "uDebug.h"
 
+uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu):
+  mMarker(0), mMenu(aMenu)
+{
+  nsRefPtr<nsIRunnable> event =
+    NS_NewNonOwningRunnableMethod(mMenu, &uGlobalMenu::FreeRecycleList);
+  NS_DispatchToCurrentThread(event);
+}
+
+uGlobalMenu::RecycleList::~RecycleList()
+{
+  for (PRUint32 i = 0; i < mList.Length(); i++) {
+    dbusmenu_menuitem_child_delete(mMenu->GetDbusMenuItem(), mList[i]);
+  }
+}
+
+DbusmenuMenuitem*
+uGlobalMenu::RecycleList::PopRecyclableItem()
+{
+  NS_ASSERTION(mList.Length() > 0, "No more recyclable menuitems");
+
+  ++mMarker;
+  DbusmenuMenuitem *recycled = mList[0];
+  mList.RemoveElementAt(0);
+
+  if (mList.Length() == 0) {
+    mMenu->FreeRecycleList();
+  }
+
+  return recycled;
+}
+
+void
+uGlobalMenu::RecycleList::PrependRecyclableItem(DbusmenuMenuitem *aItem)
+{
+  mList.InsertElementAt(0, aItem);
+}
+
+void
+uGlobalMenu::RecycleList::AppendRecyclableItem(DbusmenuMenuitem *aItem)
+{
+  mList.AppendElement(aItem);
+}
+
 /*static*/ bool
 uGlobalMenu::MenuEventCallback(DbusmenuMenuitem *menu,
                                const gchar *name,
@@ -168,6 +211,7 @@ void
 uGlobalMenu::AboutToOpen()
 {
   TRACE_WITH_THIS_MENUOBJECT();
+
   // XXX: We ignore the first AboutToOpen on top-level menus, because Unity
   //      sends this signal on all top-levels when the window opens.
   //      This isn't useful for us and it doesn't finish the job by sending
@@ -179,12 +223,11 @@ uGlobalMenu::AboutToOpen()
     return;
   }
 
-  uGlobalMenuScopedFlagsRestorer helper(this, UNITY_MENU_IS_OPENING);
-  SetFlags(UNITY_MENU_IS_OPENING);
-
   if (DoesNeedRebuild()) {
     Build();
   }
+
+  SetFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
 
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
@@ -233,28 +276,23 @@ uGlobalMenu::AboutToOpen()
       }
     }
   }
-
-  helper.Cancel();
 }
 
 void
 uGlobalMenu::OnOpen()
 {
-  if (!IsOpening()) {
+  if (!IsOpenOrOpening()) {
     // If we didn't receive an AboutToOpen, then generate it ourselves
     AboutToOpen();
   }
 
-  uGlobalMenuScopedFlagsRestorer helper(this);
-  helper.ClearFlagWhenDone(UNITY_MENU_IS_OPENING);
+  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open, NS_LITERAL_STRING("true"), true);
 
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
     return;
   }
-
-  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open, NS_LITERAL_STRING("true"), true);
 
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mPopupContent->OwnerDoc());
   if (domDoc) {
@@ -289,14 +327,14 @@ uGlobalMenu::OnOpen()
 void
 uGlobalMenu::OnClose()
 {
-  ClearFlags(UNITY_MENU_IS_OPENING);
+  mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
+
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
+    ClearFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
     return;
   }
-
-  mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
 
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mPopupContent->OwnerDoc());
   if (domDoc) {
@@ -332,6 +370,8 @@ uGlobalMenu::OnClose()
     }
   }
 
+  ClearFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
+
   Deactivate();
 }
 
@@ -349,12 +389,19 @@ uGlobalMenu::SyncProperties()
   ClearInvalid();
 }
 
-nsresult
-uGlobalMenu::ConstructDbusMenuItem()
+void
+uGlobalMenu::InitializeDbusMenuItem()
 {
-  mDbusMenuItem = dbusmenu_menuitem_new();
-  if (!mDbusMenuItem)
-    return NS_ERROR_OUT_OF_MEMORY;
+  if (!mDbusMenuItem) {
+    mDbusMenuItem = dbusmenu_menuitem_new();
+    if (!mDbusMenuItem) {
+      return;
+    }
+  } else {
+    OnlyKeepProperties(static_cast<uMenuObjectProperties>(eLabel | eEnabled |
+                                                          eVisible | eIconData |
+                                                          eChildDisplay));
+  }
 
   // This happens automatically when we add children, but we have to
   // do this manually for menus which don't initially have children,
@@ -373,8 +420,6 @@ uGlobalMenu::ConstructDbusMenuItem()
                                      this);
 
   SyncProperties();
-
-  return NS_OK;
 }
 
 void
@@ -418,17 +463,47 @@ bool
 uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                                 PRUint32 index)
 {
-  gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
-                                                    menuObj->GetDbusMenuItem(),
-                                                    index);
+  PRUint32 correctedIndex = index;
+
+  DbusmenuMenuitem *recycled = nsnull;
+  if (mRecycleList) {
+    if (index < mRecycleList->mMarker) {
+      ++mRecycleList->mMarker;
+    } else if (index > mRecycleList->mMarker) {
+      correctedIndex += mRecycleList->mList.Length();
+    } else {
+      recycled = mRecycleList->PopRecyclableItem();
+    }
+  }
+
+  gboolean res = TRUE;
+  if (recycled) {
+    menuObj->SetDbusMenuItem(recycled);
+  } else {
+    res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
+                                               menuObj->GetDbusMenuItem(),
+                                               correctedIndex);
+  }
+
   return res && mMenuObjects.InsertElementAt(index, menuObj);
 }
 
 bool
 uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 {
-  gboolean res = dbusmenu_menuitem_child_append(mDbusMenuItem,
-                                                menuObj->GetDbusMenuItem());
+  DbusmenuMenuitem *recycled = nsnull;
+  if (mRecycleList && mRecycleList->mMarker > mMenuObjects.Length()) {
+    recycled = mRecycleList->PopRecyclableItem();
+  }
+
+  gboolean res = TRUE;
+  if (recycled) {
+    menuObj->SetDbusMenuItem(recycled);
+  } else {
+    res = dbusmenu_menuitem_child_append(mDbusMenuItem,
+                                         menuObj->GetDbusMenuItem());
+  }
+
   return res && mMenuObjects.AppendElement(menuObj);
 }
 
@@ -440,8 +515,25 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
     return false;
   }
 
-  gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
-                                       mMenuObjects[index]->GetDbusMenuItem());
+  if (!mRecycleList) {
+    mRecycleList = new RecycleList(this);
+  }
+
+  gboolean res = TRUE;
+  if (mRecycleList->mList.Length() == 0 || index == mRecycleList->mMarker) {
+    mRecycleList->AppendRecyclableItem(mMenuObjects[index]->GetDbusMenuItem());
+  } else if (index == mRecycleList->mMarker - 1) {
+    mRecycleList->PrependRecyclableItem(mMenuObjects[index]->GetDbusMenuItem());
+  } else {
+    mRecycleList = nsnull;
+    res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
+                                         mMenuObjects[index]->GetDbusMenuItem());
+  }
+
+  if (mRecycleList) {
+    mRecycleList->mMarker = index;
+  }
+
   mMenuObjects.RemoveElementAt(index);
 
   return !!res;
@@ -500,7 +592,10 @@ uGlobalMenu::Build()
 
   if (mContent != mPopupContent) {
     nsresult rv = mListener->RegisterForContentChanges(mPopupContent, this);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Failed to register for popup content changes");
+      return rv;
+    }
   }
 
   ClearNeedsRebuild();
@@ -545,17 +640,20 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
   SetNeedsRebuild();
 
   // See the hack comment above for why this workaround is here
-  if (mParent->GetType() != MenuBar || mMenuBar->IsRegistered()) {
+  if (mParent->GetType() != eMenuBar || mMenuBar->IsRegistered()) {
     SetFlags(UNITY_MENU_READY);
   }
 
   nsresult rv = mListener->RegisterForContentChanges(mContent, this);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to register for content changes");
+    return rv;
+  }
 
-  return ConstructDbusMenuItem();
+  return NS_OK;
 }
 
-uGlobalMenu::uGlobalMenu(): uGlobalMenuObject(Menu)
+uGlobalMenu::uGlobalMenu(): uGlobalMenuObject(eMenu)
 {
   MOZ_COUNT_CTOR(uGlobalMenu);
 }
@@ -637,9 +735,9 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (mParent->GetType() == Menu &&
-      !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't opening. Marking invalid");
+  if (mParent->GetType() == eMenu &&
+      !(static_cast<uGlobalMenu *>(mParent))->IsOpenOrOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't open or opening. Marking invalid");
     Invalidate();
     return;
   }
@@ -680,8 +778,8 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
     return;
   }
 
-  if (!IsOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Parent not opening - Marking as needing a rebuild");
+  if (!IsOpenOrOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Not open or opening - Marking as needing a rebuild");
     SetNeedsRebuild();
     return;
   }
@@ -712,8 +810,8 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
     return;
   }
 
-  if (!IsOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Parent not opening - Marking as needing a rebuild");
+  if (!IsOpenOrOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Not open or opening - Marking as needing a rebuild");
     SetNeedsRebuild();
     return;
   }

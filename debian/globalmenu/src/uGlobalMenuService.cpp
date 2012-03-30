@@ -127,7 +127,9 @@ uGlobalMenuService::GetInstanceForService()
     return sService;
   }
 
-  NS_ENSURE_TRUE(!sShutdown, nsnull);
+  if (sShutdown) {
+    return nsnull;
+  }
 
   sService = new uGlobalMenuService();
   NS_ADDREF(sService);
@@ -149,8 +151,13 @@ uGlobalMenuService::Get##Name() \
   if (s##Name) { \
     return s##Name; \
   } \
-  NS_ENSURE_TRUE(!sShutdown, nsnull); \
+  if (sShutdown) { \
+    return nsnull; \
+  } \
   nsCOMPtr<Interface> tmp = do_GetService(CID); \
+  if (!tmp) { \
+    return nsnull; \
+  } \
   s##Name = tmp; \
   NS_ADDREF(s##Name); \
   return s##Name; \
@@ -205,7 +212,14 @@ uGlobalMenuService::ProxyCreatedCallback(GObject *object,
   GError *error = NULL;
   GDBusProxy *proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
   if (error && g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+    // If the request was cancelled, then the service is definitely not
+    // around already
+    g_error_free(error);
     return;
+  }
+
+  if (error) {
+    g_error_free(error);
   }
 
   if (!sService) {
@@ -232,10 +246,6 @@ uGlobalMenuService::ProxyCreatedCallback(GObject *object,
 
   char *owner = g_dbus_proxy_get_name_owner(sService->mDbusProxy);
   sService->SetOnline(owner ? true : false);
-
-  if (error) {
-    g_error_free(error);
-  }
   g_free(owner);
 }
 
@@ -264,16 +274,24 @@ uGlobalMenuService::RegisterWindowCallback(GObject *object,
     g_variant_unref(result);
   }
 
+  RegisterWindowCbData *data = static_cast<RegisterWindowCbData *>(userdata);
 
   if (error && g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+    // If the request was cancelled, then the menubar has definitely been
+    // deleted already
+    g_error_free(error);
+    delete data;
     return;
   }
 
-  RegisterWindowCbData *data = static_cast<RegisterWindowCbData *>(userdata);
   uGlobalMenuBar *menu = data->GetMenuBar();
 
-  if (menu && !PR_GetEnv("GLOBAL_MENU_DEBUG")) {
-    menu->SetMenuBarRegistered(error ? false : true);
+  // We don't assume that GDbus cancellation is reliable
+  // see https://launchpad.net/bugs/953562
+  if (menu && !error) {
+    menu->NotifyMenuBarRegistered();
+  } else if (menu && sService) {
+    sService->mMenus.RemoveElement(menu);
   }
 
   if (error) {
@@ -338,7 +356,10 @@ uGlobalMenuService::Init()
 {
   nsresult rv;
   rv = uWidgetAtoms::RegisterAtoms();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to register atoms");
+    return rv;
+  }
 
   mCancellable = g_cancellable_new();
 
@@ -357,7 +378,10 @@ uGlobalMenuService::Init()
 
   nsCOMPtr<nsIWindowMediator> wm =
       do_GetService("@mozilla.org/appshell/window-mediator;1");
-  NS_ENSURE_TRUE(wm, NS_ERROR_OUT_OF_MEMORY);
+  if (!wm) {
+    NS_WARNING("No window mediator, which we need for close events");
+    return NS_ERROR_FAILURE;
+  }
 
   wm->AddListener(this);
   return rv;
@@ -389,7 +413,10 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
   NS_ENSURE_ARG(aParent);
   NS_ENSURE_ARG(aMenuBarNode);
 
-  NS_ENSURE_TRUE(mOnline, NS_ERROR_FAILURE);
+  if (!mOnline) {
+    NS_WARNING("Can't create a menubar when the service is not online");
+    return NS_ERROR_FAILURE;
+  }
 
   // Sanity check to make sure we don't register more than one menu
   // for each top-level window
@@ -397,7 +424,10 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
     return NS_ERROR_FAILURE;
 
   uGlobalMenuBar *menu = uGlobalMenuBar::Create(aParent, aMenuBarNode);
-  NS_ENSURE_TRUE(menu, NS_ERROR_FAILURE);
+  if (!menu) {
+    NS_WARNING("Failed to create menubar");
+    return NS_ERROR_FAILURE;
+  }
 
   mMenus.AppendElement(menu);
 
@@ -406,7 +436,8 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
 
 /*static*/ bool
 uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
-                                          uGlobalMenuRequestAutoCanceller *aCanceller)
+                                          uGlobalMenuRequestAutoCanceller *aCanceller,
+                                          PRUint32 aXID, nsACString& aPath)
 {
   if (!InitService()) {
     NS_ERROR("Failed to register menubar - service not initialized");
@@ -418,9 +449,7 @@ uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
     return false;
   }
 
-  PRUint32 xid = aMenuBar->GetWindowID();
-  nsCAutoString path(aMenuBar->GetMenuPath());
-  if (xid == 0 || path.IsEmpty()) {
+  if (aXID == 0 || aPath.IsEmpty()) {
     return false;
   }
 
@@ -428,7 +457,7 @@ uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
 
   g_dbus_proxy_call(sService->mDbusProxy,
                     "RegisterWindow",
-                    g_variant_new("(uo)", xid, path.get()),
+                    g_variant_new("(uo)", aXID, PromiseFlatCString(aPath).get()),
                     G_DBUS_CALL_FLAGS_NONE,
                     -1,
                     aCanceller->GetCancellable(),
@@ -482,11 +511,16 @@ NS_IMETHODIMP
 uGlobalMenuService::OnCloseWindow(nsIXULWindow *window)
 {
   nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(window);
-  NS_ENSURE_TRUE(baseWindow, NS_ERROR_INVALID_ARG);
+  NS_ASSERTION(baseWindow, "nsIXULWindow passed to OnCloseWindow is not a nsIBaseWindow");
+  if (!baseWindow) {
+    return NS_ERROR_INVALID_ARG;
+  }
 
   nsCOMPtr<nsIWidget> widget;
   baseWindow->GetMainWidget(getter_AddRefs(widget));
-  NS_ENSURE_TRUE(widget, NS_ERROR_FAILURE);
+  if (!widget) {
+    return NS_ERROR_FAILURE;
+  }
 
   DestroyMenuForWidget(widget);
 

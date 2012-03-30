@@ -39,10 +39,8 @@
 #include "nsISupports.idl"
 #include "nsIObserver.idl"
 
-[ptr] native uGlobalMenuBarPtr(uGlobalMenuBar);
 [ptr] native nsIWidgetPtr(nsIWidget);
 [ptr] native nsIContentPtr(nsIContent);
-[ptr] native uGlobalMenuRequestAutoCancellerPtr(uGlobalMenuRequestAutoCanceller);
 
 %{C++
 class nsIWidget;

@@ -76,6 +76,20 @@ NS_IMPL_ISUPPORTS3(uGlobalMenuIconLoader, imgIDecoderObserver, imgIContainerObse
 // to indicate the intialization status of it.
 PRPackedBool uGlobalMenuIconLoader::sImagesInMenus = -1;
 
+// Must be kept in sync with uMenuObjectProperties
+const char *properties[] = {
+  DBUSMENU_MENUITEM_PROP_LABEL,
+  DBUSMENU_MENUITEM_PROP_ENABLED,
+  DBUSMENU_MENUITEM_PROP_VISIBLE,
+  DBUSMENU_MENUITEM_PROP_ICON_DATA,
+  DBUSMENU_MENUITEM_PROP_TYPE,
+  DBUSMENU_MENUITEM_PROP_SHORTCUT,
+  DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
+  DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
+  DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
+  NULL
+};
+
 bool
 uGlobalMenuIconLoader::ShouldShowIcon()
 {
@@ -150,7 +164,7 @@ uGlobalMenuIconLoader::Run()
     return NS_OK;
   }
 
-  mMenuItem->GetContent(getter_AddRefs(mContent));
+  mContent = mMenuItem->GetContent();
 
   nsIDocument *doc = mContent->GetCurrentDoc();
   if (!doc) {
@@ -214,6 +228,7 @@ uGlobalMenuIconLoader::Run()
     }
 
     if (!hasImage) {
+      ClearIcon();
       return NS_OK;
     }
 
@@ -248,7 +263,10 @@ uGlobalMenuIconLoader::Run()
   rv = loader->LoadImage(uri, nsnull, nsnull, nsnull, loadGroup, this,
                          nsnull, nsIRequest::LOAD_NORMAL, nsnull,
                          nsnull, nsnull, getter_AddRefs(mIconRequest));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to load icon");
+    return rv;
+  }
 
   mIconRequest->RequestDecode();
 
@@ -454,16 +472,6 @@ uGlobalMenuIconLoader::Destroy()
   }
 
   mMenuItem = nsnull;
-}
-
-void
-uGlobalMenuObject::GetContent(nsIContent **_retval)
-{
-  if (!_retval) {
-    return;
-  }
-  *_retval = mContent;
-  NS_IF_ADDREF(*_retval);
 }
 
 void
@@ -683,5 +691,41 @@ uGlobalMenuObject::DestroyIconLoader()
 {
   if (mIconLoader) {
     mIconLoader->Destroy();
+  }
+}
+
+DbusmenuMenuitem*
+uGlobalMenuObject::GetDbusMenuItem()
+{
+  if (!mDbusMenuItem) {
+    InitializeDbusMenuItem();
+  }
+
+  return mDbusMenuItem;
+}
+
+void
+uGlobalMenuObject::SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem)
+{
+  NS_ASSERTION(!mDbusMenuItem, "This node already has a corresponding DbusmenuMenuitem");
+  if (mDbusMenuItem) {
+    return;
+  }
+
+  mDbusMenuItem = aDbusMenuItem;
+  g_object_ref(mDbusMenuItem);
+
+  InitializeDbusMenuItem();
+}
+
+void
+uGlobalMenuObject::OnlyKeepProperties(uMenuObjectProperties aKeep)
+{
+  uMenuObjectProperties mask = static_cast<uMenuObjectProperties>(1);
+  for (PRUint32 i = 0; properties[i] != NULL; i++) {
+    if (!(mask & aKeep)) {
+      dbusmenu_menuitem_property_remove(mDbusMenuItem, properties[i]);
+    }
+    mask = static_cast<uMenuObjectProperties>(mask << 1);
   }
 }

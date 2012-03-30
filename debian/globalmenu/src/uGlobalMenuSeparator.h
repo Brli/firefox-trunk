@@ -68,7 +68,7 @@ private:
                 uGlobalMenuBar *aMenuBar);
   ~uGlobalMenuSeparator();
 
-  nsresult ConstructDbusMenuItem();
+  void InitializeDbusMenuItem();
 };
 
 

@@ -61,7 +61,7 @@ private:
 
   ~uGlobalMenuDummy();
 
-  nsresult ConstructDbusMenuItem(); 
+  void InitializeDbusMenuItem(); 
 };
 
 

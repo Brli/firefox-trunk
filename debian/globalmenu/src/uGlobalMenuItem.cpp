@@ -80,9 +80,10 @@ struct keyCodeData {
 static struct keyCodeData gKeyCodes[] = {
 
 #define KEYCODE_ENTRY(str) {#str, sizeof(#str) - 1, nsIDOMKeyEvent::DOM_##str}
+#define KEYCODE_ENTRY2(str, code) {str, sizeof(str) - 1, code}
 
   KEYCODE_ENTRY(VK_CANCEL),
-  KEYCODE_ENTRY(VK_BACK_SPACE),
+  KEYCODE_ENTRY2("VK_BACK", nsIDOMKeyEvent::DOM_VK_BACK_SPACE),
   KEYCODE_ENTRY(VK_TAB),
   KEYCODE_ENTRY(VK_CLEAR),
   KEYCODE_ENTRY(VK_RETURN),
@@ -196,6 +197,7 @@ static struct keyCodeData gKeyCodes[] = {
   KEYCODE_ENTRY(VK_QUOTE)
 
 #undef KEYCODE_ENTRY
+#undef KEYCODE_ENTRY2
 };
 
 PRUint32
@@ -469,12 +471,12 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
       dbusmenu_menuitem_property_set(mDbusMenuItem,
                                      DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
                                      DBUSMENU_MENUITEM_TOGGLE_CHECK);
-      SetMenuItemType(CheckBox);
+      SetMenuItemType(eCheckBox);
     } else if (type == 1) {
       dbusmenu_menuitem_property_set(mDbusMenuItem,
                                      DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
                                      DBUSMENU_MENUITEM_TOGGLE_RADIO);
-      SetMenuItemType(Radio);
+      SetMenuItemType(eRadio);
     }
 
     nsIContent *content = mCommandContent ? mCommandContent : mContent;
@@ -502,7 +504,7 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
                                       DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE);
     dbusmenu_menuitem_property_remove(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_TOGGLE_STATE);
-    SetMenuItemType(Normal);
+    SetMenuItemType(eNormal);
   }
 }
 
@@ -616,12 +618,20 @@ uGlobalMenuItem::Activate()
   }
 }
 
-nsresult
-uGlobalMenuItem::ConstructDbusMenuItem()
+void
+uGlobalMenuItem::InitializeDbusMenuItem()
 {
-  mDbusMenuItem = dbusmenu_menuitem_new();
-  if (!mDbusMenuItem)
-    return NS_ERROR_OUT_OF_MEMORY;
+  if (!mDbusMenuItem) {
+    mDbusMenuItem = dbusmenu_menuitem_new();
+    if (!mDbusMenuItem) {
+      return;
+    }
+  } else {
+    OnlyKeepProperties(static_cast<uMenuObjectProperties>(eLabel | eEnabled |
+                                                          eVisible | eIconData |
+                                                          eShortcut | eToggleType |
+                                                          eToggleState));
+  }
 
   mHandlerID = g_signal_connect(G_OBJECT(mDbusMenuItem),
                                 DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
@@ -629,8 +639,6 @@ uGlobalMenuItem::ConstructDbusMenuItem()
                                 this);
 
   SyncProperties();
-
-  return NS_OK;
 }
 
 nsresult
@@ -651,9 +659,12 @@ uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
 
   nsresult rv;
   rv = mListener->RegisterForContentChanges(mContent, this);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to register for content changes");
+    return rv;
+  }
 
-  return ConstructDbusMenuItem();
+  return NS_OK;
 }
 
 void
@@ -689,7 +700,7 @@ uGlobalMenuItem::UncheckSiblings()
 }
 
 uGlobalMenuItem::uGlobalMenuItem():
-  uGlobalMenuObject(MenuItem)
+  uGlobalMenuObject(eMenuItem)
 {
   MOZ_COUNT_CTOR(uGlobalMenuItem);
 }
@@ -772,9 +783,9 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (mParent->GetType() == Menu &&
-      !(static_cast<uGlobalMenu *>(mParent))->IsOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't opening. Marking invalid");
+  if (mParent->GetType() == eMenu &&
+      !(static_cast<uGlobalMenu *>(mParent))->IsOpenOrOpening()) {
+    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't open or opening. Marking invalid");
     Invalidate();
     return;
   }

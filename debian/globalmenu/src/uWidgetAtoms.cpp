@@ -63,9 +63,11 @@ static const uWidgetAtom atoms[] = {
 nsresult
 uWidgetAtoms::RegisterAtoms()
 {
-  nsCOMPtr<nsIAtomService> as =
-      do_GetService("@mozilla.org/atom-service;1");
-  NS_ENSURE_TRUE(as, NS_ERROR_OUT_OF_MEMORY);
+  nsCOMPtr<nsIAtomService> as = do_GetService("@mozilla.org/atom-service;1");
+  if (!as) {
+    NS_WARNING("No atom service, which means it's game over already");
+    return NS_ERROR_FAILURE;
+  }
 
   nsAutoString aAtomStr;
   nsCAutoString cAtomStr;
@@ -74,7 +76,10 @@ uWidgetAtoms::RegisterAtoms()
     cAtomStr = atoms[i].raw;
     CopyUTF8toUTF16(cAtomStr, aAtomStr);
     nsresult rv = as->GetAtom(aAtomStr, atoms[i].atom);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Failed to get atom");
+      return rv;
+    }
   }
 
   return NS_OK;

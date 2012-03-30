@@ -66,20 +66,18 @@ public:
                                      uMenuChangeObserver *aMenuObject);
   nsresult UnregisterForContentChanges(nsIContent *aContent,
                                        uMenuChangeObserver *aMenuObject);
-  nsresult RegisterForAllChanges(uMenuChangeObserver *aMenuObject);
-  nsresult UnregisterForAllChanges(uMenuChangeObserver *aMenuObject);
+  nsresult RegisterFallbackListener(uMenuChangeObserver *aMenuObject);
+  nsresult UnregisterFallbackListener(uMenuChangeObserver *aMenuObject);
   void Destroy();
   ~uGlobalMenuDocListener();
 
 private:
-  void GetListeners(nsIContent *aContent, nsTArray<uMenuChangeObserver *>& _result);
+  nsTArray<uMenuChangeObserver *>* GetListenersForContent(nsIContent *aContent,
+                                                          bool aCreate);
 
   nsIDocument *mDocument;
   nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uMenuChangeObserver *> > mContentToObserverTable;
-  nsTArray<uMenuChangeObserver *> mGlobalObservers;
-#ifdef DEBUG_chrisccoulson
-  PRUint32 mCount;
-#endif
+  nsTArray<uMenuChangeObserver *> mFallbackObservers;
 };
 
 #endif

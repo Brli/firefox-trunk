@@ -167,13 +167,19 @@ nsresult
 uGlobalMenuLoader::Init()
 {
   mService = do_GetService("@canonical.com/globalmenu-service;1");
-  NS_ENSURE_TRUE(mService, NS_ERROR_OUT_OF_MEMORY);
+  if (!mService) {
+    NS_WARNING("Failed to get menu service");
+    return NS_ERROR_FAILURE;
+  }
 
   mService->RegisterNotification(this);
 
   nsCOMPtr<nsIWindowMediator> wm =
       do_GetService("@mozilla.org/appshell/window-mediator;1");
-  NS_ENSURE_TRUE(wm, NS_ERROR_OUT_OF_MEMORY);
+  if (!wm) {
+    NS_WARNING("Failed to get window mediator service");
+    return NS_ERROR_FAILURE;
+  }
 
   wm->AddListener(this);
 

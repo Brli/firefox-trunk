@@ -67,7 +67,7 @@
 #define UNITY_MENUITEM_SHOW_ONLY_FOR_KB   (1 << 4)
 
 // The menu is in the process of opening
-#define UNITY_MENU_IS_OPENING             (1 << 5)
+#define UNITY_MENU_IS_OPEN_OR_OPENING     (1 << 5)
 
 // The menu needs rebuilding
 #define UNITY_MENU_NEEDS_REBUILDING       (1 << 6)
@@ -84,12 +84,27 @@
 // This menuitem is a radio item
 #define UNITY_MENUITEM_IS_RADIO           (1 << 10)
 
+// The menubar has been registered with the shell
+#define UNITY_MENUBAR_IS_REGISTERED       (1 << 11)
+
 enum uMenuObjectType {
-  MenuBar,
-  Menu,
-  MenuItem,
-  MenuSeparator,
-  MenuDummy
+  eMenuBar,
+  eMenu,
+  eMenuItem,
+  eMenuSeparator,
+  eMenuDummy
+};
+
+enum uMenuObjectProperties {
+  eLabel = (1 << 0),
+  eEnabled = (1 << 1),
+  eVisible = (1 << 2),
+  eIconData = (1 << 3),
+  eType = (1 << 4),
+  eShortcut = (1 << 5),
+  eToggleType = (1 << 6),
+  eToggleState = (1 << 7),
+  eChildDisplay = (1 << 8)
 };
 
 class uGlobalMenuObject;
@@ -146,14 +161,16 @@ public:
                                              mType(aType),
                                              mFlags(0)
                                              { };
-  DbusmenuMenuitem* GetDbusMenuItem() { return mDbusMenuItem; }
+  DbusmenuMenuitem* GetDbusMenuItem();
+  void SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem);
   uGlobalMenuObject* GetParent() { return mParent; }
   uMenuObjectType GetType() { return mType; }
-  void GetContent(nsIContent **_retval);
+  nsIContent* GetContent() { return mContent; }
   virtual void AboutToShowNotify() { };
   virtual ~uGlobalMenuObject() { };
 
 protected:
+  virtual void InitializeDbusMenuItem()=0;
   void SyncLabelFromContent(nsIContent *aContent);
   void SyncLabelFromContent();
   void SyncVisibilityFromContent();
@@ -167,6 +184,7 @@ protected:
   void Invalidate() { mFlags = mFlags | UNITY_MENUITEM_IS_DIRTY; }
   void ClearInvalid() { mFlags = mFlags & ~UNITY_MENUITEM_IS_DIRTY; }
   bool IsDirty() { return !!(mFlags & UNITY_MENUITEM_IS_DIRTY); }
+  void OnlyKeepProperties(uMenuObjectProperties aKeep);
 
   bool ShouldShowOnlyForKb()
   {

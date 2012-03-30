@@ -91,12 +91,6 @@ public:
                                 nsIContent *aMenuBar);
   ~uGlobalMenuBar();
 
-  // Return the native ID of the window
-  PRUint32 GetWindowID();
-
-  // Returns the path of the menubar on the session bus
-  const char* GetMenuPath();
-
   // Checks if the menubar shares the same top level window as the 
   // specified nsIWidget
   bool WidgetHasSameToplevelWindow(nsIWidget *aWidget);
@@ -104,10 +98,12 @@ public:
   // Returns whether the menu was opened via a keyboard shortcut
   bool OpenedByKeyboard() { return !!mOpenedByKeyboard; }
 
-  // Called from the menu service. Used to hide the DOM element for the menubar
-  void SetMenuBarRegistered(bool aRegistered);
+  bool IsRegistered() { return !!(mFlags & UNITY_MENUBAR_IS_REGISTERED); }
 
-  bool IsRegistered() { return mCancellable == nsnull; }
+private:
+  friend class uGlobalMenuService;
+
+  void NotifyMenuBarRegistered();
 
 private:
   friend class uGlobalMenuBarListener;
@@ -124,6 +120,7 @@ private:
   nsresult Init(nsIWidget *aWindow,
                 nsIContent *aMenuBar);
 
+  void InitializeDbusMenuItem();
   GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
   nsresult Build();
   PRUint32 GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent);
@@ -135,7 +132,8 @@ private:
   bool AppendMenuObject(uGlobalMenuObject *menu);
   bool ShouldParentStayVisible(nsIContent *aContent);
   bool IsParentOfMenuBar(nsIContent *aContent);
-  void SetXULMenuBarHidden(bool hidden);
+  void HideXULMenuBar();
+  void ShowXULMenuBar();
 
   DbusmenuServer *mServer;
   GtkWidget *mTopLevel;

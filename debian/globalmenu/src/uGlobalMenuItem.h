@@ -53,9 +53,9 @@ class uGlobalMenuDocListener;
 class uGlobalMenuBar;
 
 enum uMenuItemType {
-  Normal,
-  CheckBox,
-  Radio
+  eNormal,
+  eCheckBox,
+  eRadio
 };
 
 class uGlobalMenuItem: public uGlobalMenuObject,
@@ -85,7 +85,7 @@ private:
   void SyncAccelFromContent();
   void SyncProperties();
   void SyncTypeAndStateFromContent();
-  nsresult ConstructDbusMenuItem();
+  void InitializeDbusMenuItem();
   static void ItemActivatedCallback(DbusmenuMenuitem *menuItem,
                                     PRUint32 timeStamp,
                                     void *data);
@@ -94,16 +94,16 @@ private:
   void SetMenuItemType(uMenuItemType aType)
   {
     switch(aType) {
-      case Normal:
+      case eNormal:
         ClearFlags(UNITY_MENUITEM_IS_CHECKBOX | UNITY_MENUITEM_IS_RADIO);
         break;
 
-      case CheckBox:
+      case eCheckBox:
         ClearFlags(UNITY_MENUITEM_IS_RADIO);
         SetFlags(UNITY_MENUITEM_IS_CHECKBOX);
         break;
 
-      case Radio:
+      case eRadio:
         ClearFlags(UNITY_MENUITEM_IS_CHECKBOX);
         SetFlags(UNITY_MENUITEM_IS_RADIO);
         break;
