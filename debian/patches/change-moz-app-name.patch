@@ -7,72 +7,27 @@
  other-licenses/branding/firefox/pref/firefox-branding.js  |    8 +++---
  6 files changed, 29 insertions(+), 29 deletions(-)
 
-Index: mozilla/browser/branding/unofficial/pref/firefox-branding.js
+Index: mozilla/Makefile.in
 ===================================================================
---- mozilla.orig/browser/branding/unofficial/pref/firefox-branding.js	2012-02-02 09:54:47.000000000 +0000
-+++ mozilla/browser/branding/unofficial/pref/firefox-branding.js	2012-02-02 23:23:02.316701558 +0000
-@@ -1,5 +1,5 @@
--pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
--pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
- // The time interval between checks for a new version (in seconds)
- pref("app.update.interval", 86400); // 24 hours
- // The time interval between the downloading of mar file chunks in the
-@@ -9,14 +9,14 @@
- pref("app.update.promptWaitTime", 86400);
- // URL user can browse to manually if for some reason all update installation
- // attempts fail.
--pref("app.update.url.manual", "http://www.mozilla.org/products/%APP%/");
-+pref("app.update.url.manual", "http://www.mozilla.org/products/firefox/");
- // A default value for the "More information about this update" link
- // supplied in the "An update is available" page of the update wizard. 
--pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
-+pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
+--- mozilla.orig/Makefile.in	2012-03-30 20:36:29.837747689 +0100
++++ mozilla/Makefile.in	2012-03-30 20:38:01.105746067 +0100
+@@ -176,7 +176,7 @@
+ endif
  
- // Release notes and vendor URLs
--pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
--pref("app.vendorURL", "http://www.mozilla.org/projects/%APP%/");
-+pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
-+pref("app.vendorURL", "http://www.mozilla.org/projects/firefox/");
+ SYMBOL_INDEX_NAME = \
+-  $(MOZ_APP_NAME)-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
++  firefox-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
  
- // Search codes belong only in builds with official branding
- pref("browser.search.param.yahoo-fr", "");
-Index: mozilla/browser/branding/official/pref/firefox-branding.js
-===================================================================
---- mozilla.orig/browser/branding/official/pref/firefox-branding.js	2012-02-02 09:54:46.000000000 +0000
-+++ mozilla/browser/branding/official/pref/firefox-branding.js	2012-02-02 23:23:02.320701558 +0000
-@@ -1,5 +1,5 @@
--pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/whatsnew/");
--pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/whatsnew/");
-+pref("startup.homepage_welcome_url","http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/firstrun/");
- // Interval: Time between checks for a new version (in seconds)
- // nightly=6 hours, official=24 hours
- pref("app.update.interval", 86400);
-@@ -13,11 +13,11 @@
- pref("app.update.url.manual", "http://www.firefox.com");
- // A default value for the "More information about this update" link
- // supplied in the "An update is available" page of the update wizard. 
--pref("app.update.url.details", "http://www.mozilla.com/%LOCALE%/%APP%/releases/");
-+pref("app.update.url.details", "http://www.mozilla.com/%LOCALE%/firefox/releases/");
- 
- // Release notes and vendor URLs
--pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/%APP%/%VERSION%/releasenotes/");
--pref("app.vendorURL", "http://www.mozilla.com/%LOCALE%/%APP%/");
-+pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
-+pref("app.vendorURL", "http://www.mozilla.com/%LOCALE%/firefox/");
- 
- pref("browser.search.param.ms-pc", "MOZI");
- pref("browser.search.param.yahoo-fr", "moz35");
+ buildsymbols:
+ ifdef MOZ_CRASHREPORTER
 Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
 ===================================================================
---- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js	2012-02-02 09:54:45.000000000 +0000
-+++ mozilla/browser/branding/nightly/pref/firefox-branding.js	2012-02-02 23:23:02.320701558 +0000
+--- mozilla.orig/browser/branding/nightly/pref/firefox-branding.js	2012-03-30 20:36:29.869747688 +0100
++++ mozilla/browser/branding/nightly/pref/firefox-branding.js	2012-03-30 20:38:01.105746067 +0100
 @@ -1,5 +1,5 @@
--pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/");
+-pref("startup.homepage_override_url","http://www.mozilla.org/projects/%APP%/%VERSION%/whatsnew/?oldversion=%OLD_VERSION%");
 -pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/%APP%/%VERSION%/firstrun/");
-+pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/");
++pref("startup.homepage_override_url","http://www.mozilla.org/projects/firefox/%VERSION%/whatsnew/?oldversion=%OLD_VERSION%");
 +pref("startup.homepage_welcome_url","http://www.mozilla.org/projects/firefox/%VERSION%/firstrun/");
  // The time interval between checks for a new version (in seconds)
  pref("app.update.interval", 3600); // 1 hour
@@ -87,55 +42,17 @@ Index: mozilla/browser/branding/nightly/pref/firefox-branding.js
  // Release notes and vendor URLs
 -pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
 -pref("app.vendorURL", "http://www.mozilla.org/projects/%APP%/");
-+pref("app.releaseNotesURL", "http://www.mozilla.com/%LOCALE%/firefox/%VERSION%/releasenotes/");
-+pref("app.vendorURL", "http://www.mozilla.org/projects/firefox/");
- 
- // Search codes belong only in builds with official branding
- pref("browser.search.param.yahoo-fr", "");
-Index: mozilla/browser/branding/aurora/pref/firefox-branding.js
-===================================================================
---- mozilla.orig/browser/branding/aurora/pref/firefox-branding.js	2012-02-02 09:54:43.000000000 +0000
-+++ mozilla/browser/branding/aurora/pref/firefox-branding.js	2012-02-02 23:23:02.320701558 +0000
-@@ -14,11 +14,11 @@
- pref("app.update.url.manual", "http://www.mozilla.com/firefox/channel/");
- // A default value for the "More information about this update" link
- // supplied in the "An update is available" page of the update wizard. 
--pref("app.update.url.details", "http://www.mozilla.org/projects/%APP%/");
-+pref("app.update.url.details", "http://www.mozilla.org/projects/firefox/");
- 
- // Release notes and vendor URLs
--pref("app.releaseNotesURL", "http://www.mozilla.org/projects/%APP%/%VERSION%/releasenotes/");
--pref("app.vendorURL", "http://www.mozilla.org/projects/%APP%/");
 +pref("app.releaseNotesURL", "http://www.mozilla.org/projects/firefox/%VERSION%/releasenotes/");
 +pref("app.vendorURL", "http://www.mozilla.org/projects/firefox/");
  
  // Search codes belong only in builds with official branding
  pref("browser.search.param.yahoo-fr", "");
-Index: mozilla/browser/confvars.sh
+Index: mozilla/browser/branding/nightly/configure.sh
 ===================================================================
---- mozilla.orig/browser/confvars.sh	2012-02-02 09:55:24.000000000 +0000
-+++ mozilla/browser/confvars.sh	2012-02-02 23:23:02.320701558 +0000
-@@ -36,8 +36,9 @@
- #
- # ***** END LICENSE BLOCK *****
- 
--MOZ_APP_BASENAME=Firefox
+--- mozilla.orig/browser/branding/nightly/configure.sh	2012-03-30 20:36:29.889747688 +0100
++++ mozilla/browser/branding/nightly/configure.sh	2012-03-30 20:38:10.261745905 +0100
+@@ -1 +1,4 @@
+ MOZ_APP_DISPLAYNAME=Nightly
 +MOZ_APP_BASENAME=Firefox-Trunk
- MOZ_APP_VENDOR=Mozilla
 +MOZ_APP_UA_NAME=Firefox
- MOZ_UPDATER=1
- MOZ_PHOENIX=1
- 
-Index: mozilla/Makefile.in
-===================================================================
---- mozilla.orig/Makefile.in	2012-02-02 09:53:57.000000000 +0000
-+++ mozilla/Makefile.in	2012-02-02 23:23:02.320701558 +0000
-@@ -171,7 +171,7 @@
- endif
- 
- SYMBOL_INDEX_NAME = \
--  $(MOZ_APP_NAME)-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
-+  firefox-$(MOZ_APP_VERSION)-$(OS_TARGET)-$(BUILDID)$(EXTRA_BUILDID)-symbols.txt
- 
- buildsymbols:
- ifdef MOZ_CRASHREPORTER
++MOZ_APP_NAME=firefox-trunk
