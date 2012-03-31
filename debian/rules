@@ -205,25 +205,25 @@ endif
 
 ifeq ($(MOZ_APP_BASENAME), $(MOZ_APP_NAME))
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -eq "1004" && echo "1"))
-PLUGIN_BREAKS := flashplugin-installer (<= 11.1.102.63ubuntu0.10.04.1), adobe-flashplugin (<= 11.1.102.63-0lucid1)
+PLUGIN_BREAKS := flashplugin-installer (<= 11.2.202.228ubuntu0.10.04.1), adobe-flashplugin (<= 11.1.102.63-0lucid1)
 PLUGIN_CONFLICTS := gcu-plugin (<= 0.10.12-2ubuntu1), gecko-mediaplayer (<= 0.9.9.2-1ubuntu0.10.04.1), \
 		    mozilla-gtk-vnc (<= 0.3.10-2ubuntu2.1), mozilla-opensc  (<= 0.11.12-1ubuntu3.2), \
 		    mozilla-plugin-pcmanx (<= 0.3.9-2ubuntu2), mozplugger (<= 1.13.3-1ubuntu1), \
 		    xine-plugin (<= 1.0.2-1ubuntu2), mozilla-virt-viewer (<= 0.0.3-6ubuntu7.xul191.1)
 else
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -eq "1010" && echo "1"))
-PLUGIN_BREAKS := flashplugin-installer (<= 11.1.102.63ubuntu0.10.10.1), adobe-flashplugin (<= 11.1.102.63-0maverick1)
+PLUGIN_BREAKS := flashplugin-installer (<= 11.2.202.228ubuntu0.10.10.1), adobe-flashplugin (<= 11.1.102.63-0maverick1)
 PLUGIN_CONFLICTS := gcu-plugin (<= 0.12.3-1), gecko-mediaplayer (<= 0.9.9.2-1ubuntu0.10.10.1), \
 		    mozilla-gtk-vnc (<= 0.4.1-3ubuntu2), mozilla-opensc (<= 0.11.13-1ubuntu2.1), \
 		    mozilla-plugin-pcmanx (<= 0.3.9-2ubuntu2), mozplugger (<= 1.14.1-2~exp3ubuntu1), \
 		    xine-plugin (<= 1.0.2-2ubuntu1)
 else
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -eq "1104" && echo "1"))
-PLUGIN_BREAKS := flashplugin-installer (<= 11.1.102.63ubuntu0.11.04.1), adobe-flashplugin (<= 11.1.102.63-0natty1)
+PLUGIN_BREAKS := flashplugin-installer (<= 11.2.202.228ubuntu0.11.04.1), adobe-flashplugin (<= 11.1.102.63-0natty1)
 PLUGIN_CONFLICTS := gcu-plugin (<=  0.12.7-1ubuntu1)
 else
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -eq "1110" && echo "1"))
-PLUGIN_BREAKS := flashplugin-installer (<= 11.1.102.63ubuntu0.11.10.1), adobe-flashplugin (<= 11.1.102.63-0oneiric1)
+PLUGIN_BREAKS := flashplugin-installer (<= 11.2.202.228ubuntu0.11.10.1), adobe-flashplugin (<= 11.1.102.63-0oneiric1)
 PLUGIN_CONFLICTS := gcu-plugin (<= 0.12.8-1ubuntu3)
 else
 PLUGIN_BREAKS := flashplugin-installer (<= 11.1.102.63ubuntu1), adobe-flashplugin (<= 11.1.102.63-0precise1)
