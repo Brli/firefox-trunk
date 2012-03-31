@@ -133,7 +133,6 @@ private:
 
   nsCOMPtr<nsIContent> mCommandContent;
   nsCOMPtr<nsIContent> mKeyContent;
-  PRUint32 mHandlerID;
 };
 
 

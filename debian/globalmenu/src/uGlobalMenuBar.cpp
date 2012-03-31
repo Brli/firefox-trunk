@@ -196,12 +196,12 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 
   g_object_ref(mTopLevel);
 
-  mPath = NS_LITERAL_CSTRING("/com/canonical/menu/");
+  nsCAutoString path = NS_LITERAL_CSTRING("/com/canonical/menu/");
   char xid[10];
   sprintf(xid, "%X", (PRUint32) GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel)));
-  mPath.Append(xid);
+  path.Append(xid);
 
-  mServer = dbusmenu_server_new(mPath.get());
+  mServer = dbusmenu_server_new(path.get());
   if (!mServer) {
     NS_WARNING("Failed to create DbusmenuServer");
     return NS_ERROR_OUT_OF_MEMORY;
@@ -274,7 +274,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   }
 
   PRUint32 xidn = (PRUint32) GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel));
-  uGlobalMenuService::RegisterGlobalMenuBar(this, mCancellable, xidn, mPath);
+  uGlobalMenuService::RegisterGlobalMenuBar(this, mCancellable, xidn, path);
   HideXULMenuBar();
 
   return NS_OK;

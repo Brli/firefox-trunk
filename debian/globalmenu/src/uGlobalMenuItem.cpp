@@ -633,10 +633,8 @@ uGlobalMenuItem::InitializeDbusMenuItem()
                                                           eToggleState));
   }
 
-  mHandlerID = g_signal_connect(G_OBJECT(mDbusMenuItem),
-                                DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
-                                G_CALLBACK(ItemActivatedCallback),
-                                this);
+  g_signal_connect(G_OBJECT(mDbusMenuItem), DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
+                   G_CALLBACK(ItemActivatedCallback), this);
 
   SyncProperties();
 }
@@ -720,7 +718,9 @@ uGlobalMenuItem::~uGlobalMenuItem()
   DestroyIconLoader();
 
   if (mDbusMenuItem) {
-    g_signal_handler_disconnect(mDbusMenuItem, mHandlerID);
+    g_signal_handlers_disconnect_by_func(mDbusMenuItem,
+                                         reinterpret_cast<gpointer>(ItemActivatedCallback),
+                                         this);
     g_object_unref(mDbusMenuItem);
   }
 

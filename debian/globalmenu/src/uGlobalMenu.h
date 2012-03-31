@@ -121,8 +121,6 @@ private:
 
   nsCOMPtr<nsIContent> mPopupContent;
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
-  PRUint32 mOpenHandlerID;
-  PRUint32 mEventHandlerID;
   nsAutoPtr<RecycleList> mRecycleList;
 };
 

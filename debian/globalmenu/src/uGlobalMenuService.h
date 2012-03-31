@@ -43,6 +43,7 @@
 #include <nsTArray.h>
 #include <nsCOMPtr.h>
 #include <nsIWindowMediatorListener.h>
+#include <nsIWindowMediator.h>
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -119,9 +120,9 @@ private:
   bool mOnline;
   GDBusProxy *mDbusProxy;
   GCancellable *mCancellable;
-  PRUint32 mNOCHandlerID;
   nsTArray<nsAutoPtr<uGlobalMenuBar> > mMenus;
   nsTArray<nsCOMPtr<nsIObserver> > mListeners;
+  nsCOMPtr<nsIWindowMediator> mWindowMediator;
 };
 
 #endif

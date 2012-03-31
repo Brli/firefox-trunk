@@ -137,7 +137,6 @@ private:
 
   DbusmenuServer *mServer;
   GtkWidget *mTopLevel;
-  nsCString mPath;
 
   nsCOMPtr<nsIContent> mHiddenElement;
   nsCOMPtr<nsIDOMEventTarget> mDocTarget;

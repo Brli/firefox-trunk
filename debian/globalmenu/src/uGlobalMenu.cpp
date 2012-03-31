@@ -410,14 +410,10 @@ uGlobalMenu::InitializeDbusMenuItem()
                                  DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
                                  DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU);
 
-  mOpenHandlerID = g_signal_connect(G_OBJECT(mDbusMenuItem),
-                                    "about-to-show",
-                                    G_CALLBACK(MenuAboutToOpenCallback),
-                                    this);
-  mEventHandlerID = g_signal_connect(G_OBJECT(mDbusMenuItem),
-                                     "event",
-                                     G_CALLBACK(MenuEventCallback),
-                                     this);
+  g_signal_connect(G_OBJECT(mDbusMenuItem), "about-to-show",
+                   G_CALLBACK(MenuAboutToOpenCallback), this);
+  g_signal_connect(G_OBJECT(mDbusMenuItem), "event",
+                   G_CALLBACK(MenuEventCallback), this);
 
   SyncProperties();
 }
@@ -670,8 +666,12 @@ uGlobalMenu::~uGlobalMenu()
   DestroyIconLoader();
 
   if (mDbusMenuItem) {
-    g_signal_handler_disconnect(mDbusMenuItem, mOpenHandlerID);
-    g_signal_handler_disconnect(mDbusMenuItem, mEventHandlerID);
+    g_signal_handlers_disconnect_by_func(mDbusMenuItem,
+                                         reinterpret_cast<gpointer>(MenuAboutToOpenCallback),
+                                         this);
+    g_signal_handlers_disconnect_by_func(mDbusMenuItem,
+                                         reinterpret_cast<gpointer>(MenuEventCallback),
+                                         this);
     g_object_unref(mDbusMenuItem);
   }
 

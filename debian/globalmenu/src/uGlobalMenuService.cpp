@@ -44,7 +44,6 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIWidget.h>
-#include <nsIWindowMediator.h>
 #include <nsIBaseWindow.h>
 #include <nsIXULWindow.h>
 #include <nsICaseConversion.h>
@@ -239,10 +238,8 @@ uGlobalMenuService::ProxyCreatedCallback(GObject *object,
     return;
   }
 
-  sService->mNOCHandlerID = g_signal_connect(sService->mDbusProxy,
-                                             "notify::g-name-owner",
-                                             G_CALLBACK(NameOwnerChangedCallback),
-                                             NULL);
+  g_signal_connect(sService->mDbusProxy, "notify::g-name-owner",
+                   G_CALLBACK(NameOwnerChangedCallback), NULL);
 
   char *owner = g_dbus_proxy_get_name_owner(sService->mDbusProxy);
   sService->SetOnline(owner ? true : false);
@@ -376,24 +373,20 @@ uGlobalMenuService::Init()
                            ProxyCreatedCallback,
                            NULL);
 
-  nsCOMPtr<nsIWindowMediator> wm =
-      do_GetService("@mozilla.org/appshell/window-mediator;1");
-  if (!wm) {
+  mWindowMediator = do_GetService("@mozilla.org/appshell/window-mediator;1");
+  if (!mWindowMediator) {
     NS_WARNING("No window mediator, which we need for close events");
     return NS_ERROR_FAILURE;
   }
 
-  wm->AddListener(this);
+  mWindowMediator->AddListener(this);
   return rv;
 }
 
 uGlobalMenuService::~uGlobalMenuService()
 {
-  nsCOMPtr<nsIWindowMediator> wm =
-      do_GetService("@mozilla.org/appshell/window-mediator;1");
- 
-  if (wm) {
-    wm->RemoveListener(this);
+  if (mWindowMediator) {
+    mWindowMediator->RemoveListener(this);
   }
 
   if (mCancellable) {
@@ -401,7 +394,9 @@ uGlobalMenuService::~uGlobalMenuService()
   }
 
   if (mDbusProxy) {
-    g_signal_handler_disconnect(mDbusProxy, mNOCHandlerID);
+    g_signal_handlers_disconnect_by_func(mDbusProxy,
+                                         reinterpret_cast<gpointer>(NameOwnerChangedCallback),
+                                         NULL);
     g_object_unref(mDbusProxy);
   }
 }
