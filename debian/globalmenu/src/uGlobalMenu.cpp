@@ -67,9 +67,9 @@
 uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu):
   mMarker(0), mMenu(aMenu)
 {
-  nsRefPtr<nsIRunnable> event =
-    NS_NewNonOwningRunnableMethod(mMenu, &uGlobalMenu::FreeRecycleList);
-  NS_DispatchToCurrentThread(event);
+  mFreeEvent = NS_NewNonOwningRunnableMethod(mMenu,
+                                             &uGlobalMenu::FreeRecycleList);
+  NS_DispatchToCurrentThread(mFreeEvent);
 }
 
 uGlobalMenu::RecycleList::~RecycleList()
@@ -77,6 +77,8 @@ uGlobalMenu::RecycleList::~RecycleList()
   for (PRUint32 i = 0; i < mList.Length(); i++) {
     dbusmenu_menuitem_child_delete(mMenu->GetDbusMenuItem(), mList[i]);
   }
+
+  mFreeEvent->Revoke();
 }
 
 DbusmenuMenuitem*

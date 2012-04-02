@@ -44,6 +44,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsIContent.h>
+#include <nsThreadUtils.h>
 
 #include <libdbusmenu-glib/server.h>
 
@@ -117,6 +118,7 @@ private:
     PRUint32 mMarker;
     nsTArray<DbusmenuMenuitem *> mList;
     uGlobalMenu *mMenu;
+    nsRefPtr<nsRunnableMethod<uGlobalMenu, void, false> > mFreeEvent;
   };
 
   nsCOMPtr<nsIContent> mPopupContent;
