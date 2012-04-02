@@ -455,6 +455,21 @@ uGlobalMenu::GetMenuPopupFromMenu(nsIContent **aResult)
   }
 }
 
+static bool
+IsRecycledItemCompatible(DbusmenuMenuitem *aRecycled,
+                         uGlobalMenuObject *aNewItem)
+{
+  // If the recycled item was a separator, it can only be reused as a separator
+  if (!g_strcmp0(dbusmenu_menuitem_property_get(aRecycled, DBUSMENU_MENUITEM_PROP_TYPE),
+                 "separator") &&
+      aNewItem->GetType() != eMenuSeparator) {
+    return false;
+  }
+
+  // Everything else is fine
+  return true;
+}
+
 bool
 uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                                 PRUint32 index)
@@ -469,6 +484,10 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
       correctedIndex += mRecycleList->mList.Length();
     } else {
       recycled = mRecycleList->PopRecyclableItem();
+      if (!IsRecycledItemCompatible(recycled, menuObj)) {
+        recycled = nsnull;
+        mRecycleList = nsnull;
+      }
     }
   }
 
@@ -490,6 +509,10 @@ uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
   DbusmenuMenuitem *recycled = nsnull;
   if (mRecycleList && mRecycleList->mMarker > mMenuObjects.Length()) {
     recycled = mRecycleList->PopRecyclableItem();
+    if (!IsRecycledItemCompatible(recycled, menuObj)) {
+      recycled = nsnull;
+      mRecycleList = nsnull;
+    }
   }
 
   gboolean res = TRUE;
