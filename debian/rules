@@ -341,6 +341,9 @@ endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1204" && echo "1"))
 	DEB_DEFINES += -DMOZ_LIBXUL_PKGCONFIG
 endif
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1204" && echo "1"))
+	DEB_DEFINES += -DMOZ_FREEDESKTOP_ACTIONS
+endif
 
 ifneq (1, $(MOZ_TREE_NSPR))
 	NSPR_DEPENDS = libnspr4-dev
