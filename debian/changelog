@@ -13,8 +13,10 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox.install.in
   * Add Keywords to the desktop file
     - update debian/firefox.desktop.in
+  * Update desktop file translations
+    - update debian/firefox.sh.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Apr 2012 20:08:27 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 04 Apr 2012 20:20:14 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
