@@ -12,46 +12,43 @@ Description: We introduce a new preference that allows users to set a preferred
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: no
 
---- a/dom/plugins/base/nsPluginHost.cpp
-+++ b/dom/plugins/base/nsPluginHost.cpp
-@@ -1647,6 +1647,40 @@ nsPluginHost::FindPluginForType(const ch
+Index: mozilla/dom/plugins/base/nsPluginHost.cpp
+===================================================================
+--- mozilla.orig/dom/plugins/base/nsPluginHost.cpp	2012-04-10 11:46:52.000000000 +0100
++++ mozilla/dom/plugins/base/nsPluginHost.cpp	2012-04-10 22:59:49.487175839 +0100
+@@ -1558,7 +1558,35 @@
  
    LoadPlugins();
  
-+  nsCOMPtr<nsIPrefBranch> pref (do_QueryInterface(mPrefService));
++  nsCAutoString mimetypePref("modules.plugins.mimetype.");
++  mimetypePref.Append(aMimeType);
 +
-+  char *preferredPluginPath = NULL;
-+  nsCAutoString mimetypePrefString ("modules.plugins.mimetype.");
-+  mimetypePrefString.Append(aMimeType);
-+  // FIXME: preferredPluginPath is leaked. Ouch
-+  nsresult rv = pref->GetCharPref(mimetypePrefString.get(), &preferredPluginPath);
++  nsAdoptingCString preferred = Preferences::GetCString(mimetypePref.get());
 +
-+  if(NS_SUCCEEDED(rv) && preferredPluginPath) {
-+    // FIXME: This should really check if the selected plugin can handle
-+    //        the specified mimetype and that it is enabled, and just reject the
-+    //        pref if not
-+    nsPluginTag *plugins = mPlugins;
-+    while (plugins) {
-+      if (0 == PL_strcasecmp(plugins->mFileName.get(), preferredPluginPath) ||
-+          0 == PL_strcasecmp(plugins->mFullPath.get(), preferredPluginPath)) {
-+        return plugins;
+   nsPluginTag *plugin = mPlugins;
++  if(!preferred.IsEmpty()) {
++    nsCOMPtr<nsILocalFile> file;
++    nsresult rv = NS_NewNativeLocalFile(preferred, false, getter_AddRefs(file));
++    bool isAbsolute = NS_SUCCEEDED(rv);
++
++    while (plugin) {
++      if (((!isAbsolute && 0 == PL_strcasecmp(plugin->mFileName.get(), preferred.get())) ||
++           (isAbsolute && 0 == PL_strcasecmp(plugin->mFullPath.get(), preferred.get()))) &&
++          (!aCheckEnabled || plugin->IsEnabled())) {
++        PRInt32 mimeCount = plugin->mMimeTypes.Length();
++        for (PRInt32 i = 0; i < mimeCount; i++) {
++          if (0 == PL_strcasecmp(plugin->mMimeTypes[i].get(), aMimeType)) {
++            return plugin;
++          }
++        }
 +      }
-+      plugins = plugins->mNext;
-+    }
-+
-+    // now lets search for substrings
-+    plugins=mPlugins;
-+    while (plugins) {
-+      if (nsnull != PL_strstr(plugins->mFileName.get(), preferredPluginPath) ||
-+          nsnull != PL_strstr(plugins->mFullPath.get(), preferredPluginPath)) {
-+        return plugins;
-+      }
-+      plugins = plugins->mNext;
++      plugin = plugin->mNext;
 +    }
 +  }
 +
 +  // if there is no pref for this mime-type, or if the plugin named in pref
 +  // isn't found, we pick the first that matches for this mime-type
-   nsPluginTag *plugin = mPlugins;
++  plugin = mPlugins;
    while (plugin) {
      if (!aCheckEnabled || plugin->IsEnabled()) {
+       PRInt32 mimeCount = plugin->mMimeTypes.Length();
