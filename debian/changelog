@@ -9,6 +9,7 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - update debian/patches/revert-bmo621446-investigation.patch
     - update debian/patches/dont-include-hyphenation-patterns.patch
     - update debian/patches/change-moz-app-name.patch
+    - update debian/patches/allow-lockPref-everywhere.patch
   * Install pdf.js
     - update debian/firefox.install.in
   * Add Keywords to the desktop file
@@ -20,7 +21,7 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox.desktop.in
     - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 05 Apr 2012 14:06:28 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 10 Apr 2012 11:30:41 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
