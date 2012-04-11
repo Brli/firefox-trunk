@@ -29,6 +29,10 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - update debian/patches/plugin-for-mimetype-pref.patch
   * Drop debian/patches/revert-bmo621446-investigation.patch now the
     problematic #pragma is #ifdef'd out on !ANDROID
+  * Drop the application/vnd.mozilla.xul+xml mimetype from the desktop file.
+    Firefox hasn't been able to view XUL files from non-chrome URI's since
+    version 4.0
+    - update debian/firefox.desktop.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Apr 2012 09:14:05 +0100
 
