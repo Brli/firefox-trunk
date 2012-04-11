@@ -14,7 +14,6 @@ ubuntu-codes-baidu.patch
 #@DIST=lucid@use-new-yasm-in-lucid.patch
 ubuntu-ua-string-changes.patch
 autocomplete-theme-tweak.patch
-revert-bmo621446-investigation.patch
 dont-include-hyphenation-patterns.patch
 #@ARCH=powerpc@fix-build-failure-without-yarr-jit.patch
 dont-override-general-useragent-locale.patch

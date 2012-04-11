@@ -27,8 +27,10 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
   * When a plugin is chosen using a "modules.plugins.mimetype." pref,
     only use it if it is enabled and handles the requested mimetype
     - update debian/patches/plugin-for-mimetype-pref.patch
+  * Drop debian/patches/revert-bmo621446-investigation.patch now the
+    problematic #pragma is #ifdef'd out on !ANDROID
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Apr 2012 00:45:01 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Apr 2012 09:14:05 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
