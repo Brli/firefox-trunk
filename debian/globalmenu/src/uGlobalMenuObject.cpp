@@ -44,6 +44,11 @@
 #include <nsNetError.h>
 #include <nsNetUtil.h>
 #include <nsIImageToPixbuf.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 12
+#if MOZILLA_BRANCH_MAJOR_VERSION <= 13
+# include <nsIDOMNSElement.h>
+#endif
+#endif
 #include <nsIDOMDOMTokenList.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMWindow.h>
@@ -64,6 +69,7 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
+#include "compat.h"
 
 #define MAX_LABEL_NCHARS 40
 
@@ -627,7 +633,7 @@ void
 uGlobalMenuObject::UpdateInfoFromContentClass()
 {
   TRACE_WITH_THIS_MENUOBJECT();
-  nsCOMPtr<nsIDOMElement> element(do_QueryInterface(mContent));
+  nsCOMPtr<nsIDOMNSElement> element(do_QueryInterface(mContent));
   if (!element) {
     return;
   }
