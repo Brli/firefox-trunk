@@ -475,7 +475,7 @@ class Prefs:
             xpifile = zipfile.ZipFile(xpi)
             entries = xpifile.namelist()
             for entry in entries:
-                if re.match(r'defaults/preferences/*.js', entry):
+                if re.match(r'^defaults/preferences/*.js$', entry):
                     self._in_comment = False
                     source = '%s:%s' % (xpi, entry)
                     try:
