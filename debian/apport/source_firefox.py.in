@@ -1081,6 +1081,36 @@ def add_info(report, ui):
         if (profile.current or profile.default) and profile.addon_compat_check_disabled:
             addon_compat_check_disabled = True
 
+    crash_reports = []
+    report_to_mtime = {}
+    most_recent_report = None
+    most_recent_mtime = 0
+    for crash in glob(os.path.join(conf_dir, 'Crash Reports', 'submitted', '*.txt')):
+        id = re.sub(r'\.txt$', '', os.path.basename(crash))
+        report_to_mtime[id] = os.stat(crash).st_mtime
+        crash_reports.append(id)
+        if most_recent_report == None or report_to_mtime[id] > most_recent_mtime:
+            most_recent_report = id
+            most_recent_mtime = report_to_mtime[id]
+
+    def crashes_sort(a, b):
+        if report_to_mtime[b] > report_to_mtime[a]:
+            return 1
+        elif report_to_mtime[b] < report_to_mtime[a]:
+            return -1
+        else:
+            return 0
+
+    # Put the most recent first
+    crash_reports.sort(crashes_sort)
+
+    crash_reports_str = ''
+    for crash in crash_reports:
+        crash_reports_str += crash + '\n'
+
+    populate_item('SubmittedCrashIDs', crash_reports_str)
+    populate_item('MostRecentCrashID', most_recent_report)            
+
     plugin_packages = []
     for profile in profiles:
         profile.get_plugin_packages(plugin_packages)
