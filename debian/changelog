@@ -34,8 +34,17 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     Firefox hasn't been able to view XUL files from non-chrome URI's since
     version 4.0
     - update debian/firefox.desktop.in
+  * Apport hook improvements:
+    - Add support for reporting preference defaults that are set by extensions
+    - When reporting preferences, record the source of each preference
+    - Report plugin packages for plugins that are installed with the
+      package manager
+    - Add some addon manager related prefs to the whitelist
+    - Display additional metadata in the extensions report
+    - Take "default-to-compatible" in to account when determining whether
+      the user is running incompatible addons
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Apr 2012 16:29:25 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 12 Apr 2012 21:21:00 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
