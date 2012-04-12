@@ -834,9 +834,7 @@ class Profile:
         elif path == os.path.join(self.path, 'user.js'):
             return 'user.js'
 
-        regex = r'^' + self.path
-        sub = re.sub(r'^\/', '', re.sub(regex, '', path))
-        return os.path.join('[Profile]', sub)
+        return os.path.join('[Profile]', os.path.relpath(path, self.path))
 
     def dump_extensions(self):
         return self._do_dump(self.extensions)
