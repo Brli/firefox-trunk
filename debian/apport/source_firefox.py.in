@@ -1105,8 +1105,11 @@ def add_info(report, ui):
     crash_reports.sort(crashes_sort)
 
     crash_reports_str = ''
+    i = 0
     for crash in crash_reports:
         crash_reports_str += crash + '\n'
+        i += 1
+        if i == 15: break
 
     populate_item('SubmittedCrashIDs', crash_reports_str)
     populate_item('MostRecentCrashID', most_recent_report)            
