@@ -44,8 +44,9 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - Take "default-to-compatible" in to account when determining whether
       the user is running incompatible addons
     - Attach submitted crash ID's to bug reports
+    - Report if files in the profile folder have broken permissions
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 12 Apr 2012 21:56:15 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 12 Apr 2012 23:03:11 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 

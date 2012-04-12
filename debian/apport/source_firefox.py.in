@@ -27,6 +27,7 @@ import apport.packaging
 from apport.hookutils import *
 from glob import glob
 import zipfile
+import stat
 
 class PrefParseError(Exception):
     def __init__(self, msg):
@@ -898,6 +899,43 @@ class Profile:
                         res += extension.desc + " - " + extension.ext_id + "\n"
         return res
 
+    def dump_files_with_broken_permissions(self):
+        broken = []
+        blacklist = [
+            r'^lock$'
+        ]
+
+        for dirpath, dirnames, filenames in os.walk(self.path):
+
+            def check_path(path):
+                relpath = os.path.relpath(path, self.path)
+                for i in blacklist:
+                    if re.match(i, relpath):
+                        return
+
+                flags = os.R_OK | os.W_OK
+                if os.path.isdir(path):
+                    flags |= os.X_OK
+                if not os.access(path, flags):
+                    broken.append(relpath)
+
+            check_path(dirpath)
+            for name in filenames:
+                check_path(os.path.join(dirpath, name))
+
+        uid = os.getuid()
+        broken.sort()
+        broken_txt = ''
+        for file in broken:
+            fstat = os.stat(os.path.join(self.path, file))
+            summary = "%#o" % (fstat.st_mode & (stat.S_IRWXU | stat.S_IRWXG |
+                                                stat.S_IRWXO))
+            if fstat.st_uid != uid:
+                summary += ', wrong owner'
+            broken_txt += file + ' (' + summary + ')\n'
+
+        return broken_txt
+
     @property
     def has_forced_layers_acceleration(self):
         if "layers.acceleration.force-enabled" in self.prefs and self.prefs["layers.acceleration.force-enabled"].value == "true":
@@ -1073,6 +1111,7 @@ def add_info(report, ui):
         populate_item(prefix + "Plugins", profile.dump_plugins())
         populate_item(prefix + "IncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
         populate_item(prefix + "Prefs", profile.dump_prefs())
+        populate_item(prefix + "BrokenPermissions", profile.dump_files_with_broken_permissions())
 
         if (profile.current or profile.default) and profile.has_active_but_incompatible_extensions:
             running_incompatible_addons = True
