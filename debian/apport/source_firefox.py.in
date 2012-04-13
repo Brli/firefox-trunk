@@ -709,7 +709,6 @@ class Extension:
 
     @property
     def active_but_incompatible(self):
-        # FIXME: Assumes that extensions.strictCompatibility is always false
         return self.active and (self.cur_appver != None and \
                                 (compare_versions(self.cur_appver, self.min_appver) == -1 or \
                                  compare_versions(self.cur_appver, self.max_appver) == 1) and \
@@ -877,7 +876,7 @@ class Profile:
 
     @property
     def has_active_but_incompatible_extensions(self):
-        if self.last_version == None:
+        if self.last_version == None or self.extensions == None:
             return False
         for storage_array in self.extensions, self.locales, self.themes:
             for location in storage_array:
@@ -887,8 +886,8 @@ class Profile:
         return False
 
     def dump_active_but_incompatible_extensions(self):
-        if self.last_version == None:
-            return "Unavailable (corrupt or non-existant compatibility.ini)"
+        if self.last_version == None or self.extensions == None:
+            return "Unavailable (corrupt or non-existant compatibility.ini or extensions.sqlite)"
         res = ''
         for storage_array in self.extensions, self.locales, self.themes:
             for location in storage_array:
