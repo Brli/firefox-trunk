@@ -29,8 +29,8 @@ Build-Depends: cdbs,
 	lsb-release,
 	libiw-dev,
 	mesa-common-dev,
-	libnotify-dev (>= 0.4),  
-	libxrender-dev, 
+	libnotify-dev (>= 0.4),
+	libxrender-dev,
 	yasm-1 (>= 1.1) | yasm (>= 1.1),
 	xvfb,
 	libdbusmenu-gtk-dev,
@@ -104,10 +104,7 @@ Section: devel
 Priority: extra
 Depends: ${shlibs:Depends},
 	${misc:Depends},
-	firefox-trunk (= ${binary:Version}),
-	${nspr:Depends},
-	${nss:Depends},
-	${cairo:Depends}
+	firefox-trunk (= ${binary:Version})
 Provides: ${dev:Provides}
 Conflicts: xulrunner-2.0-dev,
 	xulrunner-1.9.2-dev,

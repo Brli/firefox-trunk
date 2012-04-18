@@ -48,6 +48,14 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - Report if files in the profile folder have broken permissions
   * Add application/x-xpinstall to the MimeType field of the desktop file
     - update debian/firefox.desktop.in
+  * Drop the ability to select between tree/system libraries using a single
+    option in debian/rules. It adds additional complexity and was never used
+    - update debian/config/mozconfig.in
+    - update debian/control.in
+    - update debian/firefox-dev.install.in
+    - update debian/firefox-dev.links.in
+    - update debian/pkgconfig/libxul.pc.in
+    - update debian/rules
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * adjust apparmor profile to deny reads to @{PROC}/[0-9]*/net/dev. Patch
