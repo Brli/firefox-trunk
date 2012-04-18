@@ -13,6 +13,7 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - update debian/patches/allow-lockPref-everywhere.patch
     - update debian/patches/plugin-for-mimetype-pref.patch
     - update debian/patches/firefox-kde.patch
+    - update debian/patches/add-syspref-dir.patch
   * Install pdf.js
     - update debian/firefox.install.in
   * Add Keywords to the desktop file
@@ -63,7 +64,7 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
   * adjust apparmor profile to deny reads to @{PROC}/[0-9]*/net/wireless.
     Patch thanks to James Troup (LP: #974141)
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 12 Apr 2012 23:03:11 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 18 Apr 2012 10:57:39 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 

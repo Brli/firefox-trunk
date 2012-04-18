@@ -4,9 +4,9 @@ Forwarded: no
 
 Index: mozilla/toolkit/xre/nsXREDirProvider.cpp
 ===================================================================
---- mozilla.orig/toolkit/xre/nsXREDirProvider.cpp	2011-09-29 00:59:39.000000000 +0100
-+++ mozilla/toolkit/xre/nsXREDirProvider.cpp	2011-09-29 10:22:10.700227676 +0100
-@@ -591,6 +591,7 @@
+--- mozilla.orig/toolkit/xre/nsXREDirProvider.cpp	2012-04-18 03:11:27.000000000 +0100
++++ mozilla/toolkit/xre/nsXREDirProvider.cpp	2012-04-18 10:45:26.885434464 +0100
+@@ -606,6 +606,7 @@
  }
  
  static const char *const kAppendPrefDir[] = { "defaults", "preferences", nsnull };
@@ -14,20 +14,20 @@ Index: mozilla/toolkit/xre/nsXREDirProvider.cpp
  
  #ifdef DEBUG_bsmedberg
  static void
-@@ -632,6 +633,9 @@
-     LoadAppDirIntoArray(mXULAppDir, kAppendPrefDir, directories);
+@@ -647,6 +648,9 @@
+     LoadDirIntoArray(mXULAppDir, kAppendPrefDir, directories);
      LoadDirsIntoArray(mAppBundleDirectories,
                        kAppendPrefDir, directories);
-+    LoadAppDirIntoArray(mXULAppDir, kAppendSysPrefDir, directories);
++    LoadDirIntoArray(mXULAppDir, kAppendSysPrefDir, directories);
 +    LoadDirsIntoArray(mAppBundleDirectories,
 +                      kAppendSysPrefDir, directories);
  
-     rv = NS_NewArrayEnumerator(aResult, directories);
-   }
+     // Include the WebappRT-specific prefs dir if we're running WebappRT.
+     if (gAppData && !strcmp(gAppData->ID, WEBAPPRT_APPID)) {
 Index: mozilla/xpcom/io/nsAppDirectoryServiceDefs.h
 ===================================================================
---- mozilla.orig/xpcom/io/nsAppDirectoryServiceDefs.h	2011-09-29 00:59:46.000000000 +0100
-+++ mozilla/xpcom/io/nsAppDirectoryServiceDefs.h	2011-09-29 10:22:10.700227676 +0100
+--- mozilla.orig/xpcom/io/nsAppDirectoryServiceDefs.h	2012-04-18 03:11:43.000000000 +0100
++++ mozilla/xpcom/io/nsAppDirectoryServiceDefs.h	2012-04-18 10:43:24.269436643 +0100
 @@ -63,6 +63,7 @@
  
  #define NS_APP_DEFAULTS_50_DIR                  "DefRt"         // The root dir of all defaults dirs
@@ -38,8 +38,8 @@ Index: mozilla/xpcom/io/nsAppDirectoryServiceDefs.h
  #define NS_APP_PROFILE_DEFAULTS_NLOC_50_DIR     "ProfDefNoLoc"  // The profile defaults of the "default"
 Index: mozilla/xpcom/io/nsAppFileLocationProvider.cpp
 ===================================================================
---- mozilla.orig/xpcom/io/nsAppFileLocationProvider.cpp	2011-09-29 00:59:46.000000000 +0100
-+++ mozilla/xpcom/io/nsAppFileLocationProvider.cpp	2011-09-29 10:22:10.700227676 +0100
+--- mozilla.orig/xpcom/io/nsAppFileLocationProvider.cpp	2012-04-18 03:11:43.000000000 +0100
++++ mozilla/xpcom/io/nsAppFileLocationProvider.cpp	2012-04-18 10:43:24.269436643 +0100
 @@ -94,6 +94,7 @@
  
  #define DEFAULTS_DIR_NAME           NS_LITERAL_CSTRING("defaults")
@@ -66,9 +66,9 @@ Index: mozilla/xpcom/io/nsAppFileLocationProvider.cpp
      {
 Index: mozilla/modules/libpref/src/Preferences.cpp
 ===================================================================
---- mozilla.orig/modules/libpref/src/Preferences.cpp	2011-09-29 10:22:28.616227359 +0100
-+++ mozilla/modules/libpref/src/Preferences.cpp	2011-09-29 10:26:43.716222825 +0100
-@@ -1093,6 +1093,15 @@
+--- mozilla.orig/modules/libpref/src/Preferences.cpp	2012-04-18 03:09:13.000000000 +0100
++++ mozilla/modules/libpref/src/Preferences.cpp	2012-04-18 10:43:24.269436643 +0100
+@@ -1122,6 +1122,15 @@
    if (NS_FAILED(rv))
      NS_WARNING("Error parsing application default preferences.");
  
@@ -82,5 +82,5 @@ Index: mozilla/modules/libpref/src/Preferences.cpp
 +    NS_WARNING("Error parsing application system preferences.");
 +
    // Load jar:$app/omni.jar!/defaults/preferences/*.js
-   nsZipArchive *appJarReader = mozilla::Omnijar::GetReader(mozilla::Omnijar::APP);
+   nsRefPtr<nsZipArchive> appJarReader = mozilla::Omnijar::GetReader(mozilla::Omnijar::APP);
    if (appJarReader) {
