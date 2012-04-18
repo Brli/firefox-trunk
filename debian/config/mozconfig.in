@@ -48,9 +48,7 @@ mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJ
 %%endif
 ac_add_options --disable-gnomevfs
 ac_add_options --enable-gio
-%%ifdef MOZ_UPDATE_CHANNEL
 ac_add_options --enable-update-channel=@MOZ_UPDATE_CHANNEL@
-%%endif
 %%ifdef MOZ_DEBUG
 ac_add_options --enable-debug
 %%else
