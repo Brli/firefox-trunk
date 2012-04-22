@@ -1165,7 +1165,7 @@ def add_info(report, ui):
         if report["SourcePackage"] == 'firefox-trunk':
             report["SourcePackage"] = 'firefox'
     else:
-        channelpref = Prefs(None, ['/@MOZ_LIBDIR@/defaults/pref/channel-prefs.js'], whitelist = [ r'app\.update\.channel' ])
+        channelpref = Prefs(None, ['/@MOZ_LIBDIR@/defaults/preferences/channel-prefs.js'], whitelist = [ r'app\.update\.channel' ])
         if "app.update.channel" in channelpref:
             report["Channel"] = channelpref["app.update.channel"].value
             append_tag(channelpref["app.update.channel"].value + '-channel')
