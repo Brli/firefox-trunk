@@ -62,6 +62,16 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox.links.in
     - update debian/apport/source_firefox.py.in
   * Update compare-locales to 0.9.5
+  * Make the language packs Architecture: any. Whilst they are actually
+    architecture independent, we do install them in to /usr/lib (as the
+    extensions location is shared with architecture-specific extensions).
+    This also avoids the problem of offering incompatible language pack
+    upgrades to users on architectures where Firefox fails to build
+    (I'm looking at you, powerpc)
+    - update debian/control.langpacks
+    - update debian/control.langpacks.unavail
+    - update debian/rules
+    - refresh debian/control
 
   [ Jamie Strandboge <jamie@ubuntu.com> ]
   * adjust apparmor profile to deny reads to @{PROC}/[0-9]*/net/dev. Patch
@@ -69,7 +79,7 @@ firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
   * adjust apparmor profile to deny reads to @{PROC}/[0-9]*/net/wireless.
     Patch thanks to James Troup (LP: #974141)
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sun, 22 Apr 2012 02:07:07 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sun, 22 Apr 2012 12:27:07 +0100
 
 firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu1) precise; urgency=low
 
