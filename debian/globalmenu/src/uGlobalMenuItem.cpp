@@ -479,6 +479,20 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
       SetMenuItemType(eRadio);
     }
 
+    if (mCommandContent) {
+      nsAutoString commandChecked;
+      mCommandContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                               commandChecked);
+      if (!commandChecked.IsEmpty() && !mContent->AttrValueIs(kNameSpaceID_None,
+                                                              uWidgetAtoms::checked,
+                                                              commandChecked,
+                                                              eCaseMatters)) {
+        UNITY_MENU_BLOCK_EVENTS_FOR_CURRENT_SCOPE();
+        mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                          commandChecked, true);
+      }
+    }
+
     SetCheckState(mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
                                        uWidgetAtoms::_true, eCaseMatters));
     dbusmenu_menuitem_property_set_int(mDbusMenuItem,
@@ -565,14 +579,10 @@ uGlobalMenuItem::Activate()
   if (!mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::autocheck,
                              uWidgetAtoms::_false, eCaseMatters) &&
       IsCheckboxOrRadioItem()) {
-    if (!IsChecked()) {
-      // We're currently not checked, so check now
-      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                        NS_LITERAL_STRING("true"), true);
-    } else if (IsChecked() && (mFlags & UNITY_MENUITEM_IS_CHECKBOX)) {
-      // We're currently checked, so uncheck now. Don't do this for radio buttons
-      mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, true);
-    }
+    mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                      IsChecked() ?
+                      NS_LITERAL_STRING("false") :  NS_LITERAL_STRING("true"),
+                      true);
   }
 
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->OwnerDoc());
@@ -803,6 +813,8 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
       SyncLabelFromContent(mCommandContent);
     } else if (aAttribute == uWidgetAtoms::disabled) {
       SyncSensitivityFromContent(mCommandContent);
+    } else if (aAttribute == uWidgetAtoms::checked) {
+      SyncTypeAndStateFromContent();
     }
   } else if (aContent == mKeyContent) {
     SyncAccelFromContent();
