@@ -1,4 +1,6 @@
-firefox-trunk (13.0~a1~hg20120313r88815-0ubuntu2) UNRELEASED; urgency=low
+firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
+
+  * New upstream snapshot v14.0 A1 HG20120424R92149
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Update globalmenu-extension to 3.2.3
