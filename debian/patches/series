@@ -15,5 +15,5 @@ ubuntu-codes-baidu.patch
 ubuntu-ua-string-changes.patch
 autocomplete-theme-tweak.patch
 dont-include-hyphenation-patterns.patch
-#@ARCH=powerpc@fix-build-failure-without-yarr-jit.patch
+#fix-build-failure-without-yarr-jit.patch
 dont-override-general-useragent-locale.patch
