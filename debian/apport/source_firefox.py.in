@@ -30,20 +30,23 @@ import zipfile
 import stat
 
 class PrefParseError(Exception):
-    def __init__(self, msg):
+    def __init__(self, msg, filename, linenum):
         super(PrefParseError, self).__init__(msg)
         self.msg = msg
+        self.filename = filename
+        self.linenum = linenum
 
     def __str__(self):
-        return self.msg
+        return self.msg + ' @ ' + self.filename + ':' + str(self.linenum)
 
 class PluginRegParseError(Exception):
-    def __init__(self, msg):
+    def __init__(self, msg, linenum):
         super(PluginRegParseError, self).__init__(msg)
         self.msg = msg
+        self.linenum = linenum
 
     def __str__(self):
-        return self.msg
+        return self.msg + ' @ line ' + str(self.linenum)
 
 
 class ExtensionTypeNotRecognised(Exception):
@@ -87,6 +90,19 @@ def mkstemp_copy(path):
         if len(data) < 4096: break
 
     return outpath
+
+
+def anonymize_path(path, profiledir = None):
+    if profiledir != None and path == os.path.join(profiledir, 'prefs.js'):
+        return 'prefs.js'
+    elif profiledir != None and path == os.path.join(profiledir, 'user.js'):
+        return 'user.js'
+    elif profiledir != None and path.startswith(profiledir):
+        return os.path.join('[Profile]', os.path.relpath(path, profiledir))
+    elif path.startswith(os.environ['HOME']):
+        return os.path.join('[HomeDir]', os.path.relpath(path, os.environ['HOME']))
+    else:
+        return path
 
 
 class CompatINIParser(ConfigParser):
@@ -283,29 +299,41 @@ class PluginRegistry:
     STATE_PROCESSING_3 = 4
     STATE_FINISHED = 5
 
-    def __init__(self, filename):
+    def __init__(self, path):
         self.plugins = []
         self._state = PluginRegistry.STATE_PENDING
         self._current_plugin = None
-        self.available = False
-        try:
-            fd = open(filename, 'r')
-            skip = 0
-            for line in fd.readlines():
-                if skip == 0:
-                    skip = self._parseline(line)
-                    if skip == -1:
-                        break
-                else:
-                    skip -= 1
-            self.available = True
-        except Exception as e:
-            self.parse_error = str(e)
+        self._profile_path = path
+        self.error = None
 
-    def _parseline(self, line):
+        fd = None
+        try:
+            fd = open(os.path.join(path, 'pluginreg.dat'), 'r')
+            try:
+                skip = 0
+                linenum = 1
+                for line in fd.readlines():
+                    if skip == 0:
+                        skip = self._parseline(line, linenum)
+                        if skip == -1:
+                            break
+                    else:
+                        skip -= 1
+                    linenum += 1
+                if skip > 0:
+                    raise PluginRegParseError("Unexpected EOF", linenum)
+            except Exception as e:
+                self.error = str(e)
+        except:
+            pass
+        finally:
+            if fd != None:
+                fd.close()
+
+    def _parseline(self, line, linenum):
         line = line.strip()
         if line != '' and line[0] == '[' and self._state != PluginRegistry.STATE_START and self._state != PluginRegistry.STATE_PENDING:
-            raise PluginRegParseError('Unexpected section header')
+            raise PluginRegParseError('Unexpected section header', linenum)
 
         if self._state == PluginRegistry.STATE_PENDING:
             if line == '[PLUGINS]':
@@ -322,9 +350,10 @@ class PluginRegistry:
             self._state += 1
             return 0
         elif self._state == PluginRegistry.STATE_PROCESSING_1:
-            self._current_plugin.path = line.split(':')[0]
-            if self._current_plugin.path[0] != '/':
-                raise PluginRegParseError("Invalid path %s" % self._current_plugin.path)
+            path = line.split(':')[0]
+            if path[0] != '/':
+                raise PluginRegParseError("Invalid path", linenum)
+            self._current_plugin.path = anonymize_path(path, self._profile_path)
             self._state += 1
             return 3
         elif self._state == PluginRegistry.STATE_PROCESSING_2:
@@ -416,8 +445,9 @@ class Prefs:
         self.whitelist = whitelist if whitelist != None else Prefs.PREF_WHITELIST
         self.blacklist = blacklist if blacklist != None else Prefs.PREF_BLACKLIST
         self.prefs = {}
-        self._pref_files = []
-        self._errors = {}
+        self.pref_sources = []
+        self.errors = {}
+        self._profile_path = profile_path
 
         # Report non-default preferences = ie, those from syspref.js, prefs.js,
         # user.js and extension prefs. The load order is important
@@ -452,22 +482,25 @@ class Prefs:
                 self._parse_dir(location)
 
     def _parse_file(self, filename):
+        anonsrc = anonymize_path(filename, self._profile_path)
         f = None
         self._in_comment = False
         try:
             f = open(filename)
             try:
+                linenum = 1
                 for line in f.readlines():
-                    self._parseline(line, filename)
+                    self._parseline(line, anonsrc, linenum)
+                    linenum += 1
             except Exception as e:
-                self._errors[filename] = str(e)
+                self.errors[anonsrc] = str(e)
         except:
             pass
         finally:
             if f != None:
                 f.close()
-            if filename not in self._errors:
-                self._pref_files.append(filename)
+            if anonsrc not in self.errors:
+                self.pref_sources.append(anonsrc)
 
     def _parse_dir(self, dirname):
         for filename in glob(os.path.join(dirname, '*.js')):
@@ -482,15 +515,18 @@ class Prefs:
                 if re.match(r'^defaults/preferences/*.js$', entry):
                     self._in_comment = False
                     source = '%s:%s' % (xpi, entry)
+                    anonsrc = anonymize_path(source, self._profile_path)
                     try:
                         f = xpifile.open(entry, 'r')
+                        linenum = 1
                         for line in f.readlines():
-                            self._parseline(line, source)
+                            self._parseline(line, anonsrc, linenum)
+                            linenum += 1
                     except Exception as e:
-                        self._errors[source] = str(e)
+                        self.errors[anonsrc] = str(e)
                     finally:
-                        if source not in self._errors:
-                            self._pref_files.append(source)
+                        if anonsrc not in self.errors:
+                            self.pref_sources.append(anonsrc)
         except:
             pass
         finally:
@@ -542,82 +578,89 @@ class Prefs:
 
                 self.prefs[key].set_value(value, source, default, locked)
 
-    def _do_parse(self, line, start, source, default, locked):
+    def _do_parse(self, line, start, source, linenum, default, locked):
         # XXX: I pity the poor soul who ever needs to change anything inside this function
         in_escape = False
-        in_name = True
+        in_name = False
         in_value = False
         in_quote = False
-        has_name = False
-        has_value = False
+        in_comment = False
         done = False
-        name = ""
-        value = ""
+        name = None
+        value = None
+        tmp = None
         for i in range(start, len(line)):
-            if in_escape == True:
+            if in_comment:
+                pass
+            elif in_escape:
                 in_escape = False
-                if in_name == True:
-                    name += line[i]
-                elif in_value == True:
-                    value += line[i]
-                else:
-                    raise PrefParseError("Unexpected character")
+                tmp += line[i]
             elif line[i] == '"':
-                if in_name == False and in_value == False:
-                    raise PrefParseError("Unexpected double quote")
+                if not in_name and not in_value:
+                    raise PrefParseError("Unexpected double quote", source, linenum)
                 in_quote = not in_quote
-                if in_quote == False:
-                    if in_name == True:
+                if not in_quote:
+                    if in_name:
                         in_name = False
-                        has_name = True
-                    elif in_value == True:
+                        name = tmp
+                    elif in_value:
                         in_value = False
-                        has_value = True
+                        value = tmp
             elif line[i] == '\\':
-                if in_quote == True:
+                if in_quote:
                     in_escape = True
                 else:
-                    raise PrefParseError("Unexpected escape character")
-            elif line[i] == ' ' and in_quote == False:
-                if in_name == True and len(name) > 0:
+                    raise PrefParseError("Unexpected escape character", source, linenum)
+            elif line[i] == ' ' and not in_quote:
+                if in_name and len(tmp) > 0:
                     in_name = False
-                    has_name = True
-                elif in_value == True and len(value) > 0:
+                    name = tmp
+                elif in_value and len(tmp) > 0:
                     in_value = False
-                    has_value = True
-            elif line[i] == ',' and in_quote == False:
-                if (in_name == True or has_name == True) and in_value == False and has_value == False:
-                    in_name = False
-                    in_value = True
-                    has_name = True
+                    value = tmp
+            elif line[i] == '(' and not in_quote:
+                if not in_name and name == None and not in_value and value == None:
+                    in_name = True
+                    tmp = ''
                 else:
-                    raise PrefParseError("Unexpected comma")
-            elif line[i] == ')' and in_quote == False:
-                if (in_value == True or has_value == True) and has_name == True and done == False:
+                    raise PrefParseError("Unexpected open brace character", source, linenum)
+            elif line[i] == ',' and not in_quote:
+                if (in_name or name != None) and not in_value and value == None:
+                    in_name = False
+                    name = tmp
+                    in_value = True
+                    tmp = ''
+                else:
+                    raise PrefParseError("Unexpected comma", source, linenum)
+            elif line[i] == ')' and not in_quote:
+                if (in_value or value != None) and name != None and not done:
                     in_value = False
-                    has_value = True
+                    value = tmp
                     done = True
                 else:
-                    raise PrefParseError("Unexpected close braces character for " + line)
-            elif line[i] == ';' and in_quote == False:
-                if done == False:
-                    raise PrefParseError("Unexpected line terminator")
-            else:
-                if in_name == True:
-                    name += line[i]
-                elif in_value == True:
-                    value += line[i]
+                    raise PrefParseError("Unexpected close brace character", source, linenum)
+            elif line[i] == ';' and not in_quote:
+                if not done:
+                    raise PrefParseError("Unexpected line terminator", source, linenum)
+            elif line[i] == '/' and line[i+1] == '/' and not in_quote:
+                if not done:
+                    raise PrefParseError("Unexpected comment", source, linenum)
                 else:
-                    raise PrefParseError("Unexpected character")
+                    in_comment = True
+            else:
+                if in_name or in_value:
+                    tmp += line[i]
+                else:
+                    raise PrefParseError("Unexpected character", source, linenum)
 
-        if done == True and in_name == False and in_value == False:
+        if done:
             self._maybe_add_pref(name, value, source, default, locked)
         else:
-            raise PrefParseError("Failed to parse line")
+            raise PrefParseError("Failed to parse line", source, linenum)
 
-    def _parseline(self, line, source):
+    def _parseline(self, line, source, linenum):
         line = line.strip()
-        if line == '' or line[0] == '#' or line.startswith('//'):
+        if len(line) == 0 or line[0] == '#' or line.startswith('//'):
             return
 
         if line.startswith('/*'):
@@ -630,14 +673,14 @@ class Prefs:
                     break
             return
 
-        if line.startswith("user_pref("):
-            self._do_parse(line, 10, source, False, False)
-        elif line.startswith("pref("):
-            self._do_parse(line, 5, source, True, False)
-        elif line.startswith("lockPref("):
-            self._do_parse(line, 9, source, True, True)
+        if line.startswith("user_pref"):
+            self._do_parse(line, 9, source, linenum, False, False)
+        elif line.startswith("pref"):
+            self._do_parse(line, 4, source, linenum, True, False)
+        elif line.startswith("lockPref"):
+            self._do_parse(line, 8, source, linenum, True, True)
         else:
-            raise PrefParseError("Unexpected line start")
+            raise PrefParseError("Unexpected line start", source, linenum)
 
     def __getitem__(self, key):
         if not key in self.prefs:
@@ -732,13 +775,12 @@ class Profile:
         self.appini = appini
 
         self.prefs = Prefs(path)
+        self.plugins = PluginRegistry(path)
 
         try:
             self._populate_extensions()
         except:
             self.extensions = None
-
-        self.plugins = PluginRegistry(os.path.join(path, "pluginreg.dat"))
 
     def _populate_extensions(self):
         # We copy the db as it's locked whilst Firefox is open. This is still racy
@@ -831,14 +873,6 @@ class Profile:
 
         return self._running
 
-    def _anonymize_path(self, path):
-        if path == os.path.join(self.path, 'prefs.js'):
-            return 'prefs.js'
-        elif path == os.path.join(self.path, 'user.js'):
-            return 'user.js'
-
-        return os.path.join('[Profile]', os.path.relpath(path, self.path))
-
     def dump_extensions(self):
         return self._do_dump(self.extensions)
 
@@ -851,15 +885,24 @@ class Profile:
     def dump_prefs(self):
         ret = ''
         for pref in self.prefs:
-            ret += pref + ' - ' + self.prefs[pref].value + ' (' + self._anonymize_path(self.prefs[pref].source) + ')\n'
+            ret += pref + ' - ' + self.prefs[pref].value + ' (' + self.prefs[pref].source + ')\n'
+        return ret
+
+    def dump_pref_sources(self):
+        ret = ''
+        for source in self.prefs.pref_sources:
+            ret += source + '\n'
+        return ret
+
+    def dump_pref_errors(self):
+        ret = ''
+        for source in self.prefs.errors:
+            ret += self.prefs.errors[source] + '\n'
         return ret
 
     def dump_plugins(self):
-        if self.plugins.available == False:
-            if os.path.exists(os.path.join(self.path, "pluginreg.dat")):
-                return "pluginreg.dat exists but isn't parseable = %s" % self.plugins.parse_error
-            else:
-                return "pluginreg.dat isn't available"
+        if self.plugins.error != None:
+            return "pluginreg.dat exists but isn't parseable. %s" % self.plugins.error
 
         ret = ''
         for plugin in self.plugins:
@@ -867,7 +910,7 @@ class Profile:
         return ret
 
     def get_plugin_packages(self, pkglist):
-        if self.plugins.available == False:
+        if self.plugins.error != None:
             return None
 
         for plugin in self.plugins:
@@ -1079,14 +1122,10 @@ def add_info(report, ui):
     conf_dir = os.path.join(os.environ["HOME"], ".mozilla", "@MOZ_APP_NAME@")
     appini = AppINIParser('/@MOZ_LIBDIR@')
     populate_item("BuildID", appini.buildid)
-    profiles = None
-    try:
-        profiles = Profiles(os.path.join(conf_dir, "profiles.ini"), appini)
-        populate_item("Profiles", profiles.dump_profile_summaries())
-    except:
-        pass
-    finally:
-        if profiles == None or len(profiles) == 0: report["NoProfiles"] = 'True'
+
+    profiles = Profiles(os.path.join(conf_dir, "profiles.ini"), appini)
+    populate_item("Profiles", profiles.dump_profile_summaries())
+    if len(profiles) == 0: report["NoProfiles"] = 'True'
 
     for profile in profiles:
         if profile.running and not profile.current:
@@ -1112,6 +1151,8 @@ def add_info(report, ui):
         populate_item(prefix + "Plugins", profile.dump_plugins())
         populate_item(prefix + "IncompatibleExtensions", profile.dump_active_but_incompatible_extensions())
         populate_item(prefix + "Prefs", profile.dump_prefs())
+        populate_item(prefix + "PrefSources", profile.dump_pref_sources())
+        populate_item(prefix + "PrefErrors", profile.dump_pref_errors())
         populate_item(prefix + "BrokenPermissions", profile.dump_files_with_broken_permissions())
 
         if (profile.current or profile.default) and profile.has_active_but_incompatible_extensions:

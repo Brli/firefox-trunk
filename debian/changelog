@@ -6,8 +6,10 @@ firefox-trunk (15.0~a1~hg20120424r92149-0ubuntu1) UNRELEASED; urgency=low
   * Fix LP: #993273 - Exception thrown in Apport hook with preferences
     which have empty values
     - update debian/apport/source_firefox.py.in
+  * Report errors when parsing preferences and plugins in the Apport hook
+    - update debian/apport/source_firefox.py.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 May 2012 17:54:00 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 02 May 2012 20:31:41 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
