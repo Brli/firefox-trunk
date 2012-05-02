@@ -505,7 +505,7 @@ class Prefs:
 
             @property
             def value(self):
-                if self._value:
+                if self._value != None:
                     return self._value
                 return self._default
 
