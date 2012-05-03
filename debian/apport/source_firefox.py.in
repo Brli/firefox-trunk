@@ -441,12 +441,29 @@ class Prefs:
         r'printer_*'
     ]
 
+    STATE_READY = 0
+    STATE_COMMENT_MAYBE_START = 1
+    STATE_COMMENT_BLOCK = 2
+    STATE_COMMENT_BLOCK_MAYBE_END = 3
+    STATE_PARSE_UNTIL_OPEN_PAREN = 4
+    STATE_PARSE_UNTIL_NAME = 5
+    STATE_PARSE_UNTIL_COMMA = 6
+    STATE_PARSE_UNTIL_VALUE = 7
+    STATE_PARSE_UNTIL_CLOSE_PAREN = 8
+    STATE_PARSE_UNTIL_SEMICOLON = 9
+    STATE_PARSE_STRING = 10
+    STATE_PARSE_ESC_SEQ = 11
+    STATE_PARSE_INT = 12
+    STATE_SKIP = 13
+    STATE_PARSE_UNTIL_EOL = 14
+
     def __init__(self, profile_path, extra_paths=None, whitelist=None, blacklist=None):
         self.whitelist = whitelist if whitelist != None else Prefs.PREF_WHITELIST
         self.blacklist = blacklist if blacklist != None else Prefs.PREF_BLACKLIST
         self.prefs = {}
         self.pref_sources = []
         self.errors = {}
+
         self._profile_path = profile_path
 
         # Report non-default preferences = ie, those from syspref.js, prefs.js,
@@ -484,13 +501,14 @@ class Prefs:
     def _parse_file(self, filename):
         anonsrc = anonymize_path(filename, self._profile_path)
         f = None
-        self._in_comment = False
+        self._state = Prefs.STATE_READY
         try:
             f = open(filename)
             try:
                 linenum = 1
+                state = None
                 for line in f.readlines():
-                    self._parseline(line, anonsrc, linenum)
+                    state = self._parseline(line, anonsrc, linenum, state)
                     linenum += 1
             except Exception as e:
                 self.errors[anonsrc] = str(e)
@@ -513,14 +531,14 @@ class Prefs:
             entries = xpifile.namelist()
             for entry in entries:
                 if re.match(r'^defaults/preferences/*.js$', entry):
-                    self._in_comment = False
                     source = '%s:%s' % (xpi, entry)
                     anonsrc = anonymize_path(source, self._profile_path)
                     try:
                         f = xpifile.open(entry, 'r')
                         linenum = 1
+                        state = None
                         for line in f.readlines():
-                            self._parseline(line, anonsrc, linenum)
+                            state = self._parseline(line, anonsrc, linenum, state)
                             linenum += 1
                     except Exception as e:
                         self.errors[anonsrc] = str(e)
@@ -578,109 +596,208 @@ class Prefs:
 
                 self.prefs[key].set_value(value, source, default, locked)
 
-    def _do_parse(self, line, start, source, linenum, default, locked):
+    def _parseline(self, line, source, linenum, old_state):
         # XXX: I pity the poor soul who ever needs to change anything inside this function
-        in_escape = False
-        in_name = False
-        in_value = False
-        in_quote = False
-        in_comment = False
-        done = False
-        name = None
-        value = None
-        tmp = None
-        for i in range(start, len(line)):
-            if in_comment:
+
+        class PrefParseState(object):
+            def __init__(self):
+                self.state = Prefs.STATE_READY
+
+            def _reset(self):
+                self.next_state = Prefs.STATE_READY
+                self.default = False
+                self.locked = False
+                self.name = None
+                self.value = None
+                self.tmp = None
+                self.skip = None
+
+            def _get_state(self):
+                return self._state
+
+            def _set_state(self, state):
+                self._state = state
+                if state == Prefs.STATE_READY:
+                    self._reset()
+
+            state = property(_get_state, _set_state)
+
+        state = old_state
+
+        if state == None:
+            state = PrefParseState()
+
+        index = 0
+        for c in line:
+            if state.state == Prefs.STATE_READY:
+                if c == '/':
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                elif c == '#':
+                    state.state = Prefs.STATE_PARSE_UNTIL_EOL
+                elif line[index:].startswith('pref'):
+                    state.default == True
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_OPEN_PAREN
+                    state.state = Prefs.STATE_SKIP
+                    state.skip = 3
+                elif line[index:].startswith('user_pref'):
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_OPEN_PAREN
+                    state.state = Prefs.STATE_SKIP
+                    state.skip = 8
+                elif line[index:].startswith('lockPref'):
+                    state.default = True
+                    state.locked = True
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_OPEN_PAREN
+                    state.state = Prefs.STATE_SKIP
+                    state.skip = 7
+
+            elif state.state == Prefs.STATE_SKIP:
+                state.skip -= 1
+                if state.skip == 0:
+                    state.state = state.next_state
+                    state.next_state = Prefs.STATE_READY
+
+            elif state.state == Prefs.STATE_COMMENT_MAYBE_START:
+                if c == '*':
+                    state.state = Prefs.STATE_COMMENT_BLOCK
+                elif c == '/':
+                    state.state = Prefs.STATE_PARSE_UNTIL_EOL
+                else:
+                    raise PrefParseError("Unexpected '/'", source, linenum)
+
+            elif state.state == Prefs.STATE_PARSE_UNTIL_EOL:
                 pass
-            elif in_escape:
-                in_escape = False
-                tmp += line[i]
-            elif line[i] == '"':
-                if not in_name and not in_value:
-                    raise PrefParseError("Unexpected double quote", source, linenum)
-                in_quote = not in_quote
-                if not in_quote:
-                    if in_name:
-                        in_name = False
-                        name = tmp
-                    elif in_value:
-                        in_value = False
-                        value = tmp
-            elif line[i] == '\\':
-                if in_quote:
-                    in_escape = True
-                else:
-                    raise PrefParseError("Unexpected escape character", source, linenum)
-            elif line[i] == ' ' and not in_quote:
-                if in_name and len(tmp) > 0:
-                    in_name = False
-                    name = tmp
-                elif in_value and len(tmp) > 0:
-                    in_value = False
-                    value = tmp
-            elif line[i] == '(' and not in_quote:
-                if not in_name and name == None and not in_value and value == None:
-                    in_name = True
-                    tmp = ''
-                else:
-                    raise PrefParseError("Unexpected open brace character", source, linenum)
-            elif line[i] == ',' and not in_quote:
-                if (in_name or name != None) and not in_value and value == None:
-                    in_name = False
-                    name = tmp
-                    in_value = True
-                    tmp = ''
-                else:
-                    raise PrefParseError("Unexpected comma", source, linenum)
-            elif line[i] == ')' and not in_quote:
-                if (in_value or value != None) and name != None and not done:
-                    in_value = False
-                    value = tmp
-                    done = True
-                else:
-                    raise PrefParseError("Unexpected close brace character", source, linenum)
-            elif line[i] == ';' and not in_quote:
-                if not done:
-                    raise PrefParseError("Unexpected line terminator", source, linenum)
-            elif line[i] == '/' and line[i+1] == '/' and not in_quote:
-                if not done:
-                    raise PrefParseError("Unexpected comment", source, linenum)
-                else:
-                    in_comment = True
-            else:
-                if in_name or in_value:
-                    tmp += line[i]
-                else:
-                    raise PrefParseError("Unexpected character", source, linenum)
 
-        if done:
-            self._maybe_add_pref(name, value, source, default, locked)
-        else:
-            raise PrefParseError("Failed to parse line", source, linenum)
+            elif state.state == Prefs.STATE_COMMENT_BLOCK:
+                if c == '*':
+                    state.state = Prefs.STATE_COMMENT_BLOCK_MAYBE_END
 
-    def _parseline(self, line, source, linenum):
-        line = line.strip()
-        if len(line) == 0 or line[0] == '#' or line.startswith('//'):
-            return
+            elif state.state == Prefs.STATE_COMMENT_BLOCK_MAYBE_END:
+                if c == '/':
+                    state.state = state.next_state
+                    state.next_state = Prefs.STATE_READY
+                else:
+                    state.state = Prefs.STATE_COMMENT_BLOCK
 
-        if line.startswith('/*'):
-            self._in_comment = True
+            elif state.state == Prefs.STATE_PARSE_UNTIL_OPEN_PAREN:
+                if c == '(':
+                    state.state = Prefs.STATE_PARSE_UNTIL_NAME
+                elif c == '/':
+                    state.next_state = state.state
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                elif not c.isspace():
+                    raise PrefParseError("Unexpected character before open parenthesis", source, linenum)
 
-        if self._in_comment == True:
-            for i in range(len(line)):
-                if i < len(line) - 1 and line[i]+line[i+1] == '*/':
-                    self._in_comment = False
-                    break
-            return
+            elif state.state == Prefs.STATE_PARSE_UNTIL_NAME:
+                if c == '"' or c == '\'':
+                    state.tmp = ''
+                    state.state = Prefs.STATE_PARSE_STRING
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_COMMA
+                elif c == '/':
+                    state.next_state = state.state
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                elif not c.isspace():
+                    raise PrefParseError("Unexpected character before pref name", source, linenum)
 
-        if line.startswith("user_pref"):
-            self._do_parse(line, 9, source, linenum, False, False)
-        elif line.startswith("pref"):
-            self._do_parse(line, 4, source, linenum, True, False)
-        elif line.startswith("lockPref"):
-            self._do_parse(line, 8, source, linenum, True, True)
-        else:
-            raise PrefParseError("Unexpected line start", source, linenum)
+            elif state.state == Prefs.STATE_PARSE_STRING:
+                if c == '\\':
+                    state.state = Prefs.STATE_PARSE_ESC_SEQ
+                elif c == '"' or c == '\'':
+                    state.state = state.next_state
+                    state.next_state = Prefs.STATE_READY
+                else:
+                    state.tmp += c
+
+            elif state.state == Prefs.STATE_PARSE_ESC_SEQ:
+                # XXX: We don't handle UTF16 / hex here
+                if c == 'n':
+                    c = '\n'
+                elif c == 'r':
+                    c = '\r' 
+                state.tmp += c
+                state.state = Prefs.STATE_PARSE_STRING
+
+            elif state.state == Prefs.STATE_PARSE_UNTIL_COMMA:
+                if state.tmp != None:
+                    state.name = state.tmp
+                    state.tmp = None
+                if c == ',':
+                    state.state = Prefs.STATE_PARSE_UNTIL_VALUE
+                elif c == '/':
+                    state.next_state = state.state
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                elif not c.isspace():
+                    raise PrefParseError("Unexpected character before comma", source, linenum)
+
+            elif state.state == Prefs.STATE_PARSE_UNTIL_VALUE:
+                if c == '"' or c == '\'':
+                    state.tmp = ''
+                    state.state = Prefs.STATE_PARSE_STRING
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
+                elif line[index:].startswith('true'):
+                    state.tmp = True
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
+                    state.state = Prefs.STATE_SKIP
+                    state.skip = 3
+                elif line[index:].startswith('false'):
+                    state.tmp = False
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
+                    state.state = Prefs.STATE_SKIP
+                    state.skip = 4
+                elif (c >= '0' and c <= '9') or c == '+' or c == '-':
+                    state.tmp = c
+                    state.state = Prefs.STATE_PARSE_INT
+                elif c == '/':
+                    state.next_state = state
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                elif not c.isspace():
+                    raise PrefParseError("Unexpected character before value", source, linenum)
+
+            elif state.state == Prefs.STATE_PARSE_INT:
+                if c >= '0' and c <= '9':
+                    state.tmp += c
+                elif c == ')':
+                    state.value = int(state.tmp)
+                    state.tmp = None
+                    state.state = Prefs.STATE_PARSE_UNTIL_SEMICOLON
+                elif c.isspace():
+                    state.tmp = int(state.tmp)
+                    state.state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
+                elif c == '/':
+                    state.tmp = int(state.tmp)
+                    state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                else:
+                    raise PrefParseError("Error whilst parsing int", source, linenum)
+
+            elif state.state == Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN:
+                if state.tmp != None:
+                    state.value = state.tmp
+                    state.tmp = None
+                if c == ')':
+                    state.state = Prefs.STATE_PARSE_UNTIL_SEMICOLON
+                elif c == '/':
+                    state.next_state = state.state
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                elif not c.isspace():
+                    raise PrefParseError("Unexpected character before close parenthesis", source, linenum)
+
+            elif state.state == Prefs.STATE_PARSE_UNTIL_SEMICOLON:
+                if c == ';':
+                    self._maybe_add_pref(state.name, state.value, source,
+                                         state.default, state.locked)
+                    state.state = Prefs.STATE_READY
+                elif c == '/':
+                    state.next_state = state.state
+                    state.state = Prefs.STATE_COMMENT_MAYBE_START
+                elif not c.isspace():
+                    raise PrefParseError("Unexpected character before semicolon", source, linenum)
+
+            index += 1
+
+        if state.state == Prefs.STATE_PARSE_UNTIL_EOL:
+            state.state = Prefs.STATE_READY
+
+        return state
 
     def __getitem__(self, key):
         if not key in self.prefs:
@@ -885,7 +1002,13 @@ class Profile:
     def dump_prefs(self):
         ret = ''
         for pref in self.prefs:
-            ret += pref + ' - ' + self.prefs[pref].value + ' (' + self.prefs[pref].source + ')\n'
+            if type(self.prefs[pref].value) == int:
+                value = str(self.prefs[pref].value)
+            elif type(self.prefs[pref].value) == bool:
+                value = 'true' if True else 'false'
+            else:
+                value = "\"%s\"" % self.prefs[pref].value
+            ret += pref + ': ' + value + ' (' + self.prefs[pref].source + ')\n'
         return ret
 
     def dump_pref_sources(self):
