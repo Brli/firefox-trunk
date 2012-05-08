@@ -1,5 +1,5 @@
 CHANNEL			= nightly
-MOZ_WANT_UNIT_TESTS	= 1
+MOZ_WANT_UNIT_TESTS	= 0
 NO_AUTO_REFRESH_LOCALES	= 1
 
 MOZILLA_REPO = http://hg.mozilla.org/mozilla-central
