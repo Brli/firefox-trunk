@@ -12,7 +12,7 @@ ac_add_options --disable-updater
 ac_add_options --enable-application=browser
 ac_add_options --enable-startup-notification
 ac_add_options --with-distribution-id=com.ubuntu
-%%if DEB_HOST_ARCH == armel
+%%ifdef MOZ_ENABLE_THUMB
 ac_add_options --enable-thumb2
 %%endif
 %%ifdef MOZ_NO_OPTIMIZE
