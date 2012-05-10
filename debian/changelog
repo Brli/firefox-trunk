@@ -16,7 +16,7 @@ firefox-trunk (15.0~a1~hg20120424r92149-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
     - update debian/config/mozconfig.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 09 May 2012 15:53:54 -0700
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 10 May 2012 05:17:39 +0000
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
