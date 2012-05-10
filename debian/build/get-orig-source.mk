@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_APP_NAME) -b $(CURDIR)/debian/config/locales.blacklist
+ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -b $(CURDIR)/debian/config/locales.blacklist
 
 ifdef DEBIAN_TAG
 ARGS += -t $(DEBIAN_TAG)

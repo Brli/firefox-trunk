@@ -1,11 +1,13 @@
 #!/usr/bin/make -f
 
+MOZ_PKG_BASENAME	:= firefox
+MOZ_APP			:= browser
+MOZ_VENDOR		:= Mozilla
+MOZ_MOZDIR		:=
+
 DISTRIB_CODENAME	= $(shell lsb_release -s -c)
 
 include $(CURDIR)/debian/config/branch.mk
-
-MOZ_APP_BASENAME	:= firefox
-MOZ_MOZDIR		:=
 
 # Various build defaults
 # 1 = Enable crashreporter (if supported)
@@ -48,12 +50,27 @@ post-patches:: enable-dist-patches
 -include /usr/share/cdbs/1/class/makefile.mk
 include $(CURDIR)/debian/build/get-orig-source.mk
 
-MOZ_OBJDIR		:= $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/obj-$(DEB_HOST_GNU_TYPE)
+MOZ_OBJDIR		:= $(DEB_BUILDDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
 
 # Define other variables used throughout the build
-MOZ_APP_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
-MOZ_APP_NAME_SUFFIX	:= $(shell echo $(MOZ_APP_NAME) | sed 's/\($(MOZ_APP_BASENAME)\)\-*\(.*\)/\2/' )
+# The package name
+MOZ_PKG_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+
+# The binary name to use (derived from the package name by default, but can be overridden)
+MOZ_APP_NAME		?= $(MOZ_PKG_NAME)
+# The value of "Name" to use in application.ini, which the profile location is based on.
+# Derived from the desired MOZ_APP_NAME, but can be overridden
+MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
+MOZ_APP_BASENAME_L	:= $(shell echo $(MOZ_APP_BASENAME) | tr A-Z a-z)
+
+# The default value of "Name" in the application.ini, derived from the upstream build system
+# It is used for the profile location. This should be set manually if not provided
+MOZ_DEFAULT_APP_BASENAME	?= $(shell . $(DEB_BUILDDIR)/$(MOZ_APP)/confvars.sh; echo $$MOZ_APP_BASENAME)
+MOZ_DEFAULT_APP_BASENAME_L	= $(shell echo $(MOZ_DEFAULT_APP_BASENAME) | tr A-Z a-z)
+# Equal to upstreams default MOZ_APP_NAME. If not a lower case version of the "Name"
+# in application.ini, then this should be manually overridden
+MOZ_DEFAULT_APP_NAME		?= $(MOZ_DEFAULT_APP_BASENAME_L)
 
 DEB_MAKE_MAKEFILE	:= client.mk
 # Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
@@ -62,16 +79,26 @@ DEB_MAKE_EXTRA_ARGS	:=
 # don't want to run configure)
 DEB_MAKE_INSTALL_TARGET	:= install DESTDIR=$(CURDIR)/debian/tmp
 DEB_MAKE_CLEAN_TARGET	:= distclean
-DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_APP_NAME)-dbg
+DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
 
-MOZ_VERSION		= $(shell cat $(DEB_BUILDDIR)/browser/config/version.txt)
+MOZ_VERSION		= $(shell cat $(DEB_BUILDDIR)/$(MOZ_APP)/config/version.txt)
 MOZ_LIBDIR		= usr/lib/$(MOZ_APP_NAME)
 MOZ_INCDIR		= usr/include/$(MOZ_APP_NAME)
 MOZ_IDLDIR		= usr/share/idl/$(MOZ_APP_NAME)
 MOZ_SDKDIR		= usr/lib/$(MOZ_APP_NAME)-devel
 MOZ_ADDONDIR		= usr/lib/$(MOZ_APP_NAME)-addons
+
+# The profile directory is determined from the Vendor and Name fields of
+# the application.ini
+ifeq (,$(MOZ_VENDOR))
+PROFILE_BASE =
+else
+PROFILE_BASE = $(shell echo $(MOZ_VENDOR) | tr A-Z a-z)/
+endif
+MOZ_PROFILEDIR		= .$(PROFILE_BASE)$(MOZ_APP_BASENAME_L)
+MOZ_DEFAULT_PROFILEDIR	= .$(PROFILE_BASE)$(MOZ_DEFAULT_APP_BASENAME_L)
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
@@ -105,8 +132,8 @@ endif
 
 include $(CURDIR)/debian/build/testsuite.mk
 
-ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
-# We don't want to make builds which change MOZ_APP_NAME official
+ifneq ($(MOZ_APP_NAME)$(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_NAME)$(MOZ_DEFAULT_APP_BASENAME))
+# If we change MOZ_APP_NAME or MOZ_APP_BASENAME, don't use official branding
 MOZ_BUILD_UNOFFICIAL = 1
 endif
 
@@ -143,7 +170,7 @@ MOZ_BRANDING_OPTION = --enable-official-branding
 else
 MOZ_BRANDING_OPTION = --with-branding=$(BRANDING_DIR)
 endif
-BRANDING_DIR = browser/branding/$(BRANDING)
+BRANDING_DIR = $(MOZ_APP)/branding/$(BRANDING)
 MOZ_DISPLAY_NAME = $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
 		    | grep brandShortName | sed -e 's/brandShortName\=//')
 
@@ -187,7 +214,7 @@ else
 LANGPACK_DIR := $(DEB_HOST_GNU_SYSTEM)-$(DEB_HOST_GNU_CPU)/xpi
 endif
 
-ifeq ($(MOZ_APP_BASENAME), $(MOZ_APP_NAME))
+ifeq (firefox, $(MOZ_PKG_NAME))
 ifneq (,$(filter lucid, $(DISTRIB_CODENAME)))
 PLUGIN_BREAKS := flashplugin-installer (<= 11.2.202.233ubuntu0.10.04.1), adobe-flashplugin (<= 11.1.102.63-0lucid1)
 PLUGIN_CONFLICTS := gcu-plugin (<= 0.10.12-2ubuntu1), gecko-mediaplayer (<= 0.9.9.2-1ubuntu0.10.04.1), \
@@ -249,33 +276,35 @@ endif
 endif
 
 ifneq (,$(filter lucid, $(DISTRIB_CODENAME)))
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vsupport:Suggests="$(MOZ_APP_NAME)-gnome-support, kmozillahelper (>= 0.6)" $(APP_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME) := -- -Vsupport:Suggests="$(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)" $(APP_CONTROL_ARGS)
 else
 ifneq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vsupport:Suggests="$(MOZ_APP_NAME)-gnome-support | firefox-kde-support" $(APP_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME) := -- -Vsupport:Suggests="$(MOZ_PKG_NAME)-gnome-support | firefox-kde-support" $(APP_CONTROL_ARGS)
 else
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME) := -- -Vsupport:Suggests="$(MOZ_APP_NAME)-gnome-support" $(APP_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME) := -- -Vsupport:Suggests="$(MOZ_PKG_NAME)-gnome-support" $(APP_CONTROL_ARGS)
 endif
 endif
 ifneq (,$(DEV_CONTROL_ARGS))
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dev := -- $(DEV_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-dev := -- $(DEV_CONTROL_ARGS)
 endif
 # With GSettings and at-spi2 in 11.10, we no longer rely on gconf for anything
 ifneq (,$(filter lucid maverick natty, $(DISTRIB_CODENAME)))
 GCONF_DEPENDS := libgconf2-4
 endif
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-gnome-support := -- -Vgconf:Depends="$(GCONF_DEPENDS)" $(GS_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-gnome-support := -- -Vgconf:Depends="$(GCONF_DEPENDS)" $(GS_CONTROL_ARGS)
 ifneq (,$(DBG_CONTROL_ARGS))
-DEB_DH_GENCONTROL_ARGS_$(MOZ_APP_NAME)-dbg := -- $(DBG_CONTROL_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-dbg := -- $(DBG_CONTROL_ARGS)
 endif
 
 # Defines used for the Mozilla text preprocessor
-DEB_DEFINES = 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)"\
+DEB_DEFINES = 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
 		-DMOZ_INCDIR="$(MOZ_INCDIR)" -DMOZ_IDLDIR="$(MOZ_IDLDIR)" -DMOZ_VERSION="$(MOZ_VERSION)" -DDEB_HOST_ARCH="$(DEB_HOST_ARCH)" \
-		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_SYSTEM_DICTDIR="$(MOZ_SYSTEM_DICTDIR)" \
+		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_SYSTEM_DICTDIR="$(MOZ_SYSTEM_DICTDIR)" -DMOZ_PKG_NAME="$(MOZ_PKG_NAME)" \
 		-DMOZ_BRANDING_OPTION="$(MOZ_BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)" \
 		-DMOZ_ADDONDIR="$(MOZ_ADDONDIR)" -DMOZ_SDKDIR="$(MOZ_SDKDIR)" -DMOZ_DISTDIR="$(MOZ_DISTDIR)" -DMOZ_UPDATE_CHANNEL="$(CHANNEL)" \
-		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILE_PREFIX=".mozilla/"
+		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILEDIR="$(MOZ_PROFILEDIR)" \
+		-DMOZ_PKG_BASENAME="$(MOZ_PKG_BASENAME)" -DMOZ_DEFAULT_PROFILEDIR="$(MOZ_DEFAULT_PROFILEDIR)" \
+		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DMOZ_DEFAULT_APP_BASENAME="$(MOZ_DEFAULT_APP_BASENAME)"
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 DEB_DEFINES += -DMOZ_ENABLE_BREAKPAD
@@ -326,34 +355,37 @@ DEB_DEFINES += -DMOZ_ENABLE_THUMB
 endif
 endif
 
-DEBIAN_EXECUTABLES = $(MOZ_APP_NAME)/$(MOZ_LIBDIR)/firefox.sh \
+DEBIAN_EXECUTABLES = $(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/firefox.sh \
 		     $(NULL)
 
-subst_files = \
-	debian/usr.bin.$(MOZ_APP_NAME) \
+pkgname_subst_files = \
+	debian/usr.bin.$(MOZ_PKG_NAME) \
 	debian/README.Debian \
 	debian/firefox.sh \
 	debian/apport/blacklist \
 	debian/apport/native-origins \
-	debian/apport/source_$(MOZ_APP_NAME).py \
-	debian/$(MOZ_APP_NAME).desktop \
-	debian/$(MOZ_APP_NAME)-gnome-support.install \
-	debian/$(MOZ_APP_NAME).dirs \
-	debian/$(MOZ_APP_NAME).install \
-	debian/$(MOZ_APP_NAME).links \
-	debian/$(MOZ_APP_NAME).manpages \
-	debian/$(MOZ_APP_NAME).postinst \
-	debian/$(MOZ_APP_NAME).postrm \
-	debian/$(MOZ_APP_NAME).preinst \
-	debian/$(MOZ_APP_NAME).prerm \
-	debian/$(MOZ_APP_NAME).1 \
-	debian/$(MOZ_APP_NAME)-mozsymbols.install \
-	debian/$(MOZ_APP_NAME)-dev.install \
-	debian/$(MOZ_APP_NAME)-dev.links \
-	debian/$(MOZ_APP_NAME).lintian-overrides \
-	debian/$(MOZ_APP_NAME)-globalmenu.dirs \
+	debian/apport/source_$(MOZ_PKG_NAME).py \
+	debian/$(MOZ_PKG_NAME)-gnome-support.install \
+	debian/$(MOZ_PKG_NAME).dirs \
+	debian/$(MOZ_PKG_NAME).install \
+	debian/$(MOZ_PKG_NAME).links \
+	debian/$(MOZ_PKG_NAME).manpages \
+	debian/$(MOZ_PKG_NAME).postinst \
+	debian/$(MOZ_PKG_NAME).postrm \
+	debian/$(MOZ_PKG_NAME).preinst \
+	debian/$(MOZ_PKG_NAME).prerm \
+	debian/$(MOZ_PKG_NAME)-mozsymbols.install \
+	debian/$(MOZ_PKG_NAME)-dev.install \
+	debian/$(MOZ_PKG_NAME)-dev.links \
+	debian/$(MOZ_PKG_NAME).lintian-overrides \
+	debian/$(MOZ_PKG_NAME)-globalmenu.dirs \
 	debian/config/mozconfig \
-	debian/$(MOZ_APP_NAME)-locale.preinst \
+	debian/$(MOZ_PKG_NAME)-locale.preinst \
+	$(NULL)
+
+appname_subst_files = \
+	debian/$(MOZ_APP_NAME).desktop \
+	debian/$(MOZ_APP_NAME).1 \
 	$(NULL)
 
 pkgconfig_files = \
@@ -369,18 +401,17 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@echo "*****************************"
 	@echo ""
 
-	@sed -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.in > debian/control
+	@sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.in > debian/control
 
 	@perl debian/build/dump-langpack-control-entries.pl -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
 
-	@sed -e 's/@MOZ_APP_NAME@/$(MOZ_APP_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
+	@sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
-BRANCH	:=
-ifneq (,$(MOZ_APP_NAME_SUFFIX))
-BRANCH = -$(MOZ_APP_NAME_SUFFIX)
-endif
-$(subst_files): $(foreach file, $(subst_files), $(subst $(BRANCH),,$(file).in))
-	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst $(BRANCH),,$@.in) > $(CURDIR)/$@
+$(pkgname_subst_files): $(foreach file, $(pkgname_subst_files), $(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
+	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+
+$(appname_subst_files): $(foreach file, $(appname_subst_files), $(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
+	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 %.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
 %.pc: %.pc.in debian/stamp-makefile-build
@@ -425,7 +456,7 @@ debian/stamp-make-langpack-xpis: compare-locales/scripts/compare-locales
 
 	@export PATH=$(CURDIR)/compare-locales/scripts/:$$PATH ; \
 	export PYTHONPATH=$(CURDIR)/compare-locales/lib ; \
-	cd $(MOZ_OBJDIR)/browser/locales ; \
+	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
 	while read line ; \
 	do \
 		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
@@ -454,26 +485,26 @@ common-install-arch common-install-indep::
 
 common-binary-arch:: make-buildsymbols
 
-binary-install/$(MOZ_APP_NAME)::
+binary-install/$(MOZ_PKG_NAME)::
 ifeq (1,$(MOZ_ENABLE_BREAKPAD))
-	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_APP_NAME)/etc/apport/blacklist.d/$(MOZ_APP_NAME)
+	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
 endif
-	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_APP_NAME)/etc/apport/native-origins.d/$(MOZ_APP_NAME)
+	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/native-origins.d/$(MOZ_PKG_NAME)
 
 ifeq (1, $(MOZ_ENABLE_GLOBALMENU))
-binary-install/$(MOZ_APP_NAME)-globalmenu::
-	unzip -o -d debian/$(MOZ_APP_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ $(MOZ_DISTDIR)/xpi-stage/globalmenu.xpi
-	find debian/$(MOZ_APP_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
+binary-install/$(MOZ_PKG_NAME)-globalmenu::
+	unzip -o -d debian/$(MOZ_PKG_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ $(MOZ_DISTDIR)/xpi-stage/globalmenu.xpi
+	find debian/$(MOZ_PKG_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
 endif
 
 GNOME_SUPPORT_FILES = libmozgnome.so
 
-binary-post-install/$(MOZ_APP_NAME)::
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(MOZ_APP_NAME)/$(MOZ_LIBDIR)/components/$(file);) true
+binary-post-install/$(MOZ_PKG_NAME)::
+	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/$(file);) true
 
-binary-post-install/$(MOZ_APP_NAME)-dev::
-	rm -f debian/$(MOZ_APP_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
-	dh_link -p$(MOZ_APP_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
+binary-post-install/$(MOZ_PKG_NAME)-dev::
+	rm -f debian/$(MOZ_PKG_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
+	dh_link -p$(MOZ_PKG_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 
 common-binary-post-install-arch::
 	@echo ""
@@ -491,13 +522,13 @@ common-binary-post-install-arch::
 			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
 			id=`python $(CURDIR)/debian/build/get-xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
 			[ $$? -eq 0 ] || exit 1 ; \
-			echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi to $${id}.xpi in $(MOZ_APP_NAME)-locale-$${pkgname}" ; \
-			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} $(MOZ_ADDONDIR)/extensions ; \
+			echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi to $${id}.xpi in $(MOZ_PKG_NAME)-locale-$${pkgname}" ; \
+			dh_installdirs -p$(MOZ_PKG_NAME)-locale-$${pkgname} $(MOZ_ADDONDIR)/extensions ; \
 			cp $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi \
-			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/$(MOZ_ADDONDIR)/extensions/$${id}.xpi ; \
-			dh_installdirs -p$(MOZ_APP_NAME)-locale-$${pkgname} $(DIST_SEARCHPLUGIN_DIR)/locale/$${language} ; \
+			  $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$${pkgname}/$(MOZ_ADDONDIR)/extensions/$${id}.xpi ; \
+			dh_installdirs -p$(MOZ_PKG_NAME)-locale-$${pkgname} $(DIST_SEARCHPLUGIN_DIR)/locale/$${language} ; \
 			cp -r $(CURDIR)/$(MOZ_DISTDIR)/xpi-stage/locale-$${language}/searchplugins/*.xml \
-			  $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}/$(DIST_SEARCHPLUGIN_DIR)/locale/$${language}/. ; \
+			  $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$${pkgname}/$(DIST_SEARCHPLUGIN_DIR)/locale/$${language}/. ; \
 		fi \
 	done < $(CURDIR)/debian/config/locales.shipped
 
@@ -508,31 +539,41 @@ common-binary-fixup-arch::
 		if [ ! -z "$$line" ] ; \
 		then \
 			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
-			cp $(CURDIR)/debian/$(MOZ_APP_NAME)-locale.preinst $(CURDIR)/debian/$(MOZ_APP_NAME)-locale-$${pkgname}.preinst ; \
+			cp $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale.preinst $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$${pkgname}.preinst ; \
 		fi \
 	done < $(CURDIR)/debian/config/locales.shipped
 
-binary-predeb/$(MOZ_APP_NAME)::
+binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
-	        LD_LIBRARY_PATH=debian/$(MOZ_APP_NAME)/$(MOZ_LIBDIR):$$LD_LIBRARY_PATH \
-	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_APP_NAME)$(MOZ_LIBDIR)/$(lib);)
+	        LD_LIBRARY_PATH=debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR):$$LD_LIBRARY_PATH \
+	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_PKG_NAME)$(MOZ_LIBDIR)/$(lib);)
 
 common-binary-predeb-arch::
 	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
 	# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
-	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_APP_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_APP_NAME)/$(MOZ_LIBDIR)/components/;) true
+	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
-pre-build:: $(subst_files)
-	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_APP_BASENAME).js
+pre-build:: $(pkgname_subst_files) $(appname_subst_files)
+	@cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
 
-	# KDE integration
-	cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
-	cp $(DEB_SRCDIR)/toolkit/content/widgets/preferences.xml $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
-	cp $(DEB_SRCDIR)/browser/base/content/browser.xul $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
+	@cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
+	@cp $(DEB_SRCDIR)/toolkit/content/widgets/preferences.xml $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
+	@cp $(DEB_SRCDIR)/browser/base/content/browser.xul $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
 
-	mkdir -p $(DEB_SRCDIR)/extensions/globalmenu
-	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -) 
+	@mkdir -p $(DEB_SRCDIR)/extensions/globalmenu
+	@(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -)
+
+ifneq ($(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_BASENAME))
+	@echo "Setting MOZ_APP_UA_NAME to $(MOZ_DEFAULT_APP_BASENAME)"
+	@cp $(DEB_BUILDDIR)/$(BRANDING_DIR)/configure.sh $(DEB_BUILDDIR)/$(BRANDING_DIR)/configure.sh.bak; \
+		echo "MOZ_APP_UA_NAME=$(MOZ_DEFAULT_APP_BASENAME)" >> $(DEB_BUILDDIR)/$(BRANDING_DIR)/configure.sh
+endif
+ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
+	@echo "Replacing instances of \"%APP%\" with \"firefox\" in firefox-branding.js"
+	@cp $(DEB_BUILDDIR)/$(BRANDING_DIR)/pref/firefox-branding.js $(DEB_BUILDDIR)/$(BRANDING_DIR)/pref/firefox-branding.js.bak; \
+		sed -ri 's/%APP%/firefox/g' $(DEB_BUILDDIR)/$(BRANDING_DIR)/pref/firefox-branding.js
+endif
 
 get-compare-locales:
 	mkdir -p compare-locales-tmp
@@ -643,10 +684,10 @@ else
 clean:: auto-refresh-supported-locales post-auto-update-debian-control
 endif
 	perl $(CURDIR)/debian/build/enable-dist-patches.pl --clean $(CURDIR)/debian/patches/series
-	rm -f $(subst_files)
-	rm -f debian/$(MOZ_APP_NAME)-locale-*.preinst
+	rm -f $(pkgname_subst_files) $(appname_subst_files)
+	rm -f debian/$(MOZ_PKG_NAME)-locale-*.preinst
 	rm -f debian/usr.bin.firefox.in
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
 	rm -rf compare-locales
-	rm -f debian/$(MOZ_APP_BASENAME).js
+	rm -f debian/$(MOZ_PKG_BASENAME).js

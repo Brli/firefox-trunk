@@ -471,9 +471,9 @@ class Prefs:
         if profile_path != None:
             locations = [
 %%ifdef MOZ_NEW_SYSPREF
-                "/etc/@MOZ_APP_NAME@/syspref.js",
+                "/etc/@MOZ_PKG_NAME@/syspref.js",
 %%else
-                "/etc/@MOZ_APP_NAME@/pref",
+                "/etc/@MOZ_PKG_NAME@/pref",
 %%endif
                 os.path.join(profile_path, "prefs.js"),
                 os.path.join(profile_path, "user.js")
@@ -1362,7 +1362,7 @@ def add_info(report, ui):
     add_apparmor = True
     if os.path.isdir(apparmor_disable_dir):
         for f in os.listdir(apparmor_disable_dir):
-            if f.startswith("usr.bin.@MOZ_APP_NAME@"):
+            if f.startswith("usr.bin.@MOZ_PKG_NAME@"):
                 add_apparmor = False
                 break
     if add_apparmor:

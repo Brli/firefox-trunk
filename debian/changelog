@@ -15,8 +15,32 @@ firefox-trunk (15.0~a1~hg20120424r92149-0ubuntu1) UNRELEASED; urgency=low
   * Don't build with --enable-thumb2 on armel in Quantal
     - update debian/rules
     - update debian/config/mozconfig.in
+  * Separate the package name from the application name. This enables us to
+    change the package name without having to modify the application (eg,
+    to allow us to provide official branded versions of Firefox ESR using
+    the package name "firefox-esr"). In doing this, also drop the patch we
+    had to rename Firefox in nightlies, and just use some magic in debian/rules
+    instead
+    - update debian/README.Debian.in
+    - update debian/apport/source_firefox.py.in
+    - update debian/build/get-orig-source.mk
+    - update debian/control{,.in}
+    - update debian/control.langpacks
+    - update debian/control.langpacks.unavail
+    - update debian/firefox-locale.preinst.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/firefox.lintian-overrides.in
+    - update debian/firefox.postinst.in
+    - update debian/firefox.postrm.in
+    - update debian/firefox.preinst.in
+    - update debian/firefox.sh.in
+    - remove debian/patches/change-moz-app-name.patch
+    - update debian/patches/series
+    - update debian/rules
+    - update debian/usr.bin.firefox.apparmor.*
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 10 May 2012 05:17:39 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 10 May 2012 16:40:24 -0700
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
