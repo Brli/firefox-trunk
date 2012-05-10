@@ -84,96 +84,100 @@ CXXFLAGS		= -g
 LDFLAGS 		= $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 
 ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
-	MOZ_WANT_UNIT_TESTS=0
+MOZ_WANT_UNIT_TESTS = 0
 endif
 
 ifeq (1,$(MOZ_VALGRIND))
-	MOZ_BUILD_UNOFFICIAL = 1
+MOZ_BUILD_UNOFFICIAL = 1
 endif
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	MOZ_BUILD_PGO = 0
-	MOZ_NO_OPTIMIZE = 1
+MOZ_BUILD_PGO = 0
+MOZ_NO_OPTIMIZE	= 1
 endif
 
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	MOZ_NO_OPTIMIZE = 1
-	MOZ_DEBUG = 1
-	MOZ_BUILD_UNOFFICIAL = 1
+MOZ_NO_OPTIMIZE = 1
+MOZ_DEBUG = 1
+MOZ_BUILD_UNOFFICIAL = 1
 endif
 
 include $(CURDIR)/debian/build/testsuite.mk
 
 ifneq ($(MOZ_APP_NAME),$(MOZ_APP_BASENAME))
-	# We don't want to make builds which change MOZ_APP_NAME official
-	MOZ_BUILD_UNOFFICIAL = 1
+# We don't want to make builds which change MOZ_APP_NAME official
+MOZ_BUILD_UNOFFICIAL = 1
 endif
 
 # enable the crash reporter only on i386, amd64 and armel
 ifeq (,$(filter i386 amd64 armel,$(DEB_HOST_ARCH)))
-	MOZ_ENABLE_BREAKPAD = 0
+MOZ_ENABLE_BREAKPAD = 0
 endif
 
 # powerpc sucks
 ifneq (,$(filter powerpc,$(DEB_HOST_ARCH)))
-	MOZ_WANT_UNIT_TESTS = 0
+MOZ_WANT_UNIT_TESTS = 0
 endif
 
 # Ensure the crash reporter gets disabled for derivatives
 ifneq (Ubuntu, $(DISTRIB))
-	MOZ_ENABLE_BREAKPAD = 0
+MOZ_ENABLE_BREAKPAD = 0
 endif
 
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1210" && echo "1"))
 MOZ_ENABLE_BREAKPAD = 0
 endif
 
-BRANDING	= $(CHANNEL)
+BRANDING = $(CHANNEL)
 ifneq (,$(filter release beta, $(BRANDING)))
-	BRANDING = official
+BRANDING = official
 endif
 ifeq (1,$(MOZ_BUILD_UNOFFICIAL))
 ifneq (,$(filter official aurora, $(BRANDING)))
-	BRANDING = unofficial
+BRANDING = unofficial
 endif
 endif
 ifeq (official,$(BRANDING))
-	MOZ_BRANDING_OPTION = --enable-official-branding
+MOZ_BRANDING_OPTION = --enable-official-branding
 else
-	MOZ_BRANDING_OPTION = --with-branding=$(BRANDING_DIR)
+MOZ_BRANDING_OPTION = --with-branding=$(BRANDING_DIR)
 endif
-BRANDING_DIR		= browser/branding/$(BRANDING)
-MOZ_DISPLAY_NAME	= $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
-			    | grep brandShortName | sed -e 's/brandShortName\=//')
+BRANDING_DIR = browser/branding/$(BRANDING)
+MOZ_DISPLAY_NAME = $(shell cat $(DEB_BUILDDIR)/$(BRANDING_DIR)/locales/en-US/brand.properties \
+		    | grep brandShortName | sed -e 's/brandShortName\=//')
+
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1110" && echo "1"))
+MOZ_BUILD_PGO = 0
+endif
+
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
+MOZ_ENABLE_GLOBALMENU = 1
+endif
+
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1010" && echo "1"))
+MOZ_SYSTEM_DICTDIR = /usr/share/hunspell
+else
+MOZ_SYSTEM_DICTDIR = /usr/share/myspell/dicts
+endif
+
+ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -eq "1110" && echo "1"))
+DIST_SEARCHPLUGIN_DIR = $(MOZ_ADDONDIR)/distribution/searchplugins
+else
+DIST_SEARCHPLUGIN_DIR = $(MOZ_LIBDIR)/distribution/searchplugins
+endif
 
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
+export MOZCONFIG=$(CURDIR)/debian/config/mozconfig
 ifeq (Ubuntu, $(DISTRIB))
 export MOZ_UA_VENDOR=Ubuntu
 endif
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1110" && echo "1"))
-	MOZ_BUILD_PGO := 0
-endif
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
-	MOZ_ENABLE_GLOBALMENU := 1
-endif
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1010" && echo "1"))
-	MOZ_SYSTEM_DICTDIR = /usr/share/hunspell
-else
-	MOZ_SYSTEM_DICTDIR = /usr/share/myspell/dicts
-endif
-ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -eq "1110" && echo "1"))
-	DIST_SEARCHPLUGIN_DIR = $(MOZ_ADDONDIR)/distribution/searchplugins
-else
-	DIST_SEARCHPLUGIN_DIR = $(MOZ_LIBDIR)/distribution/searchplugins
-endif
-export MOZCONFIG=$(CURDIR)/debian/config/mozconfig
 ifneq (1,$(MOZ_BUILD_UNOFFICIAL))
-	export BUILD_OFFICIAL=1
+export BUILD_OFFICIAL=1
 endif
 ifeq (1,$(MOZ_ENABLE_BREAKPAD))
-	# Needed to enable crashreported in application.ini
-	export MOZILLA_OFFICIAL=1
+# Needed to enable crashreported in application.ini
+export MOZILLA_OFFICIAL=1
 endif
 
 ifeq (linux-gnu, $(DEB_HOST_GNU_SYSTEM))
@@ -273,47 +277,47 @@ DEB_DEFINES = 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DM
 		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILE_PREFIX=".mozilla/"
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
-	DEB_DEFINES += -DMOZ_ENABLE_BREAKPAD
+DEB_DEFINES += -DMOZ_ENABLE_BREAKPAD
 endif
 ifeq (1, $(MOZ_VALGRIND))
-	DEB_DEFINES += -DMOZ_VALGRIND
+DEB_DEFINES += -DMOZ_VALGRIND
 endif
 ifeq (1,$(MOZ_NO_OPTIMIZE))
-	DEB_DEFINES += -DMOZ_NO_OPTIMIZE
+DEB_DEFINES += -DMOZ_NO_OPTIMIZE
 endif
 ifeq (1,$(MOZ_WANT_UNIT_TESTS))
-	DEB_DEFINES += -DMOZ_WANT_UNIT_TESTS
+DEB_DEFINES += -DMOZ_WANT_UNIT_TESTS
 endif
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-	DEB_DEFINES += -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)"
+DEB_DEFINES += -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)"
 endif
 ifeq (1,$(MOZ_BUILD_PGO))
-	DEB_DEFINES += -DMOZ_BUILD_PGO
+DEB_DEFINES += -DMOZ_BUILD_PGO
 endif
 ifeq (1,$(MOZ_DEBUG))
-	DEB_DEFINES += -DMOZ_DEBUG
+DEB_DEFINES += -DMOZ_DEBUG
 endif
 ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
-	DEB_DEFINES += -DMOZ_ENABLE_GLOBALMENU
+DEB_DEFINES += -DMOZ_ENABLE_GLOBALMENU
 endif
 ifeq (official, $(BRANDING))
-	DEB_DEFINES += -DMOZ_OFFICIAL_BRANDING
+DEB_DEFINES += -DMOZ_OFFICIAL_BRANDING
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1104" && echo "1"))
-	DEB_DEFINES += -DMOZ_NEW_SYSPREF
+DEB_DEFINES += -DMOZ_NEW_SYSPREF
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -eq "1110" && echo "1"))
-	DEB_DEFINES += -DMOZ_SYMLINKED_DIST
+DEB_DEFINES += -DMOZ_SYMLINKED_DIST
 else
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1204" && echo "1"))
-	DEB_DEFINES += -DMOZ_NO_MORE_SYMLINKED_DIST
+DEB_DEFINES += -DMOZ_NO_MORE_SYMLINKED_DIST
 endif
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1204" && echo "1"))
-	DEB_DEFINES += -DMOZ_LIBXUL_PKGCONFIG
+DEB_DEFINES += -DMOZ_LIBXUL_PKGCONFIG
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -ge "1204" && echo "1"))
-	DEB_DEFINES += -DMOZ_FREEDESKTOP_ACTIONS
+DEB_DEFINES += -DMOZ_FREEDESKTOP_ACTIONS
 endif
 ifeq (1,$(shell test "$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -lt "1210" && echo "1"))
 ifneq (,$(filter armel,$(DEB_HOST_ARCH)))
@@ -372,7 +376,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 
 BRANCH	:=
 ifneq (,$(MOZ_APP_NAME_SUFFIX))
-	BRANCH = -$(MOZ_APP_NAME_SUFFIX)
+BRANCH = -$(MOZ_APP_NAME_SUFFIX)
 endif
 $(subst_files): $(foreach file, $(subst_files), $(subst $(BRANCH),,$(file).in))
 	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) $(CURDIR)/$(subst $(BRANCH),,$@.in) > $(CURDIR)/$@
