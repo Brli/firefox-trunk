@@ -649,6 +649,9 @@ class Prefs:
                     state.next_state = Prefs.STATE_PARSE_UNTIL_OPEN_PAREN
                     state.state = Prefs.STATE_SKIP
                     state.skip = 7
+                elif not c.isspace():
+                    raise PrefParseError("Unexpected character '%s' before pref" % c,
+                                         source, linenum)
 
             elif state.state == Prefs.STATE_SKIP:
                 state.skip -= 1
@@ -685,7 +688,8 @@ class Prefs:
                     state.next_state = state.state
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
-                    raise PrefParseError("Unexpected character before open parenthesis", source, linenum)
+                    raise PrefParseError("Unexpected character '%s' before open parenthesis" % c,
+                                         source, linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_NAME:
                 if c == '"' or c == '\'':
@@ -696,7 +700,8 @@ class Prefs:
                     state.next_state = state.state
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
-                    raise PrefParseError("Unexpected character before pref name", source, linenum)
+                    raise PrefParseError("Unexpected character '%s' before pref name" % c,
+                                         source, linenum)
 
             elif state.state == Prefs.STATE_PARSE_STRING:
                 if c == '\\':
@@ -726,7 +731,8 @@ class Prefs:
                     state.next_state = state.state
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
-                    raise PrefParseError("Unexpected character before comma", source, linenum)
+                    raise PrefParseError("Unexpected character '%s' before comma" % c,
+                                         source, linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_VALUE:
                 if c == '"' or c == '\'':
@@ -750,7 +756,8 @@ class Prefs:
                     state.next_state = state
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
-                    raise PrefParseError("Unexpected character before value", source, linenum)
+                    raise PrefParseError("Unexpected character '%s' before value" % c,
+                                         source, linenum)
 
             elif state.state == Prefs.STATE_PARSE_INT:
                 if c >= '0' and c <= '9':
@@ -767,7 +774,8 @@ class Prefs:
                     state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 else:
-                    raise PrefParseError("Error whilst parsing int", source, linenum)
+                    raise PrefParseError("Unexpected character '%s' whilst parsing int" % c,
+                                         source, linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN:
                 if state.tmp != None:
@@ -779,7 +787,8 @@ class Prefs:
                     state.next_state = state.state
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
-                    raise PrefParseError("Unexpected character before close parenthesis", source, linenum)
+                    raise PrefParseError("Unexpected character '%s' before close parenthesis" % c,
+                                         source, linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_SEMICOLON:
                 if c == ';':
@@ -790,7 +799,8 @@ class Prefs:
                     state.next_state = state.state
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
-                    raise PrefParseError("Unexpected character before semicolon", source, linenum)
+                    raise PrefParseError("Unexpected character '%s' before semicolon" % c,
+                                         source, linenum)
 
             index += 1
 
