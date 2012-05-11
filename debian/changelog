@@ -43,8 +43,11 @@ firefox-trunk (15.0~a1~hg20120424r92149-0ubuntu1) UNRELEASED; urgency=low
     new, common file (mozbuild.mk)
     - update debian/rules
     - add debian/build/mozbuild.mk
+  * Move debian/compare-locales in to debian/build
+    - move debian/compare-locales => debian/build/compare-locales
+    - update debian/build/mozbuild.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 11 May 2012 15:24:07 -0700
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 11 May 2012 15:27:00 -0700
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
