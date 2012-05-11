@@ -39,8 +39,12 @@ firefox-trunk (15.0~a1~hg20120424r92149-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
     - update debian/rules
     - update debian/usr.bin.firefox.apparmor.*
+  * Move parts of debian/rules that can be shared with Thunderbird to a
+    new, common file (mozbuild.mk)
+    - update debian/rules
+    - add debian/build/mozbuild.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 10 May 2012 16:40:24 -0700
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 11 May 2012 15:24:07 -0700
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
