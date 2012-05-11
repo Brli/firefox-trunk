@@ -10,41 +10,9 @@ import sys
 import time
 import urllib
 import xml.dom.minidom
+import json
 
-ALL_LOCALES = 'browser/locales/all-locales'
-SHIPPED_LOCALES = 'browser/locales/shipped-locales'
-VERSION_FILE = 'browser/config/version.txt'
 DEB_TAR_SRCDIR = 'mozilla'
-NEED_POST_CHECKOUT = 0
-
-INCLUDE = [
-    ''
-]
-
-EXCLUDE = [
-    ['build/mobile/sutagent/android/network-libs', False], # jar files with Java class files
-    ['build/package/mac_osx/mozilla.dsstore', False], # Unknown binary file
-    ['*.exe', True], # Window executables
-    ['*.pyc', True], # Byte-compiled python files
-    ['*.sfx', True], # Self-extracting executables
-    ['*.dll', True], # Windows libraries
-    ['intl/unicharutil/tools/data', False], # Unknown binary files
-    ['layout/doc/object_diagram_template.sda', False], # Unknown binary file
-    ['layout/doc/SpaceMgr_BlockReflSt_OD.sda', False], # Unknown binary file
-    ['l10n/*/calendar', False], # Unnecessary l10n
-    ['l10n/*/editor', False], # Unnecessary l10n
-    ['l10n/*/embedding', False], # Unnecessary l10n
-    ['l10n/*/extensions', False], # Unnecessary l10n
-    ['l10n/*/mail', False], # Unnecessary l10n
-    ['l10n/*/mobile', False], # Unnecessary l10n
-    ['l10n/*/other-licenses/sunbird', False], # Unnecessary l10n
-    ['l10n/*/other-licenses/thunderbird', False], # Unnecessary l10n
-    ['l10n/*/suite', False], # Unnecessary l10n
-    ['security/nss/cmd/samples', False], # Unknown binary files
-    ['toolkit/crashreporter/google-breakpad/src/client/mac/testapp/crashduringload', False], # Unknown binary file
-    ['toolkit/crashreporter/google-breakpad/src/client/mac/testapp/crashInMain', False], # Unknown binary file
-    ['xpcom/tests/unit/data/SmallApp.app/Contents/MacOS/SmallApp', False] # Java class file
-]
 
 class DependencyNotFound(Exception):
     def __init__(self, depend):
@@ -108,22 +76,23 @@ def pack_orig_source(name, version, destdir):
 
     do_exec(args)
 
-def pack_embedded_tar(version, name):
+def pack_embedded_tar(version, name, includes, excludes, shipped_locales):
     args = ['tar', '-jvc', '--exclude-vcs']
-    for exclude in EXCLUDE:
-        args.append('--no-wildcards-match-slash') if exclude[1] == False else args.append('--wildcards-match-slash')
+    for exclude in excludes:
+        args.append('--no-wildcards-match-slash') if exclude['wms'] == False else args.append('--wildcards-match-slash')
         args.append('--exclude')
-        args.append(os.path.join(DEB_TAR_SRCDIR, exclude[0]))
+        args.append(os.path.join(DEB_TAR_SRCDIR, exclude['path']))
     args.append('-f')
     args.append('%s-%s-source.tar.bz2' % (name, version))
-    for include in INCLUDE:
+    for include in includes:
         args.append(os.path.join(DEB_TAR_SRCDIR, include))
 
     do_exec(args)
 
     # Keep a copy of shipped-locales outside of the embedded tar, so we
     # can access this quickly in the packaging
-    shutil.copy(os.path.join(DEB_TAR_SRCDIR, SHIPPED_LOCALES), 'upstream-shipped-locales')
+    if shipped_locales != None:
+        shutil.copy(os.path.join(DEB_TAR_SRCDIR, shipped_locales), 'upstream-shipped-locales')
 
     # We need to manually clean up the files we packed now. We
     # can't pass --remove-files to tar, because it uses rmdir, which
@@ -132,8 +101,8 @@ def pack_embedded_tar(version, name):
         if os.path.exists(os.path.join(DEB_TAR_SRCDIR, include)):
             shutil.rmtree(os.path.join(DEB_TAR_SRCDIR, include))
 
-def determine_upstream_version(repo, tag):
-    vf = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, VERSION_FILE), 'r')
+def determine_upstream_version(repo, tag, version_file, want_moz_version):
+    vf = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, version_file), 'r')
     upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
     vf.close()
 
@@ -151,7 +120,7 @@ def determine_upstream_version(repo, tag):
         upstream_version += '~hg%s%s%sr%s' % ('%02d' % t.tm_year, '%02d' % t.tm_mon, '%02d' % t.tm_mday, rev)
         u.close()
 
-        if NEED_POST_CHECKOUT == 1:
+        if want_moz_version == 1:
             # Embed the moz revision in the version number too. Allows us to respin dailies for comm-central
             # even if the only changes landed in mozilla-central
             (ret, out) = do_exec(['hg', 'tip'], cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'mozilla'), quiet=True)
@@ -221,7 +190,7 @@ def post_checkout(repo, cache, tag):
         args.append('--mozilla-rev=%s' % tag)
     do_exec(args, cwd=os.path.join(os.getcwd(), DEB_TAR_SRCDIR))
 
-def verify_all_locales(all_locales, blfile):
+def verify_all_locales(all_locales, blfile, shipped_locales):
     # When we also use translations from Launchpad, there will be a file
     # containing the additional locales we want to ship (locales.extra??)
     print '\n\n***Checking that required locales are present***\n'
@@ -237,7 +206,7 @@ def verify_all_locales(all_locales, blfile):
             blacklist[locale] = 1
         bl.close()
 
-    sl = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, SHIPPED_LOCALES), 'r')
+    sl = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, shipped_locales), 'r')
     for line in sl:
         line = line.strip()
         if line.startswith('#'):
@@ -307,25 +276,27 @@ def checkout_locale(base, cache, locale, tag, changesets):
             changesets.write('%s %s\n' % (locale, line.split()[1].strip()))
             break
 
-def checkout_upstream_l10n(base, cache, tag, all_locales):
-    al = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, ALL_LOCALES), 'r')
-    sl = open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, SHIPPED_LOCALES), 'r')
+def checkout_upstream_l10n(base, cache, tag, got_locales, all_locales, shipped_locales):
+    lists = []
+    if all_locales != None:
+        lists.append(open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, all_locales), 'r'))
+    lists.append(open(os.path.join(os.getcwd(), DEB_TAR_SRCDIR, shipped_locales), 'r'))
     l10ndir = os.path.join(os.getcwd(), DEB_TAR_SRCDIR, 'l10n')
     if not os.path.isdir(l10ndir):
         os.makedirs(l10ndir)
     changesets = open(os.path.join(l10ndir, 'changesets'), 'w')
     try:
-        for l10nlist in al, sl:
+        for l10nlist in lists:
             for line in l10nlist:
                 locale = line.strip()
-                if locale.startswith('#') or locale in all_locales:
+                if locale.startswith('#') or locale in got_locales:
                     continue
 
                 if l10nlist != al: print 'WARNING: Locale %s is not in all-locales. This is an upstream oversight' % locale
 
                 try:
                     checkout_locale(base, cache, locale, tag, changesets)
-                    all_locales[locale] = 1
+                    got_locales[locale] = 1
                 except Exception as e:
                     # checkout_locale will throw if the specified revision isn't found
                     # In this case, omit it from the tarball
@@ -333,8 +304,8 @@ def checkout_upstream_l10n(base, cache, tag, all_locales):
                     if os.path.exists(localedir):
                         shutil.rmtree(localedir)
     finally:
-        al.close()
-        sl.close()
+        for l10nlist in lists:
+            l10nlist.close()
         changesets.close()
 
 def checkout_source(repo, cache, tag):
@@ -385,7 +356,7 @@ if __name__ == '__main__':
     parser.add_option('-l', '--l10n-base-repo', dest='l10nbase', help='The base directory of the remote repositories to pull l10n data from')
     parser.add_option('-t', '--tag', dest='tag', help='Release tag to base the checkout on')
     parser.add_option('-n', '--name', dest='name', help='The package name')
-    parser.add_option('-b', '--locale-blacklist', dest='blacklist', help='File with a list of blacklisted locales')
+    parser.add_option('-s', '--settings', dest='settings', help='Settings file')
 
     (options, args) = parser.parse_args()
 
@@ -395,11 +366,15 @@ if __name__ == '__main__':
     if options.name == None:
         parser.error('Must specify a package name')
 
-    if not options.l10nbase and ALL_LOCALES != None:
-        parser.error('Must specify a base repository for l10n data')
+    if options.settings == None:
+        parser.error('Must specify a settings file')
 
-    if options.blacklist and not os.path.exists(options.blacklist):
-        parser.error('Locale blacklist file does not exist')
+    fd = open(options.settings, 'r')
+    settings = json.load(fd)
+    fd.close()
+
+    if not options.l10nbase and hasattr(settings, 'upstream-all-locales'):
+        parser.error('Must specify a base repository for l10n data')
 
     saved_cwd = os.getcwd()
     check_dependencies()
@@ -409,16 +384,27 @@ if __name__ == '__main__':
         options.cache = os.path.join(os.getcwd(), options.cache)
 
     checkout_source(options.repo, options.cache, options.tag)
-    if NEED_POST_CHECKOUT == 1:
+
+    need_moz = settings['need-moz'] if hasattr(settings, 'need-moz') else False
+    if need_moz:
         post_checkout(options.repo, options.cache, options.tag)
 
     # XXX: In the future we may have an additional l10n source from Launchpad
-    all_locales = {}
-    checkout_upstream_l10n(options.l10nbase, options.cache, options.tag, all_locales)
-    verify_all_locales(all_locales, options.blacklist)
+    all_locales = settings['upstream-all-locales'] if hasattr(settings, 'upstream-all-locales') else None
+    shipped_locales = settings['upstream-shipped-locales'] if hasattr(settings, 'upstream-shipped-locales') else None
+    if shipped_locales != None:
+        got_locales = {}
+        blacklist_file = settings['l10n-blacklist'] if hasattr(settings, 'l10n-blacklist') else None
+        checkout_upstream_l10n(options.l10nbase, options.cache, options.tag, got_locales,
+                               all_locales, shipped_locales)
+        verify_all_locales(got_locales, blacklist_file, shipped_locales)
 
-    version = determine_upstream_version(options.repo, options.tag)
-    pack_embedded_tar(version, os.path.basename(options.repo))
+    version = determine_upstream_version(options.repo, options.tag,
+                                         settings['upstream-version-file'],
+                                         need_moz)
+    pack_embedded_tar(version, os.path.basename(options.repo),
+                      settings['includes'], settings['excludes'],
+                      shipped_locales)
     pack_orig_source(options.name, version, saved_cwd)
 
     cleanup_working_dir(saved_cwd)

@@ -47,8 +47,13 @@ firefox-trunk (15.0~a1~hg20120424r92149-0ubuntu1) UNRELEASED; urgency=low
   * Move debian/compare-locales in to debian/build
     - move debian/compare-locales => debian/build/compare-locales
     - update debian/build/mozbuild.mk
+  * Make it possible to use the same create-tarball.py for Firefox and
+    Thunderbird
+    - update debian/build/create-tarball.py
+    - update debian/build/get-orig-source.mk
+    - add debian/config/tarball.conf
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 11 May 2012 15:27:00 -0700
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 11 May 2012 16:52:21 -0700
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
