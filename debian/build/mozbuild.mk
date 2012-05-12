@@ -209,7 +209,7 @@ endif
 
 DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME) := -- -Vapp:Replaces="$(PKG_APP_REPLACES_ARGS)" -Vapp:Breaks="$(PKG_APP_BREAKS_ARGS)" -Vapp:Conflicts="$(PKG_APP_CONFLICTS_ARGS)" \
 					     -Vapp:Provides="$(PKG_APP_PROVIDES_ARGS)" $(PKG_APP_EXTRA_ARGS) -Vsupport:Suggests="$(PKG_SUPPORT_SUGGESTS)" \
-					     -Vsupport:Recommends="$(PKG_SUPPORT_RECOMMENEDS)"
+					     -Vsupport:Recommends="$(PKG_SUPPORT_RECOMMENDS)"
 DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-globalmenu := -- -Vgm:Replaces="$(PKG_GM_REPLACES_ARGS)" -Vgm:Breaks="$(PKG_GM_BREAKS_ARGS)" -Vgm:Conflicts="$(PKG_GM_CONFLICTS_ARGS)" \
 							-Vgm:Provides="$(PKG_GM_PROVIDES_ARGS)" $(PKG_GM_EXTRA_ARGS)
 DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-gnome-support := -- -Vgs:Replaces="$(PKG_GS_REPLACES_ARGS)" -Vgs:Breaks="$(PKG_GS_BREAKS_ARGS)" -Vgs:Conflicts="$(PKG_GS_CONFLICTS_ARGS)" \
