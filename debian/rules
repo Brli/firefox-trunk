@@ -19,12 +19,12 @@ ifneq (,$(filter official aurora, $(BRANDING)))
 MOZ_BRANDING		:= unofficial
 endif
 endif
+MOZ_BRANDING_DIR 	:= $(MOZ_APP)/branding/$(MOZ_BRANDING)
 ifeq (official,$(BRANDING))
 MOZ_BRANDING_OPTION	:= --enable-official-branding
 else
 MOZ_BRANDING_OPTION	:= --with-branding=$(MOZ_BRANDING_DIR)
 endif
-MOZ_BRANDING_DIR 	:= $(MOZ_APP)/branding/$(MOZ_BRANDING)
 
 ifneq (,$(filter oneiric, $(DISTRIB_CODENAME)))
 MOZ_SEARCHPLUGIN_DIR	= $(MOZ_ADDONDIR)/distribution/searchplugins
@@ -95,17 +95,17 @@ endif
 endif
 
 ifneq (,$(filter lucid, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
+PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
 else
 ifneq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
+PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
 else
-PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support
+PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support
 endif
 endif
 
 ifeq (,$(filter lucid maverick, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_RECOMMENDS	:= $(MOZ_PKG_NAME)-globalmenu
+PKG_SUPPORT_RECOMMENDS	= $(MOZ_PKG_NAME)-globalmenu
 endif
 
 MOZ_OLD_SYSPREF_RELEASES := lucid maverick
