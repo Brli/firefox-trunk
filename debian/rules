@@ -11,11 +11,11 @@ MOZ_MOZDIR		:=
 MOZ_DEFAULT_APP_BASENAME := Firefox
 
 MOZ_BRANDING		:= $(CHANNEL)
-ifneq (,$(filter release beta, $(BRANDING)))
+ifneq (,$(filter release beta, $(MOZ_BRANDING)))
 MOZ_BRANDING		:= official
 endif
 ifeq (1,$(MOZ_BUILD_UNOFFICIAL))
-ifneq (,$(filter official aurora, $(BRANDING)))
+ifneq (,$(filter official aurora, $(MOZ_BRANDING)))
 MOZ_BRANDING		:= unofficial
 endif
 endif
