@@ -207,6 +207,13 @@ ifneq (,$(filter lucid maverick natty, $(DISTRIB_CODENAME)))
 GCONF_DEPENDS := libgconf2-4
 endif
 
+ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
+ifneq (,$(PKG_SUPPORT_RECOMMENDS))
+PKG_SUPPORT_RECOMMENDS += ", "
+endif
+PKG_SUPPORT_RECOMMENDS += $(MOZ_APP_NAME)-globalmenu
+endif
+
 DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME) := -- -Vapp:Replaces="$(PKG_APP_REPLACES_ARGS)" -Vapp:Breaks="$(PKG_APP_BREAKS_ARGS)" -Vapp:Conflicts="$(PKG_APP_CONFLICTS_ARGS)" \
 					     -Vapp:Provides="$(PKG_APP_PROVIDES_ARGS)" $(PKG_APP_EXTRA_ARGS) -Vsupport:Suggests="$(PKG_SUPPORT_SUGGESTS)" \
 					     -Vsupport:Recommends="$(PKG_SUPPORT_RECOMMENDS)"

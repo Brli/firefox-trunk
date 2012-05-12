@@ -104,10 +104,6 @@ PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support
 endif
 endif
 
-ifeq (,$(filter lucid maverick, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_RECOMMENDS	= $(MOZ_PKG_NAME)-globalmenu
-endif
-
 MOZ_OLD_SYSPREF_RELEASES := lucid maverick
 
 ifneq (,$(filter oneiric, $(DISTRIB_CODENAME)))
