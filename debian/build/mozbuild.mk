@@ -23,7 +23,7 @@ MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
 # The default value of "Name" in the application.ini, derived from the upstream build system
 # It is used for the profile location. This should be set manually if not provided
 # XXX: Needs the tarball unpacked, but we need this before the tarball is unpacked
-#MOZ_DEFAULT_APP_BASENAME ?= $(shell . $(DEB_BUILDDIR)/$(MOZ_APP)/confvars.sh; echo $$MOZ_APP_BASENAME)
+#MOZ_DEFAULT_APP_BASENAME ?= $(shell . $(DEB_SRCDIR)/$(MOZ_APP)/confvars.sh; echo $$MOZ_APP_BASENAME)
 # Equal to upstreams default MOZ_APP_NAME. If not a lower case version of the "Name"
 # in application.ini, then this should be manually overridden
 MOZ_DEFAULT_APP_NAME	?= $(MOZ_DEFAULT_APP_BASENAME_L)
@@ -71,7 +71,7 @@ DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
 
-MOZ_VERSION		= $(shell cat $(DEB_BUILDDIR)/$(MOZ_APP)/config/version.txt)
+MOZ_VERSION		= $(shell cat $(DEB_SRCDIR)/$(MOZ_APP)/config/version.txt)
 MOZ_LIBDIR		:= usr/lib/$(MOZ_APP_NAME)
 MOZ_INCDIR		:= usr/include/$(MOZ_APP_NAME)
 MOZ_IDLDIR		:= usr/share/idl/$(MOZ_APP_NAME)
@@ -144,7 +144,7 @@ ifeq (,$(filter lucid maverick natty oneiric precise, $(DISTRIB_CODENAME)))
 MOZ_ENABLE_BREAKPAD = 0
 endif
 
-MOZ_DISPLAY_NAME = $(shell cat $(DEB_BUILDDIR)/$(MOZ_BRANDING_DIR)/locales/en-US/brand.properties \
+MOZ_DISPLAY_NAME = $(shell cat $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/locales/en-US/brand.properties \
 		    | grep brandShortName | sed -e 's/brandShortName\=//')
 
 ifneq (,$(filter lucid maverick natty, $(DISTRIB_CODENAME)))
@@ -305,14 +305,14 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	$(MOZ_PYTHON) $(CURDIR)/$(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	$(MOZ_PYTHON) $(CURDIR)/$(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 $(appname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	$(MOZ_PYTHON) $(CURDIR)/$(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	$(MOZ_PYTHON) $(CURDIR)/$(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 %.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
 %.pc: %.pc.in debian/stamp-makefile-build
-	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
+	$(MOZ_PYTHON) $(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
 
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
@@ -520,6 +520,8 @@ endif
 enable-dist-patches:
 	perl $(CURDIR)/debian/build/enable-dist-patches.pl $(CODENAME) $(ARCH) $(CURDIR)/debian/patches/series
 
+RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1); fi)
+
 ifeq (1, $(NO_AUTO_REFRESH_LOCALES))
 clean:: post-auto-update-debian-control
 else
@@ -531,3 +533,4 @@ endif
 	rm -rf debian/l10n-mergedirs
 	rm -rf compare-locales
 	rm -f debian/$(MOZ_PKG_BASENAME).js
+	rm -rf $(MOZ_OBJDIR)
