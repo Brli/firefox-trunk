@@ -388,7 +388,7 @@ if __name__ == '__main__':
 
     checkout_source(options.repo, options.cache, options.tag)
 
-    need_moz = settings['need-moz'] if 'need-moz' in settings else False
+    need_moz = settings['need-post-checkout'] if 'need-post-checkout' in settings else False
     if need_moz:
         post_checkout(options.repo, options.cache, options.tag)
 
