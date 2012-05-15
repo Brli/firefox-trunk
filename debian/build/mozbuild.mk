@@ -229,7 +229,7 @@ DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-mozsymbols := -- -Vms:Replaces="$(PKG_MS_
 							-Vms:Provides="$(PKG_MS_PROVIDES_ARGS)" $(PKG_MS_EXTRA_ARGS)
 
 # Defines used for the Mozilla text preprocessor
-DEB_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
+MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
 		-DMOZ_INCDIR="$(MOZ_INCDIR)" -DMOZ_IDLDIR="$(MOZ_IDLDIR)" -DMOZ_VERSION="$(MOZ_VERSION)" -DDEB_HOST_ARCH="$(DEB_HOST_ARCH)" \
 		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_SYSTEM_DICTDIR="$(MOZ_SYSTEM_DICTDIR)" -DMOZ_PKG_NAME="$(MOZ_PKG_NAME)" \
 		-DMOZ_BRANDING_OPTION="$(MOZ_BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)" \
@@ -239,41 +239,41 @@ DEB_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -D
 		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DMOZ_DEFAULT_APP_BASENAME="$(MOZ_DEFAULT_APP_BASENAME)"
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
-DEB_DEFINES += -DMOZ_ENABLE_BREAKPAD
+MOZ_DEFINES += -DMOZ_ENABLE_BREAKPAD
 endif
 ifeq (1, $(MOZ_VALGRIND))
-DEB_DEFINES += -DMOZ_VALGRIND
+MOZ_DEFINES += -DMOZ_VALGRIND
 endif
 ifeq (1,$(MOZ_NO_OPTIMIZE))
-DEB_DEFINES += -DMOZ_NO_OPTIMIZE
+MOZ_DEFINES += -DMOZ_NO_OPTIMIZE
 endif
 ifeq (1,$(MOZ_WANT_UNIT_TESTS))
-DEB_DEFINES += -DMOZ_WANT_UNIT_TESTS
+MOZ_DEFINES += -DMOZ_WANT_UNIT_TESTS
 endif
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-DEB_DEFINES += -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)"
+MOZ_DEFINES += -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)"
 endif
 ifeq (1,$(MOZ_BUILD_PGO))
-DEB_DEFINES += -DMOZ_BUILD_PGO
+MOZ_DEFINES += -DMOZ_BUILD_PGO
 endif
 ifeq (1,$(MOZ_DEBUG))
-DEB_DEFINES += -DMOZ_DEBUG
+MOZ_DEFINES += -DMOZ_DEBUG
 endif
 ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
-DEB_DEFINES += -DMOZ_ENABLE_GLOBALMENU
+MOZ_DEFINES += -DMOZ_ENABLE_GLOBALMENU
 endif
 ifeq (official, $(BRANDING))
-DEB_DEFINES += -DMOZ_OFFICIAL_BRANDING
+MOZ_DEFINES += -DMOZ_OFFICIAL_BRANDING
 endif
 ifeq (,$(filter $(MOZ_OLD_SYSPREF_RELEASES), $(DISTRIB_CODENAME)))
-DEB_DEFINES += -DMOZ_NEW_SYSPREF
+MOZ_DEFINES += -DMOZ_NEW_SYSPREF
 endif
 ifeq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
-DEB_DEFINES += -DMOZ_FREEDESKTOP_ACTIONS
+MOZ_DEFINES += -DMOZ_FREEDESKTOP_ACTIONS
 endif
 ifneq (,$(filter lucid maverick natty oneiric precise, $(DISTRIB_CODENAME)))
 ifneq (,$(filter armel,$(DEB_HOST_ARCH)))
-DEB_DEFINES += -DMOZ_ENABLE_THUMB
+MOZ_DEFINES += -DMOZ_ENABLE_THUMB
 endif
 endif
 
@@ -281,20 +281,17 @@ DEBIAN_EXECUTABLES = $(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/$(MOZ_PKG_BASENAME).sh \
 		     $(NULL)
 
 pkgname_subst_files = \
-	debian/$(MOZ_PKG_BASENAME).sh \
-	debian/apport/blacklist \
-	debian/apport/native-origins \
-	debian/apport/source_$(MOZ_PKG_NAME).py \
 	debian/config/mozconfig \
 	$(MOZ_PKGNAME_SUBST_FILES) \
 	$(NULL)
 
 $(foreach pkg, $(MOZ_PKG_NAME) $(MOZ_PKG_NAME)-gnome-support $(MOZ_PKG_NAME)-globalmenu $(MOZ_PKG_NAME)-dev $(MOZ_PKG_NAME)-dbg $(MOZ_PKG_NAME)-mozsymbols, \
-	$(foreach dhfile, install dirs links manpages postinst preinst postrm prerm lintian-overrides, $(eval pkgname_subst_files += debian/$(pkg).$(dhfile))))
+	$(foreach dhfile, install dirs links manpages postinst preinst postrm prerm lintian-overrides, $(eval pkgname_subst_files += \
+	$(shell if [ -f $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),debian/$(pkg).$(dhfile).in) ]; then \
+		echo debian/$(pkg).$(dhfile); fi))))
 
 appname_subst_files = \
 	debian/$(MOZ_APP_NAME).desktop \
-	debian/$(MOZ_APP_NAME).1 \
 	$(MOZ_APPNAME_SUBST_FILES) \
 	$(NULL)
 
@@ -313,25 +310,15 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@perl debian/build/dump-langpack-control-entries.pl -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
 	@sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
-$(foreach file, $(pkgname_subst_files), $(eval pkgname_subst_files_deps += \
-	$(shell if [ -f $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in) ]; then echo $(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in); fi)))
-$(pkgname_subst_files): $(pkgname_subst_files_deps)
-	@if [ -e $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) ] ; then \
-		$(MOZ_PYTHON) $(CURDIR)/$(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" \
-			$(DEB_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@ ; \
-	fi
+$(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
+	$(MOZ_PYTHON) $(CURDIR)/$(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
-$(foreach file, $(appname_subst_files), $(eval appname_subst_files_deps += \
-	$(shell if [ -f $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in) ]; then echo $(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in); fi)))
-$(appname_subst_files): $(appname_subst_files_deps)
-	@if [ -e $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) ] ; then \
-		$(MOZ_PYTHON) $(CURDIR)/$(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" \
-			$(DEB_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@ ; \
-	fi
+$(appname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
+	$(MOZ_PYTHON) $(CURDIR)/$(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 %.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
 %.pc: %.pc.in debian/stamp-makefile-build
-	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(DEB_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
+	$(MOZ_PYTHON) $(DEB_BUILDDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
 
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
