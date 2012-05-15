@@ -37,8 +37,6 @@ DEB_BUILD_GNU_TYPE	:= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_ARCH		:= $(shell dpkg-architecture -qDEB_HOST_ARCH)
 DEB_HOST_GNU_CPU	:= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
 DEB_HOST_GNU_SYSTEM	:= $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
-# Other things which should be defined before including the CDBS rules
-DEB_TAR_SRCDIR		:= mozilla
 
 DISTRIB_VERSION_MAJOR 	:= $(shell lsb_release -s -r | cut -d '.' -f 1)
 DISTRIB_VERSION_MINOR 	:= $(shell lsb_release -s -r | cut -d '.' -f 2)
@@ -47,10 +45,6 @@ DISTRIB_CODENAME	:= $(shell lsb_release -s -c)
 # We need this to execute before the debian/control target gets called
 clean:: pre-auto-update-debian-control
 
-# We need this to run before apply-patches
-post-patches:: enable-dist-patches
-
--include /usr/share/cdbs/1/rules/tarball.mk
 -include /usr/share/cdbs/1/rules/debhelper.mk
 -include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 -include /usr/share/cdbs/1/class/makefile.mk
@@ -431,7 +425,7 @@ common-binary-predeb-arch::
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
-pre-build:: $(pkgname_subst_files) $(appname_subst_files)
+pre-build:: $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
 	@cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
 
 	@mkdir -p $(DEB_SRCDIR)/extensions/globalmenu
@@ -455,26 +449,21 @@ real-refresh-supported-locales:
 	@echo "****************************************"
 	@echo ""
 
-	@if [ ! -f $(CURDIR)/upstream-shipped-locales ] ; \
+	@if [ ! -f $(CURDIR)/$(MOZ_APP)/locales/shipped-locales ] ; \
 	then \
 		if [ ! -z $(TARBALL) ] ; \
 		then \
-			tarball_opts="-o $(TARBALL)" ; \
-		else \
-			tarball_opts="" ; \
-		fi ; \
-		python debian/build/extract-file.py -d $(CURDIR) $$tarball_opts upstream-shipped-locales ; \
-		touch $(CURDIR)/upstream-shipped-locales.stamp ; \
+			python debian/build/extract-file.py -o $(CURDIR)/.upstream-shipped-locales -t $(TARBALL) -i $(MOZ_APP)/locales/shipped-locales ; \
+		fi \
+	else \
+		cp $(CURDIR)/$(MOZ_APP)/locales/shipped-locales $(CURDIR)/.upstream-shipped-locales ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/upstream-shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 else
-	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/upstream-shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 endif
-	@if [ -f $(CURDIR)/upstream-shipped-locales.stamp ] ; \
-	then \
-		rm -f $(CURDIR)/upstream-shipped-locales $(CURDIR)/upstream-shipped-locales.stamp ; \
-	fi
+	@rm -f $(CURDIR)/.upstream-shipped-locales
 	
 
 pre-auto-refresh-supported-locales:

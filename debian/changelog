@@ -52,8 +52,13 @@ firefox-trunk (15.0~a1~hg20120424r92149-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/create-tarball.py
     - update debian/build/get-orig-source.mk
     - add debian/config/tarball.conf
+  * Goodbye embedded tarball, and our use of tarball.mk!
+    - update debian/build/create-tarball.py
+    - update debian/build/extract-file.py
+    - update debian/build/get-orig-source.mk
+    - update debian/build/mozbuild.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 11 May 2012 16:52:21 -0700
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 15 May 2012 19:22:06 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
