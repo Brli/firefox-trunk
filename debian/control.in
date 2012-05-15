@@ -44,7 +44,7 @@ Depends: lsb-release,
 	${misc:Depends},
 	${shlibs:Depends}
 Recommends: xul-ext-ubufox,
-	@MOZ_PKG_NAME@-globalmenu,
+	${support:Recommends},
 	libcanberra0
 Provides: www-browser,
 	iceweasel,
