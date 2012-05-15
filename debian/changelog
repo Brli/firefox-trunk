@@ -57,8 +57,10 @@ firefox-trunk (15.0~a1~hg20120515r93974-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/extract-file.py
     - update debian/build/get-orig-source.mk
     - update debian/build/mozbuild.mk
+  * Use xz compression for tarball
+    - update debian/build/create-tarball.py
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 15 May 2012 19:47:59 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 15 May 2012 21:41:39 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
