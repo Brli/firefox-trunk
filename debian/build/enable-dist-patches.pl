@@ -47,8 +47,13 @@ $cleanup && do {
   $file = shift;
 };
 
-open(I, $file) || do {
-  print "Usage: $0 dist series_file\n";
+$cleanup && do {
+  (-e "$file.in") && do unlink($file);
+  exit(0);
+};
+
+open(I, "$file.in") || do {
+  print STDERR "Can't open $file.in: $!\n";
   exit(1);
 };
 open(O, "> $file.new") || do {
@@ -59,10 +64,9 @@ my $line;
 while (defined ($line = <I>)) {
   $line =~ m/^#\@(.*)\@\s*(.*)/ && do {
     my ($c, $p) = ($1, $2);
-    print O $line;
     my @cs = split(':', $c);
-    my $matches = not $cleanup;
-    $matches && do {
+    my $matches = 1;
+    do {
       foreach my $condition (@cs) {
         $condition =~ m/^DIST\=(.*)/ && do {
           my $v = $1;
@@ -87,9 +91,8 @@ while (defined ($line = <I>)) {
     last unless defined $line;
     redo unless $line eq "$p\n";
     1;
-  } ||
-  do {
-    print O $line;
+  } || do {
+    $line =~ m/^#(.*)/ || do print O $line;
   };
 }
 close I;

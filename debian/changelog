@@ -52,6 +52,14 @@ firefox-trunk (15.0~a1~hg20120515r93974-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/create-tarball.py
     - update debian/build/get-orig-source.mk
     - add debian/config/tarball.conf
+  * Switch to source format 3.0
+    - add debian/source/format
+    - add debian/source/options to diff-ignore the .mozclient.mk file which
+      is created during clean, and to pass "--no-preparation"
+    - update debian/control
+    - update debian/build/enable-dist-patches.pl
+    - rename debian/patches/series => debian/patches/series.in so the source
+      isn't built with patches applied
   * Goodbye embedded tarball, and our use of tarball.mk!
     - update debian/build/create-tarball.py
     - update debian/build/extract-file.py
