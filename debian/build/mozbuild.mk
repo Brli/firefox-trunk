@@ -66,7 +66,7 @@ DEB_MAKE_EXTRA_ARGS	:=
 # These normally come from autotools.mk, which we no longer include (because we
 # don't want to run configure)
 DEB_MAKE_INSTALL_TARGET	:= install DESTDIR=$(CURDIR)/debian/tmp
-DEB_MAKE_CLEAN_TARGET	:= distclean
+DEB_MAKE_CLEAN_TARGET	:= cleansrcdir
 DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
