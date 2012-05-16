@@ -428,8 +428,8 @@ common-binary-predeb-arch::
 pre-build:: $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
 	@cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
 
-	@mkdir -p $(DEB_SRCDIR)/extensions/globalmenu
-	@(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/extensions/globalmenu && tar -xf -)
+	@mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
+	@(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
 ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
 	$(error "Need to set MOZ_DEFAULT_APP_BASENAME")
 endif
