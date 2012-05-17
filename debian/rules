@@ -8,7 +8,6 @@ MOZ_PKG_BASENAME	:= firefox
 MOZ_APP			:= browser
 MOZ_VENDOR		:= Mozilla
 MOZ_MOZDIR		:=
-MOZ_DEFAULT_APP_BASENAME := Firefox
 
 MOZ_BRANDING		:= $(CHANNEL)
 ifneq (,$(filter release beta, $(MOZ_BRANDING)))
