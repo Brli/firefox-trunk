@@ -143,7 +143,7 @@ endif
 MOZ_DISPLAY_NAME = $(shell cat $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/locales/en-US/brand.properties \
 		    | grep brandShortName | sed -e 's/brandShortName\=//')
 
-ifneq (,$(filter lucid maverick natty, $(DISTRIB_CODENAME)))
+ifeq (,$(filter 4.7, $(shell $(CC) -dumpversion)))
 MOZ_BUILD_PGO = 0
 endif
 
@@ -517,6 +517,9 @@ enable-dist-patches:
 	perl $(CURDIR)/debian/build/enable-dist-patches.pl $(CODENAME) $(ARCH) $(CURDIR)/debian/patches/series
 
 RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1); fi)
+
+echo-%:
+	@echo "$($*)"
 
 ifeq (1, $(NO_AUTO_REFRESH_LOCALES))
 clean:: post-auto-update-debian-control

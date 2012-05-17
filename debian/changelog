@@ -67,8 +67,11 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/create-tarball.py
   * Run the upstream cleansrcdir target during clean
     - update debian/build/mozbuild.mk
+  * Whitelist PGO on gcc 4.7 (the only one I've done a successful build
+    on so far)
+    - update debian/build/mozbuild.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 17 May 2012 16:25:41 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 17 May 2012 16:36:19 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
