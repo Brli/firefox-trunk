@@ -70,8 +70,12 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Whitelist PGO on gcc 4.7 (the only one I've done a successful build
     on so far)
     - update debian/build/mozbuild.mk
+  * Fix make-makefile test failure when the build directory contains
+    perl regexp control characters
+    - add debian/patches/make-makefile-test-fix.patch
+    - update debian/patches/series.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 17 May 2012 16:36:19 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 17 May 2012 18:09:53 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
