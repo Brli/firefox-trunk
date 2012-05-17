@@ -10,8 +10,6 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/apport/source_firefox.py.in
   * Handle line breaks in preference files
     - update debian/apport/source_firefox.py.in
-  * Disable crash reporter on quantal
-    - update debian/rules
   * Don't build with --enable-thumb2 on armel in Quantal
     - update debian/rules
     - update debian/config/mozconfig.in
@@ -70,7 +68,7 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Run the upstream cleansrcdir target during clean
     - update debian/build/mozbuild.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 16 May 2012 15:11:42 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 17 May 2012 16:25:41 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 

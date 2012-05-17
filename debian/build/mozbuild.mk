@@ -140,10 +140,6 @@ ifneq (Ubuntu, $(DISTRIB))
 MOZ_ENABLE_BREAKPAD = 0
 endif
 
-ifeq (,$(filter lucid maverick natty oneiric precise, $(DISTRIB_CODENAME)))
-MOZ_ENABLE_BREAKPAD = 0
-endif
-
 MOZ_DISPLAY_NAME = $(shell cat $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/locales/en-US/brand.properties \
 		    | grep brandShortName | sed -e 's/brandShortName\=//')
 
