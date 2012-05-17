@@ -56,7 +56,6 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - add debian/source/format
     - add debian/source/options to diff-ignore the .mozclient.mk file which
       is created during clean, and to pass "--no-preparation"
-    - update debian/control
     - update debian/build/enable-dist-patches.pl
     - rename debian/patches/series => debian/patches/series.in so the source
       isn't built with patches applied
