@@ -29,16 +29,6 @@ MOZ_DEFAULT_APP_NAME	?= $(MOZ_DEFAULT_APP_BASENAME_L)
 # Location for searchplugins
 MOZ_SEARCHPLUGIN_DIR	?= $(MOZ_LIBDIR)/distribution/searchplugins
 
-ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
-$(error "Need to set MOZ_DEFAULT_APP_BASENAME")
-endif
-ifeq (,$(MOZ_BRANDING_OPTION))
-$(error "Need to set MOZ_BRANDING_OPTION")
-endif
-ifeq (,$(MOZ_BRANDING_DIR))
-$(error "Need to set MOZ_BRANDING_DIR")
-endif
-
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
 DEB_HOST_GNU_TYPE	:= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
@@ -435,6 +425,16 @@ pre-build:: $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
 
 	@mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
 	@(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
+
+ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
+	$(error "Need to set MOZ_DEFAULT_APP_BASENAME")
+endif
+ifeq (,$(MOZ_BRANDING_OPTION))
+	$(error "Need to set MOZ_BRANDING_OPTION")
+endif
+ifeq (,$(MOZ_BRANDING_DIR))
+	$(error "Need to set MOZ_BRANDING_DIR")
+endif
 
 refresh-supported-locales: real-refresh-supported-locales debian/control
 
