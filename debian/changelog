@@ -74,8 +74,12 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     perl regexp control characters
     - add debian/patches/make-makefile-test-fix.patch
     - update debian/patches/series.in
+  * Fix weird build failure caused by running clean target without xutils-dev
+    installed, exposed by turning on PGO
+    - add debian/patches/fix-clean-with-pgo.patch
+    - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 17 May 2012 18:09:53 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 18 May 2012 03:19:27 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
