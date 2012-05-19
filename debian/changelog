@@ -76,8 +76,10 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
+  * pdf.js is no longer an extension
+    - update debian/firefox.install.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 19 May 2012 17:20:06 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 19 May 2012 17:26:24 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
