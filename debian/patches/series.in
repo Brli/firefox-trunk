@@ -16,5 +16,4 @@ autocomplete-theme-tweak.patch
 dont-include-hyphenation-patterns.patch
 #fix-build-failure-without-yarr-jit.patch
 dont-override-general-useragent-locale.patch
-make-makefile-test-fix.patch
 fix-clean-with-pgo.patch
