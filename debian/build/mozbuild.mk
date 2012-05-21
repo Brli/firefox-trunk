@@ -125,7 +125,12 @@ MOZ_BUILD_UNOFFICIAL = 1
 endif
 
 # enable the crash reporter only on i386, amd64 and armel
-ifeq (,$(filter i386 amd64 armel,$(DEB_HOST_ARCH)))
+ifeq (,$(filter lucid maverick natty oneiric,$(DISTRIB_CODENAME)))
+SUPPORTED_ARM = armhf
+else
+SUPPORTED_ARM = armel
+endif
+ifeq (,$(filter i386 amd64 $(SUPPORTED_ARM),$(DEB_HOST_ARCH)))
 MOZ_ENABLE_BREAKPAD = 0
 endif
 
