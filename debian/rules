@@ -54,6 +54,7 @@ ifneq (,$(filter oneiric, $(DISTRIB_CODENAME)))
 PLUGIN_BREAKS := flashplugin-installer (<= 11.2.202.233ubuntu0.11.10.3), adobe-flashplugin (<= 11.1.102.63-0oneiric1)
 PLUGIN_CONFLICTS := gcu-plugin (<= 0.12.8-1ubuntu3)
 else
+ifneq (,$(filter precise, $(DISTRIB_CODENAME)))
 PLUGIN_BREAKS := flashplugin-installer (<= 11.1.102.63ubuntu1), adobe-flashplugin (<= 11.1.102.63-0precise1)
 PLUGIN_CONFLICTS := gcu-plugin (<= 0.12.10-1ubuntu1)
 endif
@@ -61,8 +62,12 @@ endif
 endif
 endif
 endif
+endif
 
 ifeq (firefox, $(MOZ_PKG_NAME))
+ifeq (,$(filter lucid maverick natty oneiric precise, $(DISTRIB_CODENAME)))
+PKG_APP_REPLACES_ARGS	:= kubuntu-firefox-installer
+else
 ifeq (,$(filter lucid, $(DISTRIB_CODENAME)))
 PKG_APP_REPLACES_ARGS	:= abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer
 PKG_APP_BREAKS_ARGS	:= abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
