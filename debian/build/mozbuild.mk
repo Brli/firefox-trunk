@@ -216,6 +216,11 @@ DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-dbg := -- -Vdbg:Replaces="$(PKG_DBG_REPLA
 						 -Vdbg:Provides="$(PKG_DBG_PROVIDES_ARGS)" $(PKG_DBG_EXTRA_ARGS)
 DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-mozsymbols := -- -Vms:Replaces="$(PKG_MS_REPLACES_ARGS)" -Vms:Breaks="$(PKG_MS_BREAKS_ARGS)" -Vms:Conflicts="$(PKG_MS_CONFLICTS_ARGS)" \
 							-Vms:Provides="$(PKG_MS_PROVIDES_ARGS)" $(PKG_MS_EXTRA_ARGS)
+ifneq ($(MOZ_PKG_NAME),$(MOZ_APP_NAME))
+LOCALE_PACKAGES := $(shell cat $(CURDIR)/debian/control | grep "^Package:[[:space:]]*$(MOZ_PKG_NAME)-locale\-" | sed -n -e 's/^Package\:[[:space:]]*\([^[:space:]]*\)/\1/ p')
+$(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS_$(locale_package) := -- -Vlp:Conflicts="$(subst $(MOZ_PKG_NAME), $(MOZ_APP_NAME), $(locale_package))" \
+												    -Vlp:Provides="$(subst $(MOZ_PKG_NAME), $(MOZ_APP_NAME), $(locale_package))"))
+endif
 
 # Defines used for the Mozilla text preprocessor
 MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \

@@ -97,6 +97,7 @@ PKG_DBG_REPLACES_ARGS	:= firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg
 PKG_DBG_PROVIDES_ARGS	:= firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg
 endif
 endif
+endif
 
 ifneq (,$(filter lucid, $(DISTRIB_CODENAME)))
 PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
