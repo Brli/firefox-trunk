@@ -15,31 +15,6 @@ MOZ_WANT_UNIT_TESTS	?= 0
 MOZ_DEBUG		?= 0
 # 1 = Disable optimizations
 MOZ_NO_OPTIMIZE		?= 0
-# The binary name to use (derived from the package name by default, but can be overridden)
-MOZ_APP_NAME		?= $(MOZ_PKG_NAME)
-# The value of "Name" to use in application.ini, which the profile location is based on.
-# Derived from the desired MOZ_APP_NAME, but can be overridden
-MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
-# The default value of "Name" in the application.ini, derived from the upstream build system
-# It is used for the profile location. This should be set manually if not provided
-MOZ_DEFAULT_APP_BASENAME ?= $(shell . ./$(DEB_SRCDIR)/$(MOZ_APP)/confvars.sh; echo $$MOZ_APP_BASENAME)
-# Equal to upstreams default MOZ_APP_NAME. If not a lower case version of the "Name"
-# in application.ini, then this should be manually overridden
-MOZ_DEFAULT_APP_NAME	?= $(MOZ_DEFAULT_APP_BASENAME_L)
-# Location for searchplugins
-MOZ_SEARCHPLUGIN_DIR	?= $(MOZ_LIBDIR)/distribution/searchplugins
-
-# These are used for cross-compiling and for saving the configure script
-# from having to guess our platform (since we know it already)
-DEB_HOST_GNU_TYPE	:= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE	:= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-DEB_HOST_ARCH		:= $(shell dpkg-architecture -qDEB_HOST_ARCH)
-DEB_HOST_GNU_CPU	:= $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
-DEB_HOST_GNU_SYSTEM	:= $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
-
-DISTRIB_VERSION_MAJOR 	:= $(shell lsb_release -s -r | cut -d '.' -f 1)
-DISTRIB_VERSION_MINOR 	:= $(shell lsb_release -s -r | cut -d '.' -f 2)
-DISTRIB_CODENAME	:= $(shell lsb_release -s -c)
 
 # We need this to execute before the debian/control target gets called
 clean:: pre-auto-update-debian-control
@@ -53,11 +28,30 @@ MOZ_OBJDIR		:= $(DEB_BUILDDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
 
 # Define other variables used throughout the build
-# The package name
-MOZ_PKG_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+# The value of "Name" to use in application.ini, which the profile location is based on.
+# Derived from the desired MOZ_APP_NAME, but can be overridden
+MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
+# The default value of "Name" in the application.ini, derived from the upstream build system
+# It is used for the profile location. This should be set manually if not provided
+MOZ_DEFAULT_APP_BASENAME ?= $(shell . ./$(DEB_SRCDIR)/$(MOZ_APP)/confvars.sh; echo $$MOZ_APP_BASENAME)
+# Equal to upstreams default MOZ_APP_NAME. If not a lower case version of the "Name"
+# in application.ini, then this should be manually overridden
+MOZ_DEFAULT_APP_NAME	?= $(MOZ_DEFAULT_APP_BASENAME_L)
+# Location for searchplugins
+MOZ_SEARCHPLUGIN_DIR	?= $(MOZ_LIBDIR)/distribution/searchplugins
 
-MOZ_APP_BASENAME_L	= $(shell echo $(MOZ_APP_BASENAME) | tr A-Z a-z)
-MOZ_DEFAULT_APP_BASENAME_L = $(shell echo $(MOZ_DEFAULT_APP_BASENAME) | tr A-Z a-z)
+MOZ_APP_BASENAME_L	:= $(shell echo $(MOZ_APP_BASENAME) | tr A-Z a-z)
+MOZ_DEFAULT_APP_BASENAME_L := $(shell echo $(MOZ_DEFAULT_APP_BASENAME) | tr A-Z a-z)
+
+ifeq (,$(MOZ_APP))
+$(error "Need to set MOZ_APP")
+endif
+ifeq (,$(MOZ_APP_NAME))
+$(error "Need to set MOZ_APP_NAME")
+endif
+ifeq (,$(MOZ_PKG_NAME))
+$(error "Need to set MOZ_PKG_NAME")
+endif
 
 DEB_MAKE_MAKEFILE	:= client.mk
 # Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
@@ -70,7 +64,7 @@ DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
 
-MOZ_VERSION		= $(shell cat $(DEB_SRCDIR)/$(MOZ_APP)/config/version.txt)
+MOZ_VERSION		:= $(shell cat $(DEB_SRCDIR)/$(MOZ_APP)/config/version.txt)
 MOZ_LIBDIR		:= usr/lib/$(MOZ_APP_NAME)
 MOZ_INCDIR		:= usr/include/$(MOZ_APP_NAME)
 MOZ_IDLDIR		:= usr/share/idl/$(MOZ_APP_NAME)
@@ -94,9 +88,9 @@ DISTRIB 		:= $(shell lsb_release -i -s)
 
 NO_AUTO_REFRESH_LOCALES	?= 0
 
-CFLAGS			= -g
-CXXFLAGS		= -g
-LDFLAGS 		= $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
+CFLAGS			:= -g
+CXXFLAGS		:= -g
+LDFLAGS 		:= $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
 
 ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 MOZ_WANT_UNIT_TESTS = 0
@@ -226,9 +220,9 @@ ifneq ($(MOZ_PKG_NAME),$(MOZ_APP_NAME))
 $(foreach locale_package, $(LOCALE_PACKAGES), $(eval PKG_$(locale_package)_CONFLICTS_ARGS := $(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))))
 $(foreach locale_package, $(LOCALE_PACKAGES), $(eval PKG_$(locale_package)_PROVIDES_ARGS := $(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))))
 endif
-$(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS__$(locale_package) := -- -Vlp:Conflicts="$(PKG_$(locale_package)_PROVIDES_ARGS)" \
-												     -Vlp:Provides="$(PKG_$(locale_package)_PROVIDES_ARGS))" \
-												     $(PKG_$(locale_package)_EXTRA_ARGS))
+$(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS_$(locale_package) := -- -Vlp:Conflicts="$(PKG_$(locale_package)_PROVIDES_ARGS)" \
+												    -Vlp:Provides="$(PKG_$(locale_package)_PROVIDES_ARGS)" \
+												    $(PKG_$(locale_package)_EXTRA_ARGS)))
 
 # Defines used for the Mozilla text preprocessor
 MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
@@ -264,7 +258,7 @@ endif
 ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
 MOZ_DEFINES += -DMOZ_ENABLE_GLOBALMENU
 endif
-ifeq (official, $(BRANDING))
+ifeq (official, $(MOZ_BRANDING))
 MOZ_DEFINES += -DMOZ_OFFICIAL_BRANDING
 endif
 ifeq (,$(filter $(MOZ_OLD_SYSPREF_RELEASES), $(DISTRIB_CODENAME)))

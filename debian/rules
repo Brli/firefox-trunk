@@ -1,7 +1,6 @@
 #!/usr/bin/make -f
 
-DISTRIB_CODENAME	:= $(shell lsb_release -s -c)
-
+include $(CURDIR)/debian/build/mozvars.mk
 include $(CURDIR)/debian/config/branch.mk
 
 MOZ_PKG_BASENAME	:= firefox
@@ -100,12 +99,12 @@ endif
 endif
 
 ifneq (,$(filter lucid, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
+PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
 else
 ifneq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
+PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
 else
-PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support
+PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support
 endif
 endif
 
