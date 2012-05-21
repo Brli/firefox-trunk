@@ -218,8 +218,8 @@ DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-mozsymbols := -- -Vms:Replaces="$(PKG_MS_
 							-Vms:Provides="$(PKG_MS_PROVIDES_ARGS)" $(PKG_MS_EXTRA_ARGS)
 ifneq ($(MOZ_PKG_NAME),$(MOZ_APP_NAME))
 LOCALE_PACKAGES := $(shell cat $(CURDIR)/debian/control | grep "^Package:[[:space:]]*$(MOZ_PKG_NAME)-locale\-" | sed -n -e 's/^Package\:[[:space:]]*\([^[:space:]]*\)/\1/ p')
-$(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS_$(locale_package) := -- -Vlp:Conflicts="$(subst $(MOZ_PKG_NAME), $(MOZ_APP_NAME), $(locale_package))" \
-												    -Vlp:Provides="$(subst $(MOZ_PKG_NAME), $(MOZ_APP_NAME), $(locale_package))"))
+$(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS_$(locale_package) := -- -Vlp:Conflicts="$(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))" \
+												    -Vlp:Provides="$(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))"))
 endif
 
 # Defines used for the Mozilla text preprocessor
@@ -307,7 +307,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
 	$(MOZ_PYTHON) $(CURDIR)/$(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
-$(appname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
+$(appname_subst_files): $(foreach file,$(appname_subst_files),$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
 	$(MOZ_PYTHON) $(CURDIR)/$(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 %.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
