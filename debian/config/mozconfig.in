@@ -15,6 +15,11 @@ ac_add_options --with-distribution-id=com.ubuntu
 %%ifdef MOZ_ENABLE_THUMB
 ac_add_options --enable-thumb2
 %%endif
+%%if DEB_HOST_ARCH == armel
+%%ifndef MOZ_ENABLE_THUMB
+ac_add_options --disable-methodjit
+%%endif
+%%endif
 %%ifdef MOZ_NO_OPTIMIZE
 ac_add_options --disable-optimize
 %%else

@@ -85,8 +85,10 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/mozbuild.mk
   * Whitelist i386, amd64 and armhf for PGO
     - update debian/build/mozbuild.mk
+  * Build with --disable-methodjit on armel in quantal
+    - update debian/config/mozconfig.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 22 May 2012 02:15:01 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 22 May 2012 16:24:48 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
