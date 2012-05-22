@@ -17,3 +17,4 @@ dont-include-hyphenation-patterns.patch
 #fix-build-failure-without-yarr-jit.patch
 dont-override-general-useragent-locale.patch
 fix-clean-with-pgo.patch
+fix-makefile-substitution-bug.patch
