@@ -71,12 +71,9 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Whitelist PGO on gcc 4.7 (the only one I've done a successful build
     on so far)
     - update debian/build/mozbuild.mk
-  * Fix weird build failure caused by running clean target without xutils-dev
-    installed, exposed by turning on PGO
-    - add debian/patches/fix-clean-with-pgo.patch
-    - update debian/patches/series
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
+    - update debian/patches/ubuntu-codes-google.patch
   * pdf.js is no longer an extension
     - update debian/firefox.install.in
   * Drop the plugin / abrowser / firefox-branding replaces + breaks on quantal
@@ -94,7 +91,7 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Single quotes in preference values break the Apport hook
     - update debian/source_firefox.py.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 24 May 2012 11:23:00 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 24 May 2012 11:48:54 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 

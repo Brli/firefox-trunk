@@ -2,10 +2,10 @@ Description: Update the Google search URL
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
-Index: mozilla/l10n/bg/browser/searchplugins/google.xml
+Index: firefox-trunk-15.0~a1~hg20120524r94673/l10n/bg/browser/searchplugins/google.xml
 ===================================================================
---- mozilla.orig/l10n/bg/browser/searchplugins/google.xml	2012-03-16 18:20:42.000000000 +0000
-+++ mozilla/l10n/bg/browser/searchplugins/google.xml	2012-03-16 23:07:54.055000523 +0000
+--- firefox-trunk-15.0~a1~hg20120524r94673.orig/l10n/bg/browser/searchplugins/google.xml	2012-05-24 03:15:27.000000000 +0100
++++ firefox-trunk-15.0~a1~hg20120524r94673/l10n/bg/browser/searchplugins/google.xml	2012-05-24 11:42:29.409164874 +0100
 @@ -5,13 +5,11 @@
  <Image width="16" height="16">data:image/png;base64,AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADs9Pt8xetPtu9FsfFNtu%2BTzvb2%2B%2Fne4dFJeBw0egA%2FfAJAfAA8ewBBegAAAAD%2B%2FPtft98Mp%2BwWsfAVsvEbs%2FQeqvF8xO7%2F%2F%2F63yqkxdgM7gwE%2FggM%2BfQA%2BegBDeQDe7PIbotgQufcMufEPtfIPsvAbs%2FQvq%2Bfz%2Bf%2F%2B%2B%2FZKhR05hgBBhQI8hgBAgAI9ewD0%2B%2Fg3pswAtO8Cxf4Kw%2FsJvvYAqupKsNv%2B%2Fv7%2F%2FP5VkSU0iQA7jQA9hgBDgQU%2BfQH%2F%2Ff%2FQ6fM4sM4KsN8AteMCruIqqdbZ7PH8%2Fv%2Fg6Nc%2Fhg05kAA8jAM9iQI%2BhQA%2BgQDQu6b97uv%2F%2F%2F7V8Pqw3eiWz97q8%2Ff%2F%2F%2F%2F7%2FPptpkkqjQE4kwA7kAA5iwI8iAA8hQCOSSKdXjiyflbAkG7u2s%2F%2B%2F%2F39%2F%2F7r8utrqEYtjQE8lgA7kwA7kwA9jwA9igA9hACiWSekVRyeSgiYSBHx6N%2F%2B%2Fv7k7OFRmiYtlAA5lwI7lwI4lAA7kgI9jwE9iwI4iQCoVhWcTxCmb0K%2BooT8%2Fv%2F7%2F%2F%2FJ2r8fdwI1mwA3mQA3mgA8lAE8lAE4jwA9iwE%2BhwGfXifWvqz%2B%2Ff%2F58u%2Fev6Dt4tr%2B%2F%2F2ZuIUsggA7mgM6mAM3lgA5lgA6kQE%2FkwBChwHt4dv%2F%2F%2F728ei1bCi7VAC5XQ7kz7n%2F%2F%2F6bsZkgcB03lQA9lgM7kwA2iQktZToPK4r9%2F%2F%2F9%2F%2F%2FSqYK5UwDKZAS9WALIkFn%2B%2F%2F3%2F%2BP8oKccGGcIRJrERILYFEMwAAuEAAdX%2F%2Ff7%2F%2FP%2B%2BfDvGXQLIZgLEWgLOjlf7%2F%2F%2F%2F%2F%2F9QU90EAPQAAf8DAP0AAfMAAOUDAtr%2F%2F%2F%2F7%2B%2Fu2bCTIYwDPZgDBWQDSr4P%2F%2Fv%2F%2F%2FP5GRuABAPkAA%2FwBAfkDAPAAAesAAN%2F%2F%2B%2Fz%2F%2F%2F64g1C5VwDMYwK8Yg7y5tz8%2Fv%2FV1PYKDOcAAP0DAf4AAf0AAfYEAOwAAuAAAAD%2F%2FPvi28ymXyChTATRrIb8%2F%2F3v8fk6P8MAAdUCAvoAAP0CAP0AAfYAAO4AAACAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAA</Image>
  <Url type="application/x-suggestions+json" method="GET" template="http://suggestqueries.google.com/complete/search?output=firefox&amp;client=firefox&amp;hl={moz:locale}&amp;q={searchTerms}"/>
@@ -22,10 +22,10 @@ Index: mozilla/l10n/bg/browser/searchplugins/google.xml
  </Url>
  <SearchForm>http://www.google.com/firefox</SearchForm>
  </SearchPlugin>
-Index: mozilla/l10n/ja/browser/searchplugins/google-jp.xml
+Index: firefox-trunk-15.0~a1~hg20120524r94673/l10n/ja/browser/searchplugins/google-jp.xml
 ===================================================================
---- mozilla.orig/l10n/ja/browser/searchplugins/google-jp.xml	2012-03-16 18:29:57.000000000 +0000
-+++ mozilla/l10n/ja/browser/searchplugins/google-jp.xml	2012-03-16 23:07:54.055000523 +0000
+--- firefox-trunk-15.0~a1~hg20120524r94673.orig/l10n/ja/browser/searchplugins/google-jp.xml	2012-05-24 03:29:36.000000000 +0100
++++ firefox-trunk-15.0~a1~hg20120524r94673/l10n/ja/browser/searchplugins/google-jp.xml	2012-05-24 11:42:29.413164874 +0100
 @@ -6,16 +6,14 @@
  <Image width="16" height="16">data:image/png;base64,AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADs9Pt8xetPtu9FsfFNtu%2BTzvb2%2B%2Fne4dFJeBw0egA%2FfAJAfAA8ewBBegAAAAD%2B%2FPtft98Mp%2BwWsfAVsvEbs%2FQeqvF8xO7%2F%2F%2F63yqkxdgM7gwE%2FggM%2BfQA%2BegBDeQDe7PIbotgQufcMufEPtfIPsvAbs%2FQvq%2Bfz%2Bf%2F%2B%2B%2FZKhR05hgBBhQI8hgBAgAI9ewD0%2B%2Fg3pswAtO8Cxf4Kw%2FsJvvYAqupKsNv%2B%2Fv7%2F%2FP5VkSU0iQA7jQA9hgBDgQU%2BfQH%2F%2Ff%2FQ6fM4sM4KsN8AteMCruIqqdbZ7PH8%2Fv%2Fg6Nc%2Fhg05kAA8jAM9iQI%2BhQA%2BgQDQu6b97uv%2F%2F%2F7V8Pqw3eiWz97q8%2Ff%2F%2F%2F%2F7%2FPptpkkqjQE4kwA7kAA5iwI8iAA8hQCOSSKdXjiyflbAkG7u2s%2F%2B%2F%2F39%2F%2F7r8utrqEYtjQE8lgA7kwA7kwA9jwA9igA9hACiWSekVRyeSgiYSBHx6N%2F%2B%2Fv7k7OFRmiYtlAA5lwI7lwI4lAA7kgI9jwE9iwI4iQCoVhWcTxCmb0K%2BooT8%2Fv%2F7%2F%2F%2FJ2r8fdwI1mwA3mQA3mgA8lAE8lAE4jwA9iwE%2BhwGfXifWvqz%2B%2Ff%2F58u%2Fev6Dt4tr%2B%2F%2F2ZuIUsggA7mgM6mAM3lgA5lgA6kQE%2FkwBChwHt4dv%2F%2F%2F728ei1bCi7VAC5XQ7kz7n%2F%2F%2F6bsZkgcB03lQA9lgM7kwA2iQktZToPK4r9%2F%2F%2F9%2F%2F%2FSqYK5UwDKZAS9WALIkFn%2B%2F%2F3%2F%2BP8oKccGGcIRJrERILYFEMwAAuEAAdX%2F%2Ff7%2F%2FP%2B%2BfDvGXQLIZgLEWgLOjlf7%2F%2F%2F%2F%2F%2F9QU90EAPQAAf8DAP0AAfMAAOUDAtr%2F%2F%2F%2F7%2B%2Fu2bCTIYwDPZgDBWQDSr4P%2F%2Fv%2F%2F%2FP5GRuABAPkAA%2FwBAfkDAPAAAesAAN%2F%2F%2B%2Fz%2F%2F%2F64g1C5VwDMYwK8Yg7y5tz8%2Fv%2FV1PYKDOcAAP0DAf4AAf0AAfYEAOwAAuAAAAD%2F%2FPvi28ymXyChTATRrIb8%2F%2F3v8fk6P8MAAdUCAvoAAP0CAP0AAfYAAO4AAACAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAA</Image>
  <Url type="application/x-suggestions+json" method="GET" template="http://suggestqueries.google.com/complete/search?output=firefox&amp;client=firefox&amp;hl=ja&amp;qu={searchTerms}"/><!-- suggestqueries.google.co.jp doesn't exist and suggestqueries.google.com can handle Japanese too -->
@@ -45,10 +45,10 @@ Index: mozilla/l10n/ja/browser/searchplugins/google-jp.xml
  </Url>
  <SearchForm>http://www.google.co.jp/</SearchForm>
  </SearchPlugin>
-Index: mozilla/l10n/en-GB/browser/searchplugins/google-en-GB.xml
+Index: firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-GB/browser/searchplugins/google-en-GB.xml
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/l10n/en-GB/browser/searchplugins/google-en-GB.xml	2012-03-16 23:07:54.059000523 +0000
++++ firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-GB/browser/searchplugins/google-en-GB.xml	2012-05-24 11:42:29.413164874 +0100
 @@ -0,0 +1,16 @@
 +<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
 +<ShortName>Google</ShortName>
@@ -66,10 +66,10 @@ Index: mozilla/l10n/en-GB/browser/searchplugins/google-en-GB.xml
 +</Url>
 +<SearchForm>http://www.google.com/</SearchForm>
 +</SearchPlugin>
-Index: mozilla/l10n/en-GB/browser/searchplugins/list.txt
+Index: firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-GB/browser/searchplugins/list.txt
 ===================================================================
---- mozilla.orig/l10n/en-GB/browser/searchplugins/list.txt	2012-03-16 18:22:43.000000000 +0000
-+++ mozilla/l10n/en-GB/browser/searchplugins/list.txt	2012-03-16 23:07:54.059000523 +0000
+--- firefox-trunk-15.0~a1~hg20120524r94673.orig/l10n/en-GB/browser/searchplugins/list.txt	2012-05-24 03:21:42.000000000 +0100
++++ firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-GB/browser/searchplugins/list.txt	2012-05-24 11:42:29.413164874 +0100
 @@ -2,6 +2,6 @@
  bing
  chambers-en-GB
@@ -78,10 +78,10 @@ Index: mozilla/l10n/en-GB/browser/searchplugins/list.txt
 +google-en-GB
  wikipedia
  yahoo-en-GB
-Index: mozilla/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml
+Index: firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mozilla/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml	2012-03-16 23:07:54.059000523 +0000
++++ firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml	2012-05-24 11:42:29.413164874 +0100
 @@ -0,0 +1,16 @@
 +<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
 +<ShortName>Google</ShortName>
@@ -99,10 +99,10 @@ Index: mozilla/l10n/en-ZA/browser/searchplugins/google-en-ZA.xml
 +</Url>
 +<SearchForm>http://www.google.com/</SearchForm>
 +</SearchPlugin>
-Index: mozilla/l10n/en-ZA/browser/searchplugins/list.txt
+Index: firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-ZA/browser/searchplugins/list.txt
 ===================================================================
---- mozilla.orig/l10n/en-ZA/browser/searchplugins/list.txt	2012-03-16 18:22:54.000000000 +0000
-+++ mozilla/l10n/en-ZA/browser/searchplugins/list.txt	2012-03-16 23:07:54.059000523 +0000
+--- firefox-trunk-15.0~a1~hg20120524r94673.orig/l10n/en-ZA/browser/searchplugins/list.txt	2012-05-24 03:21:51.000000000 +0100
++++ firefox-trunk-15.0~a1~hg20120524r94673/l10n/en-ZA/browser/searchplugins/list.txt	2012-05-24 11:42:29.413164874 +0100
 @@ -1,6 +1,6 @@
  amazondotcom
  bing
@@ -111,11 +111,14 @@ Index: mozilla/l10n/en-ZA/browser/searchplugins/list.txt
 +google-en-ZA
  wikipedia
  yahoo
-Index: mozilla/browser/locales/en-US/searchplugins/google.xml
+Index: firefox-trunk-15.0~a1~hg20120524r94673/browser/locales/en-US/searchplugins/google.xml
 ===================================================================
---- mozilla.orig/browser/locales/en-US/searchplugins/google.xml	2012-03-16 18:11:47.000000000 +0000
-+++ mozilla/browser/locales/en-US/searchplugins/google.xml	2012-03-16 23:09:48.454998490 +0000
-@@ -1,13 +1,5 @@
+--- firefox-trunk-15.0~a1~hg20120524r94673.orig/browser/locales/en-US/searchplugins/google.xml	2012-05-24 03:04:36.000000000 +0100
++++ firefox-trunk-15.0~a1~hg20120524r94673/browser/locales/en-US/searchplugins/google.xml	2012-05-24 11:44:59.981159618 +0100
+@@ -2,16 +2,8 @@
+    - License, v. 2.0. If a copy of the MPL was not distributed with this
+    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+ 
 -#define GOOGLE_PARAMS <Param name="q" value="{searchTerms}"/><Param name="ie" value="utf-8"/><Param name="oe" value="utf-8"/><Param name="aq" value="t"/><Param name="rls" value="{moz:distributionID}:{moz:locale}:{moz:official}"/>
 -#if MOZ_UPDATE_CHANNEL == beta
 -#define GOOGLE_CLIENT_PARAM <MozParam name="client" condition="defaultEngine" trueValue="firefox-beta" falseValue="firefox"/>
@@ -131,7 +134,7 @@ Index: mozilla/browser/locales/en-US/searchplugins/google.xml
  <SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
  <ShortName>Google</ShortName>
  <Description>Google Search</Description>
-@@ -17,18 +9,7 @@
+@@ -21,18 +13,7 @@
  <Url type="text/html" method="GET" template="https://www.google.com/search">
  #expand   __GOOGLE_PARAMS__
  #expand   __GOOGLE_CLIENT_PARAM__
@@ -151,10 +154,10 @@ Index: mozilla/browser/locales/en-US/searchplugins/google.xml
  </Url>
  <SearchForm>https://www.google.com/</SearchForm>
  </SearchPlugin>
-Index: mozilla/l10n/ku/browser/searchplugins/google-ku.xml
+Index: firefox-trunk-15.0~a1~hg20120524r94673/l10n/ku/browser/searchplugins/google-ku.xml
 ===================================================================
---- mozilla.orig/l10n/ku/browser/searchplugins/google-ku.xml	2012-03-16 18:32:26.000000000 +0000
-+++ mozilla/l10n/ku/browser/searchplugins/google-ku.xml	2012-03-16 23:07:54.059000523 +0000
+--- firefox-trunk-15.0~a1~hg20120524r94673.orig/l10n/ku/browser/searchplugins/google-ku.xml	2012-05-24 03:32:01.000000000 +0100
++++ firefox-trunk-15.0~a1~hg20120524r94673/l10n/ku/browser/searchplugins/google-ku.xml	2012-05-24 11:42:29.413164874 +0100
 @@ -1,13 +1,5 @@
 -#define GOOGLE_PARAMS <Param name="q" value="{searchTerms}"/><Param name="ie" value="utf-8"/><Param name="oe" value="utf-8"/><Param name="aq" value="t"/><Param name="hl" value="en"/><Param name="rls" value="{moz:distributionID}:{moz:locale}:{moz:official}"/>
 -#if MOZ_UPDATE_CHANNEL == beta
