@@ -706,7 +706,7 @@ class Prefs:
             elif state.state == Prefs.STATE_PARSE_STRING:
                 if c == '\\':
                     state.state = Prefs.STATE_PARSE_ESC_SEQ
-                elif c == '"' or c == '\'':
+                elif c == '"':
                     state.state = state.next_state
                     state.next_state = Prefs.STATE_READY
                 else:

@@ -91,8 +91,10 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     variable substitution issue, which was causing some objects to be built with
     the wrong compiler flags, resulting in dump_syms crashing (LP: #1002590)
     - add debian/patches/fix-makefile-substitution-bug.patch
+  * Single quotes in preference values break the Apport hook
+    - update debian/source_firefox.py.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 22 May 2012 17:32:24 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 24 May 2012 11:23:00 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
