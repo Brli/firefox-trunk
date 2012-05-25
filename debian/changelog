@@ -2,7 +2,7 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream snapshot v15.0 A1 HG20120515R93974
 
-  * Update globalmenu-extension to 3.2.4 prerelease r338
+  * Update globalmenu-extension to 3.2.4 prerelease r339
   * Fix LP: #993273 - Exception thrown in Apport hook with preferences
     which have empty values
     - update debian/apport/source_firefox.py.in
@@ -91,7 +91,7 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Single quotes in preference values break the Apport hook
     - update debian/source_firefox.py.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 24 May 2012 11:48:54 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 25 May 2012 21:55:41 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 

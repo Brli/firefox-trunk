@@ -37,7 +37,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <nsDebug.h>
-#include <nsIXBLService.h>
 #include <nsIAtom.h>
 #include <nsIDOMEvent.h>
 #include <nsIDOMMouseEvent.h>
@@ -53,6 +52,9 @@
 #include <nsIScriptContext.h>
 #include <jsapi.h>
 #include <mozilla/dom/Element.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION < 15
+# include <nsIXBLService.h>
+#endif
 
 #include <glib-object.h>
 
@@ -438,6 +440,7 @@ uGlobalMenu::GetMenuPopupFromMenu(nsIContent **aResult)
 
   *aResult = nsnull;
 
+#if MOZILLA_BRANCH_MAJOR_VERSION < 15
   // Taken from widget/src/cocoa/nsMenuX.mm. Not sure if we need this
   nsIXBLService *xblService = uGlobalMenuService::GetXBLService();
   if (!xblService)
@@ -446,20 +449,32 @@ uGlobalMenu::GetMenuPopupFromMenu(nsIContent **aResult)
   PRInt32 dummy;
   nsCOMPtr<nsIAtom> tag;
   xblService->ResolveTag(mContent, &dummy, getter_AddRefs(tag));
+
   if (tag == uWidgetAtoms::menupopup) {
     *aResult = mContent;
     NS_ADDREF(*aResult);
     return;
   }
+#else
+  // FIXME: What are we meant to do here? Are there any scenario's where this
+  //        is actually broken? (I guess a menu could have a binding that
+  //        extends a menupopup, but that doesn't seem to happen anywhere
+  //        by default)
+#endif
 
   PRUint32 count = mContent->GetChildCount();
 
   for (PRUint32 i = 0; i < count; i++) {
     PRInt32 dummy;
     nsIContent *child = mContent->GetChildAt(i);
+#if MOZILLA_BRANCH_MAJOR_VERSION < 15
     nsCOMPtr<nsIAtom> tag;
     xblService->ResolveTag(child, &dummy, getter_AddRefs(tag));
     if (tag == uWidgetAtoms::menupopup) {
+#else
+    // XXX: See comment above
+    if (child->Tag() == uWidgetAtoms::menupopup) {
+#endif
       *aResult = child;
       NS_ADDREF(*aResult);
       return;

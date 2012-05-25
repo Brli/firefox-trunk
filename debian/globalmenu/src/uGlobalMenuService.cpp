@@ -52,7 +52,9 @@
 #include <nsIImageToPixbuf.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch2.h>
-#include <nsIXBLService.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION < 15
+# include <nsIXBLService.h>
+#endif
 #include <nsIXPConnect.h>
 #include <prenv.h>
 
