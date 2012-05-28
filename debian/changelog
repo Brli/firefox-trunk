@@ -92,8 +92,10 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/source_firefox.py.in
   * Fix for NSS libs not being signed, breaking FIPS
     - update debian/build/mozbuild.mk
+  * Update StartupWMClass to the correct name
+    - update debian/firefox.desktop.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 28 May 2012 14:12:24 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 29 May 2012 00:11:45 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
