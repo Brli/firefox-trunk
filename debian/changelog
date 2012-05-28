@@ -90,8 +90,10 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - add debian/patches/fix-makefile-substitution-bug.patch
   * Single quotes in preference values break the Apport hook
     - update debian/source_firefox.py.in
+  * Fix for NSS libs not being signed, breaking FIPS
+    - update debian/build/mozbuild.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 25 May 2012 21:55:41 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 28 May 2012 14:12:24 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 

@@ -423,7 +423,7 @@ common-binary-post-install-arch::
 binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR):$$LD_LIBRARY_PATH \
-	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_PKG_NAME)$(MOZ_LIBDIR)/$(lib);)
+	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/$(lib);)
 
 common-binary-predeb-arch::
 	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
