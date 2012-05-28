@@ -94,6 +94,7 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/mozbuild.mk
   * Update StartupWMClass to the correct name
     - update debian/firefox.desktop.in
+    - update debian/rules
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 29 May 2012 00:11:45 +0100
 

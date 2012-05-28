@@ -121,6 +121,9 @@ ifneq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
 MOZ_DEFINES += -DMOZ_LIBXUL_PKGCONFIG
 endif
 
+WM_CLASS = $(shell echo $(MOZ_APP_NAME) | sed -n 's/\<./\U&/ p')
+MOZ_DEFINES += -DMOZ_WM_CLASS="$(WM_CLASS)"
+
 MOZ_PKGNAME_SUBST_FILES = \
 	debian/usr.bin.$(MOZ_PKG_NAME) \
 	debian/README.Debian \
