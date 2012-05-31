@@ -32,7 +32,9 @@ ac_add_options --enable-optimize="-g -O -freorder-blocks"
 %%ifdef MOZ_VALGRIND
 ac_add_options --disable-jemalloc
 ac_add_options --enable-valgrind
-mk_add_options MOZ_MAKE_FLAGS=-j4
+%%endif
+%%ifdef DEB_PARALLEL_JOBS
+mk_add_options MOZ_MAKE_FLAGS=-j@DEB_PARALLEL_JOBS@
 %%endif
 %%ifdef MOZ_WANT_UNIT_TESTS
 ac_add_options --enable-tests
