@@ -407,11 +407,11 @@ customize-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,
 customize-searchplugins-%: PKGNAME = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 customize-searchplugins-%: MANIFEST = $(firstword $(wildcard $(CURDIR)/debian/searchplugins/$(LANGUAGE)/list.txt) \
 					$(wildcard $(CURDIR)/debian/searchplugins/list.txt))
-customize-searchplugins-%: OVERRIDES = $(foreach override, $(foreach override, $(shell cat $(MANIFEST) | sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$/d;/.*/p}'), \
+customize-searchplugins-%: OVERRIDES = $(foreach override, $(foreach override, $(shell cat $(MANIFEST) | sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d;/.*/p}'), \
 								$(firstword $(wildcard $(CURDIR)/debian/searchplugins/$(LANGUAGE)/$(override).xml) \
 									$(wildcard $(CURDIR)/debian/searchplugins/en-US/$(override).xml))), \
 					$(if $(wildcard $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(override))), $(override)))
-customize-searchplugins-%: ADDITIONS = $(foreach addition, $(shell cat $(MANIFEST) | sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$/d;/.*/p}'), \
+customize-searchplugins-%: ADDITIONS = $(foreach addition, $(shell cat $(MANIFEST) | sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d;/.*/p}'), \
 						$(firstword $(wildcard $(CURDIR)/debian/searchplugins/$(LANGUAGE)/$(addition).xml) \
 							$(wildcard $(CURDIR)/debian/searchplugins/en-US/$(addition).xml)))
 customize-searchplugins-%:
