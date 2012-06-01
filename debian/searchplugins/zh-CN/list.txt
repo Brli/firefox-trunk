@@ -2,3 +2,6 @@
 amazondotcn.xml
 baidu.xml
 google*.xml
+
+[Additions]
+duckduckgo.xml
