@@ -111,8 +111,12 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series.in
     - update debian/build/mozbuild.mk
     - add debian/searchplugins/*
+  * defaults/preferences got renamed to defaults/pref again
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/apport/source_firefox.py.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Jun 2012 16:14:45 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Jun 2012 16:19:11 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
