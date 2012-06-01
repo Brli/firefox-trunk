@@ -1,6 +1,6 @@
 [Overrides]
-../en-GB/amazon-en-GB.xml
-google*.xml
+../en-GB/amazon-en-GB
+google*
 
 [Additions]
-duckduckgo.xml
+duckduckgo
