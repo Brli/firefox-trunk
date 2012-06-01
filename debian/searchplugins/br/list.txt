@@ -1,0 +1,3 @@
+[Overrides]
+../fr/amazon-france.xml
+google*.xml

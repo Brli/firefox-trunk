@@ -101,8 +101,18 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Drop some of the complex shell script for creating language packs
     - update debian/build/mozbuild.mk
     - update debian/build/get-xpi-id.py
+  * Drop searchplugin patches - these patches are an absolute pain to maintain,
+    as they seem to break frequently and we have to touch each localized
+    plugin. Instead, just keep our own copy of plugins we modify, and add
+    these in to the language packs at the end of the build process
+    - remove debian/patches/ubuntu-codes-google.patch
+    - remove debian/patches/ubuntu-codes-amazon.patch
+    - remove debian/patches/ubuntu-codes-baidu.patch
+    - update debian/patches/series.in
+    - update debian/build/mozbuild.mk
+    - add debian/searchplugins/*
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Jun 2012 01:51:20 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Jun 2012 16:14:45 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 

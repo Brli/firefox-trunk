@@ -1,0 +1,3 @@
+[Overrides]
+../en-GB/amazon-en-GB.xml
+google*.xml
