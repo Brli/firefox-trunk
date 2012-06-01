@@ -98,8 +98,11 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Support the "parallel" option in DEB_BUILD_OPTIONS
     - update debian/build/mozbuild.mk
     - update debian/config/mozconfig.in
+  * Drop some of the complex shell script for creating language packs
+    - update debian/build/mozbuild.mk
+    - update debian/build/get-xpi-id.py
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 31 May 2012 18:02:54 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Jun 2012 01:51:20 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 

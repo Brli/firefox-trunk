@@ -309,9 +309,9 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@echo "*****************************"
 	@echo ""
 
-	@sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.in > debian/control
-	@perl debian/build/dump-langpack-control-entries.pl -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
-	@sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
+	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.in > debian/control
+	perl debian/build/dump-langpack-control-entries.pl -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
+	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
 	$(MOZ_PYTHON) $(CURDIR)/$(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
@@ -336,34 +336,24 @@ compare-locales/scripts/compare-locales:
 	cp -r $(CURDIR)/debian/build/compare-locales $(CURDIR)
 	chmod +x $(CURDIR)/compare-locales/scripts/*
 
-make-langpack-xpis: debian/stamp-make-langpack-xpis
-debian/stamp-make-langpack-xpis: compare-locales/scripts/compare-locales
+LANGPACK_TARGETS := $(shell cat $(CURDIR)/debian/config/locales.shipped | sed 's/\#.*//' | sed '/^$$/d' | sed 's/:/,/')
+
+make-langpack-xpis: $(foreach target, $(LANGPACK_TARGETS), debian/stamp-make-langpack-xpi-$(target))
+debian/stamp-make-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
+debian/stamp-make-langpack-xpi-%: compare-locales/scripts/compare-locales
 	@echo ""
-	@echo "********************************"
-	@echo "* Building language pack xpi's *"
-	@echo "********************************"
+	@echo ""
+	@echo "* Building language pack xpi for $(LANGUAGE)"
 	@echo ""
 
-	rm -rf $(CURDIR)/debian/l10n-mergedirs
-	mkdir $(CURDIR)/debian/l10n-mergedirs
+	rm -rf $(CURDIR)/debian/l10n-mergedirs/$(LANGUAGE)
+	mkdir -p $(CURDIR)/debian/l10n-mergedirs/$(LANGUAGE)
 
 	@export PATH=$(CURDIR)/compare-locales/scripts/:$$PATH ; \
 	export PYTHONPATH=$(CURDIR)/compare-locales/lib ; \
 	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
-	while read line ; \
-	do \
-		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
-		if [ ! -z "$$line" ] ; \
-		then \
-			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
-			echo "" ; \
-			echo "" ; \
-			echo "* Building $${language}" ; \
-			echo "" ; \
-			$(MAKE) merge-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1 ; \
-			$(MAKE) langpack-$$language LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$$language || exit 1; \
-		fi \
-	done < $(CURDIR)/debian/config/locales.shipped
+		$(MAKE) merge-$(LANGUAGE) LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$(LANGUAGE) || exit 1 ; \
+		$(MAKE) langpack-$(LANGUAGE) LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$(LANGUAGE) || exit 1; \
 
 	touch $@
 
@@ -397,31 +387,23 @@ binary-post-install/$(MOZ_PKG_NAME)-dev::
 	rm -f debian/$(MOZ_PKG_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_PKG_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 
-common-binary-post-install-arch::
-	@echo ""
-	@echo "**********************************"
-	@echo "* Installing language pack xpi's *"
-	@echo "**********************************"
-	@echo ""
+install-langpack-xpis: $(foreach target, $(LANGPACK_TARGETS), install-langpack-%(target))
+install-langpack-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
+install-langpack-%: PKGNAME = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
+install-langpack-%: XPI_ID = $(shell python $(CURDIR)/debian/build/get-xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(LANGUAGE).langpack.xpi 2>/dev/null)
+install-langpack-%:
+ifeq (,$(XPI_ID))
+	$(error Could not get ID of $(MOZ_APP_NAME)-$(MOZ_VERSION).$(LANGUAGE).langpack.xpi)
+endif
+	@echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$(LANGUAGE).langpack.xpi to $(XPI_ID).xpi in to $(MOZ_PKG_NAME)-locale-$(PKGNAME)"
+	dh_installdirs -p$(MOZ_PKG_NAME)-locale-$(PKGNAME) $(MOZ_ADDONDIR)/extensions
+	cp $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(LANGUAGE).langpack.xpi \
+		$(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_ADDONDIR)/extensions/$(XPI_ID).xpi
+	dh_installdirs -p$(MOZ_PKG_NAME)-locale-$(PKGNAME) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)
+	cp -r $(CURDIR)/$(MOZ_DISTDIR)/xpi-stage/locale-$(LANGUAGE)/searchplugins/*.xml \
+		$(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/
 
-	@while read line ; \
-	do \
-		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
-		if [ ! -z "$$line" ] ; \
-		then \
-			language=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\1/'` ; \
-			pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
-			id=`python $(CURDIR)/debian/build/get-xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi` ; \
-			[ $$? -eq 0 ] || exit 1 ; \
-			echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi to $${id}.xpi in $(MOZ_PKG_NAME)-locale-$${pkgname}" ; \
-			dh_installdirs -p$(MOZ_PKG_NAME)-locale-$${pkgname} $(MOZ_ADDONDIR)/extensions ; \
-			cp $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$${language}.langpack.xpi \
-			  $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$${pkgname}/$(MOZ_ADDONDIR)/extensions/$${id}.xpi ; \
-			dh_installdirs -p$(MOZ_PKG_NAME)-locale-$${pkgname} $(MOZ_SEARCHPLUGIN_DIR)/locale/$${language} ; \
-			cp -r $(CURDIR)/$(MOZ_DISTDIR)/xpi-stage/locale-$${language}/searchplugins/*.xml \
-			  $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$${pkgname}/$(MOZ_SEARCHPLUGIN_DIR)/locale/$${language}/. ; \
-		fi \
-	done < $(CURDIR)/debian/config/locales.shipped
+common-binary-post-install-arch:: install-langpack-xpis
 
 binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
@@ -435,10 +417,10 @@ common-binary-predeb-arch::
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
 pre-build:: $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
-	@cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
+	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
 
-	@mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
-	@(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
+	mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
+	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
 
 ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
 	$(error "Need to set MOZ_DEFAULT_APP_BASENAME")
@@ -469,11 +451,11 @@ real-refresh-supported-locales:
 		cp $(CURDIR)/$(MOZ_APP)/locales/shipped-locales $(CURDIR)/.upstream-shipped-locales ; \
 	fi
 ifdef LANGPACK_O_MATIC
-	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 else
-	@perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
+	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 endif
-	@rm -f $(CURDIR)/.upstream-shipped-locales
+	rm -f $(CURDIR)/.upstream-shipped-locales
 	
 
 pre-auto-refresh-supported-locales:
