@@ -116,8 +116,11 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.links.in
     - update debian/apport/source_firefox.py.in
   * Add searchplugin for DuckDuckGo
+  * Fix LP: #1000820 - firefox-dev conflicts with xulrunner-1.9-dev for
+    people with the latter still installed
+    - update debian/control{,.in}
 
- -- Chris Coulson <chris.coulson@canonical.com>  Fri, 01 Jun 2012 18:55:01 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Sat, 02 Jun 2012 10:00:33 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 

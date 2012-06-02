@@ -108,6 +108,7 @@ Depends: ${shlibs:Depends},
 Provides: ${dev:Provides}
 Conflicts: xulrunner-2.0-dev,
 	xulrunner-1.9.2-dev,
+	xulrunner-1.9-dev,
 	${dev:Conflicts}
 Replaces: ${dev:Replaces}
 Description: Safe and easy web browser from Mozilla - development files
