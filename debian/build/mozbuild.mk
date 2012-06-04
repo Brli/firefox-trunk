@@ -17,7 +17,9 @@ MOZ_DEBUG		?= 0
 MOZ_NO_OPTIMIZE		?= 0
 
 # We need this to execute before the debian/control target gets called
-clean:: pre-auto-update-debian-control
+clean::
+	cp debian/control debian/control.old
+	touch debian/control.in
 
 -include /usr/share/cdbs/1/rules/debhelper.mk
 -include /usr/share/cdbs/1/rules/patchsys-quilt.mk
@@ -336,7 +338,7 @@ compare-locales/scripts/compare-locales:
 	cp -r $(CURDIR)/debian/build/compare-locales $(CURDIR)
 	chmod +x $(CURDIR)/compare-locales/scripts/*
 
-LANGPACK_TARGETS := $(shell cat $(CURDIR)/debian/config/locales.shipped | sed -n 's/\#.*//;/^$$/d;s/:/,/ p')
+LANGPACK_TARGETS = $(shell cat $(CURDIR)/debian/config/locales.shipped | sed -n 's/\#.*//;/^$$/d;s/:/,/ p')
 
 make-langpack-xpis: $(foreach target, $(LANGPACK_TARGETS), debian/stamp-make-langpack-xpi-$(target))
 debian/stamp-make-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
@@ -401,8 +403,6 @@ install-langpack-xpi-%:
 	cp -r $(CURDIR)/$(MOZ_DISTDIR)/xpi-stage/locale-$(LANGUAGE)/searchplugins/*.xml \
 		$(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/
 
-OVERRIDE_SEARCHPLUGIN = cp -f $(1) $(2);
-
 customize-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 customize-searchplugins-%: PKGNAME = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 customize-searchplugins-%: MANIFEST = $(firstword $(wildcard $(CURDIR)/debian/searchplugins/$(LANGUAGE)/list.txt) \
@@ -435,7 +435,7 @@ common-binary-predeb-arch::
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
-pre-build:: $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
+pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
 	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
 
 	mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
@@ -451,36 +451,51 @@ ifeq (,$(MOZ_BRANDING_DIR))
 	$(error "Need to set MOZ_BRANDING_DIR")
 endif
 
-refresh-supported-locales: real-refresh-supported-locales debian/control
+GET_FILE_CONTENTS_CMD=$(if $(wildcard $(1)),`cat $(1)`,$(if $(wildcard .tarball/$(MOZ_PKG_NAME)/$(1)),`cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(if $(TARBALL),`mkdir -p $(CURDIR)/.tarball; tar -Jxf $(TARBALL) -C $(CURDIR)/.tarball > /dev/null 2>&1; mv .tarball/$(MOZ_PKG_NAME)-* .tarball/$(MOZ_PKG_NAME); cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(error File $(1) not found))))
 
-real-refresh-supported-locales:
+refresh-supported-locales::
 	@echo ""
 	@echo "****************************************"
 	@echo "* Refreshing list of shipped languages *"
 	@echo "****************************************"
 	@echo ""
 
-	@if [ ! -f $(CURDIR)/$(MOZ_APP)/locales/shipped-locales ] ; \
-	then \
-		if [ ! -z $(TARBALL) ] ; \
-		then \
-			python debian/build/extract-file.py -o $(CURDIR)/.upstream-shipped-locales -t $(TARBALL) -i $(MOZ_APP)/locales/shipped-locales ; \
-		fi \
-	else \
-		cp $(CURDIR)/$(MOZ_APP)/locales/shipped-locales $(CURDIR)/.upstream-shipped-locales ; \
-	fi
+	$(shell echo "$(call GET_FILE_CONTENTS_CMD,browser/locales/shipped-locales)" > $(CURDIR)/.upstream-shipped-locales)
+
 ifdef LANGPACK_O_MATIC
 	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 else
 	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
 endif
 	rm -f $(CURDIR)/.upstream-shipped-locales
-	
 
-pre-auto-refresh-supported-locales:
+refresh-supported-locales:: debian/control
+ifneq (,$(wildcard debian/searchplugins))
+refresh-supported-locales:: refresh-shipped-searchplugins
+
+refresh-shipped-searchplugins::
+	$(shell echo "en-US:$(call GET_FILE_CONTENTS_CMD,$(MOZ_APP)/locales/en-US/searchplugins/list.txt)" | \
+		tr -d '\r' | tr '\n' ',' | sed 's/,$$/\n/' > $(CURDIR)/debian/searchplugins/upstream-list.txt.new)
+
+refresh-shipped-searchplugins:: $(foreach target, $(LANGPACK_TARGETS), refresh-shipped-searchplugins-$(target))
+	mv $(CURDIR)/debian/searchplugins/upstream-list.txt.new $(CURDIR)/debian/searchplugins/upstream-list.txt
+	rm -rf $(CURDIR)/.tarball
+
+refresh-shipped-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
+refresh-shipped-searchplugins-%:
+	$(shell echo "$(LANGUAGE):$(call GET_FILE_CONTENTS_CMD,l10n/$(LANGUAGE)/$(MOZ_APP)/searchplugins/list.txt)" | \
+		tr -d '\r' | tr '\n' ',' | sed 's/,$$/\n/' >> $(CURDIR)/debian/searchplugins/upstream-list.txt.new)
+endif
+refresh-supported-locales::
+	rm -rf $(CURDIR)/.tarball
+
+auto-refresh-supported-locales::
 	cp debian/config/locales.shipped debian/config/locales.shipped.old
+	$(if $(wildcard debian/searchplugins),cp debian/searchplugins/upstream-list.txt debian/searchplugins/upstream-list.txt.old)
 
-auto-refresh-supported-locales: pre-auto-refresh-supported-locales real-refresh-supported-locales
+auto-refresh-supported-locales:: refresh-supported-locales
+
+auto-refresh-supported-locales::
 	@if ! cmp -s debian/config/locales.shipped debian/config/locales.shipped.old ; \
 	then \
 		echo "" ; \
@@ -493,28 +508,38 @@ auto-refresh-supported-locales: pre-auto-refresh-supported-locales real-refresh-
 		echo "* langpack-o-matic, using \"LANGPACK_O_MATIC=/path/to/langpack-o-matic\"     *" ; \
 		echo "****************************************************************************" ; \
 		echo "" ; \
-		rm -f debian/config/locales.shipped.old ; \
+		mv debian/config/locales.shipped.old debian/config/locales.shipped ; \
 		exit 1 ; \
 	fi
 	rm -f debian/config/locales.shipped.old
 
-pre-auto-update-debian-control:
-	cp debian/control debian/control.old
-	touch debian/control.in
-
-post-auto-update-debian-control:
-	@if ! cmp -s debian/control debian/control.old ; \
+ifneq (,$(wildcard debian/searchplugins))
+auto-refresh-supported-locales:: $(foreach target, $(LANGPACK_TARGETS), post-refresh-shipped-searchplugins-$(target))
+post-refresh-shipped-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
+post-refresh-shipped-searchplugins-%:
+	@if [ `sed -n 's/\($(LANGUAGE)\:\)\(.*\)/\2/ p' debian/searchplugins/upstream-list.txt.old` != \
+	      `sed -n 's/\($(LANGUAGE)\:\)\(.*\)/\2/ p' debian/searchplugins/upstream-list.txt` ] ; \
 	then \
 		echo "" ; \
-		echo "*************************************************************************" ; \
-		echo "* debian/control file is out of date. Please refresh and try again      *" ; \
-		echo "* To refresh, run \"debian/rules debian/control\" in the source directory *" ; \
-		echo "*************************************************************************" ; \
+		echo "***********************************************************************************" ; \
+		echo "* List of shipped search plugins for $(LANGUAGE) is out of date" ; \
+		echo "* To refresh this, run \"debian/rules refresh-shipped-searchplugins\" in the source *" ; \
+		echo "* directory. If you are in bzr, you will need to pass the location of the         *" ; \
+		echo "* upstream tarball, using \"TARBALL=/path/to/tarball\". Once you have refreshed     *" ; \
+		echo "* this, please manually inspect the changes to make sure that the appropriate     *" ; \
+		echo "* customizations will be applied at build time                                    *" ; \
+		echo "***********************************************************************************" ; \
 		echo "" ; \
-		rm -f debian/control.old ; \
+		mv debian/searchplugins/upstream-list.txt.old debian/searchplugins/upstream-list.txt ; \
 		exit 1 ; \
 	fi
-	rm -f debian/control.old
+auto-refresh-supported-locales::
+	rm -f debian/searchplugins/upstream-list.txt.old
+endif
+
+ifneq (1, $(NO_AUTO_REFRESH_LOCALES))
+clean:: auto-refresh-supported-locales
+endif
 
 ifdef PATCHES_DIST
 CODENAME = $(PATCHES_DIST)
@@ -536,11 +561,19 @@ RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1);
 echo-%:
 	@echo "$($*)"
 
-ifeq (1, $(NO_AUTO_REFRESH_LOCALES))
-clean:: post-auto-update-debian-control
-else
-clean:: auto-refresh-supported-locales post-auto-update-debian-control
-endif
+clean::
+	@if ! cmp -s debian/control debian/control.old ; \
+	then \
+		echo "" ; \
+		echo "*************************************************************************" ; \
+		echo "* debian/control file is out of date. Please refresh and try again      *" ; \
+		echo "* To refresh, run \"debian/rules debian/control\" in the source directory *" ; \
+		echo "*************************************************************************" ; \
+		echo "" ; \
+		rm -f debian/control.old ; \
+		exit 1 ; \
+	fi
+	rm -f debian/control.old
 	perl $(CURDIR)/debian/build/enable-dist-patches.pl --clean $(CURDIR)/debian/patches/series
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*

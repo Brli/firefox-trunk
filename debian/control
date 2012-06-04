@@ -824,6 +824,16 @@ Description: Ukrainian language pack for Firefox
  This package contains Ukrainian translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-vi
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-vi-base
+Conflicts: ${lp:Conflicts}
+Provides: ${lp:Provides}
+Description: Vietnamese language pack for Firefox
+ This package contains Vietnamese translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-zh-hans
 Architecture: any
 Depends: ${misc:Depends}

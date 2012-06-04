@@ -119,8 +119,18 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Fix LP: #1000820 - firefox-dev conflicts with xulrunner-1.9-dev for
     people with the latter still installed
     - update debian/control{,.in}
+  * Refresh shipped locales
+    - update debian/config/locales.*
+    - update debian/control
+  * Fail the build if the list of upstream search plugins changes, to avoid
+    the case where new localized versions of a plugin are added and
+    we ship it without applying the same modifications we apply for other
+    locales
+    - remove debian/build/extract-file.py
+    - update debian/build/mozbuild.mk
+    - add debian/searchplugins/upstream-list.txt
 
- -- Chris Coulson <chris.coulson@canonical.com>  Sat, 02 Jun 2012 10:00:33 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 04 Jun 2012 02:16:20 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
