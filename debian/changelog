@@ -122,15 +122,17 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
   * Refresh shipped locales
     - update debian/config/locales.*
     - update debian/control
-  * Fail the build if the list of upstream search plugins changes, to avoid
-    the case where new localized versions of a plugin are added and
-    we ship it without applying the same modifications we apply for other
-    locales
+  * Get rid of pointless python script
     - remove debian/build/extract-file.py
     - update debian/build/mozbuild.mk
-    - add debian/searchplugins/upstream-list.txt
+  * Check that we have applied overrides to all search engines that we
+    think we should do, using some basic pattern matching, and fail the build
+    if the check thinks that overrides were not applied correctly
+    - add debian/build/check-search-overrides.pl
+    - update debian/build/mozbuild.mk
+    - add debian/searchplugins/overrides.json
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 04 Jun 2012 02:16:20 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 05 Jun 2012 19:59:28 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
