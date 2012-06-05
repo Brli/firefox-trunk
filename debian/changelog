@@ -1,6 +1,6 @@
-firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu1) quantal; urgency=low
 
-  * New upstream snapshot v15.0 A1 HG20120515R93974
+  * New upstream snapshot v15.0 A1 HG20120603R95688
 
   * Update globalmenu-extension to 3.2.4 prerelease r339
   * Fix LP: #993273 - Exception thrown in Apport hook with preferences
@@ -135,7 +135,7 @@ firefox-trunk (15.0~a1~hg20120515r93983-0ubuntu1) UNRELEASED; urgency=low
     - remove debian/patches/reload-new-plugins.patch
     - update debian/patches/series.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 05 Jun 2012 20:23:16 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 05 Jun 2012 21:55:09 +0100
 
 firefox-trunk (14.0~a1~hg20120424r92149-0ubuntu1) precise; urgency=low
 
