@@ -24,7 +24,6 @@ clean::
 -include /usr/share/cdbs/1/rules/debhelper.mk
 -include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 -include /usr/share/cdbs/1/class/makefile.mk
-include $(CURDIR)/debian/build/get-orig-source.mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
@@ -530,6 +529,16 @@ enable-dist-patches:
 	perl $(CURDIR)/debian/build/enable-dist-patches.pl $(CODENAME) $(ARCH) $(CURDIR)/debian/patches/series
 
 RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1); fi)
+
+get-orig-source: ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -a $(MOZ_APP)
+ifdef DEBIAN_TAG
+get-orig-source: ARGS += -t $(DEBIAN_TAG)
+endif
+ifdef LOCAL_BRANCH
+get-orig-source: ARGS += -c $(LOCAL_BRANCH)
+endif
+get-orig-source:
+	python $(CURDIR)/debian/build/create-tarball.py $(ARGS)
 
 echo-%:
 	@echo "$($*)"

@@ -358,7 +358,6 @@ if __name__ == '__main__':
     parser.add_option('-l', '--l10n-base-repo', dest='l10nbase', help='The base directory of the remote repositories to pull l10n data from')
     parser.add_option('-t', '--tag', dest='tag', help='Release tag to base the checkout on')
     parser.add_option('-n', '--name', dest='name', help='The package name')
-    parser.add_option('-s', '--settings', dest='settings', help='Settings file')
     parser.add_option('-a', '--application', dest='application', help='The application to build')
 
     (options, args) = parser.parse_args()
@@ -369,13 +368,10 @@ if __name__ == '__main__':
     if options.name == None:
         parser.error('Must specify a package name')
 
-    if options.settings == None:
-        parser.error('Must specify a settings file')
-
     if options.application == None:
         parser.error('Must specify an application')
 
-    fd = open(options.settings, 'r')
+    fd = open('debian/config/tarball.conf', 'r')
     settings = json.load(fd)
     fd.close()
 
