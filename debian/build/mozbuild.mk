@@ -477,7 +477,7 @@ refresh-supported-locales::
 	@echo "****************************************"
 	@echo ""
 
-	$(shell echo "$(call GET_FILE_CONTENTS_CMD,browser/locales/shipped-locales)" > $(CURDIR)/.upstream-shipped-locales)
+	$(shell echo "$(call GET_FILE_CONTENTS_CMD,$(MOZ_APP)/locales/shipped-locales)" > $(CURDIR)/.upstream-shipped-locales)
 
 	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales $(LPOM_OPT)
 	rm -f $(CURDIR)/.upstream-shipped-locales
