@@ -4,8 +4,16 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
   * Merge get-orig-source.mk in to mozbuild.mk
     - update debian/build/mozbuild.mk
     - remove debian/build/get-orig-source.mk
+  * Drop options for things which don't change from build scripts
+    - update debian/build/dump-langpack-control-entries.pl
+    - update debian/build/enable-dist-patches.pl
+    - update debian/build/mozbuild.mk
+    - update debian/build/refresh-supported-locales.pl
+  * Handle comments in locales.blacklist
+    - update debian/build/refresh-supported-locales.pl
+    - update debian/config/locales.blacklist
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Jun 2012 00:33:07 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Jun 2012 13:52:14 +0100
 
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu1) quantal; urgency=low
 

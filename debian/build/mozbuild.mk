@@ -311,7 +311,7 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@echo ""
 
 	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.in > debian/control
-	perl debian/build/dump-langpack-control-entries.pl -i $(CURDIR)/debian/config -t $(CURDIR)/debian > debian/control.tmp
+	perl debian/build/dump-langpack-control-entries.pl > debian/control.tmp
 	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
@@ -467,6 +467,9 @@ endif
 
 GET_FILE_CONTENTS_CMD=$(if $(wildcard $(1)),`cat $(1)`,$(if $(wildcard .tarball/$(MOZ_PKG_NAME)/$(1)),`cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(if $(TARBALL),`mkdir -p $(CURDIR)/.tarball; tar -Jxf $(TARBALL) -C $(CURDIR)/.tarball > /dev/null 2>&1; mv .tarball/$(MOZ_PKG_NAME)-* .tarball/$(MOZ_PKG_NAME); cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(error File $(1) not found))))
 
+ifdef LANGPACK_O_MATIC
+refresh-supported-locales:: LPOM_OPT = -l $(LANGPACK_O_MATIC)
+endif
 refresh-supported-locales::
 	@echo ""
 	@echo "****************************************"
@@ -476,11 +479,7 @@ refresh-supported-locales::
 
 	$(shell echo "$(call GET_FILE_CONTENTS_CMD,browser/locales/shipped-locales)" > $(CURDIR)/.upstream-shipped-locales)
 
-ifdef LANGPACK_O_MATIC
-	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -l $(LANGPACK_O_MATIC) -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
-else
-	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales -o $(CURDIR)/debian/config -b $(CURDIR)/debian/config/locales.blacklist
-endif
+	perl debian/build/refresh-supported-locales.pl -s $(CURDIR)/.upstream-shipped-locales $(LPOM_OPT)
 	rm -f $(CURDIR)/.upstream-shipped-locales
 
 refresh-supported-locales:: debian/control
@@ -526,7 +525,7 @@ ARCH = $(DEB_HOST_ARCH)
 endif
 
 enable-dist-patches:
-	perl $(CURDIR)/debian/build/enable-dist-patches.pl $(CODENAME) $(ARCH) $(CURDIR)/debian/patches/series
+	perl $(CURDIR)/debian/build/enable-dist-patches.pl $(CODENAME) $(ARCH)
 
 RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1); fi)
 
