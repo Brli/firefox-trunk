@@ -90,11 +90,11 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
     prepare_rm_conffile "${MOZ_PKG_NAME}" "/etc/${MOZ_PKG_NAME}/profile/chrome/userChrome-example.css"
     prepare_rm_conffile "${MOZ_PKG_NAME}" "/etc/${MOZ_PKG_NAME}/profile/chrome/userContent-example.css"
 
-%%ifdef MOZ_NEW_SYSPREF
+%%if DISTRIB_VERSION >= 1104
     prepare_mv_conffile "${MOZ_PKG_NAME}" "/etc/${MOZ_PKG_NAME}/pref/firefox.js"
 %%endif
 
-%%ifdef MOZ_NO_MORE_SYMLINKED_DIST
+%%if DISTRIB_VERSION >= 1204
     # ${LIBDIR}/distribution was a symlink in 11.10
     if [ -h ${MOZ_LIBDIR}/distribution ] ; then
         rm -f ${MOZ_LIBDIR}/distribution
@@ -102,7 +102,7 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
 %%endif
 
     # This used to be a symlink
-%%ifdef MOZ_SYMLINKED_DIST
+%%if DISTRIB_VERSION == 1110
     if [ -h ${MOZ_ADDONDIR}/distribution/searchplugins ]; then
         rm -f ${MOZ_ADDONDIR}/distribution/searchplugins
 %%else

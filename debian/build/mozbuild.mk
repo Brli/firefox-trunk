@@ -150,14 +150,14 @@ ifeq (,$(filter i386 amd64 armhf, $(DEB_HOST_ARCH)))
 MOZ_BUILD_PGO = 0
 endif
 
+ifneq (,$(wildcard $(CURDIR)/debian/globalmenu))
+HAVE_GLOBALMENU = 1
+endif
+
+ifeq (1,$(HAVE_GLOBALMENU))
 ifeq (,$(filter lucid maverick, $(DISTRIB_CODENAME)))
 MOZ_ENABLE_GLOBALMENU = 1
 endif
-
-ifeq (,$(filter lucid, $(DISTRIB_CODENAME)))
-MOZ_SYSTEM_DICTDIR = /usr/share/hunspell
-else
-MOZ_SYSTEM_DICTDIR = /usr/share/myspell/dicts
 endif
 
 export LDFLAGS
@@ -232,12 +232,13 @@ $(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS_$(lo
 # Defines used for the Mozilla text preprocessor
 MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
 		-DMOZ_INCDIR="$(MOZ_INCDIR)" -DMOZ_IDLDIR="$(MOZ_IDLDIR)" -DMOZ_VERSION="$(MOZ_VERSION)" -DDEB_HOST_ARCH="$(DEB_HOST_ARCH)" \
-		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_SYSTEM_DICTDIR="$(MOZ_SYSTEM_DICTDIR)" -DMOZ_PKG_NAME="$(MOZ_PKG_NAME)" \
+		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_PKG_NAME="$(MOZ_PKG_NAME)" \
 		-DMOZ_BRANDING_OPTION="$(MOZ_BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)" \
 		-DMOZ_ADDONDIR="$(MOZ_ADDONDIR)" -DMOZ_SDKDIR="$(MOZ_SDKDIR)" -DMOZ_DISTDIR="$(MOZ_DISTDIR)" -DMOZ_UPDATE_CHANNEL="$(CHANNEL)" \
 		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILEDIR="$(MOZ_PROFILEDIR)" \
 		-DMOZ_PKG_BASENAME="$(MOZ_PKG_BASENAME)" -DMOZ_DEFAULT_PROFILEDIR="$(MOZ_DEFAULT_PROFILEDIR)" \
-		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DMOZ_DEFAULT_APP_BASENAME="$(MOZ_DEFAULT_APP_BASENAME)"
+		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DMOZ_DEFAULT_APP_BASENAME="$(MOZ_DEFAULT_APP_BASENAME)" \
+		-DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)"
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 MOZ_DEFINES += -DMOZ_ENABLE_BREAKPAD
@@ -265,17 +266,6 @@ MOZ_DEFINES += -DMOZ_ENABLE_GLOBALMENU
 endif
 ifeq (official, $(MOZ_BRANDING))
 MOZ_DEFINES += -DMOZ_OFFICIAL_BRANDING
-endif
-ifeq (,$(filter $(MOZ_OLD_SYSPREF_RELEASES), $(DISTRIB_CODENAME)))
-MOZ_DEFINES += -DMOZ_NEW_SYSPREF
-endif
-ifeq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
-MOZ_DEFINES += -DMOZ_FREEDESKTOP_ACTIONS
-endif
-ifneq (,$(filter lucid maverick natty oneiric precise, $(DISTRIB_CODENAME)))
-ifneq (,$(filter armel,$(DEB_HOST_ARCH)))
-MOZ_DEFINES += -DMOZ_ENABLE_THUMB
-endif
 endif
 ifneq (,$(DEB_PARALLEL_JOBS))
 MOZ_DEFINES += -DDEB_PARALLEL_JOBS=$(DEB_PARALLEL_JOBS)
@@ -315,14 +305,14 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	$(MOZ_PYTHON) $(CURDIR)/$(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	$(MOZ_PYTHON) $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 $(appname_subst_files): $(foreach file,$(appname_subst_files),$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	$(MOZ_PYTHON) $(CURDIR)/$(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	$(MOZ_PYTHON) $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 %.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
 %.pc: %.pc.in debian/stamp-makefile-build
-	$(MOZ_PYTHON) $(DEB_SRCDIR)/$(MOZ_MOZDIR)/config/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
+	$(MOZ_PYTHON) $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
 
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
@@ -451,10 +441,10 @@ common-binary-predeb-arch::
 
 pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
 	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
-
+ifeq (1,$(HAVE_GLOBALMENU))
 	mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
-
+endif
 ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
 	$(error "Need to set MOZ_DEFAULT_APP_BASENAME")
 endif
@@ -563,3 +553,4 @@ clean::
 	rm -f debian/$(MOZ_PKG_BASENAME).js
 	rm -rf $(MOZ_OBJDIR)
 	rm -f debian/searchplugins/overrides.log debian/searchplugins/check-overrides.log
+	find . -name *.pyc -delete

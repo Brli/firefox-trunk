@@ -470,7 +470,7 @@ class Prefs:
         # user.js and extension prefs. The load order is important
         if profile_path != None:
             locations = [
-%%ifdef MOZ_NEW_SYSPREF
+%%if DISTRIB_VERSION >= 1104
                 "/etc/@MOZ_PKG_NAME@/syspref.js",
 %%else
                 "/etc/@MOZ_PKG_NAME@/pref",

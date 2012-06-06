@@ -2,6 +2,7 @@
 
 set -e
 
+UPDATENOTIFIERDIR=/var/lib/update-notifier/user.d
 MOZ_LIBDIR=/@MOZ_LIBDIR@
 MOZ_APP_NAME=@MOZ_APP_NAME@
 MOZ_PKG_NAME=@MOZ_PKG_NAME@
@@ -47,12 +48,11 @@ if [ "$1" = "configure" ] ; then
     #
     APP_PROFILE="/etc/apparmor.d/usr.bin.$MOZ_PKG_NAME"
     if [ -f "$APP_PROFILE" ]; then
-	 if [ -e /etc/lsb-release ] ; then
+        if [ -e /etc/lsb-release ] ; then
             ubuntu_version=`grep ^DISTRIB_RELEASE /etc/lsb-release | cut -d= -f2 | cut -d '.' -f-2 | tr -d '.'`
         else
             ubuntu_version=`lsb_release -rs | cut -d '.' -f-2 | tr -d '.'`
         fi
-
         # Setup the extra include files for Ubuntu 10.10 and higher
         if [ "$ubuntu_version" -ge '1010' ]; then
             # Add the local/ include
@@ -97,7 +97,11 @@ EOM
         # Reload AppArmor profile
         DISABLE_APP_PROFILE="/etc/apparmor.d/disable/usr.bin.$MOZ_PKG_NAME"
         if [ ! -f "$DISABLE_APP_PROFILE" ] && aa-status --enabled 2>/dev/null; then
-            apparmor_parser -r -T -W "$APP_PROFILE" || true
+            if [ "$ubuntu_version" -ge '1010' ]; then
+                apparmor_parser -r -T -W "$APP_PROFILE" || true
+            else
+                apparmor_parser -r "$APP_PROFILE" || true
+            fi
         fi
     fi
     #
@@ -111,11 +115,11 @@ EOM
     finish_rm_conffile "/etc/${MOZ_PKG_NAME}/profile/chrome/userChrome-example.css"
     finish_rm_conffile "/etc/${MOZ_PKG_NAME}/profile/chrome/userContent-example.css"
 
-%%ifdef MOZ_NEW_SYSPREF
+%%if DISTRIB_VERSION >= 1104
     finish_mv_conffile "/etc/${MOZ_PKG_NAME}/pref/firefox.js" "/etc/${MOZ_PKG_NAME}/syspref.js"
 %%endif
 
-%%ifdef MOZ_SYMLINKED_DIST
+%%if DISTRIB_VERSION == 1110
     if [ -d $MOZ_LIBDIR/distribution ] && [ ! -h $MOZ_LIBDIR/distribution ]; then \
         rmdir --ignore-fail-on-non-empty $MOZ_LIBDIR/distribution
     fi
@@ -141,8 +145,22 @@ fi
 
 echo "Please restart all running instances of $MOZ_APP_NAME, or you will experience problems."
 
+%%if DISTRIB_VERSION <= 1004
+if [ -d $UPDATENOTIFIERDIR ] ; then
+  # pgrep matches application names from /proc/<pid>/status which is
+  # truncated according to sys/procfs.h definition. Problem is it's
+  # platform dependent. Either 15 or 16 chars.
+  if [ `/usr/bin/pgrep -x -c firefox` -ne 0 ] ||
+     [ `/usr/bin/pgrep -x -c $MOZ_APP_NAME` -ne 0 ] ;  then
+    cp -f $MOZ_LIBDIR/$MOZ_APP_NAME-restart-required.update-notifier \
+        $UPDATENOTIFIERDIR/$MOZ_APP_NAME-restart-required
+  else
+    rm -f $UPDATENOTIFIERDIR/$MOZ_APP_NAME-restart-required
+  fi
+%%else
 if [ -d /var/run ] ; then
     touch /var/run/$MOZ_APP_NAME-restart-required
+%%endif
 fi
 
 #DEBHELPER#

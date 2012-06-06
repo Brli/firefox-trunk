@@ -12,11 +12,10 @@ ac_add_options --disable-updater
 ac_add_options --enable-application=browser
 ac_add_options --enable-startup-notification
 ac_add_options --with-distribution-id=com.ubuntu
-%%ifdef MOZ_ENABLE_THUMB
-ac_add_options --enable-thumb2
-%%endif
 %%if DEB_HOST_ARCH == armel
-%%ifndef MOZ_ENABLE_THUMB
+%%if DISTRIB_VERSION < 1210
+ac_add_options --enable-thumb2
+%%else
 ac_add_options --disable-methodjit
 %%endif
 %%endif

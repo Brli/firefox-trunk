@@ -17,8 +17,27 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
   * Remove an unexpected parenthesis which breaks install
     - add debian/patches/fix-unexpected-parenthesis.patch
     - update debian/patches/series
+  * Fork the upstream text preprocessor and add support for additional
+    comparison operators, which means we no longer have to add new
+    defines for every distro version specific change we add
+    - add debian/build/Expression.py
+    - add debian/build/Preprocessor.py
+    - update debian/apport/source_firefox.py.in
+    - update debian/build/mozbuild.mk
+    - update debian/config/mozconfig.in
+    - update debian/firefox-dev.install.in
+    - update debian/firefox-locale.preinst.in
+    - update debian/firefox.desktop.in
+    - update debian/firefox.dirs.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/firefox.postinst.in
+    - update debian/firefox.postrm.in
+    - update debian/firefox.preinst.in
+    - update debian/firefox.prerm.in
+    - update debian/rules
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Jun 2012 14:30:10 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Jun 2012 18:07:09 +0100
 
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu1) quantal; urgency=low
 
