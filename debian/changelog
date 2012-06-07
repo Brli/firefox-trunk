@@ -36,8 +36,12 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox.preinst.in
     - update debian/firefox.prerm.in
     - update debian/rules
+  * Refresh patches after merging of nsILocalFile in to nsIFile
+    - update debian/patches/plugin-for-mimetype.patch
+    - update debian/patches/firefox-kde.patch 
+    - update debian/patches/mozilla-kde.patch
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 06 Jun 2012 18:07:09 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jun 2012 12:03:41 +0100
 
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu1) quantal; urgency=low
 

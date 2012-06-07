@@ -12,11 +12,11 @@ Description: We introduce a new preference that allows users to set a preferred
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: no
 
-Index: mozilla/dom/plugins/base/nsPluginHost.cpp
+Index: firefox-trunk-16.0~a1~hg20120606r95959/dom/plugins/base/nsPluginHost.cpp
 ===================================================================
---- mozilla.orig/dom/plugins/base/nsPluginHost.cpp	2012-04-10 11:46:52.000000000 +0100
-+++ mozilla/dom/plugins/base/nsPluginHost.cpp	2012-04-10 22:59:49.487175839 +0100
-@@ -1558,7 +1558,35 @@
+--- firefox-trunk-16.0~a1~hg20120606r95959.orig/dom/plugins/base/nsPluginHost.cpp	2012-06-07 11:44:38.627912231 +0100
++++ firefox-trunk-16.0~a1~hg20120606r95959/dom/plugins/base/nsPluginHost.cpp	2012-06-07 11:47:14.099906803 +0100
+@@ -1495,7 +1495,35 @@
  
    LoadPlugins();
  
@@ -27,7 +27,7 @@ Index: mozilla/dom/plugins/base/nsPluginHost.cpp
 +
    nsPluginTag *plugin = mPlugins;
 +  if(!preferred.IsEmpty()) {
-+    nsCOMPtr<nsILocalFile> file;
++    nsCOMPtr<nsIFile> file;
 +    nsresult rv = NS_NewNativeLocalFile(preferred, false, getter_AddRefs(file));
 +    bool isAbsolute = NS_SUCCEEDED(rv);
 +
