@@ -35,7 +35,8 @@ Build-Depends: cdbs,
 	xvfb,
 	libdbusmenu-gtk-dev,
 	unzip,
-	dbus-x11
+	dbus-x11,
+	libxml-simple-perl
 Standards-Version: 3.9.1
 
 Package: @MOZ_PKG_NAME@
