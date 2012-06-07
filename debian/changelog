@@ -14,9 +14,6 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     - update debian/config/locales.blacklist
   * Install the webapprt bits
     - update debian/firefox.install.in
-  * Remove an unexpected parenthesis which breaks install
-    - add debian/patches/fix-unexpected-parenthesis.patch
-    - update debian/patches/series
   * Fork the upstream text preprocessor and add support for additional
     comparison operators, which means we no longer have to add new
     defines for every distro version specific change we add

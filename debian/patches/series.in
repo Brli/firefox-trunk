@@ -13,4 +13,3 @@ dont-include-hyphenation-patterns.patch
 #fix-build-failure-without-yarr-jit.patch
 dont-override-general-useragent-locale.patch
 fix-makefile-substitution-bug.patch
-fix-unexpected-parenthesis.patch
