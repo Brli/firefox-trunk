@@ -378,7 +378,7 @@ binary-post-install/$(MOZ_PKG_NAME)-dev::
 	rm -f debian/$(MOZ_PKG_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_PKG_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 
-install-langpack-xpis:: $(foreach target, $(LANGPACK_TARGETS), install-langpack-xpi-$(target) $(if $(wildcard debian/searchplugins), customize-searchplugins-$(target)))
+install-langpack-xpis:: $(foreach target, $(LANGPACK_TARGETS), install-langpack-xpi-$(target) $(if $(wildcard debian/searchplugins), customize-searchplugins-$(target))) customize-searchplugins-en-US
 install-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 install-langpack-xpi-%: PKGNAME = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 install-langpack-xpi-%: XPI_ID = $(shell python $(CURDIR)/debian/build/get-xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(LANGUAGE).langpack.xpi 2>/dev/null;)
@@ -395,6 +395,7 @@ install-langpack-xpi-%:
 
 customize-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 customize-searchplugins-%: PKGNAME = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
+customize-searchplugins-%: PKGNAME := $(if $(PKGNAME),$(MOZ_PKG_NAME)-locale-$(PKGNAME),$(MOZ_PKG_NAME))
 customize-searchplugins-%: MANIFEST = $(firstword $(wildcard $(CURDIR)/debian/searchplugins/$(LANGUAGE)/list.txt) \
 					$(wildcard $(CURDIR)/debian/searchplugins/list.txt))
 customize-searchplugins-%: OVERRIDES = $(foreach override, $(foreach override, $(shell cat $(MANIFEST) | sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}'), \
@@ -406,13 +407,13 @@ customize-searchplugins-%: ADDITIONS = $(foreach addition, $(shell cat $(MANIFES
 					   $(wildcard $(CURDIR)/debian/searchplugins/en-US/$(addition).xml)))
 customize-searchplugins-%:
 	@echo ""
-	@echo "Applying search customizations to $(MOZ_PKG_NAME)-locale-$(PKGNAME)"
+	@echo "Applying search customizations to $(PKGNAME)"
 	@perl $(CURDIR)/debian/build/check-search-overrides.pl -l $(LANGUAGE) \
-		-d $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale > \
+		-d $(CURDIR)/debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale > \
 		$(CURDIR)/debian/searchplugins/check-overrides.log
 	rm -f  $(CURDIR)/debian/searchplugins/overrides.log
 	@$(foreach override, $(OVERRIDES), echo "Overriding $(notdir $(override))"; \
-		cp -f $(override) $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE); \
+		cp -f $(override) $(CURDIR)/debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE); \
 		echo "$(notdir $(override))" >> $(CURDIR)/debian/searchplugins/overrides.log;)
 	@if ! cmp -s $(CURDIR)/debian/searchplugins/overrides.log  $(CURDIR)/debian/searchplugins/check-overrides.log ; \
 	then \
@@ -421,10 +422,10 @@ customize-searchplugins-%:
 		exit 1 ; \
 	fi
 	@$(foreach addition, $(ADDITIONS), \
-		$(if $(wildcard $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(addition))), \
+		$(if $(wildcard $(CURDIR)/debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(addition))), \
 		  $(error Cannot add $(notdir $(addition)). Plugin already exists)))
 	@$(foreach addition, $(ADDITIONS), echo "Adding $(notdir $(addition))"; \
-		cp -f $(addition) $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
+		cp -f $(addition) $(CURDIR)/debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
 
 common-binary-post-install-arch:: install-langpack-xpis
 

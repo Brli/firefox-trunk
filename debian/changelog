@@ -42,8 +42,10 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox.desktop.in
   * Build depend on libxml-simple-perl
     - update debian/control{,.in}
+  * Ensure that overrides are applied for en-US searchplugins
+    - update debian/build/mozbuild.mk
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jun 2012 22:29:53 +0100
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jun 2012 22:40:07 +0100
 
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu1) quantal; urgency=low
 
