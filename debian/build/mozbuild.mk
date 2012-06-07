@@ -146,7 +146,7 @@ ifeq (,$(filter 4.7, $(shell $(CC) -dumpversion)))
 MOZ_BUILD_PGO = 0
 endif
 
-ifeq (,$(filter i386 amd64 armhf, $(DEB_HOST_ARCH)))
+ifeq (,$(filter i386 amd64, $(DEB_HOST_ARCH)))
 MOZ_BUILD_PGO = 0
 endif
 
