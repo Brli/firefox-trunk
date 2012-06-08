@@ -378,7 +378,8 @@ binary-post-install/$(MOZ_PKG_NAME)-dev::
 	rm -f debian/$(MOZ_PKG_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_PKG_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 
-install-langpack-xpis:: $(foreach target, $(LANGPACK_TARGETS), install-langpack-xpi-$(target) $(if $(wildcard debian/searchplugins), customize-searchplugins-$(target))) customize-searchplugins-en-US
+install-langpack-xpis:: $(foreach target, $(LANGPACK_TARGETS), install-langpack-xpi-$(target) $(if $(wildcard debian/searchplugins), customize-searchplugins-$(target)))
+install-langpack-xpis:: $(if $(wildcard debian/searchplugins), customize-searchplugins-en-US)
 install-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 install-langpack-xpi-%: PKGNAME = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 install-langpack-xpi-%: XPI_ID = $(shell python $(CURDIR)/debian/build/get-xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(LANGUAGE).langpack.xpi 2>/dev/null;)
