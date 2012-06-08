@@ -40,7 +40,8 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
   * Drop StartupWMClass from the desktop file, as it isn't actually
     required by gnome shell or unity
     - update debian/firefox.desktop.in
-  * Build depend on libxml-simple-perl
+  * Build depend on libxml-simple-perl and libjson-perl, as they are
+    needed for verifying the search plugin overrides
     - update debian/control{,.in}
   * Ensure that overrides are applied for en-US searchplugins
     - update debian/build/mozbuild.mk

@@ -36,7 +36,8 @@ Build-Depends: cdbs,
 	libdbusmenu-gtk-dev,
 	unzip,
 	dbus-x11,
-	libxml-simple-perl
+	libxml-simple-perl,
+	libjson-perl
 Standards-Version: 3.9.1
 
 Package: firefox-trunk
