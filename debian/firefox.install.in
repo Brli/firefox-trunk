@@ -14,10 +14,8 @@
 @MOZ_LIBDIR@/chrome.manifest
 %%if DISTRIB_VERSION == 1110
 debian/distribution.ini @MOZ_ADDONDIR@/distribution
-@MOZ_LIBDIR@/searchplugins/* @MOZ_ADDONDIR@/distribution/searchplugins/locale/en-US
 %%else
 debian/distribution.ini @MOZ_LIBDIR@/distribution
-@MOZ_LIBDIR@/searchplugins/* @MOZ_LIBDIR@/distribution/searchplugins/locale/en-US
 %%endif
 @MOZ_LIBDIR@/blocklist.xml
 @MOZ_LIBDIR@/dependentlibs.list
