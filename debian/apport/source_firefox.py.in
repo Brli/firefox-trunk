@@ -513,10 +513,6 @@ class Prefs:
         return False
 
     def _parse_file(self, filename):
-        if self._should_ignore_file(filename):
-            return
-            
-        anonsrc = anonymize_path(filename, self._profile_path)
         f = None
         self._state = Prefs.STATE_READY
         try:
@@ -525,26 +521,24 @@ class Prefs:
                 linenum = 1
                 state = None
                 for line in f.readlines():
-                    state = self._parseline(line, anonsrc, linenum, state)
+                    state = self._parseline(line, filename, linenum, state)
                     linenum += 1
             except Exception as e:
-                self.errors[anonsrc] = str(e)
+                self.errors[filename] = str(e)
         except:
             pass
         finally:
             if f != None:
                 f.close()
-            if anonsrc not in self.errors:
-                self.pref_sources.append(anonsrc)
+            if filename not in self.errors \
+               and not self._should_ignore_file(filename):
+                self.pref_sources.append(filename)
 
     def _parse_dir(self, dirname):
         for filename in glob(os.path.join(dirname, '*.js')):
             self._parse_file(filename)
 
     def _parse_xpi(self, xpi):
-        if self._should_ignore_file(xpi):
-            return
-
         xpifile = None
         try:
             xpifile = zipfile.ZipFile(xpi)
@@ -552,19 +546,19 @@ class Prefs:
             for entry in entries:
                 if re.match(r'^defaults/preferences/*.js$', entry):
                     source = '%s:%s' % (xpi, entry)
-                    anonsrc = anonymize_path(source, self._profile_path)
                     try:
                         f = xpifile.open(entry, 'r')
                         linenum = 1
                         state = None
                         for line in f.readlines():
-                            state = self._parseline(line, anonsrc, linenum, state)
+                            state = self._parseline(line, source, linenum, state)
                             linenum += 1
                     except Exception as e:
-                        self.errors[anonsrc] = str(e)
+                        self.errors[source] = str(e)
                     finally:
-                        if anonsrc not in self.errors:
-                            self.pref_sources.append(anonsrc)
+                        if source not in self.errors \
+                           and not self._should_ignore_file(xpi):
+                            self.pref_sources.append(source)
         except:
             pass
         finally:
@@ -574,12 +568,13 @@ class Prefs:
     def _maybe_add_pref(self, key, value, source, default, locked):
 
         class Pref(object):
-            def __init__(self):
+            def __init__(self, profile_path):
                 self._default = None
                 self._value = None
                 self._default_source = None
                 self._value_source = None
                 self.locked = False
+                self._profile_path = profile_path
 
             @property
             def value(self):
@@ -592,6 +587,12 @@ class Prefs:
                 if self._value != None: 
                     return self._value_source
                 return self._default_source
+
+            @property
+            def anon_source(self):
+                if self._value != None:
+                    return anonymize_path(self._value_source, self._profile_path)
+                return anonymize_path(self._default_source, self._profile_path)
 
             def set_value(self, value, source, default, locked):
                 if self.locked == True:
@@ -612,7 +613,7 @@ class Prefs:
         for match in self.whitelist:
             if re.match(match, key):
                 if key not in self.prefs:
-                    self.prefs[key] = Pref()
+                    self.prefs[key] = Pref(self._profile_path)
 
                 self.prefs[key].set_value(value, source, default, locked)
 
@@ -671,7 +672,8 @@ class Prefs:
                     state.skip = 7
                 elif not c.isspace():
                     raise PrefParseError("Unexpected character '%s' before pref" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_SKIP:
                 state.skip -= 1
@@ -685,7 +687,9 @@ class Prefs:
                 elif c == '/':
                     state.state = Prefs.STATE_PARSE_UNTIL_EOL
                 else:
-                    raise PrefParseError("Unexpected '/'", source, linenum)
+                    raise PrefParseError("Unexpected '/'",
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_EOL:
                 pass
@@ -709,7 +713,8 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
                     raise PrefParseError("Unexpected character '%s' before open parenthesis" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_NAME:
                 if c == '"' or c == '\'':
@@ -721,7 +726,8 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
                     raise PrefParseError("Unexpected character '%s' before pref name" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_PARSE_STRING:
                 if c == '\\':
@@ -752,7 +758,8 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
                     raise PrefParseError("Unexpected character '%s' before comma" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_VALUE:
                 if c == '"' or c == '\'':
@@ -777,7 +784,8 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
                     raise PrefParseError("Unexpected character '%s' before value" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_PARSE_INT:
                 if c >= '0' and c <= '9':
@@ -795,7 +803,8 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 else:
                     raise PrefParseError("Unexpected character '%s' whilst parsing int" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN:
                 if state.tmp != None:
@@ -808,7 +817,8 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
                     raise PrefParseError("Unexpected character '%s' before close parenthesis" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             elif state.state == Prefs.STATE_PARSE_UNTIL_SEMICOLON:
                 if c == ';':
@@ -820,7 +830,8 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif not c.isspace():
                     raise PrefParseError("Unexpected character '%s' before semicolon" % c,
-                                         source, linenum)
+                                         anonymize_path(source, self._profile_path),
+                                         linenum)
 
             index += 1
 
@@ -830,16 +841,23 @@ class Prefs:
         return state
 
     def __getitem__(self, key):
-        if not key in self.prefs:
-            raise IndexError
-        return self.prefs[key]
+        res = self.prefs[key]
+        if res.source in self.pref_sources:
+            return res
+        raise KeyError
 
     def __iter__(self):
 
         class PrefsIter:
             def __init__(self, prefs):
                 self.index = 0
-                self.keys = prefs.prefs.keys()
+                self.keys = []
+                for k in prefs.prefs.keys():
+                    try:
+                        test = prefs[k]
+                        self.keys.append(k)
+                    except:
+                        pass
                 self.keys.sort()
 
             def next(self):
@@ -852,7 +870,10 @@ class Prefs:
         return PrefsIter(self)
 
     def __len__(self):
-        return len(self.prefs)
+        i = 0
+        for k in self:
+            i += 1
+        return i
 
 
 class Extension:
@@ -1039,13 +1060,13 @@ class Profile:
                 value = 'true' if True else 'false'
             else:
                 value = "\"%s\"" % self.prefs[pref].value
-            ret += pref + ': ' + value + ' (' + self.prefs[pref].source + ')\n'
+            ret += pref + ': ' + value + ' (' + self.prefs[pref].anon_source + ')\n'
         return ret
 
     def dump_pref_sources(self):
         ret = ''
         for source in self.prefs.pref_sources:
-            ret += source + '\n'
+            ret += anonymize_path(source, self.path) + '\n'
         return ret
 
     def dump_pref_errors(self):
