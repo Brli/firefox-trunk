@@ -29,6 +29,10 @@ from glob import glob
 import zipfile
 import stat
 
+DISTRO_ADDONS = [
+    'xul-ext-ubufox'
+]
+
 class PrefParseError(Exception):
     def __init__(self, msg, filename, linenum):
         super(PrefParseError, self).__init__(msg)
@@ -498,7 +502,20 @@ class Prefs:
             else:
                 self._parse_dir(location)
 
+    def _should_ignore_file(self, filename):
+        realpath = os.path.realpath(filename)
+        package = apport.packaging.get_file_package(realpath)
+        if package and apport.packaging.is_distro_package(package) and \
+           package in DISTRO_ADDONS and \
+           realpath[1:] not in apport.packaging.get_modified_files(package):
+            return True
+
+        return False
+
     def _parse_file(self, filename):
+        if self._should_ignore_file(filename):
+            return
+            
         anonsrc = anonymize_path(filename, self._profile_path)
         f = None
         self._state = Prefs.STATE_READY
@@ -525,6 +542,9 @@ class Prefs:
             self._parse_file(filename)
 
     def _parse_xpi(self, xpi):
+        if self._should_ignore_file(xpi):
+            return
+
         xpifile = None
         try:
             xpifile = zipfile.ZipFile(xpi)
