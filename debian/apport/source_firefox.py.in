@@ -820,6 +820,7 @@ class Prefs:
             def __init__(self, prefs):
                 self.index = 0
                 self.keys = prefs.prefs.keys()
+                self.keys.sort()
 
             def next(self):
                 if self.index == len(self.keys):
