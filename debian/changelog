@@ -54,6 +54,9 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     don't show up in apport data, unless the preference files have
     been modified
     - update debian/apport/source_firefox.py.in
+  * Make the apport hook manage random pref files dropped in to
+    the Firefox install folder, and bundle preferences
+    - update debian/apport/source_firefox.py.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jun 2012 23:00:12 +0100
 

@@ -30,6 +30,7 @@ import zipfile
 import stat
 
 DISTRO_ADDONS = [
+    '@MOZ_PKG_NAME@',
     'xul-ext-ubufox'
 ]
 
@@ -470,24 +471,45 @@ class Prefs:
 
         self._profile_path = profile_path
 
-        # Report non-default preferences = ie, those from syspref.js, prefs.js,
-        # user.js and extension prefs. The load order is important
+        # Read all preferences. Note that we hide preferences that are considered
+        # default (ie, all of those set by the Firefox package or bundled addons,
+        # unless any of the pref files have been modified by the user).
+        # The load order is *very important*
         if profile_path != None:
             locations = [
-%%if DISTRIB_VERSION >= 1104
-                "/etc/@MOZ_PKG_NAME@/syspref.js",
-%%else
-                "/etc/@MOZ_PKG_NAME@/pref",
-%%endif
-                os.path.join(profile_path, "prefs.js"),
-                os.path.join(profile_path, "user.js")
+                "/@MOZ_LIBDIR@/omni.ja:greprefs.js",
+                "/@MOZ_LIBDIR@/omni.ja:defaults/pref/*.js",
+                "/@MOZ_LIBDIR@/defaults/pref/*.js",
+                "/@MOZ_LIBDIR@/defaults/pref/unix.js",
+                "/@MOZ_LIBDIR@/omni.ja:defaults/preferences/*.js"
+                "/@MOZ_LIBDIR@/defaults/preferences/*.js"
             ]
+
+            append_dirs = [ 'defaults/preferences/*.js' ]
+%%if DISTRIB_VERSION < 1104
+            locations.append('/@MOZ_LIBDIR@/defaults/syspref/*.js')
+            append_dirs.append('defaults/syspref/*.js')
+%%endif
+            if os.path.isdir('/@MOZ_LIBDIR@/distribution/bundles'):
+                bundles = os.listdir('/@MOZ_LIBDIR@/distribution/bundles')
+                bundles.sort()
+                for d in append_dirs:
+                    for bundle in bundles:
+                        path = os.path.join('/@MOZ_LIBDIR@/distribution/bundles', bundle)
+                        if path.endswith('.xpi'):
+                            locations.append(path + ':' + d)
+                        elif os.path.isdir(path):
+                            locations.append(os.path.join(path, d))
+
+            locations.append(os.path.join(profile_path, "prefs.js"))
+            locations.append(os.path.join(profile_path, "user.js"))
 
             extensions = ExtensionINIParser(profile_path)
             for extension in extensions:
-                if not extension.endswith('.xpi'):
-                    extension = os.path.join(extension, "defaults", "preferences")
-                locations.append(extension)
+                if extension.endswith('.xpi'):
+                    locations.append(extension + ':defaults/preferences/*.js')
+                elif os.path.isdir(extension):
+                    locations.append(os.path.join(extension, 'defaults/preferences/*.js'))
         else: locations = []
 
         if extra_paths != None:
@@ -495,12 +517,14 @@ class Prefs:
                 locations.append(extra)
 
         for location in locations:
-            if location.endswith('.js'):
-                self._parse_file(location)
-            elif location.endswith('.xpi'):
-                self._parse_xpi(location)
+            m = re.match(r'^([^:]*):?(.*)', location)
+            if m.group(2) == '':
+                files = glob(location)
+                files.sort()
+                for f in files:
+                    self._parse_file(f)
             else:
-                self._parse_dir(location)
+                self._parse_jar(m.group(1), m.group(2))
 
     def _should_ignore_file(self, filename):
         realpath = os.path.realpath(filename)
@@ -534,20 +558,17 @@ class Prefs:
                and not self._should_ignore_file(filename):
                 self.pref_sources.append(filename)
 
-    def _parse_dir(self, dirname):
-        for filename in glob(os.path.join(dirname, '*.js')):
-            self._parse_file(filename)
-
-    def _parse_xpi(self, xpi):
-        xpifile = None
+    def _parse_jar(self, jar, match):
+        jarfile = None
         try:
-            xpifile = zipfile.ZipFile(xpi)
-            entries = xpifile.namelist()
+            jarfile = zipfile.ZipFile(jar)
+            entries = jarfile.namelist()
+            entries.sort()
             for entry in entries:
-                if re.match(r'^defaults/preferences/*.js$', entry):
-                    source = '%s:%s' % (xpi, entry)
+                if re.match(r'^' + match + '$', entry):
+                    source = '%s:%s' % (jar, entry)
                     try:
-                        f = xpifile.open(entry, 'r')
+                        f = jarfile.open(entry, 'r')
                         linenum = 1
                         state = None
                         for line in f.readlines():
@@ -557,13 +578,13 @@ class Prefs:
                         self.errors[source] = str(e)
                     finally:
                         if source not in self.errors \
-                           and not self._should_ignore_file(xpi):
+                           and not self._should_ignore_file(jar):
                             self.pref_sources.append(source)
         except:
             pass
         finally:
-            if xpifile != None:
-                xpifile.close()
+            if jarfile != None:
+                jarfile.close()
 
     def _maybe_add_pref(self, key, value, source, default, locked):
 
