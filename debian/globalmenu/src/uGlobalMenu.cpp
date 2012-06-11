@@ -44,7 +44,9 @@
 #include <nsIDOMDocument.h>
 #include <nsStringAPI.h>
 #include <nsIDOMEventTarget.h>
-#include <nsIPrivateDOMEvent.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
+# include <nsIPrivateDOMEvent.h>
+#endif
 #include <nsPIDOMWindow.h>
 #include <nsIDOMXULCommandEvent.h>
 #include <nsIXPConnect.h>
@@ -172,10 +174,14 @@ uGlobalMenu::Activate()
       if (event) {
         event->InitEvent(NS_LITERAL_STRING("DOMMenuItemActive"),
                          true, true);
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
         nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
         if (priv) {
           priv->SetTrusted(true);
         }
+#else
+        event->SetTrused(true);
+#endif
         bool dummy;
         target->DispatchEvent(event, &dummy);
       }
@@ -198,10 +204,14 @@ uGlobalMenu::Deactivate()
                        true, true);
       nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
       if (target) {
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
         nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
         if (priv) {
           priv->SetTrusted(true);
         }
+#else
+        event->SetTrused(true);
+#endif
         bool dummy;
         target->DispatchEvent(event, &dummy);
       }
@@ -277,10 +287,14 @@ uGlobalMenu::AboutToOpen()
                                      false, false, 0, nsnull);
           nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPopupContent);
           if (target) {
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
             nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
             if (priv) {
               priv->SetTrusted(true);
             }
+#else
+            event->SetTrused(true);
+#endif
             bool dummy;
             // XXX: dummy == false means that we should prevent the
             //      the menu from opening, but there's no way to do this
@@ -325,10 +339,14 @@ uGlobalMenu::OnOpen()
                                      false, false, 0, nsnull);
           nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPopupContent);
           if (target) {
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
             nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
             if (priv) {
               priv->SetTrusted(true);
             }
+#else
+            event->SetTrused(true);
+#endif
             bool dummy;
             target->DispatchEvent(event, &dummy);
           }
@@ -367,10 +385,14 @@ uGlobalMenu::OnClose()
                                      false, false, 0, nsnull);
           nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPopupContent);
           if (target) {
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
             nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
             if (priv) {
               priv->SetTrusted(true);
             }
+#else
+            event->SetTrused(true);
+#endif
             bool dummy;
             target->DispatchEvent(event, &dummy);
             mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popuphidden"),

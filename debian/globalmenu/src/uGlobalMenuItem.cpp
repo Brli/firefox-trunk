@@ -46,7 +46,9 @@
 #include <nsPIDOMWindow.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMDocument.h>
-#include <nsIPrivateDOMEvent.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
+# include <nsIPrivateDOMEvent.h>
+#endif
 #include <nsIDOMEventTarget.h>
 #include <mozilla/dom/Element.h>
 #include <nsIContent.h>
@@ -602,10 +604,14 @@ uGlobalMenuItem::Activate()
                                      false, nsnull);
           nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
           if (target) {
+#if MOZILLA_BRANCH_MAJOR_VERSION < 16
             nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
             if (priv) {
               priv->SetTrusted(true);
             }
+#else
+            event->SetTrused(true);
+#endif
             bool dummy;
             target->DispatchEvent(event, &dummy);
           }

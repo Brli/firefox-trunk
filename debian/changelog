@@ -1,6 +1,6 @@
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.2.4 prerelease r340
+  * Update globalmenu-extension to 3.2.4 prerelease r341
   * Merge get-orig-source.mk in to mozbuild.mk
     - update debian/build/mozbuild.mk
     - remove debian/build/get-orig-source.mk
