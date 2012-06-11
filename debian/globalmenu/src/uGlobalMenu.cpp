@@ -180,7 +180,7 @@ uGlobalMenu::Activate()
           priv->SetTrusted(true);
         }
 #else
-        event->SetTrused(true);
+        event->SetTrusted(true);
 #endif
         bool dummy;
         target->DispatchEvent(event, &dummy);
@@ -210,7 +210,7 @@ uGlobalMenu::Deactivate()
           priv->SetTrusted(true);
         }
 #else
-        event->SetTrused(true);
+        event->SetTrusted(true);
 #endif
         bool dummy;
         target->DispatchEvent(event, &dummy);
@@ -293,7 +293,7 @@ uGlobalMenu::AboutToOpen()
               priv->SetTrusted(true);
             }
 #else
-            event->SetTrused(true);
+            event->SetTrusted(true);
 #endif
             bool dummy;
             // XXX: dummy == false means that we should prevent the
@@ -345,7 +345,7 @@ uGlobalMenu::OnOpen()
               priv->SetTrusted(true);
             }
 #else
-            event->SetTrused(true);
+            event->SetTrusted(true);
 #endif
             bool dummy;
             target->DispatchEvent(event, &dummy);
@@ -391,7 +391,7 @@ uGlobalMenu::OnClose()
               priv->SetTrusted(true);
             }
 #else
-            event->SetTrused(true);
+            event->SetTrusted(true);
 #endif
             bool dummy;
             target->DispatchEvent(event, &dummy);

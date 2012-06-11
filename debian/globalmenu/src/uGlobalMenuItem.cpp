@@ -610,7 +610,7 @@ uGlobalMenuItem::Activate()
               priv->SetTrusted(true);
             }
 #else
-            event->SetTrused(true);
+            event->SetTrusted(true);
 #endif
             bool dummy;
             target->DispatchEvent(event, &dummy);
