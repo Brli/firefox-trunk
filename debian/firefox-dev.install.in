@@ -1,3 +1,6 @@
+%%if DISTRIB_VERSION >= 1210
+@MOZ_INCDIR@/np*.h
+%%else
 @MOZ_INCDIR@
 @MOZ_IDLDIR@
 
@@ -8,5 +11,6 @@
 %%if DISTRIB_VERSION < 1204
 debian/pkgconfig/mozilla-nspr.pc usr/lib/pkgconfig
 debian/pkgconfig/libxul.pc usr/lib/pkgconfig
+%%endif
 %%endif
 debian/pkgconfig/mozilla-plugin.pc usr/lib/pkgconfig
