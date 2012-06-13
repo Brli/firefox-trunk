@@ -6,7 +6,7 @@
 %%else
 @MOZ_ADDONDIR@/distribution/extensions @MOZ_LIBDIR@/distribution/extensions
 %%endif
-%%if DISTRIB_VERSION_MAJOR <= 1004
+%%if DISTRIB_VERSION <= 1004
 usr/share/myspell/dicts @MOZ_LIBDIR@/dictionaries
 %%else
 usr/share/hunspell @MOZ_LIBDIR@/dictionaries
