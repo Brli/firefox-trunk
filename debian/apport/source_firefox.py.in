@@ -19,7 +19,10 @@ import fcntl
 import subprocess
 import struct
 from subprocess import Popen
-from ConfigParser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 import sqlite3
 import tempfile
 import re
@@ -1052,7 +1055,7 @@ class Profile:
         if not hasattr(self, '_running'):
             # We detect if this profile is running or not by trying to lock the lockfile
             # If we can't lock it, then Firefox is running
-            fd = os.open(os.path.join(self.path, ".parentlock"), os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0666)
+            fd = os.open(os.path.join(self.path, ".parentlock"), os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0o666)
             lock = struct.pack("hhqqi", 1, 0, 0, 0, 0)
             try:
                 fcntl.fcntl(fd, fcntl.F_SETLK, lock)
@@ -1309,10 +1312,10 @@ def add_info(report, ui):
             tags += ' '
         report['Tags'] = tags + tag
 
-    ddproc = Popen(['dpkg-divert', '--truename', '/usr/bin/@MOZ_APP_NAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    ddproc = Popen(['dpkg-divert', '--truename', '/usr/bin/@MOZ_APP_NAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
     truename = ddproc.communicate()
     if ddproc.returncode == 0 and truename[0].strip() != '/usr/bin/@MOZ_APP_NAME@':
-        ddproc = Popen(['dpkg-divert', '--listpackage', '/usr/bin/@MOZ_APP_NAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        ddproc = Popen(['dpkg-divert', '--listpackage', '/usr/bin/@MOZ_APP_NAME@'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
         diverter = ddproc.communicate()
         report['UnreportableReason'] = "/usr/bin/@MOZ_APP_NAME@ has been diverted by a third party package (%s)" % diverter[0].strip()
         return
@@ -1451,5 +1454,5 @@ if __name__ == "__main__":
     D = {}
     D['Package'] = 'firefox'
     add_info(D, None)
-    for KEY in D.keys(): 
-        print '''-------------------%s: ------------------\n''' % KEY, D[KEY]
+    for KEY in D.keys():
+        print('''-------------------%s: ------------------\n%s''' % (KEY, D[KEY]))
