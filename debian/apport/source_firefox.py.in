@@ -696,16 +696,16 @@ class Prefs:
                     state.state = Prefs.STATE_COMMENT_MAYBE_START
                 elif c == '#':
                     state.state = Prefs.STATE_PARSE_UNTIL_EOL
-                elif line[index:].startswith('pref'):
+                elif line.startswith('pref', index):
                     state.default == True
                     state.next_state = Prefs.STATE_PARSE_UNTIL_OPEN_PAREN
                     state.state = Prefs.STATE_SKIP
                     state.skip = 3
-                elif line[index:].startswith('user_pref'):
+                elif line.startswith('user_pref', index):
                     state.next_state = Prefs.STATE_PARSE_UNTIL_OPEN_PAREN
                     state.state = Prefs.STATE_SKIP
                     state.skip = 8
-                elif line[index:].startswith('lockPref'):
+                elif line.startswith('lockPref', index):
                     state.default = True
                     state.locked = True
                     state.next_state = Prefs.STATE_PARSE_UNTIL_OPEN_PAREN
@@ -807,12 +807,12 @@ class Prefs:
                     state.tmp = ''
                     state.state = Prefs.STATE_PARSE_STRING
                     state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
-                elif line[index:].startswith('true'):
+                elif line.startswith('true', index):
                     state.tmp = True
                     state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
                     state.state = Prefs.STATE_SKIP
                     state.skip = 3
-                elif line[index:].startswith('false'):
+                elif line.startswith('false', index):
                     state.tmp = False
                     state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
                     state.state = Prefs.STATE_SKIP
