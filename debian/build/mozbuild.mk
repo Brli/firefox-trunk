@@ -323,15 +323,11 @@ ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 endif
 	touch $@
 
-compare-locales/scripts/compare-locales:
-	cp -r $(CURDIR)/debian/build/compare-locales $(CURDIR)
-	chmod +x $(CURDIR)/compare-locales/scripts/*
-
 LANGPACK_TARGETS = $(shell cat $(CURDIR)/debian/config/locales.shipped | sed -n 's/\#.*//;/^$$/d;s/:/,/ p')
 
 make-langpack-xpis: $(foreach target, $(LANGPACK_TARGETS), debian/stamp-make-langpack-xpi-$(target))
 debian/stamp-make-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
-debian/stamp-make-langpack-xpi-%: compare-locales/scripts/compare-locales
+debian/stamp-make-langpack-xpi-%:
 	@echo ""
 	@echo ""
 	@echo "* Building language pack xpi for $(LANGUAGE)"
@@ -559,8 +555,8 @@ clean::
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
-	rm -rf compare-locales
 	rm -f debian/$(MOZ_PKG_BASENAME).js
 	rm -rf $(MOZ_OBJDIR)
 	rm -f debian/searchplugins/overrides.log debian/searchplugins/check-overrides.log
-	find . -name *.pyc -delete
+	find debian -name *.pyc -delete
+	find compare-locales -name *.pyc -delete

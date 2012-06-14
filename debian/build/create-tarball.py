@@ -308,6 +308,16 @@ def checkout_upstream_l10n(base, cache, tag, got_locales, all_locales, shipped_l
             l10nlist.close()
         changesets.close()
 
+def checkout_compare_locales(cache, tag):
+    print '\n\n*** Checking out compare-locales ***\n'
+    remote_source = 'https://hg.mozilla.org/build/compare-locales'
+    local_source = None
+    if cache != None:
+        ensure_cache(remote_source, cache)
+        local_source = os.path.join(cache, 'compare-locales')
+    source = remote_source if local_source == None else local_source
+    do_checkout(source, 'compare-locales', tag=tag)
+
 def checkout_source(repo, cache, tag):
     print '\n\n*** Checking out source from %s%s ***\n' % (repo, ' using cache from %s' % cache if cache != None else '')
     local_source = None
@@ -316,7 +326,6 @@ def checkout_source(repo, cache, tag):
         local_source = os.path.join(cache, os.path.basename(repo))
     source = repo if local_source == None else local_source
     do_checkout(source, os.getcwd(), tag=tag)
-
 def check_dependencies():
     DEPENDENCIES = [
         [ 'hg', 'mercurial' ],
@@ -383,6 +392,7 @@ if __name__ == '__main__':
         options.cache = os.path.join(os.getcwd(), options.cache)
 
     checkout_source(options.repo, options.cache, options.tag)
+    checkout_compare_locales(options.cache, options.tag)
 
     need_moz = settings['need-post-checkout'] if 'need-post-checkout' in settings else False
     if need_moz:
