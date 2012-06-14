@@ -492,7 +492,7 @@ class Prefs:
 %%endif
             if os.path.isdir('/@MOZ_LIBDIR@/distribution/bundles'):
                 bundles = os.listdir('/@MOZ_LIBDIR@/distribution/bundles')
-                bundles.sort()
+                bundles.sort().reverse()
                 for d in append_dirs:
                     for bundle in bundles:
                         path = os.path.join('/@MOZ_LIBDIR@/distribution/bundles', bundle)
@@ -507,9 +507,11 @@ class Prefs:
             extensions = ExtensionINIParser(profile_path)
             for extension in extensions:
                 if extension.endswith('.xpi'):
-                    locations.append(extension + ':defaults/preferences/*.js')
+                    locations.append(extension + ':defaults/preferences/*.(J|j)(S|s)')
                 elif os.path.isdir(extension):
                     locations.append(os.path.join(extension, 'defaults/preferences/*.js'))
+
+            locations.append(os.path.join(profile_path, 'preferences/*.js'))
         else: locations = []
 
         if extra_paths != None:
@@ -520,7 +522,7 @@ class Prefs:
             m = re.match(r'^([^:]*):?(.*)', location)
             if m.group(2) == '':
                 files = glob(location)
-                files.sort()
+                files.sort().reverse()
                 for f in files:
                     self._parse_file(f)
             else:
@@ -563,7 +565,7 @@ class Prefs:
         try:
             jarfile = zipfile.ZipFile(jar)
             entries = jarfile.namelist()
-            entries.sort()
+            entries.sort().reverse()
             for entry in entries:
                 if re.match(r'^' + match + '$', entry):
                     source = '%s:%s' % (jar, entry)
