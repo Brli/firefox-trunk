@@ -509,8 +509,7 @@ class Prefs:
 %%endif
             if os.path.isdir('/@MOZ_LIBDIR@/distribution/bundles'):
                 bundles = os.listdir('/@MOZ_LIBDIR@/distribution/bundles')
-                bundles.sort()
-                bundles.reverse()
+                bundles.sort(reverse=True)
                 for d in append_dirs:
                     for bundle in bundles:
                         path = os.path.join('/@MOZ_LIBDIR@/distribution/bundles', bundle)
@@ -540,8 +539,7 @@ class Prefs:
             m = re.match(r'^([^:]*):?(.*)', location)
             if m.group(2) == '':
                 files = glob(location)
-                files.sort()
-                files.reverse()
+                files.sort(reverse=True)
                 for f in files:
                     self._parse_file(f)
             else:
@@ -584,8 +582,7 @@ class Prefs:
         try:
             jarfile = zipfile.ZipFile(jar)
             entries = jarfile.namelist()
-            entries.sort()
-            entries.reverse()
+            entries.sort(reverse=True)
             for entry in entries:
                 if re.match(r'^' + match + '$', entry):
                     source = '%s:%s' % (jar, entry)
