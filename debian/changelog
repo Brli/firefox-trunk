@@ -65,6 +65,13 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     - update debian/firefox-dev.links.in
   * Fix ordering issues when loading preferences in the apport hook
     - update debian/apport/source_firefox.py.in
+  * Fix LP: #1013186 - install our vendor preferences as application
+    defaults rather than GRE defaults, so that they are loaded after
+    the upstream defaults again. The upstream defaults were also moved
+    as part of the webapp runtime work (which has it's own application
+    defaults)
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jun 2012 23:00:12 +0100
 
