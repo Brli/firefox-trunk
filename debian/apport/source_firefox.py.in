@@ -31,6 +31,9 @@ from apport.hookutils import *
 from glob import glob
 import zipfile
 import stat
+import functools
+if sys.version_info[0] < 3:
+    import codecs
 
 DISTRO_ADDONS = [
     '@MOZ_PKG_NAME@',
@@ -82,11 +85,16 @@ class VersionCompareFailed(Exception):
         return "Failed to compare versions A = %s, B = %s (%s)" % (self.a, self.b, str(self.e))
 
 
+def _open(filename, mode):
+    if sys.version_info[0] < 3:
+        return codecs.open(filename, mode, 'utf-8')
+    return open(filename, mode)
+
 def mkstemp_copy(path):
     '''Make a copy of a file to a temporary file, and return the path'''
     (outfd, outpath) = tempfile.mkstemp()
-    outfile = os.fdopen(outfd, 'w')
-    infile = open(path, 'r')
+    outfile = os.fdopen(outfd, 'wb')
+    infile = open(path, 'rb')
 
     total = 0
     while True:
@@ -173,12 +181,15 @@ class ExtensionINIParser(ConfigParser):
                 self.parser = parser
                 self.index = 0
 
-            def next(self):
+            def __next__(self):
                 if self.index == len(self.parser):
                     raise StopIteration
                 res = self.parser[self.index]
                 self.index += 1
                 return res
+
+            def next(self):
+                return self.__next__()
 
         return ExtensionINIParserIter(self)
 
@@ -228,7 +239,9 @@ def compare_versions(a, b):
         return (re.sub(r'([^\.]*)\.*(.*)', r'\2', part), res)
 
     def strcmp(stra, strb):
-        if stra == None and strb != None:
+        if stra == None and strb == None:
+            return 0
+        elif stra == None and strb != None:
             return 1
         elif stra != None and strb == None:
             return -1
@@ -292,9 +305,7 @@ class Plugin(object):
     @property
     def package(self):
         if self._checked_package == False:
-            package = apport.packaging.get_file_package(self.path)
-            if package != None:
-                self._package = package.encode()
+            self._package = apport.packaging.get_file_package(self.path)
             self._checked_package = True
         return self._package
 
@@ -316,7 +327,7 @@ class PluginRegistry:
 
         fd = None
         try:
-            fd = open(os.path.join(path, 'pluginreg.dat'), 'r')
+            fd = _open(os.path.join(path, 'pluginreg.dat'), 'r')
             try:
                 skip = 0
                 linenum = 1
@@ -387,12 +398,15 @@ class PluginRegistry:
                 self.registry = registry
                 self.index = 0
 
-            def next(self):
+            def __next__(self):
                 if self.index == len(self.registry):
                     raise StopIteration
                 ret = self.registry[self.index]
                 self.index += 1
                 return ret
+
+            def next(self):
+                return self.__next__()
 
         return PluginRegistryIter(self)
 
@@ -547,7 +561,7 @@ class Prefs:
         f = None
         self._state = Prefs.STATE_READY
         try:
-            f = open(filename)
+            f = _open(filename, 'r')
             try:
                 linenum = 1
                 state = None
@@ -580,7 +594,8 @@ class Prefs:
                         linenum = 1
                         state = None
                         for line in f.readlines():
-                            state = self._parseline(line, source, linenum, state)
+                            state = self._parseline(line.decode('utf-8'),
+                                                    source, linenum, state)
                             linenum += 1
                     except Exception as e:
                         self.errors[source] = str(e)
@@ -889,12 +904,15 @@ class Prefs:
                         pass
                 self.keys.sort()
 
-            def next(self):
+            def __next__(self):
                 if self.index == len(self.keys):
                     raise StopIteration
                 res = self.keys[self.index]
                 self.index += 1
                 return res
+
+            def next(self):
+                return self.__next__()
 
         return PrefsIter(self)
 
@@ -1248,12 +1266,15 @@ class Profiles:
                 self.profiles = profiles
                 self.index = 0
 
-            def next(self):
+            def __next__(self):
                 if self.index == len(self.profiles):
                     raise StopIteration
                 res = self.profiles[self.index]
                 self.index += 1
                 return res
+
+            def next(self):
+                return self.__next__()
 
         return ProfilesIter(self)
 
@@ -1387,7 +1408,7 @@ def add_info(report, ui):
             return 0
 
     # Put the most recent first
-    crash_reports.sort(crashes_sort)
+    crash_reports.sort(key=functools.cmp_to_key(crashes_sort))
 
     crash_reports_str = ''
     i = 0
@@ -1455,7 +1476,8 @@ if __name__ == "__main__":
     import apport
     from apport import packaging
     D = {}
-    D['Package'] = 'firefox'
+    D['Package'] = '@MOZ_PKG_NAME@'
+    D['SourcePackage'] = '@MOZ_PKG_NAME@'
     add_info(D, None)
     for KEY in D.keys():
         print('''-------------------%s: ------------------\n%s''' % (KEY, D[KEY]))
