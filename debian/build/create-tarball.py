@@ -237,7 +237,7 @@ def verify_all_locales(all_locales, blfile, shipped_locales):
 
 def do_checkout(source, dest, tag=None):
     dest_parent = os.path.dirname(dest)
-    if not os.path.isdir(dest_parent):
+    if dest_parent != '' and not os.path.isdir(dest_parent):
         os.makedirs(dest_parent)
 
     do_exec(['hg', 'clone', source, dest])
@@ -326,6 +326,7 @@ def checkout_source(repo, cache, tag):
         local_source = os.path.join(cache, os.path.basename(repo))
     source = repo if local_source == None else local_source
     do_checkout(source, os.getcwd(), tag=tag)
+
 def check_dependencies():
     DEPENDENCIES = [
         [ 'hg', 'mercurial' ],
