@@ -100,6 +100,8 @@ public:
 
   bool IsRegistered() { return !!(mFlags & UNITY_MENUBAR_IS_REGISTERED); }
 
+  GtkWidget* TopLevelWindow() { return mTopLevel; }
+
 private:
   friend class uGlobalMenuService;
 

@@ -89,7 +89,7 @@ private:
   static void ItemActivatedCallback(DbusmenuMenuitem *menuItem,
                                     PRUint32 timeStamp,
                                     void *data);
-  void Activate();
+  void Activate(PRUint32 timeStamp);
   void UncheckSiblings();
   void SetMenuItemType(uMenuItemType aType)
   {

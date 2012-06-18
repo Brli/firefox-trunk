@@ -56,6 +56,7 @@
 #include <glib-object.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <gdk/gdkx.h>
 #include <libdbusmenu-gtk/menuitem.h>
 
 #include "uGlobalMenuService.h"
@@ -563,12 +564,14 @@ uGlobalMenuItem::ItemActivatedCallback(DbusmenuMenuitem *menuItem,
                                        void *data)
 {
   uGlobalMenuItem *self = static_cast<uGlobalMenuItem *>(data);
-  self->Activate();
+  self->Activate(timeStamp);
 }
 
 void
-uGlobalMenuItem::Activate()
+uGlobalMenuItem::Activate(PRUint32 timeStamp)
 {
+  gdk_x11_window_set_user_time(gtk_widget_get_window(mMenuBar->TopLevelWindow()),
+                               timeStamp);
   // This first bit seems backwards, but it's not really. If autocheck is
   // not set or autocheck==true, then the checkbox state is usually updated
   // by the input event that clicked on the menu item. In this case, we need
