@@ -61,6 +61,8 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     - update debian/apport/source_firefox.py.in
   * Refresh patches
     - update debian/patches/ubuntu-ua-string-changes.patch
+    - update debian/patches/mozilla-kde.patch
+    - update debian/patches/dont-override-general-useragent-locale.patch
   * Kill the SDK in quantal - nothing in the archive depends on it
     (note, we still provide the NPAPI SDK though)
     - update debian/firefox-dev.install.in
