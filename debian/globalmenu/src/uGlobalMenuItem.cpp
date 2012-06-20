@@ -62,10 +62,13 @@
 #include "uGlobalMenuService.h"
 #include "uGlobalMenuItem.h"
 #include "uGlobalMenuBar.h"
+#include "uGlobalMenuUtils.h"
 #include "uGlobalMenu.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
+
+#include "compat.h"
 
 // XXX: Borrowed from content/xbl/src/nsXBLPrototypeHandler.cpp. This doesn't
 // seem to be publicly available, and we need a way to map key names
@@ -463,6 +466,9 @@ uGlobalMenuItem::SyncAccelFromContent()
 void
 uGlobalMenuItem::SyncTypeAndStateFromContent()
 {
+  MENUOBJECT_REENTRANCY_GUARD(UNITY_MENUITEM_SYNC_TYPE_GUARD);
+  TRACETM();
+
   static nsIContent::AttrValuesArray attrs[] =
     { &uWidgetAtoms::checkbox, &uWidgetAtoms::radio, nsnull };
   PRInt32 type = mContent->FindAttrValueIn(kNameSpaceID_None,
@@ -490,7 +496,6 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
                                                               uWidgetAtoms::checked,
                                                               commandChecked,
                                                               eCaseMatters)) {
-        UNITY_MENU_BLOCK_EVENTS_FOR_CURRENT_SCOPE();
         mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
                           commandChecked, true);
       }
@@ -516,7 +521,7 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
 void
 uGlobalMenuItem::SyncProperties()
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
 
   if (mCommandContent) {
     mListener->UnregisterForContentChanges(mCommandContent, this);
@@ -607,14 +612,10 @@ uGlobalMenuItem::Activate(PRUint32 timeStamp)
                                      false, nsnull);
           nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
           if (target) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
             nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
             if (priv) {
               priv->SetTrusted(true);
             }
-#else
-            event->SetTrusted(true);
-#endif
             bool dummy;
             target->DispatchEvent(event, &dummy);
           }
@@ -725,7 +726,7 @@ uGlobalMenuItem::~uGlobalMenuItem()
 
   if (mDbusMenuItem) {
     g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                         reinterpret_cast<gpointer>(ItemActivatedCallback),
+                                         FuncToVoidPtr(ItemActivatedCallback),
                                          this);
     g_object_unref(mDbusMenuItem);
   }
@@ -739,7 +740,7 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
                         nsIContent *aContent,
                         uGlobalMenuBar *aMenuBar)
 {
-  TRACE_WITH_CONTENT(aContent);
+  TRACEC(aContent);
 
   uGlobalMenuItem *menuitem = new uGlobalMenuItem();
   if (!menuitem) {
@@ -757,7 +758,7 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
 void
 uGlobalMenuItem::AboutToShowNotify()
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
 
   if (IsDirty()) {
     SyncProperties();
@@ -771,8 +772,7 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
                                          nsIContent *aContent,
                                          nsIAtom *aAttribute)
 {
-  TRACE_WITH_THIS_MENUOBJECT();
-  UNITY_MENU_ENSURE_EVENTS_UNBLOCKED();
+  TRACETM();
   NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
                aContent == mKeyContent,
                "Received an event that wasn't meant for us!");
@@ -784,13 +784,13 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
   }
 
   if (IsDirty()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as invalid");
+    LOGTM("Previously marked as invalid");
     return;
   }
 
   if (mParent->GetType() == eMenu &&
       !(static_cast<uGlobalMenu *>(mParent))->IsOpenOrOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't open or opening. Marking invalid");
+    LOGTM("Parent isn't open or opening. Marking invalid");
     Invalidate();
     return;
   }
@@ -828,22 +828,4 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
   } else if (aContent == mKeyContent) {
     SyncAccelFromContent();
   }
-}
-
-void
-uGlobalMenuItem::ObserveContentRemoved(nsIDocument *aDocument,
-                                       nsIContent *aContainer,
-                                       nsIContent *aChild,
-                                       PRInt32 aIndexInContainer)
-{
-  NS_ASSERTION(0, "We can't remove content from a menuitem!");
-}
-
-void
-uGlobalMenuItem::ObserveContentInserted(nsIDocument *aDocument,
-                                        nsIContent *aContainer,
-                                        nsIContent *aChild,
-                                        PRInt32 aIndexInContainer)
-{
-  NS_ASSERTION(0, "We can't insert content in to a menuitem!");
 }

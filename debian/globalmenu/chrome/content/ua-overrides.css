@@ -1,0 +1,16 @@
+toolbar[type="menubar"] {
+  -moz-binding: url("chrome://globalmenu/content/overrides.xml#menutoolbar") ! important;
+}
+
+menubar {
+  -moz-binding: url("chrome://globalmenu/content/overrides.xml#menubar") ! important;
+}
+
+menubar.menubar-displayed-in-unity {
+  display: none ! important;
+}
+
+toolbar.menubar-displayed-in-unity:not([customizing="true"]) {
+  min-height: 0 !important;
+  border: 0 !important;
+}

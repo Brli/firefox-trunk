@@ -50,6 +50,7 @@
 #include <nsIDOMKeyEvent.h>
 #include <nsIDOMEventListener.h>
 #include <nsICaseConversion.h>
+#include <nsIContent.h>
 
 #include <glib-object.h>
 #include <gdk/gdk.h>
@@ -68,10 +69,10 @@
 #define MODIFIER_ALT      4
 #define MODIFIER_META     8
 
-NS_IMPL_ISUPPORTS1(uGlobalMenuBarListener, nsIDOMEventListener)
+NS_IMPL_ISUPPORTS1(uGlobalMenuBar::Listener, nsIDOMEventListener)
 
 NS_IMETHODIMP
-uGlobalMenuBarListener::HandleEvent(nsIDOMEvent *aEvent)
+uGlobalMenuBar::Listener::HandleEvent(nsIDOMEvent *aEvent)
 {
   nsAutoString type;
   nsresult rv = aEvent->GetType(type);
@@ -95,22 +96,6 @@ uGlobalMenuBarListener::HandleEvent(nsIDOMEvent *aEvent)
   return rv;
 }
 
-GtkWidget*
-uGlobalMenuBar::WidgetToGTKWindow(nsIWidget *aWidget)
-{
-  // Get the main GDK drawing window from our nsIWidget
-  GdkWindow *window = static_cast<GdkWindow *>(aWidget->GetNativeData(NS_NATIVE_WINDOW));
-  if (!window)
-    return nsnull;
-
-  // Get the widget for the main drawing window, which should be a MozContainer
-  gpointer user_data = nsnull;
-  gdk_window_get_user_data(window, &user_data);
-  if (!user_data || !GTK_IS_CONTAINER(user_data))
-    return nsnull;
-
-  return gtk_widget_get_toplevel(GTK_WIDGET(user_data));
-}
 
 bool
 uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
@@ -124,6 +109,11 @@ bool
 uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
                                    PRUint32 index)
 {
+  NS_ASSERTION(index <= mMenuObjects.Length(), "Invalid index");
+  if (index > mMenuObjects.Length()) {
+    return false;
+  }
+
   gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                       menu->GetDbusMenuItem(),
                                                       index);
@@ -184,9 +174,6 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   NS_ENSURE_ARG(aWindow);
   NS_ENSURE_ARG(aMenuBar);
 
-  // We create this early so that IsRegistered() works
-  mCancellable = uGlobalMenuRequestAutoCanceller::Create();
-
   mContent = aMenuBar;
 
   mTopLevel = WidgetToGTKWindow(aWindow);
@@ -230,7 +217,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     return rv;
   }
 
-  mEventListener = new uGlobalMenuBarListener(this);
+  mEventListener = new Listener(this);
 
   mDocTarget = do_QueryInterface(mContent->GetCurrentDoc());
 
@@ -268,56 +255,17 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     mAccessKeyMask = MODIFIER_ALT;
   }
 
-  rv = mListener->RegisterFallbackListener(this);
+  rv = mListener->RegisterForContentChanges(mContent, this);
   if (NS_FAILED(rv)) {
     return rv;
   }
 
+  mCancellable = g_cancellable_new();
+
   PRUint32 xidn = (PRUint32) GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel));
   uGlobalMenuService::RegisterGlobalMenuBar(this, mCancellable, xidn, path);
-  HideXULMenuBar();
 
   return NS_OK;
-}
-
-bool
-uGlobalMenuBar::ShouldParentStayVisible(nsIContent *aContent)
-{
-  static nsIAtom *blacklist[] =
-    { uWidgetAtoms::toolbarspring, nsnull };
-
-  nsIContent *parent = aContent->GetParent();
-  if (!parent) {
-    return true;
-  }
-
-  PRUint32 count = parent->GetChildCount();
-
-  if (count <= 1) {
-    // It's just us
-    return false;
-  }
-
-  for (PRUint32 i = 0 ; i < count ; i++) {
-    nsIContent *child = parent->GetChildAt(i);
-    if (child == aContent) {
-      continue;
-    }
-
-    bool found = false;
-    for (PRUint32 j = 0 ; blacklist[j] != nsnull ; j++) {
-      if (child->Tag() == blacklist[j]) {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 PRUint32
@@ -349,73 +297,19 @@ uGlobalMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent)
   return modifiers;
 }
 
-bool
-uGlobalMenuBar::IsParentOfMenuBar(nsIContent *aContent)
-{
-  nsIContent *tmp = mContent->GetParent();
-
-  while (tmp) {
-    if (tmp == aContent) {
-      return true;
-    }
-
-    tmp = tmp->GetParent();
-  }
-
-  return false;
-}
-
-void
-uGlobalMenuBar::HideXULMenuBar()
-{
-  if (mHiddenElement) {
-    mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
-                            mRestoreHidden ? NS_LITERAL_STRING("true") :
-                            NS_LITERAL_STRING("false"), true);
-  }
-
-  nsIContent *tmp = mContent;
-
-  // Walk up the DOM tree until we find a node with siblings
-  while (tmp) {
-    if (ShouldParentStayVisible(tmp)) {
-      break;
-    }
-
-    tmp = tmp->GetParent();
-  }
-
-  mHiddenElement = tmp;
-  mRestoreHidden = mHiddenElement->AttrValueIs(kNameSpaceID_None,
-                                               uWidgetAtoms::hidden,
-                                               uWidgetAtoms::_true,
-                                               eCaseMatters);
-
-  mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
-                          NS_LITERAL_STRING("true"), true);
-}
-
-void
-uGlobalMenuBar::ShowXULMenuBar()
-{
-  if (mHiddenElement) {
-    mHiddenElement->SetAttr(kNameSpaceID_None, uWidgetAtoms::hidden,
-                            mRestoreHidden ? NS_LITERAL_STRING("true") :
-                            NS_LITERAL_STRING("false"), true);
-    mHiddenElement = nsnull;
-  }
-}
-
 uGlobalMenuBar::uGlobalMenuBar():
   uGlobalMenuObject(eMenuBar), mServer(nsnull), mTopLevel(nsnull),
-  mOpenedByKeyboard(false)
+  mOpenedByKeyboard(false), mCancellable(nsnull)
 {
   MOZ_COUNT_CTOR(uGlobalMenuBar);
 }
 
 uGlobalMenuBar::~uGlobalMenuBar()
 {
-  ShowXULMenuBar();
+  if (mCancellable) {
+    g_cancellable_cancel(mCancellable);
+    g_object_unref(mCancellable);
+  }
 
   if (mDocTarget) {
     mDocTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
@@ -436,7 +330,7 @@ uGlobalMenuBar::~uGlobalMenuBar()
   }
 
   if (mListener) {
-    mListener->UnregisterFallbackListener(this);
+    mListener->UnregisterForContentChanges(mContent, this);
     mListener->Destroy();
   }
 
@@ -625,27 +519,10 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
 void
 uGlobalMenuBar::NotifyMenuBarRegistered()
 {
-  if (mCancellable) {
-    mCancellable->Destroy();
-    mCancellable = nsnull;
-  }
+  g_object_unref(mCancellable);
+  mCancellable = nsnull;
 
   SetFlags(UNITY_MENUBAR_IS_REGISTERED);
-}
-
-bool
-uGlobalMenuBar::WidgetHasSameToplevelWindow(nsIWidget *aWidget)
-{
-  GtkWidget *topLevel = WidgetToGTKWindow(aWidget);
-  return GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel)) == GDK_WINDOW_XID(gtk_widget_get_window(topLevel));
-}
-
-void
-uGlobalMenuBar::ObserveAttributeChanged(nsIDocument *aDocument,
-                                        nsIContent *aContent,
-                                        nsIAtom *aAttribute)
-{
-
 }
 
 void
@@ -654,10 +531,7 @@ uGlobalMenuBar::ObserveContentRemoved(nsIDocument *aDocument,
                                       nsIContent *aChild,
                                       PRInt32 aIndexInContainer)
 {
-  if (IsParentOfMenuBar(aContainer)) {
-    HideXULMenuBar();
-    return;
-  }
+  TRACETM();
 
   if (aContainer != mContent) {
     return;
@@ -674,10 +548,7 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
                                        nsIContent *aChild,
                                        PRInt32 aIndexInContainer)
 {
-  if (IsParentOfMenuBar(aContainer)) {
-    HideXULMenuBar();
-    return;
-  }
+  TRACETM();
 
   if (aContainer != mContent) {
     return;

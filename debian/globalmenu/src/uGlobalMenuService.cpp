@@ -59,6 +59,9 @@
 #include <prenv.h>
 
 #include <glib-object.h>
+#include <gtk/gtk.h>
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
 
 #include "uGlobalMenuService.h"
 #include "uWidgetAtoms.h"
@@ -69,15 +72,12 @@ class RegisterWindowCbData
 {
 public:
   RegisterWindowCbData(uGlobalMenuBar *aMenu,
-                       uGlobalMenuRequestAutoCanceller *aCanceller):
+                       GCancellable *aCancellable):
                        mMenu(aMenu),
-                       mCanceller(aCanceller)
+                       mCancellable(aCancellable)
   {
-    mCancellable = mCanceller->GetCancellable();
-    if (mCancellable) {
-      g_object_ref(mCancellable);
-      mID = g_cancellable_connect(mCancellable, G_CALLBACK(Cancelled), this, nsnull);
-    }
+    g_object_ref(mCancellable);
+    mID = g_cancellable_connect(mCancellable, G_CALLBACK(Cancelled), this, nsnull);
   }
 
   static void Cancelled(GCancellable *aCancellable,
@@ -89,25 +89,20 @@ public:
     // If the request was cancelled, then invalidate pointers to objects
     // that might not exist anymore, as we don't assume that GDBus
     // cancellation is reliable (see https://launchpad.net/bugs/953562)
-
     cbdata->mMenu = nsnull;
-    cbdata->mCanceller = nsnull;
   }
 
   uGlobalMenuBar* GetMenuBar() { return mMenu; }
 
   ~RegisterWindowCbData()
   {
-    if (mCancellable) {
-      g_cancellable_disconnect(mCancellable, mID);
-      g_object_unref(mCancellable);
-    }
+    g_cancellable_disconnect(mCancellable, mID);
+    g_object_unref(mCancellable);
   }
 
 private:
   uGlobalMenuBar *mMenu;
   GCancellable *mCancellable;
-  uGlobalMenuRequestAutoCanceller *mCanceller;
   PRUint32 mID;
 };
 
@@ -313,7 +308,8 @@ void
 uGlobalMenuService::DestroyMenuForWidget(nsIWidget *aWidget)
 {
   for (PRUint32 i = 0; i < mMenus.Length(); i++) {
-    if (mMenus[i]->WidgetHasSameToplevelWindow(aWidget)) {
+    if (GDK_WINDOW_XID(gtk_widget_get_window(mMenus[i]->TopLevelWindow())) ==
+        GDK_WINDOW_XID(gtk_widget_get_window(WidgetToGTKWindow(aWidget)))) {
       mMenus.RemoveElementAt(i);
       return;
     }
@@ -344,7 +340,8 @@ bool
 uGlobalMenuService::WidgetHasGlobalMenu(nsIWidget *aWidget)
 {
   for (PRUint32 i = 0; i < mMenus.Length(); i++) {
-    if (mMenus[i]->WidgetHasSameToplevelWindow(aWidget))
+    if (GDK_WINDOW_XID(gtk_widget_get_window(mMenus[i]->TopLevelWindow())) ==
+        GDK_WINDOW_XID(gtk_widget_get_window(WidgetToGTKWindow(aWidget))))
       return true;
   }
   return false;
@@ -397,7 +394,7 @@ uGlobalMenuService::~uGlobalMenuService()
 
   if (mDbusProxy) {
     g_signal_handlers_disconnect_by_func(mDbusProxy,
-                                         reinterpret_cast<gpointer>(NameOwnerChangedCallback),
+                                         FuncToVoidPtr(NameOwnerChangedCallback),
                                          NULL);
     g_object_unref(mDbusProxy);
   }
@@ -433,7 +430,7 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
 
 /*static*/ bool
 uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
-                                          uGlobalMenuRequestAutoCanceller *aCanceller,
+                                          GCancellable *aCancellable,
                                           PRUint32 aXID, nsACString& aPath)
 {
   if (!InitService()) {
@@ -450,14 +447,14 @@ uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
     return false;
   }
 
-  RegisterWindowCbData *data = new RegisterWindowCbData(aMenuBar, aCanceller);
+  RegisterWindowCbData *data = new RegisterWindowCbData(aMenuBar, aCancellable);
 
   g_dbus_proxy_call(sService->mDbusProxy,
                     "RegisterWindow",
                     g_variant_new("(uo)", aXID, PromiseFlatCString(aPath).get()),
                     G_DBUS_CALL_FLAGS_NONE,
                     -1,
-                    aCanceller->GetCancellable(),
+                    aCancellable,
                     RegisterWindowCallback,
                     data);
 

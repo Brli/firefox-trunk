@@ -49,18 +49,23 @@
 #include <libdbusmenu-glib/server.h>
 
 #include "uGlobalMenuObject.h"
-#include "uMenuChangeObserver.h"
+
+// The menu is in the process of opening
+#define UNITY_MENU_IS_OPEN_OR_OPENING     (1 << 7)
+
+// The menu needs rebuilding
+#define UNITY_MENU_NEEDS_REBUILDING       (1 << 8)
+
+// The shell sent the first "AboutToOpen" event
+#define UNITY_MENU_READY                  (1 << 9)
 
 class uGlobalMenuItem;
 class uGlobalMenuBar;
 class uGlobalMenuDocListener;
 
-class uGlobalMenu: public uGlobalMenuObject,
-                   public uMenuChangeObserver
+class uGlobalMenu: public uGlobalMenuObject
 {
 public:
-  NS_DECL_UMENUCHANGEOBSERVER
-
   static uGlobalMenuObject* Create(uGlobalMenuObject *aParent,
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
@@ -72,6 +77,19 @@ public:
   void OpenMenu();
   void AboutToShowNotify();
   bool IsOpenOrOpening() { return !!(mFlags & UNITY_MENU_IS_OPEN_OR_OPENING); }
+
+protected:
+  void ObserveAttributeChanged(nsIDocument *aDocument,
+                               nsIContent *aContent,
+                               nsIAtom *aAttribute);
+  void ObserveContentRemoved(nsIDocument *aDocument,
+                             nsIContent *aContainer,
+                             nsIContent *aChild,
+                             PRInt32 aIndexInContainer);
+  void ObserveContentInserted(nsIDocument *aDocument,
+                              nsIContent *aContainer,
+                              nsIContent *aChild,
+                              PRInt32 aIndexInContainer);
 
 private:
   uGlobalMenu();

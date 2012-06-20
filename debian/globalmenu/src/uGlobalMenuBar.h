@@ -44,15 +44,16 @@
 #include <nsAutoPtr.h>
 #include <nsStringAPI.h>
 #include <nsIDOMEventTarget.h>
-#include <nsIContent.h>
 #include <nsIDOMEventListener.h>
 
 #include <libdbusmenu-glib/server.h>
+#include <gio/gio.h>
 #include <gtk/gtk.h>
 
-#include "uMenuChangeObserver.h"
 #include "uGlobalMenuObject.h"
-#include "uGlobalMenuUtils.h"
+
+// The menubar has been registered with the shell
+#define UNITY_MENUBAR_IS_REGISTERED           (1 << 14)
 
 // Meh. X.h defines this
 #ifdef KeyPress
@@ -66,34 +67,14 @@ class uGlobalMenuService;
 class uGlobalMenu;
 class uGlobalMenuBar;
 class nsIDOMKeyEvent;
+class nsIContent;
 
-class uGlobalMenuBarListener: public nsIDOMEventListener
+class uGlobalMenuBar: public uGlobalMenuObject
 {
 public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSIDOMEVENTLISTENER
-
-  uGlobalMenuBarListener(uGlobalMenuBar *aMenuBar):
-                         mMenuBar(aMenuBar) { };
-  ~uGlobalMenuBarListener() { };
-
-private:
-  uGlobalMenuBar *mMenuBar;
-};
-
-class uGlobalMenuBar: public uGlobalMenuObject,
-                      public uMenuChangeObserver
-{
-public:
-  NS_DECL_UMENUCHANGEOBSERVER
-
   static uGlobalMenuBar* Create(nsIWidget *aWindow,
                                 nsIContent *aMenuBar);
   ~uGlobalMenuBar();
-
-  // Checks if the menubar shares the same top level window as the 
-  // specified nsIWidget
-  bool WidgetHasSameToplevelWindow(nsIWidget *aWidget);
 
   // Returns whether the menu was opened via a keyboard shortcut
   bool OpenedByKeyboard() { return !!mOpenedByKeyboard; }
@@ -102,28 +83,42 @@ public:
 
   GtkWidget* TopLevelWindow() { return mTopLevel; }
 
+protected:
+  void ObserveContentRemoved(nsIDocument *aDocument,
+                             nsIContent *aContainer,
+                             nsIContent *aChild,
+                             PRInt32 aIndexInContainer);
+  void ObserveContentInserted(nsIDocument *aDocument,
+                              nsIContent *aContainer,
+                              nsIContent *aChild,
+                              PRInt32 aIndexInContainer);
+
 private:
   friend class uGlobalMenuService;
 
   void NotifyMenuBarRegistered();
 
 private:
-  friend class uGlobalMenuBarListener;
 
-  void Focus();
-  void Blur();
-  nsresult KeyPress(nsIDOMEvent *aKeyEvent);
-  nsresult KeyUp(nsIDOMEvent *aKeyEvent);
-  nsresult KeyDown(nsIDOMEvent *aKeyEvent);
+  class Listener: public nsIDOMEventListener
+  {
+  public:
+    NS_DECL_ISUPPORTS
+    NS_DECL_NSIDOMEVENTLISTENER
 
-private:
+    Listener(uGlobalMenuBar *aMenuBar): mMenuBar(aMenuBar) { };
+    ~Listener() { };
+
+  private:
+    uGlobalMenuBar *mMenuBar;
+  };
+
   uGlobalMenuBar();
   // Initialize the menu structure
   nsresult Init(nsIWidget *aWindow,
                 nsIContent *aMenuBar);
 
   void InitializeDbusMenuItem();
-  GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
   nsresult Build();
   PRUint32 GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent);
   bool ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent);
@@ -132,23 +127,22 @@ private:
   bool InsertMenuObjectAt(uGlobalMenuObject *menu,
                           PRUint32 index);
   bool AppendMenuObject(uGlobalMenuObject *menu);
-  bool ShouldParentStayVisible(nsIContent *aContent);
-  bool IsParentOfMenuBar(nsIContent *aContent);
-  void HideXULMenuBar();
-  void ShowXULMenuBar();
+  void Focus();
+  void Blur();
+  nsresult KeyPress(nsIDOMEvent *aKeyEvent);
+  nsresult KeyUp(nsIDOMEvent *aKeyEvent);
+  nsresult KeyDown(nsIDOMEvent *aKeyEvent);
 
   DbusmenuServer *mServer;
   GtkWidget *mTopLevel;
 
-  nsCOMPtr<nsIContent> mHiddenElement;
   nsCOMPtr<nsIDOMEventTarget> mDocTarget;
-  bool mRestoreHidden;
   bool mXULMenuHidden;
-  nsRefPtr<uGlobalMenuBarListener> mEventListener;
+  nsRefPtr<Listener> mEventListener;
   PRInt32 mAccessKey;
   PRUint32 mAccessKeyMask;
   bool mOpenedByKeyboard;
-  nsAutoPtr<uGlobalMenuRequestAutoCanceller> mCancellable;
+  GCancellable *mCancellable;
 
   // Should probably have a container class and subclass that
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;

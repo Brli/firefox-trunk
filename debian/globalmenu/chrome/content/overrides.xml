@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+
+<bindings id="globalmenuOverrides"
+   xmlns="http://www.mozilla.org/xbl"
+   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="menutoolbar"
+           extends="chrome://global/content/bindings/toolbar.xml#toolbar-drag">
+    <implementation implements="nsIObserver">
+
+      <field name="menuservice">
+        Components.classes["@canonical.com/globalmenu-service;1"]
+                           .getService(Components.interfaces.uIGlobalMenuService);
+      </field>
+
+      <method name="observe">
+        <parameter name="aSubject"/>
+        <parameter name="aTopic"/>
+        <parameter name="aData"/>
+        <body><![CDATA[
+          let classes = this.getAttribute("class").split();
+
+          if (this.menuservice.online) {
+            if (classes.indexOf("menubar-displayed-in-unity") == -1) {
+              if (classes.length == 1 && classes[0].length == 0) {
+                classes.splice(0, 1);
+              }
+              classes.push("menubar-displayed-in-unity");
+              this.setAttribute("class", classes.join(" "));
+            }
+          } else {
+            let index = classes.indexOf("menubar-displayed-in-unity");
+            if (index > -1) {
+              classes.splice(index, 1);
+              this.setAttribute("class", classes.join(" "));
+            }
+          }
+        ]]></body>
+      </method>
+
+      <constructor>
+        <![CDATA[
+          this.menuservice.registerNotification(this);
+          this.observe(null, null, null);
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          this.menuservice.unregisterNotification(this);
+        ]]>
+      </destructor>
+
+    </implementation>
+  </binding>
+
+  <binding id="menubar"
+           extends="chrome://global/content/bindings/toolbar.xml#menubar">
+    <implementation implements="nsIObserver">
+
+      <field name="menuservice">
+        Components.classes["@canonical.com/globalmenu-service;1"]
+                           .getService(Components.interfaces.uIGlobalMenuService);
+      </field>
+
+      <method name="observe">
+        <parameter name="aSubject"/>
+        <parameter name="aTopic"/>
+        <parameter name="aData"/>
+        <body><![CDATA[
+          let classes = this.getAttribute("class").split();
+
+          if (this.menuservice.online) {
+            if (classes.indexOf("menubar-displayed-in-unity") == -1) {
+              if (classes.length == 1 && classes[0].length == 0) {
+                classes.splice(0, 1);
+              }
+              classes.push("menubar-displayed-in-unity");
+              this.setAttribute("class", classes.join(" "));
+            }
+          } else {
+            let index = classes.indexOf("menubar-displayed-in-unity");
+            if (index > -1) {
+              classes.splice(index, 1);
+              this.setAttribute("class", classes.join(" "));
+            }
+          }
+        ]]></body>
+      </method>
+
+      <constructor>
+        <![CDATA[
+          this.menuservice.registerNotification(this);
+          this.observe(null, null, null);
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          this.menuservice.unregisterNotification(this);
+        ]]>
+      </destructor>
+
+    </implementation>
+  </binding>
+
+</bindings>

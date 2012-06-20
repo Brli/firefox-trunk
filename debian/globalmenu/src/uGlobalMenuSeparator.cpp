@@ -118,7 +118,7 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
                              nsIContent *aContent,
                              uGlobalMenuBar *aMenuBar)
 {
-  TRACE_WITH_CONTENT(aContent);
+  TRACEC(aContent);
 
   uGlobalMenuSeparator *menuitem = new uGlobalMenuSeparator();
   if (!menuitem) {
@@ -170,22 +170,4 @@ uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
     UpdateInfoFromContentClass();
     SyncVisibilityFromContent();
   }
-}
-
-void
-uGlobalMenuSeparator::ObserveContentRemoved(nsIDocument *aDocument,
-                                            nsIContent *aContainer,
-                                            nsIContent *aChild,
-                                            PRInt32 aIndexInContainer)
-{
-  NS_ASSERTION(0, "We can't remove content from a menuseparator!");
-}
-
-void
-uGlobalMenuSeparator::ObserveContentInserted(nsIDocument *aDocument,
-                                             nsIContent *aContainer,
-                                             nsIContent *aChild,
-                                             PRInt32 aIndexInContainer)
-{
-  NS_ASSERTION(0, "We can't insert content in to a menuseparator!");
 }

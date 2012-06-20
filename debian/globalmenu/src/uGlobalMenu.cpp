@@ -68,6 +68,8 @@
 
 #include "uDebug.h"
 
+#include "compat.h"
+
 uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu):
   mMarker(0), mMenu(aMenu)
 {
@@ -158,30 +160,22 @@ uGlobalMenu::MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
   return false;
 }
 
-void
-uGlobalMenu::Activate()
+static void
+DispatchEvent(nsIContent *aContent, const nsAString& aType)
 {
-  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::menuactive,
-                    NS_LITERAL_STRING("true"), true);
-
-  nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
+  nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(aContent);
   if (target) {
-    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->OwnerDoc());
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aContent->OwnerDoc());
     if (domDoc) {
       nsCOMPtr<nsIDOMEvent> event;
       domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
                           getter_AddRefs(event));
       if (event) {
-        event->InitEvent(NS_LITERAL_STRING("DOMMenuItemActive"),
-                         true, true);
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
+        event->InitEvent(aType, true, true);
         nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
         if (priv) {
           priv->SetTrusted(true);
         }
-#else
-        event->SetTrusted(true);
-#endif
         bool dummy;
         target->DispatchEvent(event, &dummy);
       }
@@ -190,33 +184,20 @@ uGlobalMenu::Activate()
 }
 
 void
+uGlobalMenu::Activate()
+{
+  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::menuactive,
+                    NS_LITERAL_STRING("true"), true);
+
+  DispatchEvent(mContent, NS_LITERAL_STRING("DOMMenuItemActive"));
+}
+
+void
 uGlobalMenu::Deactivate()
 {
   mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::menuactive, true);
 
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->OwnerDoc());
-  if (domDoc) {
-    nsCOMPtr<nsIDOMEvent> event;
-    domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
-                        getter_AddRefs(event));
-    if (event) {
-      event->InitEvent(NS_LITERAL_STRING("DOMMenuItemInactive"),
-                       true, true);
-      nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
-      if (target) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
-        nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-        if (priv) {
-          priv->SetTrusted(true);
-        }
-#else
-        event->SetTrusted(true);
-#endif
-        bool dummy;
-        target->DispatchEvent(event, &dummy);
-      }
-    }
-  }
+  DispatchEvent(mContent, NS_LITERAL_STRING("DOMMenuItemInactive"));
 }
 
 bool
@@ -231,10 +212,44 @@ uGlobalMenu::CanOpen()
     return (!isHidden && !isDisabled);
 }
 
+static void
+DispatchMouseEvent(nsIContent *aPopup, const nsAString& aType)
+{
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aPopup->OwnerDoc());
+  if (domDoc) {
+    nsCOMPtr<nsIDOMEvent> event;
+    domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
+                        getter_AddRefs(event));
+    if (event) {
+      nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
+      if (mouseEvent) {
+        nsCOMPtr<nsIDOMWindow> window;
+        domDoc->GetDefaultView(getter_AddRefs(window));
+        if (window) {
+          mouseEvent->InitMouseEvent(aType, true, true, window, nsnull,
+                                     0, 0, 0, 0, false, false, false, false,
+                                     0, nsnull);
+          nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(aPopup);
+          if (target) {
+            nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
+            if (priv) {
+              priv->SetTrusted(true);
+            }
+            bool dummy;
+            // XXX: dummy == false means that we should prevent the
+            //      the menu from opening, but there's no way to do this
+            target->DispatchEvent(event, &dummy);
+          }
+        }
+      }
+    }
+  }
+}
+
 void
 uGlobalMenu::AboutToOpen()
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
 
   // XXX: We ignore the first AboutToOpen on top-level menus, because Unity
   //      sends this signal on all top-levels when the window opens.
@@ -242,7 +257,7 @@ uGlobalMenu::AboutToOpen()
   //      open/close events, so we end up in a state where we resent the
   //      entire menu structure over dbus on every page navigation
   if (!(mFlags & UNITY_MENU_READY)) {
-    DEBUG_WITH_THIS_MENUOBJECT("Ignoring first AboutToOpen");
+    LOGTM("Ignoring first AboutToOpen");
     SetFlags(UNITY_MENU_READY);
     return;
   }
@@ -256,7 +271,7 @@ uGlobalMenu::AboutToOpen()
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
-    DEBUG_WITH_THIS_MENUOBJECT("Menu has no popup content");
+    LOGTM("Menu has no popup content");
     return;
   }
 
@@ -270,40 +285,7 @@ uGlobalMenu::AboutToOpen()
   //      menus, but this doesn't work for menuitems at all
   Activate();
 
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mPopupContent->OwnerDoc());
-  if (domDoc) {
-    nsCOMPtr<nsIDOMEvent> event;
-    domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
-                        getter_AddRefs(event));
-    if (event) {
-      nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
-      if (mouseEvent) {
-        nsCOMPtr<nsIDOMWindow> window;
-        domDoc->GetDefaultView(getter_AddRefs(window));
-        if (window) {
-          mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popupshowing"),
-                                     true, true, window, nsnull,
-                                     0, 0, 0, 0, false, false,
-                                     false, false, 0, nsnull);
-          nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPopupContent);
-          if (target) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
-            nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-            if (priv) {
-              priv->SetTrusted(true);
-            }
-#else
-            event->SetTrusted(true);
-#endif
-            bool dummy;
-            // XXX: dummy == false means that we should prevent the
-            //      the menu from opening, but there's no way to do this
-            target->DispatchEvent(event, &dummy);
-          }
-        }
-      }
-    }
-  }
+  DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshowing"));
 }
 
 void
@@ -322,38 +304,7 @@ uGlobalMenu::OnOpen()
     return;
   }
 
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mPopupContent->OwnerDoc());
-  if (domDoc) {
-    nsCOMPtr<nsIDOMEvent> event;
-    domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
-                        getter_AddRefs(event));
-    if (event) {
-      nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
-      if (mouseEvent) {
-        nsCOMPtr<nsIDOMWindow> window;
-        domDoc->GetDefaultView(getter_AddRefs(window));
-        if (window) {
-          mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popupshown"),
-                                     true, true, window, nsnull,
-                                     0, 0, 0, 0, false, false,
-                                     false, false, 0, nsnull);
-          nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPopupContent);
-          if (target) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
-            nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-            if (priv) {
-              priv->SetTrusted(true);
-            }
-#else
-            event->SetTrusted(true);
-#endif
-            bool dummy;
-            target->DispatchEvent(event, &dummy);
-          }
-        }
-      }
-    }
-  }
+  DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshown"));
 }
 
 void
@@ -368,43 +319,8 @@ uGlobalMenu::OnClose()
     return;
   }
 
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mPopupContent->OwnerDoc());
-  if (domDoc) {
-    nsCOMPtr<nsIDOMEvent> event;
-    domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
-                        getter_AddRefs(event));
-    if (event) {
-      nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
-      if (mouseEvent) {
-        nsCOMPtr<nsIDOMWindow> window;
-        domDoc->GetDefaultView(getter_AddRefs(window));
-        if (window) {
-          mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popuphiding"),
-                                     true, true, window, nsnull,
-                                     0, 0, 0, 0, false, false,
-                                     false, false, 0, nsnull);
-          nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPopupContent);
-          if (target) {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
-            nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-            if (priv) {
-              priv->SetTrusted(true);
-            }
-#else
-            event->SetTrusted(true);
-#endif
-            bool dummy;
-            target->DispatchEvent(event, &dummy);
-            mouseEvent->InitMouseEvent(NS_LITERAL_STRING("popuphidden"),
-                                       true, true, window, nsnull,
-                                       0, 0, 0, 0, false, false,
-                                       false, false, 0, nsnull);
-            target->DispatchEvent(event, &dummy);
-          }
-        }
-      }
-    }
-  }
+  DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphiding"));
+  DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
 
   ClearFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
 
@@ -414,7 +330,7 @@ uGlobalMenu::OnClose()
 void
 uGlobalMenu::SyncProperties()
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
 
   UpdateInfoFromContentClass();
   SyncLabelFromContent();
@@ -524,6 +440,11 @@ bool
 uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                                 PRUint32 index)
 {
+  NS_ASSERTION(index <= mMenuObjects.Length(), "Invalid index");
+  if (index > mMenuObjects.Length()) {
+    return false;
+  }
+
   PRUint32 correctedIndex = index;
 
   DbusmenuMenuitem *recycled = nsnull;
@@ -621,7 +542,7 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
 nsresult
 uGlobalMenu::Build()
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
 
   PRUint32 count = mMenuObjects.Length();
   for (PRUint32 i = 0; i < count; i++) {
@@ -750,10 +671,10 @@ uGlobalMenu::~uGlobalMenu()
 
   if (mDbusMenuItem) {
     g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                         reinterpret_cast<gpointer>(MenuAboutToOpenCallback),
+                                         FuncToVoidPtr(MenuAboutToOpenCallback),
                                          this);
     g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                         reinterpret_cast<gpointer>(MenuEventCallback),
+                                         FuncToVoidPtr(MenuEventCallback),
                                          this);
     g_object_unref(mDbusMenuItem);
   }
@@ -767,7 +688,7 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
                     nsIContent *aContent,
                     uGlobalMenuBar *aMenuBar)
 {
-  TRACE_WITH_CONTENT(aContent);
+  TRACEC(aContent);
 
   uGlobalMenu *menu = new uGlobalMenu();
   if (!menu) {
@@ -785,7 +706,7 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
 void
 uGlobalMenu::AboutToShowNotify()
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
 
   if (IsDirty()) {
     SyncProperties();
@@ -809,18 +730,18 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
                                      nsIContent *aContent,
                                      nsIAtom *aAttribute)
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
 
   if (IsDirty()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as invalid");
+    LOGTM("Previously marked as invalid");
     return;
   }
 
   if (mParent->GetType() == eMenu &&
       !(static_cast<uGlobalMenu *>(mParent))->IsOpenOrOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Parent isn't open or opening. Marking invalid");
+    LOGTM("Parent isn't open or opening. Marking invalid");
     Invalidate();
     return;
   }
@@ -852,24 +773,24 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
                                    nsIContent *aChild,
                                    PRInt32 aIndexInContainer)
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
   if (DoesNeedRebuild()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as needing a rebuild");
+    LOGTM("Previously marked as needing a rebuild");
     return;
   }
 
   if (!IsOpenOrOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Not open or opening - Marking as needing a rebuild");
+    LOGTM("Not open or opening - Marking as needing a rebuild");
     SetNeedsRebuild();
     return;
   }
 
   if (aContainer == mPopupContent) {
     bool res = RemoveMenuObjectAt(aIndexInContainer);
-    NS_WARN_IF_FALSE(res, "Failed to remove menuitem. Marking menu invalid");
+    NS_WARN_IF_FALSE(res, "Failed to remove menuitem - marking menu as needing a rebuild");
     if (!res) {
       SetNeedsRebuild();
     }
@@ -884,17 +805,17 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
                                     nsIContent *aChild,
                                     PRInt32 aIndexInContainer)
 {
-  TRACE_WITH_THIS_MENUOBJECT();
+  TRACETM();
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
                "Received an event that wasn't meant for us!");
 
   if (DoesNeedRebuild()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Previously marked as needing a rebuild");
+    LOGTM("Previously marked as needing a rebuild");
     return;
   }
 
   if (!IsOpenOrOpening()) {
-    DEBUG_WITH_THIS_MENUOBJECT("Not open or opening - Marking as needing a rebuild");
+    LOGTM("Not open or opening - Marking as needing a rebuild");
     SetNeedsRebuild();
     return;
   }
@@ -907,10 +828,10 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
     if (newItem) {
       res = InsertMenuObjectAt(newItem, aIndexInContainer);
     }
-    NS_WARN_IF_FALSE(res, "Failed to insert menuitem. Marking menu invalid");
+    NS_WARN_IF_FALSE(res, "Failed to insert menuitem - marking menu as needing a rebuild");
     if (!res) {
       SetNeedsRebuild();
-    }    
+    } 
   } else {
     Build();
   }

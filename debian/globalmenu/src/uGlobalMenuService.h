@@ -85,7 +85,7 @@ public:
   static void Shutdown();
 
   static bool RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
-                                    uGlobalMenuRequestAutoCanceller *aCanceller,
+                                    GCancellable *aCancellable,
                                     PRUint32 aXID, nsACString& aPath);
 
   static bool InitService();
