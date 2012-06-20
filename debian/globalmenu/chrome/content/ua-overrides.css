@@ -6,7 +6,7 @@ menubar {
   -moz-binding: url("chrome://globalmenu/content/overrides.xml#menubar") ! important;
 }
 
-menubar.menubar-displayed-in-unity {
+menubar.menubar-displayed-in-unity:not(.menubar-display-in-window) {
   display: none ! important;
 }
 

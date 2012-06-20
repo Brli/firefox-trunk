@@ -40,9 +40,10 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 
-(function unity_overrides() {
+(function unity_init() {
   "use strict";
 
+  var menuObserver = null;
   var fx13 = Services.vc.compare(Services.appinfo.version, "13.0a1") >= 0;
 
   function enablePlacesNativeViewMenu(name) {
@@ -66,14 +67,6 @@ Components.utils.import("resource://gre/modules/Services.jsm");
     // rewrite the prototype
     window[name].prototype = menuCtor.prototype;
   }
-
-  enablePlacesNativeViewMenu("PlacesMenu");
-  enablePlacesNativeViewMenu("HistoryMenu");
-
-})();
-
-(function unity_init() {
-  "use strict";
 
   function $(id) document.getElementById(id);
 
@@ -132,7 +125,8 @@ Components.utils.import("resource://gre/modules/Services.jsm");
     }
   }
 
-  var menuObserver = null;
+  enablePlacesNativeViewMenu("PlacesMenu");
+  enablePlacesNativeViewMenu("HistoryMenu");
 
   addEventListener("load", function onLoad()
   {

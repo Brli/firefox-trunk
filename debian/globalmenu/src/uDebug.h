@@ -94,28 +94,28 @@
   LOGM(this, format)
 
 #define LOGM(object, format...)                               \
-  if (getenv("GLOBAL_MENU_VERBOSE")) {                        \
+  if (getenv("GLOBAL_MENU_LOGGING")) {                        \
     nsAutoString id;                                          \
     if (object) object->GetContent()->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, id); \
     char str[LOG_LENGTH+1];                                   \
     snprintf(str, LOG_LENGTH, format);                        \
-    printf("%*s* globalmenu-extension %s: %s [menuobject: %p (id: %s)]\n", DEBUG_DEPTH, "", __PRETTY_FUNCTION__, str, (void *)object, LOGU16TOU8(id)); \
+    printf("%*s %s [menuobject: %p (id: %s)]: %s\n", DEBUG_DEPTH, "", str, (void *)object, LOGU16TOU8(id), __PRETTY_FUNCTION__); \
   }
 
 #define LOGC(content, format...)                              \
-  if (getenv("GLOBAL_MENU_VERBOSE")) {                        \
+  if (getenv("GLOBAL_MENU_LOGGING")) {                        \
     nsAutoString id;                                          \
     content->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, id); \
     char str[LOG_LENGTH+1];                                   \
     snprintf(str, LOG_LENGTH, format);                        \
-    printf("%*s* globalmenu-extension %s: %s [content: %p (id: %s)]\n", DEBUG_DEPTH, "", __PRETTY_FUNCTION__, str, (void *)content, LOGU16TOU8(id)); \
+    printf("%*s %s [content: %p (id: %s)]: %s\n", DEBUG_DEPTH, "", str, (void *)content, LOGU16TOU8(id), __PRETTY_FUNCTION__); \
   }
 
 #define LOG(format...)                                        \
-  if (getenv("GLOBAL_MENU_VERBOSE")) {                        \
-    char str[LOG_LENGTH+1];                                     \
+  if (getenv("GLOBAL_MENU_LOGGING")) {                        \
+    char str[LOG_LENGTH+1];                                   \
     snprintf(str, LOG_LENGTH, format);                        \
-    printf("%*s* globalmenu-extension %s: %s\n", DEBUG_DEPTH, "", __PRETTY_FUNCTION__, str); \
+    printf("%*s %s: %s\n", DEBUG_DEPTH, "", str, __PRETTY_FUNCTION__); \
   }
 
 #else
@@ -133,22 +133,22 @@ public:
   FunctionTracer(const char *s, ...)
   {
 
-    if (getenv("GLOBAL_MENU_VERBOSE")) {
+    if (getenv("GLOBAL_MENU_TRACING")) {
       va_list ap;
       va_start(ap, s);
       vsnprintf(mString, LOG_LENGTH, s, ap);
       va_end(ap);
 
-      printf("%*s=== globalmenu-extension: Entering %s ===\n", sDepth * 2, "", mString);
+      printf("%*s=== Entering %s ===\n", sDepth * 2, "", mString);
+      sDepth++;
     }
-    sDepth++;
   }
 
   ~FunctionTracer()
   {
-    sDepth--;
-    if (getenv("GLOBAL_MENU_VERBOSE")) {
-      printf("%*s=== globalmenu-extension: Leaving %s ===\n", sDepth * 2, "", mString);
+    if (getenv("GLOBAL_MENU_TRACING")) {
+      sDepth--;
+      printf("%*s=== Leaving %s ===\n", sDepth * 2, "", mString);
     }
   }
 

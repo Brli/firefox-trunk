@@ -1,9 +1,13 @@
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * Update globalmenu-extension to 3.3 prerelease r361
+  * Update globalmenu-extension to 3.3 prerelease r369
     - Fix LP: #1010580 - No choice of folder when adding a bookmark from
       the bookmark menu
+    - Fix LP: #775080 - Thunderbird with Firetray/MinimizeToTray -
+      Global menu disappears
+    - Fix LP: #813775 - Hitting an assertion in dbusmenu
+    - Fix LP: #861565 - No buttons in the "Show All Bookmarks" dialog
   * Merge get-orig-source.mk in to mozbuild.mk
     - update debian/build/mozbuild.mk
     - remove debian/build/get-orig-source.mk

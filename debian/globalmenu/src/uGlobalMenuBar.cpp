@@ -53,7 +53,6 @@
 #include <nsIContent.h>
 
 #include <glib-object.h>
-#include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 
 #include "uGlobalMenuBar.h"
@@ -96,6 +95,30 @@ uGlobalMenuBar::Listener::HandleEvent(nsIDOMEvent *aEvent)
   return rv;
 }
 
+/*static*/ gboolean
+uGlobalMenuBar::MapEventCallback(GtkWidget *widget,
+                                 GdkEvent *event,
+                                 gpointer user_data)
+{
+  uGlobalMenuBar *menubar = static_cast<uGlobalMenuBar *>(user_data);
+  menubar->Register();
+
+  return FALSE;
+}
+
+void
+uGlobalMenuBar::Register()
+{
+  if (mCancellable) {
+    // Registration in progress
+    return;
+  }
+
+  mCancellable = g_cancellable_new();
+
+  PRUint32 xidn = (PRUint32) GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel));
+  uGlobalMenuService::RegisterGlobalMenuBar(this, mCancellable, xidn, mPath);
+}
 
 bool
 uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
@@ -183,12 +206,12 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 
   g_object_ref(mTopLevel);
 
-  nsCAutoString path = NS_LITERAL_CSTRING("/com/canonical/menu/");
+  mPath = NS_LITERAL_CSTRING("/com/canonical/menu/");
   char xid[10];
   sprintf(xid, "%X", (PRUint32) GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel)));
-  path.Append(xid);
+  mPath.Append(xid);
 
-  mServer = dbusmenu_server_new(path.get());
+  mServer = dbusmenu_server_new(mPath.get());
   if (!mServer) {
     NS_WARNING("Failed to create DbusmenuServer");
     return NS_ERROR_OUT_OF_MEMORY;
@@ -260,10 +283,16 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     return rv;
   }
 
-  mCancellable = g_cancellable_new();
+  // Unity forgets our window if it is unmapped by the application, which
+  // happens with some extensions that add "minimize to tray" type
+  // functionality. We hook on to the MapNotify event to re-register our menu
+  // with Unity
+  g_signal_connect(G_OBJECT(mTopLevel), "map-event",
+                   G_CALLBACK(MapEventCallback), this);
 
-  PRUint32 xidn = (PRUint32) GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel));
-  uGlobalMenuService::RegisterGlobalMenuBar(this, mCancellable, xidn, path);
+  if (gtk_widget_get_mapped(mTopLevel)) {
+    Register();
+  }
 
   return NS_OK;
 }
@@ -306,6 +335,12 @@ uGlobalMenuBar::uGlobalMenuBar():
 
 uGlobalMenuBar::~uGlobalMenuBar()
 {
+  if (mTopLevel) {
+    g_signal_handlers_disconnect_by_func(mTopLevel,
+                                         FuncToVoidPtr(MapEventCallback),
+                                         this);
+  }
+
   if (mCancellable) {
     g_cancellable_cancel(mCancellable);
     g_object_unref(mCancellable);

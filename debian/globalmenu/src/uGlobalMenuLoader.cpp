@@ -51,11 +51,18 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsPIDOMWindow.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION == 13
+# include <nsIDOMNSElement.h>
+#endif
+#include <nsIDOMElement.h>
+#include <nsIDOMDOMTokenList.h>
 
 #include "uIGlobalMenuService.h"
 #include "uGlobalMenuLoader.h"
 
 #include "uDebug.h"
+
+#include "compat.h"
 
 // XXX: The sole purpose of this class is to listen for new nsIXULWindows
 //      and do the task that xpfe/appshell/src/nsWebShellWindow.cpp
@@ -67,18 +74,24 @@ void
 uGlobalMenuLoader::RegisterMenuForWindow(nsIXULWindow *aWindow)
 {
   nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(aWindow);
-  if (!baseWindow)
+  NS_ASSERTION(baseWindow, "Incoming window is not a nsIBaseWindow?");
+  if (!baseWindow) {
     return;
+  }
 
   nsCOMPtr<nsIWidget> mainWidget;
   baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
-  if (!mainWidget)
+  if (!mainWidget) {
+    NS_WARNING("Incoming window doesn't have a nsWindow");
     return;
+  }
 
   nsCOMPtr<nsIDocShell> docShell;
   aWindow->GetDocShell(getter_AddRefs(docShell));
-  if (!docShell)
+  if (!docShell) {
+    NS_WARNING("Incoming window doesn't have a docshell");
     return;
+  }
 
   bool res = RegisterMenu(mainWidget, docShell);
 
@@ -100,26 +113,53 @@ uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
 {
   nsCOMPtr<nsIContentViewer> cv;
   aDocShell->GetContentViewer(getter_AddRefs(cv));
-  if (!cv)
+  if (!cv) {
+    LOG("No content viewer available for %p yet", (void *)aWindow);
     return false;
+  }
 
   nsIDocument *doc = cv->GetDocument();
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-  if (!domDoc)
+  if (!domDoc) {
+    LOG("No document available for %p yet", (void *)aWindow);
     return false;
+  }
 
   nsresult rv;
   nsCOMPtr<nsIDOMNodeList> elements;
   rv = domDoc->GetElementsByTagNameNS(NS_LITERAL_STRING("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"),
                                       NS_LITERAL_STRING("menubar"),
                                       getter_AddRefs(elements));
-  if (NS_FAILED(rv) || !elements)
+  PRUint32 length;
+  if (NS_FAILED(rv) || !elements ||
+      NS_FAILED(elements->GetLength(&length)) || length == 0) {
+    LOG("%p has no menubar", (void *)aWindow);
     return true;
+  }
 
   nsCOMPtr<nsIDOMNode> menubar;
   elements->Item(0, getter_AddRefs(menubar));
-  if (!menubar)
+  NS_ASSERTION(menubar, "I don't think this is meant to happen");
+  if (!menubar) {
     return true;
+  }
+
+  nsCOMPtr<nsIDOMNSElement> menubarElem = do_QueryInterface(menubar);
+  NS_ASSERTION(menubarElem, "menubar is not a nsIDOMNSElement?");
+  if (!menubarElem) {
+    return true;
+  }
+
+  nsCOMPtr<nsIDOMDOMTokenList> classes;
+  menubarElem->GetClassList(getter_AddRefs(classes));
+  if (classes) {
+    bool ignore;
+    classes->Contains(NS_LITERAL_STRING("menubar-display-in-window"), &ignore);
+    if (ignore) {
+      LOG("Keeping menubar for %p in window", (void *)aWindow);
+      return true;
+    }
+  }
 
   nsCOMPtr<nsIContent> menubarContent = do_QueryInterface(menubar);
   // XXX: Should we do anything with errors here?

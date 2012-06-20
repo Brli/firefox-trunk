@@ -48,6 +48,7 @@
 
 #include <libdbusmenu-glib/server.h>
 #include <gio/gio.h>
+#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
 #include "uGlobalMenuObject.h"
@@ -132,6 +133,10 @@ private:
   nsresult KeyPress(nsIDOMEvent *aKeyEvent);
   nsresult KeyUp(nsIDOMEvent *aKeyEvent);
   nsresult KeyDown(nsIDOMEvent *aKeyEvent);
+  void Register();
+  static gboolean MapEventCallback(GtkWidget *widget,
+                                   GdkEvent *event,
+                                   gpointer user_data);
 
   DbusmenuServer *mServer;
   GtkWidget *mTopLevel;
@@ -143,6 +148,7 @@ private:
   PRUint32 mAccessKeyMask;
   bool mOpenedByKeyboard;
   GCancellable *mCancellable;
+  nsCString mPath;
 
   // Should probably have a container class and subclass that
   nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
