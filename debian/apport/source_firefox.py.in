@@ -1101,7 +1101,7 @@ class Profile:
             if type(self.prefs[pref].value) == int:
                 value = str(self.prefs[pref].value)
             elif type(self.prefs[pref].value) == bool:
-                value = 'true' if True else 'false'
+                value = 'true' if self.prefs[pref].value == True else 'false'
             else:
                 value = "\"%s\"" % self.prefs[pref].value
             ret += pref + ': ' + value + ' (' + self.prefs[pref].anon_source + ')\n'
