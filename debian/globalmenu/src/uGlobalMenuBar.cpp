@@ -51,6 +51,8 @@
 #include <nsIDOMEventListener.h>
 #include <nsICaseConversion.h>
 #include <nsIContent.h>
+#include <nsIDOMDocument.h>
+#include <nsIDOMEventTarget.h>
 
 #include <glib-object.h>
 #include <gdk/gdkx.h>
@@ -242,23 +244,24 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 
   mEventListener = new Listener(this);
 
-  mDocTarget = do_QueryInterface(mContent->GetCurrentDoc());
+  mDocument = mContent->GetCurrentDoc();
+  nsCOMPtr<nsIDOMEventTarget> docTarget = do_QueryInterface(mDocument);
 
-  mDocTarget->AddEventListener(NS_LITERAL_STRING("focus"),
-                               mEventListener,
-                               true);
-  mDocTarget->AddEventListener(NS_LITERAL_STRING("blur"),
-                               mEventListener,
-                               true);
-  mDocTarget->AddEventListener(NS_LITERAL_STRING("keypress"),
-                               mEventListener,
-                               false);
-  mDocTarget->AddEventListener(NS_LITERAL_STRING("keydown"),
-                               mEventListener,
-                               false);
-  mDocTarget->AddEventListener(NS_LITERAL_STRING("keyup"),
-                               mEventListener,
-                               false);
+  docTarget->AddEventListener(NS_LITERAL_STRING("focus"),
+                              mEventListener,
+                              true);
+  docTarget->AddEventListener(NS_LITERAL_STRING("blur"),
+                              mEventListener,
+                              true);
+  docTarget->AddEventListener(NS_LITERAL_STRING("keypress"),
+                              mEventListener,
+                              false);
+  docTarget->AddEventListener(NS_LITERAL_STRING("keydown"),
+                              mEventListener,
+                              false);
+  docTarget->AddEventListener(NS_LITERAL_STRING("keyup"),
+                              mEventListener,
+                              false);
 
   nsIPrefBranch *prefs = uGlobalMenuService::GetPrefService();
   if (!prefs) {
@@ -294,7 +297,15 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     Register();
   }
 
-  return NS_OK;
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mDocument);
+  nsCOMPtr<nsIDOMElement> windowElem;
+  domDoc->GetDocumentElement(getter_AddRefs(windowElem));
+  if (!windowElem) {
+    return NS_ERROR_FAILURE;
+  }
+
+  return windowElem->SetAttribute(NS_LITERAL_STRING("shellshowingmenubar"),
+                                  NS_LITERAL_STRING("true"));
 }
 
 PRUint32
@@ -346,22 +357,31 @@ uGlobalMenuBar::~uGlobalMenuBar()
     g_object_unref(mCancellable);
   }
 
-  if (mDocTarget) {
-    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
-                                    mEventListener,
-                                    true);
-    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
-                                    mEventListener,
-                                    true);
-    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
-                                    mEventListener,
-                                    false);
-    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
-                                    mEventListener,
-                                    false);
-    mDocTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
-                                    mEventListener,
-                                    false);
+  if (mDocument) {
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mDocument);
+    nsCOMPtr<nsIDOMElement> windowElem;
+    domDoc->GetDocumentElement(getter_AddRefs(windowElem));
+    if (windowElem) {
+      windowElem->SetAttribute(NS_LITERAL_STRING("shellshowingmenubar"),
+                               NS_LITERAL_STRING("false"));
+    }
+
+    nsCOMPtr<nsIDOMEventTarget> docTarget = do_QueryInterface(mDocument);
+    docTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
+                                   mEventListener,
+                                   true);
+    docTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
+                                   mEventListener,
+                                   true);
+    docTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
+                                   mEventListener,
+                                   false);
+    docTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
+                                   mEventListener,
+                                   false);
+    docTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
+                                   mEventListener,
+                                   false);
   }
 
   if (mListener) {

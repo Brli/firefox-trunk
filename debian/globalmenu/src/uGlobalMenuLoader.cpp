@@ -64,106 +64,77 @@
 
 #include "compat.h"
 
+#define XUL_NS "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+
 // XXX: The sole purpose of this class is to listen for new nsIXULWindows
 //      and do the task that xpfe/appshell/src/nsWebShellWindow.cpp
 //      would be doing if this extension were part of Mozilla core. The reason
 //      it is an entirely separate entity is so that the menubar service
 //      implementation is as close as possible to how it might look inside Mozilla
 
-void
-uGlobalMenuLoader::RegisterMenuForWindow(nsIXULWindow *aWindow)
-{
-  nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(aWindow);
-  NS_ASSERTION(baseWindow, "Incoming window is not a nsIBaseWindow?");
-  if (!baseWindow) {
-    return;
-  }
-
-  nsCOMPtr<nsIWidget> mainWidget;
-  baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
-  if (!mainWidget) {
-    NS_WARNING("Incoming window doesn't have a nsWindow");
-    return;
-  }
-
-  nsCOMPtr<nsIDocShell> docShell;
-  aWindow->GetDocShell(getter_AddRefs(docShell));
-  if (!docShell) {
-    NS_WARNING("Incoming window doesn't have a docshell");
-    return;
-  }
-
-  bool res = RegisterMenu(mainWidget, docShell);
-
-  if (!res) {
-    // If we've been called off a window open event from the window mediator,
-    // then the document probably hasn't loaded yet. To fix this, we set up a progress
-    // listener on the docshell, so we can do the actual menu load once the
-    // document has finished loading
-    nsCOMPtr<nsIWebProgress> progress = do_GetInterface(docShell);
-    if (progress) {
-       progress->AddProgressListener(this, nsIWebProgress::NOTIFY_STATE_NETWORK);
-    }
-  }
-}
-
 bool
-uGlobalMenuLoader::RegisterMenu(nsIWidget *aWindow,
-                                nsIDocShell *aDocShell)
+uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
 {
   nsCOMPtr<nsIContentViewer> cv;
   aDocShell->GetContentViewer(getter_AddRefs(cv));
   if (!cv) {
-    LOG("No content viewer available for %p yet", (void *)aWindow);
+    LOG("No content viewer available for %p yet", (void *)aDocShell);
     return false;
   }
 
-  nsIDocument *doc = cv->GetDocument();
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(cv->GetDocument());
   if (!domDoc) {
-    LOG("No document available for %p yet", (void *)aWindow);
+    NS_ERROR("Content viewer does not have a document");
     return false;
   }
 
-  nsresult rv;
   nsCOMPtr<nsIDOMNodeList> elements;
-  rv = domDoc->GetElementsByTagNameNS(NS_LITERAL_STRING("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"),
-                                      NS_LITERAL_STRING("menubar"),
-                                      getter_AddRefs(elements));
+  nsresult rv = domDoc->GetElementsByTagNameNS(NS_LITERAL_STRING(XUL_NS),
+                                               NS_LITERAL_STRING("menubar"),
+                                               getter_AddRefs(elements));
   PRUint32 length;
   if (NS_FAILED(rv) || !elements ||
       NS_FAILED(elements->GetLength(&length)) || length == 0) {
     LOG("%p has no menubar", (void *)aWindow);
-    return true;
+    return false;
   }
 
   nsCOMPtr<nsIDOMNode> menubar;
   elements->Item(0, getter_AddRefs(menubar));
-  NS_ASSERTION(menubar, "I don't think this is meant to happen");
   if (!menubar) {
-    return true;
+    NS_ERROR("Null item in nsIDOMNodeList. Is this meant to happen?");
+    return false;
   }
 
   nsCOMPtr<nsIDOMNSElement> menubarElem = do_QueryInterface(menubar);
-  NS_ASSERTION(menubarElem, "menubar is not a nsIDOMNSElement?");
   if (!menubarElem) {
-    return true;
+    NS_ERROR("Node is not an element, so it can't be a menubar");
+    return false;
   }
 
   nsCOMPtr<nsIDOMDOMTokenList> classes;
   menubarElem->GetClassList(getter_AddRefs(classes));
   if (classes) {
-    bool ignore;
-    classes->Contains(NS_LITERAL_STRING("menubar-display-in-window"), &ignore);
+    bool ignore = false;
+    classes->Contains(NS_LITERAL_STRING("menubar-keep-in-window"), &ignore);
     if (ignore) {
       LOG("Keeping menubar for %p in window", (void *)aWindow);
-      return true;
+      return false;
     }
   }
 
+  nsCOMPtr<nsIBaseWindow> baseWindow = do_GetInterface(aDocShell);
+  nsCOMPtr<nsIWidget> mainWidget;
+  baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
+
   nsCOMPtr<nsIContent> menubarContent = do_QueryInterface(menubar);
+
   // XXX: Should we do anything with errors here?
-  mService->CreateGlobalMenuBar(aWindow, menubarContent);
+  rv = mService->CreateGlobalMenuBar(mainWidget, menubarContent);
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to create menubar");
+    return false;
+  }
 
   return true;
 }
@@ -197,7 +168,7 @@ uGlobalMenuLoader::RegisterAllMenus()
     if (!xulWindow)
       continue;
 
-    RegisterMenuForWindow(xulWindow);
+    OnOpenWindow(xulWindow);
   }
 }
 
@@ -268,8 +239,27 @@ uGlobalMenuLoader::OnWindowTitleChange(nsIXULWindow *window,
 NS_IMETHODIMP
 uGlobalMenuLoader::OnOpenWindow(nsIXULWindow *window)
 {
-    RegisterMenuForWindow(window);
-    return NS_OK;
+  nsCOMPtr<nsIDocShell> docShell;
+  window->GetDocShell(getter_AddRefs(docShell));
+  if (!docShell) {
+    NS_WARNING("Incoming window doesn't have a docshell");
+    return NS_ERROR_FAILURE;
+  }
+
+  bool res = RegisterMenuFromDS(docShell);
+
+  if (!res) {
+    // If we've been called off a window open event from the window mediator,
+    // then the document probably hasn't loaded yet. To fix this, we set up a progress
+    // listener on the docshell, so we can do the actual menu load once the
+    // document has finished loading
+    nsCOMPtr<nsIWebProgress> progress = do_GetInterface(docShell);
+    if (progress) {
+       progress->AddProgressListener(this, nsIWebProgress::NOTIFY_STATE_NETWORK);
+    }
+  }
+
+  return NS_OK;
 }
 
 /* void onCloseWindow (in nsIXULWindow window); */
@@ -306,16 +296,13 @@ uGlobalMenuLoader::OnStateChange(nsIWebProgress *aWebProgress,
 
   aWebProgress->RemoveProgressListener(this);
 
-  nsCOMPtr<nsIBaseWindow> baseWindow = do_GetInterface(aWebProgress);
-  if (baseWindow) {
-    nsCOMPtr<nsIWidget> parentWidget;
-    baseWindow->GetParentWidget(getter_AddRefs(parentWidget));
-
-    nsCOMPtr<nsIDocShell> docShell = do_GetInterface(aWebProgress);
-    if (docShell && parentWidget) {
-      RegisterMenu(parentWidget, docShell);
-    }
+  nsCOMPtr<nsIDocShell> docShell = do_GetInterface(aWebProgress);
+  if (!docShell) {
+    NS_ERROR("No docshell?");
+    return NS_ERROR_FAILURE;
   }
+
+  RegisterMenuFromDS(docShell);
 
   return NS_OK;
 }

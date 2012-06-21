@@ -69,9 +69,7 @@ public:
 
 private:
   void RegisterAllMenus();
-  void RegisterMenuForWindow(nsIXULWindow *aWindow);
-  bool RegisterMenu(nsIWidget *aWindow,
-                    nsIDocShell *aDocShell);
+  bool RegisterMenuFromDS(nsIDocShell *aDocShell);
 
   nsCOMPtr<uIGlobalMenuService> mService;
 };

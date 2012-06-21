@@ -43,8 +43,8 @@
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
 #include <nsStringAPI.h>
-#include <nsIDOMEventTarget.h>
 #include <nsIDOMEventListener.h>
+#include <nsIDocument.h>
 
 #include <libdbusmenu-glib/server.h>
 #include <gio/gio.h>
@@ -141,7 +141,7 @@ private:
   DbusmenuServer *mServer;
   GtkWidget *mTopLevel;
 
-  nsCOMPtr<nsIDOMEventTarget> mDocTarget;
+  nsCOMPtr<nsIDocument> mDocument;
   bool mXULMenuHidden;
   nsRefPtr<Listener> mEventListener;
   PRInt32 mAccessKey;
