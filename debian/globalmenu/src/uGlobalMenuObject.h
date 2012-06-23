@@ -59,12 +59,6 @@
 // The content node says that this menuitem should be visible
 #define UNITY_MENUOBJECT_CONTENT_IS_VISIBLE     (1 << 1)
 
-// The icon for this menuitem should always be shown (eg, bookmarks)
-#define UNITY_MENUOBJECT_ALWAYS_SHOW_ICON       (1 << 3)
-
-// This menuitem should only be visible when its menu is opened by the keyboard
-#define UNITY_MENUOBJECT_SHOW_ONLY_FOR_KB       (1 << 4)
-
 // Used ny the reentrancy guard for SyncSensitivityFromContent()
 #define UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD (1 << 5)
 
@@ -93,6 +87,7 @@ enum uMenuObjectProperties {
 
 class uGlobalMenuObject;
 class uGlobalMenuBar;
+class nsIDOMCSSStyleDeclaration;
 
 #define MENUOBJECT_REENTRANCY_GUARD(flag)         \
   ReentrancyGuard _reentrancy_guard(this, flag);  \
@@ -115,6 +110,7 @@ public:
   uGlobalMenuObject* GetParent() { return mParent; }
   uMenuObjectType GetType() { return mType; }
   nsIContent* GetContent() { return mContent; }
+  void Invalidate() { mFlags = mFlags | UNITY_MENUOBJECT_IS_DIRTY; }
   virtual void AboutToShowNotify() { };
   virtual ~uGlobalMenuObject() { };
 
@@ -126,19 +122,11 @@ protected:
   void SyncSensitivityFromContent(nsIContent *aContent);
   void SyncSensitivityFromContent();
   void SyncIconFromContent();
-  void UpdateInfoFromContentClass();
-  void UpdateVisibility();
   void DestroyIconLoader();
-  bool IsHidden();
-  void Invalidate() { mFlags = mFlags | UNITY_MENUOBJECT_IS_DIRTY; }
+  bool IsHidden() { return !(mFlags & UNITY_MENUOBJECT_CONTENT_IS_VISIBLE); }
   void ClearInvalid() { mFlags = mFlags & ~UNITY_MENUOBJECT_IS_DIRTY; }
   bool IsDirty() { return !!(mFlags & UNITY_MENUOBJECT_IS_DIRTY); }
   void OnlyKeepProperties(uMenuObjectProperties aKeep);
-
-  bool ShouldShowOnlyForKb()
-  {
-    return !!(mFlags & UNITY_MENUOBJECT_SHOW_ONLY_FOR_KB);
-  }
 
   void SetFlags(PRUint16 aFlags) { mFlags = mFlags | aFlags; }
   void ClearFlags(PRUint16 aFlags) { mFlags = mFlags & ~aFlags; }
@@ -239,16 +227,12 @@ private:
 
     bool mIconLoaded;
     uGlobalMenuObject *mMenuItem;
-    nsCOMPtr<nsIContent> mContent;
     nsCOMPtr<imgIRequest> mIconRequest;
     nsIntRect mImageRect;
     static PRPackedBool sImagesInMenus;
   };
 
-  bool ShouldAlwaysShowIcon()
-  {
-    return !!(mFlags & UNITY_MENUOBJECT_ALWAYS_SHOW_ICON);
-  }
+  void GetComputedStyle(nsIDOMCSSStyleDeclaration **aResult);
 
   nsRefPtr<IconLoader> mIconLoader;
 };

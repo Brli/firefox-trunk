@@ -262,6 +262,8 @@ uGlobalMenu::AboutToOpen()
     return;
   }
 
+  NS_ASSERTION(!IsDirty(), "We shouldn't still be invalid at this point");
+
   if (DoesNeedRebuild()) {
     Build();
   }
@@ -332,13 +334,12 @@ uGlobalMenu::SyncProperties()
 {
   TRACETM();
 
-  UpdateInfoFromContentClass();
+  ClearInvalid();
+
   SyncLabelFromContent();
   SyncSensitivityFromContent();
   SyncVisibilityFromContent();
   SyncIconFromContent();
-
-  ClearInvalid();
 }
 
 void
@@ -568,7 +569,9 @@ uGlobalMenu::Build()
     return NS_OK;
   }
 
-  // Manually wrap the menupopup node to make sure it's bounded
+  // Wrap the native menupopup node, as this results in style resolution
+  // and attachment of XBL bindings, which normally doesn't happen because
+  // we are a child of an element with "display: none"
   // Borrowed from widget/src/cocoa/nsMenuX.mm, we need this to make
   // some menus in Thunderbird work
   nsIDocument *doc = mPopupContent->GetCurrentDoc();
@@ -710,8 +713,11 @@ uGlobalMenu::AboutToShowNotify()
 
   if (IsDirty()) {
     SyncProperties();
-  } else {
-    UpdateVisibility();
+
+    // If we had to update, then we also mark children as invalid
+    for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
+      mMenuObjects[i]->Invalidate();
+    }
   }
 }
 
@@ -734,6 +740,10 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
 
+  if (aAttribute == uWidgetAtoms::open) {
+    return;
+  }
+
   if (IsDirty()) {
     LOGTM("Previously marked as invalid");
     return;
@@ -746,24 +756,29 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (aAttribute == uWidgetAtoms::open) {
-    return;
+  if (aContent == mContent) {
+    if (aAttribute == uWidgetAtoms::disabled) {
+      SyncSensitivityFromContent();
+    } else if (aAttribute == uWidgetAtoms::label || 
+               aAttribute == uWidgetAtoms::accesskey) {
+      SyncLabelFromContent();
+    } else if (aAttribute == uWidgetAtoms::image) {
+      SyncIconFromContent();
+    }
+
+    SyncVisibilityFromContent();
+    if (aAttribute != uWidgetAtoms::image) {
+      SyncIconFromContent();
+    }
   }
 
-  if (aAttribute == uWidgetAtoms::disabled) {
-    SyncSensitivityFromContent();
-  } else if (aAttribute == uWidgetAtoms::hidden ||
-             aAttribute == uWidgetAtoms::collapsed) {
-    SyncVisibilityFromContent();
-  } else if (aAttribute == uWidgetAtoms::label || 
-             aAttribute == uWidgetAtoms::accesskey) {
-    SyncLabelFromContent();
-  } else if (aAttribute == uWidgetAtoms::image) {
-    SyncIconFromContent();
-  } else if (aAttribute == uWidgetAtoms::_class) {
-    UpdateInfoFromContentClass();
-    SyncVisibilityFromContent();
-    SyncIconFromContent();
+  // Attribute changes can change the style of children, so
+  // we refresh them
+  for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
+    mMenuObjects[i]->Invalidate();
+    if (IsOpenOrOpening()) {
+      mMenuObjects[i]->AboutToShowNotify();
+    }
   }
 }
 

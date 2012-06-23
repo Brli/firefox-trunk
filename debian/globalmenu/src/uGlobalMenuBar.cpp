@@ -339,7 +339,7 @@ uGlobalMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent)
 
 uGlobalMenuBar::uGlobalMenuBar():
   uGlobalMenuObject(eMenuBar), mServer(nsnull), mTopLevel(nsnull),
-  mOpenedByKeyboard(false), mCancellable(nsnull)
+  mCancellable(nsnull)
 {
   MOZ_COUNT_CTOR(uGlobalMenuBar);
 }
@@ -427,7 +427,16 @@ uGlobalMenuBar::Blur()
 void
 uGlobalMenuBar::Focus()
 {
-  mOpenedByKeyboard = false;
+  nsCOMPtr<nsIDOMElement> self = do_QueryInterface(mContent);
+#if DEBUG_GLOBALMENU >= 2
+  nsAutoString old;
+  self->GetAttribute(NS_LITERAL_STRING("openedwithkey"), old);
+  if (old.Equals(NS_LITERAL_STRING("true"))) {
+    LOG("Received focus - unsetting \"openedwithkey\"");
+  }
+#endif
+  self->SetAttribute(NS_LITERAL_STRING("openedwithkey"),
+                     NS_LITERAL_STRING("false"));
 }
 
 bool
@@ -561,7 +570,9 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
   }
 
   if (found) {
-    mOpenedByKeyboard = true;
+    nsCOMPtr<nsIDOMElement> self = do_QueryInterface(mContent);
+    self->SetAttribute(NS_LITERAL_STRING("openedwithkey"),
+                       NS_LITERAL_STRING("true"));
     uGlobalMenu *menu = static_cast<uGlobalMenu *>(found);
     menu->OpenMenu();
     aKeyEvent->StopPropagation();
@@ -581,20 +592,33 @@ uGlobalMenuBar::NotifyMenuBarRegistered()
 }
 
 void
+uGlobalMenuBar::ObserveAttributeChanged(nsIDocument *aDocument,
+                                        nsIContent *aContent,
+                                        nsIAtom *aAttribute)
+{
+  TRACETM();
+  NS_ASSERTION(aContent == mContent,
+               "Received an event that wasn't meant for us!");
+
+  // Refresh all children
+  for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
+    mMenuObjects[i]->Invalidate();
+    mMenuObjects[i]->AboutToShowNotify();
+  }
+}
+
+void
 uGlobalMenuBar::ObserveContentRemoved(nsIDocument *aDocument,
                                       nsIContent *aContainer,
                                       nsIContent *aChild,
                                       PRInt32 aIndexInContainer)
 {
   TRACETM();
-
-  if (aContainer != mContent) {
-    return;
-  }
+  NS_ASSERTION(aContainer == mContent,
+               "Received an event that wasn't meant for us!");
 
   bool res = RemoveMenuObjectAt(aIndexInContainer);
   NS_ASSERTION(res, "Failed to remove menuitem. Our menu representation is out-of-sync with reality");
-  // XXX: Is there anything else we can do if removal fails?
 }
 
 void
@@ -604,10 +628,8 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
                                        PRInt32 aIndexInContainer)
 {
   TRACETM();
-
-  if (aContainer != mContent) {
-    return;
-  }
+  NS_ASSERTION(aContainer == mContent,
+               "Received an event that wasn't meant for us!");
 
   uGlobalMenuObject *newItem =
     NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
@@ -617,5 +639,4 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
     res = InsertMenuObjectAt(newItem, aIndexInContainer);
   }
   NS_ASSERTION(res, "Failed to insert menuitem. Our menu representation is out-of-sync with reality");
-  // XXX: Is there anything else we can do if insertion fails?
 }

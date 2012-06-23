@@ -95,7 +95,7 @@ uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
   PRUint32 length;
   if (NS_FAILED(rv) || !elements ||
       NS_FAILED(elements->GetLength(&length)) || length == 0) {
-    LOG("%p has no menubar", (void *)aWindow);
+    LOG("%p has no menubar", (void *)aDocShell);
     return false;
   }
 
@@ -118,7 +118,7 @@ uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
     bool ignore = false;
     classes->Contains(NS_LITERAL_STRING("menubar-keep-in-window"), &ignore);
     if (ignore) {
-      LOG("Keeping menubar for %p in window", (void *)aWindow);
+      LOG("Keeping menubar for %p in window", (void *)aDocShell);
       return false;
     }
   }

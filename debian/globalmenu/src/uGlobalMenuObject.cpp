@@ -123,7 +123,21 @@ uGlobalMenuObject::IconLoader::ShouldShowIcon()
     return true;
   }
 
-  return mMenuItem->ShouldAlwaysShowIcon();
+  nsCOMPtr<nsIDOMNSElement> element = do_QueryInterface(mMenuItem->GetContent());
+  if (!element) {
+    return false;
+  }
+
+  nsCOMPtr<nsIDOMDOMTokenList> classes;
+  element->GetClassList(getter_AddRefs(classes));
+  if (!classes) {
+    return false;
+  }
+
+  bool show;
+  classes->Contains(NS_LITERAL_STRING("menuitem-with-favicon"), &show);
+
+  return show;
 }
 
 void
@@ -140,9 +154,9 @@ GetDOMRectSide(nsIDOMRect* aRect, GetRectSideMethod aMethod)
   if (!dimensionValue)
     return -1;
 
-  PRUint16 primitiveType;
-  nsresult rv = dimensionValue->GetPrimitiveType(&primitiveType);
-  if (NS_FAILED(rv) || primitiveType != nsIDOMCSSPrimitiveValue::CSS_PX)
+  PRUint16 type;
+  nsresult rv = dimensionValue->GetPrimitiveType(&type);
+  if (NS_FAILED(rv) || type != nsIDOMCSSPrimitiveValue::CSS_PX)
     return -1;
 
   float dimension = 0;
@@ -169,9 +183,7 @@ uGlobalMenuObject::IconLoader::Run()
     return NS_OK;
   }
 
-  mContent = mMenuItem->GetContent();
-
-  nsIDocument *doc = mContent->GetCurrentDoc();
+  nsIDocument *doc = mMenuItem->GetContent()->GetCurrentDoc();
   if (!doc) {
     // We might have been removed from the menu, in which case we will
     // no longer be in a document
@@ -186,66 +198,49 @@ uGlobalMenuObject::IconLoader::Run()
   mIconLoaded = false;
 
   nsAutoString uriString;
-  bool hasImage = mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::image,
-                                    uriString);
+  bool hasImage = mMenuItem->GetContent()->GetAttr(kNameSpaceID_None,
+                                                   uWidgetAtoms::image,
+                                                   uriString);
 
   nsresult rv;
   nsCOMPtr<nsIDOMRect> domRect;
 
   if (!hasImage) {
-    LOGM(mMenuItem, "Menuitem does not have an image");
-    nsCOMPtr<nsIDOMCSSStyleDeclaration> cssStyleDecl;
-    nsCOMPtr<nsIDOMWindow> domWin;
-    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-    if (domDoc) {
-      domDoc->GetDefaultView(getter_AddRefs(domWin));
-      if (domWin) {
-        nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
-        if (domElement) {
-          domWin->GetComputedStyle(domElement, EmptyString(),
-                                   getter_AddRefs(cssStyleDecl));
-        }
-      }
-    }
+    nsCOMPtr<nsIDOMCSSStyleDeclaration> style;
+    mMenuItem->GetComputedStyle(getter_AddRefs(style));
 
-    if (!cssStyleDecl) {
-      return NS_ERROR_FAILURE;
-    }
-
-    nsCOMPtr<nsIDOMCSSValue> cssValue;
-    nsCOMPtr<nsIDOMCSSPrimitiveValue> primitiveValue;
-    PRUint16 primitiveType;
-    cssStyleDecl->GetPropertyCSSValue(NS_LITERAL_STRING("list-style-image"),
-                                      getter_AddRefs(cssValue));
-    if (cssValue) {
-      primitiveValue = do_QueryInterface(cssValue);
-      if (primitiveValue) {
-        primitiveValue->GetPrimitiveType(&primitiveType);
-        if (primitiveType == nsIDOMCSSPrimitiveValue::CSS_URI) {
-          rv = primitiveValue->GetStringValue(uriString);
+    if (style) {
+      nsCOMPtr<nsIDOMCSSValue> value;
+      style->GetPropertyCSSValue(NS_LITERAL_STRING("list-style-image"),
+                                 getter_AddRefs(value));
+      if (value) {
+        nsCOMPtr<nsIDOMCSSPrimitiveValue> pval = do_QueryInterface(value);
+        PRUint16 type;
+        pval->GetPrimitiveType(&type);
+        if (type == nsIDOMCSSPrimitiveValue::CSS_URI) {
+          rv = pval->GetStringValue(uriString);
           if (NS_SUCCEEDED(rv)) {
             hasImage = true;
           }
-        } else {
-          NS_WARNING("list-style-image has wrong primitive type");
         }
       }
     }
 
     if (!hasImage) {
+      LOGM(mMenuItem, "Menuitem does not have an image");
       ClearIcon();
       return NS_OK;
     }
 
-    cssStyleDecl->GetPropertyCSSValue(NS_LITERAL_STRING("-moz-image-region"),
-                                      getter_AddRefs(cssValue));
-    if (cssValue) {
-      primitiveValue = do_QueryInterface(cssValue);
-      if (primitiveValue) {
-        primitiveValue->GetPrimitiveType(&primitiveType);
-        if (primitiveType == nsIDOMCSSPrimitiveValue::CSS_RECT) {
-          primitiveValue->GetRectValue(getter_AddRefs(domRect));
-        }
+    nsCOMPtr<nsIDOMCSSValue> value;
+    style->GetPropertyCSSValue(NS_LITERAL_STRING("-moz-image-region"),
+                               getter_AddRefs(value));
+    if (value) {
+      nsCOMPtr<nsIDOMCSSPrimitiveValue> pval = do_QueryInterface(value);
+      PRUint16 type;
+      pval->GetPrimitiveType(&type);
+      if (type == nsIDOMCSSPrimitiveValue::CSS_RECT) {
+        pval->GetRectValue(getter_AddRefs(domRect));
       }
     }
   }
@@ -572,23 +567,54 @@ uGlobalMenuObject::SyncLabelFromContent()
   SyncLabelFromContent(nsnull);
 }
 
-// Synchronize the 'hidden' attribute on the DOM node with the
-// 'visible' property on the dbusmenu node
+inline static void
+GetCSSIdentValue(nsIDOMCSSStyleDeclaration *aStyle,
+                 const nsAString& aProp, nsAString& aResult)
+{
+  nsCOMPtr<nsIDOMCSSValue> value;
+  aStyle->GetPropertyCSSValue(aProp, getter_AddRefs(value));
+  if (value) {
+    nsCOMPtr<nsIDOMCSSPrimitiveValue> pval = do_QueryInterface(value);
+    PRUint16 type;
+    pval->GetPrimitiveType(&type);
+    if (type == nsIDOMCSSPrimitiveValue::CSS_IDENT) {
+      pval->GetStringValue(aResult);
+    }
+  }
+}
+
 void
 uGlobalMenuObject::SyncVisibilityFromContent()
 {
   TRACETM();
 
-  SetOrClearFlags(!IsHidden(), UNITY_MENUOBJECT_CONTENT_IS_VISIBLE);
+  bool vis = true;
+  nsCOMPtr<nsIDOMCSSStyleDeclaration> style;
+  GetComputedStyle(getter_AddRefs(style));
+  if (style) {
+    // "display: none" nodes would normally have no frame. Setting the
+    // XUL "hidden" attribute to true sets this
+    nsAutoString display;
+    GetCSSIdentValue(style, NS_LITERAL_STRING("display"), display);
+    if (display.Equals(NS_LITERAL_STRING("none"))) {
+      vis = false;
+    } else {
+      // "visibility: collapse" nodes would normally be hidden but keep its
+      // frame, but we don't differentiate here. Setting the XUL "collapsed"
+      // attribute to true sets this
+      nsAutoString visibility;
+      GetCSSIdentValue(style, NS_LITERAL_STRING("visibility"), visibility);
+      if (visibility.Equals(NS_LITERAL_STRING("collapse"))) {
+        vis = false;
+      }
+    }
+  }
 
-  bool realVis = (!mMenuBar || !ShouldShowOnlyForKb() ||
-                  mMenuBar->OpenedByKeyboard()) ?
-                  !!(mFlags & UNITY_MENUOBJECT_CONTENT_IS_VISIBLE) : false;
-  LOGTM("Setting %s", realVis ? "visible" : "hidden");
-
+  LOGTM("Setting visibility to %s", vis ? "visible" : "hidden");
+  SetOrClearFlags(vis, UNITY_MENUOBJECT_CONTENT_IS_VISIBLE);
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
-                                      realVis);
+                                      vis);
 }
 
 void
@@ -627,58 +653,6 @@ void
 uGlobalMenuObject::SyncSensitivityFromContent()
 {
   SyncSensitivityFromContent(nsnull);
-}
-
-void
-uGlobalMenuObject::UpdateInfoFromContentClass()
-{
-  TRACETM();
-  nsCOMPtr<nsIDOMNSElement> element(do_QueryInterface(mContent));
-  if (!element) {
-    return;
-  }
-
-  nsCOMPtr<nsIDOMDOMTokenList> classes;
-  element->GetClassList(getter_AddRefs(classes));
-  if (!classes) {
-    return;
-  }
-
-  bool tmp;
-
-  classes->Contains(NS_LITERAL_STRING("show-only-for-keyboard"), &tmp);
-  LOGTM("show-only-for-keyboard class? %s", tmp ? "Yes" : "No");
-  SetOrClearFlags(tmp, UNITY_MENUOBJECT_SHOW_ONLY_FOR_KB);
-
-  classes->Contains(NS_LITERAL_STRING("menuitem-with-favicon"), &tmp);
-  LOGTM("menuitem-with-favicon class? %s", tmp ? "Yes" : "No");
-  SetOrClearFlags(tmp, UNITY_MENUOBJECT_ALWAYS_SHOW_ICON);
-}
-
-bool
-uGlobalMenuObject::IsHidden()
-{
-  return mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::hidden,
-                               uWidgetAtoms::_true, eCaseMatters) ||
-         mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::collapsed,
-                               uWidgetAtoms::_true, eCaseMatters);
-}
-
-void
-uGlobalMenuObject::UpdateVisibility()
-{
-  TRACETM();
-  if (!mMenuBar) {
-    return;
-  }
-
-  bool newVis = (!ShouldShowOnlyForKb() || mMenuBar->OpenedByKeyboard()) ?
-                 !!(mFlags & UNITY_MENUOBJECT_CONTENT_IS_VISIBLE) : false;
-
-  LOGTM("Setting %s", newVis ? "visible" : "hidden");
-  dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
-                                      DBUSMENU_MENUITEM_PROP_VISIBLE,
-                                      newVis);
 }
 
 void
@@ -733,5 +707,27 @@ uGlobalMenuObject::OnlyKeepProperties(uMenuObjectProperties aKeep)
       dbusmenu_menuitem_property_remove(mDbusMenuItem, properties[i]);
     }
     mask = static_cast<uMenuObjectProperties>(mask << 1);
+  }
+}
+
+void
+uGlobalMenuObject::GetComputedStyle(nsIDOMCSSStyleDeclaration **aResult)
+{
+  *aResult = nsnull;
+
+  nsIDocument *doc = mContent->GetCurrentDoc();
+  if (doc) {
+    nsCOMPtr<nsIDOMWindow> domWin;
+    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+    if (domDoc) {
+      domDoc->GetDefaultView(getter_AddRefs(domWin));
+      if (domWin) {
+        nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
+        if (domElement) {
+          domWin->GetComputedStyle(domElement, EmptyString(),
+                                   aResult);
+        }
+      }
+    }
   }
 }

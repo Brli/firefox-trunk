@@ -77,14 +77,14 @@ public:
                                 nsIContent *aMenuBar);
   ~uGlobalMenuBar();
 
-  // Returns whether the menu was opened via a keyboard shortcut
-  bool OpenedByKeyboard() { return !!mOpenedByKeyboard; }
-
   bool IsRegistered() { return !!(mFlags & UNITY_MENUBAR_IS_REGISTERED); }
 
   GtkWidget* TopLevelWindow() { return mTopLevel; }
 
 protected:
+  void ObserveAttributeChanged(nsIDocument *aDocument,
+                               nsIContent *aContent,
+                               nsIAtom *aAttribute);
   void ObserveContentRemoved(nsIDocument *aDocument,
                              nsIContent *aContainer,
                              nsIContent *aChild,
@@ -146,7 +146,6 @@ private:
   nsRefPtr<Listener> mEventListener;
   PRInt32 mAccessKey;
   PRUint32 mAccessKeyMask;
-  bool mOpenedByKeyboard;
   GCancellable *mCancellable;
   nsCString mPath;
 

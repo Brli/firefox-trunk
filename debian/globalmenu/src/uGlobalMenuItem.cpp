@@ -554,7 +554,6 @@ uGlobalMenuItem::SyncProperties()
   // is opening
   ClearInvalid();
 
-  UpdateInfoFromContentClass();
   SyncLabelFromContent(mCommandContent);
   SyncSensitivityFromContent(mCommandContent);
   SyncVisibilityFromContent();
@@ -762,8 +761,6 @@ uGlobalMenuItem::AboutToShowNotify()
 
   if (IsDirty()) {
     SyncProperties();
-  } else {
-    UpdateVisibility();
   }
 }
 
@@ -802,9 +799,6 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     } else if (aAttribute == uWidgetAtoms::label ||
                aAttribute == uWidgetAtoms::accesskey) {
       SyncLabelFromContent(mCommandContent);
-    } else if (aAttribute == uWidgetAtoms::hidden ||
-               aAttribute == uWidgetAtoms::collapsed) {
-      SyncVisibilityFromContent();
     } else if (aAttribute == uWidgetAtoms::disabled) {
       SyncSensitivityFromContent(mCommandContent);
     } else if (aAttribute == uWidgetAtoms::checked ||
@@ -812,9 +806,10 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
       SyncTypeAndStateFromContent();
     } else if (aAttribute == uWidgetAtoms::image) {
       SyncIconFromContent();
-    } else if (aAttribute == uWidgetAtoms::_class) {
-      UpdateInfoFromContentClass();
-      SyncVisibilityFromContent();
+    }
+
+    SyncVisibilityFromContent();
+    if (aAttribute != uWidgetAtoms::image) {
       SyncIconFromContent();
     }
   } else if (aContent == mCommandContent) {

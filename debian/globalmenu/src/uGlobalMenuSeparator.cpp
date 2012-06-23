@@ -66,7 +66,6 @@ uGlobalMenuSeparator::InitializeDbusMenuItem()
                                  DBUSMENU_MENUITEM_PROP_TYPE,
                                  "separator");
 
-  UpdateInfoFromContentClass();
   SyncVisibilityFromContent();
 }
 
@@ -137,12 +136,9 @@ void
 uGlobalMenuSeparator::AboutToShowNotify()
 {
   if (IsDirty()) {
-    UpdateInfoFromContentClass();
     SyncVisibilityFromContent();
 
     ClearInvalid();
-  } else {
-    UpdateVisibility();
   }
 }
 
@@ -163,11 +159,5 @@ uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (aAttribute == uWidgetAtoms::hidden ||
-      aAttribute == uWidgetAtoms::collapsed) {
-    SyncVisibilityFromContent();
-  } else if (aAttribute == uWidgetAtoms::_class) {
-    UpdateInfoFromContentClass();
-    SyncVisibilityFromContent();
-  }
+  SyncVisibilityFromContent();
 }
