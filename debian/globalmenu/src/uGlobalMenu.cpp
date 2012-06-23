@@ -268,6 +268,10 @@ uGlobalMenu::AboutToOpen()
     Build();
   }
 
+  if (IsOpenOrOpening()) {
+    return;
+  }
+
   SetFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
 
   // If there is no popup content, then there is nothing to do, and it's
@@ -717,18 +721,38 @@ uGlobalMenu::AboutToShowNotify()
     // If we had to update, then we also mark children as invalid
     for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
       mMenuObjects[i]->Invalidate();
+      if (mParent->GetType() == eMenuBar) {
+        mMenuObjects[i]->AboutToShowNotify();
+      }
     }
   }
 }
 
+/*static*/ gboolean
+uGlobalMenu::DoOpen(gpointer user_data)
+{
+  DbusmenuMenuitem *menuitem = static_cast<DbusmenuMenuitem *>(user_data);
+  dbusmenu_menuitem_show_to_user(menuitem, 0);
+  g_object_unref(menuitem);
+  return FALSE;
+}
+
 void
-uGlobalMenu::OpenMenu()
+uGlobalMenu::OpenMenuDelayed()
 {
   if (!CanOpen()) {
     return;
   }
 
-  dbusmenu_menuitem_show_to_user(mDbusMenuItem, 0);
+  // Normally we get this when the menu opens, but we call it manually
+  // here so that we can process menu updates before telling it to
+  // actually open. Then we open the menu after a short delay. This
+  // avoids an issue where opening the History menu in Firefox with
+  // the keyboard causes extra items to appear at the top of the menu,
+  // but keyboard focus is not on the first item
+  AboutToOpen();
+
+  g_timeout_add(100, DoOpen, g_object_ref(mDbusMenuItem));
 }
 
 void

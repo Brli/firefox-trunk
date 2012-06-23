@@ -574,7 +574,7 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
     self->SetAttribute(NS_LITERAL_STRING("openedwithkey"),
                        NS_LITERAL_STRING("true"));
     uGlobalMenu *menu = static_cast<uGlobalMenu *>(found);
-    menu->OpenMenu();
+    menu->OpenMenuDelayed();
     aKeyEvent->StopPropagation();
     aKeyEvent->PreventDefault();
   }

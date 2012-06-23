@@ -74,7 +74,7 @@ public:
   ~uGlobalMenu();
 
   bool CanOpen();
-  void OpenMenu();
+  void OpenMenuDelayed();
   void AboutToShowNotify();
   bool IsOpenOrOpening() { return !!(mFlags & UNITY_MENU_IS_OPEN_OR_OPENING); }
 
@@ -114,6 +114,7 @@ private:
                                 GVariant *value,
                                 guint timestamp,
                                 void *data);
+  static gboolean DoOpen(gpointer user_data);
   void AboutToOpen();
   void OnOpen();
   void OnClose();

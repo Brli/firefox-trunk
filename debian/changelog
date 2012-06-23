@@ -1,7 +1,7 @@
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * Update globalmenu-extension to 3.3 prerelease r377
+  * Update globalmenu-extension to 3.3 prerelease r378
     - Fix LP: #1010580 - No choice of folder when adding a bookmark from
       the bookmark menu
     - Fix LP: #775080 - Thunderbird with Firetray/MinimizeToTray -
@@ -11,6 +11,10 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     - Fix LP: #1016081 - Menubar is not hidden when using the Firefox
       button outside of Unity
     - Fix LP: #775305 - An empty menu appears when FFChrome is installed
+    - Add a small delay when opening the menu with the keyboard, so that
+      the additional items are added before the menu appears. Fixes an
+      issue where keyboard focus isn't on the first item when opening the
+      history menu with the keyboard
   * Merge get-orig-source.mk in to mozbuild.mk
     - update debian/build/mozbuild.mk
     - remove debian/build/get-orig-source.mk
