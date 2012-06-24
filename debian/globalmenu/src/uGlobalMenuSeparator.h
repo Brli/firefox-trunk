@@ -53,12 +53,11 @@ public:
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
 
-  void AboutToShowNotify();
-
 protected:
   void ObserveAttributeChanged(nsIDocument *aDocument,
                                nsIContent *aContent,
                                nsIAtom *aAttribute);
+  void Refresh();
 
 private:
   uGlobalMenuSeparator();

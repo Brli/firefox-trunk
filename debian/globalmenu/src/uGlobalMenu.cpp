@@ -254,7 +254,7 @@ uGlobalMenu::AboutToOpen()
   // XXX: We ignore the first AboutToOpen on top-level menus, because Unity
   //      sends this signal on all top-levels when the window opens.
   //      This isn't useful for us and it doesn't finish the job by sending
-  //      open/close events, so we end up in a state where we resent the
+  //      open/close events, so we end up in a state where we resend the
   //      entire menu structure over dbus on every page navigation
   if (!(mFlags & UNITY_MENU_READY)) {
     LOGTM("Ignoring first AboutToOpen");
@@ -262,14 +262,8 @@ uGlobalMenu::AboutToOpen()
     return;
   }
 
-  NS_ASSERTION(!IsDirty(), "We shouldn't still be invalid at this point");
-
   if (DoesNeedRebuild()) {
     Build();
-  }
-
-  if (IsOpenOrOpening()) {
-    return;
   }
 
   SetFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
@@ -281,9 +275,11 @@ uGlobalMenu::AboutToOpen()
     return;
   }
 
+  // Tell children we are opening. This will cause invalidated children
+  // to refresh
   PRUint32 count = mMenuObjects.Length();
   for (PRUint32 i = 0; i < count; i++) {
-    mMenuObjects[i]->AboutToShowNotify();
+    mMenuObjects[i]->ContainerIsOpening();
   }
 
   // XXX: This should happen when the pointer hovers over the menu entry,
@@ -318,27 +314,31 @@ uGlobalMenu::OnClose()
 {
   mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
 
+  PRUint32 count = mMenuObjects.Length();
+  for (PRUint32 i = 0; i < count; i++) {
+    mMenuObjects[i]->ContainerIsClosing();
+  }
+
+  ClearFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
+
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
-    ClearFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
     return;
   }
 
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphiding"));
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
 
-  ClearFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
-
   Deactivate();
 }
 
 void
-uGlobalMenu::SyncProperties()
+uGlobalMenu::Refresh()
 {
   TRACETM();
 
-  ClearInvalid();
+  ClearFlags(UNITY_MENUOBJECT_IS_DIRTY);
 
   SyncLabelFromContent();
   SyncSensitivityFromContent();
@@ -372,7 +372,7 @@ uGlobalMenu::InitializeDbusMenuItem()
   g_signal_connect(G_OBJECT(mDbusMenuItem), "event",
                    G_CALLBACK(MenuEventCallback), this);
 
-  SyncProperties();
+  Refresh();
 }
 
 void
@@ -711,21 +711,50 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
 }
 
 void
-uGlobalMenu::AboutToShowNotify()
+uGlobalMenu::Invalidate()
 {
-  TRACETM();
+  uGlobalMenuObject::Invalidate();
 
-  if (IsDirty()) {
-    SyncProperties();
-
-    // If we had to update, then we also mark children as invalid
-    for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
-      mMenuObjects[i]->Invalidate();
-      if (mParent->GetType() == eMenuBar) {
-        mMenuObjects[i]->AboutToShowNotify();
+  // If we are visible on screen, now we go and invalidate children. If not,
+  // then we invalidate them when we appear on screen in ContainerIsOpening().
+  // If we need a rebuild, we just skip this (unless we are a direct descendant
+  // of the menubar, when we rebuild to avoid the issue mentioned in the
+  // comment below....)
+  if (IsContainerOnScreen()) {
+    if (mParent->GetType() == eMenuBar && DoesNeedRebuild()) {
+      Build();
+    } else if (!DoesNeedRebuild()) {
+      for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
+        if (mParent->GetType() == eMenuBar) {
+          // This is a bit of a hack. When a menu is opened with the keyboard,
+          // some of our children unhide themselves. If we just invalidate here,
+          // then these items won't really appear until this menu gets the
+          // about-to-show signal, when we tell our children to refresh themselves,
+          // which is after we ask the menu to open. This causes a strange issue
+          // in the Firefox History menu, where these additional items appear at
+          // the top of the menu after it has appeared on screen, causing
+          // keyboard focus to be on the wrong menu item
+          mMenuObjects[i]->Invalidate();
+          mMenuObjects[i]->ContainerIsOpening();
+          mMenuObjects[i]->ContainerIsClosing();
+        } else {
+          mMenuObjects[i]->Invalidate();
+        }
       }
     }
   }
+} 
+
+void
+uGlobalMenu::ContainerIsOpening()
+{
+  if (IsDirty() && !DoesNeedRebuild()) {
+    for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
+      mMenuObjects[i]->Invalidate();
+    }
+  }
+
+  uGlobalMenuObject::ContainerIsOpening();
 }
 
 /*static*/ gboolean
@@ -744,14 +773,10 @@ uGlobalMenu::OpenMenuDelayed()
     return;
   }
 
-  // Normally we get this when the menu opens, but we call it manually
-  // here so that we can process menu updates before telling it to
-  // actually open. Then we open the menu after a short delay. This
-  // avoids an issue where opening the History menu in Firefox with
-  // the keyboard causes extra items to appear at the top of the menu,
-  // but keyboard focus is not on the first item
-  AboutToOpen();
-
+  // Here, we open the menu after a short delay. This avoids an issue
+  // where opening the History menu in Firefox with the keyboard causes
+  // extra items to appear at the top of the menu, but keyboard focus is
+  // not on the first item
   g_timeout_add(100, DoOpen, g_object_ref(mDbusMenuItem));
 }
 
@@ -773,8 +798,7 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (mParent->GetType() == eMenu &&
-      !(static_cast<uGlobalMenu *>(mParent))->IsOpenOrOpening()) {
+  if (!IsContainerOnScreen()) {
     LOGTM("Parent isn't open or opening. Marking invalid");
     Invalidate();
     return;
@@ -797,12 +821,9 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
   }
 
   // Attribute changes can change the style of children, so
-  // we refresh them
+  // we invalidate them
   for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
     mMenuObjects[i]->Invalidate();
-    if (IsOpenOrOpening()) {
-      mMenuObjects[i]->AboutToShowNotify();
-    }
   }
 }
 

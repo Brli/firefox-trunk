@@ -519,7 +519,7 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
 }
 
 void
-uGlobalMenuItem::SyncProperties()
+uGlobalMenuItem::Refresh()
 {
   TRACETM();
 
@@ -552,7 +552,7 @@ uGlobalMenuItem::SyncProperties()
   // We need to do this first, as some of the next functions may
   // trigger mutation events, which we want to handle if we our parent
   // is opening
-  ClearInvalid();
+  ClearFlags(UNITY_MENUOBJECT_IS_DIRTY);
 
   SyncLabelFromContent(mCommandContent);
   SyncSensitivityFromContent(mCommandContent);
@@ -642,7 +642,7 @@ uGlobalMenuItem::InitializeDbusMenuItem()
   g_signal_connect(G_OBJECT(mDbusMenuItem), DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
                    G_CALLBACK(ItemActivatedCallback), this);
 
-  SyncProperties();
+  Refresh();
 }
 
 nsresult
@@ -755,16 +755,6 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
 }
 
 void
-uGlobalMenuItem::AboutToShowNotify()
-{
-  TRACETM();
-
-  if (IsDirty()) {
-    SyncProperties();
-  }
-}
-
-void
 uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
                                          nsIContent *aContent,
                                          nsIAtom *aAttribute)
@@ -795,7 +785,7 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
   if (aContent == mContent) {
     if (aAttribute == uWidgetAtoms::command ||
         aAttribute == uWidgetAtoms::key) {
-      SyncProperties();
+      Refresh();
     } else if (aAttribute == uWidgetAtoms::label ||
                aAttribute == uWidgetAtoms::accesskey) {
       SyncLabelFromContent(mCommandContent);

@@ -77,12 +77,11 @@ public:
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
 
-  void AboutToShowNotify();
-
 protected:
   void ObserveAttributeChanged(nsIDocument *aDocument,
                                nsIContent *aContent,
                                nsIAtom *aAttribute);
+  void Refresh();
 
 private:
   uGlobalMenuItem();
@@ -96,7 +95,6 @@ private:
   PRUint32 GetKeyCode(nsAString &aKeyName);
   PRUint32 MozKeyCodeToGdkKeyCode(PRUint32 aMozKeyCode);
   void SyncAccelFromContent();
-  void SyncProperties();
   void SyncTypeAndStateFromContent();
   void InitializeDbusMenuItem();
   static void ItemActivatedCallback(DbusmenuMenuitem *menuItem,

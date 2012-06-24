@@ -59,6 +59,9 @@
 // The content node says that this menuitem should be visible
 #define UNITY_MENUOBJECT_CONTENT_IS_VISIBLE     (1 << 1)
 
+// The menuobject is visible on screen
+#define UNITY_MENUOBJECT_CONTAINER_ON_SCREEN    (1 << 2)
+
 // Used ny the reentrancy guard for SyncSensitivityFromContent()
 #define UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD (1 << 5)
 
@@ -103,19 +106,21 @@ public:
                                              mListener(nsnull),
                                              mParent(nsnull),
                                              mType(aType),
-                                             mFlags(0)
-                                             { };
+                                             mFlags(0) { };
+
   DbusmenuMenuitem* GetDbusMenuItem();
   void SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem);
   uGlobalMenuObject* GetParent() { return mParent; }
   uMenuObjectType GetType() { return mType; }
   nsIContent* GetContent() { return mContent; }
-  void Invalidate() { mFlags = mFlags | UNITY_MENUOBJECT_IS_DIRTY; }
-  virtual void AboutToShowNotify() { };
+  virtual void Invalidate();
+  virtual void ContainerIsOpening();
+  void ContainerIsClosing() { ClearFlags(UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
   virtual ~uGlobalMenuObject() { };
 
 protected:
   virtual void InitializeDbusMenuItem()=0;
+  virtual void Refresh() { };
   void SyncLabelFromContent(nsIContent *aContent);
   void SyncLabelFromContent();
   void SyncVisibilityFromContent();
@@ -124,8 +129,8 @@ protected:
   void SyncIconFromContent();
   void DestroyIconLoader();
   bool IsHidden() { return !(mFlags & UNITY_MENUOBJECT_CONTENT_IS_VISIBLE); }
-  void ClearInvalid() { mFlags = mFlags & ~UNITY_MENUOBJECT_IS_DIRTY; }
   bool IsDirty() { return !!(mFlags & UNITY_MENUOBJECT_IS_DIRTY); }
+  bool IsContainerOnScreen() { return !!(mFlags & UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
   void OnlyKeepProperties(uMenuObjectProperties aKeep);
 
   void SetFlags(PRUint16 aFlags) { mFlags = mFlags | aFlags; }

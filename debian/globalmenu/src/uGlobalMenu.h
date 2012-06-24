@@ -75,7 +75,9 @@ public:
 
   bool CanOpen();
   void OpenMenuDelayed();
-  void AboutToShowNotify();
+  void Invalidate();
+  void ContainerIsOpening();
+  
   bool IsOpenOrOpening() { return !!(mFlags & UNITY_MENU_IS_OPEN_OR_OPENING); }
 
 protected:
@@ -90,6 +92,7 @@ protected:
                               nsIContent *aContainer,
                               nsIContent *aChild,
                               PRInt32 aIndexInContainer);
+  void Refresh();
 
 private:
   uGlobalMenu();
@@ -105,7 +108,6 @@ private:
   bool RemoveMenuObjectAt(PRUint32 index);
   void InitializeDbusMenuItem();
   nsresult Build();
-  void SyncProperties();
   void GetMenuPopupFromMenu(nsIContent **aResult);
   static bool MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
                                       void *data);

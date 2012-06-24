@@ -127,6 +127,7 @@ uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
 {
   gboolean res = dbusmenu_menuitem_child_append(mDbusMenuItem,
                                                 menu->GetDbusMenuItem());
+  menu->ContainerIsOpening();
   return res && mMenuObjects.AppendElement(menu);
 }
 
@@ -142,6 +143,7 @@ uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
   gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                       menu->GetDbusMenuItem(),
                                                       index);
+  menu->ContainerIsOpening();
   return res && mMenuObjects.InsertElementAt(index, menu);
 }
 
@@ -603,7 +605,6 @@ uGlobalMenuBar::ObserveAttributeChanged(nsIDocument *aDocument,
   // Refresh all children
   for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
     mMenuObjects[i]->Invalidate();
-    mMenuObjects[i]->AboutToShowNotify();
   }
 }
 

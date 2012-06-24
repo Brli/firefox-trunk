@@ -66,6 +66,13 @@ uGlobalMenuSeparator::InitializeDbusMenuItem()
                                  DBUSMENU_MENUITEM_PROP_TYPE,
                                  "separator");
 
+  Refresh();
+}
+
+void
+uGlobalMenuSeparator::Refresh()
+{
+  ClearFlags(UNITY_MENUOBJECT_IS_DIRTY);
   SyncVisibilityFromContent();
 }
 
@@ -133,16 +140,6 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
 }
 
 void
-uGlobalMenuSeparator::AboutToShowNotify()
-{
-  if (IsDirty()) {
-    SyncVisibilityFromContent();
-
-    ClearInvalid();
-  }
-}
-
-void
 uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
                                               nsIContent *aContent,
                                               nsIAtom *aAttribute)
@@ -153,8 +150,7 @@ uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (mParent->GetType() == eMenu &&
-      !(static_cast<uGlobalMenu *>(mParent))->IsOpenOrOpening()) {
+  if (!IsContainerOnScreen()) {
     Invalidate();
     return;
   }

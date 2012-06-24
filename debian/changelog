@@ -1,7 +1,7 @@
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * Update globalmenu-extension to 3.3 prerelease r378
+  * Update globalmenu-extension to 3.3 prerelease r384
     - Fix LP: #1010580 - No choice of folder when adding a bookmark from
       the bookmark menu
     - Fix LP: #775080 - Thunderbird with Firetray/MinimizeToTray -

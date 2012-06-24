@@ -674,6 +674,28 @@ uGlobalMenuObject::DestroyIconLoader()
   }
 }
 
+void
+uGlobalMenuObject::Invalidate()
+{
+  if (IsContainerOnScreen()) {
+    Refresh();
+  } else {
+    SetFlags(UNITY_MENUOBJECT_IS_DIRTY);
+  }
+}
+
+void
+uGlobalMenuObject::ContainerIsOpening()
+{
+  TRACETM();
+
+  SetFlags(UNITY_MENUOBJECT_CONTAINER_ON_SCREEN);
+
+  if (IsDirty()) {
+    Refresh();
+  }
+}
+
 DbusmenuMenuitem*
 uGlobalMenuObject::GetDbusMenuItem()
 {
