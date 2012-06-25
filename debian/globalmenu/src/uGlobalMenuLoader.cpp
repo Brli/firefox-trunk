@@ -172,7 +172,7 @@ uGlobalMenuLoader::RegisterAllMenus()
   }
 }
 
-NS_IMPL_ISUPPORTS3(uGlobalMenuLoader, nsIObserver, nsIWebProgressListener, nsISupportsWeakReference)
+NS_IMPL_ISUPPORTS3(uGlobalMenuLoader, uIGlobalMenuServiceObserver, nsIWebProgressListener, nsISupportsWeakReference)
 
 nsresult
 uGlobalMenuLoader::Init()
@@ -216,11 +216,9 @@ uGlobalMenuLoader::~uGlobalMenuLoader()
 }
 
 NS_IMETHODIMP
-uGlobalMenuLoader::Observe(nsISupports *aSubject,
-                           const char *aTopic,
-                           const PRUnichar *aData)
+uGlobalMenuLoader::OnMenuServiceOnlineChange(bool aOnline)
 {
-  if (strcmp(aTopic, "native-menu-service:online") == 0) {
+  if (aOnline) {
     RegisterAllMenus();
   }
 

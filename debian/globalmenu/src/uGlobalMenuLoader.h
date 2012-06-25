@@ -36,7 +36,6 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#include <nsIObserver.h>
 #include <nsIWindowMediatorListener.h>
 #include <nsIWebProgressListener.h>
 #include <nsWeakReference.h>
@@ -52,14 +51,14 @@ class nsIXULWindow;
 class nsIDocShell;
 class nsIWidget;
 
-class uGlobalMenuLoader: public nsIObserver,
+class uGlobalMenuLoader: public uIGlobalMenuServiceObserver,
                          public nsIWindowMediatorListener,
                          public nsIWebProgressListener,
                          public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIOBSERVER
+  NS_DECL_UIGLOBALMENUSERVICEOBSERVER
   NS_DECL_NSIWINDOWMEDIATORLISTENER
   NS_DECL_NSIWEBPROGRESSLISTENER
 

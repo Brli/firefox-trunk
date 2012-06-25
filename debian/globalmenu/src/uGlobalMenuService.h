@@ -121,7 +121,7 @@ private:
   GDBusProxy *mDbusProxy;
   GCancellable *mCancellable;
   nsTArray<nsAutoPtr<uGlobalMenuBar> > mMenus;
-  nsTArray<nsCOMPtr<nsIObserver> > mListeners;
+  nsTArray<nsCOMPtr<uIGlobalMenuServiceObserver> > mListeners;
   nsCOMPtr<nsIWindowMediator> mWindowMediator;
 };
 

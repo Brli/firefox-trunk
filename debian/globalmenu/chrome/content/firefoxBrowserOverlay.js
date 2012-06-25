@@ -90,8 +90,8 @@
       }
     };
 
-    this.observe = function uGMO_observe(aSubject, aTopic, aData) {
-      if (aTopic == "native-menu-service:online") {
+    this.onMenuServiceOnlineChange = function uGMO_observe(aOnline) {
+      if (aOnline) {
         // XXX: localstore.rdf is re-applied when additional overlays are loaded
         //      (https://bugzilla.mozilla.org/show_bug.cgi?id=640158), which
         //      causes this to be undone and the bookmark button to reappear
@@ -101,17 +101,18 @@
         toolbarNameSaved = $("toolbar-menubar").getAttribute("toolbarname");
         $("toolbar-menubar").setAttribute("autohide", "false");
         $("toolbar-menubar").removeAttribute("toolbarname");
-
-        online = true;
-      } else if (aTopic == "native-menu-service:offline") {
+      } else {
         $("toolbar-menubar").removeEventListener("DOMAttrModified", this);
 
-        $("toolbar-menubar").setAttribute("autohide", autohideSaved);
-        $("toolbar-menubar").setAttribute("toolbarname", toolbarNameSaved);
-
-        online = false;
+        if (autohideSaved !== undefined) {
+          $("toolbar-menubar").setAttribute("autohide", autohideSaved);
+        }
+        if (toolbarNameSaved !== undefined) {
+          $("toolbar-menubar").setAttribute("toolbarname", toolbarNameSaved);
+        }
       }
 
+      online = aOnline;
       updateAppButtonDisplay();
     };
 
@@ -123,9 +124,7 @@
     };
 
     menuservice.registerNotification(this);
-    if (menuservice.online) {
-      this.observe(null, "native-menu-service:online", null);
-    }
+    this.onMenuServiceOnlineChange(menuservice.online);
   }
 
   enablePlacesNativeViewMenu("PlacesMenu");

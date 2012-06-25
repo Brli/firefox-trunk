@@ -56,6 +56,8 @@
 # include <nsIXBLService.h>
 #endif
 #include <nsIXPConnect.h>
+#include <nsNetUtil.h>
+#include <nsIStyleSheetService.h>
 #include <prenv.h>
 
 #include <glib-object.h>
@@ -323,12 +325,8 @@ uGlobalMenuService::SetOnline(bool aOnline)
     mOnline = !!aOnline;
 
     for (PRUint32 i = mListeners.Length(); i > 0; --i) {
-      mListeners[i - 1]->Observe(nsnull,
-                                 mOnline ? "native-menu-service:online" :
-                                           "native-menu-service:offline",
-                                 nsnull);
+      mListeners[i - 1]->OnMenuServiceOnlineChange(mOnline);
     }
-
 
     if (!mOnline) {
       DestroyMenus();
@@ -350,8 +348,7 @@ uGlobalMenuService::WidgetHasGlobalMenu(nsIWidget *aWidget)
 nsresult
 uGlobalMenuService::Init()
 {
-  nsresult rv;
-  rv = uWidgetAtoms::RegisterAtoms();
+  nsresult rv = uWidgetAtoms::RegisterAtoms();
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to register atoms");
     return rv;
@@ -379,6 +376,27 @@ uGlobalMenuService::Init()
   }
 
   mWindowMediator->AddListener(this);
+
+  // Bootstrapped addons may initialize the stylesheet service before our
+  // extension chrome is registered. To workaround this, we manually register
+  // our UA stylesheet if it isn't already registered
+  // see https://launchpad.net/bugs/1017247
+  nsCOMPtr<nsIStyleSheetService> sss =
+    do_GetService("@mozilla.org/content/style-sheet-service;1");
+  if (sss) {
+    nsCOMPtr<nsIURI> uri;
+    rv = NS_NewURI(getter_AddRefs(uri),
+                   NS_LITERAL_CSTRING("chrome://globalmenu/content/ua-overrides.css"));
+    if (NS_SUCCEEDED(rv) && uri) {
+      bool registered;
+      sss->SheetRegistered(uri, nsIStyleSheetService::AGENT_SHEET,
+                           &registered);
+      if (!registered) {
+        sss->LoadAndRegisterSheet(uri, nsIStyleSheetService::AGENT_SHEET);
+      }
+    }
+  }
+
   return rv;
 }
 
@@ -461,18 +479,18 @@ uGlobalMenuService::RegisterGlobalMenuBar(uGlobalMenuBar *aMenuBar,
   return true;
 }
 
-/* void registerNotification (in nsIObserver observer); */
+/* void registerNotification (in uIGlobalMenuServiceObserver observer); */
 NS_IMETHODIMP
-uGlobalMenuService::RegisterNotification(nsIObserver *aObserver)
+uGlobalMenuService::RegisterNotification(uIGlobalMenuServiceObserver *aObserver)
 {
   NS_ENSURE_ARG(aObserver);
 
   return mListeners.AppendElement(aObserver) ? NS_OK : NS_ERROR_FAILURE;
 }
 
-/* void unregisterNotification (in nsIObserver observer); */
+/* void unregisterNotification (in uIGlobalMenuServiceObserver observer); */
 NS_IMETHODIMP
-uGlobalMenuService::UnregisterNotification(nsIObserver *aObserver)
+uGlobalMenuService::UnregisterNotification(uIGlobalMenuServiceObserver *aObserver)
 {
   NS_ENSURE_ARG(aObserver);
 
