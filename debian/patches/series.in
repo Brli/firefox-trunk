@@ -1,6 +1,5 @@
 ubuntu-bookmarks.patch
 normalize-distribution-searchplugins.patch
-plugin-for-mimetype-pref.patch
 allow-lockPref-everywhere.patch
 #@DIST=lucid,maverick,natty,oneiric@mozilla-kde.patch
 #@DIST=lucid,maverick,natty,oneiric@firefox-kde.patch

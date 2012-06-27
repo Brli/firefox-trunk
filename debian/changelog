@@ -101,6 +101,8 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
     - update debian/build/mozbuild.mk
     - update debian/build/create-tarball.py
     - remove debian/build/compare-locales
+  * Drop debian/patches/plugin-for-mimetype-pref.patch. The burden of
+    carrying this is starting to outweigh the benefits of it
 
   [ Martin Pitt <martin.pitt@ubuntu.com> ]
   * Add partial support for Python 3 in the apport hook (LP: #1013171)
