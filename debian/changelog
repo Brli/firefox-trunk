@@ -1,7 +1,7 @@
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
-  * Update globalmenu-extension to 3.3 prerelease r386
+  * Update globalmenu-extension to 3.3 prerelease r388
     - Fix LP: #1010580 - No choice of folder when adding a bookmark from
       the bookmark menu
     - Fix LP: #775080 - Thunderbird with Firetray/MinimizeToTray -
@@ -21,6 +21,7 @@ firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu2) UNRELEASED; urgency=low
       the additional items are added before the menu appears. Fixes an
       issue where keyboard focus isn't on the first item when opening the
       history menu with the keyboard
+    - Fix a crash in uGlobalMenu::RecycleList::~RecycleList()
   * Merge get-orig-source.mk in to mozbuild.mk
     - update debian/build/mozbuild.mk
     - remove debian/build/get-orig-source.mk

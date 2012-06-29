@@ -129,13 +129,13 @@ private:
 
   struct RecycleList
   {
-    RecycleList(uGlobalMenu *aMenu);
+    RecycleList(uGlobalMenu *aMenu, PRUint32 aMarker);
     ~RecycleList();
 
     void Empty();
-    DbusmenuMenuitem* PopRecyclableItem();
-    void PrependRecyclableItem(DbusmenuMenuitem *aItem);
-    void AppendRecyclableItem(DbusmenuMenuitem *aItem);
+    DbusmenuMenuitem* Shift();
+    void Unshift(DbusmenuMenuitem *aItem);
+    void Push(DbusmenuMenuitem *aItem);
 
     PRUint32 mMarker;
     nsTArray<DbusmenuMenuitem *> mList;

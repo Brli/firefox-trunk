@@ -70,8 +70,9 @@
 
 #include "compat.h"
 
-uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu):
-  mMarker(0), mMenu(aMenu)
+uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu,
+                                      PRUint32 aMarker):
+  mMarker(aMarker), mMenu(aMenu)
 {
   mFreeEvent = NS_NewNonOwningRunnableMethod(mMenu,
                                              &uGlobalMenu::FreeRecycleList);
@@ -80,47 +81,44 @@ uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu):
 
 uGlobalMenu::RecycleList::~RecycleList()
 {
-  for (PRUint32 i = 0; i < mList.Length(); i++) {
-    dbusmenu_menuitem_child_delete(mMenu->GetDbusMenuItem(), mList[i]);
-  }
-
+  Empty();
   mFreeEvent->Revoke();
 }
 
 void
 uGlobalMenu::RecycleList::Empty()
 {
-  for (PRUint32 i = 0; i < mList.Length(); i++) {
-    dbusmenu_menuitem_child_delete(mMenu->GetDbusMenuItem(), mList[i]);
+  while(mList.Length() > 0) {
+    dbusmenu_menuitem_child_delete(mMenu->GetDbusMenuItem(), Shift());
   }
-
-  mList.SetLength(0);
 }
 
 DbusmenuMenuitem*
-uGlobalMenu::RecycleList::PopRecyclableItem()
+uGlobalMenu::RecycleList::Shift()
 {
-  NS_ASSERTION(mList.Length() > 0, "No more recyclable menuitems");
+  if (mList.Length() == 0) {
+    return nsnull;
+  }
 
   ++mMarker;
   DbusmenuMenuitem *recycled = mList[0];
   mList.RemoveElementAt(0);
 
-  if (mList.Length() == 0) {
-    mMenu->FreeRecycleList();
-  }
-
   return recycled;
 }
 
 void
-uGlobalMenu::RecycleList::PrependRecyclableItem(DbusmenuMenuitem *aItem)
+uGlobalMenu::RecycleList::Unshift(DbusmenuMenuitem *aItem)
 {
+  if (mList.Length() == 0) {
+    --mMarker;
+  }
+
   mList.InsertElementAt(0, aItem);
 }
 
 void
-uGlobalMenu::RecycleList::AppendRecyclableItem(DbusmenuMenuitem *aItem)
+uGlobalMenu::RecycleList::Push(DbusmenuMenuitem *aItem)
 {
   mList.AppendElement(aItem);
 }
@@ -453,7 +451,7 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
   PRUint32 correctedIndex = index;
 
   DbusmenuMenuitem *recycled = nsnull;
-  if (mRecycleList) {
+  if (mRecycleList && mRecycleList->mList.Length() > 0) {
     if (index < mRecycleList->mMarker) {
       ++mRecycleList->mMarker;
     } else if (index > mRecycleList->mMarker) {
@@ -461,7 +459,7 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
     } else {
       // If this node is being inserted in to a gap left by previously
       // removed nodes, then recycle one that we just removed
-      recycled = mRecycleList->PopRecyclableItem();
+      recycled = mRecycleList->Shift();
       if (!IsRecycledItemCompatible(recycled, menuObj)) {
         recycled = nsnull;
         mRecycleList = nsnull;
@@ -485,10 +483,11 @@ bool
 uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 {
   DbusmenuMenuitem *recycled = nsnull;
-  if (mRecycleList && mRecycleList->mMarker > mMenuObjects.Length()) {
+  if (mRecycleList && mRecycleList->mList.Length() > 0 &&
+      mRecycleList->mMarker == mMenuObjects.Length()) {
     // If any nodes were just removed from the end of the menu, then recycle
     // one now
-    recycled = mRecycleList->PopRecyclableItem();
+    recycled = mRecycleList->Shift();
     if (!IsRecycledItemCompatible(recycled, menuObj)) {
       recycled = nsnull;
       mRecycleList = nsnull;
@@ -523,21 +522,21 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
   // and inserting new ones, without altering the overall structure. It is used
   // by the history menu in Firefox
   if (!mRecycleList) {
-    mRecycleList = new RecycleList(this);
+    mRecycleList = new RecycleList(this, index);
   } else if (mRecycleList->mList.Length() > 0 &&
              (index < mRecycleList->mMarker - 1 ||
               index > mRecycleList->mMarker)) {
     // If this node is not adjacent to any previously removed nodes, then
     // free the existing nodes already and restart the process
     mRecycleList->Empty();
+    mRecycleList->mMarker = index;
   }
 
-  if (mRecycleList->mList.Length() == 0 || index == mRecycleList->mMarker) {
-    mRecycleList->AppendRecyclableItem(mMenuObjects[index]->GetDbusMenuItem());
+  if (index == mRecycleList->mMarker) {
+    mRecycleList->Push(mMenuObjects[index]->GetDbusMenuItem());
   } else {
-    mRecycleList->PrependRecyclableItem(mMenuObjects[index]->GetDbusMenuItem());
+    mRecycleList->Unshift(mMenuObjects[index]->GetDbusMenuItem());
   }
-  mRecycleList->mMarker = index;
 
   mMenuObjects.RemoveElementAt(index);
 
@@ -684,6 +683,14 @@ uGlobalMenu::~uGlobalMenu()
                                          FuncToVoidPtr(MenuEventCallback),
                                          this);
     g_object_unref(mDbusMenuItem);
+  }
+
+  if (mRecycleList) {
+    // The recycle list doesn't hold a strong ref to our dbusmenuitem or
+    // any of it's children. As we've just dropped our ref, if there are
+    // any items on the recycle list, forget them now. If we don't forget
+    // them, we will crash when calling the recycle list destructor
+    mRecycleList->mList.Clear();
   }
 
   MOZ_COUNT_DTOR(uGlobalMenu);
