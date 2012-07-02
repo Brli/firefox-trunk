@@ -155,6 +155,15 @@ common-binary-fixup-arch::
 		fi \
 	done < $(CURDIR)/debian/config/locales.shipped
 
+LOCALE_PACKAGES := $(shell cat $(CURDIR)/debian/control | grep "^Package:[[:space:]]*$(MOZ_PKG_NAME)-locale\-" | sed -n -e 's/^Package\:[[:space:]]*\([^[:space:]]*\)/\1/ p')
+
+common-binary-post-install-arch:: install-webapprt-langpack-links
+
+install-webapprt-langpack-links: $(foreach target, $(LOCALE_PACKAGES), install-webapprt-langpack-link-$(target))
+install-webapprt-langpack-link-%: XPIS = $(notdir $(wildcard debian/$*/$(MOZ_ADDONDIR)/extensions/*.xpi))
+install-webapprt-langpack-link-%:
+	$(foreach xpi,$(XPIS),dh_link -p$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
+
 pre-build::
 	@cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
 	@cp $(DEB_SRCDIR)/toolkit/content/widgets/preferences.xml $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
@@ -164,6 +173,10 @@ ifneq ($(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_BASENAME))
 	@echo "Setting MOZ_APP_UA_NAME to $(MOZ_DEFAULT_APP_BASENAME)"
 	@cp $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh.bak; \
 		echo "MOZ_APP_UA_NAME=$(MOZ_DEFAULT_APP_BASENAME)" >> $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh
+
+	@echo "Setting UAName to $(MOZ_DEFAULT_APP_BASENAME)"
+	@cp $(DEB_SRCDIR)/webapprt/application.ini.in $(DEB_SRCDIR)/webapprt/application.ini.in.bak; \
+		sed -ri 's/@MOZ_APP_BASENAME@/$(MOZ_DEFAULT_APP_BASENAME)/g' $(DEB_SRCDIR)/webapprt/application.ini.in
 endif
 ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
 	@echo "Replacing instances of \"%APP%\" with \"firefox\" in firefox-branding.js"
@@ -176,6 +189,7 @@ clean::
 	rm -f debian/usr.bin.firefox.in
 	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh)
 	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js)
+	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/webapprt/application.ini.in)
 	rm -f $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
 	rm -f $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
 	rm -f $(DEB_SRCDIR)/browser/base/content/browser-kde.xul

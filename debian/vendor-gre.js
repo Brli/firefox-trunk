@@ -1,19 +1,8 @@
 // Use LANG environment variable to choose locale
 pref("intl.locale.matchOS", true);
 
-// Disable default browser checking.
-pref("browser.shell.checkDefaultBrowser", false);
-
-// identify default locale to use if no /usr/lib/firefox-addons/searchplugins/LOCALE
-// exists for the current used LOCALE
+// Fall back to en-US search plugins if none exist for the current locale
 pref("distribution.searchplugins.defaultLocale", "en-US");
-
-// Enable the NetworkManager integration
-//pref("network.manage-offline-status", true);
-
-// Don't disable our bundled extensions in the application directory
-pref("extensions.autoDisableScopes", 0);
-pref("extensions.shownSelectionUI", true);
 
 // Map to hyphenation patterns from openoffice.org-hyphenation and openoffice.org-dictionaries
 pref("intl.hyphenation-alias.af", "af-za");
