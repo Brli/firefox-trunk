@@ -2,11 +2,11 @@ Description: Add a system-wide preferences folder
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: no
 
-Index: mozilla/toolkit/xre/nsXREDirProvider.cpp
+Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsXREDirProvider.cpp
 ===================================================================
---- mozilla.orig/toolkit/xre/nsXREDirProvider.cpp	2012-04-18 03:11:27.000000000 +0100
-+++ mozilla/toolkit/xre/nsXREDirProvider.cpp	2012-04-18 10:45:26.885434464 +0100
-@@ -606,6 +606,7 @@
+--- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/xre/nsXREDirProvider.cpp	2012-07-02 11:08:32.000000000 +0100
++++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsXREDirProvider.cpp	2012-07-02 17:11:30.218977459 +0100
+@@ -601,6 +601,7 @@
  }
  
  static const char *const kAppendPrefDir[] = { "defaults", "preferences", nsnull };
@@ -14,7 +14,7 @@ Index: mozilla/toolkit/xre/nsXREDirProvider.cpp
  
  #ifdef DEBUG_bsmedberg
  static void
-@@ -647,6 +648,9 @@
+@@ -642,6 +643,9 @@
      LoadDirIntoArray(mXULAppDir, kAppendPrefDir, directories);
      LoadDirsIntoArray(mAppBundleDirectories,
                        kAppendPrefDir, directories);
@@ -22,13 +22,13 @@ Index: mozilla/toolkit/xre/nsXREDirProvider.cpp
 +    LoadDirsIntoArray(mAppBundleDirectories,
 +                      kAppendSysPrefDir, directories);
  
-     // Include the WebappRT-specific prefs dir if we're running WebappRT.
-     if (gAppData && !strcmp(gAppData->ID, WEBAPPRT_APPID)) {
-Index: mozilla/xpcom/io/nsAppDirectoryServiceDefs.h
+     rv = NS_NewArrayEnumerator(aResult, directories);
+   }
+Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppDirectoryServiceDefs.h
 ===================================================================
---- mozilla.orig/xpcom/io/nsAppDirectoryServiceDefs.h	2012-04-18 03:11:43.000000000 +0100
-+++ mozilla/xpcom/io/nsAppDirectoryServiceDefs.h	2012-04-18 10:43:24.269436643 +0100
-@@ -63,6 +63,7 @@
+--- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/io/nsAppDirectoryServiceDefs.h	2012-07-02 11:08:47.000000000 +0100
++++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppDirectoryServiceDefs.h	2012-07-02 17:11:30.218977459 +0100
+@@ -30,6 +30,7 @@
  
  #define NS_APP_DEFAULTS_50_DIR                  "DefRt"         // The root dir of all defaults dirs
  #define NS_APP_PREF_DEFAULTS_50_DIR             "PrfDef"
@@ -36,11 +36,11 @@ Index: mozilla/xpcom/io/nsAppDirectoryServiceDefs.h
  #define NS_APP_PROFILE_DEFAULTS_50_DIR          "profDef"       // The profile defaults of the "current"
                                                                  // locale. Should be first choice.
  #define NS_APP_PROFILE_DEFAULTS_NLOC_50_DIR     "ProfDefNoLoc"  // The profile defaults of the "default"
-Index: mozilla/xpcom/io/nsAppFileLocationProvider.cpp
+Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppFileLocationProvider.cpp
 ===================================================================
---- mozilla.orig/xpcom/io/nsAppFileLocationProvider.cpp	2012-04-18 03:11:43.000000000 +0100
-+++ mozilla/xpcom/io/nsAppFileLocationProvider.cpp	2012-04-18 10:43:24.269436643 +0100
-@@ -94,6 +94,7 @@
+--- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/io/nsAppFileLocationProvider.cpp	2012-07-02 11:08:47.000000000 +0100
++++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppFileLocationProvider.cpp	2012-07-02 17:11:30.218977459 +0100
+@@ -60,6 +60,7 @@
  
  #define DEFAULTS_DIR_NAME           NS_LITERAL_CSTRING("defaults")
  #define DEFAULTS_PREF_DIR_NAME      NS_LITERAL_CSTRING("pref")
@@ -48,7 +48,7 @@ Index: mozilla/xpcom/io/nsAppFileLocationProvider.cpp
  #define DEFAULTS_PROFILE_DIR_NAME   NS_LITERAL_CSTRING("profile")
  #define RES_DIR_NAME                NS_LITERAL_CSTRING("res")
  #define CHROME_DIR_NAME             NS_LITERAL_CSTRING("chrome")
-@@ -158,6 +159,15 @@
+@@ -124,6 +125,15 @@
                  rv = localFile->AppendRelativeNativePath(DEFAULTS_PREF_DIR_NAME);
          }
      }
@@ -64,11 +64,11 @@ Index: mozilla/xpcom/io/nsAppFileLocationProvider.cpp
      else if (nsCRT::strcmp(prop, NS_APP_PROFILE_DEFAULTS_50_DIR) == 0 ||
               nsCRT::strcmp(prop, NS_APP_PROFILE_DEFAULTS_NLOC_50_DIR) == 0)
      {
-Index: mozilla/modules/libpref/src/Preferences.cpp
+Index: firefox-trunk-16.0~a1~hg20120702r98108/modules/libpref/src/Preferences.cpp
 ===================================================================
---- mozilla.orig/modules/libpref/src/Preferences.cpp	2012-04-18 03:09:13.000000000 +0100
-+++ mozilla/modules/libpref/src/Preferences.cpp	2012-04-18 10:43:24.269436643 +0100
-@@ -1122,6 +1122,15 @@
+--- firefox-trunk-16.0~a1~hg20120702r98108.orig/modules/libpref/src/Preferences.cpp	2012-07-02 11:07:04.000000000 +0100
++++ firefox-trunk-16.0~a1~hg20120702r98108/modules/libpref/src/Preferences.cpp	2012-07-02 17:11:30.218977459 +0100
+@@ -1057,6 +1057,15 @@
    if (NS_FAILED(rv))
      NS_WARNING("Error parsing application default preferences.");
  
@@ -82,5 +82,5 @@ Index: mozilla/modules/libpref/src/Preferences.cpp
 +    NS_WARNING("Error parsing application system preferences.");
 +
    // Load jar:$app/omni.jar!/defaults/preferences/*.js
+   // or jar:$gre/omni.jar!/defaults/preferences/*.js.
    nsRefPtr<nsZipArchive> appJarReader = mozilla::Omnijar::GetReader(mozilla::Omnijar::APP);
-   if (appJarReader) {
