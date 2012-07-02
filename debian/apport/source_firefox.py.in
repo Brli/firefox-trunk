@@ -213,7 +213,10 @@ def compare_versions(a, b):
         spl = part.split('.')
 
         if part == '*' and len(part) == 1:
-            res.numA = sys.maxint
+            try:
+                res.numA = sys.maxint
+            except:
+                res.numA = sys.maxsize # python3
             res.strB = ""
         else:
             res.numA = int(re.sub(r'([0-9]*)(.*)', r'\1', spl[0]))
