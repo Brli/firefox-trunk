@@ -9,7 +9,6 @@ allow-lockPref-everywhere.patch
 ubuntu-ua-string-changes.patch
 autocomplete-theme-tweak.patch
 dont-include-hyphenation-patterns.patch
-#fix-build-failure-without-yarr-jit.patch
 dont-override-general-useragent-locale.patch
 fix-makefile-substitution-bug.patch
 webapprt-support-for-langpacks.patch
