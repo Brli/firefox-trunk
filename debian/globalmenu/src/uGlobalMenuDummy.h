@@ -50,6 +50,8 @@ class uGlobalMenuDummy: public uGlobalMenuObject
 public:
   static uGlobalMenuObject* Create();
 
+  virtual uMenuObjectType GetType() { return eMenuDummy; }
+
 private:
   uGlobalMenuDummy();
 

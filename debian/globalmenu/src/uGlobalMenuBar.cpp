@@ -70,10 +70,10 @@
 #define MODIFIER_ALT      4
 #define MODIFIER_META     8
 
-NS_IMPL_ISUPPORTS1(uGlobalMenuBar::Listener, nsIDOMEventListener)
+NS_IMPL_ISUPPORTS1(uGlobalMenuBar::EventListener, nsIDOMEventListener)
 
 NS_IMETHODIMP
-uGlobalMenuBar::Listener::HandleEvent(nsIDOMEvent *aEvent)
+uGlobalMenuBar::EventListener::HandleEvent(nsIDOMEvent *aEvent)
 {
   nsAutoString type;
   nsresult rv = aEvent->GetType(type);
@@ -244,7 +244,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     return rv;
   }
 
-  mEventListener = new Listener(this);
+  mEventListener = new EventListener(this);
 
   mDocument = mContent->GetCurrentDoc();
   nsCOMPtr<nsIDOMEventTarget> docTarget = do_QueryInterface(mDocument);
@@ -282,6 +282,12 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   } else {
     mAccessKeyMask = MODIFIER_ALT;
   }
+
+  /* Do this before registering for content changes, so that we
+   * don't handle the subsequent event */
+  nsCOMPtr<nsIDOMElement> self = do_QueryInterface(mContent);
+  self->SetAttribute(NS_LITERAL_STRING("openedwithkey"),
+                     NS_LITERAL_STRING("false"));
 
   rv = mListener->RegisterForContentChanges(mContent, this);
   if (NS_FAILED(rv)) {
@@ -340,7 +346,7 @@ uGlobalMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent)
 }
 
 uGlobalMenuBar::uGlobalMenuBar():
-  uGlobalMenuObject(eMenuBar), mServer(nsnull), mTopLevel(nsnull),
+  uGlobalMenuObject(), mServer(nsnull), mTopLevel(nsnull),
   mCancellable(nsnull)
 {
   MOZ_COUNT_CTOR(uGlobalMenuBar);

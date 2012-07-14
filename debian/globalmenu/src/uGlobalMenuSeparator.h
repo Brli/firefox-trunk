@@ -53,6 +53,8 @@ public:
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
 
+  virtual uMenuObjectType GetType() { return eMenuSeparator; }
+
 protected:
   void ObserveAttributeChanged(nsIDocument *aDocument,
                                nsIContent *aContent,

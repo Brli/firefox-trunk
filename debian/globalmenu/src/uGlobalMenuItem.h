@@ -77,6 +77,8 @@ public:
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
 
+  virtual uMenuObjectType GetType() { return eMenuItem; }
+
 protected:
   void ObserveAttributeChanged(nsIDocument *aDocument,
                                nsIContent *aContent,

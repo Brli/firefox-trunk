@@ -102,20 +102,17 @@ class nsIDOMCSSStyleDeclaration;
 class uGlobalMenuObject
 {
 public:
-  uGlobalMenuObject (uMenuObjectType aType): mDbusMenuItem(nsnull),
-                                             mListener(nsnull),
-                                             mParent(nsnull),
-                                             mType(aType),
-                                             mFlags(0) { };
+  uGlobalMenuObject (): mDbusMenuItem(nsnull), mListener(nsnull),
+                        mParent(nsnull), mFlags(0) { };
 
   DbusmenuMenuitem* GetDbusMenuItem();
   void SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem);
   uGlobalMenuObject* GetParent() { return mParent; }
-  uMenuObjectType GetType() { return mType; }
+  virtual uMenuObjectType GetType()=0;
   nsIContent* GetContent() { return mContent; }
   virtual void Invalidate();
   virtual void ContainerIsOpening();
-  void ContainerIsClosing() { ClearFlags(UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
+  virtual void ContainerIsClosing() { ClearFlags(UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
   virtual ~uGlobalMenuObject() { };
 
 protected:
@@ -149,7 +146,6 @@ protected:
   DbusmenuMenuitem *mDbusMenuItem;
   nsRefPtr<uGlobalMenuDocListener> mListener;
   uGlobalMenuObject *mParent;
-  uMenuObjectType mType;
   uGlobalMenuBar *mMenuBar;
 
 protected:

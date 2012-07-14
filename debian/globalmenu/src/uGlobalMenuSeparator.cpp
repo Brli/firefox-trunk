@@ -101,7 +101,7 @@ uGlobalMenuSeparator::Init(uGlobalMenuObject *aParent,
   return NS_OK;
 }
 
-uGlobalMenuSeparator::uGlobalMenuSeparator(): uGlobalMenuObject(eMenuSeparator)
+uGlobalMenuSeparator::uGlobalMenuSeparator(): uGlobalMenuObject()
 {
   MOZ_COUNT_CTOR(uGlobalMenuSeparator);
 }

@@ -704,7 +704,7 @@ uGlobalMenuItem::UncheckSiblings()
 }
 
 uGlobalMenuItem::uGlobalMenuItem():
-  uGlobalMenuObject(eMenuItem)
+  uGlobalMenuObject()
 {
   MOZ_COUNT_CTOR(uGlobalMenuItem);
 }
@@ -775,8 +775,7 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (mParent->GetType() == eMenu &&
-      !(static_cast<uGlobalMenu *>(mParent))->IsOpenOrOpening()) {
+  if (!IsContainerOnScreen()) {
     LOGTM("Parent isn't open or opening. Marking invalid");
     Invalidate();
     return;

@@ -49,9 +49,10 @@
 #include <libdbusmenu-glib/server.h>
 
 #include "uGlobalMenuObject.h"
+#include "uWidgetAtoms.h"
 
 // The menu is in the process of opening
-#define UNITY_MENU_IS_OPEN_OR_OPENING     (1 << 7)
+#define UNITY_MENU_IS_OPENING             (1 << 7)
 
 // The menu needs rebuilding
 #define UNITY_MENU_NEEDS_REBUILDING       (1 << 8)
@@ -73,12 +74,19 @@ public:
 
   ~uGlobalMenu();
 
+  virtual uMenuObjectType GetType() { return eMenu; }
+
   bool CanOpen();
   void OpenMenuDelayed();
   void Invalidate();
   void ContainerIsOpening();
   
-  bool IsOpenOrOpening() { return !!(mFlags & UNITY_MENU_IS_OPEN_OR_OPENING); }
+  bool IsOpenOrOpening()
+  {
+    return mFlags & UNITY_MENU_IS_OPENING ||
+           mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::open,
+                                 uWidgetAtoms::_true, eCaseMatters);
+  }
 
 protected:
   void ObserveAttributeChanged(nsIDocument *aDocument,

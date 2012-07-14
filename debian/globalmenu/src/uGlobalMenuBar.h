@@ -77,6 +77,8 @@ public:
                                 nsIContent *aMenuBar);
   ~uGlobalMenuBar();
 
+  virtual uMenuObjectType GetType() { return eMenuBar; }
+
   bool IsRegistered() { return !!(mFlags & UNITY_MENUBAR_IS_REGISTERED); }
 
   GtkWidget* TopLevelWindow() { return mTopLevel; }
@@ -94,21 +96,21 @@ protected:
                               nsIContent *aChild,
                               PRInt32 aIndexInContainer);
 
-private:
+protected:
   friend class uGlobalMenuService;
 
   void NotifyMenuBarRegistered();
 
 private:
 
-  class Listener: public nsIDOMEventListener
+  class EventListener: public nsIDOMEventListener
   {
   public:
     NS_DECL_ISUPPORTS
     NS_DECL_NSIDOMEVENTLISTENER
 
-    Listener(uGlobalMenuBar *aMenuBar): mMenuBar(aMenuBar) { };
-    ~Listener() { };
+    EventListener(uGlobalMenuBar *aMenuBar): mMenuBar(aMenuBar) { };
+    ~EventListener() { };
 
   private:
     uGlobalMenuBar *mMenuBar;
@@ -143,7 +145,7 @@ private:
 
   nsCOMPtr<nsIDocument> mDocument;
   bool mXULMenuHidden;
-  nsRefPtr<Listener> mEventListener;
+  nsRefPtr<EventListener> mEventListener;
   PRInt32 mAccessKey;
   PRUint32 mAccessKeyMask;
   GCancellable *mCancellable;

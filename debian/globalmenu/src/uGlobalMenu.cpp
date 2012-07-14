@@ -64,7 +64,6 @@
 #include "uGlobalMenu.h"
 #include "uGlobalMenuBar.h"
 #include "uGlobalMenuUtils.h"
-#include "uWidgetAtoms.h"
 
 #include "uDebug.h"
 
@@ -110,7 +109,7 @@ uGlobalMenu::RecycleList::Shift()
 void
 uGlobalMenu::RecycleList::Unshift(DbusmenuMenuitem *aItem)
 {
-  if (mList.Length() == 0) {
+  if (mList.Length() != 0) {
     --mMarker;
   }
 
@@ -264,7 +263,11 @@ uGlobalMenu::AboutToOpen()
     Build();
   }
 
-  SetFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
+  if (mFlags & UNITY_MENU_IS_OPENING) {
+    return;
+  }
+
+  SetFlags(UNITY_MENU_IS_OPENING);
 
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
@@ -291,10 +294,12 @@ uGlobalMenu::AboutToOpen()
 void
 uGlobalMenu::OnOpen()
 {
-  if (!IsOpenOrOpening()) {
+  if (!(mFlags & UNITY_MENU_IS_OPENING)) {
     // If we didn't receive an AboutToOpen, then generate it ourselves
     AboutToOpen();
   }
+
+  ClearFlags(UNITY_MENU_IS_OPENING);
 
   mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open, NS_LITERAL_STRING("true"), true);
 
@@ -316,8 +321,6 @@ uGlobalMenu::OnClose()
   for (PRUint32 i = 0; i < count; i++) {
     mMenuObjects[i]->ContainerIsClosing();
   }
-
-  ClearFlags(UNITY_MENU_IS_OPEN_OR_OPENING);
 
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
@@ -476,6 +479,10 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                                                correctedIndex);
   }
 
+  if (IsOpenOrOpening()) {
+    menuObj->ContainerIsOpening();
+  }
+
   return res && mMenuObjects.InsertElementAt(index, menuObj);
 }
 
@@ -500,6 +507,10 @@ uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
   } else {
     res = dbusmenu_menuitem_child_append(mDbusMenuItem,
                                          menuObj->GetDbusMenuItem());
+  }
+
+  if (IsOpenOrOpening()) {
+    menuObj->ContainerIsOpening();
   }
 
   return res && mMenuObjects.AppendElement(menuObj);
@@ -659,7 +670,7 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
   return NS_OK;
 }
 
-uGlobalMenu::uGlobalMenu(): uGlobalMenuObject(eMenu)
+uGlobalMenu::uGlobalMenu(): uGlobalMenuObject()
 {
   MOZ_COUNT_CTOR(uGlobalMenu);
 }
@@ -724,30 +735,10 @@ uGlobalMenu::Invalidate()
 
   // If we are visible on screen, now we go and invalidate children. If not,
   // then we invalidate them when we appear on screen in ContainerIsOpening().
-  // If we need a rebuild, we just skip this (unless we are a direct descendant
-  // of the menubar, when we rebuild to avoid the issue mentioned in the
-  // comment below....)
-  if (IsContainerOnScreen()) {
-    if (mParent->GetType() == eMenuBar && DoesNeedRebuild()) {
-      Build();
-    } else if (!DoesNeedRebuild()) {
-      for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
-        if (mParent->GetType() == eMenuBar) {
-          // This is a bit of a hack. When a menu is opened with the keyboard,
-          // some of our children unhide themselves. If we just invalidate here,
-          // then these items won't really appear until this menu gets the
-          // about-to-show signal, when we tell our children to refresh themselves,
-          // which is after we ask the menu to open. This causes a strange issue
-          // in the Firefox History menu, where these additional items appear at
-          // the top of the menu after it has appeared on screen, causing
-          // keyboard focus to be on the wrong menu item
-          mMenuObjects[i]->Invalidate();
-          mMenuObjects[i]->ContainerIsOpening();
-          mMenuObjects[i]->ContainerIsClosing();
-        } else {
-          mMenuObjects[i]->Invalidate();
-        }
-      }
+  // If we need a rebuild, we just skip this.
+  if (IsContainerOnScreen() && !DoesNeedRebuild()) {
+    for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
+      mMenuObjects[i]->Invalidate();
     }
   }
 } 
@@ -780,10 +771,11 @@ uGlobalMenu::OpenMenuDelayed()
     return;
   }
 
-  // Here, we open the menu after a short delay. This avoids an issue
-  // where opening the History menu in Firefox with the keyboard causes
-  // extra items to appear at the top of the menu, but keyboard focus is
-  // not on the first item
+  // Here, we manually call AboutToOpen and then open the menu after a short
+  // delay. This avoids an issue where opening the History menu in Firefox
+  // with the keyboard causes extra items to appear at the top of the menu,
+  // but keyboard focus is not on the first item
+  AboutToOpen();
   g_timeout_add(100, DoOpen, g_object_ref(mDbusMenuItem));
 }
 

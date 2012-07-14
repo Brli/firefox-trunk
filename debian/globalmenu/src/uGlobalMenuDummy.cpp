@@ -68,7 +68,7 @@ uGlobalMenuDummy::InitializeDbusMenuItem()
 }
 
 uGlobalMenuDummy::uGlobalMenuDummy():
-  uGlobalMenuObject(eMenuDummy)
+  uGlobalMenuObject()
 {
   MOZ_COUNT_CTOR(uGlobalMenuDummy);
 }
