@@ -126,6 +126,10 @@ firefox-trunk (16.0~a1~hg20120702r98108-0ubuntu1) UNRELEASED; urgency=low
   * debian/apport/source_firefox.py.in:
     - Update apport hook for python3
 
+  [ Adam Conrad <adconrad@ubuntu.com> ]
+  * Add no_neon_on_arm.patch to skip the NEON tests on ARM, since we
+    don't build with NEON by default on either of our ARM architectures
+
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 07 Jun 2012 23:00:12 +0100
 
 firefox-trunk (15.0~a1~hg20120603r95688-0ubuntu1) quantal; urgency=low
