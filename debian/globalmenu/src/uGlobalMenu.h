@@ -71,15 +71,14 @@ public:
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
-
-  ~uGlobalMenu();
+  virtual ~uGlobalMenu();
 
   virtual uMenuObjectType GetType() { return eMenu; }
 
   bool CanOpen();
   void OpenMenuDelayed();
-  void Invalidate();
-  void ContainerIsOpening();
+  virtual void Invalidate();
+  virtual void ContainerIsOpening();
   
   bool IsOpenOrOpening()
   {
@@ -89,18 +88,17 @@ public:
   }
 
 protected:
-  void ObserveAttributeChanged(nsIDocument *aDocument,
-                               nsIContent *aContent,
-                               nsIAtom *aAttribute);
-  void ObserveContentRemoved(nsIDocument *aDocument,
-                             nsIContent *aContainer,
-                             nsIContent *aChild,
-                             PRInt32 aIndexInContainer);
-  void ObserveContentInserted(nsIDocument *aDocument,
-                              nsIContent *aContainer,
-                              nsIContent *aChild,
-                              PRInt32 aIndexInContainer);
-  void Refresh();
+  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
+                                       nsIContent *aContent,
+                                       nsIAtom *aAttribute);
+  virtual void ObserveContentRemoved(nsIDocument *aDocument,
+                                     nsIContent *aContainer,
+                                     nsIContent *aChild,
+                                     PRInt32 aIndexInContainer);
+  virtual void ObserveContentInserted(nsIDocument *aDocument,
+                                      nsIContent *aContainer,
+                                      nsIContent *aChild,
+                                      PRInt32 aIndexInContainer);
 
 private:
   uGlobalMenu();
@@ -114,7 +112,13 @@ private:
                           PRUint32 index);
   bool AppendMenuObject(uGlobalMenuObject *menuObj);
   bool RemoveMenuObjectAt(PRUint32 index);
-  void InitializeDbusMenuItem();
+  virtual void InitializeDbusMenuItem();
+  virtual void Refresh();
+  virtual uMenuObjectProperties GetValidProperties()
+  {
+    return static_cast<uMenuObjectProperties>(eLabel | eEnabled | eVisible |
+                                              eIconData | eChildDisplay);
+  }
   nsresult Build();
   void GetMenuPopupFromMenu(nsIContent **aResult);
   static bool MenuAboutToOpenCallback(DbusmenuMenuitem *menu,

@@ -113,22 +113,18 @@ public:
   virtual void Invalidate();
   virtual void ContainerIsOpening();
   virtual void ContainerIsClosing() { ClearFlags(UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
-  virtual ~uGlobalMenuObject() { };
+  virtual ~uGlobalMenuObject();
 
 protected:
-  virtual void InitializeDbusMenuItem()=0;
-  virtual void Refresh() { };
   void SyncLabelFromContent(nsIContent *aContent);
   void SyncLabelFromContent();
   void SyncVisibilityFromContent();
   void SyncSensitivityFromContent(nsIContent *aContent);
   void SyncSensitivityFromContent();
   void SyncIconFromContent();
-  void DestroyIconLoader();
   bool IsHidden() { return !(mFlags & UNITY_MENUOBJECT_CONTENT_IS_VISIBLE); }
   bool IsDirty() { return !!(mFlags & UNITY_MENUOBJECT_IS_DIRTY); }
   bool IsContainerOnScreen() { return !!(mFlags & UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
-  void OnlyKeepProperties(uMenuObjectProperties aKeep);
 
   void SetFlags(PRUint16 aFlags) { mFlags = mFlags | aFlags; }
   void ClearFlags(PRUint16 aFlags) { mFlags = mFlags & ~aFlags; }
@@ -141,15 +137,6 @@ protected:
       ClearFlags(aFlags);
     }
   }
-
-  nsCOMPtr<nsIContent> mContent;
-  DbusmenuMenuitem *mDbusMenuItem;
-  nsRefPtr<uGlobalMenuDocListener> mListener;
-  uGlobalMenuObject *mParent;
-  uGlobalMenuBar *mMenuBar;
-
-protected:
-  friend class uGlobalMenuDocListener;
 
   class ReentrancyGuard
   {
@@ -180,6 +167,15 @@ protected:
     bool mAlreadyEntered;
   };
 
+  nsCOMPtr<nsIContent> mContent;
+  DbusmenuMenuitem *mDbusMenuItem;
+  nsRefPtr<uGlobalMenuDocListener> mListener;
+  uGlobalMenuObject *mParent;
+  uGlobalMenuBar *mMenuBar;
+
+protected:
+  friend class uGlobalMenuDocListener;
+
   virtual void ObserveAttributeChanged(nsIDocument *aDocument,
                                        nsIContent *aContent,
                                        nsIAtom *aAttribute)
@@ -205,6 +201,11 @@ protected:
 
   PRUint16 mFlags;
 
+protected:
+  friend class IconLoader;
+
+  void ClearIcon();
+
 private:
 
   class IconLoader: public imgIDecoderObserver,
@@ -223,19 +224,24 @@ private:
     ~IconLoader() { };
 
   private:
-    void ClearIcon();
-    bool ShouldShowIcon();
-
     bool mIconLoaded;
     uGlobalMenuObject *mMenuItem;
     nsCOMPtr<imgIRequest> mIconRequest;
     nsIntRect mImageRect;
-    static PRPackedBool sImagesInMenus;
   };
 
+  virtual void InitializeDbusMenuItem() { };
+  virtual void Refresh() { };
+  virtual uMenuObjectProperties GetValidProperties()
+  {
+    return static_cast<uMenuObjectProperties>(0);
+  }
   void GetComputedStyle(nsIDOMCSSStyleDeclaration **aResult);
+  bool ShouldShowIcon();
+  void OnlyKeepProperties(uMenuObjectProperties aKeep);
 
   nsRefPtr<IconLoader> mIconLoader;
+  static unsigned char sImagesInMenus;
 };
 
 #endif

@@ -186,14 +186,6 @@ uGlobalMenuBar::Build()
   return NS_OK;
 }
 
-void
-uGlobalMenuBar::InitializeDbusMenuItem()
-{
-  if (!mDbusMenuItem) {
-    mDbusMenuItem = dbusmenu_menuitem_new();
-  }
-}
-
 nsresult
 uGlobalMenuBar::Init(nsIWidget *aWindow,
                      nsIContent *aMenuBar)
@@ -221,7 +213,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
-  InitializeDbusMenuItem();
+  GetDbusMenuItem();
 
   if (!mDbusMenuItem) {
     NS_WARNING("Failed to create DbusmenuMenuitem");
@@ -392,19 +384,17 @@ uGlobalMenuBar::~uGlobalMenuBar()
                                    false);
   }
 
-  if (mListener) {
-    mListener->UnregisterForContentChanges(mContent, this);
-    mListener->Destroy();
+  if (mTopLevel) {
+    g_object_unref(mTopLevel);
   }
 
-  if (mTopLevel)
-    g_object_unref(mTopLevel);
-
-  if (mDbusMenuItem)
-    g_object_unref(mDbusMenuItem);
-
-  if (mServer)
+  if (mServer) {
     g_object_unref(mServer);
+  }
+
+  if (mListener) {
+    mListener->Destroy();
+  }
 
   MOZ_COUNT_DTOR(uGlobalMenuBar);
 }

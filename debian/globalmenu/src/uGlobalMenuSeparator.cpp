@@ -53,20 +53,9 @@
 void
 uGlobalMenuSeparator::InitializeDbusMenuItem()
 {
-  if (!mDbusMenuItem) {
-    mDbusMenuItem = dbusmenu_menuitem_new();
-    if (!mDbusMenuItem) {
-      return;
-    }
-  } else {
-    OnlyKeepProperties(static_cast<uMenuObjectProperties>(eVisible | eType));
-  }
-
   dbusmenu_menuitem_property_set(mDbusMenuItem,
                                  DBUSMENU_MENUITEM_PROP_TYPE,
                                  "separator");
-
-  Refresh();
 }
 
 void
@@ -108,13 +97,6 @@ uGlobalMenuSeparator::uGlobalMenuSeparator(): uGlobalMenuObject()
 
 uGlobalMenuSeparator::~uGlobalMenuSeparator()
 {
-  if (mListener) {
-    mListener->UnregisterForContentChanges(mContent, this);
-  }
-
-  if (mDbusMenuItem)
-    g_object_unref(mDbusMenuItem);
-
   MOZ_COUNT_DTOR(uGlobalMenuSeparator);
 }
 

@@ -350,17 +350,6 @@ uGlobalMenu::Refresh()
 void
 uGlobalMenu::InitializeDbusMenuItem()
 {
-  if (!mDbusMenuItem) {
-    mDbusMenuItem = dbusmenu_menuitem_new();
-    if (!mDbusMenuItem) {
-      return;
-    }
-  } else {
-    OnlyKeepProperties(static_cast<uMenuObjectProperties>(eLabel | eEnabled |
-                                                          eVisible | eIconData |
-                                                          eChildDisplay));
-  }
-
   // This happens automatically when we add children, but we have to
   // do this manually for menus which don't initially have children,
   // so we can receive about-to-show which triggers a build of the menu
@@ -372,8 +361,6 @@ uGlobalMenu::InitializeDbusMenuItem()
                    G_CALLBACK(MenuAboutToOpenCallback), this);
   g_signal_connect(G_OBJECT(mDbusMenuItem), "event",
                    G_CALLBACK(MenuEventCallback), this);
-
-  Refresh();
 }
 
 void
@@ -677,14 +664,9 @@ uGlobalMenu::uGlobalMenu(): uGlobalMenuObject()
 
 uGlobalMenu::~uGlobalMenu()
 {
-  if (mListener) {
-    mListener->UnregisterForContentChanges(mContent, this);
-    if (mPopupContent && mContent != mPopupContent) {
-      mListener->UnregisterForContentChanges(mPopupContent, this);
-    }
+  if (mListener && mPopupContent && mContent != mPopupContent) {
+    mListener->UnregisterForContentChanges(mPopupContent, this);
   }
-
-  DestroyIconLoader();
 
   if (mDbusMenuItem) {
     g_signal_handlers_disconnect_by_func(mDbusMenuItem,
@@ -693,7 +675,6 @@ uGlobalMenu::~uGlobalMenu()
     g_signal_handlers_disconnect_by_func(mDbusMenuItem,
                                          FuncToVoidPtr(MenuEventCallback),
                                          this);
-    g_object_unref(mDbusMenuItem);
   }
 
   if (mRecycleList) {

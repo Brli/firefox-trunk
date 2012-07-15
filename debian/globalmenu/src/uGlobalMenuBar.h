@@ -75,7 +75,7 @@ class uGlobalMenuBar: public uGlobalMenuObject
 public:
   static uGlobalMenuBar* Create(nsIWidget *aWindow,
                                 nsIContent *aMenuBar);
-  ~uGlobalMenuBar();
+  virtual ~uGlobalMenuBar();
 
   virtual uMenuObjectType GetType() { return eMenuBar; }
 
@@ -84,17 +84,17 @@ public:
   GtkWidget* TopLevelWindow() { return mTopLevel; }
 
 protected:
-  void ObserveAttributeChanged(nsIDocument *aDocument,
-                               nsIContent *aContent,
-                               nsIAtom *aAttribute);
-  void ObserveContentRemoved(nsIDocument *aDocument,
-                             nsIContent *aContainer,
-                             nsIContent *aChild,
-                             PRInt32 aIndexInContainer);
-  void ObserveContentInserted(nsIDocument *aDocument,
-                              nsIContent *aContainer,
-                              nsIContent *aChild,
-                              PRInt32 aIndexInContainer);
+  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
+                                       nsIContent *aContent,
+                                       nsIAtom *aAttribute);
+  virtual void ObserveContentRemoved(nsIDocument *aDocument,
+                                     nsIContent *aContainer,
+                                     nsIContent *aChild,
+                                     PRInt32 aIndexInContainer);
+  virtual void ObserveContentInserted(nsIDocument *aDocument,
+                                      nsIContent *aContainer,
+                                      nsIContent *aChild,
+                                      PRInt32 aIndexInContainer);
 
 protected:
   friend class uGlobalMenuService;
@@ -121,7 +121,6 @@ private:
   nsresult Init(nsIWidget *aWindow,
                 nsIContent *aMenuBar);
 
-  void InitializeDbusMenuItem();
   nsresult Build();
   PRUint32 GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent);
   bool ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent);

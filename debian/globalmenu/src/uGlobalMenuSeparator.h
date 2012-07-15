@@ -52,14 +52,14 @@ public:
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
+  virtual ~uGlobalMenuSeparator();
 
   virtual uMenuObjectType GetType() { return eMenuSeparator; }
 
 protected:
-  void ObserveAttributeChanged(nsIDocument *aDocument,
-                               nsIContent *aContent,
-                               nsIAtom *aAttribute);
-  void Refresh();
+  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
+                                       nsIContent *aContent,
+                                       nsIAtom *aAttribute);
 
 private:
   uGlobalMenuSeparator();
@@ -68,9 +68,13 @@ private:
                 uGlobalMenuDocListener *aListener,
                 nsIContent *aContent,
                 uGlobalMenuBar *aMenuBar);
-  ~uGlobalMenuSeparator();
 
-  void InitializeDbusMenuItem();
+  virtual void InitializeDbusMenuItem();
+  virtual void Refresh();
+  virtual uMenuObjectProperties GetValidProperties()
+  {
+    return static_cast<uMenuObjectProperties>(eVisible | eType);
+  }
 };
 
 

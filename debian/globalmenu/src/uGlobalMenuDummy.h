@@ -49,6 +49,7 @@ class uGlobalMenuDummy: public uGlobalMenuObject
 {
 public:
   static uGlobalMenuObject* Create();
+  virtual ~uGlobalMenuDummy();
 
   virtual uMenuObjectType GetType() { return eMenuDummy; }
 
@@ -57,9 +58,11 @@ private:
 
   nsresult Init();
 
-  ~uGlobalMenuDummy();
-
-  void InitializeDbusMenuItem(); 
+  virtual void InitializeDbusMenuItem();
+  virtual uMenuObjectProperties GetValidProperties()
+  {
+    return static_cast<uMenuObjectProperties>(eVisible);
+  }
 };
 
 

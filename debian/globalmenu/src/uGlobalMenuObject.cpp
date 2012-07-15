@@ -76,10 +76,7 @@ typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 NS_IMPL_ISUPPORTS3(uGlobalMenuObject::IconLoader, imgIDecoderObserver,
                    imgIContainerObserver, nsIRunnable)
 
-// Yes, we're abusing PRPackedBool a bit here. We initialize it to a value
-// that is neither true or false, so that we don't need another static member
-// to indicate the intialization status of it.
-PRPackedBool uGlobalMenuObject::IconLoader::sImagesInMenus = -1;
+unsigned char uGlobalMenuObject::sImagesInMenus = 0xFF;
 
 // Must be kept in sync with uMenuObjectProperties
 const char *properties[] = {
@@ -94,51 +91,6 @@ const char *properties[] = {
   DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
   NULL
 };
-
-bool
-uGlobalMenuObject::IconLoader::ShouldShowIcon()
-{
-  // Ideally, we want to get the visibility of the XUL image in our menu item,
-  // but that is anonymous content which is only created when the frame is drawn
-  // (which obviously never happens here).
-  // As an alternative, we get the user setting for menus-have-icons from
-  // nsILookAndFeel. If menu icons are to be hidden, we hide everything except
-  // for menuitems with the menuitem-with-favicon class. This is basically
-  // how the visibility gets set anyway (see chrome://toolkit/content/xul.css),
-  // which should work in most cases. But, I guess a theme could override this,
-  // and then we ignore the users theme settings. Oh well......
-
-  if (sImagesInMenus == static_cast<PRPackedBool>(-1)) {
-    // We could get the correct GtkSettings by getting the GdkScreen that our
-    // top-level window is on. However, I don't think this matters, as
-    // nsILookAndFeel never had per-screen settings
-    GtkSettings *settings = gtk_settings_get_default();
-    gboolean menus_have_icons;
-    g_object_get(settings, "gtk-menu-images", &menus_have_icons, NULL);
-
-    sImagesInMenus = !!menus_have_icons;
-  }
-
-  if (sImagesInMenus) {
-    return true;
-  }
-
-  nsCOMPtr<nsIDOMNSElement> element = do_QueryInterface(mMenuItem->GetContent());
-  if (!element) {
-    return false;
-  }
-
-  nsCOMPtr<nsIDOMDOMTokenList> classes;
-  element->GetClassList(getter_AddRefs(classes));
-  if (!classes) {
-    return false;
-  }
-
-  bool show;
-  classes->Contains(NS_LITERAL_STRING("menuitem-with-favicon"), &show);
-
-  return show;
-}
 
 void
 uGlobalMenuObject::IconLoader::LoadIcon()
@@ -190,11 +142,6 @@ uGlobalMenuObject::IconLoader::Run()
     return NS_OK;
   }
 
-  if (!ShouldShowIcon()) {
-    ClearIcon();
-    return NS_OK;
-  }
-
   mIconLoaded = false;
 
   nsAutoString uriString;
@@ -228,7 +175,7 @@ uGlobalMenuObject::IconLoader::Run()
 
     if (!hasImage) {
       LOGM(mMenuItem, "Menuitem does not have an image");
-      ClearIcon();
+      mMenuItem->ClearIcon();
       return NS_OK;
     }
 
@@ -250,7 +197,7 @@ uGlobalMenuObject::IconLoader::Run()
   rv = NS_NewURI(getter_AddRefs(uri), uriString);
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to create new URI");
-    ClearIcon();
+    mMenuItem->ClearIcon();
     return NS_OK;
   }
 
@@ -286,13 +233,6 @@ uGlobalMenuObject::IconLoader::Run()
   }
 
   return NS_OK;
-}
-
-void
-uGlobalMenuObject::IconLoader::ClearIcon()
-{
-  dbusmenu_menuitem_property_remove(mMenuItem->GetDbusMenuItem(),
-                                    DBUSMENU_MENUITEM_PROP_ICON_DATA);
 }
 
 NS_IMETHODIMP
@@ -379,7 +319,7 @@ uGlobalMenuObject::IconLoader::OnStopFrame(imgIRequest *aRequest,
      * GDbus helpfully aborts the application. Thank you :)
      */
     NS_WARNING("Icon data too large");
-    ClearIcon();
+    mMenuItem->ClearIcon();
     return NS_OK;
   }
 
@@ -407,7 +347,7 @@ uGlobalMenuObject::IconLoader::OnStopFrame(imgIRequest *aRequest,
                                          pixbuf);
     g_object_unref(pixbuf);
   } else {
-    ClearIcon();
+    mMenuItem->ClearIcon();
   }
 
   return NS_OK;
@@ -473,6 +413,58 @@ uGlobalMenuObject::IconLoader::Destroy()
   }
 
   mMenuItem = nsnull;
+}
+
+void
+uGlobalMenuObject::ClearIcon()
+{
+  dbusmenu_menuitem_property_remove(mDbusMenuItem,
+                                    DBUSMENU_MENUITEM_PROP_ICON_DATA);
+}
+
+bool
+uGlobalMenuObject::ShouldShowIcon()
+{
+  // Ideally, we want to get the visibility of the XUL image in our menu item,
+  // but that is anonymous content which is only created when the frame is drawn
+  // (which obviously never happens here).
+  // As an alternative, we get the user setting for menus-have-icons from
+  // nsILookAndFeel. If menu icons are to be hidden, we hide everything except
+  // for menuitems with the menuitem-with-favicon class. This is basically
+  // how the visibility gets set anyway (see chrome://toolkit/content/xul.css),
+  // which should work in most cases. But, I guess a theme could override this,
+  // and then we ignore the users theme settings. Oh well......
+
+  if (sImagesInMenus == 0xFF) {
+    // We could get the correct GtkSettings by getting the GdkScreen that our
+    // top-level window is on. However, I don't think this matters, as
+    // nsILookAndFeel never had per-screen settings
+    GtkSettings *settings = gtk_settings_get_default();
+    gboolean menus_have_icons;
+    g_object_get(settings, "gtk-menu-images", &menus_have_icons, NULL);
+
+    sImagesInMenus = menus_have_icons ? 1 : 0;
+  }
+
+  if (sImagesInMenus) {
+    return true;
+  }
+
+  nsCOMPtr<nsIDOMNSElement> element = do_QueryInterface(mContent);
+  if (!element) {
+    return false;
+  }
+
+  nsCOMPtr<nsIDOMDOMTokenList> classes;
+  element->GetClassList(getter_AddRefs(classes));
+  if (!classes) {
+    return false;
+  }
+
+  bool show;
+  classes->Contains(NS_LITERAL_STRING("menuitem-with-favicon"), &show);
+
+  return show;
 }
 
 void
@@ -659,18 +651,19 @@ void
 uGlobalMenuObject::SyncIconFromContent()
 {
   TRACETM();
-  if (!mIconLoader) {
-    mIconLoader = new IconLoader(this);
-  }
+  if (ShouldShowIcon()) {
+    if (!mIconLoader) {
+      mIconLoader = new IconLoader(this);
+    }
 
-  mIconLoader->LoadIcon();
-}
+    mIconLoader->LoadIcon();
+  } else {
+    if (mIconLoader) {
+      mIconLoader->Destroy();
+      mIconLoader = nsnull;
+    }
 
-void
-uGlobalMenuObject::DestroyIconLoader()
-{
-  if (mIconLoader) {
-    mIconLoader->Destroy();
+    ClearIcon();
   }
 }
 
@@ -700,7 +693,9 @@ DbusmenuMenuitem*
 uGlobalMenuObject::GetDbusMenuItem()
 {
   if (!mDbusMenuItem) {
+    mDbusMenuItem = dbusmenu_menuitem_new();
     InitializeDbusMenuItem();
+    Refresh();
   }
 
   return mDbusMenuItem;
@@ -717,7 +712,9 @@ uGlobalMenuObject::SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem)
   mDbusMenuItem = aDbusMenuItem;
   g_object_ref(mDbusMenuItem);
 
+  OnlyKeepProperties(GetValidProperties());
   InitializeDbusMenuItem();
+  Refresh();
 }
 
 void
@@ -751,5 +748,21 @@ uGlobalMenuObject::GetComputedStyle(nsIDOMCSSStyleDeclaration **aResult)
         }
       }
     }
+  }
+}
+
+uGlobalMenuObject::~uGlobalMenuObject()
+{
+  if (mIconLoader) {
+    mIconLoader->Destroy();
+  }
+
+  if (mListener) {
+    mListener->UnregisterForContentChanges(mContent, this);
+  }
+
+  if (mDbusMenuItem) {
+    g_object_unref(mDbusMenuItem);
+    mDbusMenuItem = nsnull;
   }
 }

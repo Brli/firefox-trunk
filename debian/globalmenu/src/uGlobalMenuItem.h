@@ -76,14 +76,14 @@ public:
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent,
                                    uGlobalMenuBar *aMenuBar);
+  virtual ~uGlobalMenuItem();
 
   virtual uMenuObjectType GetType() { return eMenuItem; }
 
 protected:
-  void ObserveAttributeChanged(nsIDocument *aDocument,
-                               nsIContent *aContent,
-                               nsIAtom *aAttribute);
-  void Refresh();
+  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
+                                       nsIContent *aContent,
+                                       nsIAtom *aAttribute);
 
 private:
   uGlobalMenuItem();
@@ -92,13 +92,19 @@ private:
                 uGlobalMenuDocListener *aListener,
                 nsIContent *aContent,
                 uGlobalMenuBar *aMenuBar);
-  ~uGlobalMenuItem();
 
   PRUint32 GetKeyCode(nsAString &aKeyName);
   PRUint32 MozKeyCodeToGdkKeyCode(PRUint32 aMozKeyCode);
   void SyncAccelFromContent();
   void SyncTypeAndStateFromContent();
-  void InitializeDbusMenuItem();
+  virtual void InitializeDbusMenuItem();
+  virtual void Refresh();
+  virtual uMenuObjectProperties GetValidProperties()
+  {
+    return static_cast<uMenuObjectProperties>(eLabel | eEnabled | eVisible |
+                                              eIconData | eShortcut |
+                                              eToggleType | eToggleState);
+  }
   static void ItemActivatedCallback(DbusmenuMenuitem *menuItem,
                                     PRUint32 timeStamp,
                                     void *data);

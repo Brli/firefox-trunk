@@ -627,22 +627,8 @@ uGlobalMenuItem::Activate(PRUint32 timeStamp)
 void
 uGlobalMenuItem::InitializeDbusMenuItem()
 {
-  if (!mDbusMenuItem) {
-    mDbusMenuItem = dbusmenu_menuitem_new();
-    if (!mDbusMenuItem) {
-      return;
-    }
-  } else {
-    OnlyKeepProperties(static_cast<uMenuObjectProperties>(eLabel | eEnabled |
-                                                          eVisible | eIconData |
-                                                          eShortcut | eToggleType |
-                                                          eToggleState));
-  }
-
   g_signal_connect(G_OBJECT(mDbusMenuItem), DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
                    G_CALLBACK(ItemActivatedCallback), this);
-
-  Refresh();
 }
 
 nsresult
@@ -712,7 +698,6 @@ uGlobalMenuItem::uGlobalMenuItem():
 uGlobalMenuItem::~uGlobalMenuItem()
 {
   if (mListener) {
-    mListener->UnregisterForContentChanges(mContent, this);
     if (mCommandContent) {
       mListener->UnregisterForContentChanges(mCommandContent, this);
     }
@@ -721,13 +706,10 @@ uGlobalMenuItem::~uGlobalMenuItem()
     }
   }
 
-  DestroyIconLoader();
-
   if (mDbusMenuItem) {
     g_signal_handlers_disconnect_by_func(mDbusMenuItem,
                                          FuncToVoidPtr(ItemActivatedCallback),
                                          this);
-    g_object_unref(mDbusMenuItem);
   }
 
   MOZ_COUNT_DTOR(uGlobalMenuItem);

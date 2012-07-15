@@ -53,15 +53,6 @@
 void
 uGlobalMenuDummy::InitializeDbusMenuItem()
 {
-  if (!mDbusMenuItem) {
-    mDbusMenuItem = dbusmenu_menuitem_new();
-    if (!mDbusMenuItem) {
-      return;
-    }
-  } else {
-    OnlyKeepProperties(static_cast<uMenuObjectProperties>(eVisible));
-  }
-
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
                                       FALSE);
@@ -75,10 +66,6 @@ uGlobalMenuDummy::uGlobalMenuDummy():
 
 uGlobalMenuDummy::~uGlobalMenuDummy()
 {
-
-  if (mDbusMenuItem)
-    g_object_unref(mDbusMenuItem);
-
   MOZ_COUNT_DTOR(uGlobalMenuDummy);
 }
 
