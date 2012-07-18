@@ -117,6 +117,15 @@ firefox-trunk (16.0~a1~hg20120702r98108-0ubuntu1) UNRELEASED; urgency=low
     - add debian/vendor-firefox.js
     - add debian/vendor-webapprt.js
     - update debian/vendor-gre.js
+  * Generate a list of the search engines that we modify and store this
+    in bzr, rather than determining this list at build time. We refresh
+    the list in the clean target and fail the build if anything changes.
+    This ensures that any upstream changes to the search engine list
+    for any locale will not go unnoticed and will force a manual check
+    to ensure that we are shipping correctly modified search engines
+    - add debian/build/refresh-search-modifications.pl
+    - update debian/build/mozbuild.mk
+    - add debian/config/search-mods.list
 
   [ Martin Pitt <martin.pitt@ubuntu.com> ]
   * Add partial support for Python 3 in the apport hook (LP: #1013171)

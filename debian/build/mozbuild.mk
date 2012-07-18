@@ -401,36 +401,28 @@ install-searchplugins-%:
 customize-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 customize-searchplugins-%: PKGLANG = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 customize-searchplugins-%: PKGNAME = $(if $(PKGLANG),$(MOZ_PKG_NAME)-locale-$(PKGLANG),$(MOZ_PKG_NAME))
-customize-searchplugins-%: MANIFEST = $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) \
-					$(wildcard debian/searchplugins/list.txt))
-customize-searchplugins-%: OVERRIDES = $(foreach override, $(foreach override, $(shell cat $(MANIFEST) | sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}'), \
-							     $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(override).xml) \
-							       $(wildcard debian/searchplugins/en-US/$(override).xml))), \
-				         $(if $(wildcard debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(override))), $(override)))
-customize-searchplugins-%: ADDITIONS = $(foreach addition, $(shell cat $(MANIFEST) | sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}'), \
-					 $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(addition).xml) \
-					   $(wildcard debian/searchplugins/en-US/$(addition).xml)))
+customize-searchplugins-%: OVERRIDES = $(shell cat debian/config/search-mods.list | sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}' | \
+					 grep ^$(LANGUAGE): | cut -d ':' -f 2 | sed -e 's/,/ /g')
+customize-searchplugins-%: ADDITIONS = $(shell cat debian/config/search-mods.list | sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}' | \
+					 grep ^$(LANGUAGE): | cut -d ':' -f 2 | sed -e 's/,/ /g')
 customize-searchplugins-%:
 	@echo ""
 	@echo "Applying search customizations to $(PKGNAME)"
-	@perl $(CURDIR)/debian/build/check-search-overrides.pl -l $(LANGUAGE) \
+	@perl $(CURDIR)/debian/build/compute-search-overrides.pl -l $(LANGUAGE) \
 		-d $(CURDIR)/debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale > \
-		$(CURDIR)/debian/searchplugins/check-overrides.log
-	rm -f  $(CURDIR)/debian/searchplugins/overrides.log
+		$(CURDIR)/debian/searchplugins/computed-overrides-$(LANGUAGE).log
+	rm -f  $(CURDIR)/debian/searchplugins/actual-overrides-$(LANGUAGE).log
 	@$(foreach override, $(OVERRIDES), echo "Overriding $(notdir $(override))"; \
-		dh_install -p$(PKGNAME) $(override) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE); \
-		echo "$(notdir $(override))" >> $(CURDIR)/debian/searchplugins/overrides.log;)
-	@if ! cmp -s $(CURDIR)/debian/searchplugins/overrides.log  $(CURDIR)/debian/searchplugins/check-overrides.log ; \
+		dh_install -p$(PKGNAME) debian/searchplugins/$(override) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE); \
+		echo "$(notdir $(override))" >> $(CURDIR)/debian/searchplugins/actual-overrides-$(LANGUAGE).log;)
+	@if ! cmp -s $(CURDIR)/debian/searchplugins/actual-overrides-$(LANGUAGE).log  $(CURDIR)/debian/searchplugins/computed-overrides-$(LANGUAGE).log ; \
 	then \
 		echo "List of searchplugins we have overridden doesn't match what we expect. Is this right?" ; \
-		diff -u $(CURDIR)/debian/searchplugins/check-overrides.log $(CURDIR)/debian/searchplugins/overrides.log ; \
+		diff -u $(CURDIR)/debian/searchplugins/computed-overrides-$(LANGUAGE).log $(CURDIR)/debian/searchplugins/actual-overrides-$(LANGUAGE).log ; \
 		exit 1 ; \
 	fi
-	@$(foreach addition, $(ADDITIONS), \
-		$(if $(wildcard debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(addition))), \
-		  $(error Cannot add $(notdir $(addition)). Plugin already exists)))
 	@$(foreach addition, $(ADDITIONS), echo "Adding $(notdir $(addition))"; \
-		dh_install -p$(PKGNAME) $(addition) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
+		dh_install -p$(PKGNAME) debian/searchplugins/$(addition) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
 
 common-binary-post-install-arch:: install-langpack-xpis install-searchplugins
 
@@ -462,6 +454,41 @@ ifeq (,$(MOZ_BRANDING_DIR))
 endif
 
 GET_FILE_CONTENTS_CMD=$(if $(wildcard $(1)),`cat $(1)`,$(if $(wildcard .tarball/$(MOZ_PKG_NAME)/$(1)),`cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(if $(TARBALL),`mkdir -p $(CURDIR)/.tarball; tar -Jxf $(TARBALL) -C $(CURDIR)/.tarball > /dev/null 2>&1; mv .tarball/$(MOZ_PKG_NAME)-* .tarball/$(MOZ_PKG_NAME); cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(error File $(1) not found))))
+
+refresh-search-mod-list: SOURCE = $(if $(wildcard $(MOZ_APP)),$(CURDIR),$(CURDIR)/.tarball/$(MOZ_PKG_NAME))
+refresh-search-mod-list:
+	@echo ""
+	@echo "*******************************************************"
+	@echo "* Refreshing the list of search engine customizations *"
+	@echo "*******************************************************"
+	@echo ""
+
+	$(shell echo "$(call GET_FILE_CONTENTS_CMD,$(MOZ_APP)/config/version.txt)" > /dev/null)
+
+	perl debian/build/refresh-search-modifications.pl -a $(MOZ_APP) -b $(SOURCE) -d searchplugins
+
+auto-refresh-search-mod-list::
+	cp debian/config/search-mods.list debian/config/search-mods.list.old
+
+auto-refresh-search-mod-list:: refresh-search-mod-list
+
+auto-refresh-search-mod-list::
+	@if ! cmp -s debian/config/search-mods.list debian/config/search-mods.list.old ; \
+	then \
+		echo "" ; \
+		echo "*******************************************************************************" ; \
+		echo "* List of search engine customizations has changed. This is likely because of *" ; \
+		echo "* a change in the search engine list upstream. Please refresh, check the      *" ; \
+		echo "* differences, and try again. To refresh, run                                 *" ; \
+		echo "* \"debian/rules refresh-search-mod-list\" in the source directory. If you      *" ; \
+		echo "* are in bzr, you will need to pass the location of the upstream tarball,     *" ; \
+		echo "* using \"TARBALL=/path/to/tarball\"                                            *" ; \
+		echo "*******************************************************************************" ; \
+		echo "" ; \
+		mv debian/config/search-mods.list.old debian/config/search-mods.list ; \
+		exit 1 ; \
+	fi
+	rm -f debian/config/search-mods.list.old
 
 ifdef LANGPACK_O_MATIC
 refresh-supported-locales:: LPOM_OPT = -l $(LANGPACK_O_MATIC)
@@ -507,6 +534,8 @@ auto-refresh-supported-locales::
 ifneq (1, $(NO_AUTO_REFRESH_LOCALES))
 clean:: auto-refresh-supported-locales
 endif
+
+clean:: auto-refresh-search-mod-list
 
 ifdef PATCHES_DIST
 CODENAME = $(PATCHES_DIST)
@@ -557,6 +586,6 @@ clean::
 	rm -rf debian/l10n-mergedirs
 	rm -f debian/$(MOZ_PKG_BASENAME).js
 	rm -rf $(MOZ_OBJDIR)
-	rm -f debian/searchplugins/overrides.log debian/searchplugins/check-overrides.log
+	rm -f debian/searchplugins/actual-overrides-*.log debian/searchplugins/computed-overrides-*.log
 	find debian -name *.pyc -delete
 	find compare-locales -name *.pyc -delete

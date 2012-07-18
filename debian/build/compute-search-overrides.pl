@@ -58,7 +58,7 @@ while (@ARGV) {
 
 (defined($dir) && defined($lang)) || die "Missing options";
 
-open(my $config_file, "debian/searchplugins/overrides.json") or die "Cannot open config";
+open(my $config_file, "debian/searchplugins/compute-overrides.json") or die "Cannot open config";
 my $json;
 while (<$config_file>) { $json .= $_; }
 close($config_file);
