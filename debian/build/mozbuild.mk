@@ -19,7 +19,11 @@ MOZ_NO_OPTIMIZE		?= 0
 # We need this to execute before the debian/control target gets called
 clean::
 	cp debian/control debian/control.old
+ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 	touch debian/control.in
+else
+	touch debian/control
+endif
 
 -include /usr/share/cdbs/1/rules/debhelper.mk
 -include /usr/share/cdbs/1/rules/patchsys-quilt.mk
@@ -86,8 +90,6 @@ DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
 MOZ_PYTHON		:= $(shell which python)
 DISTRIB 		:= $(shell lsb_release -i -s)
-
-NO_AUTO_REFRESH_LOCALES	?= 0
 
 CFLAGS			:= -g
 CXXFLAGS		:= -g
@@ -531,11 +533,9 @@ auto-refresh-supported-locales::
 	fi
 	rm -f debian/config/locales.shipped.old
 
-ifneq (1, $(NO_AUTO_REFRESH_LOCALES))
-clean:: auto-refresh-supported-locales
+ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
+clean:: auto-refresh-supported-locales auto-refresh-search-mod-list
 endif
-
-clean:: auto-refresh-search-mod-list
 
 ifdef PATCHES_DIST
 CODENAME = $(PATCHES_DIST)
