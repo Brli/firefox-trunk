@@ -707,9 +707,10 @@ uGlobalMenuItem::~uGlobalMenuItem()
   }
 
   if (mDbusMenuItem) {
-    g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                         FuncToVoidPtr(ItemActivatedCallback),
-                                         this);
+    guint found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
+                                                       FuncToVoidPtr(ItemActivatedCallback),
+                                                       this);
+    NS_ASSERTION(found == 1, "Failed to disconnect \"activated\" handler");
   }
 
   MOZ_COUNT_DTOR(uGlobalMenuItem);

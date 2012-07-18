@@ -669,12 +669,15 @@ uGlobalMenu::~uGlobalMenu()
   }
 
   if (mDbusMenuItem) {
-    g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                         FuncToVoidPtr(MenuAboutToOpenCallback),
-                                         this);
-    g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                         FuncToVoidPtr(MenuEventCallback),
-                                         this);
+    guint found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
+                                                       FuncToVoidPtr(MenuAboutToOpenCallback),
+                                                       this);
+    NS_ASSERTION(found == 1, "Failed to disconnect \"about-to-open\" handler");
+
+    found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
+                                                 FuncToVoidPtr(MenuEventCallback),
+                                                 this);
+    NS_ASSERTION(found == 1, "Failed to disconnect \"event\" handler");
   }
 
   if (mRecycleList) {
