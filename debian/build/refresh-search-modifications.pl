@@ -153,7 +153,10 @@ close(SHIPPED_LOCALES);
 
 handle_locale("en-US", "$basedir/$app/locales/en-US/$spdir/list.txt");
 
-scalar(keys(%overrides)) > 0 or scalar(keys(%additions)) > 0 or exit(0);
+scalar(keys(%overrides)) > 0 or scalar(keys(%additions)) > 0 or do {
+    unlink("debian/config/search-mods.list");
+    exit(0);
+};
 
 open(OUTFILE, ">debian/config/search-mods.list");
 scalar(keys(%overrides)) > 0 and do {
