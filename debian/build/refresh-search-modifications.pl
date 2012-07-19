@@ -36,13 +36,13 @@ open(ORIG, "debian/config/search-mods.list") and do {
     );
     my $table;
     while(<ORIG>) {
-        chomp($_);
+        chomp;
         $_ =~ s/#.*//; s/\s*$//;
         if (/^\[([[:alnum:]]*)\]$/) {
             $table = $map{$1};
         } elsif (/^([^\:]*)\:(.*)/) {
-            my @l = sort(split(',', $2));
-            $table->{$1} = @l;
+            my @l = sort({basename($a) cmp basename($b)} split(',', $2));
+            $table->{$1} = \@l;
         } elsif (not /^$/) { die "Unexpected line"; }
     }
 };
@@ -59,7 +59,7 @@ sub parse_manifest {
     my $table;
     open(FILE, $path) or die "Failed to open manifest $path";
     while(<FILE>) {
-        chomp($_);
+        chomp;
         $_ =~ s/#.*//; s/\s*$//;
         if (/^\[([[:alnum:]]*)\]$/) {
             $table = $map{$1};
@@ -93,16 +93,16 @@ sub handle_locale {
     $overrides{$lang} = [];
     $additions{$lang} = [];
 
-    my $o = $wanted_overrides{exists($wanted_overrides{$lang}) ? $lang : "en-US"};
-    my $a = $wanted_additions{exists($wanted_additions{$lang}) ? $lang : "en-US"};
+    my $ov = $wanted_overrides{exists($wanted_overrides{$lang}) ? $lang : "en-US"};
+    my $ad = $wanted_additions{exists($wanted_additions{$lang}) ? $lang : "en-US"};
 
     my @upstream;
     open(FILE, $path) and do {
-        while(<FILE>) { chomp($_); push(@upstream, $_); }
+        while(<FILE>) { s/\r\n/\n/; chomp; push(@upstream, $_); }
     };
     close(FILE);
 
-    foreach my $override (@{$o}) {
+    foreach my $override (@{$ov}) {
         my @files = <debian/searchplugins/$lang/$override.xml>;
         @files = grep(-f $_, @files);
         scalar(@files) > 0 or @files = <debian/searchplugins/en-US/$override.xml>;
@@ -113,12 +113,12 @@ sub handle_locale {
             my $base = basename($file);
             $base =~ s/\.xml$//;
             $file =~ s/debian\/searchplugins\///;
-            my $count = grep($upstream[$_] eq $base, 0..$#upstream);
-            $count > 0 and push(@{$overrides{$lang}}, $file);
+            my ($index) = grep($upstream[$_] eq $base, 0..$#upstream);
+            defined($index) and push(@{$overrides{$lang}}, $file);
         }
     }
 
-    foreach my $addition (@{$a}) {
+    foreach my $addition (@{$ad}) {
         my @files = <debian/searchplugins/$lang/$addition.xml>;
         @files = grep(-f $_, @files);
         scalar(@files) > 0 or @files = <debian/searchplugins/en-US/$addition.xml>;
@@ -129,14 +129,14 @@ sub handle_locale {
             my $base = basename($file);
             $base =~ s/\.xml$//;
             $file =~ s/debian\/searchplugins\///;
-            my $count = grep($upstream[$_] eq $base, 0..$#upstream);
-            $count == 0 or die "Cannot add plugin $base for $lang. Destination already exists";
+            my ($index) = grep($upstream[$_] eq $base, 0..$#upstream);
+            defined($index) and die "Cannot add plugin $base for $lang. Destination already exists";
             push(@{$additions{$lang}}, $file);
         }
     }
 
-    @{$overrides{$lang}} = sort(@{$overrides{$lang}});
-    @{$additions{$lang}} = sort(@{$additions{$lang}});
+    @{$overrides{$lang}} = sort({basename($a) cmp basename($b)} @{$overrides{$lang}});
+    @{$additions{$lang}} = sort({basename($a) cmp basename($b)} @{$additions{$lang}});
 
     if (scalar(@{$overrides{$lang}}) == 0) { delete $overrides{$lang}; }
     if (scalar(@{$additions{$lang}}) == 0) { delete $additions{$lang}; }
@@ -152,6 +152,8 @@ while(<SHIPPED_LOCALES>) {
 close(SHIPPED_LOCALES);
 
 handle_locale("en-US", "$basedir/$app/locales/en-US/$spdir/list.txt");
+
+scalar(keys(%overrides)) > 0 or scalar(keys(%additions)) > 0 or exit(0);
 
 open(OUTFILE, ">debian/config/search-mods.list");
 scalar(keys(%overrides)) > 0 and do {

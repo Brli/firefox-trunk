@@ -126,7 +126,8 @@ firefox-trunk (16.0~a1~hg20120702r98108-0ubuntu1) UNRELEASED; urgency=low
     - add debian/build/refresh-search-modifications.pl
     - update debian/build/mozbuild.mk
     - add debian/config/search-mods.list
-
+    - rename debian/build/check-search-overrides.pl =>
+        debian/build/verify-search-overrides.pl
   [ Martin Pitt <martin.pitt@ubuntu.com> ]
   * Add partial support for Python 3 in the apport hook (LP: #1013171)
     - update debian/apport/source_firefox.py.in
