@@ -1,6 +1,6 @@
-firefox-trunk (16.0~a1~hg20120702r98108-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (16.0~a1~hg20120715r99319-0ubuntu1) quantal; urgency=low
 
-  * New upstream snapshot v16.0 A1 HG20120702R98108
+  * New upstream snapshot v16.0 A1 HG20120715R99319
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Update globalmenu-extension to 3.3
