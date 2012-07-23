@@ -444,7 +444,7 @@ ifeq (,$(MOZ_BRANDING_DIR))
 	$(error "Need to set MOZ_BRANDING_DIR")
 endif
 
-GET_FILE_CONTENTS_CMD=$(if $(wildcard $(1)),`cat $(1)`,$(if $(wildcard .tarball/$(MOZ_PKG_NAME)/$(1)),`cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(if $(TARBALL),`mkdir -p $(CURDIR)/.tarball; tar -Jxf $(TARBALL) -C $(CURDIR)/.tarball > /dev/null 2>&1; mv .tarball/$(MOZ_PKG_NAME)-* .tarball/$(MOZ_PKG_NAME); cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(error File $(1) not found))))
+GET_FILE_CONTENTS_CMD=$(if $(wildcard $(1)),`cat $(1)`,$(if $(wildcard .tarball/$(MOZ_PKG_NAME)/$(1)),`cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(if $(TARBALL),`mkdir -p $(CURDIR)/.tarball; tar -jxf $(TARBALL) -C $(CURDIR)/.tarball > /dev/null 2>&1; mv .tarball/$(MOZ_PKG_NAME)-* .tarball/$(MOZ_PKG_NAME); cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(error File $(1) not found))))
 
 refresh-search-mod-list:: SOURCE = $(if $(wildcard $(MOZ_APP)),$(CURDIR),$(CURDIR)/.tarball/$(MOZ_PKG_NAME))
 refresh-search-mod-list::

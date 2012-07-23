@@ -74,13 +74,13 @@ def pack_orig_source(name, version, destdir, includes, excludes):
     os.chdir('..')
     topsrcdir = '%s-%s' % (name, version)
     os.rename(name, topsrcdir)
-    args = ['tar', '-Jc', '--exclude-vcs']
+    args = ['tar', '-jc', '--exclude-vcs']
     for exclude in excludes:
         args.append('--no-wildcards-match-slash') if exclude['wms'] == False else args.append('--wildcards-match-slash')
         args.append('--exclude')
         args.append(os.path.join(topsrcdir , exclude['path']))
     args.append('-f')
-    args.append(os.path.join(destdir, '%s_%s.orig.tar.xz' % (name, version)))
+    args.append(os.path.join(destdir, '%s_%s.orig.tar.bz2' % (name, version)))
     for include in includes:
         args.append(os.path.join(topsrcdir, include))
 
