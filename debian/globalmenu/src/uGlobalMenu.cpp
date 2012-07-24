@@ -283,6 +283,8 @@ uGlobalMenu::AboutToOpen()
     mMenuObjects[i]->ContainerIsOpening();
   }
 
+  nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
+
   // XXX: This should happen when the pointer hovers over the menu entry,
   //      but we don't have that information right now. We synthesize it for
   //      menus, but this doesn't work for menuitems at all
@@ -294,6 +296,10 @@ uGlobalMenu::AboutToOpen()
 void
 uGlobalMenu::OnOpen()
 {
+  TRACETM();
+
+  nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
+
   if (!(mFlags & UNITY_MENU_IS_OPENING)) {
     // If we didn't receive an AboutToOpen, then generate it ourselves
     AboutToOpen();
@@ -315,6 +321,8 @@ uGlobalMenu::OnOpen()
 void
 uGlobalMenu::OnClose()
 {
+  TRACETM();
+
   mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
 
   PRUint32 count = mMenuObjects.Length();
@@ -327,6 +335,8 @@ uGlobalMenu::OnClose()
   if (!mPopupContent) {
     return;
   }
+
+  nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
 
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphiding"));
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
@@ -361,56 +371,6 @@ uGlobalMenu::InitializeDbusMenuItem()
                    G_CALLBACK(MenuAboutToOpenCallback), this);
   g_signal_connect(G_OBJECT(mDbusMenuItem), "event",
                    G_CALLBACK(MenuEventCallback), this);
-}
-
-void
-uGlobalMenu::GetMenuPopupFromMenu(nsIContent **aResult)
-{
-  if (!aResult)
-    return;
-
-  *aResult = nsnull;
-
-#if MOZILLA_BRANCH_MAJOR_VERSION < 15
-  // Taken from widget/src/cocoa/nsMenuX.mm. Not sure if we need this
-  nsIXBLService *xblService = uGlobalMenuService::GetXBLService();
-  if (!xblService)
-    return;
-
-  PRInt32 dummy;
-  nsCOMPtr<nsIAtom> tag;
-  xblService->ResolveTag(mContent, &dummy, getter_AddRefs(tag));
-
-  if (tag == uWidgetAtoms::menupopup) {
-    *aResult = mContent;
-    NS_ADDREF(*aResult);
-    return;
-  }
-#else
-  // FIXME: What are we meant to do here? Are there any scenario's where this
-  //        is actually broken? (I guess a menu could have a binding that
-  //        extends a menupopup, but that doesn't seem to happen anywhere
-  //        by default)
-#endif
-
-  PRUint32 count = mContent->GetChildCount();
-
-  for (PRUint32 i = 0; i < count; i++) {
-    PRInt32 dummy;
-    nsIContent *child = mContent->GetChildAt(i);
-#if MOZILLA_BRANCH_MAJOR_VERSION < 15
-    nsCOMPtr<nsIAtom> tag;
-    xblService->ResolveTag(child, &dummy, getter_AddRefs(tag));
-    if (tag == uWidgetAtoms::menupopup) {
-#else
-    // XXX: See comment above
-    if (child->Tag() == uWidgetAtoms::menupopup) {
-#endif
-      *aResult = child;
-      NS_ADDREF(*aResult);
-      return;
-    }
-  }
 }
 
 static bool
@@ -541,6 +501,107 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
   return true;
 }
 
+void
+uGlobalMenu::InitializePopup()
+{
+  nsCOMPtr<nsIContent> oldPopupContent;
+  oldPopupContent.swap(mPopupContent);
+
+#if MOZILLA_BRANCH_MAJOR_VERSION < 15
+  // Taken from widget/src/cocoa/nsMenuX.mm
+  nsIXBLService *xblService = uGlobalMenuService::GetXBLService();
+  if (xblService) {
+    PRInt32 dummy;
+    nsCOMPtr<nsIAtom> tag;
+    xblService->ResolveTag(mContent, &dummy, getter_AddRefs(tag));
+
+    if (tag == uWidgetAtoms::menupopup) {
+      mPopupContent = mContent;
+    } else {
+#else
+  {
+    {
+#endif
+      PRUint32 count = mContent->GetChildCount();
+
+      for (PRUint32 i = 0; i < count; i++) {
+        PRInt32 dummy;
+        nsIContent *child = mContent->GetChildAt(i);
+#if MOZILLA_BRANCH_MAJOR_VERSION < 15
+        nsCOMPtr<nsIAtom> tag;
+        xblService->ResolveTag(child, &dummy, getter_AddRefs(tag));
+        if (tag == uWidgetAtoms::menupopup) {
+#else
+        // FIXME: What are we meant to do here? Are there any scenario's where this
+        //        is actually broken? (I guess a menu could have a binding that
+        //        extends a menupopup, but that doesn't seem to happen anywhere
+        //        by default)
+        if (child->Tag() == uWidgetAtoms::menupopup) {
+#endif
+          mPopupContent = child;
+          break;
+        }
+      }
+    }
+  }
+
+  if (!mPopupContent) {
+    LOGTM("Menu now has no menupopup");
+  }
+
+  if (oldPopupContent == mPopupContent) {
+    return;
+  }
+
+  // If the popup has changed, disconnect the old one from the doc observer,
+  // attach the new one and attach its bindings
+  if (oldPopupContent && oldPopupContent != mContent) {
+    mListener->UnregisterForContentChanges(oldPopupContent, this);
+  }
+
+  if (!mPopupContent) {
+    return;
+  }
+
+  LOGTM("Menu has new menupopup");
+
+  // Wrap the native menupopup node, as this results in style resolution
+  // and attachment of XBL bindings, which normally doesn't happen because
+  // we are a child of an element with "display: none"
+  // Borrowed from widget/src/cocoa/nsMenuX.mm, we need this to make
+  // some menus in Thunderbird work
+  nsIDocument *doc = mPopupContent->OwnerDoc();
+  if (doc) {
+    nsIXPConnect *xpconnect = uGlobalMenuService::GetXPConnect();
+    if (xpconnect) {
+      nsIScriptGlobalObject *sgo = doc->GetScriptGlobalObject();
+      nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
+      JSObject *global = sgo->GetGlobalJSObject();
+      if (scriptContext && global) {
+        JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
+        if (cx) {
+          LOGTM("Wrapping menupopup");
+          nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
+          nsresult rv = xpconnect->WrapNative(cx, global,
+                                              mPopupContent,
+                                              NS_GET_IID(nsISupports),
+                                              getter_AddRefs(wrapper));
+          if (NS_FAILED(rv)) {
+            NS_WARNING("Failed to wrap menupopup");
+          }
+        }
+      }
+    }
+  }
+
+  if (mContent != mPopupContent) {
+    nsresult rv = mListener->RegisterForContentChanges(mPopupContent, this);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Failed to register for popup content changes");
+    }
+  }
+}
+
 nsresult
 uGlobalMenu::Build()
 {
@@ -559,47 +620,11 @@ uGlobalMenu::Build()
                                  DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
                                  DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU);
 
-  if (mPopupContent && mPopupContent != mContent) {
-    mListener->UnregisterForContentChanges(mPopupContent, this);
-  }
-
-  GetMenuPopupFromMenu(getter_AddRefs(mPopupContent));
+  InitializePopup();
 
   if (!mPopupContent) {
     // The menu has no popup, so there are no menuitems here
     return NS_OK;
-  }
-
-  // Wrap the native menupopup node, as this results in style resolution
-  // and attachment of XBL bindings, which normally doesn't happen because
-  // we are a child of an element with "display: none"
-  // Borrowed from widget/src/cocoa/nsMenuX.mm, we need this to make
-  // some menus in Thunderbird work
-  nsIDocument *doc = mPopupContent->GetCurrentDoc();
-  if (doc) {
-    nsIXPConnect *xpconnect = uGlobalMenuService::GetXPConnect();
-    if (xpconnect) {
-      nsIScriptGlobalObject *sgo = doc->GetScriptGlobalObject();
-      nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
-      JSObject *global = sgo->GetGlobalJSObject();
-      if (scriptContext && global) {
-        JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
-        if (cx) {
-          nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
-          xpconnect->WrapNative(cx, global,
-                                mPopupContent, NS_GET_IID(nsISupports),
-                                getter_AddRefs(wrapper));
-        }
-      }
-    }
-  }
-
-  if (mContent != mPopupContent) {
-    nsresult rv = mListener->RegisterForContentChanges(mPopupContent, this);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Failed to register for popup content changes");
-      return rv;
-    }
   }
 
   ClearNeedsRebuild();

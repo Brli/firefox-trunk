@@ -120,7 +120,7 @@ private:
                                               eIconData | eChildDisplay);
   }
   nsresult Build();
-  void GetMenuPopupFromMenu(nsIContent **aResult);
+  void InitializePopup();
   static bool MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
                                       void *data);
   static bool MenuEventCallback(DbusmenuMenuitem *menu,
@@ -156,7 +156,7 @@ private:
   };
 
   nsCOMPtr<nsIContent> mPopupContent;
-  nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
+  nsTArray< nsRefPtr<uGlobalMenuObject> > mMenuObjects;
   nsAutoPtr<RecycleList> mRecycleList;
 };
 

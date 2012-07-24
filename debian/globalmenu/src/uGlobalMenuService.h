@@ -120,7 +120,7 @@ private:
   bool mOnline;
   GDBusProxy *mDbusProxy;
   GCancellable *mCancellable;
-  nsTArray<nsAutoPtr<uGlobalMenuBar> > mMenus;
+  nsTArray<nsRefPtr<uGlobalMenuBar> > mMenus;
   nsTArray<nsCOMPtr<uIGlobalMenuServiceObserver> > mListeners;
   nsCOMPtr<nsIWindowMediator> mWindowMediator;
 };

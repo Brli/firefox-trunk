@@ -1,6 +1,14 @@
 firefox-trunk (16.0~a1~hg20120715r99319-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.3.1 prerelease r408
+  * Update globalmenu-extension to 3.3.1 prerelease r417
+    + Fixes for LP: #1025011 - HUD search crashes Firefox when Firebug
+      is installed
+      - Provide our own binding for menupopup nodes which derives from the
+        default binding and makes the "state" property work as if there
+        were a frame
+      - Make all menu nodes reference counted, and hold a strong ref when
+        dispatching events, in case the event results in the removal of menu
+        nodes
   * Switch back from lzma to bz2 for the tarball, as compression speed
     is abysmal on my laptop
     - update debian/build/create-tarball.py

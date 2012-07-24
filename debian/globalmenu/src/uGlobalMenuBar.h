@@ -151,7 +151,7 @@ private:
   nsCString mPath;
 
   // Should probably have a container class and subclass that
-  nsTArray< nsAutoPtr<uGlobalMenuObject> > mMenuObjects;
+  nsTArray< nsRefPtr<uGlobalMenuObject> > mMenuObjects;
 };
 
 #endif

@@ -102,6 +102,8 @@ class nsIDOMCSSStyleDeclaration;
 class uGlobalMenuObject
 {
 public:
+  NS_INLINE_DECL_REFCOUNTING(uGlobalMenuObject)
+
   uGlobalMenuObject (): mDbusMenuItem(nsnull), mListener(nsnull),
                         mParent(nsnull), mFlags(0) { };
 
