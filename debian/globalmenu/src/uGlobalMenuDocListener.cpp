@@ -198,42 +198,39 @@ uGlobalMenuDocListener::ParentChainChanged(nsIContent *aContent)
 
 }
 
-nsresult
+void
 uGlobalMenuDocListener::RegisterForContentChanges(nsIContent *aContent,
                                                   uGlobalMenuObject *aMenuObject)
 {
-  NS_ENSURE_ARG(aContent);
-  NS_ENSURE_ARG(aMenuObject);
+  NS_ASSERTION(aContent && aMenuObject, "Invalid args");
+  if (!aContent || !aMenuObject) {
+    return;
+  }
 
   nsTArray<uGlobalMenuObject *> *listeners =
     GetListenersForContent(aContent, true);
 
   listeners->AppendElement(aMenuObject);
-  return NS_OK;
 }
 
-nsresult
+void
 uGlobalMenuDocListener::UnregisterForContentChanges(nsIContent *aContent,
                                                     uGlobalMenuObject *aMenuObject)
 {
-  NS_ENSURE_ARG(aContent);
-  NS_ENSURE_ARG(aMenuObject);
+  NS_ASSERTION(aContent && aMenuObject, "Invalid args");
+  if (!aContent || !aMenuObject) {
+    return;
+  }
 
   nsTArray<uGlobalMenuObject *> *listeners =
     GetListenersForContent(aContent, false);
   if (!listeners) {
-    return NS_ERROR_FAILURE;
+    return;
   }
 
-  if (listeners->RemoveElement(aMenuObject)) {
-    if (listeners->Length() == 0) {
-      mContentToObserverTable.Remove(aContent);
-    }
-
-    return NS_OK;
+  if (listeners->RemoveElement(aMenuObject) && listeners->Length() == 0) {
+    mContentToObserverTable.Remove(aContent);
   }
-
-  return NS_ERROR_FAILURE;
 }
 
 nsTArray<uGlobalMenuObject *>*

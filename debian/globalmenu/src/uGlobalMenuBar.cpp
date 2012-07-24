@@ -208,38 +208,37 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   mPath.Append(xid);
 
   mServer = dbusmenu_server_new(mPath.get());
-  if (!mServer) {
-    NS_WARNING("Failed to create DbusmenuServer");
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
 
   GetDbusMenuItem();
-
-  if (!mDbusMenuItem) {
-    NS_WARNING("Failed to create DbusmenuMenuitem");
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
-
   dbusmenu_server_set_root(mServer, mDbusMenuItem);
 
   mListener = new uGlobalMenuDocListener();
 
   nsresult rv = mListener->Init(mContent);
   if (NS_FAILED(rv)) {
-    NS_WARNING("Failed to initialize doc listener");
+    NS_ERROR("Failed to initialize doc listener");
     return rv;
   }
 
   rv = Build();
   if (NS_FAILED(rv)) {
-    NS_WARNING("Failed to build menubar");
+    NS_ERROR("Failed to build menubar");
     return rv;
   }
 
   mEventListener = new EventListener(this);
 
   mDocument = mContent->GetCurrentDoc();
+  NS_ASSERTION(mDocument, "Menubar is not inside a document");
+  if (!mDocument) {
+    return NS_ERROR_FAILURE;
+  }
+
   nsCOMPtr<nsIDOMEventTarget> docTarget = do_QueryInterface(mDocument);
+  NS_ASSERTION(docTarget, "Document failed QI to nsIDOMEventTarget");
+  if (!docTarget) {
+    return NS_ERROR_FAILURE;
+  }
 
   docTarget->AddEventListener(NS_LITERAL_STRING("focus"),
                               mEventListener,
@@ -258,6 +257,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
                               false);
 
   nsIPrefBranch *prefs = uGlobalMenuService::GetPrefService();
+  NS_ASSERTION(prefs, "Failed to get pref service");
   if (!prefs) {
     return NS_ERROR_FAILURE;
   }
@@ -278,13 +278,15 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   /* Do this before registering for content changes, so that we
    * don't handle the subsequent event */
   nsCOMPtr<nsIDOMElement> self = do_QueryInterface(mContent);
+  NS_ASSERTION(self, "Content failed QI to nsIDOMElement");
+  if (!self) {
+    return NS_ERROR_FAILURE;
+  }
+
   self->SetAttribute(NS_LITERAL_STRING("openedwithkey"),
                      NS_LITERAL_STRING("false"));
 
-  rv = mListener->RegisterForContentChanges(mContent, this);
-  if (NS_FAILED(rv)) {
-    return rv;
-  }
+  mListener->RegisterForContentChanges(mContent, this);
 
   // Unity forgets our window if it is unmapped by the application, which
   // happens with some extensions that add "minimize to tray" type
@@ -298,8 +300,14 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
   }
 
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mDocument);
+  NS_ASSERTION(domDoc, "Document failed QI to nsIDOMDocument");
+  if (!domDoc) {
+    return NS_ERROR_FAILURE;
+  }
+
   nsCOMPtr<nsIDOMElement> windowElem;
   domDoc->GetDocumentElement(getter_AddRefs(windowElem));
+  NS_ASSERTION(windowElem, "Document has no documentElement");
   if (!windowElem) {
     return NS_ERROR_FAILURE;
   }
@@ -359,29 +367,33 @@ uGlobalMenuBar::~uGlobalMenuBar()
 
   if (mDocument) {
     nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mDocument);
-    nsCOMPtr<nsIDOMElement> windowElem;
-    domDoc->GetDocumentElement(getter_AddRefs(windowElem));
-    if (windowElem) {
-      windowElem->SetAttribute(NS_LITERAL_STRING("shellshowingmenubar"),
-                               NS_LITERAL_STRING("false"));
+    if (domDoc) {
+      nsCOMPtr<nsIDOMElement> windowElem;
+      domDoc->GetDocumentElement(getter_AddRefs(windowElem));
+      if (windowElem) {
+        windowElem->SetAttribute(NS_LITERAL_STRING("shellshowingmenubar"),
+                                 NS_LITERAL_STRING("false"));
+      }
     }
 
     nsCOMPtr<nsIDOMEventTarget> docTarget = do_QueryInterface(mDocument);
-    docTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
-                                   mEventListener,
-                                   true);
-    docTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
-                                   mEventListener,
-                                   true);
-    docTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
-                                   mEventListener,
-                                   false);
-    docTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
-                                   mEventListener,
-                                   false);
-    docTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
-                                   mEventListener,
-                                   false);
+    if (docTarget) {
+      docTarget->RemoveEventListener(NS_LITERAL_STRING("focus"),
+                                     mEventListener,
+                                     true);
+      docTarget->RemoveEventListener(NS_LITERAL_STRING("blur"),
+                                     mEventListener,
+                                     true);
+      docTarget->RemoveEventListener(NS_LITERAL_STRING("keypress"),
+                                     mEventListener,
+                                     false);
+      docTarget->RemoveEventListener(NS_LITERAL_STRING("keydown"),
+                                     mEventListener,
+                                     false);
+      docTarget->RemoveEventListener(NS_LITERAL_STRING("keyup"),
+                                     mEventListener,
+                                     false);
+    }
   }
 
   if (mTopLevel) {
@@ -440,22 +452,14 @@ uGlobalMenuBar::Focus()
 bool
 uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
 {
-#if 0
-# define nsEvent aKeyEvent
-#else
   nsCOMPtr<nsIDOMNSEvent> nsEvent = do_QueryInterface(aKeyEvent);
   if (!nsEvent) {
     return false;
   }
-#endif
 
   bool handled, trusted;
   nsEvent->GetPreventDefault(&handled);
   nsEvent->GetIsTrusted(&trusted);
-
-#if 0
-# undef nsEvent
-#endif
 
   if (handled || !trusted) {
     return false;

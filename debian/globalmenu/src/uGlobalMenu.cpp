@@ -161,23 +161,35 @@ static void
 DispatchEvent(nsIContent *aContent, const nsAString& aType)
 {
   nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(aContent);
-  if (target) {
-    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aContent->OwnerDoc());
-    if (domDoc) {
-      nsCOMPtr<nsIDOMEvent> event;
-      domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
-                          getter_AddRefs(event));
-      if (event) {
-        event->InitEvent(aType, true, true);
-        nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-        if (priv) {
-          priv->SetTrusted(true);
-        }
-        bool dummy;
-        target->DispatchEvent(event, &dummy);
-      }
-    }
+  NS_ASSERTION(target, "Content failed QI to nsIDOMEventTarget");
+  if (!target) {
+    return;
   }
+
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aContent->OwnerDoc());
+  if (!domDoc) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMEvent> event;
+  domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
+                      getter_AddRefs(event));
+  NS_ASSERTION(event, "Failed to create Event");
+  if (!event) {
+    return;
+  }
+
+  event->InitEvent(aType, true, true);
+  nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
+  NS_ASSERTION(priv, "Event failed QI to nsIPrivateDOMEvent");
+  if (!priv) {
+    return;
+  }
+
+  priv->SetTrusted(true);
+
+  bool dummy;
+  target->DispatchEvent(event, &dummy);
 }
 
 void
@@ -212,35 +224,53 @@ uGlobalMenu::CanOpen()
 static void
 DispatchMouseEvent(nsIContent *aPopup, const nsAString& aType)
 {
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aPopup->OwnerDoc());
-  if (domDoc) {
-    nsCOMPtr<nsIDOMEvent> event;
-    domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
-                        getter_AddRefs(event));
-    if (event) {
-      nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
-      if (mouseEvent) {
-        nsCOMPtr<nsIDOMWindow> window;
-        domDoc->GetDefaultView(getter_AddRefs(window));
-        if (window) {
-          mouseEvent->InitMouseEvent(aType, true, true, window, nsnull,
-                                     0, 0, 0, 0, false, false, false, false,
-                                     0, nsnull);
-          nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(aPopup);
-          if (target) {
-            nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-            if (priv) {
-              priv->SetTrusted(true);
-            }
-            bool dummy;
-            // XXX: dummy == false means that we should prevent the
-            //      the menu from opening, but there's no way to do this
-            target->DispatchEvent(event, &dummy);
-          }
-        }
-      }
-    }
+  nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(aPopup);
+  NS_ASSERTION(target, "Content failed QI to nsIDOMEventTarget");
+  if (!target) {
+    return;
   }
+
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aPopup->OwnerDoc());
+  if (!domDoc) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMEvent> event;
+  domDoc->CreateEvent(NS_LITERAL_STRING("mouseevent"),
+                      getter_AddRefs(event));
+  NS_ASSERTION(event, "Failed to create mouseevent");
+  if (!event) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event);
+  NS_ASSERTION(mouseEvent, "Event failed QI to nsIDOMMouseEvent");
+  if (!mouseEvent) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMWindow> window;
+  domDoc->GetDefaultView(getter_AddRefs(window));
+  if (!window) {
+    return;
+  }
+
+  mouseEvent->InitMouseEvent(aType, true, true, window, nsnull,
+                             0, 0, 0, 0, false, false, false, false,
+                             0, nsnull);
+
+  nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
+  NS_ASSERTION(priv, "Event failed QI to nsIPrivateDOMEvent");
+  if (!priv) {
+    return;
+  }
+
+  priv->SetTrusted(true);
+
+  bool dummy;
+  // XXX: dummy == false means that we should prevent the
+  //      the menu from opening, but there's no way to do this
+  target->DispatchEvent(event, &dummy);
 }
 
 void
@@ -595,10 +625,7 @@ uGlobalMenu::InitializePopup()
   }
 
   if (mContent != mPopupContent) {
-    nsresult rv = mListener->RegisterForContentChanges(mPopupContent, this);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Failed to register for popup content changes");
-    }
+    mListener->RegisterForContentChanges(mPopupContent, this);
   }
 }
 
@@ -673,11 +700,7 @@ uGlobalMenu::Init(uGlobalMenuObject *aParent,
     SetFlags(UNITY_MENU_READY);
   }
 
-  nsresult rv = mListener->RegisterForContentChanges(mContent, this);
-  if (NS_FAILED(rv)) {
-    NS_WARNING("Failed to register for content changes");
-    return rv;
-  }
+  mListener->RegisterForContentChanges(mContent, this);
 
   return NS_OK;
 }

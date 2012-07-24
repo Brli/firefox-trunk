@@ -81,11 +81,7 @@ uGlobalMenuSeparator::Init(uGlobalMenuObject *aParent,
   mContent = aContent;
   mMenuBar = aMenuBar;
 
-  nsresult rv = mListener->RegisterForContentChanges(mContent, this);
-  if (NS_FAILED(rv)) {
-    NS_WARNING("Failed to register for content changes");
-    return rv;
-  }
+  mListener->RegisterForContentChanges(mContent, this);
 
   return NS_OK;
 }

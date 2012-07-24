@@ -83,8 +83,8 @@ uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
   }
 
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(cv->GetDocument());
+  NS_ASSERTION(domDoc, "Content viewer does not have a document");
   if (!domDoc) {
-    NS_ERROR("Content viewer does not have a document");
     return false;
   }
 
@@ -101,14 +101,14 @@ uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
 
   nsCOMPtr<nsIDOMNode> menubar;
   elements->Item(0, getter_AddRefs(menubar));
+  NS_ASSERTION(menubar, "Null item in nsIDOMNodeList. Is this meant to happen?");
   if (!menubar) {
-    NS_ERROR("Null item in nsIDOMNodeList. Is this meant to happen?");
     return false;
   }
 
   nsCOMPtr<nsIDOMNSElement> menubarElem = do_QueryInterface(menubar);
+  NS_ASSERTION(menubarElem, "Menubar failed QI to nsIDOMNSElement");
   if (!menubarElem) {
-    NS_ERROR("Node is not an element, so it can't be a menubar");
     return false;
   }
 
@@ -124,10 +124,23 @@ uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
   }
 
   nsCOMPtr<nsIBaseWindow> baseWindow = do_GetInterface(aDocShell);
+  NS_ASSERTION(baseWindow, "Docshell does not GI to nsIBaseWindow");
+  if (!baseWindow) {
+    return false;
+  }
+
   nsCOMPtr<nsIWidget> mainWidget;
   baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
+  NS_ASSERTION(mainWidget, "Window does not have a widget");
+  if (!mainWidget) {
+    return false;
+  }
 
   nsCOMPtr<nsIContent> menubarContent = do_QueryInterface(menubar);
+  NS_ASSERTION(menubarContent, "Menubar failed QI to nsIContent");
+  if (!menubarContent) {
+    return false;
+  }
 
   // XXX: Should we do anything with errors here?
   rv = mService->CreateGlobalMenuBar(mainWidget, menubarContent);
@@ -150,6 +163,7 @@ uGlobalMenuLoader::RegisterAllMenus()
 
   nsCOMPtr<nsISimpleEnumerator> iter;
   wm->GetXULWindowEnumerator(nsnull, getter_AddRefs(iter));
+  NS_ASSERTION(iter, "Failed to get XUL window enumerator");
   if (!iter) {
     return;
   }
@@ -161,12 +175,14 @@ uGlobalMenuLoader::RegisterAllMenus()
     nsCOMPtr<nsISupports> elem;
     iter->GetNext(getter_AddRefs(elem));
     iter->HasMoreElements(&hasMore);
-    if (!elem)
+    if (!elem) {
       continue;
+    }
 
     nsCOMPtr<nsIXULWindow> xulWindow = do_QueryInterface(elem);
-    if (!xulWindow)
+    if (!xulWindow) {
       continue;
+    }
 
     OnOpenWindow(xulWindow);
   }
@@ -178,8 +194,8 @@ nsresult
 uGlobalMenuLoader::Init()
 {
   mService = do_GetService("@canonical.com/globalmenu-service;1");
+  NS_ASSERTION(mService, "Failed to get our own menu service!");
   if (!mService) {
-    NS_WARNING("Failed to get menu service");
     return NS_ERROR_FAILURE;
   }
 
@@ -187,8 +203,8 @@ uGlobalMenuLoader::Init()
 
   nsCOMPtr<nsIWindowMediator> wm =
       do_GetService("@mozilla.org/appshell/window-mediator;1");
+  NS_ASSERTION(wm, "Failed to get window mediator");
   if (!wm) {
-    NS_WARNING("Failed to get window mediator service");
     return NS_ERROR_FAILURE;
   }
 
@@ -285,18 +301,21 @@ uGlobalMenuLoader::OnStateChange(nsIWebProgress *aWebProgress,
   // If this document notification is for a frame then ignore it...
   nsCOMPtr<nsIDOMWindow> eventWin;
   aWebProgress->GetDOMWindow(getter_AddRefs(eventWin));
-  nsCOMPtr<nsPIDOMWindow> eventPWin(do_QueryInterface(eventWin));
-  if (eventPWin) {
-    nsPIDOMWindow *rootPWin = eventPWin->GetPrivateRoot();
-    if (eventPWin != rootPWin)
-      return NS_OK;
+  if (eventWin) {
+    nsCOMPtr<nsPIDOMWindow> eventPWin(do_QueryInterface(eventWin));
+    if (eventPWin) {
+      nsPIDOMWindow *rootPWin = eventPWin->GetPrivateRoot();
+      if (eventPWin != rootPWin) {
+        return NS_OK;
+      }
+    }
   }
 
   aWebProgress->RemoveProgressListener(this);
 
   nsCOMPtr<nsIDocShell> docShell = do_GetInterface(aWebProgress);
+  NS_ASSERTION(docShell, "No docshell?");
   if (!docShell) {
-    NS_ERROR("No docshell?");
     return NS_ERROR_FAILURE;
   }
 

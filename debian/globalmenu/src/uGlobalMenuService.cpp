@@ -370,8 +370,8 @@ uGlobalMenuService::Init()
                            NULL);
 
   mWindowMediator = do_GetService("@mozilla.org/appshell/window-mediator;1");
+  NS_ASSERTION(mWindowMediator, "No window mediator");
   if (!mWindowMediator) {
-    NS_WARNING("No window mediator, which we need for close events");
     return NS_ERROR_FAILURE;
   }
 
@@ -383,21 +383,24 @@ uGlobalMenuService::Init()
   // see https://launchpad.net/bugs/1017247
   nsCOMPtr<nsIStyleSheetService> sss =
     do_GetService("@mozilla.org/content/style-sheet-service;1");
-  if (sss) {
-    nsCOMPtr<nsIURI> uri;
-    rv = NS_NewURI(getter_AddRefs(uri),
-                   NS_LITERAL_CSTRING("chrome://globalmenu/content/ua-overrides.css"));
-    if (NS_SUCCEEDED(rv) && uri) {
-      bool registered;
-      sss->SheetRegistered(uri, nsIStyleSheetService::AGENT_SHEET,
-                           &registered);
-      if (!registered) {
-        sss->LoadAndRegisterSheet(uri, nsIStyleSheetService::AGENT_SHEET);
-      }
+  if (!sss) {
+    NS_WARNING("No style sheet service");
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIURI> uri;
+  rv = NS_NewURI(getter_AddRefs(uri),
+                 NS_LITERAL_CSTRING("chrome://globalmenu/content/ua-overrides.css"));
+  if (NS_SUCCEEDED(rv) && uri) {
+    bool registered;
+    sss->SheetRegistered(uri, nsIStyleSheetService::AGENT_SHEET,
+                         &registered);
+    if (!registered) {
+      sss->LoadAndRegisterSheet(uri, nsIStyleSheetService::AGENT_SHEET);
     }
   }
 
-  return rv;
+  return NS_OK;
 }
 
 uGlobalMenuService::~uGlobalMenuService()
@@ -523,13 +526,14 @@ NS_IMETHODIMP
 uGlobalMenuService::OnCloseWindow(nsIXULWindow *window)
 {
   nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(window);
-  NS_ASSERTION(baseWindow, "nsIXULWindow passed to OnCloseWindow is not a nsIBaseWindow");
+  NS_ASSERTION(baseWindow, "nsIXULWindow failed QI to nsIBaseWindow");
   if (!baseWindow) {
     return NS_ERROR_INVALID_ARG;
   }
 
   nsCOMPtr<nsIWidget> widget;
   baseWindow->GetMainWidget(getter_AddRefs(widget));
+  NS_ASSERTION(widget, "Window has no widget");
   if (!widget) {
     return NS_ERROR_FAILURE;
   }

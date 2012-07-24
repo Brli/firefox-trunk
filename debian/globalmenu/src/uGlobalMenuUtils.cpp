@@ -88,14 +88,16 @@ WidgetToGTKWindow(nsIWidget *aWidget)
 {
   // Get the main GDK drawing window from our nsIWidget
   GdkWindow *window = static_cast<GdkWindow *>(aWidget->GetNativeData(NS_NATIVE_WINDOW));
-  if (!window)
+  if (!window) {
     return nsnull;
+  }
 
   // Get the widget for the main drawing window, which should be a MozContainer
   gpointer user_data = nsnull;
   gdk_window_get_user_data(window, &user_data);
-  if (!user_data || !GTK_IS_CONTAINER(user_data))
+  if (!user_data || !GTK_IS_CONTAINER(user_data)) {
     return nsnull;
+  }
 
   return gtk_widget_get_toplevel(GTK_WIDGET(user_data));
 }

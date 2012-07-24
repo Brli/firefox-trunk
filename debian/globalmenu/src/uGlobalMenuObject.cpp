@@ -103,19 +103,22 @@ GetDOMRectSide(nsIDOMRect* aRect, GetRectSideMethod aMethod)
 {
   nsCOMPtr<nsIDOMCSSPrimitiveValue> dimensionValue;
   (aRect->*aMethod)(getter_AddRefs(dimensionValue));
-  if (!dimensionValue)
+  if (!dimensionValue) {
     return -1;
+  }
 
   PRUint16 type;
   nsresult rv = dimensionValue->GetPrimitiveType(&type);
-  if (NS_FAILED(rv) || type != nsIDOMCSSPrimitiveValue::CSS_PX)
+  if (NS_FAILED(rv) || type != nsIDOMCSSPrimitiveValue::CSS_PX) {
     return -1;
+  }
 
   float dimension = 0;
   rv = dimensionValue->GetFloatValue(nsIDOMCSSPrimitiveValue::CSS_PX,
                                      &dimension);
-  if (NS_FAILED(rv))
+  if (NS_FAILED(rv)) {
     return -1;
+  }
 
   return NSToIntRound(dimension);
 }
@@ -162,12 +165,14 @@ uGlobalMenuObject::IconLoader::Run()
                                  getter_AddRefs(value));
       if (value) {
         nsCOMPtr<nsIDOMCSSPrimitiveValue> pval = do_QueryInterface(value);
-        PRUint16 type;
-        pval->GetPrimitiveType(&type);
-        if (type == nsIDOMCSSPrimitiveValue::CSS_URI) {
-          rv = pval->GetStringValue(uriString);
-          if (NS_SUCCEEDED(rv)) {
-            hasImage = true;
+        if (pval) {
+          PRUint16 type;
+          pval->GetPrimitiveType(&type);
+          if (type == nsIDOMCSSPrimitiveValue::CSS_URI) {
+            rv = pval->GetStringValue(uriString);
+            if (NS_SUCCEEDED(rv)) {
+              hasImage = true;
+            }
           }
         }
       }
@@ -184,10 +189,12 @@ uGlobalMenuObject::IconLoader::Run()
                                getter_AddRefs(value));
     if (value) {
       nsCOMPtr<nsIDOMCSSPrimitiveValue> pval = do_QueryInterface(value);
-      PRUint16 type;
-      pval->GetPrimitiveType(&type);
-      if (type == nsIDOMCSSPrimitiveValue::CSS_RECT) {
-        pval->GetRectValue(getter_AddRefs(domRect));
+      if (pval) {
+        PRUint16 type;
+        pval->GetPrimitiveType(&type);
+        if (type == nsIDOMCSSPrimitiveValue::CSS_RECT) {
+          pval->GetRectValue(getter_AddRefs(domRect));
+        }
       }
     }
   }
@@ -203,6 +210,7 @@ uGlobalMenuObject::IconLoader::Run()
 
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
   imgILoader *loader = uGlobalMenuService::GetIconLoader();
+  NS_ASSERTION(loader, "Failed to get image loader");
   if (!loader) {
     return NS_ERROR_FAILURE;
   }
@@ -407,6 +415,7 @@ void
 uGlobalMenuObject::IconLoader::Destroy()
 {
   TRACEM(mMenuItem);
+
   if (mIconRequest) {
     mIconRequest->Cancel(NS_BINDING_ABORTED);
     mIconRequest = nsnull;
@@ -567,10 +576,12 @@ GetCSSIdentValue(nsIDOMCSSStyleDeclaration *aStyle,
   aStyle->GetPropertyCSSValue(aProp, getter_AddRefs(value));
   if (value) {
     nsCOMPtr<nsIDOMCSSPrimitiveValue> pval = do_QueryInterface(value);
-    PRUint16 type;
-    pval->GetPrimitiveType(&type);
-    if (type == nsIDOMCSSPrimitiveValue::CSS_IDENT) {
-      pval->GetStringValue(aResult);
+    if (pval) {
+      PRUint16 type;
+      pval->GetPrimitiveType(&type);
+      if (type == nsIDOMCSSPrimitiveValue::CSS_IDENT) {
+        pval->GetStringValue(aResult);
+      }
     }
   }
 }
@@ -735,19 +746,25 @@ uGlobalMenuObject::GetComputedStyle(nsIDOMCSSStyleDeclaration **aResult)
   *aResult = nsnull;
 
   nsIDocument *doc = mContent->GetCurrentDoc();
-  if (doc) {
-    nsCOMPtr<nsIDOMWindow> domWin;
-    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-    if (domDoc) {
-      domDoc->GetDefaultView(getter_AddRefs(domWin));
-      if (domWin) {
-        nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
-        if (domElement) {
-          domWin->GetComputedStyle(domElement, EmptyString(),
-                                   aResult);
-        }
-      }
-    }
+  if (!doc) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+  if (!domDoc) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMWindow> domWin;
+  domDoc->GetDefaultView(getter_AddRefs(domWin));
+  if (!domWin) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMElement> domElement = do_QueryInterface(mContent);
+  if (domElement) {
+    domWin->GetComputedStyle(domElement, EmptyString(),
+                             aResult);
   }
 }
 

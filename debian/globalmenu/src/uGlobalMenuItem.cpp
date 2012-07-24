@@ -407,18 +407,13 @@ uGlobalMenuItem::SyncAccelFromContent()
         modifier |= GDK_CONTROL_MASK;
       } else if (strcmp(token, "accel") == 0) {
         nsIPrefBranch *prefs = uGlobalMenuService::GetPrefService();
-        if (prefs) {
-          PRInt32 accel;
-          prefs->GetIntPref("ui.key.accelKey", &accel);
-          if (accel == nsIDOMKeyEvent::DOM_VK_META) {
-            modifier |= GDK_META_MASK;
-          } else if (accel == nsIDOMKeyEvent::DOM_VK_ALT) {
-            modifier |= GDK_MOD1_MASK;
-          } else {
-            modifier |= GDK_CONTROL_MASK;
-          }
+        PRInt32 accel;
+        prefs->GetIntPref("ui.key.accelKey", &accel);
+        if (accel == nsIDOMKeyEvent::DOM_VK_META) {
+          modifier |= GDK_META_MASK;
+        } else if (accel == nsIDOMKeyEvent::DOM_VK_ALT) {
+          modifier |= GDK_MOD1_MASK;
         } else {
-          // This is the default, see layout/xul/base/src/nsMenuFrame.cpp
           modifier |= GDK_CONTROL_MASK;
         }
       }
@@ -594,34 +589,52 @@ uGlobalMenuItem::Activate(PRUint32 timeStamp)
                       true);
   }
 
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->OwnerDoc());
-  if (domDoc) {
-    nsCOMPtr<nsIDOMEvent> event;
-    domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
-                        getter_AddRefs(event));
-    if (event) {
-      nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
-      if (cmdEvent) {
-        nsCOMPtr<nsIDOMWindow> window;
-        domDoc->GetDefaultView(getter_AddRefs(window));
-        if (window) {
-          cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
-                                     true, true, window, 0,
-                                     false, false, false,
-                                     false, nsnull);
-          nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
-          if (target) {
-            nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-            if (priv) {
-              priv->SetTrusted(true);
-            }
-            bool dummy;
-            target->DispatchEvent(event, &dummy);
-          }
-        }
-      }
-    }
+  nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
+  NS_ASSERTION(target, "Content failed QI to nsIDOMEventTarget");
+  if (!target) {
+    return;
   }
+
+  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(mContent->OwnerDoc());
+  if (!domDoc) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMEvent> event;
+  domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
+                      getter_AddRefs(event));
+  NS_ASSERTION(event, "Failed to create xulcommandevent");
+  if (!event) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMXULCommandEvent> cmdEvent = do_QueryInterface(event);
+  NS_ASSERTION(cmdEvent, "Event failed QI to nsIDOMXULCommandEvent");
+  if (!cmdEvent) {
+    return;
+  }
+
+  nsCOMPtr<nsIDOMWindow> window;
+  domDoc->GetDefaultView(getter_AddRefs(window));
+  if (!window) {
+    return;
+  }
+
+  cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
+                             true, true, window, 0,
+                             false, false, false,
+                             false, nsnull);
+
+  nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
+  NS_ASSERTION(priv, "Event failed QI to nsIPrivateDOMEvent");
+  if (!priv) {
+    return;
+  }
+
+  priv->SetTrusted(true);
+
+  bool dummy;
+  target->DispatchEvent(event, &dummy);
 }
 
 void
@@ -647,12 +660,7 @@ uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
   mContent = aContent;
   mMenuBar = aMenuBar;
 
-  nsresult rv;
-  rv = mListener->RegisterForContentChanges(mContent, this);
-  if (NS_FAILED(rv)) {
-    NS_WARNING("Failed to register for content changes");
-    return rv;
-  }
+  mListener->RegisterForContentChanges(mContent, this);
 
   return NS_OK;
 }

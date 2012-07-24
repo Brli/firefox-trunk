@@ -61,10 +61,10 @@ public:
 
   uGlobalMenuDocListener();
   nsresult Init(nsIContent *rootNode);
-  nsresult RegisterForContentChanges(nsIContent *aContent,
-                                     uGlobalMenuObject *aMenuObject);
-  nsresult UnregisterForContentChanges(nsIContent *aContent,
-                                       uGlobalMenuObject *aMenuObject);
+  void RegisterForContentChanges(nsIContent *aContent,
+                                 uGlobalMenuObject *aMenuObject);
+  void UnregisterForContentChanges(nsIContent *aContent,
+                                   uGlobalMenuObject *aMenuObject);
   void Destroy();
   ~uGlobalMenuDocListener();
 
