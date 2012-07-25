@@ -42,12 +42,12 @@
 
 #include <gdk/gdk.h>
 
+#include "uGlobalMenuUtils.h"
 #include "uGlobalMenu.h"
 #include "uGlobalMenuItem.h"
 #include "uGlobalMenuSeparator.h"
 #include "uGlobalMenuDummy.h"
 #include "uGlobalMenuDocListener.h"
-#include "uGlobalMenuBar.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
@@ -55,8 +55,7 @@
 uGlobalMenuObject*
 NewGlobalMenuItem(uGlobalMenuObject *aParent,
                   uGlobalMenuDocListener *aListener,
-                  nsIContent *aContent,
-                  uGlobalMenuBar *aMenuBar)
+                  nsIContent *aContent)
 {
   TRACEC(aContent);
 
@@ -66,11 +65,11 @@ NewGlobalMenuItem(uGlobalMenuObject *aParent,
 
   uGlobalMenuObject *menuitem = nsnull;
   if (aContent->Tag() == uWidgetAtoms::menu) {
-    menuitem = uGlobalMenu::Create(aParent, aListener, aContent, aMenuBar);
+    menuitem = uGlobalMenu::Create(aParent, aListener, aContent);
   } else if (aContent->Tag() == uWidgetAtoms::menuitem) {
-    menuitem = uGlobalMenuItem::Create(aParent, aListener, aContent, aMenuBar);
+    menuitem = uGlobalMenuItem::Create(aParent, aListener, aContent);
   } else if (aContent->Tag() == uWidgetAtoms::menuseparator) {
-    menuitem = uGlobalMenuSeparator::Create(aParent, aListener, aContent, aMenuBar);
+    menuitem = uGlobalMenuSeparator::Create(aParent, aListener, aContent);
   }
 
   if (!menuitem) {

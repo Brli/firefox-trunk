@@ -424,6 +424,21 @@ uGlobalMenuObject::IconLoader::Destroy()
   mMenuItem = nsnull;
 }
 
+uGlobalMenuBar*
+uGlobalMenuObject::GetMenuBar()
+{
+  uGlobalMenuObject *tmp = this;
+  while (tmp) {
+    if (tmp->GetType() == eMenuBar) {
+      return static_cast<uGlobalMenuBar *>(tmp);
+    }
+
+    tmp = tmp->GetParent();
+  }
+
+  return nsnull;
+}
+
 void
 uGlobalMenuObject::ClearIcon()
 {

@@ -48,20 +48,19 @@
 #include "uGlobalMenuObject.h"
 
 // This menuitem is a checkbox or radioitem which is active
-#define UNITY_MENUITEM_TOGGLE_IS_ACTIVE   (1 << 10)
+#define UNITY_MENUITEM_TOGGLE_IS_ACTIVE   FLAG(8)
 
 // This menuitem is a checkbox
-#define UNITY_MENUITEM_IS_CHECKBOX        (1 << 11)
+#define UNITY_MENUITEM_IS_CHECKBOX        FLAG(9)
 
 // This menuitem is a radio item
-#define UNITY_MENUITEM_IS_RADIO           (1 << 12)
+#define UNITY_MENUITEM_IS_RADIO           FLAG(10)
 
 // Used by the reentrancy guard for SyncTypeAndStateFromContent()
-#define UNITY_MENUITEM_SYNC_TYPE_GUARD    (1 << 13)
+#define UNITY_MENUITEM_SYNC_TYPE_GUARD    FLAG(11)
 
 class nsIContent;
 class uGlobalMenuDocListener;
-class uGlobalMenuBar;
 
 enum uMenuItemType {
   eNormal,
@@ -74,8 +73,7 @@ class uGlobalMenuItem: public uGlobalMenuObject
 public:
   static uGlobalMenuObject* Create(uGlobalMenuObject *aParent,
                                    uGlobalMenuDocListener *aListener,
-                                   nsIContent *aContent,
-                                   uGlobalMenuBar *aMenuBar);
+                                   nsIContent *aContent);
   virtual ~uGlobalMenuItem();
 
   virtual uMenuObjectType GetType() { return eMenuItem; }
@@ -90,8 +88,7 @@ private:
 
   nsresult Init(uGlobalMenuObject *aParent,
                 uGlobalMenuDocListener *aListener,
-                nsIContent *aContent,
-                uGlobalMenuBar *aMenuBar);
+                nsIContent *aContent);
 
   PRUint32 GetKeyCode(nsAString &aKeyName);
   PRUint32 MozKeyCodeToGdkKeyCode(PRUint32 aMozKeyCode);

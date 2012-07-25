@@ -569,7 +569,7 @@ uGlobalMenuItem::ItemActivatedCallback(DbusmenuMenuitem *menuItem,
 void
 uGlobalMenuItem::Activate(PRUint32 timeStamp)
 {
-  gdk_x11_window_set_user_time(gtk_widget_get_window(mMenuBar->TopLevelWindow()),
+  gdk_x11_window_set_user_time(gtk_widget_get_window(GetMenuBar()->TopLevelWindow()),
                                timeStamp);
   // This first bit seems backwards, but it's not really. If autocheck is
   // not set or autocheck==true, then the checkbox state is usually updated
@@ -647,18 +647,15 @@ uGlobalMenuItem::InitializeDbusMenuItem()
 nsresult
 uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
                       uGlobalMenuDocListener *aListener,
-                      nsIContent *aContent,
-                      uGlobalMenuBar *aMenuBar)
+                      nsIContent *aContent)
 {
   NS_ENSURE_ARG(aParent);
   NS_ENSURE_ARG(aListener);
   NS_ENSURE_ARG(aContent);
-  NS_ENSURE_ARG(aMenuBar);
 
   mParent = aParent;
   mListener = aListener;
   mContent = aContent;
-  mMenuBar = aMenuBar;
 
   mListener->RegisterForContentChanges(mContent, this);
 
@@ -727,8 +724,7 @@ uGlobalMenuItem::~uGlobalMenuItem()
 /*static*/ uGlobalMenuObject*
 uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
                         uGlobalMenuDocListener *aListener,
-                        nsIContent *aContent,
-                        uGlobalMenuBar *aMenuBar)
+                        nsIContent *aContent)
 {
   TRACEC(aContent);
 
@@ -737,7 +733,7 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
     return nsnull;
   }
 
-  if (NS_FAILED(menuitem->Init(aParent, aListener, aContent, aMenuBar))) {
+  if (NS_FAILED(menuitem->Init(aParent, aListener, aContent))) {
     delete menuitem;
     return nsnull;
   }

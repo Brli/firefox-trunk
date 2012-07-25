@@ -660,9 +660,7 @@ uGlobalMenu::Build()
 
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *child = mPopupContent->GetChildAt(i);
-    uGlobalMenuObject *menuObject =
-      NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
-                        mListener, child, mMenuBar);
+    uGlobalMenuObject *menuObject = NewGlobalMenuItem(this, mListener, child);
     bool res = false;
     if (menuObject) {
       res = AppendMenuObject(menuObject);
@@ -680,23 +678,20 @@ uGlobalMenu::Build()
 nsresult
 uGlobalMenu::Init(uGlobalMenuObject *aParent,
                   uGlobalMenuDocListener *aListener,
-                  nsIContent *aContent,
-                  uGlobalMenuBar *aMenuBar)
+                  nsIContent *aContent)
 {
   NS_ENSURE_ARG(aParent);
   NS_ENSURE_ARG(aListener);
   NS_ENSURE_ARG(aContent);
-  NS_ENSURE_ARG(aMenuBar);
 
   mParent = aParent;
   mListener = aListener;
   mContent = aContent;
-  mMenuBar = aMenuBar;
 
   SetNeedsRebuild();
 
   // See the hack comment above for why this workaround is here
-  if (mParent->GetType() != eMenuBar || mMenuBar->IsRegistered()) {
+  if (mParent->GetType() != eMenuBar || GetMenuBar()->IsRegistered()) {
     SetFlags(UNITY_MENU_READY);
   }
 
@@ -742,8 +737,7 @@ uGlobalMenu::~uGlobalMenu()
 /*static*/ uGlobalMenuObject*
 uGlobalMenu::Create(uGlobalMenuObject *aParent,
                     uGlobalMenuDocListener *aListener,
-                    nsIContent *aContent,
-                    uGlobalMenuBar *aMenuBar)
+                    nsIContent *aContent)
 {
   TRACEC(aContent);
 
@@ -752,7 +746,7 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
     return nsnull;
   }
 
-  if (NS_FAILED(menu->Init(aParent, aListener, aContent, aMenuBar))) {
+  if (NS_FAILED(menu->Init(aParent, aListener, aContent))) {
     delete menu;
     return nsnull;
   }
@@ -912,9 +906,7 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
   }
 
   if (aContainer == mPopupContent) {
-    uGlobalMenuObject *newItem =
-      NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
-                        mListener, aChild, mMenuBar);
+    uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
     bool res = false;
     if (newItem) {
       res = InsertMenuObjectAt(newItem, aIndexInContainer);

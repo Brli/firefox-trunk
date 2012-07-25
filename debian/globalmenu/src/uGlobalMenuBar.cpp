@@ -170,8 +170,7 @@ uGlobalMenuBar::Build()
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *menuContent = mContent->GetChildAt(i);
     uGlobalMenuObject *newItem =
-      NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
-                        mListener, menuContent, this);
+      NewGlobalMenuItem(this, mListener, menuContent);
     bool res = false;
     if (newItem) {
       res = AppendMenuObject(newItem);
@@ -632,9 +631,7 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
   NS_ASSERTION(aContainer == mContent,
                "Received an event that wasn't meant for us!");
 
-  uGlobalMenuObject *newItem =
-    NewGlobalMenuItem(static_cast<uGlobalMenuObject *>(this),
-                      mListener, aChild, this);
+  uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
   bool res = false;
   if (newItem) {
     res = InsertMenuObjectAt(newItem, aIndexInContainer);

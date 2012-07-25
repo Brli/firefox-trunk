@@ -54,7 +54,7 @@
 #include "uGlobalMenuObject.h"
 
 // The menubar has been registered with the shell
-#define UNITY_MENUBAR_IS_REGISTERED           (1 << 14)
+#define UNITY_MENUBAR_IS_REGISTERED           FLAG(8)
 
 // Meh. X.h defines this
 #ifdef KeyPress
@@ -110,7 +110,7 @@ private:
     NS_DECL_NSIDOMEVENTLISTENER
 
     EventListener(uGlobalMenuBar *aMenuBar): mMenuBar(aMenuBar) { };
-    ~EventListener() { };
+    virtual ~EventListener() { };
 
   private:
     uGlobalMenuBar *mMenuBar;

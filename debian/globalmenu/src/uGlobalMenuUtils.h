@@ -49,8 +49,7 @@ class nsIWidget;
 
 uGlobalMenuObject* NewGlobalMenuItem(uGlobalMenuObject *aParent,
                                      uGlobalMenuDocListener *aListener,
-                                     nsIContent *aContent,
-                                     uGlobalMenuBar *aMenuBar);
+                                     nsIContent *aContent);
 
 GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
 

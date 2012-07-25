@@ -52,16 +52,15 @@
 #include "uWidgetAtoms.h"
 
 // The menu is in the process of opening
-#define UNITY_MENU_IS_OPENING             (1 << 7)
+#define UNITY_MENU_IS_OPENING             FLAG(8)
 
 // The menu needs rebuilding
-#define UNITY_MENU_NEEDS_REBUILDING       (1 << 8)
+#define UNITY_MENU_NEEDS_REBUILDING       FLAG(9)
 
 // The shell sent the first "AboutToOpen" event
-#define UNITY_MENU_READY                  (1 << 9)
+#define UNITY_MENU_READY                  FLAG(10)
 
 class uGlobalMenuItem;
-class uGlobalMenuBar;
 class uGlobalMenuDocListener;
 
 class uGlobalMenu: public uGlobalMenuObject
@@ -69,8 +68,7 @@ class uGlobalMenu: public uGlobalMenuObject
 public:
   static uGlobalMenuObject* Create(uGlobalMenuObject *aParent,
                                    uGlobalMenuDocListener *aListener,
-                                   nsIContent *aContent,
-                                   uGlobalMenuBar *aMenuBar);
+                                   nsIContent *aContent);
   virtual ~uGlobalMenu();
 
   virtual uMenuObjectType GetType() { return eMenu; }
@@ -106,8 +104,7 @@ private:
   // Initialize the menu structure
   nsresult Init(uGlobalMenuObject *aParent,
                 uGlobalMenuDocListener *aListener,
-                nsIContent *aContent,
-                uGlobalMenuBar *aMenuBar);
+                nsIContent *aContent);
   bool InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                           PRUint32 index);
   bool AppendMenuObject(uGlobalMenuObject *menuObj);

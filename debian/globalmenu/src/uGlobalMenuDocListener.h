@@ -66,7 +66,7 @@ public:
   void UnregisterForContentChanges(nsIContent *aContent,
                                    uGlobalMenuObject *aMenuObject);
   void Destroy();
-  ~uGlobalMenuDocListener();
+  virtual ~uGlobalMenuDocListener();
 
 private:
   nsTArray<uGlobalMenuObject *>* GetListenersForContent(nsIContent *aContent,

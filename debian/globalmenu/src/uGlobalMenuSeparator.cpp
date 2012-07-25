@@ -44,7 +44,6 @@
 #include <libdbusmenu-glib/server.h>
 
 #include "uGlobalMenuSeparator.h"
-#include "uGlobalMenuBar.h"
 #include "uGlobalMenu.h"
 #include "uWidgetAtoms.h"
 
@@ -68,18 +67,15 @@ uGlobalMenuSeparator::Refresh()
 nsresult
 uGlobalMenuSeparator::Init(uGlobalMenuObject *aParent,
                            uGlobalMenuDocListener *aListener,
-                           nsIContent *aContent,
-                           uGlobalMenuBar *aMenuBar)
+                           nsIContent *aContent)
 {
   NS_ENSURE_ARG(aParent);
   NS_ENSURE_ARG(aListener);
   NS_ENSURE_ARG(aContent);
-  NS_ENSURE_ARG(aMenuBar);
 
   mParent = aParent;
   mListener = aListener;
   mContent = aContent;
-  mMenuBar = aMenuBar;
 
   mListener->RegisterForContentChanges(mContent, this);
 
@@ -99,8 +95,7 @@ uGlobalMenuSeparator::~uGlobalMenuSeparator()
 /*static*/ uGlobalMenuObject*
 uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
                              uGlobalMenuDocListener *aListener,
-                             nsIContent *aContent,
-                             uGlobalMenuBar *aMenuBar)
+                             nsIContent *aContent)
 {
   TRACEC(aContent);
 
@@ -109,7 +104,7 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
     return nsnull;
   }
 
-  if (NS_FAILED(menuitem->Init(aParent, aListener, aContent, aMenuBar))) {
+  if (NS_FAILED(menuitem->Init(aParent, aListener, aContent))) {
     delete menuitem;
     return nsnull;
   }

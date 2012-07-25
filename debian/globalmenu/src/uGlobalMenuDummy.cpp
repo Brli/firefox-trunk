@@ -45,7 +45,6 @@
 #include <libdbusmenu-glib/server.h>
 
 #include "uGlobalMenuDummy.h"
-#include "uGlobalMenuBar.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
@@ -73,7 +72,6 @@ nsresult
 uGlobalMenuDummy::Init()
 {
   mParent = nsnull;
-  mMenuBar = nsnull;
 
   return NS_OK;
 }

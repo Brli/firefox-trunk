@@ -53,20 +53,22 @@
 
 #include "uDebug.h"
 
+#define FLAG(val) (1 << val)
+
 // The menuitem attributes need updating
-#define UNITY_MENUOBJECT_IS_DIRTY               (1 << 0)
+#define UNITY_MENUOBJECT_IS_DIRTY               FLAG(0)
 
 // The content node says that this menuitem should be visible
-#define UNITY_MENUOBJECT_CONTENT_IS_VISIBLE     (1 << 1)
+#define UNITY_MENUOBJECT_CONTENT_IS_VISIBLE     FLAG(1)
 
 // The menuobject is visible on screen
-#define UNITY_MENUOBJECT_CONTAINER_ON_SCREEN    (1 << 2)
+#define UNITY_MENUOBJECT_CONTAINER_ON_SCREEN    FLAG(2)
 
 // Used ny the reentrancy guard for SyncSensitivityFromContent()
-#define UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD (1 << 5)
+#define UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD FLAG(3)
 
 // Used by the reentrancy guard for SyncLabelFromContent()
-#define UNITY_MENUOBJECT_SYNC_LABEL_GUARD       (1 << 6)
+#define UNITY_MENUOBJECT_SYNC_LABEL_GUARD       FLAG(4)
 
 enum uMenuObjectType {
   eMenuBar,
@@ -140,6 +142,8 @@ protected:
     }
   }
 
+  uGlobalMenuBar* GetMenuBar();
+
   class ReentrancyGuard
   {
   public:
@@ -173,7 +177,6 @@ protected:
   DbusmenuMenuitem *mDbusMenuItem;
   nsRefPtr<uGlobalMenuDocListener> mListener;
   uGlobalMenuObject *mParent;
-  uGlobalMenuBar *mMenuBar;
 
 protected:
   friend class uGlobalMenuDocListener;

@@ -43,15 +43,13 @@
 
 class nsIContent;
 class uGlobalMenuDocListener;
-class uGlobalMenuBar;
 
 class uGlobalMenuSeparator: public uGlobalMenuObject
 {
 public:
   static uGlobalMenuObject* Create(uGlobalMenuObject *aParent,
                                    uGlobalMenuDocListener *aListener,
-                                   nsIContent *aContent,
-                                   uGlobalMenuBar *aMenuBar);
+                                   nsIContent *aContent);
   virtual ~uGlobalMenuSeparator();
 
   virtual uMenuObjectType GetType() { return eMenuSeparator; }
@@ -66,8 +64,7 @@ private:
 
   nsresult Init(uGlobalMenuObject *aParent,
                 uGlobalMenuDocListener *aListener,
-                nsIContent *aContent,
-                uGlobalMenuBar *aMenuBar);
+                nsIContent *aContent);
 
   virtual void InitializeDbusMenuItem();
   virtual void Refresh();
