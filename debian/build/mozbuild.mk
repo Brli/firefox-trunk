@@ -542,7 +542,10 @@ auto-refresh-supported-locales::
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 clean:: auto-refresh-supported-locales
 ifneq (,$(wildcard debian/searchplugins))
+# Depends on libjson-perl, which is in universe in 10.04
+ifeq (,$(filter lucid,$(DISTRIB_CODENAME)))
 clean:: auto-refresh-search-mod-list
+endif
 endif
 endif
 
