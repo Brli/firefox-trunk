@@ -676,6 +676,7 @@ class Prefs:
                 self.value = None
                 self.tmp = None
                 self.skip = None
+                self.quote = None
 
             def _get_state(self):
                 return self._state
@@ -763,6 +764,7 @@ class Prefs:
             elif state.state == Prefs.STATE_PARSE_UNTIL_NAME:
                 if c == '"' or c == '\'':
                     state.tmp = ''
+                    state.quote = c
                     state.state = Prefs.STATE_PARSE_STRING
                     state.next_state = Prefs.STATE_PARSE_UNTIL_COMMA
                 elif c == '/':
@@ -776,7 +778,7 @@ class Prefs:
             elif state.state == Prefs.STATE_PARSE_STRING:
                 if c == '\\':
                     state.state = Prefs.STATE_PARSE_ESC_SEQ
-                elif c == '"':
+                elif c == state.quote:
                     state.state = state.next_state
                     state.next_state = Prefs.STATE_READY
                 else:
@@ -808,6 +810,7 @@ class Prefs:
             elif state.state == Prefs.STATE_PARSE_UNTIL_VALUE:
                 if c == '"' or c == '\'':
                     state.tmp = ''
+                    state.quote = c
                     state.state = Prefs.STATE_PARSE_STRING
                     state.next_state = Prefs.STATE_PARSE_UNTIL_CLOSE_PAREN
                 elif line.startswith('true', index):

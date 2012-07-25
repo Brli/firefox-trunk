@@ -13,6 +13,8 @@ firefox-trunk (16.0~a1~hg20120715r99319-0ubuntu2) UNRELEASED; urgency=low
     is abysmal on my laptop
     - update debian/build/create-tarball.py
     - update debian/build/mozbuild.mk
+  * Fix quoting issues when parsing preferences
+    - update debian/apport/source_firefox.py.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 19 Jul 2012 02:18:51 +0100
 
