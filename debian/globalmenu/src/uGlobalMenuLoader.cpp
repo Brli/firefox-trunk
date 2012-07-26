@@ -51,11 +51,7 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsPIDOMWindow.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION == 13
-# include <nsIDOMNSElement.h>
-#endif
 #include <nsIDOMElement.h>
-#include <nsIDOMDOMTokenList.h>
 
 #include "uIGlobalMenuService.h"
 #include "uGlobalMenuLoader.h"
@@ -106,21 +102,18 @@ uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
     return false;
   }
 
-  nsCOMPtr<nsIDOMNSElement> menubarElem = do_QueryInterface(menubar);
-  NS_ASSERTION(menubarElem, "Menubar failed QI to nsIDOMNSElement");
+  nsCOMPtr<nsIDOMElement> menubarElem = do_QueryInterface(menubar);
+  NS_ASSERTION(menubarElem, "Menubar failed QI to nsIDOMElement");
   if (!menubarElem) {
     return false;
   }
 
-  nsCOMPtr<nsIDOMDOMTokenList> classes;
-  menubarElem->GetClassList(getter_AddRefs(classes));
-  if (classes) {
-    bool ignore = false;
-    classes->Contains(NS_LITERAL_STRING("menubar-keep-in-window"), &ignore);
-    if (ignore) {
-      LOG("Keeping menubar for %p in window", (void *)aDocShell);
-      return false;
-    }
+  nsAutoString value;
+  if (NS_SUCCEEDED(menubarElem->GetAttribute(NS_LITERAL_STRING("menubarkeeplocal"),
+                                             value)) &&
+      value.Equals(NS_LITERAL_STRING("true"))) {
+    LOG("Keeping menubar for %p in window", (void *)aDocShell);
+    return false;
   }
 
   nsCOMPtr<nsIBaseWindow> baseWindow = do_GetInterface(aDocShell);

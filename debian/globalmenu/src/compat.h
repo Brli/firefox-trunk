@@ -36,10 +36,6 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#if MOZILLA_BRANCH_MAJOR_VERSION != 13
-# define nsIDOMNSElement nsIDOMElement
-#endif
-
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 16
 # define nsIPrivateDOMEvent nsIDOMEvent
 #endif

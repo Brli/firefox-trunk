@@ -320,6 +320,8 @@ uGlobalMenu::AboutToOpen()
   //      menus, but this doesn't work for menuitems at all
   Activate();
 
+  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
+                         NS_LITERAL_STRING("showing"), false);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshowing"));
 }
 
@@ -345,6 +347,8 @@ uGlobalMenu::OnOpen()
     return;
   }
 
+  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
+                         NS_LITERAL_STRING("open"), false);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshown"));
 }
 
@@ -368,7 +372,12 @@ uGlobalMenu::OnClose()
 
   nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
 
+  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
+                         NS_LITERAL_STRING("hiding"), false);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphiding"));
+
+  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
+                         NS_LITERAL_STRING("closed"), false);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
 
   Deactivate();
@@ -814,7 +823,8 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
   NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
                "Received an event that wasn't meant for us!");
 
-  if (aAttribute == uWidgetAtoms::open) {
+  if (aAttribute == uWidgetAtoms::open ||
+      aAttribute == uWidgetAtoms::_ubuntu_state) {
     return;
   }
 

@@ -44,9 +44,6 @@
 #include <nsNetError.h>
 #include <nsNetUtil.h>
 #include <nsIImageToPixbuf.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION == 13
-# include <nsIDOMNSElement.h>
-#endif
 #include <nsIDOMDOMTokenList.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMWindow.h>
@@ -474,7 +471,7 @@ uGlobalMenuObject::ShouldShowIcon()
     return true;
   }
 
-  nsCOMPtr<nsIDOMNSElement> element = do_QueryInterface(mContent);
+  nsCOMPtr<nsIDOMElement> element = do_QueryInterface(mContent);
   if (!element) {
     return false;
   }

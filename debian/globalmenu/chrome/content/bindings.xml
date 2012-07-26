@@ -9,7 +9,7 @@
       <property name="state" readonly="true">
         <getter><![CDATA[
           if (document.documentElement.getAttribute('shellshowingmenubar'))
-            return this.parentNode.open ? 'open' : 'closed';
+            return this.getAttribute("_ubuntu-state");
           else
             return this.popupBoxObject.popupState;
         ]]></getter>

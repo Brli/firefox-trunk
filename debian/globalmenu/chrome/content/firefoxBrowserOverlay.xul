@@ -3,10 +3,6 @@
   <script type="application/x-javascript" src="chrome://globalmenu/content/firefoxBrowserOverlay.js" />
   <!-- Don't set the openedwithkey attr, as we handle that ourselves -->
   <menubar id="main-menubar" onpopupshowing=""/>
-  <!-- Fix sensitivity of edit menu items -->
-  <menupopup id="menu_EditPopup"
-             onpopupshowing="gEditUIVisible = true; goUpdateGlobalEditMenuItems()">
-  </menupopup>
   <!-- Drop accel that GTK considers invalid. This item is hidden anyway -->
   <menuitem id="menu_showAllTabs" key=""/>
 </overlay>
