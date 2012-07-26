@@ -562,7 +562,7 @@ uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
     for (PRUint32 i = 1; i < 4; i++) {
       *(cur + (MAX_LABEL_NCHARS - i)) = PRUnichar('.');
     }
-    *(cur + MAX_LABEL_NCHARS) = nsnull;
+    *(cur + MAX_LABEL_NCHARS) = 0;
     label.SetLength(MAX_LABEL_NCHARS);
   }
 
