@@ -6,10 +6,10 @@ Bug-Ubuntu: https://launchpad.net/bugs/494067
 Bug-OpenSUSE: https://bugzilla.novell.com/show_bug.cgi?id=170055
 Forwarded: no
 
-Index: firefox-trunk-16.0~a1~hg20120702r98108/modules/libpref/src/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120725r100412/modules/libpref/src/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/modules/libpref/src/Makefile.in	2012-07-02 11:07:04.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/modules/libpref/src/Makefile.in	2012-07-02 17:07:29.226967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/modules/libpref/src/Makefile.in	2012-07-26 03:10:58.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/modules/libpref/src/Makefile.in	2012-07-26 13:05:44.784759818 +0100
 @@ -50,6 +50,8 @@
  	$(ELOG) $(CCC) $(OUTOPTION)$@ -c $(COMPILE_CXXFLAGS:-O2=-O1) $(_VPATH_SRCS)
  endif
@@ -19,10 +19,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/modules/libpref/src/Makefile.in
  
  greprefs.js: $(GREPREF_FILES)
  	$(PYTHON) $(topsrcdir)/config/Preprocessor.py $(PREF_PPFLAGS) $(DEFINES) $(ACDEFINES) $(XULPPFLAGS) $^ > $@
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/components/downloads/nsDownloadManager.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/components/downloads/nsDownloadManager.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/components/downloads/nsDownloadManager.cpp	2012-07-02 11:07:57.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/components/downloads/nsDownloadManager.cpp	2012-07-02 17:07:29.230967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/toolkit/components/downloads/nsDownloadManager.cpp	2012-07-26 03:12:02.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/components/downloads/nsDownloadManager.cpp	2012-07-26 13:05:44.784759818 +0100
 @@ -40,6 +40,10 @@
  #endif
  #endif
@@ -58,10 +58,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/components/downloads/nsDow
        }
  
  #if defined(XP_WIN) || defined(XP_MACOSX) || defined(MOZ_WIDGET_ANDROID) || defined(MOZ_WIDGET_GTK2)
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/widgets/dialog-kde.xml
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/content/widgets/dialog-kde.xml
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/content/widgets/dialog-kde.xml	2012-07-02 17:06:42.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/widgets/dialog-kde.xml	2012-07-02 17:07:29.230967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/toolkit/content/widgets/dialog-kde.xml	2012-07-26 13:04:13.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/content/widgets/dialog-kde.xml	2012-07-26 13:05:44.784759818 +0100
 @@ -20,7 +20,7 @@
            
        <xul:hbox class="dialog-button-box" anonid="buttons"
@@ -87,10 +87,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/widgets/dialog-kde
  #else
                  pack="end">
          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/widgets/preferences-kde.xml
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/content/widgets/preferences-kde.xml
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/content/widgets/preferences-kde.xml	2012-07-02 17:06:42.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/widgets/preferences-kde.xml	2012-07-02 17:07:29.230967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/toolkit/content/widgets/preferences-kde.xml	2012-07-26 13:04:13.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/content/widgets/preferences-kde.xml	2012-07-26 13:05:44.784759818 +0100
 @@ -573,7 +573,7 @@
          </xul:deck>
        </xul:hbox>
@@ -116,19 +116,19 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/widgets/preference
  #else
                  pack="end">
          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2012-07-02 11:08:29.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2012-07-02 17:07:29.230967560 +0100
-@@ -17,6 +17,7 @@
- #include "nsISupportsPrimitives.h"
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2012-07-26 03:12:35.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2012-07-26 13:06:18.032761184 +0100
+@@ -18,6 +18,7 @@
  #include "nsIGSettingsService.h"
  #include "nsInterfaceHashtable.h"
+ #include "mozilla/Attributes.h"
 +#include "nsKDEUtils.h"
  
- class nsUnixSystemProxySettings : public nsISystemProxySettings {
+ class nsUnixSystemProxySettings MOZ_FINAL : public nsISystemProxySettings {
  public:
-@@ -38,6 +39,7 @@
+@@ -39,6 +40,7 @@
    nsresult GetProxyFromGConf(const nsACString& aScheme, const nsACString& aHost, PRInt32 aPort, nsACString& aResult);
    nsresult GetProxyFromGSettings(const nsACString& aScheme, const nsACString& aHost, PRInt32 aPort, nsACString& aResult);
    nsresult SetProxyResultFromGSettings(const char* aKeyBase, const char* aType, nsACString& aResult);
@@ -136,7 +136,7 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/system/unixproxy/nsUnixSys
  };
  
  NS_IMPL_ISUPPORTS1(nsUnixSystemProxySettings, nsISystemProxySettings)
-@@ -494,6 +496,9 @@
+@@ -495,6 +497,9 @@
    rv = aURI->GetPort(&port);
    NS_ENSURE_SUCCESS(rv, rv);
  
@@ -146,7 +146,7 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/system/unixproxy/nsUnixSys
    if (mProxySettings) {
      rv = GetProxyFromGSettings(scheme, host, port, aResult);
      if (rv == NS_OK)
-@@ -505,6 +510,30 @@
+@@ -506,6 +511,30 @@
    return GetProxyFromEnvironment(scheme, host, port, aResult);
  }
  
@@ -177,10 +177,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/system/unixproxy/nsUnixSys
  #define NS_UNIXSYSTEMPROXYSERVICE_CID  /* 0fa3158c-d5a7-43de-9181-a285e74cf1d4 */\
       { 0x0fa3158c, 0xd5a7, 0x43de, \
         {0x91, 0x81, 0xa2, 0x85, 0xe7, 0x4c, 0xf1, 0xd4 } }
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/xre/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/xre/Makefile.in	2012-07-02 11:08:32.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/Makefile.in	2012-07-02 17:07:29.230967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/toolkit/xre/Makefile.in	2012-07-26 03:12:40.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/xre/Makefile.in	2012-07-26 13:05:44.784759818 +0100
 @@ -74,7 +74,8 @@
  CPPSRCS += nsNativeAppSupportOS2.cpp
  else
@@ -191,10 +191,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/Makefile.in
  else
  ifeq ($(MOZ_WIDGET_TOOLKIT),qt)
  MOCSRCS += moc_nsNativeAppSupportQt.cpp
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsKDEUtils.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/xre/nsKDEUtils.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsKDEUtils.cpp	2012-07-02 17:07:29.230967560 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/xre/nsKDEUtils.cpp	2012-07-26 13:05:44.784759818 +0100
 @@ -0,0 +1,377 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -573,10 +573,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsKDEUtils.cpp
 +    fputs( "\\E\n", commandFile ); // done as \E, so it cannot happen in normal data
 +    fflush( commandFile );
 +    }
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsKDEUtils.h
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/xre/nsKDEUtils.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsKDEUtils.h	2012-07-02 17:07:29.230967560 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/xre/nsKDEUtils.h	2012-07-26 13:05:44.784759818 +0100
 @@ -0,0 +1,80 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-
 + *
@@ -658,10 +658,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsKDEUtils.h
 +    };
 +
 +#endif // nsKDEUtils
-Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/uriloader/exthandler/Makefile.in	2012-07-02 11:08:40.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/Makefile.in	2012-07-02 17:07:29.230967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/uriloader/exthandler/Makefile.in	2012-07-26 03:12:49.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/Makefile.in	2012-07-26 13:05:44.784759818 +0100
 @@ -63,8 +63,9 @@
              -I$(topsrcdir)/netwerk/protocol/http
  
@@ -673,10 +673,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/Makefile.in
  endif
  
  ifeq ($(MOZ_WIDGET_TOOLKIT),android)
-Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsCommonRegistry.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsCommonRegistry.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsCommonRegistry.cpp	2012-07-02 17:07:29.230967560 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsCommonRegistry.cpp	2012-07-26 13:05:44.788759818 +0100
 @@ -0,0 +1,87 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -765,10 +765,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsCommon
 +        return nsKDERegistry::GetFromType( aMIMEType );
 +    return nsGNOMERegistry::GetFromType( aMIMEType );
 +}
-Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsCommonRegistry.h
+Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsCommonRegistry.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsCommonRegistry.h	2012-07-02 17:07:29.230967560 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsCommonRegistry.h	2012-07-26 13:05:44.788759818 +0100
 @@ -0,0 +1,56 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -826,10 +826,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsCommon
 +
 +  static already_AddRefed<nsMIMEInfoBase> GetFromType(const nsACString& aMIMEType);
 +};
-Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsKDERegistry.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsKDERegistry.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsKDERegistry.cpp	2012-07-02 17:07:29.230967560 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsKDERegistry.cpp	2012-07-26 13:05:44.788759818 +0100
 @@ -0,0 +1,118 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -949,10 +949,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsKDEReg
 +        }
 +    return nsnull;
 +}
-Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsKDERegistry.h
+Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsKDERegistry.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsKDERegistry.h	2012-07-02 17:07:29.230967560 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsKDERegistry.h	2012-07-26 13:05:44.788759818 +0100
 @@ -0,0 +1,62 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -1016,10 +1016,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsKDEReg
 +  static already_AddRefed<nsMIMEInfoBase> GetFromHelper(const nsTArray<nsCString>& command);
 +
 +};
-Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2012-07-02 11:08:40.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2012-07-26 03:12:49.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsMIMEInfoUnix.cpp	2012-07-26 13:05:44.788759818 +0100
 @@ -21,7 +21,7 @@
  #endif
  
@@ -1093,10 +1093,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsMIMEIn
    if (mimeInfo) {
      nsCAutoString type;
      mimeInfo->GetType(type);
-Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsOSHelperAppService.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsOSHelperAppService.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2012-07-02 11:08:40.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2012-07-26 03:12:49.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsOSHelperAppService.cpp	2012-07-26 13:05:44.788759818 +0100
 @@ -15,7 +15,7 @@
  #include "nsOSHelperAppService.h"
  #include "nsMIMEInfoUnix.h"
@@ -1142,10 +1142,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/uriloader/exthandler/unix/nsOSHelp
      if (gnomeInfo && gnomeInfo->HasExtensions()) {
        LOG(("Got MIMEInfo from GNOME registry, and it has extensions set\n"));
        return gnomeInfo;
-Index: firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120725r100412/widget/gtk2/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/widget/gtk2/Makefile.in	2012-07-02 11:08:42.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/Makefile.in	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/widget/gtk2/Makefile.in	2012-07-26 03:12:58.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/widget/gtk2/Makefile.in	2012-07-26 13:05:44.788759818 +0100
 @@ -110,6 +110,9 @@
  		-I$(topsrcdir)/layout/xul/base/src \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
@@ -1156,10 +1156,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/Makefile.in
  ifdef MOZ_X11
  INCLUDES   	+= -I$(srcdir)/../shared/x11
  endif
-Index: firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/nsFilePicker.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/widget/gtk2/nsFilePicker.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/widget/gtk2/nsFilePicker.cpp	2012-07-02 11:08:42.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/nsFilePicker.cpp	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/widget/gtk2/nsFilePicker.cpp	2012-07-26 03:12:58.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/widget/gtk2/nsFilePicker.cpp	2012-07-26 13:05:44.788759818 +0100
 @@ -6,6 +6,7 @@
  #include "mozilla/Util.h"
  
@@ -1424,10 +1424,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/nsFilePicker.cpp
 +        }
 +    return NS_OK;
 +    }
-Index: firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/nsFilePicker.h
+Index: firefox-trunk-17.0~a1~hg20120725r100412/widget/gtk2/nsFilePicker.h
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/widget/gtk2/nsFilePicker.h	2012-07-02 11:08:42.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/nsFilePicker.h	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/widget/gtk2/nsFilePicker.h	2012-07-26 03:12:58.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/widget/gtk2/nsFilePicker.h	2012-07-26 13:05:44.788759818 +0100
 @@ -62,6 +62,12 @@
  
  private:
@@ -1441,10 +1441,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/widget/gtk2/nsFilePicker.h
  };
  
  #endif
-Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/components/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120725r100412/xpcom/components/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/components/Makefile.in	2012-07-02 11:08:46.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/components/Makefile.in	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/xpcom/components/Makefile.in	2012-07-26 03:13:00.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/xpcom/components/Makefile.in	2012-07-26 13:05:44.788759818 +0100
 @@ -64,5 +64,6 @@
  DEFINES	+= -D_IMPL_NS_COM
  
@@ -1452,10 +1452,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/components/Makefile.in
 +LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
  CXXFLAGS += $(MOZ_GTK2_CFLAGS)
  endif
-Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120725r100412/xpcom/io/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/io/Makefile.in	2012-07-02 11:08:47.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/Makefile.in	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/xpcom/io/Makefile.in	2012-07-26 03:13:01.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/xpcom/io/Makefile.in	2012-07-26 13:05:44.788759818 +0100
 @@ -162,7 +162,7 @@
  endif
  endif
@@ -1465,10 +1465,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/Makefile.in
  
  ifeq ($(MOZ_PLATFORM_MAEMO),5)
  CFLAGS          += $(MOZ_DBUS_CFLAGS)
-Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsLocalFileUnix.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/xpcom/io/nsLocalFileUnix.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/io/nsLocalFileUnix.cpp	2012-07-02 11:08:47.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsLocalFileUnix.cpp	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/xpcom/io/nsLocalFileUnix.cpp	2012-07-26 03:13:01.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/xpcom/io/nsLocalFileUnix.cpp	2012-07-26 13:05:44.788759818 +0100
 @@ -54,6 +54,7 @@
  #ifdef MOZ_WIDGET_GTK
  #include "nsIGIOService.h"
@@ -1545,10 +1545,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsLocalFileUnix.cpp
      nsCOMPtr<nsIGIOService> giovfs = do_GetService(NS_GIOSERVICE_CONTRACTID);
      nsCOMPtr<nsIGnomeVFSService> gnomevfs = do_GetService(NS_GNOMEVFSSERVICE_CONTRACTID);
      if (giovfs) {
-Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/components/ManifestParser.cpp
+Index: firefox-trunk-17.0~a1~hg20120725r100412/xpcom/components/ManifestParser.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/components/ManifestParser.cpp	2012-07-02 11:08:46.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/components/ManifestParser.cpp	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/xpcom/components/ManifestParser.cpp	2012-07-26 03:13:00.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/xpcom/components/ManifestParser.cpp	2012-07-26 13:05:44.788759818 +0100
 @@ -35,6 +35,7 @@
  #include "nsIScriptError.h"
  #include "nsIXULAppInfo.h"
@@ -1625,20 +1625,20 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/components/ManifestParser.cp
  #ifdef MOZ_WIDGET_ANDROID
          stTablet == eBad ||
  #endif
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/components/downloads/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/components/downloads/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/components/downloads/Makefile.in	2012-07-02 11:07:57.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/components/downloads/Makefile.in	2012-07-02 17:07:29.234967560 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/toolkit/components/downloads/Makefile.in	2012-07-26 03:12:02.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/components/downloads/Makefile.in	2012-07-26 13:05:44.788759818 +0100
 @@ -47,3 +47,5 @@
  include $(topsrcdir)/config/rules.mk
  
  CXXFLAGS += $(TK_CFLAGS)
 +
 +LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/xre
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/jar.mn
+Index: firefox-trunk-17.0~a1~hg20120725r100412/toolkit/content/jar.mn
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/content/jar.mn	2012-07-02 11:08:06.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/content/jar.mn	2012-07-02 17:09:14.558971887 +0100
+--- firefox-trunk-17.0~a1~hg20120725r100412.orig/toolkit/content/jar.mn	2012-07-26 03:12:17.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120725r100412/toolkit/content/jar.mn	2012-07-26 13:05:44.788759818 +0100
 @@ -50,6 +50,8 @@
     content/global/bindings/colorpicker.xml     (widgets/colorpicker.xml)
     content/global/bindings/datetimepicker.xml  (widgets/datetimepicker.xml)
