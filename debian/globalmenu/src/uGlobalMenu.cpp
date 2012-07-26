@@ -255,7 +255,7 @@ DispatchMouseEvent(nsIContent *aPopup, const nsAString& aType)
     return;
   }
 
-  mouseEvent->InitMouseEvent(aType, true, true, window, nsnull,
+  mouseEvent->InitMouseEvent(aType, true, true, window, 0,
                              0, 0, 0, 0, false, false, false, false,
                              0, nsnull);
 
