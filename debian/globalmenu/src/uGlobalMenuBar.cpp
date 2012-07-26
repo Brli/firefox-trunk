@@ -516,9 +516,9 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
 
   nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aKeyEvent);
   uGlobalMenuObject *found = nsnull;
-  PRUint32 keyCode = nsnull;
 
   if (keyEvent) {
+    PRUint32 keyCode;
     keyEvent->GetKeyCode(&keyCode);
     PRUint32 count = mMenuObjects.Length();
     PRUint32 modifiers = GetModifiersFromEvent(keyEvent);
