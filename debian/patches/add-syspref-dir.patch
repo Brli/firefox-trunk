@@ -2,19 +2,19 @@ Description: Add a system-wide preferences folder
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: no
 
-Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsXREDirProvider.cpp
+Index: firefox-trunk-17.0~a1~hg20120807r101567/toolkit/xre/nsXREDirProvider.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/toolkit/xre/nsXREDirProvider.cpp	2012-07-02 11:08:32.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsXREDirProvider.cpp	2012-07-02 17:11:30.218977459 +0100
-@@ -601,6 +601,7 @@
+--- firefox-trunk-17.0~a1~hg20120807r101567.orig/toolkit/xre/nsXREDirProvider.cpp	2012-08-07 03:12:55.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120807r101567/toolkit/xre/nsXREDirProvider.cpp	2012-08-07 12:10:15.303809140 +0100
+@@ -613,6 +613,7 @@
  }
  
- static const char *const kAppendPrefDir[] = { "defaults", "preferences", nsnull };
-+static const char *const kAppendSysPrefDir[] = { "defaults", "syspref", nsnull };
+ static const char *const kAppendPrefDir[] = { "defaults", "preferences", nullptr };
++static const char *const kAppendSysPrefDir[] = { "defaults", "syspref", nullptr };
  
  #ifdef DEBUG_bsmedberg
  static void
-@@ -642,6 +643,9 @@
+@@ -654,6 +655,9 @@
      LoadDirIntoArray(mXULAppDir, kAppendPrefDir, directories);
      LoadDirsIntoArray(mAppBundleDirectories,
                        kAppendPrefDir, directories);
@@ -24,10 +24,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/toolkit/xre/nsXREDirProvider.cpp
  
      rv = NS_NewArrayEnumerator(aResult, directories);
    }
-Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppDirectoryServiceDefs.h
+Index: firefox-trunk-17.0~a1~hg20120807r101567/xpcom/io/nsAppDirectoryServiceDefs.h
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/io/nsAppDirectoryServiceDefs.h	2012-07-02 11:08:47.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppDirectoryServiceDefs.h	2012-07-02 17:11:30.218977459 +0100
+--- firefox-trunk-17.0~a1~hg20120807r101567.orig/xpcom/io/nsAppDirectoryServiceDefs.h	2012-08-07 03:13:18.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120807r101567/xpcom/io/nsAppDirectoryServiceDefs.h	2012-08-07 11:38:13.751730203 +0100
 @@ -30,6 +30,7 @@
  
  #define NS_APP_DEFAULTS_50_DIR                  "DefRt"         // The root dir of all defaults dirs
@@ -36,10 +36,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppDirectoryServiceDefs
  #define NS_APP_PROFILE_DEFAULTS_50_DIR          "profDef"       // The profile defaults of the "current"
                                                                  // locale. Should be first choice.
  #define NS_APP_PROFILE_DEFAULTS_NLOC_50_DIR     "ProfDefNoLoc"  // The profile defaults of the "default"
-Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppFileLocationProvider.cpp
+Index: firefox-trunk-17.0~a1~hg20120807r101567/xpcom/io/nsAppFileLocationProvider.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/xpcom/io/nsAppFileLocationProvider.cpp	2012-07-02 11:08:47.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppFileLocationProvider.cpp	2012-07-02 17:11:30.218977459 +0100
+--- firefox-trunk-17.0~a1~hg20120807r101567.orig/xpcom/io/nsAppFileLocationProvider.cpp	2012-08-07 03:13:18.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120807r101567/xpcom/io/nsAppFileLocationProvider.cpp	2012-08-07 11:38:13.751730203 +0100
 @@ -60,6 +60,7 @@
  
  #define DEFAULTS_DIR_NAME           NS_LITERAL_CSTRING("defaults")
@@ -64,10 +64,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/xpcom/io/nsAppFileLocationProvider
      else if (nsCRT::strcmp(prop, NS_APP_PROFILE_DEFAULTS_50_DIR) == 0 ||
               nsCRT::strcmp(prop, NS_APP_PROFILE_DEFAULTS_NLOC_50_DIR) == 0)
      {
-Index: firefox-trunk-16.0~a1~hg20120702r98108/modules/libpref/src/Preferences.cpp
+Index: firefox-trunk-17.0~a1~hg20120807r101567/modules/libpref/src/Preferences.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/modules/libpref/src/Preferences.cpp	2012-07-02 11:07:04.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/modules/libpref/src/Preferences.cpp	2012-07-02 17:11:30.218977459 +0100
+--- firefox-trunk-17.0~a1~hg20120807r101567.orig/modules/libpref/src/Preferences.cpp	2012-08-07 03:11:15.000000000 +0100
++++ firefox-trunk-17.0~a1~hg20120807r101567/modules/libpref/src/Preferences.cpp	2012-08-07 11:38:13.755730205 +0100
 @@ -1057,6 +1057,15 @@
    if (NS_FAILED(rv))
      NS_WARNING("Error parsing application default preferences.");
