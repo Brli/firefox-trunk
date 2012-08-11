@@ -65,6 +65,8 @@
 
 #include "uDebug.h"
 
+#include "compat.h"
+
 #define MODIFIER_SHIFT    1
 #define MODIFIER_CONTROL  2
 #define MODIFIER_ALT      4
