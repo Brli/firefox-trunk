@@ -129,7 +129,6 @@ uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
 {
   gboolean res = dbusmenu_menuitem_child_append(mDbusMenuItem,
                                                 menu->GetDbusMenuItem());
-  menu->ContainerIsOpening();
   return res && mMenuObjects.AppendElement(menu);
 }
 
@@ -145,7 +144,6 @@ uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
   gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                       menu->GetDbusMenuItem(),
                                                       index);
-  menu->ContainerIsOpening();
   return res && mMenuObjects.InsertElementAt(index, menu);
 }
 
@@ -229,8 +227,8 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 
   mEventListener = new EventListener(this);
 
-  mDocument = mContent->GetCurrentDoc();
-  NS_ASSERTION(mDocument, "Menubar is not inside a document");
+  mDocument = mContent->OwnerDoc();
+  NS_ASSERTION(mDocument, "Menubar has no owner document!");
   if (!mDocument) {
     return NS_ERROR_FAILURE;
   }
@@ -599,14 +597,7 @@ uGlobalMenuBar::ObserveAttributeChanged(nsIDocument *aDocument,
                                         nsIContent *aContent,
                                         nsIAtom *aAttribute)
 {
-  TRACETM();
-  NS_ASSERTION(aContent == mContent,
-               "Received an event that wasn't meant for us!");
 
-  // Refresh all children
-  for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
-    mMenuObjects[i]->Invalidate();
-  }
 }
 
 void

@@ -58,9 +58,8 @@ uGlobalMenuSeparator::InitializeDbusMenuItem()
 }
 
 void
-uGlobalMenuSeparator::Refresh()
+uGlobalMenuSeparator::Refresh(uMenuObjectRefreshMode aMode)
 {
-  ClearFlags(UNITY_MENUOBJECT_IS_DIRTY);
   SyncVisibilityFromContent();
 }
 
@@ -89,6 +88,8 @@ uGlobalMenuSeparator::uGlobalMenuSeparator(): uGlobalMenuObject()
 
 uGlobalMenuSeparator::~uGlobalMenuSeparator()
 {
+  TRACETM();
+
   MOZ_COUNT_DTOR(uGlobalMenuSeparator);
 }
 
@@ -118,15 +119,6 @@ uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
                                               nsIAtom *aAttribute)
 {
   NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");
-
-  if (IsDirty()) {
-    return;
-  }
-
-  if (!IsContainerOnScreen()) {
-    Invalidate();
-    return;
-  }
 
   SyncVisibilityFromContent();
 }

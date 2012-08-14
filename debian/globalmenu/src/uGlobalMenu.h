@@ -75,16 +75,7 @@ public:
 
   bool CanOpen();
   void OpenMenuDelayed();
-  virtual void Invalidate();
-  virtual void ContainerIsOpening();
   
-  bool IsOpenOrOpening()
-  {
-    return mFlags & UNITY_MENU_IS_OPENING ||
-           mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::open,
-                                 uWidgetAtoms::_true, eCaseMatters);
-  }
-
 protected:
   virtual void ObserveAttributeChanged(nsIDocument *aDocument,
                                        nsIContent *aContent,
@@ -110,7 +101,7 @@ private:
   bool AppendMenuObject(uGlobalMenuObject *menuObj);
   bool RemoveMenuObjectAt(PRUint32 index);
   virtual void InitializeDbusMenuItem();
-  virtual void Refresh();
+  virtual void Refresh(uMenuObjectRefreshMode aMode);
   virtual uMenuObjectProperties GetValidProperties()
   {
     return static_cast<uMenuObjectProperties>(eLabel | eEnabled | eVisible |

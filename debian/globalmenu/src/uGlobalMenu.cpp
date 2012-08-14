@@ -87,15 +87,22 @@ uGlobalMenu::RecycleList::~RecycleList()
 void
 uGlobalMenu::RecycleList::Empty()
 {
+  TRACEM(mMenu);
+
   while(mList.Length() > 0) {
     dbusmenu_menuitem_child_delete(mMenu->GetDbusMenuItem(), Shift());
   }
+
+  dbusmenu_menuitem_property_set(mMenu->GetDbusMenuItem(),
+                                 DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
+                                 DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU);
 }
 
 DbusmenuMenuitem*
 uGlobalMenu::RecycleList::Shift()
 {
   if (mList.Length() == 0) {
+    LOGM(mMenu, "No items to shift from the front of the recycle list");
     return nsnull;
   }
 
@@ -103,6 +110,8 @@ uGlobalMenu::RecycleList::Shift()
   DbusmenuMenuitem *recycled = mList[0];
   mList.RemoveElementAt(0);
 
+  LOGM(mMenu, "Shifting %p from the front of the recycle list. New marker=%d",
+       (void *)recycled, mMarker);
   return recycled;
 }
 
@@ -113,12 +122,14 @@ uGlobalMenu::RecycleList::Unshift(DbusmenuMenuitem *aItem)
     --mMarker;
   }
 
+  LOGM(mMenu, "Prepending %p to recycle list. New marker=%d", (void *)aItem, mMarker);
   mList.InsertElementAt(0, aItem);
 }
 
 void
 uGlobalMenu::RecycleList::Push(DbusmenuMenuitem *aItem)
 {
+  LOGM(mMenu, "Appending %p to recycle list", (void *)aItem);
   mList.AppendElement(aItem);
 }
 
@@ -167,6 +178,7 @@ DispatchEvent(nsIContent *aContent, const nsAString& aType)
   }
 
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aContent->OwnerDoc());
+  NS_ASSERTION(domDoc, "Document failed QI to nsIDOMDocument");
   if (!domDoc) {
     return;
   }
@@ -212,13 +224,15 @@ uGlobalMenu::Deactivate()
 bool
 uGlobalMenu::CanOpen()
 {
-    bool isHidden = IsHidden();
+    
+    bool isVisible = dbusmenu_menuitem_property_get_bool(mDbusMenuItem,
+                                                         DBUSMENU_MENUITEM_PROP_VISIBLE);
     bool isDisabled = mContent->AttrValueIs(kNameSpaceID_None,
                                             uWidgetAtoms::disabled,
                                             uWidgetAtoms::_true,
                                             eCaseMatters);
 
-    return (!isHidden && !isDisabled);
+    return (isVisible && !isDisabled);
 }
 
 static void
@@ -231,6 +245,7 @@ DispatchMouseEvent(nsIContent *aPopup, const nsAString& aType)
   }
 
   nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aPopup->OwnerDoc());
+  NS_ASSERTION(domDoc, "Document failed QI to nsIDOMDocument");
   if (!domDoc) {
     return;
   }
@@ -299,18 +314,13 @@ uGlobalMenu::AboutToOpen()
 
   SetFlags(UNITY_MENU_IS_OPENING);
 
+  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open, NS_LITERAL_STRING("true"), true);
+
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
   if (!mPopupContent) {
     LOGTM("Menu has no popup content");
     return;
-  }
-
-  // Tell children we are opening. This will cause invalidated children
-  // to refresh
-  PRUint32 count = mMenuObjects.Length();
-  for (PRUint32 i = 0; i < count; i++) {
-    mMenuObjects[i]->ContainerIsOpening();
   }
 
   nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
@@ -323,6 +333,10 @@ uGlobalMenu::AboutToOpen()
   mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
                          NS_LITERAL_STRING("showing"), false);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshowing"));
+
+  for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
+    mMenuObjects[i]->ContainerIsOpening();
+  }
 }
 
 void
@@ -338,8 +352,6 @@ uGlobalMenu::OnOpen()
   }
 
   ClearFlags(UNITY_MENU_IS_OPENING);
-
-  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open, NS_LITERAL_STRING("true"), true);
 
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
@@ -358,11 +370,6 @@ uGlobalMenu::OnClose()
   TRACETM();
 
   mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
-
-  PRUint32 count = mMenuObjects.Length();
-  for (PRUint32 i = 0; i < count; i++) {
-    mMenuObjects[i]->ContainerIsClosing();
-  }
 
   // If there is no popup content, then there is nothing to do, and it's
   // unsafe to proceed anyway
@@ -384,14 +391,15 @@ uGlobalMenu::OnClose()
 }
 
 void
-uGlobalMenu::Refresh()
+uGlobalMenu::Refresh(uMenuObjectRefreshMode aMode)
 {
   TRACETM();
 
-  ClearFlags(UNITY_MENUOBJECT_IS_DIRTY);
+  if (aMode == eRefreshFull) {
+    SyncLabelFromContent();
+    SyncSensitivityFromContent();
+  }
 
-  SyncLabelFromContent();
-  SyncSensitivityFromContent();
   SyncVisibilityFromContent();
   SyncIconFromContent();
 }
@@ -458,15 +466,14 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
 
   gboolean res = TRUE;
   if (recycled) {
+    LOGTM("Inserting item at index %d using recycled DbusmenuMenuitem %p",
+          index, (void *)recycled);
     menuObj->SetDbusMenuItem(recycled);
   } else {
+    LOGTM("Inserting item at index %d", index);
     res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                menuObj->GetDbusMenuItem(),
                                                correctedIndex);
-  }
-
-  if (IsOpenOrOpening()) {
-    menuObj->ContainerIsOpening();
   }
 
   return res && mMenuObjects.InsertElementAt(index, menuObj);
@@ -489,14 +496,12 @@ uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 
   gboolean res = TRUE;
   if (recycled) {
+    LOGTM("Appending item using recycled DbusmenuMenuitem %p", (void *)recycled);
     menuObj->SetDbusMenuItem(recycled);
   } else {
+    LOGTM("Appending item");
     res = dbusmenu_menuitem_child_append(mDbusMenuItem,
                                          menuObj->GetDbusMenuItem());
-  }
-
-  if (IsOpenOrOpening()) {
-    menuObj->ContainerIsOpening();
   }
 
   return res && mMenuObjects.AppendElement(menuObj);
@@ -521,7 +526,8 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
   if (!mRecycleList) {
     mRecycleList = new RecycleList(this, index);
   } else if (mRecycleList->mList.Length() > 0 &&
-             (index < mRecycleList->mMarker - 1 ||
+             ((mRecycleList->mMarker != 0 &&
+               index < mRecycleList->mMarker - 1) ||
               index > mRecycleList->mMarker)) {
     // If this node is not adjacent to any previously removed nodes, then
     // free the existing nodes already and restart the process
@@ -535,6 +541,7 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
     mRecycleList->Unshift(mMenuObjects[index]->GetDbusMenuItem());
   }
 
+  LOGTM("Removing item at index %d", index);
   mMenuObjects.RemoveElementAt(index);
 
   return true;
@@ -609,25 +616,23 @@ uGlobalMenu::InitializePopup()
   // we are a child of an element with "display: none"
   // Borrowed from widget/src/cocoa/nsMenuX.mm, we need this to make
   // some menus in Thunderbird work
-  nsIDocument *doc = mPopupContent->OwnerDoc();
-  if (doc) {
-    nsIXPConnect *xpconnect = uGlobalMenuService::GetXPConnect();
-    if (xpconnect) {
-      nsIScriptGlobalObject *sgo = doc->GetScriptGlobalObject();
-      nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
-      JSObject *global = sgo->GetGlobalJSObject();
-      if (scriptContext && global) {
-        JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
-        if (cx) {
-          LOGTM("Wrapping menupopup");
-          nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
-          nsresult rv = xpconnect->WrapNative(cx, global,
-                                              mPopupContent,
-                                              NS_GET_IID(nsISupports),
-                                              getter_AddRefs(wrapper));
-          if (NS_FAILED(rv)) {
-            NS_WARNING("Failed to wrap menupopup");
-          }
+  nsIXPConnect *xpconnect = uGlobalMenuService::GetXPConnect();
+  NS_ASSERTION(xpconnect, "Could not get xpconnect");
+  if (xpconnect) {
+    nsIScriptGlobalObject *sgo = mPopupContent->OwnerDoc()->GetScriptGlobalObject();
+    nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
+    JSObject *global = sgo->GetGlobalJSObject();
+    if (scriptContext && global) {
+      JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
+      if (cx) {
+        LOGTM("Wrapping menupopup");
+        nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
+        nsresult rv = xpconnect->WrapNative(cx, global,
+                                            mPopupContent,
+                                            NS_GET_IID(nsISupports),
+                                            getter_AddRefs(wrapper));
+        if (NS_FAILED(rv)) {
+          NS_WARNING("Failed to wrap menupopup");
         }
       }
     }
@@ -647,14 +652,6 @@ uGlobalMenu::Build()
   for (PRUint32 i = 0; i < count; i++) {
     RemoveMenuObjectAt(0);
   }
-
-  // Removing all of the children causes dbusmenu to convert us from a
-  // submenu to a normal menuitem. Adding children changes this back again.
-  // We can avoid the shell ever seeing this by manually making ourself
-  // a submenu again before spinning the event loop
-  dbusmenu_menuitem_property_set(mDbusMenuItem,
-                                 DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
-                                 DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU);
 
   InitializePopup();
 
@@ -716,6 +713,15 @@ uGlobalMenu::uGlobalMenu(): uGlobalMenuObject()
 
 uGlobalMenu::~uGlobalMenu()
 {
+  TRACETM();
+
+  // Although nsTArray will take care of this in its constructor,
+  // we have to manually ensure children are removed from our dbusmenu
+  // item, just in case our parent recycles it
+  while (mMenuObjects.Length() > 0) {
+    RemoveMenuObjectAt(0);
+  }
+
   if (mListener && mPopupContent && mContent != mPopupContent) {
     mListener->UnregisterForContentChanges(mPopupContent, this);
   }
@@ -732,13 +738,9 @@ uGlobalMenu::~uGlobalMenu()
     NS_ASSERTION(found == 1, "Failed to disconnect \"event\" handler");
   }
 
-  if (mRecycleList) {
-    // The recycle list doesn't hold a strong ref to our dbusmenuitem or
-    // any of it's children. As we've just dropped our ref, if there are
-    // any items on the recycle list, forget them now. If we don't forget
-    // them, we will crash when calling the recycle list destructor
-    mRecycleList->mList.Clear();
-  }
+  // The recycle list doesn't hold a strong ref to our dbusmenuitem or
+  // any of it's children, so we need to drop them now to avoid crashing later
+  mRecycleList = nsnull;
 
   MOZ_COUNT_DTOR(uGlobalMenu);
 }
@@ -761,33 +763,6 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
   }
 
   return static_cast<uGlobalMenuObject *>(menu);
-}
-
-void
-uGlobalMenu::Invalidate()
-{
-  uGlobalMenuObject::Invalidate();
-
-  // If we are visible on screen, now we go and invalidate children. If not,
-  // then we invalidate them when we appear on screen in ContainerIsOpening().
-  // If we need a rebuild, we just skip this.
-  if (IsContainerOnScreen() && !DoesNeedRebuild()) {
-    for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
-      mMenuObjects[i]->Invalidate();
-    }
-  }
-} 
-
-void
-uGlobalMenu::ContainerIsOpening()
-{
-  if (IsDirty() && !DoesNeedRebuild()) {
-    for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
-      mMenuObjects[i]->Invalidate();
-    }
-  }
-
-  uGlobalMenuObject::ContainerIsOpening();
 }
 
 /*static*/ gboolean
@@ -828,17 +803,6 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
     return;
   }
 
-  if (IsDirty()) {
-    LOGTM("Previously marked as invalid");
-    return;
-  }
-
-  if (!IsContainerOnScreen()) {
-    LOGTM("Parent isn't open or opening. Marking invalid");
-    Invalidate();
-    return;
-  }
-
   if (aContent == mContent) {
     if (aAttribute == uWidgetAtoms::disabled) {
       SyncSensitivityFromContent();
@@ -847,18 +811,10 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
       SyncLabelFromContent();
     } else if (aAttribute == uWidgetAtoms::image) {
       SyncIconFromContent();
+    } else if (aAttribute == uWidgetAtoms::hidden ||
+               aAttribute == uWidgetAtoms::collapsed) {
+      SyncVisibilityFromContent();
     }
-
-    SyncVisibilityFromContent();
-    if (aAttribute != uWidgetAtoms::image) {
-      SyncIconFromContent();
-    }
-  }
-
-  // Attribute changes can change the style of children, so
-  // we invalidate them
-  for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
-    mMenuObjects[i]->Invalidate();
   }
 }
 
@@ -874,12 +830,6 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
 
   if (DoesNeedRebuild()) {
     LOGTM("Previously marked as needing a rebuild");
-    return;
-  }
-
-  if (!IsOpenOrOpening()) {
-    LOGTM("Not open or opening - Marking as needing a rebuild");
-    SetNeedsRebuild();
     return;
   }
 
@@ -906,12 +856,6 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
 
   if (DoesNeedRebuild()) {
     LOGTM("Previously marked as needing a rebuild");
-    return;
-  }
-
-  if (!IsOpenOrOpening()) {
-    LOGTM("Not open or opening - Marking as needing a rebuild");
-    SetNeedsRebuild();
     return;
   }
 

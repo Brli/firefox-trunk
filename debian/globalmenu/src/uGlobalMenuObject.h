@@ -55,15 +55,6 @@
 
 #define FLAG(val) (1 << val)
 
-// The menuitem attributes need updating
-#define UNITY_MENUOBJECT_IS_DIRTY               FLAG(0)
-
-// The content node says that this menuitem should be visible
-#define UNITY_MENUOBJECT_CONTENT_IS_VISIBLE     FLAG(1)
-
-// The menuobject is visible on screen
-#define UNITY_MENUOBJECT_CONTAINER_ON_SCREEN    FLAG(2)
-
 // Used ny the reentrancy guard for SyncSensitivityFromContent()
 #define UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD FLAG(3)
 
@@ -90,6 +81,11 @@ enum uMenuObjectProperties {
   eChildDisplay = (1 << 8)
 };
 
+enum uMenuObjectRefreshMode {
+  eRefreshFull,
+  eContainerOpeningRefresh
+};
+
 class uGlobalMenuObject;
 class uGlobalMenuBar;
 class nsIDOMCSSStyleDeclaration;
@@ -114,9 +110,7 @@ public:
   uGlobalMenuObject* GetParent() { return mParent; }
   virtual uMenuObjectType GetType()=0;
   nsIContent* GetContent() { return mContent; }
-  virtual void Invalidate();
-  virtual void ContainerIsOpening();
-  virtual void ContainerIsClosing() { ClearFlags(UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
+  void ContainerIsOpening() { Refresh(eContainerOpeningRefresh); }
   virtual ~uGlobalMenuObject();
 
 protected:
@@ -126,9 +120,6 @@ protected:
   void SyncSensitivityFromContent(nsIContent *aContent);
   void SyncSensitivityFromContent();
   void SyncIconFromContent();
-  bool IsHidden() { return !(mFlags & UNITY_MENUOBJECT_CONTENT_IS_VISIBLE); }
-  bool IsDirty() { return !!(mFlags & UNITY_MENUOBJECT_IS_DIRTY); }
-  bool IsContainerOnScreen() { return !!(mFlags & UNITY_MENUOBJECT_CONTAINER_ON_SCREEN); }
 
   void SetFlags(PRUint16 aFlags) { mFlags = mFlags | aFlags; }
   void ClearFlags(PRUint16 aFlags) { mFlags = mFlags & ~aFlags; }
@@ -233,10 +224,11 @@ private:
     uGlobalMenuObject *mMenuItem;
     nsCOMPtr<imgIRequest> mIconRequest;
     nsIntRect mImageRect;
+    nsString mUriString;
   };
 
   virtual void InitializeDbusMenuItem() { };
-  virtual void Refresh() { };
+  virtual void Refresh(uMenuObjectRefreshMode aMode) { };
   virtual uMenuObjectProperties GetValidProperties()
   {
     return static_cast<uMenuObjectProperties>(0);

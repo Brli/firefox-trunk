@@ -65,6 +65,8 @@ uGlobalMenuDummy::uGlobalMenuDummy():
 
 uGlobalMenuDummy::~uGlobalMenuDummy()
 {
+  TRACETM();
+
   MOZ_COUNT_DTOR(uGlobalMenuDummy);
 }
 

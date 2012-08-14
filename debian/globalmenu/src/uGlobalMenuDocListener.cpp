@@ -59,8 +59,6 @@ uGlobalMenuDocListener::Init(nsIContent *rootNode)
   NS_ENSURE_ARG(rootNode);
 
   mDocument = rootNode->OwnerDoc();
-  if (!mDocument)
-    return NS_ERROR_FAILURE;
   mDocument->AddMutationObserver(this);
 
   return NS_OK;

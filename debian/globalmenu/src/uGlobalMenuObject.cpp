@@ -123,12 +123,8 @@ GetDOMRectSide(nsIDOMRect* aRect, GetRectSideMethod aMethod)
 NS_IMETHODIMP
 uGlobalMenuObject::IconLoader::Run()
 {
-  TRACEM(mMenuItem);
   // Some of this is borrowed from widget/src/cocoa/nsMenuItemIconX.mm
-  if (mIconRequest) {
-    mIconRequest->Cancel(NS_BINDING_ABORTED);
-    mIconRequest = nsnull;
-  }
+  TRACEM(mMenuItem);
 
   if (!mMenuItem) {
     // Our menu item got destroyed already
@@ -141,8 +137,6 @@ uGlobalMenuObject::IconLoader::Run()
     // no longer be in a document
     return NS_OK;
   }
-
-  mIconLoaded = false;
 
   nsAutoString uriString;
   bool hasImage = mMenuItem->GetContent()->GetAttr(kNameSpaceID_None,
@@ -177,7 +171,16 @@ uGlobalMenuObject::IconLoader::Run()
 
     if (!hasImage) {
       LOGM(mMenuItem, "Menuitem does not have an image");
+      mUriString.Truncate();
+      mImageRect.SetEmpty();
       mMenuItem->ClearIcon();
+
+      // Make sure we cancel any pending request to set the icon
+      if (mIconRequest) {
+        mIconRequest->Cancel(NS_BINDING_ABORTED);
+        mIconRequest = nsnull;
+      }
+
       return NS_OK;
     }
 
@@ -196,13 +199,40 @@ uGlobalMenuObject::IconLoader::Run()
     }
   }
 
+  nsIntRect imageRect;
+
+  if (domRect) {
+    PRInt32 bottom = GetDOMRectSide(domRect, &nsIDOMRect::GetBottom);
+    PRInt32 right = GetDOMRectSide(domRect, &nsIDOMRect::GetRight);
+    PRInt32 top = GetDOMRectSide(domRect, &nsIDOMRect::GetTop);
+    PRInt32 left = GetDOMRectSide(domRect, &nsIDOMRect::GetLeft);
+
+    if (top < 0 || left < 0 || bottom <= top || right <= left) {
+      return NS_ERROR_FAILURE;
+    }
+
+    imageRect.SetRect(left, top, right - left, bottom - top);
+  }
+
+  if (mUriString.Equals(uriString) && mImageRect.IsEqualEdges(imageRect)) {
+    LOGM(mMenuItem, "Icon has not changed");
+    return NS_OK;
+  }
+
   LOGM(mMenuItem, "Icon URI: %s", LOGU16TOU8(uriString));
+
+  if (mIconRequest) {
+    mIconRequest->Cancel(NS_BINDING_ABORTED);
+    mIconRequest = nsnull;
+  }
+
+  mIconLoaded = false;
+
   nsCOMPtr<nsIURI> uri;
   rv = NS_NewURI(getter_AddRefs(uri), uriString);
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to create new URI");
-    mMenuItem->ClearIcon();
-    return NS_OK;
+    return NS_ERROR_FAILURE;
   }
 
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
@@ -222,20 +252,8 @@ uGlobalMenuObject::IconLoader::Run()
 
   mIconRequest->RequestDecode();
 
-  mImageRect.SetEmpty();
-
-  if (domRect) {
-    PRInt32 bottom = GetDOMRectSide(domRect, &nsIDOMRect::GetBottom);
-    PRInt32 right = GetDOMRectSide(domRect, &nsIDOMRect::GetRight);
-    PRInt32 top = GetDOMRectSide(domRect, &nsIDOMRect::GetTop);
-    PRInt32 left = GetDOMRectSide(domRect, &nsIDOMRect::GetLeft);
-
-    if (top < 0 || left < 0 || bottom <= top || right <= left) {
-      return NS_ERROR_FAILURE;
-    }
-
-    mImageRect.SetRect(left, top, right - left, bottom - top);
-  }
+  mUriString = uriString;
+  mImageRect = imageRect;
 
   return NS_OK;
 }
@@ -352,6 +370,7 @@ uGlobalMenuObject::IconLoader::OnStopFrame(imgIRequest *aRequest,
                                          pixbuf);
     g_object_unref(pixbuf);
   } else {
+    NS_WARNING("Failed to create pixbuf");
     mMenuItem->ClearIcon();
   }
 
@@ -626,7 +645,6 @@ uGlobalMenuObject::SyncVisibilityFromContent()
   }
 
   LOGTM("Setting visibility to %s", vis ? "visible" : "hidden");
-  SetOrClearFlags(vis, UNITY_MENUOBJECT_CONTENT_IS_VISIBLE);
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_VISIBLE,
                                       vis);
@@ -690,35 +708,13 @@ uGlobalMenuObject::SyncIconFromContent()
   }
 }
 
-void
-uGlobalMenuObject::Invalidate()
-{
-  if (IsContainerOnScreen()) {
-    Refresh();
-  } else {
-    SetFlags(UNITY_MENUOBJECT_IS_DIRTY);
-  }
-}
-
-void
-uGlobalMenuObject::ContainerIsOpening()
-{
-  TRACETM();
-
-  SetFlags(UNITY_MENUOBJECT_CONTAINER_ON_SCREEN);
-
-  if (IsDirty()) {
-    Refresh();
-  }
-}
-
 DbusmenuMenuitem*
 uGlobalMenuObject::GetDbusMenuItem()
 {
   if (!mDbusMenuItem) {
     mDbusMenuItem = dbusmenu_menuitem_new();
     InitializeDbusMenuItem();
-    Refresh();
+    Refresh(eRefreshFull);
   }
 
   return mDbusMenuItem;
@@ -737,7 +733,7 @@ uGlobalMenuObject::SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem)
 
   OnlyKeepProperties(GetValidProperties());
   InitializeDbusMenuItem();
-  Refresh();
+  Refresh(eRefreshFull);
 }
 
 void

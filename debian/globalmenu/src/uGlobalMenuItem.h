@@ -95,7 +95,7 @@ private:
   void SyncAccelFromContent();
   void SyncTypeAndStateFromContent();
   virtual void InitializeDbusMenuItem();
-  virtual void Refresh();
+  virtual void Refresh(uMenuObjectRefreshMode aMode);
   virtual uMenuObjectProperties GetValidProperties()
   {
     return static_cast<uMenuObjectProperties>(eLabel | eEnabled | eVisible |
