@@ -376,6 +376,9 @@ binary-post-install/$(MOZ_PKG_NAME)-dev::
 	rm -f debian/$(MOZ_PKG_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_PKG_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 
+binary-post-install/%::
+	find debian/$* -name .mkdir.done -delete
+
 install-langpack-xpis: $(foreach target, $(LANGPACK_TARGETS), install-langpack-xpi-$(target))
 install-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 install-langpack-xpi-%: PKGNAME = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
