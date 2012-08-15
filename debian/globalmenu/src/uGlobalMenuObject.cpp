@@ -41,7 +41,11 @@
 #include <nsIURI.h>
 #include <nsILoadGroup.h>
 #include <imgIContainer.h>
-#include <nsNetError.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION < 17
+# include <nsNetError.h>
+#else
+# include <nsError.h>
+#endif
 #include <nsNetUtil.h>
 #include <nsIImageToPixbuf.h>
 #include <nsIDOMDOMTokenList.h>
