@@ -73,7 +73,7 @@ uGlobalMenuDocListener::Destroy()
 }
 
 uGlobalMenuDocListener::uGlobalMenuDocListener() :
-  mDocument(nsnull)
+  mDocument(nullptr)
 {
   mContentToObserverTable.Init();
 }
@@ -187,7 +187,7 @@ uGlobalMenuDocListener::ContentRemoved(nsIDocument *aDocument,
 void
 uGlobalMenuDocListener::NodeWillBeDestroyed(const nsINode *aNode)
 {
-  mDocument = nsnull;
+  mDocument = nullptr;
 }
 
 void

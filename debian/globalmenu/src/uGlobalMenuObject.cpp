@@ -178,7 +178,7 @@ uGlobalMenuObject::IconLoader::Run()
       // Make sure we cancel any pending request to set the icon
       if (mIconRequest) {
         mIconRequest->Cancel(NS_BINDING_ABORTED);
-        mIconRequest = nsnull;
+        mIconRequest = nullptr;
       }
 
       return NS_OK;
@@ -223,7 +223,7 @@ uGlobalMenuObject::IconLoader::Run()
 
   if (mIconRequest) {
     mIconRequest->Cancel(NS_BINDING_ABORTED);
-    mIconRequest = nsnull;
+    mIconRequest = nullptr;
   }
 
   mIconLoaded = false;
@@ -242,9 +242,9 @@ uGlobalMenuObject::IconLoader::Run()
     return NS_ERROR_FAILURE;
   }
 
-  rv = loader->LoadImage(uri, nsnull, nsnull, nsnull, loadGroup, this,
-                         nsnull, nsIRequest::LOAD_NORMAL, nsnull,
-                         nsnull, nsnull, getter_AddRefs(mIconRequest));
+  rv = loader->LoadImage(uri, nullptr, nullptr, nullptr, loadGroup, this,
+                         nullptr, nsIRequest::LOAD_NORMAL, nullptr,
+                         nullptr, nullptr, getter_AddRefs(mIconRequest));
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to load icon");
     return rv;
@@ -401,7 +401,7 @@ uGlobalMenuObject::IconLoader::OnStopRequest(imgIRequest *aRequest,
 
   if (mIconRequest) {
     mIconRequest->Cancel(NS_BINDING_ABORTED);
-    mIconRequest = nsnull;
+    mIconRequest = nullptr;
   }
 
   return NS_OK;
@@ -434,10 +434,10 @@ uGlobalMenuObject::IconLoader::Destroy()
 
   if (mIconRequest) {
     mIconRequest->Cancel(NS_BINDING_ABORTED);
-    mIconRequest = nsnull;
+    mIconRequest = nullptr;
   }
 
-  mMenuItem = nsnull;
+  mMenuItem = nullptr;
 }
 
 uGlobalMenuBar*
@@ -452,7 +452,7 @@ uGlobalMenuObject::GetMenuBar()
     tmp = tmp->GetParent();
   }
 
-  return nsnull;
+  return nullptr;
 }
 
 void
@@ -596,7 +596,7 @@ uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
 void
 uGlobalMenuObject::SyncLabelFromContent()
 {
-  SyncLabelFromContent(nsnull);
+  SyncLabelFromContent(nullptr);
 }
 
 inline static void
@@ -685,7 +685,7 @@ uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aContent)
 void
 uGlobalMenuObject::SyncSensitivityFromContent()
 {
-  SyncSensitivityFromContent(nsnull);
+  SyncSensitivityFromContent(nullptr);
 }
 
 void
@@ -701,7 +701,7 @@ uGlobalMenuObject::SyncIconFromContent()
   } else {
     if (mIconLoader) {
       mIconLoader->Destroy();
-      mIconLoader = nsnull;
+      mIconLoader = nullptr;
     }
 
     ClearIcon();
@@ -751,7 +751,7 @@ uGlobalMenuObject::OnlyKeepProperties(uMenuObjectProperties aKeep)
 void
 uGlobalMenuObject::GetComputedStyle(nsIDOMCSSStyleDeclaration **aResult)
 {
-  *aResult = nsnull;
+  *aResult = nullptr;
 
   nsIDocument *doc = mContent->GetCurrentDoc();
   if (!doc) {
@@ -788,6 +788,6 @@ uGlobalMenuObject::~uGlobalMenuObject()
 
   if (mDbusMenuItem) {
     g_object_unref(mDbusMenuItem);
-    mDbusMenuItem = nsnull;
+    mDbusMenuItem = nullptr;
   }
 }

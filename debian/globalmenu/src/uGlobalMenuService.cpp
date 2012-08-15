@@ -79,7 +79,7 @@ public:
                        mCancellable(aCancellable)
   {
     g_object_ref(mCancellable);
-    mID = g_cancellable_connect(mCancellable, G_CALLBACK(Cancelled), this, nsnull);
+    mID = g_cancellable_connect(mCancellable, G_CALLBACK(Cancelled), this, nullptr);
   }
 
   static void Cancelled(GCancellable *aCancellable,
@@ -91,7 +91,7 @@ public:
     // If the request was cancelled, then invalidate pointers to objects
     // that might not exist anymore, as we don't assume that GDBus
     // cancellation is reliable (see https://launchpad.net/bugs/953562)
-    cbdata->mMenu = nsnull;
+    cbdata->mMenu = nullptr;
   }
 
   uGlobalMenuBar* GetMenuBar() { return mMenu; }
@@ -110,9 +110,9 @@ private:
 
 NS_IMPL_ISUPPORTS2(uGlobalMenuService, uIGlobalMenuService, nsIWindowMediatorListener)
 
-uGlobalMenuService* uGlobalMenuService::sService = nsnull;
+uGlobalMenuService* uGlobalMenuService::sService = nullptr;
 #define SERVICE(Name, Interface, CID) \
-Interface* uGlobalMenuService::s##Name = nsnull;
+Interface* uGlobalMenuService::s##Name = nullptr;
 #include "uGlobalMenuServiceList.h"
 #undef SERVICE
 bool uGlobalMenuService::sShutdown = false;
@@ -126,7 +126,7 @@ uGlobalMenuService::GetInstanceForService()
   }
 
   if (sShutdown) {
-    return nsnull;
+    return nullptr;
   }
 
   sService = new uGlobalMenuService();
@@ -134,8 +134,8 @@ uGlobalMenuService::GetInstanceForService()
 
   if (NS_FAILED(sService->Init())) {
     NS_RELEASE(sService);
-    sService = nsnull;
-    return nsnull;
+    sService = nullptr;
+    return nullptr;
   }
 
   NS_ADDREF(sService);
@@ -150,11 +150,11 @@ uGlobalMenuService::Get##Name() \
     return s##Name; \
   } \
   if (sShutdown) { \
-    return nsnull; \
+    return nullptr; \
   } \
   nsCOMPtr<Interface> tmp = do_GetService(CID); \
   if (!tmp) { \
-    return nsnull; \
+    return nullptr; \
   } \
   s##Name = tmp; \
   NS_ADDREF(s##Name); \
@@ -174,13 +174,13 @@ uGlobalMenuService::Shutdown()
         g_cancellable_cancel(sService->mCancellable);
       }
       NS_RELEASE(sService);
-      sService = nsnull;
+      sService = nullptr;
     }
 
 #define SERVICE(Name, Interface, CID) \
     if (s##Name) { \
       NS_RELEASE(s##Name); \
-      s##Name = nsnull; \
+      s##Name = nullptr; \
     }
 #include "uGlobalMenuServiceList.h"
 #undef SERVICE
@@ -199,7 +199,7 @@ uGlobalMenuService::InitService()
       do_GetService(U_GLOBALMENUSERVICE_CONTRACTID);
   }
 
-  return sService != nsnull;
+  return sService != nullptr;
 }
 
 /*static*/ void
@@ -227,7 +227,7 @@ uGlobalMenuService::ProxyCreatedCallback(GObject *object,
   }
 
   g_object_unref(sService->mCancellable);
-  sService->mCancellable = nsnull;
+  sService->mCancellable = nullptr;
 
   sService->mDbusProxy = proxy;
 

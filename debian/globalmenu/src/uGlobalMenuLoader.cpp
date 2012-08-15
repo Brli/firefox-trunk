@@ -155,7 +155,7 @@ uGlobalMenuLoader::RegisterAllMenus()
   }
 
   nsCOMPtr<nsISimpleEnumerator> iter;
-  wm->GetXULWindowEnumerator(nsnull, getter_AddRefs(iter));
+  wm->GetXULWindowEnumerator(nullptr, getter_AddRefs(iter));
   NS_ASSERTION(iter, "Failed to get XUL window enumerator");
   if (!iter) {
     return;

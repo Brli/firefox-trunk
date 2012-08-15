@@ -345,8 +345,8 @@ uGlobalMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent)
 }
 
 uGlobalMenuBar::uGlobalMenuBar():
-  uGlobalMenuObject(), mServer(nsnull), mTopLevel(nsnull),
-  mCancellable(nsnull)
+  uGlobalMenuObject(), mServer(nullptr), mTopLevel(nullptr),
+  mCancellable(nullptr)
 {
   MOZ_COUNT_CTOR(uGlobalMenuBar);
 }
@@ -416,12 +416,12 @@ uGlobalMenuBar::Create(nsIWidget *aWindow,
 {
   uGlobalMenuBar *menubar = new uGlobalMenuBar();
   if (!menubar) {
-    return nsnull;
+    return nullptr;
   }
 
   if (NS_FAILED(menubar->Init(aWindow, aMenuBar))) {
     delete menubar;
-    return nsnull;
+    return nullptr;
   }
 
   return menubar;
@@ -515,7 +515,7 @@ uGlobalMenuBar::KeyPress(nsIDOMEvent *aKeyEvent)
   }
 
   nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aKeyEvent);
-  uGlobalMenuObject *found = nsnull;
+  uGlobalMenuObject *found = nullptr;
 
   if (keyEvent) {
     PRUint32 keyCode;
@@ -587,7 +587,7 @@ void
 uGlobalMenuBar::NotifyMenuBarRegistered()
 {
   g_object_unref(mCancellable);
-  mCancellable = nsnull;
+  mCancellable = nullptr;
 
   SetFlags(UNITY_MENUBAR_IS_REGISTERED);
 }

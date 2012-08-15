@@ -102,8 +102,8 @@ class uGlobalMenuObject
 public:
   NS_INLINE_DECL_REFCOUNTING(uGlobalMenuObject)
 
-  uGlobalMenuObject (): mDbusMenuItem(nsnull), mListener(nsnull),
-                        mParent(nsnull), mFlags(0) { };
+  uGlobalMenuObject (): mDbusMenuItem(nullptr), mListener(nullptr),
+                        mParent(nullptr), mFlags(0) { };
 
   DbusmenuMenuitem* GetDbusMenuItem();
   void SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem);

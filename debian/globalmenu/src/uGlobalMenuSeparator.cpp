@@ -102,12 +102,12 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
 
   uGlobalMenuSeparator *menuitem = new uGlobalMenuSeparator();
   if (!menuitem) {
-    return nsnull;
+    return nullptr;
   }
 
   if (NS_FAILED(menuitem->Init(aParent, aListener, aContent))) {
     delete menuitem;
-    return nsnull;
+    return nullptr;
   }
 
   return static_cast<uGlobalMenuObject *>(menuitem);

@@ -73,7 +73,7 @@ uGlobalMenuDummy::~uGlobalMenuDummy()
 nsresult
 uGlobalMenuDummy::Init()
 {
-  mParent = nsnull;
+  mParent = nullptr;
 
   return NS_OK;
 }
@@ -85,12 +85,12 @@ uGlobalMenuDummy::Create()
 
   uGlobalMenuDummy *menuitem = new uGlobalMenuDummy();
   if (!menuitem) {
-    return nsnull;
+    return nullptr;
   }
 
   if (NS_FAILED(menuitem->Init())) {
     delete menuitem;
-    return nsnull;
+    return nullptr;
   }
 
   return static_cast<uGlobalMenuObject *>(menuitem);

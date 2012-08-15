@@ -418,7 +418,7 @@ uGlobalMenuItem::SyncAccelFromContent()
         }
       }
 
-      token = strtok(nsnull, ", \t");
+      token = strtok(nullptr, ", \t");
     }
 
     nsMemory::Free(str);
@@ -465,7 +465,7 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
   TRACETM();
 
   static nsIContent::AttrValuesArray attrs[] =
-    { &uWidgetAtoms::checkbox, &uWidgetAtoms::radio, nsnull };
+    { &uWidgetAtoms::checkbox, &uWidgetAtoms::radio, nullptr };
   PRInt32 type = mContent->FindAttrValueIn(kNameSpaceID_None,
                                            uWidgetAtoms::type,
                                            attrs, eCaseMatters);
@@ -521,11 +521,11 @@ uGlobalMenuItem::Refresh(uMenuObjectRefreshMode aMode)
   if (aMode == eRefreshFull) {
     if (mCommandContent) {
       mListener->UnregisterForContentChanges(mCommandContent, this);
-      mCommandContent = nsnull;
+      mCommandContent = nullptr;
     }
     if (mKeyContent) {
       mListener->UnregisterForContentChanges(mKeyContent, this);
-      mKeyContent = nsnull;
+      mKeyContent = nullptr;
     }
 
     nsIDocument *doc = mContent->GetCurrentDoc();
@@ -624,7 +624,7 @@ uGlobalMenuItem::Activate(PRUint32 timeStamp)
   cmdEvent->InitCommandEvent(NS_LITERAL_STRING("command"),
                              true, true, window, 0,
                              false, false, false,
-                             false, nsnull);
+                             false, nullptr);
 
   nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
   NS_ASSERTION(priv, "Event failed QI to nsIPrivateDOMEvent");
@@ -733,12 +733,12 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
 
   uGlobalMenuItem *menuitem = new uGlobalMenuItem();
   if (!menuitem) {
-    return nsnull;
+    return nullptr;
   }
 
   if (NS_FAILED(menuitem->Init(aParent, aListener, aContent))) {
     delete menuitem;
-    return nsnull;
+    return nullptr;
   }
 
   return static_cast<uGlobalMenuObject *>(menuitem);

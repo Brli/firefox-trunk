@@ -103,7 +103,7 @@ uGlobalMenu::RecycleList::Shift()
 {
   if (mList.Length() == 0) {
     LOGM(mMenu, "No items to shift from the front of the recycle list");
-    return nsnull;
+    return nullptr;
   }
 
   ++mMarker;
@@ -272,7 +272,7 @@ DispatchMouseEvent(nsIContent *aPopup, const nsAString& aType)
 
   mouseEvent->InitMouseEvent(aType, true, true, window, 0,
                              0, 0, 0, 0, false, false, false, false,
-                             0, nsnull);
+                             0, nullptr);
 
   nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
   NS_ASSERTION(priv, "Event failed QI to nsIPrivateDOMEvent");
@@ -447,7 +447,7 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
 
   PRUint32 correctedIndex = index;
 
-  DbusmenuMenuitem *recycled = nsnull;
+  DbusmenuMenuitem *recycled = nullptr;
   if (mRecycleList && mRecycleList->mList.Length() > 0) {
     if (index < mRecycleList->mMarker) {
       ++mRecycleList->mMarker;
@@ -458,8 +458,8 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
       // removed nodes, then recycle one that we just removed
       recycled = mRecycleList->Shift();
       if (!IsRecycledItemCompatible(recycled, menuObj)) {
-        recycled = nsnull;
-        mRecycleList = nsnull;
+        recycled = nullptr;
+        mRecycleList = nullptr;
       }
     }
   }
@@ -482,15 +482,15 @@ uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
 bool
 uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 {
-  DbusmenuMenuitem *recycled = nsnull;
+  DbusmenuMenuitem *recycled = nullptr;
   if (mRecycleList && mRecycleList->mList.Length() > 0 &&
       mRecycleList->mMarker == mMenuObjects.Length()) {
     // If any nodes were just removed from the end of the menu, then recycle
     // one now
     recycled = mRecycleList->Shift();
     if (!IsRecycledItemCompatible(recycled, menuObj)) {
-      recycled = nsnull;
-      mRecycleList = nsnull;
+      recycled = nullptr;
+      mRecycleList = nullptr;
     }
   }
 
@@ -740,7 +740,7 @@ uGlobalMenu::~uGlobalMenu()
 
   // The recycle list doesn't hold a strong ref to our dbusmenuitem or
   // any of it's children, so we need to drop them now to avoid crashing later
-  mRecycleList = nsnull;
+  mRecycleList = nullptr;
 
   MOZ_COUNT_DTOR(uGlobalMenu);
 }
@@ -754,12 +754,12 @@ uGlobalMenu::Create(uGlobalMenuObject *aParent,
 
   uGlobalMenu *menu = new uGlobalMenu();
   if (!menu) {
-    return nsnull;
+    return nullptr;
   }
 
   if (NS_FAILED(menu->Init(aParent, aListener, aContent))) {
     delete menu;
-    return nsnull;
+    return nullptr;
   }
 
   return static_cast<uGlobalMenuObject *>(menu);

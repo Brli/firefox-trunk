@@ -125,7 +125,7 @@ private:
   void SetNeedsRebuild() { mFlags = mFlags | UNITY_MENU_NEEDS_REBUILDING; }
   void ClearNeedsRebuild() { mFlags = mFlags & ~UNITY_MENU_NEEDS_REBUILDING; }
   bool DoesNeedRebuild() { return !!(mFlags & UNITY_MENU_NEEDS_REBUILDING); }
-  void FreeRecycleList() { mRecycleList = nsnull; }
+  void FreeRecycleList() { mRecycleList = nullptr; }
 
   struct RecycleList
   {
