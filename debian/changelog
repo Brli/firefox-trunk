@@ -1,4 +1,4 @@
-firefox-trunk (16.0~a1~hg20120715r99319-0ubuntu2) UNRELEASED; urgency=low
+firefox-trunk (17.0~a1~hg20120820r102758-0ubuntu1) UNRELEASED; urgency=low
 
   * Update globalmenu-extension to 3.4 prerelease r438
     + Fixes for LP: #1025011 - HUD search crashes Firefox when Firebug
@@ -31,6 +31,7 @@ firefox-trunk (16.0~a1~hg20120715r99319-0ubuntu2) UNRELEASED; urgency=low
     - update debian/apport/source_firefox.py.in
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
+    - update debian/patches/firefox-kde.patch
     - update debian/patches/ubuntu-ua-string-changes.patch
     - update debian/patches/add-syspref-dir.patch
     - update debian/patches/unity-globalmenu-build-support.patch

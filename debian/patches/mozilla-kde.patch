@@ -937,7 +937,7 @@ Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsKDERe
 +        {
 +        nsCString mimetype = output[ 0 ];
 +        nsRefPtr<nsMIMEInfoUnix> mimeInfo = new nsMIMEInfoUnix( mimetype );
-+        NS_ENSURE_TRUE(mimeInfo, nsnull);
++        NS_ENSURE_TRUE(mimeInfo, nullptr);
 +        nsCString description = output[ 1 ];
 +        mimeInfo->SetDescription(NS_ConvertUTF8toUTF16(description));
 +        nsCString handlerAppName = output[ 2 ];
@@ -947,7 +947,7 @@ Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsKDERe
 +        NS_ADDREF((retval = mimeInfo));
 +        return retval;
 +        }
-+    return nsnull;
++    return nullptr;
 +}
 Index: firefox-trunk-17.0~a1~hg20120725r100412/uriloader/exthandler/unix/nsKDERegistry.h
 ===================================================================

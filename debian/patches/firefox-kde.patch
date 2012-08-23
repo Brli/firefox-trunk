@@ -299,7 +299,7 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDE
 +NS_IMETHODIMP
 +nsKDEShellService::GetDefaultFeedReader(nsIFile** _retval)
 +    {
-+    *_retval = nsnull;
++    *_retval = nullptr;
 +
 +    nsCOMPtr<nsIMutableArray> command = do_CreateInstance( NS_ARRAY_CONTRACTID );
 +    if( !command )
