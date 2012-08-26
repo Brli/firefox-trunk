@@ -51,6 +51,8 @@
 #include "uGlobalMenuObject.h"
 #include "uWidgetAtoms.h"
 
+#include "compat.h"
+
 // The menu is in the process of opening
 #define UNITY_MENU_IS_OPENING             FLAG(8)
 

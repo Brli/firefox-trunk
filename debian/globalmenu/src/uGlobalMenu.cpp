@@ -66,7 +66,6 @@
 #include "uGlobalMenuUtils.h"
 
 #include "uDebug.h"
-
 #include "compat.h"
 
 uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu,

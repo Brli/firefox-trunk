@@ -67,7 +67,6 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-
 #include "compat.h"
 
 // XXX: Borrowed from content/xbl/src/nsXBLPrototypeHandler.cpp. This doesn't

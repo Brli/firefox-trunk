@@ -1,6 +1,6 @@
 firefox-trunk (17.0~a1~hg20120820r102758-0ubuntu1) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.4
+  * Update globalmenu-extension to 3.5 prerelease r440
     + Fixes for LP: #1025011 - HUD search crashes Firefox when Firebug
       is installed
       - Provide our own binding for menupopup nodes which derives from the

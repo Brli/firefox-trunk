@@ -42,6 +42,8 @@
 #include <nsStringAPI.h>
 #include <nsXPCOM.h>
 
+#include "compat.h"
+
 #if DEBUG_GLOBALMENU >= 1 && !defined DEBUG
 #undef NS_ASSERTION
 #undef NS_WARN_IF_FALSE

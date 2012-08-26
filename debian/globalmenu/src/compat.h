@@ -36,6 +36,16 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
+#ifndef HAVE_NULLPTR
+#ifdef nsnull
+# define nullptr nsnull
+#elif defined(__GNUC__)
+# define nullptr __null
+#else
+# define nullptr 0L
+#endif
+#endif
+
 #if MOZILLA_BRANCH_MAJOR_VERSION >= 16
 # define nsIPrivateDOMEvent nsIDOMEvent
 #endif

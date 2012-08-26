@@ -64,7 +64,6 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-
 #include "compat.h"
 
 #define MODIFIER_SHIFT    1

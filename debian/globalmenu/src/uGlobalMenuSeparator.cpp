@@ -48,6 +48,7 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
+#include "compat.h"
 
 void
 uGlobalMenuSeparator::InitializeDbusMenuItem()

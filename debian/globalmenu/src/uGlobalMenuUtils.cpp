@@ -51,6 +51,7 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
+#include "compat.h"
 
 uGlobalMenuObject*
 NewGlobalMenuItem(uGlobalMenuObject *aParent,
