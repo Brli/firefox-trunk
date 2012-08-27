@@ -6,11 +6,11 @@ Bug-Ubuntu: https://launchpad.net/bugs/494067
 Bug-OpenSUSE: https://bugzilla.novell.com/show_bug.cgi?id=170055
 Forwarded: no
 
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/base/content/browser-kde.xul
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/base/content/browser-kde.xul
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/browser/base/content/browser-kde.xul	2012-07-02 17:06:42.050965622 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/base/content/browser-kde.xul	2012-07-02 17:09:21.514972173 +0100
-@@ -158,7 +158,7 @@
+--- firefox-trunk-17.0~a1~hg20120826r103484.orig/browser/base/content/browser-kde.xul	2012-08-27 21:07:36.856260141 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/base/content/browser-kde.xul	2012-08-27 21:08:47.688263051 +0100
+@@ -154,7 +154,7 @@
        </row>
        <vbox id="editBookmarkPanelContent" flex="1" hidden="true"/>
        <hbox id="editBookmarkPanelBottomButtons" pack="end">
@@ -19,10 +19,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/base/content/browser-kde.x
          <button id="editBookmarkPanelDoneButton"
                  class="editBookmarkPanelBottomButton"
                  label="&editBookmark.done.label;"
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/base/jar.mn
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/base/jar.mn
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/browser/base/jar.mn	2012-07-02 11:00:30.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/base/jar.mn	2012-07-02 17:09:21.514972173 +0100
+--- firefox-trunk-17.0~a1~hg20120826r103484.orig/browser/base/jar.mn	2012-08-27 21:07:36.856260141 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/base/jar.mn	2012-08-27 21:08:47.688263051 +0100
 @@ -40,6 +40,8 @@
  *       content/browser/browser.css                   (content/browser.css)
  *       content/browser/browser.js                    (content/browser.js)
@@ -30,12 +30,12 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/base/jar.mn
 +*       content/browser/browser-kde.xul               (content/browser-kde.xul)
 +%       override chrome://browser/content/browser.xul chrome://browser/content/browser-kde.xul desktop=kde
  *       content/browser/browser-tabPreviews.xml       (content/browser-tabPreviews.xml)
- *       content/browser/content.js                    (content/content.js)
- *       content/browser/newtab/newTab.xul             (content/newtab/newTab.xul)
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/build/nsModule.cpp
+         content/browser/content.js                    (content/content.js)
+         content/browser/newtab/newTab.xul             (content/newtab/newTab.xul)
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/build/nsModule.cpp
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/browser/components/build/nsModule.cpp	2012-07-02 11:00:35.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/components/build/nsModule.cpp	2012-07-02 17:09:21.514972173 +0100
+--- firefox-trunk-17.0~a1~hg20120826r103484.orig/browser/components/build/nsModule.cpp	2012-08-27 21:07:36.856260141 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/components/build/nsModule.cpp	2012-08-27 21:08:47.688263051 +0100
 @@ -13,7 +13,7 @@
  #elif defined(XP_MACOSX)
  #include "nsMacShellService.h"
@@ -63,10 +63,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/build/nsModule.
  #endif
      { &kNS_FEEDSNIFFER_CID, false, NULL, nsFeedSnifferConstructor },
      { &kNS_BROWSER_ABOUT_REDIRECTOR_CID, false, NULL, AboutRedirector::Create },
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/Makefile.in
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/Makefile.in
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/browser/components/shell/src/Makefile.in	2012-07-02 11:00:39.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/Makefile.in	2012-07-02 17:09:21.514972173 +0100
+--- firefox-trunk-17.0~a1~hg20120826r103484.orig/browser/components/shell/src/Makefile.in	2012-08-27 21:07:36.856260141 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/Makefile.in	2012-08-27 21:08:47.688263051 +0100
 @@ -22,7 +22,8 @@
  CPPSRCS = nsMacShellService.cpp
  else
@@ -77,10 +77,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/Makef
  endif
  endif
  endif
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDEShellService.cpp
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsKDEShellService.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDEShellService.cpp	2012-07-02 17:09:21.514972173 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsKDEShellService.cpp	2012-08-27 21:08:47.688263051 +0100
 @@ -0,0 +1,261 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -232,25 +232,25 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDE
 +
 +NS_IMETHODIMP
 +nsKDEShellService::SetDesktopBackground(nsIDOMElement* aElement, 
-+                                        PRInt32 aPosition)
++                                        int32_t aPosition)
 +    {
 +    return NS_ERROR_NOT_IMPLEMENTED;
 +    }
 +
 +NS_IMETHODIMP
-+nsKDEShellService::GetDesktopBackgroundColor(PRUint32 *aColor)
++nsKDEShellService::GetDesktopBackgroundColor(uint32_t *aColor)
 +    {
 +    return NS_ERROR_NOT_IMPLEMENTED;
 +    }
 +
 +NS_IMETHODIMP
-+nsKDEShellService::SetDesktopBackgroundColor(PRUint32 aColor)
++nsKDEShellService::SetDesktopBackgroundColor(uint32_t aColor)
 +    {
 +    return NS_ERROR_NOT_IMPLEMENTED;
 +    }
 +
 +NS_IMETHODIMP
-+nsKDEShellService::OpenApplication(PRInt32 aApplication)
++nsKDEShellService::OpenApplication(int32_t aApplication)
 +    {
 +    nsCOMPtr<nsIMutableArray> command = do_CreateInstance( NS_ARRAY_CONTRACTID );
 +    if (!command)
@@ -316,7 +316,7 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDE
 +    if( !nsKDEUtils::command( command, getter_AddRefs( output ) ) )
 +        return NS_ERROR_FAILURE;
 +
-+    PRUint32 length;
++    uint32_t length;
 +    output->GetLength( &length );
 +    if( length != 1 )
 +        return NS_ERROR_FAILURE;
@@ -343,10 +343,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDE
 +    NS_ADDREF(*_retval = defaultReader);
 +    return NS_OK;
 +    }
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDEShellService.h
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsKDEShellService.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDEShellService.h	2012-07-02 17:09:21.514972173 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsKDEShellService.h	2012-08-27 21:08:47.688263051 +0100
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -407,10 +407,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsKDE
 +};
 +
 +#endif // nskdeshellservice_h____
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsUnixShellService.cpp
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsUnixShellService.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsUnixShellService.cpp	2012-07-02 17:09:21.514972173 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsUnixShellService.cpp	2012-08-27 21:08:47.688263051 +0100
 @@ -0,0 +1,52 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
@@ -464,10 +464,10 @@ Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsUni
 +        return nsKDEShellServiceConstructor( aOuter, aIID, aResult );
 +    return nsGNOMEShellServiceConstructor( aOuter, aIID, aResult );
 +}
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsUnixShellService.h
+Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsUnixShellService.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/components/shell/src/nsUnixShellService.h	2012-07-02 17:09:21.514972173 +0100
++++ firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsUnixShellService.h	2012-08-27 21:08:47.692263051 +0100
 @@ -0,0 +1,45 @@
 +/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 +/* ***** BEGIN LICENSE BLOCK *****
