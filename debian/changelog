@@ -1,4 +1,6 @@
-firefox-trunk (17.0~a1~hg20120820r102758-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (17.0~a1~hg20120826r103484-0ubuntu1) quantal; urgency=low
+
+  * New upstream snapshot v17.0 A1 HG20120826R103484
 
   * Update globalmenu-extension to 3.5 prerelease r440
     + Fixes for LP: #1025011 - HUD search crashes Firefox when Firebug
