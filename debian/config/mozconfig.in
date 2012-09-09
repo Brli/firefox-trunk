@@ -71,3 +71,6 @@ ac_add_options --with-app-basename=@MOZ_APP_BASENAME@
 ac_add_options --with-app-name=@MOZ_APP_NAME@
 %%endif
 %%endif
+%%if MOZ_UPDATE_CHANNEL == nightly
+ac_add_options --enable-profiling
+%%endif
