@@ -286,7 +286,7 @@ Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsKD
 +
 +    cmdstr->SetData( NS_LITERAL_CSTRING( "RUN" ));
 +    command->AppendElement( cmdstr, false );
-+    nsCAutoString app;
++    nsAutoCString app;
 +    nsresult rv = aApplication->GetNativePath( app );
 +    NS_ENSURE_SUCCESS( rv, rv );
 +    appstr->SetData( app );
@@ -325,7 +325,7 @@ Index: firefox-trunk-17.0~a1~hg20120826r103484/browser/components/shell/src/nsKD
 +    if( !resstr )
 +        return NS_ERROR_FAILURE;
 +
-+    nsCAutoString path;
++    nsAutoCString path;
 +    resstr->GetData( path );
 +    if (path.IsEmpty())
 +        return NS_ERROR_FAILURE;
