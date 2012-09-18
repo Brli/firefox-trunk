@@ -354,6 +354,11 @@ uGlobalMenuBar::uGlobalMenuBar():
 uGlobalMenuBar::~uGlobalMenuBar()
 {
   TRACETM();
+
+  if (!IsDestroyed()) {
+    Destroy();
+  }
+
   MOZ_COUNT_DTOR(uGlobalMenuBar);
 }
 
@@ -440,6 +445,8 @@ uGlobalMenuBar::Destroy()
   if (mListener) {
     mListener->Destroy();
   }
+
+  uGlobalMenuObject::Destroy();
 }
 
 void

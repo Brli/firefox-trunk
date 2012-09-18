@@ -700,6 +700,11 @@ uGlobalMenu::uGlobalMenu(): uGlobalMenuObject()
 uGlobalMenu::~uGlobalMenu()
 {
   TRACETM();
+
+  if (!IsDestroyed()) {
+    Destroy();
+  }
+
   MOZ_COUNT_DTOR(uGlobalMenu);
 }
 

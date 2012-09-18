@@ -704,6 +704,10 @@ uGlobalMenuItem::~uGlobalMenuItem()
 {
   TRACETM();
 
+  if (!IsDestroyed()) {
+    Destroy();
+  }
+
   MOZ_COUNT_DTOR(uGlobalMenuItem);
 }
 
