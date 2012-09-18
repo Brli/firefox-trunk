@@ -74,6 +74,7 @@ public:
   static uGlobalMenuObject* Create(uGlobalMenuObject *aParent,
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent);
+  virtual void Destroy();
   virtual ~uGlobalMenuItem();
 
   virtual uMenuObjectType GetType() { return eMenuItem; }

@@ -53,17 +53,25 @@
 
 #include "compat.h"
 
-// The menu is in the process of opening
-#define UNITY_MENU_IS_OPENING             FLAG(8)
+#define UNITY_MENU_POPUP_STATE_0          FLAG(8)
+#define UNITY_MENU_POPUP_STATE_1          FLAG(9)
+#define UNITY_MENU_POPUP_STATE_MASK       (UNITY_MENU_POPUP_STATE_1 | UNITY_MENU_POPUP_STATE_0)
 
 // The menu needs rebuilding
-#define UNITY_MENU_NEEDS_REBUILDING       FLAG(9)
+#define UNITY_MENU_NEEDS_REBUILDING       FLAG(10)
 
 // The shell sent the first "AboutToOpen" event
-#define UNITY_MENU_READY                  FLAG(10)
+#define UNITY_MENU_READY                  FLAG(11)
 
 class uGlobalMenuItem;
 class uGlobalMenuDocListener;
+
+enum uMenuPopupState {
+  ePopupClosed = 0,
+  ePopupShowing,
+  ePopupOpen,
+  ePopupHiding
+};
 
 class uGlobalMenu: public uGlobalMenuObject
 {
@@ -71,6 +79,7 @@ public:
   static uGlobalMenuObject* Create(uGlobalMenuObject *aParent,
                                    uGlobalMenuDocListener *aListener,
                                    nsIContent *aContent);
+  virtual void Destroy();
   virtual ~uGlobalMenu();
 
   virtual uMenuObjectType GetType() { return eMenu; }
@@ -120,14 +129,18 @@ private:
                                 void *data);
   static gboolean DoOpen(gpointer user_data);
   void AboutToOpen();
-  void OnOpen();
+  void FirePopupShownEvent();
   void OnClose();
-  void Activate();
-  void Deactivate();
+  void FirePopupHidingEvent();
   void SetNeedsRebuild() { mFlags = mFlags | UNITY_MENU_NEEDS_REBUILDING; }
   void ClearNeedsRebuild() { mFlags = mFlags & ~UNITY_MENU_NEEDS_REBUILDING; }
   bool DoesNeedRebuild() { return !!(mFlags & UNITY_MENU_NEEDS_REBUILDING); }
   void FreeRecycleList() { mRecycleList = nullptr; }
+  uMenuPopupState GetPopupState()
+  {
+    return static_cast<uMenuPopupState>((mFlags & UNITY_MENU_POPUP_STATE_MASK) >> 8);
+  }
+  void SetPopupState(uMenuPopupState aState);
 
   struct RecycleList
   {

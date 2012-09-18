@@ -704,22 +704,6 @@ uGlobalMenuItem::~uGlobalMenuItem()
 {
   TRACETM();
 
-  if (mListener) {
-    if (mCommandContent) {
-      mListener->UnregisterForContentChanges(mCommandContent, this);
-    }
-    if (mKeyContent) {
-      mListener->UnregisterForContentChanges(mKeyContent, this);
-    }
-  }
-
-  if (mDbusMenuItem) {
-    guint found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                                       FuncToVoidPtr(ItemActivatedCallback),
-                                                       this);
-    NS_ASSERTION(found == 1, "Failed to disconnect \"activated\" handler");
-  }
-
   MOZ_COUNT_DTOR(uGlobalMenuItem);
 }
 
@@ -741,6 +725,33 @@ uGlobalMenuItem::Create(uGlobalMenuObject *aParent,
   }
 
   return static_cast<uGlobalMenuObject *>(menuitem);
+}
+
+void
+uGlobalMenuItem::Destroy()
+{
+  NS_ASSERTION(!IsDestroyed(), "Menuitem is already destroyed");
+  if (IsDestroyed()) {
+    return;
+  }
+
+  if (mListener) {
+    if (mCommandContent) {
+      mListener->UnregisterForContentChanges(mCommandContent, this);
+    }
+    if (mKeyContent) {
+      mListener->UnregisterForContentChanges(mKeyContent, this);
+    }
+  }
+
+  if (mDbusMenuItem) {
+    guint found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
+                                                       FuncToVoidPtr(ItemActivatedCallback),
+                                                       this);
+    NS_ASSERTION(found == 1, "Failed to disconnect \"activated\" handler");
+  }
+
+  uGlobalMenuObject::Destroy();
 }
 
 void

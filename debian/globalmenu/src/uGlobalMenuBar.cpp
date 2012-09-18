@@ -156,6 +156,7 @@ uGlobalMenuBar::RemoveMenuObjectAt(PRUint32 index)
 
   gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
                                        mMenuObjects[index]->GetDbusMenuItem());
+  mMenuObjects[index]->Destroy();
   mMenuObjects.RemoveElementAt(index);
 
   return !!res;
@@ -352,6 +353,37 @@ uGlobalMenuBar::uGlobalMenuBar():
 
 uGlobalMenuBar::~uGlobalMenuBar()
 {
+  TRACETM();
+  MOZ_COUNT_DTOR(uGlobalMenuBar);
+}
+
+/*static*/ uGlobalMenuBar*
+uGlobalMenuBar::Create(nsIWidget *aWindow,
+                       nsIContent *aMenuBar)
+{
+  uGlobalMenuBar *menubar = new uGlobalMenuBar();
+  if (!menubar) {
+    return nullptr;
+  }
+
+  if (NS_FAILED(menubar->Init(aWindow, aMenuBar))) {
+    delete menubar;
+    return nullptr;
+  }
+
+  return menubar;
+}
+
+void
+uGlobalMenuBar::Destroy()
+{
+  TRACETM();
+
+  NS_ASSERTION(!IsDestroyed(), "Menubar is already destroyed");
+  if (IsDestroyed()) {
+    return;
+  }
+
   if (mTopLevel) {
     g_signal_handlers_disconnect_by_func(mTopLevel,
                                          FuncToVoidPtr(MapEventCallback),
@@ -361,6 +393,7 @@ uGlobalMenuBar::~uGlobalMenuBar()
   if (mCancellable) {
     g_cancellable_cancel(mCancellable);
     g_object_unref(mCancellable);
+    mCancellable = nullptr;
   }
 
   if (mDocument) {
@@ -396,34 +429,17 @@ uGlobalMenuBar::~uGlobalMenuBar()
 
   if (mTopLevel) {
     g_object_unref(mTopLevel);
+    mTopLevel = nullptr;
   }
 
   if (mServer) {
     g_object_unref(mServer);
+    mServer = nullptr;
   }
 
   if (mListener) {
     mListener->Destroy();
   }
-
-  MOZ_COUNT_DTOR(uGlobalMenuBar);
-}
-
-/*static*/ uGlobalMenuBar*
-uGlobalMenuBar::Create(nsIWidget *aWindow,
-                       nsIContent *aMenuBar)
-{
-  uGlobalMenuBar *menubar = new uGlobalMenuBar();
-  if (!menubar) {
-    return nullptr;
-  }
-
-  if (NS_FAILED(menubar->Init(aWindow, aMenuBar))) {
-    delete menubar;
-    return nullptr;
-  }
-
-  return menubar;
 }
 
 void

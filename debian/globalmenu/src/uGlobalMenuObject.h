@@ -56,6 +56,8 @@
 
 #define FLAG(val) (1 << val)
 
+#define UNITY_MENUOBJECT_DESTROYED              FLAG(0)
+
 // Used ny the reentrancy guard for SyncSensitivityFromContent()
 #define UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD FLAG(3)
 
@@ -111,7 +113,8 @@ public:
   uGlobalMenuObject* GetParent() { return mParent; }
   virtual uMenuObjectType GetType()=0;
   nsIContent* GetContent() { return mContent; }
-  void ContainerIsOpening() { Refresh(eContainerOpeningRefresh); }
+  void ContainerIsOpening();
+  virtual void Destroy();
   virtual ~uGlobalMenuObject();
 
 protected:
@@ -133,6 +136,8 @@ protected:
       ClearFlags(aFlags);
     }
   }
+
+  bool IsDestroyed() { return !!(mFlags & UNITY_MENUOBJECT_DESTROYED); }
 
   uGlobalMenuBar* GetMenuBar();
 

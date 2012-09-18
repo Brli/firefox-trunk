@@ -715,6 +715,10 @@ uGlobalMenuObject::SyncIconFromContent()
 DbusmenuMenuitem*
 uGlobalMenuObject::GetDbusMenuItem()
 {
+  if (IsDestroyed()) {
+    return nullptr;
+  }
+
   if (!mDbusMenuItem) {
     mDbusMenuItem = dbusmenu_menuitem_new();
     InitializeDbusMenuItem();
@@ -727,8 +731,9 @@ uGlobalMenuObject::GetDbusMenuItem()
 void
 uGlobalMenuObject::SetDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem)
 {
+  NS_ASSERTION(!IsDestroyed(), "Menuobject has been destroyed");
   NS_ASSERTION(!mDbusMenuItem, "This node already has a corresponding DbusmenuMenuitem");
-  if (mDbusMenuItem) {
+  if (mDbusMenuItem || IsDestroyed()) {
     return;
   }
 
@@ -782,6 +787,34 @@ uGlobalMenuObject::GetComputedStyle(nsIDOMCSSStyleDeclaration **aResult)
 
 uGlobalMenuObject::~uGlobalMenuObject()
 {
+  TRACETM();
+
+  if (!IsDestroyed()) {
+    Destroy();
+  }
+}
+
+void
+uGlobalMenuObject::ContainerIsOpening()
+{
+  NS_ASSERTION(!IsDestroyed(), "Menuobject has been destroyed");
+  if (IsDestroyed()) {
+    return;
+  }
+
+  Refresh(eContainerOpeningRefresh);
+}
+
+void
+uGlobalMenuObject::Destroy()
+{
+  TRACETM();
+
+  NS_ASSERTION(!IsDestroyed(), "Menuobject is already destroyed");
+  if (IsDestroyed()) {
+    return;
+  }
+
   if (mIconLoader) {
     mIconLoader->Destroy();
   }
@@ -794,4 +827,8 @@ uGlobalMenuObject::~uGlobalMenuObject()
     g_object_unref(mDbusMenuItem);
     mDbusMenuItem = nullptr;
   }
+
+  mParent = nullptr;
+
+  SetFlags(UNITY_MENUOBJECT_DESTROYED);
 }

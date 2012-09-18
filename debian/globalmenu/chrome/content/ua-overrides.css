@@ -7,6 +7,6 @@ window[shellshowingmenubar="true"] toolbar[type="menubar"]:not([customizing="tru
   border: 0 !important;
 }
 
-menubar menupopup {
+menubar menupopup:not([type]) {
   -moz-binding: url("chrome://globalmenu/content/bindings.xml#popup") !important;
 }

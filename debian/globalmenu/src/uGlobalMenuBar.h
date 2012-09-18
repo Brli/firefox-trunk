@@ -75,6 +75,7 @@ class uGlobalMenuBar: public uGlobalMenuObject
 public:
   static uGlobalMenuBar* Create(nsIWidget *aWindow,
                                 nsIContent *aMenuBar);
+  virtual void Destroy();
   virtual ~uGlobalMenuBar();
 
   virtual uMenuObjectType GetType() { return eMenuBar; }

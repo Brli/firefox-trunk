@@ -57,6 +57,7 @@
 #if MOZILLA_BRANCH_MAJOR_VERSION < 15
 # include <nsIXBLService.h>
 #endif
+#include <nsIRunnable.h>
 
 #include <glib-object.h>
 
@@ -146,7 +147,7 @@ uGlobalMenu::MenuEventCallback(DbusmenuMenuitem *menu,
   }
 
   if (!g_strcmp0("opened", name)) {
-    self->OnOpen();
+    self->AboutToOpen();
     return true;
   }
 
@@ -167,76 +168,62 @@ uGlobalMenu::MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
   return false;
 }
 
-static void
-DispatchEvent(nsIContent *aContent, const nsAString& aType)
-{
-  nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(aContent);
-  NS_ASSERTION(target, "Content failed QI to nsIDOMEventTarget");
-  if (!target) {
-    return;
-  }
-
-  nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(aContent->OwnerDoc());
-  NS_ASSERTION(domDoc, "Document failed QI to nsIDOMDocument");
-  if (!domDoc) {
-    return;
-  }
-
-  nsCOMPtr<nsIDOMEvent> event;
-  domDoc->CreateEvent(NS_LITERAL_STRING("Events"),
-                      getter_AddRefs(event));
-  NS_ASSERTION(event, "Failed to create Event");
-  if (!event) {
-    return;
-  }
-
-  event->InitEvent(aType, true, true);
-  nsCOMPtr<nsIPrivateDOMEvent> priv = do_QueryInterface(event);
-  NS_ASSERTION(priv, "Event failed QI to nsIPrivateDOMEvent");
-  if (!priv) {
-    return;
-  }
-
-  priv->SetTrusted(true);
-
-  bool dummy;
-  target->DispatchEvent(event, &dummy);
-}
-
-void
-uGlobalMenu::Activate()
-{
-  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::menuactive,
-                    NS_LITERAL_STRING("true"), true);
-
-  DispatchEvent(mContent, NS_LITERAL_STRING("DOMMenuItemActive"));
-}
-
-void
-uGlobalMenu::Deactivate()
-{
-  mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::menuactive, true);
-
-  DispatchEvent(mContent, NS_LITERAL_STRING("DOMMenuItemInactive"));
-}
-
 bool
 uGlobalMenu::CanOpen()
 {
+  if (IsDestroyed()) {
+    return false;
+  }
     
-    bool isVisible = dbusmenu_menuitem_property_get_bool(mDbusMenuItem,
-                                                         DBUSMENU_MENUITEM_PROP_VISIBLE);
-    bool isDisabled = mContent->AttrValueIs(kNameSpaceID_None,
-                                            uWidgetAtoms::disabled,
-                                            uWidgetAtoms::_true,
-                                            eCaseMatters);
+  bool isVisible = dbusmenu_menuitem_property_get_bool(mDbusMenuItem,
+                                                       DBUSMENU_MENUITEM_PROP_VISIBLE);
+  bool isDisabled = mContent->AttrValueIs(kNameSpaceID_None,
+                                          uWidgetAtoms::disabled,
+                                          uWidgetAtoms::_true,
+                                          eCaseMatters);
 
-    return (isVisible && !isDisabled);
+  return (isVisible && !isDisabled);
+}
+
+void
+uGlobalMenu::SetPopupState(uMenuPopupState aState)
+{
+  ClearFlags(UNITY_MENU_POPUP_STATE_MASK);
+  SetFlags(aState << 8);
+
+  if (!mPopupContent) {
+    return;
+  }
+
+  nsAutoString state;
+  switch (aState) {
+    case ePopupClosed:
+      state.Assign(NS_LITERAL_STRING("closed"));
+      break;
+    case ePopupShowing:
+      state.Assign(NS_LITERAL_STRING("showing"));
+      break;
+    case ePopupOpen:
+      state.Assign(NS_LITERAL_STRING("open"));
+      break;
+    case ePopupHiding:
+      state.Assign(NS_LITERAL_STRING("hiding"));
+      break;
+    default:
+      NS_NOTREACHED("Invalid popup state");
+  }
+
+  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
+                         state, false);
 }
 
 static void
 DispatchMouseEvent(nsIContent *aPopup, const nsAString& aType)
 {
+  if (!aPopup) {
+    return;
+  }
+
   nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(aPopup);
   NS_ASSERTION(target, "Content failed QI to nsIDOMEventTarget");
   if (!target) {
@@ -307,60 +294,41 @@ uGlobalMenu::AboutToOpen()
     Build();
   }
 
-  if (mFlags & UNITY_MENU_IS_OPENING) {
-    return;
-  }
-
-  SetFlags(UNITY_MENU_IS_OPENING);
-
-  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open, NS_LITERAL_STRING("true"), true);
-
-  // If there is no popup content, then there is nothing to do, and it's
-  // unsafe to proceed anyway
-  if (!mPopupContent) {
-    LOGTM("Menu has no popup content");
+  if (GetPopupState() == ePopupShowing || GetPopupState() == ePopupOpen) {
+    LOGTM("Ignoring AboutToOpen for already open menu");
     return;
   }
 
   nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
 
-  // XXX: This should happen when the pointer hovers over the menu entry,
-  //      but we don't have that information right now. We synthesize it for
-  //      menus, but this doesn't work for menuitems at all
-  Activate();
-
-  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
-                         NS_LITERAL_STRING("showing"), false);
+  SetPopupState(ePopupShowing);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshowing"));
 
   for (PRUint32 i = 0; i < mMenuObjects.Length(); i++) {
     mMenuObjects[i]->ContainerIsOpening();
   }
+
+  SetPopupState(ePopupOpen);
+  mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open,
+                    NS_LITERAL_STRING("true"), true);
+
+  nsCOMPtr<nsIRunnable> event =
+    NS_NewRunnableMethod(this, &uGlobalMenu::FirePopupShownEvent);
+  NS_DispatchToCurrentThread(event);
 }
 
 void
-uGlobalMenu::OnOpen()
+uGlobalMenu::FirePopupShownEvent()
 {
   TRACETM();
 
-  nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
-
-  if (!(mFlags & UNITY_MENU_IS_OPENING)) {
-    // If we didn't receive an AboutToOpen, then generate it ourselves
-    AboutToOpen();
-  }
-
-  ClearFlags(UNITY_MENU_IS_OPENING);
-
-  // If there is no popup content, then there is nothing to do, and it's
-  // unsafe to proceed anyway
-  if (!mPopupContent) {
+  if (IsDestroyed()) {
     return;
   }
 
-  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
-                         NS_LITERAL_STRING("open"), false);
-  DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshown"));
+  if (GetPopupState() == ePopupOpen) {
+    DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshown"));
+  }
 }
 
 void
@@ -368,25 +336,41 @@ uGlobalMenu::OnClose()
 {
   TRACETM();
 
-  mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
+  if (GetPopupState() != ePopupShowing && GetPopupState() != ePopupOpen) {
+    LOGTM("Ignoring OnClose for menu which isn't open");
+    return;
+  }
 
-  // If there is no popup content, then there is nothing to do, and it's
-  // unsafe to proceed anyway
-  if (!mPopupContent) {
+  SetPopupState(ePopupHiding);
+
+  nsCOMPtr<nsIRunnable> event =
+    NS_NewRunnableMethod(this, &uGlobalMenu::FirePopupHidingEvent);
+  NS_DispatchToCurrentThread(event);
+}
+
+void
+uGlobalMenu::FirePopupHidingEvent()
+{
+  TRACETM();
+
+  if (IsDestroyed()) {
+    return;
+  }
+
+  if (GetPopupState() != ePopupHiding) {
     return;
   }
 
   nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
 
-  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
-                         NS_LITERAL_STRING("hiding"), false);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphiding"));
 
-  mPopupContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::_ubuntu_state,
-                         NS_LITERAL_STRING("closed"), false);
-  DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
+  if (GetPopupState() != ePopupClosed) {
+    SetPopupState(ePopupClosed);
+    DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
+  }
 
-  Deactivate();
+  mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
 }
 
 void
@@ -541,6 +525,7 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
   }
 
   LOGTM("Removing item at index %d", index);
+  mMenuObjects[index]->Destroy();
   mMenuObjects.RemoveElementAt(index);
 
   return true;
@@ -597,6 +582,8 @@ uGlobalMenu::InitializePopup()
   if (oldPopupContent == mPopupContent) {
     return;
   }
+
+  SetPopupState(ePopupClosed);
 
   // If the popup has changed, disconnect the old one from the doc observer,
   // attach the new one and attach its bindings
@@ -713,8 +700,38 @@ uGlobalMenu::uGlobalMenu(): uGlobalMenuObject()
 uGlobalMenu::~uGlobalMenu()
 {
   TRACETM();
+  MOZ_COUNT_DTOR(uGlobalMenu);
+}
 
-  // Although nsTArray will take care of this in its constructor,
+/*static*/ uGlobalMenuObject*
+uGlobalMenu::Create(uGlobalMenuObject *aParent,
+                    uGlobalMenuDocListener *aListener,
+                    nsIContent *aContent)
+{
+  TRACEC(aContent);
+
+  uGlobalMenu *menu = new uGlobalMenu();
+  if (!menu) {
+    return nullptr;
+  }
+
+  if (NS_FAILED(menu->Init(aParent, aListener, aContent))) {
+    delete menu;
+    return nullptr;
+  }
+
+  return static_cast<uGlobalMenuObject *>(menu);
+}
+
+void
+uGlobalMenu::Destroy()
+{
+  NS_ASSERTION(!IsDestroyed(), "Menu is already destroyed");
+  if (IsDestroyed()) {
+    return;
+  }
+
+  // Although nsTArray will take care of this in its destructor,
   // we have to manually ensure children are removed from our dbusmenu
   // item, just in case our parent recycles it
   while (mMenuObjects.Length() > 0) {
@@ -741,27 +758,7 @@ uGlobalMenu::~uGlobalMenu()
   // any of it's children, so we need to drop them now to avoid crashing later
   mRecycleList = nullptr;
 
-  MOZ_COUNT_DTOR(uGlobalMenu);
-}
-
-/*static*/ uGlobalMenuObject*
-uGlobalMenu::Create(uGlobalMenuObject *aParent,
-                    uGlobalMenuDocListener *aListener,
-                    nsIContent *aContent)
-{
-  TRACEC(aContent);
-
-  uGlobalMenu *menu = new uGlobalMenu();
-  if (!menu) {
-    return nullptr;
-  }
-
-  if (NS_FAILED(menu->Init(aParent, aListener, aContent))) {
-    delete menu;
-    return nullptr;
-  }
-
-  return static_cast<uGlobalMenuObject *>(menu);
+  uGlobalMenuObject::Destroy();
 }
 
 /*static*/ gboolean
@@ -776,6 +773,11 @@ uGlobalMenu::DoOpen(gpointer user_data)
 void
 uGlobalMenu::OpenMenuDelayed()
 {
+  NS_ASSERTION(!IsDestroyed(), "Menu has been destroyed");
+  if (IsDestroyed()) {
+    return;
+  }
+
   if (!CanOpen()) {
     return;
   }
