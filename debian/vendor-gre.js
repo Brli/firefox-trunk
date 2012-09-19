@@ -4,6 +4,9 @@ pref("intl.locale.matchOS", true);
 // Fall back to en-US search plugins if none exist for the current locale
 pref("distribution.searchplugins.defaultLocale", "en-US");
 
+// Enable Network Manager integration
+pref("network.manage-offline-status", true);
+
 // Map to hyphenation patterns from openoffice.org-hyphenation and openoffice.org-dictionaries
 pref("intl.hyphenation-alias.af", "af-za");
 pref("intl.hyphenation-alias.af-*", "af-za");
