@@ -159,6 +159,18 @@ uGlobalMenu::MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
                                      void *data)
 {
   uGlobalMenu *self = static_cast<uGlobalMenu *>(data);
+
+  // XXX: We ignore the first AboutToOpen on top-level menus, because Unity
+  //      sends this signal on all top-levels when the window opens.
+  //      This isn't useful for us and it doesn't finish the job by sending
+  //      open/close events, so we end up in a state where we resend the
+  //      entire menu structure over dbus on every page navigation
+  if (!(self->mFlags & UNITY_MENU_READY)) {
+    LOGM(self, "Ignoring first AboutToOpen");
+    self->SetFlags(UNITY_MENU_READY);
+    return false;
+  }
+
   self->AboutToOpen();
 
   // We return false here for "needsUpdate", as we have no way of
@@ -278,17 +290,6 @@ void
 uGlobalMenu::AboutToOpen()
 {
   TRACETM();
-
-  // XXX: We ignore the first AboutToOpen on top-level menus, because Unity
-  //      sends this signal on all top-levels when the window opens.
-  //      This isn't useful for us and it doesn't finish the job by sending
-  //      open/close events, so we end up in a state where we resend the
-  //      entire menu structure over dbus on every page navigation
-  if (!(mFlags & UNITY_MENU_READY)) {
-    LOGTM("Ignoring first AboutToOpen");
-    SetFlags(UNITY_MENU_READY);
-    return;
-  }
 
   if (DoesNeedRebuild()) {
     Build();
@@ -491,7 +492,7 @@ uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 }
 
 bool
-uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
+uGlobalMenu::RemoveMenuObjectAt(PRUint32 index, bool recycle)
 {
   NS_ASSERTION(index < mMenuObjects.Length(), "Invalid index");
   if (index >= mMenuObjects.Length()) {
@@ -506,22 +507,27 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index)
   // This feature allows menu contents to be refreshed by removing all children
   // and inserting new ones, without altering the overall structure. It is used
   // by the history menu in Firefox
-  if (!mRecycleList) {
-    mRecycleList = new RecycleList(this, index);
-  } else if (mRecycleList->mList.Length() > 0 &&
-             ((mRecycleList->mMarker != 0 &&
-               index < mRecycleList->mMarker - 1) ||
-              index > mRecycleList->mMarker)) {
-    // If this node is not adjacent to any previously removed nodes, then
-    // free the existing nodes already and restart the process
-    mRecycleList->Empty();
-    mRecycleList->mMarker = index;
-  }
+  if (recycle) {
+    if (!mRecycleList) {
+      mRecycleList = new RecycleList(this, index);
+    } else if (mRecycleList->mList.Length() > 0 &&
+               ((mRecycleList->mMarker != 0 &&
+                 index < mRecycleList->mMarker - 1) ||
+                index > mRecycleList->mMarker)) {
+      // If this node is not adjacent to any previously removed nodes, then
+      // free the existing nodes already and restart the process
+      mRecycleList->Empty();
+      mRecycleList->mMarker = index;
+    }
 
-  if (index == mRecycleList->mMarker) {
-    mRecycleList->Push(mMenuObjects[index]->GetDbusMenuItem());
+    if (index == mRecycleList->mMarker) {
+      mRecycleList->Push(mMenuObjects[index]->GetDbusMenuItem());
+    } else {
+      mRecycleList->Unshift(mMenuObjects[index]->GetDbusMenuItem());
+    }
   } else {
-    mRecycleList->Unshift(mMenuObjects[index]->GetDbusMenuItem());
+    dbusmenu_menuitem_child_delete(mDbusMenuItem,
+                                   mMenuObjects[index]->GetDbusMenuItem());
   }
 
   LOGTM("Removing item at index %d", index);
@@ -636,7 +642,7 @@ uGlobalMenu::Build()
 
   PRUint32 count = mMenuObjects.Length();
   for (PRUint32 i = 0; i < count; i++) {
-    RemoveMenuObjectAt(0);
+    RemoveMenuObjectAt(0, true);
   }
 
   InitializePopup();
@@ -736,11 +742,15 @@ uGlobalMenu::Destroy()
     return;
   }
 
+  // The recycle list doesn't hold a strong ref to our dbusmenuitem or
+  // any of it's children, so we need to drop them now to avoid crashing later
+  mRecycleList = nullptr;
+
   // Although nsTArray will take care of this in its destructor,
   // we have to manually ensure children are removed from our dbusmenu
   // item, just in case our parent recycles it
   while (mMenuObjects.Length() > 0) {
-    RemoveMenuObjectAt(0);
+    RemoveMenuObjectAt(0, false);
   }
 
   if (mListener && mPopupContent && mContent != mPopupContent) {
@@ -758,10 +768,6 @@ uGlobalMenu::Destroy()
                                                  this);
     NS_ASSERTION(found == 1, "Failed to disconnect \"event\" handler");
   }
-
-  // The recycle list doesn't hold a strong ref to our dbusmenuitem or
-  // any of it's children, so we need to drop them now to avoid crashing later
-  mRecycleList = nullptr;
 
   uGlobalMenuObject::Destroy();
 }
@@ -840,7 +846,7 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
   }
 
   if (aContainer == mPopupContent) {
-    bool res = RemoveMenuObjectAt(aIndexInContainer);
+    bool res = RemoveMenuObjectAt(aIndexInContainer, true);
     NS_WARN_IF_FALSE(res, "Failed to remove menuitem - marking menu as needing a rebuild");
     if (!res) {
       SetNeedsRebuild();

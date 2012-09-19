@@ -58,6 +58,8 @@
 #include <nsIDOMRect.h>
 #include <nsICaseConversion.h>
 #include <imgILoader.h>
+#include <nsThreadUtils.h>
+#include <nsIRunnable.h>
 
 #include <libdbusmenu-gtk/menuitem.h>
 #include <gtk/gtk.h>
@@ -74,8 +76,8 @@
 
 typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 
-NS_IMPL_ISUPPORTS3(uGlobalMenuObject::IconLoader, imgIDecoderObserver,
-                   imgIContainerObserver, nsIRunnable)
+NS_IMPL_ISUPPORTS2(uGlobalMenuObject::IconLoader, imgIDecoderObserver,
+                   imgIContainerObserver)
 
 unsigned char uGlobalMenuObject::sImagesInMenus = 0xFF;
 
@@ -94,9 +96,11 @@ const char *properties[] = {
 };
 
 void
-uGlobalMenuObject::IconLoader::LoadIcon()
+uGlobalMenuObject::IconLoader::ScheduleIconLoad()
 {
-  NS_DispatchToCurrentThread(this);
+  nsCOMPtr<nsIRunnable> event =
+    NS_NewRunnableMethod(this, &uGlobalMenuObject::IconLoader::LoadIcon);
+  NS_DispatchToCurrentThread(event);
 }
 
 static PRInt32
@@ -124,22 +128,22 @@ GetDOMRectSide(nsIDOMRect* aRect, GetRectSideMethod aMethod)
   return NSToIntRound(dimension);
 }
 
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::Run()
+void
+uGlobalMenuObject::IconLoader::LoadIcon()
 {
   // Some of this is borrowed from widget/src/cocoa/nsMenuItemIconX.mm
   TRACEM(mMenuItem);
 
   if (!mMenuItem) {
     // Our menu item got destroyed already
-    return NS_OK;
+    return;
   }
 
   nsIDocument *doc = mMenuItem->GetContent()->GetCurrentDoc();
   if (!doc) {
     // We might have been removed from the menu, in which case we will
     // no longer be in a document
-    return NS_OK;
+    return;
   }
 
   nsAutoString uriString;
@@ -185,7 +189,7 @@ uGlobalMenuObject::IconLoader::Run()
         mIconRequest = nullptr;
       }
 
-      return NS_OK;
+      return;
     }
 
     nsCOMPtr<nsIDOMCSSValue> value;
@@ -212,7 +216,7 @@ uGlobalMenuObject::IconLoader::Run()
     PRInt32 left = GetDOMRectSide(domRect, &nsIDOMRect::GetLeft);
 
     if (top < 0 || left < 0 || bottom <= top || right <= left) {
-      return NS_ERROR_FAILURE;
+      return;
     }
 
     imageRect.SetRect(left, top, right - left, bottom - top);
@@ -220,7 +224,7 @@ uGlobalMenuObject::IconLoader::Run()
 
   if (mUriString.Equals(uriString) && mImageRect.IsEqualEdges(imageRect)) {
     LOGM(mMenuItem, "Icon has not changed");
-    return NS_OK;
+    return;
   }
 
   LOGM(mMenuItem, "Icon URI: %s", LOGU16TOU8(uriString));
@@ -236,14 +240,14 @@ uGlobalMenuObject::IconLoader::Run()
   rv = NS_NewURI(getter_AddRefs(uri), uriString);
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to create new URI");
-    return NS_ERROR_FAILURE;
+    return;
   }
 
   nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
   imgILoader *loader = uGlobalMenuService::GetIconLoader();
   NS_ASSERTION(loader, "Failed to get image loader");
   if (!loader) {
-    return NS_ERROR_FAILURE;
+    return;
   }
 
   rv = loader->LoadImage(uri, nullptr, nullptr, nullptr, loadGroup, this,
@@ -251,7 +255,7 @@ uGlobalMenuObject::IconLoader::Run()
                          nullptr, nullptr, getter_AddRefs(mIconRequest));
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to load icon");
-    return rv;
+    return;
   }
 
   mIconRequest->RequestDecode();
@@ -259,7 +263,7 @@ uGlobalMenuObject::IconLoader::Run()
   mUriString = uriString;
   mImageRect = imageRect;
 
-  return NS_OK;
+  return;
 }
 
 NS_IMETHODIMP
@@ -701,7 +705,7 @@ uGlobalMenuObject::SyncIconFromContent()
       mIconLoader = new IconLoader(this);
     }
 
-    mIconLoader->LoadIcon();
+    mIconLoader->ScheduleIconLoad();
   } else {
     if (mIconLoader) {
       mIconLoader->Destroy();

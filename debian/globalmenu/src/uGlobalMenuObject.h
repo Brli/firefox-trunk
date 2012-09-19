@@ -45,7 +45,6 @@
 #include <imgIDecoderObserver.h>
 #include <imgIRequest.h>
 #include <imgIContainerObserver.h>
-#include <nsThreadUtils.h>
 
 #include <libdbusmenu-glib/server.h>
 
@@ -210,15 +209,14 @@ protected:
 
 private:
 
-  class IconLoader: public imgIDecoderObserver,
-                    public nsRunnable
+  class IconLoader: public imgIDecoderObserver
   {
   public:
     NS_DECL_ISUPPORTS
     NS_DECL_IMGIDECODEROBSERVER
     NS_DECL_IMGICONTAINEROBSERVER
-    NS_DECL_NSIRUNNABLE
 
+    void ScheduleIconLoad();
     void LoadIcon();
     void Destroy();
 

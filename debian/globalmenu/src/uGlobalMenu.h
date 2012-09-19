@@ -110,7 +110,7 @@ private:
   bool InsertMenuObjectAt(uGlobalMenuObject *menuObj,
                           PRUint32 index);
   bool AppendMenuObject(uGlobalMenuObject *menuObj);
-  bool RemoveMenuObjectAt(PRUint32 index);
+  bool RemoveMenuObjectAt(PRUint32 index, bool recycle);
   virtual void InitializeDbusMenuItem();
   virtual void Refresh(uMenuObjectRefreshMode aMode);
   virtual uMenuObjectProperties GetValidProperties()
