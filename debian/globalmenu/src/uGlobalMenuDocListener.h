@@ -68,6 +68,11 @@ public:
   void Destroy();
   virtual ~uGlobalMenuDocListener();
 
+  void HandleMutations(nsTArray<nsCOMPtr<nsIDOMMutationRecord> >& aRecords);
+
+  static void EnterCriticalZone() { sInhibitDepth++; }
+  static void LeaveCriticalZone();
+
 private:
   void AttributeChanged(nsIContent *aContent, nsAString& aAttribute);
   void ContentRemoved(nsIContent *aContainer, nsIContent *aChild,
@@ -78,8 +83,31 @@ private:
   nsTArray<uGlobalMenuObject *>* GetListenersForContent(nsIContent *aContent,
                                                         bool aCreate);
 
+  void HandlePendingMutations();
+
   nsCOMPtr<nsIDOMMutationObserver> mObserver;
   nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uGlobalMenuObject *> > mContentToObserverTable;
+
+  nsTArray<nsCOMPtr<nsIDOMMutationRecord> > mPendingMutations;
+
+  static void ScheduleListener(uGlobalMenuDocListener *aListener);
+
+  static uint32_t sInhibitDepth;
+  static nsTArray<uGlobalMenuDocListener *> sPendingListeners;
+};
+
+class uMenuAutoSuspendMutationEvents
+{
+public:
+  uMenuAutoSuspendMutationEvents()
+  {
+    uGlobalMenuDocListener::EnterCriticalZone();
+  }
+
+  ~uMenuAutoSuspendMutationEvents()
+  {
+    uGlobalMenuDocListener::LeaveCriticalZone();
+  }
 };
 
 #endif

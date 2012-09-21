@@ -291,6 +291,8 @@ uGlobalMenu::AboutToOpen()
 {
   TRACETM();
 
+  uMenuAutoSuspendMutationEvents as;
+
   if (DoesNeedRebuild()) {
     Build();
   }
@@ -299,8 +301,6 @@ uGlobalMenu::AboutToOpen()
     LOGTM("Ignoring AboutToOpen for already open menu");
     return;
   }
-
-  nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
 
   SetPopupState(ePopupShowing);
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshowing"));
@@ -354,6 +354,8 @@ uGlobalMenu::FirePopupHidingEvent()
 {
   TRACETM();
 
+  uMenuAutoSuspendMutationEvents as;
+
   if (IsDestroyed()) {
     return;
   }
@@ -362,14 +364,10 @@ uGlobalMenu::FirePopupHidingEvent()
     return;
   }
 
-  nsRefPtr<uGlobalMenu> kungFuDeathGrip = this;
-
   DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphiding"));
 
-  if (GetPopupState() != ePopupClosed) {
-    SetPopupState(ePopupClosed);
-    DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
-  }
+  SetPopupState(ePopupClosed);
+  DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popuphidden"));
 
   mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::open, true);
 }

@@ -579,6 +579,8 @@ uGlobalMenuItem::ItemActivatedCallback(DbusmenuMenuitem *menuItem,
                                        PRUint32 timeStamp,
                                        void *data)
 {
+  uMenuAutoSuspendMutationEvents as;
+
   uGlobalMenuItem *self = static_cast<uGlobalMenuItem *>(data);
   self->Activate(timeStamp);
 }

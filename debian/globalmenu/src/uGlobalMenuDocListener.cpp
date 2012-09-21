@@ -62,6 +62,9 @@
 
 NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, nsIMutationObserverCallback)
 
+uint32_t uGlobalMenuDocListener::sInhibitDepth = 0;
+nsTArray<uGlobalMenuDocListener *> uGlobalMenuDocListener::sPendingListeners;
+
 nsresult
 uGlobalMenuDocListener::Init(nsIContent *rootNode)
 {
@@ -184,12 +187,31 @@ uGlobalMenuDocListener::HandleMutations(nsIVariant *aRecords,
     return NS_ERROR_FAILURE;
   }
 
-  nsTArray<nsIDOMMutationRecord *> mods(count);
-  mods.AppendElements(static_cast<nsIDOMMutationRecord **>(ptr), count);
+  nsTArray<nsCOMPtr<nsIDOMMutationRecord> > mods(count);
+  nsIDOMMutationRecord **p = (nsIDOMMutationRecord **)ptr;
+  for (uint32_t i = 0; i < count; i++, p++) {
+    nsCOMPtr<nsIDOMMutationRecord> rec = dont_AddRef(*p);
+    mods.AppendElement(rec);
+  }
 
-  for (uint32_t i = 0; i < mods.Length(); i++) {
+  nsMemory::Free(ptr);
+
+  if (sInhibitDepth > 0) {
+    mPendingMutations.AppendElements(mods);
+    ScheduleListener(this);
+  } else {
+    HandleMutations(mods);
+  }
+
+  return NS_OK;
+}
+
+void
+uGlobalMenuDocListener::HandleMutations(nsTArray<nsCOMPtr<nsIDOMMutationRecord> >& aRecords)
+{
+  for (uint32_t i = 0; i < aRecords.Length(); i++) {
     LOG("Beginning record %d", i);
-    nsIDOMMutationRecord *record = mods[i];
+    nsIDOMMutationRecord *record = aRecords[i];
 
     nsCOMPtr<nsIDOMNode> targetNode;
     record->GetTarget(getter_AddRefs(targetNode));
@@ -261,8 +283,6 @@ uGlobalMenuDocListener::HandleMutations(nsIVariant *aRecords,
       NS_WARNING("Got a mutation record that we don't care about");
     }
   }
-
-  return NS_OK;
 }
 
 void
@@ -385,4 +405,40 @@ uGlobalMenuDocListener::GetListenersForContent(nsIContent *aContent,
   }
 
   return listeners;
+}
+
+void
+uGlobalMenuDocListener::HandlePendingMutations()
+{
+  if (sInhibitDepth > 0) {
+    ScheduleListener(this);
+    return;
+  }
+
+  HandleMutations(mPendingMutations);
+  mPendingMutations.Clear();
+}
+
+/*static*/void
+uGlobalMenuDocListener::LeaveCriticalZone()
+{
+  NS_ASSERTION(sInhibitDepth > 0, "Negative inhibit depth!");
+
+  nsTArray<uGlobalMenuDocListener *> tmp(sPendingListeners);
+
+  if (--sInhibitDepth == 0) {
+    for (uint32_t i = 0; i < tmp.Length(); i++) {
+      tmp[i]->HandlePendingMutations();
+    }
+  }
+}
+
+/*static*/void
+uGlobalMenuDocListener::ScheduleListener(uGlobalMenuDocListener *aListener)
+{
+  NS_ASSERTION(sInhibitDepth > 0, "Shouldn't be doing this now");
+
+  if (sPendingListeners.IndexOf(aListener) == -1) {
+    sPendingListeners.AppendElement(aListener);
+  }
 }
