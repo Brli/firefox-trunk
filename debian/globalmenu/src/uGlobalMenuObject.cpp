@@ -518,7 +518,6 @@ uGlobalMenuObject::ShouldShowIcon()
 void
 uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
 {
-  MENUOBJECT_REENTRANCY_GUARD(UNITY_MENUOBJECT_SYNC_LABEL_GUARD);
   TRACETM();
   // Gecko stores the label and access key in separate attributes
   // so we need to convert label="Foo"/accesskey="F" in to
@@ -661,7 +660,6 @@ uGlobalMenuObject::SyncVisibilityFromContent()
 void
 uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aContent)
 {
-  MENUOBJECT_REENTRANCY_GUARD(UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD);
   TRACETM();
 
   nsIContent *content;

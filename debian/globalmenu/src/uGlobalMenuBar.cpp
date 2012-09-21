@@ -123,6 +123,22 @@ uGlobalMenuBar::Register()
   uGlobalMenuService::RegisterGlobalMenuBar(this, mCancellable, xidn, mPath);
 }
 
+uint32_t
+uGlobalMenuBar::IndexOf(nsIContent *aContent)
+{
+  if (!aContent) {
+    return -1;
+  }
+
+  for (uint32_t i = 0; i < mMenuObjects.Length(); i++) {
+    if (mMenuObjects[i]->GetContent() == aContent) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
 bool
 uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
 {
@@ -132,13 +148,16 @@ uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
 }
 
 bool
-uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
-                                   PRUint32 index)
+uGlobalMenuBar::InsertMenuObjectAfter(uGlobalMenuObject *menu,
+                                      nsIContent *aPrevSibling)
 {
-  NS_ASSERTION(index <= mMenuObjects.Length(), "Invalid index");
-  if (index > mMenuObjects.Length()) {
+  int32_t index = IndexOf(aPrevSibling);
+  NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
+  if (index < 0 && aPrevSibling) {
     return false;
   }
+
+  index++;
 
   gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
                                                       menu->GetDbusMenuItem(),
@@ -147,12 +166,15 @@ uGlobalMenuBar::InsertMenuObjectAt(uGlobalMenuObject *menu,
 }
 
 bool
-uGlobalMenuBar::RemoveMenuObjectAt(PRUint32 index)
+uGlobalMenuBar::RemoveMenuObjectAfter(nsIContent *aPrevSibling)
 {
-  NS_ASSERTION(index < mMenuObjects.Length(), "Invalid index");
-  if (index >= mMenuObjects.Length()) {
+  int32_t index = IndexOf(aPrevSibling);
+  NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
+  if (index < 0 && aPrevSibling) {
     return false;
   }
+
+  index++;
 
   gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
                                        mMenuObjects[index]->GetDbusMenuItem());
@@ -615,32 +637,29 @@ uGlobalMenuBar::NotifyMenuBarRegistered()
 }
 
 void
-uGlobalMenuBar::ObserveAttributeChanged(nsIDocument *aDocument,
-                                        nsIContent *aContent,
+uGlobalMenuBar::ObserveAttributeChanged(nsIContent *aContent,
                                         nsIAtom *aAttribute)
 {
 
 }
 
 void
-uGlobalMenuBar::ObserveContentRemoved(nsIDocument *aDocument,
-                                      nsIContent *aContainer,
+uGlobalMenuBar::ObserveContentRemoved(nsIContent *aContainer,
                                       nsIContent *aChild,
-                                      PRInt32 aIndexInContainer)
+                                      nsIContent *aPrevSibling)
 {
   TRACETM();
   NS_ASSERTION(aContainer == mContent,
                "Received an event that wasn't meant for us!");
 
-  bool res = RemoveMenuObjectAt(aIndexInContainer);
+  bool res = RemoveMenuObjectAfter(aPrevSibling);
   NS_ASSERTION(res, "Failed to remove menuitem. Our menu representation is out-of-sync with reality");
 }
 
 void
-uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
-                                       nsIContent *aContainer,
+uGlobalMenuBar::ObserveContentInserted(nsIContent *aContainer,
                                        nsIContent *aChild,
-                                       PRInt32 aIndexInContainer)
+                                       nsIContent *aPrevSibling)
 {
   TRACETM();
   NS_ASSERTION(aContainer == mContent,
@@ -649,7 +668,7 @@ uGlobalMenuBar::ObserveContentInserted(nsIDocument *aDocument,
   uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
   bool res = false;
   if (newItem) {
-    res = InsertMenuObjectAt(newItem, aIndexInContainer);
+    res = InsertMenuObjectAfter(newItem, aPrevSibling);
   }
   NS_ASSERTION(res, "Failed to insert menuitem. Our menu representation is out-of-sync with reality");
 }

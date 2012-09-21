@@ -6,3 +6,4 @@ SERVICE(PrefService, nsIPrefBranch, NS_PREFSERVICE_CONTRACTID)
 SERVICE(XBLService, nsIXBLService, "@mozilla.org/xbl;1")
 #endif
 SERVICE(XPConnect, nsIXPConnect, nsIXPConnect::GetCID())
+SERVICE(AtomService, nsIAtomService, "@mozilla.org/atom-service;1")

@@ -64,6 +64,7 @@ class nsIImageToPixbuf;
 class nsIPrefBranch;
 class nsIXBLService;
 class nsIXPConnect;
+class nsIAtomService;
 
 class uGlobalMenuService: public uIGlobalMenuService,
                           public nsIWindowMediatorListener

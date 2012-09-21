@@ -115,8 +115,7 @@ uGlobalMenuSeparator::Create(uGlobalMenuObject *aParent,
 }
 
 void
-uGlobalMenuSeparator::ObserveAttributeChanged(nsIDocument *aDocument,
-                                              nsIContent *aContent,
+uGlobalMenuSeparator::ObserveAttributeChanged(nsIContent *aContent,
                                               nsIAtom *aAttribute)
 {
   NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");

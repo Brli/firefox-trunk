@@ -55,8 +55,7 @@ public:
   virtual uMenuObjectType GetType() { return eMenuSeparator; }
 
 protected:
-  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
-                                       nsIContent *aContent,
+  virtual void ObserveAttributeChanged(nsIContent *aContent,
                                        nsIAtom *aAttribute);
 
 private:

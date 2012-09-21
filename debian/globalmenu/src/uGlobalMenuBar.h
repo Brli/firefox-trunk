@@ -85,17 +85,14 @@ public:
   GtkWidget* TopLevelWindow() { return mTopLevel; }
 
 protected:
-  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
-                                       nsIContent *aContent,
+  virtual void ObserveAttributeChanged(nsIContent *aContent,
                                        nsIAtom *aAttribute);
-  virtual void ObserveContentRemoved(nsIDocument *aDocument,
-                                     nsIContent *aContainer,
+  virtual void ObserveContentRemoved(nsIContent *aContainer,
                                      nsIContent *aChild,
-                                     PRInt32 aIndexInContainer);
-  virtual void ObserveContentInserted(nsIDocument *aDocument,
-                                      nsIContent *aContainer,
+                                     nsIContent *aPrevSibling);
+  virtual void ObserveContentInserted(nsIContent *aContainer,
                                       nsIContent *aChild,
-                                      PRInt32 aIndexInContainer);
+                                      nsIContent *aPrevSibling);
 
 protected:
   friend class uGlobalMenuService;
@@ -126,9 +123,10 @@ private:
   PRUint32 GetModifiersFromEvent(nsIDOMKeyEvent *aKeyEvent);
   bool ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent);
 
-  bool RemoveMenuObjectAt(PRUint32 index);
-  bool InsertMenuObjectAt(uGlobalMenuObject *menu,
-                          PRUint32 index);
+  uint32_t IndexOf(nsIContent *aContent);
+  bool RemoveMenuObjectAfter(nsIContent *aPrevSibling);
+  bool InsertMenuObjectAfter(uGlobalMenuObject *menu,
+                             nsIContent *aPrevSibling);
   bool AppendMenuObject(uGlobalMenuObject *menu);
   void Focus();
   void Blur();

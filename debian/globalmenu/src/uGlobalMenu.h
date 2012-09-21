@@ -88,17 +88,14 @@ public:
   void OpenMenuDelayed();
   
 protected:
-  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
-                                       nsIContent *aContent,
+  virtual void ObserveAttributeChanged(nsIContent *aContent,
                                        nsIAtom *aAttribute);
-  virtual void ObserveContentRemoved(nsIDocument *aDocument,
-                                     nsIContent *aContainer,
+  virtual void ObserveContentRemoved(nsIContent *aContainer,
                                      nsIContent *aChild,
-                                     PRInt32 aIndexInContainer);
-  virtual void ObserveContentInserted(nsIDocument *aDocument,
-                                      nsIContent *aContainer,
+                                     nsIContent *aPrevSibling);
+  virtual void ObserveContentInserted(nsIContent *aContainer,
                                       nsIContent *aChild,
-                                      PRInt32 aIndexInContainer);
+                                      nsIContent *aPrevSibling);
 
 private:
   uGlobalMenu();
@@ -107,10 +104,13 @@ private:
   nsresult Init(uGlobalMenuObject *aParent,
                 uGlobalMenuDocListener *aListener,
                 nsIContent *aContent);
-  bool InsertMenuObjectAt(uGlobalMenuObject *menuObj,
-                          PRUint32 index);
+
+  uint32_t IndexOf(nsIContent *aContent);
+  bool InsertMenuObjectAfter(uGlobalMenuObject *menuObj,
+                             nsIContent *aPrevSibling);
   bool AppendMenuObject(uGlobalMenuObject *menuObj);
-  bool RemoveMenuObjectAt(PRUint32 index, bool recycle);
+  bool RemoveMenuObjectAt(uint32_t index, bool recycle);
+  bool RemoveMenuObjectAfter(nsIContent *aPrevSibling, bool recycle);
   virtual void InitializeDbusMenuItem();
   virtual void Refresh(uMenuObjectRefreshMode aMode);
   virtual uMenuObjectProperties GetValidProperties()

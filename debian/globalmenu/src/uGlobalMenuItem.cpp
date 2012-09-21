@@ -458,10 +458,24 @@ uGlobalMenuItem::SyncAccelFromContent()
 }
 
 void
+uGlobalMenuItem::SyncStateFromCommand()
+{
+  TRACETM()
+
+  if (mCommandContent) {
+    nsAutoString checked;
+    if (mCommandContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
+                                 checked)) {
+      LOGTM("Copying checked state from command node");
+      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked, checked, true);
+    }
+  }
+}
+
+void
 uGlobalMenuItem::SyncTypeAndStateFromContent()
 {
-  MENUOBJECT_REENTRANCY_GUARD(UNITY_MENUITEM_SYNC_TYPE_GUARD);
-  TRACETM();
+  TRACETM()
 
   static nsIContent::AttrValuesArray attrs[] =
     { &uWidgetAtoms::checkbox, &uWidgetAtoms::radio, nullptr };
@@ -482,19 +496,6 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
       SetMenuItemType(eRadio);
     }
 
-    if (mCommandContent) {
-      nsAutoString commandChecked;
-      mCommandContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                               commandChecked);
-      if (!commandChecked.IsEmpty() && !mContent->AttrValueIs(kNameSpaceID_None,
-                                                              uWidgetAtoms::checked,
-                                                              commandChecked,
-                                                              eCaseMatters)) {
-        mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                          commandChecked, true);
-      }
-    }
-
     SetCheckState(mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
                                        uWidgetAtoms::_true, eCaseMatters));
     dbusmenu_menuitem_property_set_int(mDbusMenuItem,
@@ -512,10 +513,26 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
   }
 }
 
+const char *types[] = {
+  "Normal",
+  "Checkbox",
+  "Radio",
+  NULL
+};
+
+void
+uGlobalMenuItem::SetMenuItemType(uMenuItemType aType)
+{
+  ClearFlags(UNITY_MENUITEM_TYPE_MASK);
+  SetFlags(aType << 8);
+
+  LOGTM("Setting menuitem to type %s", types[aType]);
+}
+
 void
 uGlobalMenuItem::Refresh(uMenuObjectRefreshMode aMode)
 {
-  TRACETM();
+  TRACETM()
 
   if (aMode == eRefreshFull) {
     if (mCommandContent) {
@@ -554,6 +571,7 @@ uGlobalMenuItem::Refresh(uMenuObjectRefreshMode aMode)
 
   SyncVisibilityFromContent();
   SyncIconFromContent();
+  SyncStateFromCommand();
 }
 
 /*static*/ void
@@ -568,6 +586,8 @@ uGlobalMenuItem::ItemActivatedCallback(DbusmenuMenuitem *menuItem,
 void
 uGlobalMenuItem::Activate(PRUint32 timeStamp)
 {
+  TRACETM()
+
   gdk_x11_window_set_user_time(gtk_widget_get_window(GetMenuBar()->TopLevelWindow()),
                                timeStamp);
   // This first bit seems backwards, but it's not really. If autocheck is
@@ -581,7 +601,8 @@ uGlobalMenuItem::Activate(PRUint32 timeStamp)
   //      the event, as the handler might check the new state
   if (!mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::autocheck,
                              uWidgetAtoms::_false, eCaseMatters) &&
-      IsCheckboxOrRadioItem()) {
+      (GetMenuItemType() == eCheckBox ||
+       (GetMenuItemType() == eRadio && !IsChecked()))) {
     mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
                       IsChecked() ?
                       NS_LITERAL_STRING("false") :  NS_LITERAL_STRING("true"),
@@ -665,17 +686,15 @@ uGlobalMenuItem::Init(uGlobalMenuObject *aParent,
 void
 uGlobalMenuItem::UncheckSiblings()
 {
-  if (!(mFlags & UNITY_MENUITEM_IS_RADIO)) {
+  TRACETM()
+
+  if (GetMenuItemType() != eRadio) {
     // If we're not a radio button, we don't care
     return;
   }
 
   nsAutoString name;
   mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::name, name);
-  if (name.IsEmpty()) {
-    // If we don't have a name, then we can't find our siblings
-    return;
-  }
 
   nsIContent *parent = mContent->GetParent();
   if (!parent) {
@@ -685,8 +704,11 @@ uGlobalMenuItem::UncheckSiblings()
   PRUint32 count = parent->GetChildCount();
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *sibling = parent->GetChildAt(i);
-    if (sibling->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::name,
-        name, eCaseMatters) && sibling != mContent &&
+
+    nsAutoString otherName;
+    sibling->GetAttr(kNameSpaceID_None, uWidgetAtoms::name, otherName);
+
+    if (sibling != mContent && otherName == name && 
         sibling->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::type,
                              uWidgetAtoms::radio, eCaseMatters)) {
       sibling->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::checked, true);
@@ -759,8 +781,7 @@ uGlobalMenuItem::Destroy()
 }
 
 void
-uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
-                                         nsIContent *aContent,
+uGlobalMenuItem::ObserveAttributeChanged(nsIContent *aContent,
                                          nsIAtom *aAttribute)
 {
   TRACETM();
@@ -778,11 +799,16 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
     if (aAttribute == uWidgetAtoms::command ||
         aAttribute == uWidgetAtoms::key) {
       Refresh(eRefreshFull);
-    } else if (aAttribute == uWidgetAtoms::label ||
-               aAttribute == uWidgetAtoms::accesskey) {
+    } else if (aAttribute == uWidgetAtoms::label) {
+      if (!mCommandContent) {
+        SyncLabelFromContent();
+      }
+    } else if (aAttribute == uWidgetAtoms::accesskey) {
       SyncLabelFromContent(mCommandContent);
     } else if (aAttribute == uWidgetAtoms::disabled) {
-      SyncSensitivityFromContent(mCommandContent);
+      if (!mCommandContent) {
+        SyncSensitivityFromContent();
+      }
     } else if (aAttribute == uWidgetAtoms::checked ||
                aAttribute == uWidgetAtoms::type) {
       SyncTypeAndStateFromContent();
@@ -797,8 +823,6 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIDocument *aDocument,
       SyncLabelFromContent(mCommandContent);
     } else if (aAttribute == uWidgetAtoms::disabled) {
       SyncSensitivityFromContent(mCommandContent);
-    } else if (aAttribute == uWidgetAtoms::checked) {
-      SyncTypeAndStateFromContent();
     }
   } else if (aContent == mKeyContent) {
     SyncAccelFromContent();

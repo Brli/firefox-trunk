@@ -56,6 +56,7 @@
 # include <nsIXBLService.h>
 #endif
 #include <nsIXPConnect.h>
+#include <nsIAtomService.h>
 #include <nsNetUtil.h>
 #include <nsIStyleSheetService.h>
 #include <prenv.h>

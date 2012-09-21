@@ -420,16 +420,33 @@ IsRecycledItemCompatible(DbusmenuMenuitem *aRecycled,
   return true;
 }
 
-bool
-uGlobalMenu::InsertMenuObjectAt(uGlobalMenuObject *menuObj,
-                                PRUint32 index)
+uint32_t
+uGlobalMenu::IndexOf(nsIContent *aContent)
 {
-  NS_ASSERTION(index <= mMenuObjects.Length(), "Invalid index");
-  if (index > mMenuObjects.Length()) {
+  if (!aContent) {
+    return -1;
+  }
+
+  for (uint32_t i = 0; i < mMenuObjects.Length(); i++) {
+    if (mMenuObjects[i]->GetContent() == aContent) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+bool
+uGlobalMenu::InsertMenuObjectAfter(uGlobalMenuObject *menuObj,
+                                   nsIContent *aPrevSibling)
+{
+  int32_t index = IndexOf(aPrevSibling);
+  NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
+  if (index < 0 && aPrevSibling) {
     return false;
   }
 
-  PRUint32 correctedIndex = index;
+  uint32_t correctedIndex = ++index;
 
   DbusmenuMenuitem *recycled = nullptr;
   if (mRecycleList && mRecycleList->mList.Length() > 0) {
@@ -492,7 +509,7 @@ uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 }
 
 bool
-uGlobalMenu::RemoveMenuObjectAt(PRUint32 index, bool recycle)
+uGlobalMenu::RemoveMenuObjectAt(uint32_t index, bool recycle)
 {
   NS_ASSERTION(index < mMenuObjects.Length(), "Invalid index");
   if (index >= mMenuObjects.Length()) {
@@ -535,6 +552,20 @@ uGlobalMenu::RemoveMenuObjectAt(PRUint32 index, bool recycle)
   mMenuObjects.RemoveElementAt(index);
 
   return true;
+}
+
+bool
+uGlobalMenu::RemoveMenuObjectAfter(nsIContent *aPrevSibling, bool recycle)
+{
+  int32_t index = IndexOf(aPrevSibling);
+  NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
+  if (index < 0 && aPrevSibling) {
+    return false;
+  }
+
+  index++;
+
+  return RemoveMenuObjectAt(index, recycle);
 }
 
 void
@@ -802,8 +833,7 @@ uGlobalMenu::OpenMenuDelayed()
 }
 
 void
-uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
-                                     nsIContent *aContent,
+uGlobalMenu::ObserveAttributeChanged(nsIContent *aContent,
                                      nsIAtom *aAttribute)
 {
   TRACETM();
@@ -831,10 +861,9 @@ uGlobalMenu::ObserveAttributeChanged(nsIDocument *aDocument,
 }
 
 void
-uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
-                                   nsIContent *aContainer,
+uGlobalMenu::ObserveContentRemoved(nsIContent *aContainer,
                                    nsIContent *aChild,
-                                   PRInt32 aIndexInContainer)
+                                   nsIContent *aPrevSibling)
 {
   TRACETM();
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
@@ -846,7 +875,7 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
   }
 
   if (aContainer == mPopupContent) {
-    bool res = RemoveMenuObjectAt(aIndexInContainer, true);
+    bool res = RemoveMenuObjectAfter(aPrevSibling, true);
     NS_WARN_IF_FALSE(res, "Failed to remove menuitem - marking menu as needing a rebuild");
     if (!res) {
       SetNeedsRebuild();
@@ -857,10 +886,9 @@ uGlobalMenu::ObserveContentRemoved(nsIDocument *aDocument,
 }
 
 void
-uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
-                                    nsIContent *aContainer,
+uGlobalMenu::ObserveContentInserted(nsIContent *aContainer,
                                     nsIContent *aChild,
-                                    PRInt32 aIndexInContainer)
+                                    nsIContent *aPrevSibling)
 {
   TRACETM();
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
@@ -875,7 +903,7 @@ uGlobalMenu::ObserveContentInserted(nsIDocument *aDocument,
     uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
     bool res = false;
     if (newItem) {
-      res = InsertMenuObjectAt(newItem, aIndexInContainer);
+      res = InsertMenuObjectAfter(newItem, aPrevSibling);
     }
     NS_WARN_IF_FALSE(res, "Failed to insert menuitem - marking menu as needing a rebuild");
     if (!res) {

@@ -52,6 +52,7 @@ XPI_NAME	= globalmenu
 CPPSRCS		= uGlobalMenuModule.cpp
 
 EXTRA_DSO_LDOPTS += $(XPCOM_GLUE_LDOPTS) \
+		    -lxul \
 		    $(NSPR_LIBS) \
 		    $(DBUSMENU_LIBS) \
 		    $(MOZ_GTK2_LIBS) \

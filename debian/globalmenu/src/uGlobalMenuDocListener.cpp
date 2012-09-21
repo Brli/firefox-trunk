@@ -42,38 +42,119 @@
 #include <nsIDocument.h>
 #include <nsIAtom.h>
 #include <nsINode.h>
-#include <mozilla/dom/Element.h>
 #include <nsIContent.h>
 #include <nsIDocument.h>
+#include <nsIDOMWindow.h>
+#include <nsIXPConnect.h>
+#include <nsIScriptGlobalObject.h>
+#include <nsIScriptContext.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIJSNativeInitializer.h>
+#include <nsIDOMNodeList.h>
+#include <nsIAtomService.h>
+#include <jsapi.h>
 
 #include "uGlobalMenuDocListener.h"
 #include "uGlobalMenuObject.h"
+#include "uGlobalMenuService.h"
 
 #include "uDebug.h"
 
-NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, nsIMutationObserver)
+NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, nsIMutationObserverCallback)
 
 nsresult
 uGlobalMenuDocListener::Init(nsIContent *rootNode)
 {
   NS_ENSURE_ARG(rootNode);
 
-  mDocument = rootNode->OwnerDoc();
-  mDocument->AddMutationObserver(this);
+  nsIXPConnect *xpconnect = uGlobalMenuService::GetXPConnect();
+  NS_ASSERTION(xpconnect, "Failed to get xpconnect");
+  if (!xpconnect) {
+    return NS_ERROR_FAILURE;
+  }
 
-  return NS_OK;
+  nsIScriptGlobalObject *sgo = rootNode->OwnerDoc()->GetScriptGlobalObject();
+  nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
+  JSObject *global = sgo->GetGlobalJSObject();
+  NS_ASSERTION(global && scriptContext, "What?");
+  if (!global || !scriptContext) {
+    return NS_ERROR_FAILURE;
+  }
+
+  JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
+  NS_ASSERTION(cx, "Yikes!");
+  if (!cx) {
+    return NS_ERROR_FAILURE;
+  }
+
+  jsval v;
+  nsresult rv = xpconnect->WrapNativeToJSVal(cx, global, this, nullptr,
+                                             &NS_GET_IID(nsISupports), false,
+                                             &v, nullptr);
+  if (NS_FAILED(rv)) {
+    NS_ERROR("Failed to wrap native observer to jsval");
+    return rv;
+  }
+
+  nsPIDOMWindow *owner = rootNode->OwnerDoc()->GetInnerWindow();
+
+  mObserver = do_CreateInstance("@mozilla.org/dommutationobserver;1");
+  NS_ASSERTION(mObserver, "Failed to create nsIDOMMutationObserver");
+  if (!mObserver) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsCOMPtr<nsIJSNativeInitializer> initializer = do_QueryInterface(mObserver);
+  NS_ASSERTION(initializer, "Failed to QI to nsIJSNativeInitializer");
+  if (!initializer) {
+    return NS_ERROR_FAILURE;
+  }
+
+  rv = initializer->Initialize(owner, cx, nullptr, 1, &v);
+  if (NS_FAILED(rv)) {
+    NS_ERROR("Failed to initialize MutationObserver");
+    return rv;
+  }
+
+  nsCOMPtr<nsIDOMNode> docNode = do_QueryInterface(rootNode->OwnerDoc());
+  NS_ASSERTION(docNode, "Document failed QI to nsIDOMNode");
+  if (!docNode) {
+    return NS_ERROR_FAILURE;
+  }
+
+  JSAutoRequest ar(cx);
+
+  JSObject *options = JS_NewObject(cx, nullptr, nullptr, nullptr);
+
+#define SET_OBSERVER_OPTION(_option) \
+  if (!JS_DefineProperty(cx, options, #_option, BOOLEAN_TO_JSVAL(JS_TRUE), \
+                         nullptr, nullptr, 0)) { \
+    NS_ERROR("Failed setting options for mutation observer"); \
+    return NS_ERROR_FAILURE; \
+  }
+
+  SET_OBSERVER_OPTION(childList)
+  SET_OBSERVER_OPTION(attributes)
+  SET_OBSERVER_OPTION(subtree)
+
+  rv = mObserver->Observe(docNode, OBJECT_TO_JSVAL(options), cx);
+  if (NS_FAILED(rv)) {
+    NS_ERROR("Failed to observe");
+  }
+
+  return rv;
 }
 
 void
 uGlobalMenuDocListener::Destroy()
 {
-  if (mDocument) {
-    mDocument->RemoveMutationObserver(this);
+  if (mObserver) {
+    mObserver->Disconnect();
+    mObserver = nullptr;
   }
 }
 
-uGlobalMenuDocListener::uGlobalMenuDocListener() :
-  mDocument(nullptr)
+uGlobalMenuDocListener::uGlobalMenuDocListener()
 {
   mContentToObserverTable.Init();
 }
@@ -84,116 +165,178 @@ uGlobalMenuDocListener::~uGlobalMenuDocListener()
                "Some nodes forgot to unregister listeners");
 }
 
-void
-uGlobalMenuDocListener::CharacterDataWillChange(nsIDocument *aDocument,
-                                                nsIContent *aContent,
-              	                                CharacterDataChangeInfo *aInfo)
+NS_IMETHODIMP
+uGlobalMenuDocListener::HandleMutations(nsIVariant *aRecords,
+                                        nsIDOMMutationObserver *aObserver)
 {
+  TRACE()
 
+  uint16_t vtype;
+  uint32_t count;
+  void *ptr;
+  nsIID iid;
+  aRecords->GetAsArray(&vtype, &iid, &count, &ptr);
+
+  LOG("Number of records %d", count);
+
+  NS_ASSERTION(vtype == nsIDataType::VTYPE_INTERFACE, "Invalid variant");
+  if (vtype != nsIDataType::VTYPE_INTERFACE) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsTArray<nsIDOMMutationRecord *> mods(count);
+  mods.AppendElements(static_cast<nsIDOMMutationRecord **>(ptr), count);
+
+  for (uint32_t i = 0; i < mods.Length(); i++) {
+    LOG("Beginning record %d", i);
+    nsIDOMMutationRecord *record = mods[i];
+
+    nsCOMPtr<nsIDOMNode> targetNode;
+    record->GetTarget(getter_AddRefs(targetNode));
+    if (!targetNode) {
+      NS_ERROR("No target node?");
+      continue;
+    }
+
+    nsCOMPtr<nsIContent> target = do_QueryInterface(targetNode);
+    NS_ASSERTION(target, "Node failed to QI to nsIContent");
+    if (!target) {
+      continue;
+    }
+
+    nsAutoString type;
+    record->GetType(type);
+
+    if (type.Equals(NS_LITERAL_STRING("attributes"))) {
+      nsAutoString attributeName;
+      record->GetAttributeName(attributeName);
+
+      AttributeChanged(target, attributeName);
+    } else if (type.Equals(NS_LITERAL_STRING("childList"))) {
+      nsCOMPtr<nsIDOMNodeList> removedNodes;
+      record->GetRemovedNodes(getter_AddRefs(removedNodes));
+      uint32_t removedLength;
+      removedNodes->GetLength(&removedLength);
+
+      nsCOMPtr<nsIDOMNodeList> addedNodes;
+      record->GetAddedNodes(getter_AddRefs(addedNodes));
+      uint32_t addedLength;
+      addedNodes->GetLength(&addedLength);
+
+      nsCOMPtr<nsIDOMNode> prev;
+      record->GetPreviousSibling(getter_AddRefs(prev));
+
+      nsCOMPtr<nsIContent> prevSibling;
+      if (prev) {
+        prevSibling = do_QueryInterface(prev);
+      }
+
+      for (uint32_t i = 0; i < removedLength; i++) {
+        nsCOMPtr<nsIDOMNode> item;
+        removedNodes->Item(i, getter_AddRefs(item));
+
+        nsCOMPtr<nsIContent> removed = do_QueryInterface(item);
+        NS_ASSERTION(removed, "Node failed to QI to nsIContent");
+        if (!removed) {
+          continue;
+        }
+
+        ContentRemoved(target, removed, prevSibling);
+      }
+
+      for (uint32_t i = 0; i < addedLength; i++) {
+        nsCOMPtr<nsIDOMNode> item;
+        addedNodes->Item(i, getter_AddRefs(item));
+
+        nsCOMPtr<nsIContent> added = do_QueryInterface(item);
+        NS_ASSERTION(added, "Node failed to QI to nsIContent");
+        if (!added) {
+          continue;
+        }
+
+        ContentInserted(target, added, prevSibling);
+        prevSibling = added;
+      }
+    } else {
+      NS_WARNING("Got a mutation record that we don't care about");
+    }
+  }
+
+  return NS_OK;
 }
 
 void
-uGlobalMenuDocListener::CharacterDataChanged(nsIDocument *aDocument,
-                                             nsIContent *aContent,
-                                             CharacterDataChangeInfo *aInfo)
+uGlobalMenuDocListener::AttributeChanged(nsIContent *aContent,
+                                         nsAString& aAttribute)
 {
-
-}
-
-void
-uGlobalMenuDocListener::AttributeWillChange(nsIDocument *aDocument,
-                                            mozilla::dom::Element *aElement,
-                                            PRInt32 aNameSpaceID,
-                                            nsIAtom *aAttribute,
-                                            PRInt32 aModType)
-{
-
-}
-
-void
-uGlobalMenuDocListener::AttributeChanged(nsIDocument *aDocument,
-                                         mozilla::dom::Element *aElement,
-                                         PRInt32 aNameSpaceID,
-                                         nsIAtom *aAttribute,
-                                         PRInt32 aModType)
-{
-  if (!aElement)
+  if (!aContent || aAttribute.IsEmpty()) {
     return;
+  }
+
+  nsIAtomService *as = uGlobalMenuService::GetAtomService();
+  if (!as) {
+    return;
+  }
+
+  nsIAtom *attribute;
+  as->GetAtom(aAttribute, &attribute);
 
   nsTArray<uGlobalMenuObject *> *listeners =
-    GetListenersForContent(aElement, false);
+    GetListenersForContent(aContent, false);
 
   if (listeners) {
-    for (PRUint32 i = 0; i < listeners->Length(); i++) {
-      listeners->ElementAt(i)->ObserveAttributeChanged(aDocument, aElement,
-                                                       aAttribute);
+    for (uint32_t i = 0; i < listeners->Length(); i++) {
+      listeners->ElementAt(i)->ObserveAttributeChanged(aContent, attribute);
     }
   }
 }
 
 void
-uGlobalMenuDocListener::ContentAppended(nsIDocument *aDocument,
-                                        nsIContent *aContainer,
-                                        nsIContent *aFirstNewContent,
-                                        PRInt32 aNewIndexInContainer)
-{
-  for (nsIContent* cur = aFirstNewContent; cur; cur = cur->GetNextSibling()) {
-    ContentInserted(aDocument, aContainer, cur, aNewIndexInContainer);
-    aNewIndexInContainer++;
-  }
-}
-
-void
-uGlobalMenuDocListener::ContentInserted(nsIDocument *aDocument,
-                                        nsIContent *aContainer,
-                                        nsIContent *aChild,
-                                        PRInt32 aIndexInContainer)
-{
-  if (!aContainer)
-    return;
-
-  nsTArray<uGlobalMenuObject *> *listeners =
-    GetListenersForContent(aContainer, false);
-
-  if (listeners) {
-    for (PRUint32 i = 0; i < listeners->Length(); i++) {
-      listeners->ElementAt(i)->ObserveContentInserted(aDocument, aContainer,
-                                                      aChild, aIndexInContainer);
-    }
-  }
-}
-
-void
-uGlobalMenuDocListener::ContentRemoved(nsIDocument *aDocument,
-                                       nsIContent *aContainer,
+uGlobalMenuDocListener::ContentRemoved(nsIContent *aContainer,
                                        nsIContent *aChild,
-                                       PRInt32 aIndexInContainer,
-                                       nsIContent *aPreviousSibling)
+                                       nsIContent *aPrevSibling)
 {
-  if (!aContainer)
+  TRACE()
+  LOG("aContainer=%p, aChild=%p, aPrevSibling=%p",
+      (void *)aContainer, (void *)aChild, (void *)aPrevSibling);
+
+  if (!aContainer || !aChild) {
     return;
+  }
 
   nsTArray<uGlobalMenuObject *> *listeners =
     GetListenersForContent(aContainer, false);
 
   if (listeners) {
-    for (PRUint32 i = 0; i < listeners->Length(); i++) {
-      listeners->ElementAt(i)->ObserveContentRemoved(aDocument, aContainer,
-                                                     aChild, aIndexInContainer);
+    for (uint32_t i = 0; i < listeners->Length(); i++) {
+      listeners->ElementAt(i)->ObserveContentRemoved(aContainer, aChild,
+                                                     aPrevSibling);
     }
   }
 }
 
 void
-uGlobalMenuDocListener::NodeWillBeDestroyed(const nsINode *aNode)
+uGlobalMenuDocListener::ContentInserted(nsIContent *aContainer,
+                                        nsIContent *aChild,
+                                        nsIContent *aPrevSibling)
 {
-  mDocument = nullptr;
-}
+  TRACE()
+  LOG("aContainer=%p, aChild=%p, aPrevSibling=%p",
+      (void *)aContainer, (void *)aChild, (void *)aPrevSibling);
 
-void
-uGlobalMenuDocListener::ParentChainChanged(nsIContent *aContent)
-{
+  if (!aContainer || !aChild) {
+    return;
+  }
 
+  nsTArray<uGlobalMenuObject *> *listeners =
+    GetListenersForContent(aContainer, false);
+
+  if (listeners) {
+    for (uint32_t i = 0; i < listeners->Length(); i++) {
+      listeners->ElementAt(i)->ObserveContentInserted(aContainer, aChild,
+                                                      aPrevSibling);
+    }
+  }
 }
 
 void

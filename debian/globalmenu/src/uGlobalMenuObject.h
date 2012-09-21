@@ -57,12 +57,6 @@
 
 #define UNITY_MENUOBJECT_DESTROYED              FLAG(0)
 
-// Used ny the reentrancy guard for SyncSensitivityFromContent()
-#define UNITY_MENUOBJECT_SYNC_SENSITIVITY_GUARD FLAG(3)
-
-// Used by the reentrancy guard for SyncLabelFromContent()
-#define UNITY_MENUOBJECT_SYNC_LABEL_GUARD       FLAG(4)
-
 enum uMenuObjectType {
   eMenuBar,
   eMenu,
@@ -91,13 +85,6 @@ enum uMenuObjectRefreshMode {
 class uGlobalMenuObject;
 class uGlobalMenuBar;
 class nsIDOMCSSStyleDeclaration;
-
-#define MENUOBJECT_REENTRANCY_GUARD(flag)         \
-  ReentrancyGuard _reentrancy_guard(this, flag);  \
-  if (_reentrancy_guard.AlreadyEntered()) {       \
-    LOGTM("Already entered");                     \
-    return;                                       \
-  }
 
 class uGlobalMenuObject
 {
@@ -140,35 +127,6 @@ protected:
 
   uGlobalMenuBar* GetMenuBar();
 
-  class ReentrancyGuard
-  {
-  public:
-    ReentrancyGuard(uGlobalMenuObject *aMenuObject, PRUint16 aFlags):
-                    mMenuObject(aMenuObject), mFlags(aFlags),
-                    mAlreadyEntered(false)
-    {
-      if (mMenuObject->mFlags & mFlags) {
-        mAlreadyEntered = true;
-      } else {
-        mMenuObject->SetFlags(mFlags);
-      }
-    }
-
-    ~ReentrancyGuard()
-    {
-      if (!mAlreadyEntered) {
-        mMenuObject->ClearFlags(mFlags);
-      }
-    }
-
-    bool AlreadyEntered() { return mAlreadyEntered; }
-
-  private:
-    uGlobalMenuObject *mMenuObject;
-    PRUint16 mFlags;
-    bool mAlreadyEntered;
-  };
-
   nsCOMPtr<nsIContent> mContent;
   DbusmenuMenuitem *mDbusMenuItem;
   nsRefPtr<uGlobalMenuDocListener> mListener;
@@ -177,25 +135,22 @@ protected:
 protected:
   friend class uGlobalMenuDocListener;
 
-  virtual void ObserveAttributeChanged(nsIDocument *aDocument,
-                                       nsIContent *aContent,
+  virtual void ObserveAttributeChanged(nsIContent *aContent,
                                        nsIAtom *aAttribute)
   {
     NS_ERROR("Unhandled AttributeChanged notification");
   };
 
-  virtual void ObserveContentRemoved(nsIDocument *aDocument,
-                                     nsIContent *aContainer,
+  virtual void ObserveContentRemoved(nsIContent *aContainer,
                                      nsIContent *aChild,
-                                     PRInt32 aIndexInContainer)
+                                     nsIContent *aPrevSibling)
   {
     NS_ERROR("Unhandled ContentRemoved notification");
   };
 
-  virtual void ObserveContentInserted(nsIDocument *aDocument,
-                                      nsIContent *aContainer,
+  virtual void ObserveContentInserted(nsIContent *aContainer,
                                       nsIContent *aChild,
-                                      PRInt32 aIndexInContainer)
+                                      nsIContent *aPrevSibling)
   {
     NS_ERROR("Unhandled ContentInserted notification");
   };

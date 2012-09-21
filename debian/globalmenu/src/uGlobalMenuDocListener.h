@@ -40,7 +40,7 @@
 #ifndef _U_GLOBALMENUDOCLISTENER_H
 #define _U_GLOBALMENUDOCLISTENER_H
 
-#include <nsIMutationObserver.h>
+#include <nsIDOMMutationObserver.h>
 #include <nsAutoPtr.h>
 #include <nsHashKeys.h>
 #include <nsClassHashtable.h>
@@ -50,14 +50,14 @@
 #endif
 
 class nsIContent;
-class nsIDocument;
 class uGlobalMenuObject;
+class nsAString;
 
-class uGlobalMenuDocListener: public nsIMutationObserver
+class uGlobalMenuDocListener: public nsIMutationObserverCallback
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIMUTATIONOBSERVER
+  NS_DECL_NSIMUTATIONOBSERVERCALLBACK
 
   uGlobalMenuDocListener();
   nsresult Init(nsIContent *rootNode);
@@ -69,10 +69,16 @@ public:
   virtual ~uGlobalMenuDocListener();
 
 private:
+  void AttributeChanged(nsIContent *aContent, nsAString& aAttribute);
+  void ContentRemoved(nsIContent *aContainer, nsIContent *aChild,
+                      nsIContent *aPrevSibling);
+  void ContentInserted(nsIContent *aContainer, nsIContent *aChild,
+                       nsIContent *aPrevSibling);
+
   nsTArray<uGlobalMenuObject *>* GetListenersForContent(nsIContent *aContent,
                                                         bool aCreate);
 
-  nsIDocument *mDocument;
+  nsCOMPtr<nsIDOMMutationObserver> mObserver;
   nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uGlobalMenuObject *> > mContentToObserverTable;
 };
 

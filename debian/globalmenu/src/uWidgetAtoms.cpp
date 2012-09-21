@@ -37,13 +37,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <uWidgetAtoms.h>
 #include <nsDebug.h>
 #include <nsIAtomService.h>
 #include <nsIAtom.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringAPI.h>
 #include <nsMemory.h>
+
+#include "uGlobalMenuService.h"
+#include "uWidgetAtoms.h"
 
 #define WIDGET_ATOM(_name) nsIAtom* uWidgetAtoms::_name = 0;
 #define WIDGET_ATOM2(_name, _value) nsIAtom* uWidgetAtoms::_name = 0;
@@ -67,7 +69,7 @@ static const uWidgetAtom atoms[] = {
 nsresult
 uWidgetAtoms::RegisterAtoms()
 {
-  nsCOMPtr<nsIAtomService> as = do_GetService("@mozilla.org/atom-service;1");
+  nsIAtomService *as = uGlobalMenuService::GetAtomService();
   if (!as) {
     NS_WARNING("No atom service, which means it's game over already");
     return NS_ERROR_FAILURE;
