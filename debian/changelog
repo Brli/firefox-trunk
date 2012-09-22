@@ -15,6 +15,10 @@ firefox-trunk (17.0~a1~hg20120826r103484-0ubuntu2) UNRELEASED; urgency=low
     - update debian/patches/use-new-yasm-in-lucid.patch
   * Turn on Network Manager integration
     - update debian/vendor-gre.js
+  * Don't include nsString.h in nsRegion.h, which is included by nsIWidget.h,
+    used by our menubar addon. Use nsStringGlue.h instead
+    - add debian/patches/no-internal-api-in-external-headers.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 28 Aug 2012 11:39:02 +0100
 
