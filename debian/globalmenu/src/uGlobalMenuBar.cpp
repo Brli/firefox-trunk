@@ -148,8 +148,8 @@ uGlobalMenuBar::AppendMenuObject(uGlobalMenuObject *menu)
 }
 
 bool
-uGlobalMenuBar::InsertMenuObjectAfter(uGlobalMenuObject *menu,
-                                      nsIContent *aPrevSibling)
+uGlobalMenuBar::InsertMenuObjectAfterContent(uGlobalMenuObject *menu,
+                                             nsIContent *aPrevSibling)
 {
   int32_t index = IndexOf(aPrevSibling);
   NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
@@ -166,15 +166,13 @@ uGlobalMenuBar::InsertMenuObjectAfter(uGlobalMenuObject *menu,
 }
 
 bool
-uGlobalMenuBar::RemoveMenuObjectAfter(nsIContent *aPrevSibling)
+uGlobalMenuBar::RemoveMenuObjectForContent(nsIContent *aContent)
 {
-  int32_t index = IndexOf(aPrevSibling);
-  NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
-  if (index < 0 && aPrevSibling) {
+  int32_t index = IndexOf(aContent);
+  NS_ASSERTION(index >= 0, "Previous sibling not found");
+  if (index < 0) {
     return false;
   }
-
-  index++;
 
   gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
                                        mMenuObjects[index]->GetDbusMenuItem());
@@ -645,14 +643,13 @@ uGlobalMenuBar::ObserveAttributeChanged(nsIContent *aContent,
 
 void
 uGlobalMenuBar::ObserveContentRemoved(nsIContent *aContainer,
-                                      nsIContent *aChild,
-                                      nsIContent *aPrevSibling)
+                                      nsIContent *aChild)
 {
   TRACETM();
   NS_ASSERTION(aContainer == mContent,
                "Received an event that wasn't meant for us!");
 
-  bool res = RemoveMenuObjectAfter(aPrevSibling);
+  bool res = RemoveMenuObjectForContent(aChild);
   NS_ASSERTION(res, "Failed to remove menuitem. Our menu representation is out-of-sync with reality");
 }
 
@@ -668,7 +665,7 @@ uGlobalMenuBar::ObserveContentInserted(nsIContent *aContainer,
   uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
   bool res = false;
   if (newItem) {
-    res = InsertMenuObjectAfter(newItem, aPrevSibling);
+    res = InsertMenuObjectAfterContent(newItem, aPrevSibling);
   }
   NS_ASSERTION(res, "Failed to insert menuitem. Our menu representation is out-of-sync with reality");
 }

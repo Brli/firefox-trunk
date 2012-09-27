@@ -91,8 +91,7 @@ protected:
   virtual void ObserveAttributeChanged(nsIContent *aContent,
                                        nsIAtom *aAttribute);
   virtual void ObserveContentRemoved(nsIContent *aContainer,
-                                     nsIContent *aChild,
-                                     nsIContent *aPrevSibling);
+                                     nsIContent *aChild);
   virtual void ObserveContentInserted(nsIContent *aContainer,
                                       nsIContent *aChild,
                                       nsIContent *aPrevSibling);
@@ -106,11 +105,11 @@ private:
                 nsIContent *aContent);
 
   uint32_t IndexOf(nsIContent *aContent);
-  bool InsertMenuObjectAfter(uGlobalMenuObject *menuObj,
-                             nsIContent *aPrevSibling);
+  bool InsertMenuObjectAfterContent(uGlobalMenuObject *menuObj,
+                                    nsIContent *aPrevSibling);
   bool AppendMenuObject(uGlobalMenuObject *menuObj);
   bool RemoveMenuObjectAt(uint32_t index, bool recycle);
-  bool RemoveMenuObjectAfter(nsIContent *aPrevSibling, bool recycle);
+  bool RemoveMenuObjectForContent(nsIContent *aContent, bool recycle);
   virtual void InitializeDbusMenuItem();
   virtual void Refresh(uMenuObjectRefreshMode aMode);
   virtual uMenuObjectProperties GetValidProperties()

@@ -263,7 +263,7 @@ uGlobalMenuDocListener::HandleMutations(nsTArray<nsCOMPtr<nsIDOMMutationRecord> 
           continue;
         }
 
-        ContentRemoved(target, removed, prevSibling);
+        ContentRemoved(target, removed);
       }
 
       for (uint32_t i = 0; i < addedLength; i++) {
@@ -313,12 +313,11 @@ uGlobalMenuDocListener::AttributeChanged(nsIContent *aContent,
 
 void
 uGlobalMenuDocListener::ContentRemoved(nsIContent *aContainer,
-                                       nsIContent *aChild,
-                                       nsIContent *aPrevSibling)
+                                       nsIContent *aChild)
 {
   TRACE()
-  LOG("aContainer=%p, aChild=%p, aPrevSibling=%p",
-      (void *)aContainer, (void *)aChild, (void *)aPrevSibling);
+  LOG("aContainer=%p, aChild=%p",
+      (void *)aContainer, (void *)aChild);
 
   if (!aContainer || !aChild) {
     return;
@@ -329,8 +328,7 @@ uGlobalMenuDocListener::ContentRemoved(nsIContent *aContainer,
 
   if (listeners) {
     for (uint32_t i = 0; i < listeners->Length(); i++) {
-      listeners->ElementAt(i)->ObserveContentRemoved(aContainer, aChild,
-                                                     aPrevSibling);
+      listeners->ElementAt(i)->ObserveContentRemoved(aContainer, aChild);
     }
   }
 }

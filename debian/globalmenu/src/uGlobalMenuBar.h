@@ -88,8 +88,7 @@ protected:
   virtual void ObserveAttributeChanged(nsIContent *aContent,
                                        nsIAtom *aAttribute);
   virtual void ObserveContentRemoved(nsIContent *aContainer,
-                                     nsIContent *aChild,
-                                     nsIContent *aPrevSibling);
+                                     nsIContent *aChild);
   virtual void ObserveContentInserted(nsIContent *aContainer,
                                       nsIContent *aChild,
                                       nsIContent *aPrevSibling);
@@ -124,9 +123,9 @@ private:
   bool ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent);
 
   uint32_t IndexOf(nsIContent *aContent);
-  bool RemoveMenuObjectAfter(nsIContent *aPrevSibling);
-  bool InsertMenuObjectAfter(uGlobalMenuObject *menu,
-                             nsIContent *aPrevSibling);
+  bool RemoveMenuObjectForContent(nsIContent *aContent);
+  bool InsertMenuObjectAfterContent(uGlobalMenuObject *menu,
+                                    nsIContent *aPrevSibling);
   bool AppendMenuObject(uGlobalMenuObject *menu);
   void Focus();
   void Blur();

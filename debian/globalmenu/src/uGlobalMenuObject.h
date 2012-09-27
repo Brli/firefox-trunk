@@ -142,8 +142,7 @@ protected:
   };
 
   virtual void ObserveContentRemoved(nsIContent *aContainer,
-                                     nsIContent *aChild,
-                                     nsIContent *aPrevSibling)
+                                     nsIContent *aChild)
   {
     NS_ERROR("Unhandled ContentRemoved notification");
   };

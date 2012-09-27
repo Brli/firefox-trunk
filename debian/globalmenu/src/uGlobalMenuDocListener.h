@@ -75,8 +75,7 @@ public:
 
 private:
   void AttributeChanged(nsIContent *aContent, nsAString& aAttribute);
-  void ContentRemoved(nsIContent *aContainer, nsIContent *aChild,
-                      nsIContent *aPrevSibling);
+  void ContentRemoved(nsIContent *aContainer, nsIContent *aChild);
   void ContentInserted(nsIContent *aContainer, nsIContent *aChild,
                        nsIContent *aPrevSibling);
 

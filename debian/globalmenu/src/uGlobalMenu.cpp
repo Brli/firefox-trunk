@@ -435,8 +435,8 @@ uGlobalMenu::IndexOf(nsIContent *aContent)
 }
 
 bool
-uGlobalMenu::InsertMenuObjectAfter(uGlobalMenuObject *menuObj,
-                                   nsIContent *aPrevSibling)
+uGlobalMenu::InsertMenuObjectAfterContent(uGlobalMenuObject *menuObj,
+                                          nsIContent *aPrevSibling)
 {
   int32_t index = IndexOf(aPrevSibling);
   NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
@@ -553,15 +553,13 @@ uGlobalMenu::RemoveMenuObjectAt(uint32_t index, bool recycle)
 }
 
 bool
-uGlobalMenu::RemoveMenuObjectAfter(nsIContent *aPrevSibling, bool recycle)
+uGlobalMenu::RemoveMenuObjectForContent(nsIContent *aContent, bool recycle)
 {
-  int32_t index = IndexOf(aPrevSibling);
-  NS_ASSERTION(index >= 0 || !aPrevSibling, "Previous sibling not found");
-  if (index < 0 && aPrevSibling) {
+  int32_t index = IndexOf(aContent);
+  NS_ASSERTION(index >= 0, "Previous sibling not found");
+  if (index < 0 ) {
     return false;
   }
-
-  index++;
 
   return RemoveMenuObjectAt(index, recycle);
 }
@@ -860,8 +858,7 @@ uGlobalMenu::ObserveAttributeChanged(nsIContent *aContent,
 
 void
 uGlobalMenu::ObserveContentRemoved(nsIContent *aContainer,
-                                   nsIContent *aChild,
-                                   nsIContent *aPrevSibling)
+                                   nsIContent *aChild)
 {
   TRACETM();
   NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
@@ -873,7 +870,7 @@ uGlobalMenu::ObserveContentRemoved(nsIContent *aContainer,
   }
 
   if (aContainer == mPopupContent) {
-    bool res = RemoveMenuObjectAfter(aPrevSibling, true);
+    bool res = RemoveMenuObjectForContent(aChild, true);
     NS_WARN_IF_FALSE(res, "Failed to remove menuitem - marking menu as needing a rebuild");
     if (!res) {
       SetNeedsRebuild();
@@ -901,7 +898,7 @@ uGlobalMenu::ObserveContentInserted(nsIContent *aContainer,
     uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
     bool res = false;
     if (newItem) {
-      res = InsertMenuObjectAfter(newItem, aPrevSibling);
+      res = InsertMenuObjectAfterContent(newItem, aPrevSibling);
     }
     NS_WARN_IF_FALSE(res, "Failed to insert menuitem - marking menu as needing a rebuild");
     if (!res) {
