@@ -73,6 +73,8 @@ public:
   static void EnterCriticalZone() { sInhibitDepth++; }
   static void LeaveCriticalZone();
 
+  static void Shutdown();
+
 private:
   void AttributeChanged(nsIContent *aContent, nsAString& aAttribute);
   void ContentRemoved(nsIContent *aContainer, nsIContent *aChild);
@@ -82,7 +84,7 @@ private:
   nsTArray<uGlobalMenuObject *>* GetListenersForContent(nsIContent *aContent,
                                                         bool aCreate);
 
-  void HandlePendingMutations();
+  void FlushPendingMutations();
 
   nsCOMPtr<nsIDOMMutationObserver> mObserver;
   nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uGlobalMenuObject *> > mContentToObserverTable;
@@ -92,7 +94,7 @@ private:
   static void ScheduleListener(uGlobalMenuDocListener *aListener);
 
   static uint32_t sInhibitDepth;
-  static nsTArray<nsCOMPtr<uGlobalMenuDocListener> > sPendingListeners;
+  static nsTArray<nsCOMPtr<uGlobalMenuDocListener> > *sPendingListeners;
 };
 
 class uMenuAutoSuspendMutationEvents

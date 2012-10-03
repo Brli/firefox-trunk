@@ -63,7 +63,7 @@
 NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, nsIMutationObserverCallback)
 
 uint32_t uGlobalMenuDocListener::sInhibitDepth = 0;
-nsTArray<nsCOMPtr<uGlobalMenuDocListener> > uGlobalMenuDocListener::sPendingListeners;
+nsTArray<nsCOMPtr<uGlobalMenuDocListener> >* uGlobalMenuDocListener::sPendingListeners;
 
 nsresult
 uGlobalMenuDocListener::Init(nsIContent *rootNode)
@@ -406,7 +406,7 @@ uGlobalMenuDocListener::GetListenersForContent(nsIContent *aContent,
 }
 
 void
-uGlobalMenuDocListener::HandlePendingMutations()
+uGlobalMenuDocListener::FlushPendingMutations()
 {
   if (!mObserver) {
     // We've been destroyed already
@@ -425,14 +425,19 @@ uGlobalMenuDocListener::HandlePendingMutations()
 /*static*/void
 uGlobalMenuDocListener::LeaveCriticalZone()
 {
+  if (sInhibitDepth == 1 && sPendingListeners) {
+    while (sPendingListeners->Length() > 0) {
+      (*sPendingListeners)[0]->FlushPendingMutations();
+      sPendingListeners->RemoveElementAt(0);
+    }
+
+    delete sPendingListeners;
+    sPendingListeners = nullptr;
+  }
+
   NS_ASSERTION(sInhibitDepth > 0, "Negative inhibit depth!");
 
-  if (--sInhibitDepth == 0) {
-    while (sPendingListeners.Length() > 0) {
-      sPendingListeners[0]->HandlePendingMutations();
-      sPendingListeners.RemoveElementAt(0);
-    }
-  }
+  sInhibitDepth--;
 }
 
 /*static*/void
@@ -440,7 +445,18 @@ uGlobalMenuDocListener::ScheduleListener(uGlobalMenuDocListener *aListener)
 {
   NS_ASSERTION(sInhibitDepth > 0, "Shouldn't be doing this now");
 
-  if (sPendingListeners.IndexOf(aListener) == -1) {
-    sPendingListeners.AppendElement(aListener);
+  if (!sPendingListeners) {
+    sPendingListeners = new nsTArray<nsCOMPtr<uGlobalMenuDocListener> >;
   }
+
+  if (sPendingListeners->IndexOf(aListener) == -1) {
+    sPendingListeners->AppendElement(aListener);
+  }
+}
+
+/*static*/void
+uGlobalMenuDocListener::Shutdown()
+{
+  delete sPendingListeners;
+  sPendingListeners = nullptr;
 }
