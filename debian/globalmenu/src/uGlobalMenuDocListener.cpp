@@ -63,7 +63,7 @@
 NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, nsIMutationObserverCallback)
 
 uint32_t uGlobalMenuDocListener::sInhibitDepth = 0;
-nsTArray<uGlobalMenuDocListener *> uGlobalMenuDocListener::sPendingListeners;
+nsTArray<nsCOMPtr<uGlobalMenuDocListener> > uGlobalMenuDocListener::sPendingListeners;
 
 nsresult
 uGlobalMenuDocListener::Init(nsIContent *rootNode)
@@ -408,6 +408,11 @@ uGlobalMenuDocListener::GetListenersForContent(nsIContent *aContent,
 void
 uGlobalMenuDocListener::HandlePendingMutations()
 {
+  if (!mObserver) {
+    // We've been destroyed already
+    return;
+  }
+
   if (sInhibitDepth > 0) {
     ScheduleListener(this);
     return;
@@ -422,11 +427,10 @@ uGlobalMenuDocListener::LeaveCriticalZone()
 {
   NS_ASSERTION(sInhibitDepth > 0, "Negative inhibit depth!");
 
-  nsTArray<uGlobalMenuDocListener *> tmp(sPendingListeners);
-
   if (--sInhibitDepth == 0) {
-    for (uint32_t i = 0; i < tmp.Length(); i++) {
-      tmp[i]->HandlePendingMutations();
+    while (sPendingListeners.Length() > 0) {
+      sPendingListeners[0]->HandlePendingMutations();
+      sPendingListeners.RemoveElementAt(0);
     }
   }
 }

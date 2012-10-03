@@ -92,7 +92,7 @@ private:
   static void ScheduleListener(uGlobalMenuDocListener *aListener);
 
   static uint32_t sInhibitDepth;
-  static nsTArray<uGlobalMenuDocListener *> sPendingListeners;
+  static nsTArray<nsCOMPtr<uGlobalMenuDocListener> > sPendingListeners;
 };
 
 class uMenuAutoSuspendMutationEvents
