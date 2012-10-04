@@ -413,11 +413,6 @@ uGlobalMenuDocListener::FlushPendingMutations()
     return;
   }
 
-  if (sInhibitDepth > 0) {
-    ScheduleListener(this);
-    return;
-  }
-
   HandleMutations(mPendingMutations);
   mPendingMutations.Clear();
 }

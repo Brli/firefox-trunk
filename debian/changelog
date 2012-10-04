@@ -1,6 +1,6 @@
 firefox-trunk (17.0~a1~hg20120826r103484-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.5.3
+  * Update globalmenu-extension to 3.5.4
     - Fix LP: #1051152 - Firefox 16 beta crash in nsIContent::SetAttr with
       greasemonkey installed
     - Improve handling of radio items, and work correctly for radio items
