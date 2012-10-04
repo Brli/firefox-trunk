@@ -20,6 +20,12 @@ firefox-trunk (17.0~a1~hg20120826r103484-0ubuntu2) UNRELEASED; urgency=low
     used by our menubar addon. Use nsStringGlue.h instead
     - add debian/patches/no-internal-api-in-external-headers.patch
     - update debian/patches/series.in
+  * Update favicon for Google searchplugin
+    - update debian/searchplugins/en-GB/google.xml
+    - update debian/searchplugins/en-US/google.xml
+    - update debian/searchplugins/en-ZA/google.xml
+    - update debian/searchplugins/ja/google-jp.xml
+    - update debian/searchplugins/ku/google-ku.xml
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 28 Aug 2012 11:39:02 +0100
 
