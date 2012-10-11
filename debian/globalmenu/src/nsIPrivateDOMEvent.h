@@ -21,7 +21,6 @@
  *
  * Contributor(s):
  * Chris Coulson <chris.coulson@canonical.com>
- * Mike Conley <mconley@mozillamessaging.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -37,61 +36,15 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#include <nsIAtom.h>
-#include <nsDebug.h>
-#include <nsIContent.h>
+#ifndef __NSIPRIVATEDOMEVENT_H_STUB
+#define __NSIPRIVATEDOMEVENT_H_STUB
 
-#include <glib-object.h>
-#include <libdbusmenu-glib/server.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 16
+# include <nsIDOMEvent.h>
+typedef nsIDOMEvent nsIPrivateDOMEvent;
+#else
+#pragma GCC system_header
+# include_next <nsIPrivateDOMEvent.h>
+#endif
 
-#include "uGlobalMenuDummy.h"
-#include "uWidgetAtoms.h"
-
-#include "uDebug.h"
-
-void
-uGlobalMenuDummy::InitializeDbusMenuItem()
-{
-  dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
-                                      DBUSMENU_MENUITEM_PROP_VISIBLE,
-                                      FALSE);
-}
-
-uGlobalMenuDummy::uGlobalMenuDummy():
-  uGlobalMenuObject()
-{
-  MOZ_COUNT_CTOR(uGlobalMenuDummy);
-}
-
-uGlobalMenuDummy::~uGlobalMenuDummy()
-{
-  TRACETM();
-
-  MOZ_COUNT_DTOR(uGlobalMenuDummy);
-}
-
-nsresult
-uGlobalMenuDummy::Init()
-{
-  mParent = nullptr;
-
-  return NS_OK;
-}
-
-/*static*/ uGlobalMenuObject*
-uGlobalMenuDummy::Create()
-{
-  TRACE();
-
-  uGlobalMenuDummy *menuitem = new uGlobalMenuDummy();
-  if (!menuitem) {
-    return nullptr;
-  }
-
-  if (NS_FAILED(menuitem->Init())) {
-    delete menuitem;
-    return nullptr;
-  }
-
-  return static_cast<uGlobalMenuObject *>(menuitem);
-}
+#endif

@@ -70,7 +70,6 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 #define MAX_LABEL_NCHARS 40
 
@@ -227,7 +226,7 @@ uGlobalMenuObject::IconLoader::LoadIcon()
     return;
   }
 
-  LOGM(mMenuItem, "Icon URI: %s", LOGU16TOU8(uriString));
+  LOGM(mMenuItem, "Icon URI: %s", NS_LossyConvertUTF16toASCII(uriString).get());
 
   if (mIconRequest) {
     mIconRequest->Cancel(NS_BINDING_ABORTED);
@@ -526,7 +525,8 @@ uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
   nsAutoString label;
   if (aContent && aContent->GetAttr(kNameSpaceID_None,
                                     uWidgetAtoms::label, label)) {
-    LOGC(aContent, "Content has label \"%s\"", LOGU16TOU8(label));
+    LOGC(aContent, "Content has label \"%s\"",
+         NS_LossyConvertUTF16toASCII(label).get());
     mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label, label, true);
   } else {
     mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);

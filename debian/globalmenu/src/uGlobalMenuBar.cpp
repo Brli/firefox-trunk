@@ -43,7 +43,7 @@
 #include <nsIXULWindow.h>
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDocShell.h>
-#if 1
+#if MOZILLA_BRANCH_MAJOR_VERSION < 17
 # include <nsIDOMNSEvent.h>
 #endif
 #include <nsIPrefBranch.h>
@@ -53,6 +53,7 @@
 #include <nsIContent.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMEventTarget.h>
+#include <nsIDOMEvent.h>
 
 #include <glib-object.h>
 #include <gdk/gdkx.h>
@@ -64,7 +65,6 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 #define MODIFIER_SHIFT    1
 #define MODIFIER_CONTROL  2
@@ -493,14 +493,18 @@ uGlobalMenuBar::Focus()
 bool
 uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
 {
-  nsCOMPtr<nsIDOMNSEvent> nsEvent = do_QueryInterface(aKeyEvent);
-  if (!nsEvent) {
+#if MOZILLA_BRANCH_MAJOR_VERSION < 17
+  nsCOMPtr<nsIDOMNSEvent> event = do_QueryInterface(aKeyEvent);
+  if (!event) {
     return false;
   }
+#else
+  nsIDOMEvent *event = aKeyEvent;
+#endif
 
   bool handled, trusted;
-  nsEvent->GetPreventDefault(&handled);
-  nsEvent->GetIsTrusted(&trusted);
+  event->GetPreventDefault(&handled);
+  event->GetIsTrusted(&trusted);
 
   if (handled || !trusted) {
     return false;

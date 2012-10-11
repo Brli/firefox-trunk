@@ -57,7 +57,6 @@
 #include "uGlobalMenuLoader.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 #define XUL_NS "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 

@@ -46,9 +46,7 @@
 #include <nsPIDOMWindow.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMDocument.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
-# include <nsIPrivateDOMEvent.h>
-#endif
+#include <nsIPrivateDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #include <mozilla/dom/Element.h>
 #include <nsIContent.h>
@@ -67,7 +65,6 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 // XXX: Borrowed from content/xbl/src/nsXBLPrototypeHandler.cpp. This doesn't
 // seem to be publicly available, and we need a way to map key names

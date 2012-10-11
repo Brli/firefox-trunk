@@ -51,8 +51,6 @@
 #include "uGlobalMenuObject.h"
 #include "uWidgetAtoms.h"
 
-#include "compat.h"
-
 #define UNITY_MENU_POPUP_STATE_0          FLAG(8)
 #define UNITY_MENU_POPUP_STATE_1          FLAG(9)
 #define UNITY_MENU_POPUP_STATE_MASK       (UNITY_MENU_POPUP_STATE_1 | UNITY_MENU_POPUP_STATE_0)
@@ -134,7 +132,7 @@ private:
   void SetNeedsRebuild() { mFlags = mFlags | UNITY_MENU_NEEDS_REBUILDING; }
   void ClearNeedsRebuild() { mFlags = mFlags & ~UNITY_MENU_NEEDS_REBUILDING; }
   bool DoesNeedRebuild() { return !!(mFlags & UNITY_MENU_NEEDS_REBUILDING); }
-  void FreeRecycleList() { mRecycleList = nullptr; }
+  void FlushRecycleList() { mRecycleList = nullptr; }
   uMenuPopupState GetPopupState()
   {
     return static_cast<uMenuPopupState>((mFlags & UNITY_MENU_POPUP_STATE_MASK) >> 8);
@@ -143,15 +141,21 @@ private:
 
   struct RecycleList
   {
-    RecycleList(uGlobalMenu *aMenu, PRUint32 aMarker);
+  public:
+    RecycleList(uGlobalMenu *aMenu);
     ~RecycleList();
 
-    void Empty();
-    DbusmenuMenuitem* Shift();
-    void Unshift(DbusmenuMenuitem *aItem);
-    void Push(DbusmenuMenuitem *aItem);
+    DbusmenuMenuitem* RecycleForAppend(uGlobalMenuObject *aMenuObj);
+    DbusmenuMenuitem* RecycleForInsert(uGlobalMenuObject *aMenuObj,
+                                       uint32_t aIndex,
+                                       uint32_t *aCorrectedIndex);
+    void TakeItem(DbusmenuMenuitem *aMenuObj, uint32_t aIndex);
 
-    PRUint32 mMarker;
+  private:
+    void Flush();
+    DbusmenuMenuitem* Shift(uGlobalMenuObject *aMenuObj = nullptr);
+
+    uint32_t mMarker;
     nsTArray<DbusmenuMenuitem *> mList;
     uGlobalMenu *mMenu;
     nsRefPtr<nsRunnableMethod<uGlobalMenu, void, false> > mFreeEvent;

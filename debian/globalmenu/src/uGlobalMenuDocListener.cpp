@@ -306,7 +306,7 @@ uGlobalMenuDocListener::AttributeChanged(nsIContent *aContent,
 
   if (listeners) {
     for (uint32_t i = 0; i < listeners->Length(); i++) {
-      listeners->ElementAt(i)->ObserveAttributeChanged(aContent, attribute);
+      (*listeners)[i]->ObserveAttributeChanged(aContent, attribute);
     }
   }
 }
@@ -328,7 +328,7 @@ uGlobalMenuDocListener::ContentRemoved(nsIContent *aContainer,
 
   if (listeners) {
     for (uint32_t i = 0; i < listeners->Length(); i++) {
-      listeners->ElementAt(i)->ObserveContentRemoved(aContainer, aChild);
+      (*listeners)[i]->ObserveContentRemoved(aContainer, aChild);
     }
   }
 }
@@ -351,8 +351,8 @@ uGlobalMenuDocListener::ContentInserted(nsIContent *aContainer,
 
   if (listeners) {
     for (uint32_t i = 0; i < listeners->Length(); i++) {
-      listeners->ElementAt(i)->ObserveContentInserted(aContainer, aChild,
-                                                      aPrevSibling);
+      (*listeners)[i]->ObserveContentInserted(aContainer, aChild,
+                                              aPrevSibling);
     }
   }
 }

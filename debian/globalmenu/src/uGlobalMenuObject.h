@@ -51,7 +51,6 @@
 #include "uGlobalMenuDocListener.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 #define FLAG(val) (1 << val)
 

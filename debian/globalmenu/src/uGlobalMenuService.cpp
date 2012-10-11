@@ -70,7 +70,6 @@
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
 class RegisterWindowCbData
 {

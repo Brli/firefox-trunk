@@ -45,11 +45,3 @@
 # define nullptr 0L
 #endif
 #endif
-
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 16
-# define nsIPrivateDOMEvent nsIDOMEvent
-#endif
-
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 17
-# define nsIDOMNSEvent nsIDOMEvent
-#endif

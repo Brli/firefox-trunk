@@ -42,8 +42,6 @@
 #include <nsStringAPI.h>
 #include <nsXPCOM.h>
 
-#include "compat.h"
-
 #if DEBUG_GLOBALMENU >= 1 && !defined DEBUG
 #undef NS_ASSERTION
 #undef NS_WARN_IF_FALSE
@@ -80,12 +78,6 @@
 #include <stdio.h>
 # define LOG_LENGTH 1024
 
-#define LOGU16TOU8(str) __extension__({                       \
-  nsCAutoString cstr;                                         \
-  CopyUTF16toUTF8(str, cstr);                                 \
-  cstr.get();                                                 \
-})
-
 #if DEBUG_GLOBALMENU == 2
 # define DEBUG_DEPTH 0
 #else
@@ -101,7 +93,7 @@
     if (object) object->GetContent()->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, id); \
     char str[LOG_LENGTH+1];                                   \
     snprintf(str, LOG_LENGTH, format);                        \
-    printf("%*s %s [menuobject: %p (id: %s)]: %s\n", DEBUG_DEPTH, "", str, (void *)object, LOGU16TOU8(id), __PRETTY_FUNCTION__); \
+    printf("%*s %s [menuobject: %p (id: %s)]: %s\n", DEBUG_DEPTH, "", str, (void *)object, NS_LossyConvertUTF16toASCII(id).get(), __PRETTY_FUNCTION__); \
   }
 
 #define LOGC(content, format...)                              \
@@ -110,7 +102,7 @@
     content->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, id); \
     char str[LOG_LENGTH+1];                                   \
     snprintf(str, LOG_LENGTH, format);                        \
-    printf("%*s %s [content: %p (id: %s)]: %s\n", DEBUG_DEPTH, "", str, (void *)content, LOGU16TOU8(id), __PRETTY_FUNCTION__); \
+    printf("%*s %s [content: %p (id: %s)]: %s\n", DEBUG_DEPTH, "", str, (void *)content, NS_LossyConvertUTF16toASCII(id).get(), __PRETTY_FUNCTION__); \
   }
 
 #define LOG(format...)                                        \
@@ -125,7 +117,6 @@
 #define LOGM(object, format...)
 #define LOGC(content, format...)
 #define LOG(format...)
-#define LOGU16TOU8(str)
 #endif
 
 #if DEBUG_GLOBALMENU >= 3
@@ -166,12 +157,12 @@ private:
 #define TRACEM(object)                                        \
   nsAutoString _id;                                           \
   if (object) object->GetContent()->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, _id); \
-  FunctionTracer _marker("%s [menuobject: %p (id: %s)]", __PRETTY_FUNCTION__, (void *)object, LOGU16TOU8(_id)); \
+  FunctionTracer _marker("%s [menuobject: %p (id: %s)]", __PRETTY_FUNCTION__, (void *)object, NS_LossyConvertUTF16toASCII(_id).get()); \
 
 #define TRACEC(content)                                       \
   nsAutoString _id;                                           \
   content->GetAttr(kNameSpaceID_None, uWidgetAtoms::id, _id); \
-  FunctionTracer _marker("%s [content: %p (id: %s)]", __PRETTY_FUNCTION__, (void *)content, LOGU16TOU8(_id)); \
+  FunctionTracer _marker("%s [content: %p (id: %s)]", __PRETTY_FUNCTION__, (void *)content, NS_LossyConvertUTF16toASCII(_id).get()); \
 
 #define TRACE()                                               \
   FunctionTracer _marker("%s", __PRETTY_FUNCTION__);

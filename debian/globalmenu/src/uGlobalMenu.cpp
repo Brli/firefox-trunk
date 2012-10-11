@@ -44,9 +44,7 @@
 #include <nsIDOMDocument.h>
 #include <nsStringAPI.h>
 #include <nsIDOMEventTarget.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 16
-# include <nsIPrivateDOMEvent.h>
-#endif
+#include <nsIPrivateDOMEvent.h>
 #include <nsPIDOMWindow.h>
 #include <nsIDOMXULCommandEvent.h>
 #include <nsIXPConnect.h>
@@ -67,25 +65,39 @@
 #include "uGlobalMenuUtils.h"
 
 #include "uDebug.h"
-#include "compat.h"
 
-uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu,
-                                      PRUint32 aMarker):
-  mMarker(aMarker), mMenu(aMenu)
+static bool
+IsRecycledItemCompatible(DbusmenuMenuitem *aRecycled,
+                         uGlobalMenuObject *aNewItem)
+{
+  // If the recycled item was a separator, it can only be reused as a separator
+  if ((g_strcmp0(dbusmenu_menuitem_property_get(aRecycled,
+                                                DBUSMENU_MENUITEM_PROP_TYPE),
+                 "separator") == 0) !=
+      (aNewItem->GetType() == eMenuSeparator)) {
+    return false;
+  }
+
+  // Everything else is fine
+  return true;
+}
+
+uGlobalMenu::RecycleList::RecycleList(uGlobalMenu *aMenu):
+  mMenu(aMenu)
 {
   mFreeEvent = NS_NewNonOwningRunnableMethod(mMenu,
-                                             &uGlobalMenu::FreeRecycleList);
+                                             &uGlobalMenu::FlushRecycleList);
   NS_DispatchToCurrentThread(mFreeEvent);
 }
 
 uGlobalMenu::RecycleList::~RecycleList()
 {
-  Empty();
+  Flush();
   mFreeEvent->Revoke();
 }
 
 void
-uGlobalMenu::RecycleList::Empty()
+uGlobalMenu::RecycleList::Flush()
 {
   TRACEM(mMenu);
 
@@ -99,7 +111,7 @@ uGlobalMenu::RecycleList::Empty()
 }
 
 DbusmenuMenuitem*
-uGlobalMenu::RecycleList::Shift()
+uGlobalMenu::RecycleList::Shift(uGlobalMenuObject *aMenuObj)
 {
   if (mList.Length() == 0) {
     LOGM(mMenu, "No items to shift from the front of the recycle list");
@@ -108,6 +120,12 @@ uGlobalMenu::RecycleList::Shift()
 
   ++mMarker;
   DbusmenuMenuitem *recycled = mList[0];
+
+  if (aMenuObj && !IsRecycledItemCompatible(recycled, aMenuObj)) {
+    Flush();
+    return nullptr;
+  }
+
   mList.RemoveElementAt(0);
 
   LOGM(mMenu, "Shifting %p from the front of the recycle list. New marker=%d",
@@ -115,22 +133,72 @@ uGlobalMenu::RecycleList::Shift()
   return recycled;
 }
 
-void
-uGlobalMenu::RecycleList::Unshift(DbusmenuMenuitem *aItem)
+DbusmenuMenuitem*
+uGlobalMenu::RecycleList::RecycleForAppend(uGlobalMenuObject *aMenuObj)
 {
-  if (mList.Length() != 0) {
-    --mMarker;
+  if (!aMenuObj) {
+    return nullptr;
   }
 
-  LOGM(mMenu, "Prepending %p to recycle list. New marker=%d", (void *)aItem, mMarker);
-  mList.InsertElementAt(0, aItem);
+  return Shift(aMenuObj);
+}
+
+DbusmenuMenuitem*
+uGlobalMenu::RecycleList::RecycleForInsert(uGlobalMenuObject *aMenuObj,
+                                           uint32_t aIndex,
+                                           uint32_t *aCorrectedIndex)
+{
+  if (aCorrectedIndex) {
+    *aCorrectedIndex = aIndex;
+  }
+
+  if (!aMenuObj) {
+    return nullptr;
+  }
+
+  DbusmenuMenuitem *recycled = nullptr;
+  if (aIndex < mMarker) {
+    ++mMarker;
+  } else if (aIndex > mMarker) {
+    if (aCorrectedIndex) {
+      *aCorrectedIndex += mList.Length();
+    }
+  } else {
+    recycled = Shift(aMenuObj);
+  }
+
+  return recycled;
 }
 
 void
-uGlobalMenu::RecycleList::Push(DbusmenuMenuitem *aItem)
+uGlobalMenu::RecycleList::TakeItem(DbusmenuMenuitem *aMenuObj,
+                                   uint32_t aIndex)
 {
-  LOGM(mMenu, "Appending %p to recycle list", (void *)aItem);
-  mList.AppendElement(aItem);
+  if (!aMenuObj) {
+    return;
+  }
+
+  if (mList.Length() == 0) {
+    // This is an empty list. Ensure we add this node to it
+    mMarker = aIndex;
+  } else if ((mMarker != 0 && aIndex < mMarker - 1) ||
+             aIndex > mMarker) {
+    // If this node is not adjacent to any previously removed nodes, then
+    // free the existing nodes already and restart the process
+    Flush();
+    mMarker = aIndex;
+  }
+
+  if (aIndex == mMarker) {
+    LOGM(mMenu, "Appending %p to recycle list", (void *)aMenuObj);
+    mList.AppendElement(aMenuObj);
+  } else {
+    --mMarker;
+
+    LOGM(mMenu, "Prepending %p to recycle list. New marker=%d",
+         (void *)aMenuObj, mMarker);
+    mList.InsertElementAt(0, aMenuObj);
+  }
 }
 
 /*static*/ bool
@@ -293,13 +361,13 @@ uGlobalMenu::AboutToOpen()
 
   uMenuAutoSuspendMutationEvents as;
 
-  if (DoesNeedRebuild()) {
-    Build();
-  }
-
   if (GetPopupState() == ePopupShowing || GetPopupState() == ePopupOpen) {
     LOGTM("Ignoring AboutToOpen for already open menu");
     return;
+  }
+
+  if (DoesNeedRebuild()) {
+    Build();
   }
 
   SetPopupState(ePopupShowing);
@@ -402,22 +470,6 @@ uGlobalMenu::InitializeDbusMenuItem()
                    G_CALLBACK(MenuEventCallback), this);
 }
 
-static bool
-IsRecycledItemCompatible(DbusmenuMenuitem *aRecycled,
-                         uGlobalMenuObject *aNewItem)
-{
-  // If the recycled item was a separator, it can only be reused as a separator
-  if ((g_strcmp0(dbusmenu_menuitem_property_get(aRecycled,
-                                                DBUSMENU_MENUITEM_PROP_TYPE),
-                 "separator") == 0) !=
-      (aNewItem->GetType() == eMenuSeparator)) {
-    return false;
-  }
-
-  // Everything else is fine
-  return true;
-}
-
 uint32_t
 uGlobalMenu::IndexOf(nsIContent *aContent)
 {
@@ -445,22 +497,9 @@ uGlobalMenu::InsertMenuObjectAfterContent(uGlobalMenuObject *menuObj,
   }
 
   uint32_t correctedIndex = ++index;
-
   DbusmenuMenuitem *recycled = nullptr;
-  if (mRecycleList && mRecycleList->mList.Length() > 0) {
-    if (index < mRecycleList->mMarker) {
-      ++mRecycleList->mMarker;
-    } else if (index > mRecycleList->mMarker) {
-      correctedIndex += mRecycleList->mList.Length();
-    } else {
-      // If this node is being inserted in to a gap left by previously
-      // removed nodes, then recycle one that we just removed
-      recycled = mRecycleList->Shift();
-      if (!IsRecycledItemCompatible(recycled, menuObj)) {
-        recycled = nullptr;
-        mRecycleList = nullptr;
-      }
-    }
+  if (mRecycleList) {
+    recycled = mRecycleList->RecycleForInsert(menuObj, index, &correctedIndex);
   }
 
   gboolean res = TRUE;
@@ -482,15 +521,10 @@ bool
 uGlobalMenu::AppendMenuObject(uGlobalMenuObject *menuObj)
 {
   DbusmenuMenuitem *recycled = nullptr;
-  if (mRecycleList && mRecycleList->mList.Length() > 0 &&
-      mRecycleList->mMarker == mMenuObjects.Length()) {
+  if (mRecycleList) {
     // If any nodes were just removed from the end of the menu, then recycle
     // one now
-    recycled = mRecycleList->Shift();
-    if (!IsRecycledItemCompatible(recycled, menuObj)) {
-      recycled = nullptr;
-      mRecycleList = nullptr;
-    }
+    recycled = mRecycleList->RecycleForAppend(menuObj);
   }
 
   gboolean res = TRUE;
@@ -514,6 +548,8 @@ uGlobalMenu::RemoveMenuObjectAt(uint32_t index, bool recycle)
     return false;
   }
 
+  uGlobalMenuObject *menuObj = mMenuObjects[index];
+
   // We add contiguous blocks of removed nodes to a recycle list, so that
   // we can reuse them again if they can be reinserted in to the menu without
   // changing its structure. The list is cleaned in an idle event, so nodes
@@ -524,29 +560,17 @@ uGlobalMenu::RemoveMenuObjectAt(uint32_t index, bool recycle)
   // by the history menu in Firefox
   if (recycle) {
     if (!mRecycleList) {
-      mRecycleList = new RecycleList(this, index);
-    } else if (mRecycleList->mList.Length() > 0 &&
-               ((mRecycleList->mMarker != 0 &&
-                 index < mRecycleList->mMarker - 1) ||
-                index > mRecycleList->mMarker)) {
-      // If this node is not adjacent to any previously removed nodes, then
-      // free the existing nodes already and restart the process
-      mRecycleList->Empty();
-      mRecycleList->mMarker = index;
+      mRecycleList = new RecycleList(this);
     }
 
-    if (index == mRecycleList->mMarker) {
-      mRecycleList->Push(mMenuObjects[index]->GetDbusMenuItem());
-    } else {
-      mRecycleList->Unshift(mMenuObjects[index]->GetDbusMenuItem());
-    }
+    mRecycleList->TakeItem(menuObj->GetDbusMenuItem(), index);
   } else {
-    dbusmenu_menuitem_child_delete(mDbusMenuItem,
-                                   mMenuObjects[index]->GetDbusMenuItem());
+    mRecycleList = nullptr;
+    dbusmenu_menuitem_child_delete(mDbusMenuItem, menuObj->GetDbusMenuItem());
   }
 
   LOGTM("Removing item at index %d", index);
-  mMenuObjects[index]->Destroy();
+  menuObj->Destroy();
   mMenuObjects.RemoveElementAt(index);
 
   return true;
