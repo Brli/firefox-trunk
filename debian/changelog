@@ -1,11 +1,14 @@
 firefox-trunk (18.0~a1~hg20121008r109581-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.6 prerelease r474
+  * Update globalmenu-extension to 3.6 prerelease r475
     - Don't override the binding on menupopups if we aren't exporting
       the menubar remotely
     - Fix issue with stale entries being left in the Recently Closed
       Tabs / Windows menus
     - Make logging work correctly on debug builds
+    - Handle submenu's being reopened without getting a close event
+      in between. We don't seem to get a close event when a menuitem
+      is activated
   * Fix LP: #1064423 - "Submitting your report..." shows missing-icon icon.
     Install the throbber icon in the package
     - update debian/firefox.install.in

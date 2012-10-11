@@ -215,7 +215,7 @@ uGlobalMenu::MenuEventCallback(DbusmenuMenuitem *menu,
   }
 
   if (!g_strcmp0("opened", name)) {
-    self->AboutToOpen();
+    self->AboutToOpen(true);
     return true;
   }
 
@@ -231,15 +231,14 @@ uGlobalMenu::MenuAboutToOpenCallback(DbusmenuMenuitem *menu,
   // XXX: We ignore the first AboutToOpen on top-level menus, because Unity
   //      sends this signal on all top-levels when the window opens.
   //      This isn't useful for us and it doesn't finish the job by sending
-  //      open/close events, so we end up in a state where we resend the
-  //      entire menu structure over dbus on every page navigation
+  //      open/closed events
   if (!(self->mFlags & UNITY_MENU_READY)) {
     LOGM(self, "Ignoring first AboutToOpen");
     self->SetFlags(UNITY_MENU_READY);
     return false;
   }
 
-  self->AboutToOpen();
+  self->AboutToOpen(false);
 
   // We return false here for "needsUpdate", as we have no way of
   // knowing in advance if the menu structure is going to be updated.
@@ -283,7 +282,8 @@ uGlobalMenu::SetPopupState(uMenuPopupState aState)
     case ePopupShowing:
       state.Assign(NS_LITERAL_STRING("showing"));
       break;
-    case ePopupOpen:
+    case ePopupOpen1:
+    case ePopupOpen2:
       state.Assign(NS_LITERAL_STRING("open"));
       break;
     case ePopupHiding:
@@ -355,13 +355,30 @@ DispatchMouseEvent(nsIContent *aPopup, const nsAString& aType)
 }
 
 void
-uGlobalMenu::AboutToOpen()
+uGlobalMenu::AboutToOpen(bool aOpenedEvent, bool aWantPopupShownEvent)
 {
   TRACETM();
 
   uMenuAutoSuspendMutationEvents as;
 
-  if (GetPopupState() == ePopupShowing || GetPopupState() == ePopupOpen) {
+  // This function can be called in 2 ways:
+  // - "about-to-show" signal from dbusmenu
+  // - "opened" event from dbusmenu
+  // Unity sends both of these, but we only want to respond to one of them.
+  // Unity-2D only sends the second one.
+  // To complicate things even more, Unity doesn't send us a closed event
+  // when a menuitem is activated, so we need to accept consecutive
+  // about-to-show signals without corresponding "closed" events (else we would
+  // just ignore all calls to this function once the menu is open). So, the
+  // way this works is:
+  // - If we were called from an "about-to-show" signal, ignore the "opened"
+  //   event and accept consecutive "about-to-show" signals
+  // - If we were called from an "opened" event, accept any consecutve call
+  //   without a corresponding "closed" event
+  uMenuPopupState openState = aOpenedEvent ? ePopupOpen2 : ePopupOpen1;
+
+  if (GetPopupState() != ePopupClosed && GetPopupState() != ePopupHiding &&
+      aOpenedEvent && GetPopupState() != openState) {
     LOGTM("Ignoring AboutToOpen for already open menu");
     return;
   }
@@ -377,13 +394,15 @@ uGlobalMenu::AboutToOpen()
     mMenuObjects[i]->ContainerIsOpening();
   }
 
-  SetPopupState(ePopupOpen);
+  SetPopupState(openState);
   mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::open,
                     NS_LITERAL_STRING("true"), true);
 
-  nsCOMPtr<nsIRunnable> event =
-    NS_NewRunnableMethod(this, &uGlobalMenu::FirePopupShownEvent);
-  NS_DispatchToCurrentThread(event);
+  if (aWantPopupShownEvent) {
+    nsCOMPtr<nsIRunnable> event =
+      NS_NewRunnableMethod(this, &uGlobalMenu::FirePopupShownEvent);
+    NS_DispatchToCurrentThread(event);
+  }
 }
 
 void
@@ -395,7 +414,7 @@ uGlobalMenu::FirePopupShownEvent()
     return;
   }
 
-  if (GetPopupState() == ePopupOpen) {
+  if (GetPopupState() == ePopupOpen1 || GetPopupState() == ePopupOpen2) {
     DispatchMouseEvent(mPopupContent, NS_LITERAL_STRING("popupshown"));
   }
 }
@@ -405,7 +424,8 @@ uGlobalMenu::OnClose()
 {
   TRACETM();
 
-  if (GetPopupState() != ePopupShowing && GetPopupState() != ePopupOpen) {
+  if (GetPopupState() != ePopupShowing && GetPopupState() != ePopupOpen1 &&
+      GetPopupState() != ePopupOpen2) {
     LOGTM("Ignoring OnClose for menu which isn't open");
     return;
   }
@@ -844,11 +864,16 @@ uGlobalMenu::OpenMenuDelayed()
     return;
   }
 
-  // Here, we manually call AboutToOpen and then open the menu after a short
-  // delay. This avoids an issue where opening the History menu in Firefox
-  // with the keyboard causes extra items to appear at the top of the menu,
-  // but keyboard focus is not on the first item
-  AboutToOpen();
+  // Here, we synchronously fire popupshowing and popupshown events and then
+  // open the menu after a short delay. This allows the menu to refresh before
+  // it's shown, and avoids an issue where keyboard focus is not on the first
+  // item of the history menu in Firefox when opening it with the keyboard,
+  // because extra items to appear at the top of the menu
+
+  SetPopupState(ePopupClosed);
+  AboutToOpen(false, false);
+  FirePopupShownEvent();
+  SetPopupState(ePopupClosed);
   g_timeout_add(100, DoOpen, g_object_ref(mDbusMenuItem));
 }
 

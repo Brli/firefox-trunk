@@ -53,13 +53,14 @@
 
 #define UNITY_MENU_POPUP_STATE_0          FLAG(8)
 #define UNITY_MENU_POPUP_STATE_1          FLAG(9)
-#define UNITY_MENU_POPUP_STATE_MASK       (UNITY_MENU_POPUP_STATE_1 | UNITY_MENU_POPUP_STATE_0)
+#define UNITY_MENU_POPUP_STATE_2          FLAG(10)
+#define UNITY_MENU_POPUP_STATE_MASK       (UNITY_MENU_POPUP_STATE_2 | UNITY_MENU_POPUP_STATE_1 | UNITY_MENU_POPUP_STATE_0)
 
 // The menu needs rebuilding
-#define UNITY_MENU_NEEDS_REBUILDING       FLAG(10)
+#define UNITY_MENU_NEEDS_REBUILDING       FLAG(11)
 
 // The shell sent the first "AboutToOpen" event
-#define UNITY_MENU_READY                  FLAG(11)
+#define UNITY_MENU_READY                  FLAG(12)
 
 class uGlobalMenuItem;
 class uGlobalMenuDocListener;
@@ -67,7 +68,8 @@ class uGlobalMenuDocListener;
 enum uMenuPopupState {
   ePopupClosed = 0,
   ePopupShowing,
-  ePopupOpen,
+  ePopupOpen1, // Menu was opened with an "about-to-show" signal
+  ePopupOpen2, // Menu was opened with an "opened" event
   ePopupHiding
 };
 
@@ -125,7 +127,7 @@ private:
                                 guint timestamp,
                                 void *data);
   static gboolean DoOpen(gpointer user_data);
-  void AboutToOpen();
+  void AboutToOpen(bool aOpenedEvent, bool aWantPopupShownEvent = true);
   void FirePopupShownEvent();
   void OnClose();
   void FirePopupHidingEvent();
