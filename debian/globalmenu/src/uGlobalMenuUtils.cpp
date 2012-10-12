@@ -81,8 +81,8 @@ GetMenuObjectConstructor(nsIContent *aContent)
   return nullptr;
 }
 
-bool
-uGlobalMenuUtils::ContentIsSupported(nsIContent *aContent)
+static bool
+ContentIsSupported(nsIContent *aContent)
 {
   TRACEC(aContent);
 
@@ -102,16 +102,26 @@ uGlobalMenuUtils::GetPreviousSupportedSibling(nsIContent *aContent)
 uGlobalMenuObject*
 uGlobalMenuUtils::CreateMenuObject(uGlobalMenuObject *aParent,
                                    uGlobalMenuDocListener *aListener,
-                                   nsIContent *aContent)
+                                   nsIContent *aContent,
+                                   bool *aFailed)
 {
   TRACEC(aContent);
+
+  if (aFailed) {
+    *aFailed = false;
+  }
 
   uMenuObjectConstructor constructor = GetMenuObjectConstructor(aContent);
   if (!constructor) {
     return nullptr;
   }
 
-  return constructor(aParent, aListener, aContent);
+  uGlobalMenuObject *res = constructor(aParent, aListener, aContent);
+  if (!res && aFailed) {
+    *aFailed = true;
+  }
+
+  return res;
 }
 
 GtkWidget*

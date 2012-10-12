@@ -459,14 +459,63 @@ uGlobalMenuItem::SyncStateFromCommand()
 {
   TRACETM()
 
+  nsAutoString checked;
+  if (mCommandContent && mCommandContent->GetAttr(kNameSpaceID_None,
+                                                  uWidgetAtoms::checked,
+                                                  checked)) {
+    LOGTM("Copying checked state from command node");
+    mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked, checked,
+                      true);
+  }
+}
+
+void
+uGlobalMenuItem::SyncLabelFromCommand()
+{
+  TRACETM()
+
+  nsAutoString label;
+  if (mCommandContent && mCommandContent->GetAttr(kNameSpaceID_None,
+                                                  uWidgetAtoms::label,
+                                                  label)) {
+    LOGTM("Copying label from command node");
+    mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label, label,
+                      true);
+  }
+}
+
+void
+uGlobalMenuItem::SyncSensitivityFromCommand()
+{
+  TRACETM()
+
   if (mCommandContent) {
-    nsAutoString checked;
-    if (mCommandContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::checked,
-                                 checked)) {
-      LOGTM("Copying checked state from command node");
-      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::checked, checked, true);
+    if (mCommandContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::disabled,
+                                     uWidgetAtoms::_true, eCaseMatters)) {
+      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
+                        NS_LITERAL_STRING("true"), true);
+    } else {
+      mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, true);
     }
   }
+}
+
+void
+uGlobalMenuItem::SyncStateFromContent()
+{
+  TRACETM()
+
+  if (!IsCheckboxOrRadioItem()) {
+    return;
+  }
+
+  SetCheckState(mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
+                                      uWidgetAtoms::_true, eCaseMatters));
+  dbusmenu_menuitem_property_set_int(mDbusMenuItem,
+                                     DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
+                                     IsChecked() ?
+                                     DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED : 
+                                      DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED);
 }
 
 void
@@ -493,13 +542,7 @@ uGlobalMenuItem::SyncTypeAndStateFromContent()
       SetMenuItemType(eRadio);
     }
 
-    SetCheckState(mContent->AttrValueIs(kNameSpaceID_None, uWidgetAtoms::checked,
-                                       uWidgetAtoms::_true, eCaseMatters));
-    dbusmenu_menuitem_property_set_int(mDbusMenuItem,
-                                       DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
-                                       IsChecked() ?
-                                       DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED : 
-                                        DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED);
+    SyncStateFromContent();
 
   } else {
     dbusmenu_menuitem_property_remove(mDbusMenuItem,
@@ -559,16 +602,21 @@ uGlobalMenuItem::Refresh(uMenuObjectRefreshMode aMode)
         }
       }
     }
+  }
 
-    SyncLabelFromContent(mCommandContent);
-    SyncSensitivityFromContent(mCommandContent);
+  SyncStateFromCommand();
+  SyncLabelFromCommand();
+  SyncSensitivityFromCommand();
+
+  if (aMode == eRefreshFull) {
     SyncTypeAndStateFromContent();
     SyncAccelFromContent();
+    SyncLabelFromContent();
+    SyncSensitivityFromContent();
   }
 
   SyncVisibilityFromContent();
   SyncIconFromContent();
-  SyncStateFromCommand();
 }
 
 /*static*/ void
@@ -799,18 +847,15 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIContent *aContent,
         aAttribute == uWidgetAtoms::key) {
       Refresh(eRefreshFull);
     } else if (aAttribute == uWidgetAtoms::label) {
-      if (!mCommandContent) {
-        SyncLabelFromContent();
-      }
+      SyncLabelFromContent();
     } else if (aAttribute == uWidgetAtoms::accesskey) {
-      SyncLabelFromContent(mCommandContent);
+      SyncLabelFromContent();
     } else if (aAttribute == uWidgetAtoms::disabled) {
-      if (!mCommandContent) {
-        SyncSensitivityFromContent();
-      }
-    } else if (aAttribute == uWidgetAtoms::checked ||
-               aAttribute == uWidgetAtoms::type) {
+      SyncSensitivityFromContent();
+    } else if (aAttribute == uWidgetAtoms::type) {
       SyncTypeAndStateFromContent();
+    } else if (aAttribute == uWidgetAtoms::checked) {
+      SyncStateFromContent();
     } else if (aAttribute == uWidgetAtoms::image) {
       SyncIconFromContent();
     } else if (aAttribute == uWidgetAtoms::hidden ||
@@ -819,9 +864,11 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIContent *aContent,
     }
   } else if (aContent == mCommandContent) {
     if (aAttribute == uWidgetAtoms::label) {
-      SyncLabelFromContent(mCommandContent);
+      SyncLabelFromCommand();
     } else if (aAttribute == uWidgetAtoms::disabled) {
-      SyncSensitivityFromContent(mCommandContent);
+      SyncSensitivityFromCommand();
+    } else if (aAttribute == uWidgetAtoms::checked) {
+      SyncStateFromCommand();
     }
   } else if (aContent == mKeyContent) {
     SyncAccelFromContent();

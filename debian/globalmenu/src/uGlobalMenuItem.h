@@ -88,9 +88,12 @@ private:
 
   PRUint32 GetKeyCode(nsAString &aKeyName);
   PRUint32 MozKeyCodeToGdkKeyCode(PRUint32 aMozKeyCode);
-  void SyncAccelFromContent();
   void SyncStateFromCommand();
+  void SyncLabelFromCommand();
+  void SyncSensitivityFromCommand();
+  void SyncAccelFromContent();
   void SyncTypeAndStateFromContent();
+  void SyncStateFromContent();
   virtual void InitializeDbusMenuItem();
   virtual void Refresh(uMenuObjectRefreshMode aMode);
   virtual uMenuObjectProperties GetValidProperties()

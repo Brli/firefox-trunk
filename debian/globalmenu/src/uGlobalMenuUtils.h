@@ -52,11 +52,10 @@ class uGlobalMenuUtils
 public:
   static nsIContent* GetPreviousSupportedSibling(nsIContent *aContent);
 
-  static bool ContentIsSupported(nsIContent *aContent);
-
   static uGlobalMenuObject* CreateMenuObject(uGlobalMenuObject *aParent,
                                              uGlobalMenuDocListener *aListener,
-                                             nsIContent *aContent);
+                                             nsIContent *aContent,
+                                             bool *aFailed);
 
   static GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
 

@@ -119,7 +119,7 @@ uGlobalMenuDocListener::Init(nsIContent *rootNode)
     return rv;
   }
 
-  nsCOMPtr<nsIDOMNode> docNode = do_QueryInterface(rootNode);
+  nsCOMPtr<nsIDOMNode> docNode = do_QueryInterface(rootNode->OwnerDoc());
   NS_ASSERTION(docNode, "Document failed QI to nsIDOMNode");
   if (!docNode) {
     return NS_ERROR_FAILURE;
@@ -423,6 +423,7 @@ uGlobalMenuDocListener::FlushPendingMutations()
 uGlobalMenuDocListener::LeaveCriticalZone()
 {
   if (sInhibitDepth == 1 && sPendingListeners) {
+    LOG("*** Flushing pending DOM mutations ***");
     while (sPendingListeners->Length() > 0) {
       (*sPendingListeners)[0]->FlushPendingMutations();
       sPendingListeners->RemoveElementAt(0);

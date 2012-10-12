@@ -103,10 +103,8 @@ public:
   virtual ~uGlobalMenuObject();
 
 protected:
-  void SyncLabelFromContent(nsIContent *aContent);
   void SyncLabelFromContent();
   void SyncVisibilityFromContent();
-  void SyncSensitivityFromContent(nsIContent *aContent);
   void SyncSensitivityFromContent();
   void SyncIconFromContent();
 

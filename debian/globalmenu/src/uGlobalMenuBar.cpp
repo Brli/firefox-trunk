@@ -189,17 +189,17 @@ uGlobalMenuBar::Build()
 
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *menuContent = mContent->GetChildAt(i);
-    nsRefPtr<uGlobalMenuObject> newItem =
-      uGlobalMenuUtils::CreateMenuObject(this, mListener, menuContent);
 
-    bool res = false;
+    bool failed = false;
+    nsRefPtr<uGlobalMenuObject> newItem =
+      uGlobalMenuUtils::CreateMenuObject(this, mListener, menuContent, &failed);
+
     if (newItem) {
-      res = AppendMenuObject(newItem);
-    } else {
-      res = !(uGlobalMenuUtils::ContentIsSupported(menuContent));
+      failed = !(AppendMenuObject(newItem));
     }
-    NS_ASSERTION(res, "Failed to append item to menubar");
-    if (!res) {
+
+    NS_ASSERTION(!failed, "Failed to append item to menubar");
+    if (failed) {
       // XXX: Is there anything else we should do here?
       return NS_ERROR_FAILURE;
     }
@@ -389,6 +389,8 @@ uGlobalMenuBar::~uGlobalMenuBar()
 uGlobalMenuBar::Create(nsIWidget *aWindow,
                        nsIContent *aMenuBar)
 {
+  TRACEC(aMenuBar);
+
   uGlobalMenuBar *menubar = new uGlobalMenuBar();
   if (!menubar) {
     return nullptr;
@@ -670,14 +672,13 @@ uGlobalMenuBar::ObserveContentInserted(nsIContent *aContainer,
 
   aPrevSibling = uGlobalMenuUtils::GetPreviousSupportedSibling(aPrevSibling);
 
+  bool failed = false;
   nsRefPtr<uGlobalMenuObject> newItem =
-    uGlobalMenuUtils::CreateMenuObject(this, mListener, aChild);
+    uGlobalMenuUtils::CreateMenuObject(this, mListener, aChild, &failed);
 
-  bool res = false;
   if (newItem) {
-    res = InsertMenuObjectAfterContent(newItem, aPrevSibling);
-  } else {
-    res = !(uGlobalMenuUtils::ContentIsSupported(aChild));
+    failed = !(InsertMenuObjectAfterContent(newItem, aPrevSibling));
   }
-  NS_ASSERTION(res, "Failed to insert item in to menubar");
+
+  NS_ASSERTION(!failed, "Failed to insert item in to menubar");
 }

@@ -67,6 +67,7 @@
 #include <gdk/gdkx.h>
 
 #include "uGlobalMenuService.h"
+#include "uGlobalMenuDocListener.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
@@ -438,6 +439,8 @@ uGlobalMenuService::CreateGlobalMenuBar(nsIWidget  *aParent,
   // for each top-level window
   if (WidgetHasGlobalMenu(aParent))
     return NS_ERROR_FAILURE;
+
+  uMenuAutoSuspendMutationEvents as;
 
   uGlobalMenuBar *menu = uGlobalMenuBar::Create(aParent, aMenuBarNode);
   if (!menu) {

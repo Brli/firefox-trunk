@@ -515,7 +515,7 @@ uGlobalMenuObject::ShouldShowIcon()
 }
 
 void
-uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
+uGlobalMenuObject::SyncLabelFromContent()
 {
   TRACETM();
   // Gecko stores the label and access key in separate attributes
@@ -523,14 +523,7 @@ uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
   // label="_Foo" for dbusmenu
 
   nsAutoString label;
-  if (aContent && aContent->GetAttr(kNameSpaceID_None,
-                                    uWidgetAtoms::label, label)) {
-    LOGC(aContent, "Content has label \"%s\"",
-         NS_LossyConvertUTF16toASCII(label).get());
-    mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::label, label, true);
-  } else {
-    mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
-  }
+  mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::label, label);
 
   nsAutoString accesskey;
   mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::accesskey, accesskey);
@@ -600,12 +593,6 @@ uGlobalMenuObject::SyncLabelFromContent(nsIContent *aContent)
                                  clabel.get());
 }
 
-void
-uGlobalMenuObject::SyncLabelFromContent()
-{
-  SyncLabelFromContent(nullptr);
-}
-
 inline static void
 GetCSSIdentValue(nsIDOMCSSStyleDeclaration *aStyle,
                  const nsAString& aProp, nsAString& aResult)
@@ -658,40 +645,19 @@ uGlobalMenuObject::SyncVisibilityFromContent()
 }
 
 void
-uGlobalMenuObject::SyncSensitivityFromContent(nsIContent *aContent)
+uGlobalMenuObject::SyncSensitivityFromContent()
 {
   TRACETM();
 
-  nsIContent *content;
-  if (aContent) {
-    content = aContent;
-  } else {
-    content = mContent;
-  }
-  bool disabled = content->AttrValueIs(kNameSpaceID_None,
-                                       uWidgetAtoms::disabled,
-                                       uWidgetAtoms::_true,
-                                       eCaseMatters);
+  bool disabled = mContent->AttrValueIs(kNameSpaceID_None,
+                                        uWidgetAtoms::disabled,
+                                        uWidgetAtoms::_true,
+                                        eCaseMatters);
   LOGTM("Setting %s", disabled ? "disabled" : "enabled");
-
-  if (aContent) {
-    if (disabled) {
-      mContent->SetAttr(kNameSpaceID_None, uWidgetAtoms::disabled,
-                        NS_LITERAL_STRING("true"), true);
-    } else {
-      mContent->UnsetAttr(kNameSpaceID_None, uWidgetAtoms::disabled, true);
-    }
-  }
 
   dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
                                       DBUSMENU_MENUITEM_PROP_ENABLED,
                                       !disabled);
-}
-
-void
-uGlobalMenuObject::SyncSensitivityFromContent()
-{
-  SyncSensitivityFromContent(nullptr);
 }
 
 void

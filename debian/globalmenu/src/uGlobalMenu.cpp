@@ -735,17 +735,16 @@ uGlobalMenu::Build()
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *child = mPopupContent->GetChildAt(i);
 
+    bool failed = false;
     nsRefPtr<uGlobalMenuObject> menuObject =
-      uGlobalMenuUtils::CreateMenuObject(this, mListener, child);
+      uGlobalMenuUtils::CreateMenuObject(this, mListener, child, &failed);
 
-    bool res = false;
     if (menuObject) {
-      res = AppendMenuObject(menuObject);
-    } else {
-      res = !(uGlobalMenuUtils::ContentIsSupported(child));
+      failed = !(AppendMenuObject(menuObject));
     }
-    NS_WARN_IF_FALSE(res, "Failed to append menuitem. Marking menu invalid");
-    if (!res) {
+
+    NS_WARN_IF_FALSE(!failed, "Failed to append menuitem. Marking menu invalid");
+    if (failed) {
       SetNeedsRebuild();
       return NS_ERROR_FAILURE;
     }
@@ -860,6 +859,7 @@ uGlobalMenu::DoOpen(nsITimer *aTimer, void *aClosure)
   dbusmenu_menuitem_show_to_user(menu->GetDbusMenuItem(), 0);
 
   menu->Release();
+  NS_RELEASE(aTimer);
 }
 
 void
@@ -891,8 +891,13 @@ uGlobalMenu::OpenMenuDelayed()
     return;
   }
 
+  if (NS_FAILED(timer->InitWithFuncCallback(DoOpen, this, 100,
+                                            nsITimer::TYPE_ONE_SHOT))) {
+    return;
+  }
+
   AddRef();
-  timer->InitWithFuncCallback(DoOpen, this, 100, nsITimer::TYPE_ONE_SHOT);
+  timer.forget();
 }
 
 void
@@ -960,17 +965,16 @@ uGlobalMenu::ObserveContentInserted(nsIContent *aContainer,
   if (aContainer == mPopupContent) {
     aPrevSibling = uGlobalMenuUtils::GetPreviousSupportedSibling(aPrevSibling);
 
+    bool failed = false;
     nsRefPtr<uGlobalMenuObject> newItem =
-      uGlobalMenuUtils::CreateMenuObject(this, mListener, aChild);
+      uGlobalMenuUtils::CreateMenuObject(this, mListener, aChild, &failed);
 
-    bool res = false;
     if (newItem) {
-      res = InsertMenuObjectAfterContent(newItem, aPrevSibling);
-    } else {
-      res = !(uGlobalMenuUtils::ContentIsSupported(aChild));
+      failed = !(InsertMenuObjectAfterContent(newItem, aPrevSibling));
     }
-    NS_WARN_IF_FALSE(res, "Failed to insert menuitem - marking menu as needing a rebuild");
-    if (!res) {
+
+    NS_WARN_IF_FALSE(!failed, "Failed to insert menuitem - marking menu as needing a rebuild");
+    if (failed) {
       SetNeedsRebuild();
     } 
   } else {
