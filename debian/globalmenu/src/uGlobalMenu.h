@@ -64,6 +64,7 @@
 
 class uGlobalMenuItem;
 class uGlobalMenuDocListener;
+class nsITimer;
 
 enum uMenuPopupState {
   ePopupClosed = 0,
@@ -126,7 +127,7 @@ private:
                                 GVariant *value,
                                 guint timestamp,
                                 void *data);
-  static gboolean DoOpen(gpointer user_data);
+  static void DoOpen(nsITimer *aTimer, void *aClosure);
   void AboutToOpen(bool aOpenedEvent, bool aWantPopupShownEvent = true);
   void FirePopupShownEvent();
   void OnClose();

@@ -47,16 +47,25 @@ class nsIContent;
 class uGlobalMenuBar;
 class nsIWidget;
 
-uGlobalMenuObject* NewGlobalMenuItem(uGlobalMenuObject *aParent,
-                                     uGlobalMenuDocListener *aListener,
-                                     nsIContent *aContent);
-
-GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
-
-template <class T>
-inline void*
-FuncToVoidPtr(T a)
+class uGlobalMenuUtils
 {
-  return reinterpret_cast<void *>(reinterpret_cast<unsigned long>(reinterpret_cast<void (*)()>(a)));
-}
+public:
+  static nsIContent* GetPreviousSupportedSibling(nsIContent *aContent);
+
+  static bool ContentIsSupported(nsIContent *aContent);
+
+  static uGlobalMenuObject* CreateMenuObject(uGlobalMenuObject *aParent,
+                                             uGlobalMenuDocListener *aListener,
+                                             nsIContent *aContent);
+
+  static GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
+
+  template <class T>
+  static inline void*
+  FuncToVoidPtr(T a)
+  {
+    return reinterpret_cast<void *>(reinterpret_cast<unsigned long>(reinterpret_cast<void (*)()>(a)));
+  }
+};
+
 #endif

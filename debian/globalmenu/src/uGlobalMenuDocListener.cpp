@@ -119,7 +119,7 @@ uGlobalMenuDocListener::Init(nsIContent *rootNode)
     return rv;
   }
 
-  nsCOMPtr<nsIDOMNode> docNode = do_QueryInterface(rootNode->OwnerDoc());
+  nsCOMPtr<nsIDOMNode> docNode = do_QueryInterface(rootNode);
   NS_ASSERTION(docNode, "Document failed QI to nsIDOMNode");
   if (!docNode) {
     return NS_ERROR_FAILURE;
@@ -209,6 +209,8 @@ uGlobalMenuDocListener::HandleMutations(nsIVariant *aRecords,
 void
 uGlobalMenuDocListener::HandleMutations(nsTArray<nsCOMPtr<nsIDOMMutationRecord> >& aRecords)
 {
+  TRACE()
+
   for (uint32_t i = 0; i < aRecords.Length(); i++) {
     LOG("Beginning record %d", i);
     nsIDOMMutationRecord *record = aRecords[i];

@@ -56,6 +56,8 @@
 # include <nsIXBLService.h>
 #endif
 #include <nsIRunnable.h>
+#include <nsITimer.h>
+#include <nsComponentManagerUtils.h>
 
 #include <glib-object.h>
 
@@ -209,12 +211,15 @@ uGlobalMenu::MenuEventCallback(DbusmenuMenuitem *menu,
                                void *data)
 {
   uGlobalMenu *self = static_cast<uGlobalMenu *>(data);
-  if (!g_strcmp0("closed", name)) {
+
+  nsAutoCString event(name);
+
+  if (event.EqualsLiteral("closed")) {
     self->OnClose();
     return true;
   }
 
-  if (!g_strcmp0("opened", name)) {
+  if (event.EqualsLiteral("opened")) {
     self->AboutToOpen(true);
     return true;
   }
@@ -600,7 +605,7 @@ bool
 uGlobalMenu::RemoveMenuObjectForContent(nsIContent *aContent, bool recycle)
 {
   int32_t index = IndexOf(aContent);
-  NS_ASSERTION(index >= 0, "Previous sibling not found");
+  NS_ASSERTION(index >= 0, "Menuitem not found");
   if (index < 0 ) {
     return false;
   }
@@ -729,10 +734,15 @@ uGlobalMenu::Build()
 
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *child = mPopupContent->GetChildAt(i);
-    uGlobalMenuObject *menuObject = NewGlobalMenuItem(this, mListener, child);
+
+    nsRefPtr<uGlobalMenuObject> menuObject =
+      uGlobalMenuUtils::CreateMenuObject(this, mListener, child);
+
     bool res = false;
     if (menuObject) {
       res = AppendMenuObject(menuObject);
+    } else {
+      res = !(uGlobalMenuUtils::ContentIsSupported(child));
     }
     NS_WARN_IF_FALSE(res, "Failed to append menuitem. Marking menu invalid");
     if (!res) {
@@ -830,12 +840,12 @@ uGlobalMenu::Destroy()
 
   if (mDbusMenuItem) {
     guint found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                                       FuncToVoidPtr(MenuAboutToOpenCallback),
+                                                       uGlobalMenuUtils::FuncToVoidPtr(MenuAboutToOpenCallback),
                                                        this);
     NS_ASSERTION(found == 1, "Failed to disconnect \"about-to-open\" handler");
 
     found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                                 FuncToVoidPtr(MenuEventCallback),
+                                                 uGlobalMenuUtils::FuncToVoidPtr(MenuEventCallback),
                                                  this);
     NS_ASSERTION(found == 1, "Failed to disconnect \"event\" handler");
   }
@@ -843,13 +853,13 @@ uGlobalMenu::Destroy()
   uGlobalMenuObject::Destroy();
 }
 
-/*static*/ gboolean
-uGlobalMenu::DoOpen(gpointer user_data)
+/*static*/ void
+uGlobalMenu::DoOpen(nsITimer *aTimer, void *aClosure)
 {
-  DbusmenuMenuitem *menuitem = static_cast<DbusmenuMenuitem *>(user_data);
-  dbusmenu_menuitem_show_to_user(menuitem, 0);
-  g_object_unref(menuitem);
-  return FALSE;
+  uGlobalMenu *menu = static_cast<uGlobalMenu *>(aClosure);
+  dbusmenu_menuitem_show_to_user(menu->GetDbusMenuItem(), 0);
+
+  menu->Release();
 }
 
 void
@@ -874,7 +884,15 @@ uGlobalMenu::OpenMenuDelayed()
   AboutToOpen(false, false);
   FirePopupShownEvent();
   SetPopupState(ePopupClosed);
-  g_timeout_add(100, DoOpen, g_object_ref(mDbusMenuItem));
+
+  nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID);
+  NS_ASSERTION(timer, "Failed to create timer instance");
+  if (!timer) {
+    return;
+  }
+
+  AddRef();
+  timer->InitWithFuncCallback(DoOpen, this, 100, nsITimer::TYPE_ONE_SHOT);
 }
 
 void
@@ -919,11 +937,7 @@ uGlobalMenu::ObserveContentRemoved(nsIContent *aContainer,
   }
 
   if (aContainer == mPopupContent) {
-    bool res = RemoveMenuObjectForContent(aChild, true);
-    NS_WARN_IF_FALSE(res, "Failed to remove menuitem - marking menu as needing a rebuild");
-    if (!res) {
-      SetNeedsRebuild();
-    }
+    RemoveMenuObjectForContent(aChild, true);
   } else {
     Build();
   }
@@ -944,10 +958,16 @@ uGlobalMenu::ObserveContentInserted(nsIContent *aContainer,
   }
 
   if (aContainer == mPopupContent) {
-    uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
+    aPrevSibling = uGlobalMenuUtils::GetPreviousSupportedSibling(aPrevSibling);
+
+    nsRefPtr<uGlobalMenuObject> newItem =
+      uGlobalMenuUtils::CreateMenuObject(this, mListener, aChild);
+
     bool res = false;
     if (newItem) {
       res = InsertMenuObjectAfterContent(newItem, aPrevSibling);
+    } else {
+      res = !(uGlobalMenuUtils::ContentIsSupported(aChild));
     }
     NS_WARN_IF_FALSE(res, "Failed to insert menuitem - marking menu as needing a rebuild");
     if (!res) {

@@ -56,7 +56,6 @@ CPPSRCS		= \
 		  uGlobalMenuBar.cpp \
 		  uGlobalMenuSeparator.cpp \
 		  uGlobalMenuItem.cpp \
-                  uGlobalMenuDummy.cpp \
 		  uGlobalMenu.cpp \
 		  uGlobalMenuDocListener.cpp \
 		  uGlobalMenuObject.cpp \

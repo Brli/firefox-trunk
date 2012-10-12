@@ -312,7 +312,7 @@ uGlobalMenuService::DestroyMenuForWidget(nsIWidget *aWidget)
 {
   for (PRUint32 i = 0; i < mMenus.Length(); i++) {
     if (GDK_WINDOW_XID(gtk_widget_get_window(mMenus[i]->TopLevelWindow())) ==
-        GDK_WINDOW_XID(gtk_widget_get_window(WidgetToGTKWindow(aWidget)))) {
+        GDK_WINDOW_XID(gtk_widget_get_window(uGlobalMenuUtils::WidgetToGTKWindow(aWidget)))) {
       mMenus.RemoveElementAt(i);
       return;
     }
@@ -340,7 +340,7 @@ uGlobalMenuService::WidgetHasGlobalMenu(nsIWidget *aWidget)
 {
   for (PRUint32 i = 0; i < mMenus.Length(); i++) {
     if (GDK_WINDOW_XID(gtk_widget_get_window(mMenus[i]->TopLevelWindow())) ==
-        GDK_WINDOW_XID(gtk_widget_get_window(WidgetToGTKWindow(aWidget))))
+        GDK_WINDOW_XID(gtk_widget_get_window(uGlobalMenuUtils::WidgetToGTKWindow(aWidget))))
       return true;
   }
   return false;
@@ -416,7 +416,7 @@ uGlobalMenuService::~uGlobalMenuService()
 
   if (mDbusProxy) {
     g_signal_handlers_disconnect_by_func(mDbusProxy,
-                                         FuncToVoidPtr(NameOwnerChangedCallback),
+                                         uGlobalMenuUtils::FuncToVoidPtr(NameOwnerChangedCallback),
                                          NULL);
     g_object_unref(mDbusProxy);
   }

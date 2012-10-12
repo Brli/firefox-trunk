@@ -189,13 +189,16 @@ uGlobalMenuBar::Build()
 
   for (PRUint32 i = 0; i < count; i++) {
     nsIContent *menuContent = mContent->GetChildAt(i);
-    uGlobalMenuObject *newItem =
-      NewGlobalMenuItem(this, mListener, menuContent);
+    nsRefPtr<uGlobalMenuObject> newItem =
+      uGlobalMenuUtils::CreateMenuObject(this, mListener, menuContent);
+
     bool res = false;
     if (newItem) {
       res = AppendMenuObject(newItem);
+    } else {
+      res = !(uGlobalMenuUtils::ContentIsSupported(menuContent));
     }
-    NS_ASSERTION(res, "Failed to append menuitem. Our menu representation is out-of-sync with reality");
+    NS_ASSERTION(res, "Failed to append item to menubar");
     if (!res) {
       // XXX: Is there anything else we should do here?
       return NS_ERROR_FAILURE;
@@ -214,7 +217,7 @@ uGlobalMenuBar::Init(nsIWidget *aWindow,
 
   mContent = aMenuBar;
 
-  mTopLevel = WidgetToGTKWindow(aWindow);
+  mTopLevel = uGlobalMenuUtils::WidgetToGTKWindow(aWindow);
   if (!GTK_IS_WINDOW(mTopLevel)) {
     return NS_ERROR_FAILURE;
   }
@@ -411,7 +414,7 @@ uGlobalMenuBar::Destroy()
 
   if (mTopLevel) {
     g_signal_handlers_disconnect_by_func(mTopLevel,
-                                         FuncToVoidPtr(MapEventCallback),
+                                         uGlobalMenuUtils::FuncToVoidPtr(MapEventCallback),
                                          this);
   }
 
@@ -653,8 +656,7 @@ uGlobalMenuBar::ObserveContentRemoved(nsIContent *aContainer,
   NS_ASSERTION(aContainer == mContent,
                "Received an event that wasn't meant for us!");
 
-  bool res = RemoveMenuObjectForContent(aChild);
-  NS_ASSERTION(res, "Failed to remove menuitem. Our menu representation is out-of-sync with reality");
+  RemoveMenuObjectForContent(aChild);
 }
 
 void
@@ -666,10 +668,16 @@ uGlobalMenuBar::ObserveContentInserted(nsIContent *aContainer,
   NS_ASSERTION(aContainer == mContent,
                "Received an event that wasn't meant for us!");
 
-  uGlobalMenuObject *newItem = NewGlobalMenuItem(this, mListener, aChild);
+  aPrevSibling = uGlobalMenuUtils::GetPreviousSupportedSibling(aPrevSibling);
+
+  nsRefPtr<uGlobalMenuObject> newItem =
+    uGlobalMenuUtils::CreateMenuObject(this, mListener, aChild);
+
   bool res = false;
   if (newItem) {
     res = InsertMenuObjectAfterContent(newItem, aPrevSibling);
+  } else {
+    res = !(uGlobalMenuUtils::ContentIsSupported(aChild));
   }
-  NS_ASSERTION(res, "Failed to insert menuitem. Our menu representation is out-of-sync with reality");
+  NS_ASSERTION(res, "Failed to insert item in to menubar");
 }

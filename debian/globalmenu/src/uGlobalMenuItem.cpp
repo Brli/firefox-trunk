@@ -771,7 +771,7 @@ uGlobalMenuItem::Destroy()
 
   if (mDbusMenuItem) {
     guint found = g_signal_handlers_disconnect_by_func(mDbusMenuItem,
-                                                       FuncToVoidPtr(ItemActivatedCallback),
+                                                       uGlobalMenuUtils::FuncToVoidPtr(ItemActivatedCallback),
                                                        this);
     NS_ASSERTION(found == 1, "Failed to disconnect \"activated\" handler");
   }
