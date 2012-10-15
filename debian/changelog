@@ -1,6 +1,6 @@
 firefox-trunk (18.0~a1~hg20121008r109581-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.6 prerelease r487
+  * Update globalmenu-extension to 3.6
     - Don't override the binding on menupopups if we aren't exporting
       the menubar remotely
     - Fix issue with stale entries being left in the Recently Closed
