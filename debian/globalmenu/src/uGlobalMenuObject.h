@@ -42,9 +42,13 @@
 #include <nsIContent.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
-#include <imgIDecoderObserver.h>
 #include <imgIRequest.h>
-#include <imgIContainerObserver.h>
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+# include <imgINotificationObserver.h>
+#else
+# include <imgIDecoderObserver.h>
+# include <imgIContainerObserver.h>
+#endif
 
 #include <libdbusmenu-glib/server.h>
 
@@ -160,12 +164,21 @@ protected:
 
 private:
 
-  class IconLoader: public imgIDecoderObserver
+  class IconLoader:
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+    public imgINotificationObserver
+#else
+    public imgIDecoderObserver
+#endif
   {
   public:
     NS_DECL_ISUPPORTS
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+    NS_DECL_IMGINOTIFICATIONOBSERVER
+#else
     NS_DECL_IMGIDECODEROBSERVER
     NS_DECL_IMGICONTAINEROBSERVER
+#endif
 
     void ScheduleIconLoad();
     void LoadIcon();
@@ -175,6 +188,9 @@ private:
     ~IconLoader() { };
 
   private:
+    nsresult OnStopFrame(imgIRequest *aRequest);
+    void OnStopRequest();
+
     bool mIconLoaded;
     uGlobalMenuObject *mMenuItem;
     nsCOMPtr<imgIRequest> mIconRequest;

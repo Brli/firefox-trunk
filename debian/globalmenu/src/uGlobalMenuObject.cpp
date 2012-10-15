@@ -75,8 +75,12 @@
 
 typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+NS_IMPL_ISUPPORTS1(uGlobalMenuObject::IconLoader, imgINotificationObserver)
+#else
 NS_IMPL_ISUPPORTS2(uGlobalMenuObject::IconLoader, imgIDecoderObserver,
                    imgIContainerObserver)
+#endif
 
 unsigned char uGlobalMenuObject::sImagesInMenus = 0xFF;
 
@@ -265,46 +269,11 @@ uGlobalMenuObject::IconLoader::LoadIcon()
   return;
 }
 
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::OnStartRequest(imgIRequest *aRequest)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::OnStartDecode(imgIRequest *aRequest)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::OnStartContainer(imgIRequest *aRequest,
-                                                imgIContainer *aContainer)
+nsresult
+uGlobalMenuObject::IconLoader::OnStopFrame(imgIRequest *aRequest)
 {
   TRACEM(mMenuItem);
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
 
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::OnStartFrame(imgIRequest *aRequest,
-                                            PRUint32 aFrame)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::OnDataAvailable(imgIRequest *aRequest,
-                                               bool aCurrentFrame,
-                                               const nsIntRect *aRect)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::OnStopFrame(imgIRequest *aRequest,
-                                           PRUint32 aFrame)
-{
-  TRACEM(mMenuItem);
   if (aRequest != mIconRequest) {
     return NS_ERROR_FAILURE;
   }
@@ -384,6 +353,87 @@ uGlobalMenuObject::IconLoader::OnStopFrame(imgIRequest *aRequest,
   return NS_OK;
 }
 
+void
+uGlobalMenuObject::IconLoader::OnStopRequest()
+{
+  TRACEM(mMenuItem);
+
+  if (mIconRequest) {
+    mIconRequest->Cancel(NS_BINDING_ABORTED);
+    mIconRequest = nullptr;
+  }
+}
+
+#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::Notify(imgIRequest *aProxy,
+                                      int32_t aType,
+                                      const nsIntRect *aRect)
+{
+  if (aType == imgINotificationObserver::FRAME_COMPLETE) {
+    return OnStopFrame(aProxy);
+  } else if (aType == imgINotificationObserver::LOAD_COMPLETE) {
+    OnStopRequest();
+  }
+
+  return NS_OK;
+}
+
+#else
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::OnStopFrame(imgIRequest *aRequest,
+                                           PRUint32 aFrame)
+{
+  return OnStopFrame(aRequest);
+}
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::OnStopRequest(imgIRequest *aRequest,
+                                             bool aIsLastPart)
+{
+  OnStopRequest();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::OnStartRequest(imgIRequest *aRequest)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::OnStartDecode(imgIRequest *aRequest)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::OnStartContainer(imgIRequest *aRequest,
+                                                imgIContainer *aContainer)
+{
+  TRACEM(mMenuItem);
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::OnStartFrame(imgIRequest *aRequest,
+                                            PRUint32 aFrame)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+uGlobalMenuObject::IconLoader::OnDataAvailable(imgIRequest *aRequest,
+                                               bool aCurrentFrame,
+                                               const nsIntRect *aRect)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
+
 NS_IMETHODIMP
 uGlobalMenuObject::IconLoader::OnStopContainer(imgIRequest *aRequest,
                                                imgIContainer *aContainer)
@@ -398,20 +448,6 @@ uGlobalMenuObject::IconLoader::OnStopDecode(imgIRequest *aRequest,
 {
   TRACEM(mMenuItem);
   return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-uGlobalMenuObject::IconLoader::OnStopRequest(imgIRequest *aRequest,
-                                             bool aIsLastPart)
-{
-  TRACEM(mMenuItem);
-
-  if (mIconRequest) {
-    mIconRequest->Cancel(NS_BINDING_ABORTED);
-    mIconRequest = nullptr;
-  }
-
-  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -433,6 +469,8 @@ uGlobalMenuObject::IconLoader::OnImageIsAnimated(imgIRequest* aRequest)
 {
   return NS_OK;
 }
+
+#endif
 
 void
 uGlobalMenuObject::IconLoader::Destroy()
