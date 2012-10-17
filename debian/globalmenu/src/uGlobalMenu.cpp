@@ -688,19 +688,21 @@ uGlobalMenu::InitializePopup()
   NS_ASSERTION(xpconnect, "Could not get xpconnect");
   if (xpconnect) {
     nsIScriptGlobalObject *sgo = mPopupContent->OwnerDoc()->GetScriptGlobalObject();
-    nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
-    JSObject *global = sgo->GetGlobalJSObject();
-    if (scriptContext && global) {
-      JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
-      if (cx) {
-        LOGTM("Wrapping menupopup");
-        nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
-        nsresult rv = xpconnect->WrapNative(cx, global,
-                                            mPopupContent,
-                                            NS_GET_IID(nsISupports),
-                                            getter_AddRefs(wrapper));
-        if (NS_FAILED(rv)) {
-          NS_WARNING("Failed to wrap menupopup");
+    if (sgo) {
+      nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
+      JSObject *global = sgo->GetGlobalJSObject();
+      if (scriptContext && global) {
+        JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
+        if (cx) {
+          LOGTM("Wrapping menupopup");
+          nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
+          nsresult rv = xpconnect->WrapNative(cx, global,
+                                              mPopupContent,
+                                              NS_GET_IID(nsISupports),
+                                              getter_AddRefs(wrapper));
+          if (NS_FAILED(rv)) {
+            NS_WARNING("Failed to wrap menupopup");
+          }
         }
       }
     }

@@ -1,6 +1,7 @@
 firefox-trunk (18.0~a1~hg20121008r109581-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.7 prerelease r489
+  * Update globalmenu-extension to 3.7 prerelease r491
+    - Fix crash in uGlobalMenu::InitializePopup
     - Update for imagelib changes in Firefox 19
     - Don't override the binding on menupopups if we aren't exporting
       the menubar remotely

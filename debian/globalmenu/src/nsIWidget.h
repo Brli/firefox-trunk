@@ -40,10 +40,9 @@
 #define __NSIWIDGET_H_STUB
 
 // Workaround nsIWidget.h including nsRegion.h which includes nsString.h
-#include <nsStringGlue.h>
-#define nsString_h___
+class nsIntRegion;
+#define nsRegion_h__
 #pragma GCC system_header
 #include_next <nsIWidget.h>
-#undef nsString_h___
 
 #endif
