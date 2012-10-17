@@ -11,11 +11,11 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# The Original Code is the Mozilla build system.
+# The Original Code is mozilla.org code.
 #
 # The Initial Developer of the Original Code is
-# the Mozilla Foundation <http://www.mozilla.org/>.
-# Portions created by the Initial Developer are Copyright (C) 2007
+# Netscape Communications Corporation.
+# Portions created by the Initial Developer are Copyright (C) 2001
 # the Initial Developer. All Rights Reserved.
 #
 # Contributor(s):
@@ -35,11 +35,17 @@
 #
 # ***** END LICENSE BLOCK *****
 
-add_makefiles "
-extensions/globalmenu/Makefile
-extensions/globalmenu/build/Makefile
-extensions/globalmenu/chrome/Makefile
-extensions/globalmenu/package/Makefile
-extensions/globalmenu/public/Makefile
-extensions/globalmenu/src/Makefile
-"
+DEPTH		= ../../..
+topsrcdir	= @top_srcdir@
+srcdir		= @srcdir@
+VPATH		= @srcdir@
+
+include $(DEPTH)/config/autoconf.mk
+
+MODULE	= globalmenu
+
+XPI_NAME		= globalmenu
+
+DIST_FILES = install.rdf
+
+include $(topsrcdir)/config/rules.mk
