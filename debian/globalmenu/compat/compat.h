@@ -45,7 +45,3 @@
 # define nullptr 0L
 #endif
 #endif
-
-#if MOZILLA_BRANCH_VERSION < 19
-typedef nsCAutoString nsAutoCString;
-#endif

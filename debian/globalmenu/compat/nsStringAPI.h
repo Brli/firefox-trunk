@@ -36,11 +36,11 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef __NSSTRINGGLUE_H_STUB
-#define __NSSTRINGGLUE_H_STUB
+#ifndef __NSSTRINGAPI_H_STUB
+#define __NSSTRINGAPI_H_STUB
 
 #pragma GCC system_header
-#include_next <nsStringGlue.h>
+#include_next <nsStringAPI.h>
 
 #if MOZILLA_BRANCH_VERSION < 18
 typedef nsCAutoString nsAutoCString;
