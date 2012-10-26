@@ -76,7 +76,7 @@ uWidgetAtoms::RegisterAtoms()
   }
 
   nsAutoString aAtomStr;
-  nsCAutoString cAtomStr;
+  nsAutoCString cAtomStr;
 
   for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(atoms); i++) {
     cAtomStr = atoms[i].raw;

@@ -205,7 +205,7 @@ static struct keyCodeData gKeyCodes[] = {
 PRUint32
 uGlobalMenuItem::GetKeyCode(nsAString &aKeyName)
 {
-  nsCAutoString keyName;
+  nsAutoCString keyName;
   CopyUTF16toUTF8(aKeyName, keyName);
   ToUpperCase(keyName); // We want case-insensitive comparison with data
                         // stored as uppercase.
@@ -424,7 +424,7 @@ uGlobalMenuItem::SyncAccelFromContent()
   guint key = 0;
   mKeyContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, keyStr);
 
-  nsCAutoString cKeyStr;
+  nsAutoCString cKeyStr;
   CopyUTF16toUTF8(keyStr, cKeyStr);
 
   if (!cKeyStr.IsEmpty()) {

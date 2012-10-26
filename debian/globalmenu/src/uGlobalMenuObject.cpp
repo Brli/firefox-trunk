@@ -623,7 +623,7 @@ uGlobalMenuObject::SyncLabelFromContent()
     label.SetLength(MAX_LABEL_NCHARS);
   }
 
-  nsCAutoString clabel;
+  nsAutoCString clabel;
   CopyUTF16toUTF8(label, clabel);
   LOGTM("Setting label to \"%s\"", clabel.get());
   dbusmenu_menuitem_property_set(mDbusMenuItem,
