@@ -37,7 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <prtypes.h>
-#include <nsStringAPI.h>
+#include <nsStringGlue.h>
 #include <nsIURI.h>
 #include <nsILoadGroup.h>
 #include <imgIContainer.h>

@@ -38,7 +38,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsIContent.h>
-#include <nsStringAPI.h>
+#include <nsStringGlue.h>
 #include <nsDebug.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIInterfaceRequestorUtils.h>

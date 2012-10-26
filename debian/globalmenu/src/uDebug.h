@@ -39,7 +39,7 @@
 #ifndef _U_DEBUG_H
 #define _U_DEBUG_H
 
-#include <nsStringAPI.h>
+#include <nsStringGlue.h>
 #include <nsXPCOM.h>
 
 #if DEBUG_GLOBALMENU >= 1 && !defined DEBUG

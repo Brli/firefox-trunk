@@ -41,7 +41,7 @@
 
 #include <prtypes.h>
 #include <nsCOMPtr.h>
-#include <nsStringAPI.h>
+#include <nsStringGlue.h>
 
 #include <libdbusmenu-glib/server.h>
 

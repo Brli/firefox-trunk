@@ -42,7 +42,7 @@
 #include <prtypes.h>
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
-#include <nsStringAPI.h>
+#include <nsStringGlue.h>
 #include <nsIDOMEventListener.h>
 #include <nsIDocument.h>
 

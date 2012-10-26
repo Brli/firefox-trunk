@@ -42,7 +42,7 @@
 #include <nsIDOMMouseEvent.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMDocument.h>
-#include <nsStringAPI.h>
+#include <nsStringGlue.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIPrivateDOMEvent.h>
 #include <nsPIDOMWindow.h>
