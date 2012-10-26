@@ -52,7 +52,7 @@
 #include <nsIScriptContext.h>
 #include <jsapi.h>
 #include <mozilla/dom/Element.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 15
+#if MOZILLA_BRANCH_VERSION < 15
 # include <nsIXBLService.h>
 #endif
 #include <nsIRunnable.h>
@@ -619,7 +619,7 @@ uGlobalMenu::InitializePopup()
   nsCOMPtr<nsIContent> oldPopupContent;
   oldPopupContent.swap(mPopupContent);
 
-#if MOZILLA_BRANCH_MAJOR_VERSION < 15
+#if MOZILLA_BRANCH_VERSION < 15
   // Taken from widget/src/cocoa/nsMenuX.mm
   nsIXBLService *xblService = uGlobalMenuService::GetXBLService();
   if (xblService) {
@@ -639,7 +639,7 @@ uGlobalMenu::InitializePopup()
       for (PRUint32 i = 0; i < count; i++) {
         PRInt32 dummy;
         nsIContent *child = mContent->GetChildAt(i);
-#if MOZILLA_BRANCH_MAJOR_VERSION < 15
+#if MOZILLA_BRANCH_VERSION < 15
         nsCOMPtr<nsIAtom> tag;
         xblService->ResolveTag(child, &dummy, getter_AddRefs(tag));
         if (tag == uWidgetAtoms::menupopup) {

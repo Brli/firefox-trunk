@@ -43,7 +43,7 @@
 #include <nsIXULWindow.h>
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIDocShell.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 17
+#if MOZILLA_BRANCH_VERSION < 17
 # include <nsIDOMNSEvent.h>
 #endif
 #include <nsIPrefBranch.h>
@@ -498,7 +498,7 @@ uGlobalMenuBar::Focus()
 bool
 uGlobalMenuBar::ShouldHandleKeyEvent(nsIDOMEvent *aKeyEvent)
 {
-#if MOZILLA_BRANCH_MAJOR_VERSION < 17
+#if MOZILLA_BRANCH_VERSION < 17
   nsCOMPtr<nsIDOMNSEvent> event = do_QueryInterface(aKeyEvent);
   if (!event) {
     return false;

@@ -36,15 +36,14 @@
  * 
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef __NSIPRIVATEDOMEVENT_H_STUB
-#define __NSIPRIVATEDOMEVENT_H_STUB
+#ifndef __NSSTRINGGLUE_H_STUB
+#define __NSSTRINGGLUE_H_STUB
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 16
-# include <nsIDOMEvent.h>
-typedef nsIDOMEvent nsIPrivateDOMEvent;
-#else
 #pragma GCC system_header
-# include_next <nsIPrivateDOMEvent.h>
+#include_next <nsStringGlue.h>
+
+#if MOZILLA_BRANCH_VERSION < 18
+typedef nsCAutoString nsAutoCString;
 #endif
 
 #endif

@@ -41,7 +41,7 @@
 #include <nsIURI.h>
 #include <nsILoadGroup.h>
 #include <imgIContainer.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION < 17
+#if MOZILLA_BRANCH_VERSION < 17
 # include <nsNetError.h>
 #else
 # include <nsError.h>
@@ -75,7 +75,7 @@
 
 typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+#if MOZILLA_BRANCH_VERSION >= 19
 NS_IMPL_ISUPPORTS1(uGlobalMenuObject::IconLoader, imgINotificationObserver)
 #else
 NS_IMPL_ISUPPORTS2(uGlobalMenuObject::IconLoader, imgIDecoderObserver,
@@ -364,7 +364,7 @@ uGlobalMenuObject::IconLoader::OnStopRequest()
   }
 }
 
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+#if MOZILLA_BRANCH_VERSION >= 19
 
 NS_IMETHODIMP
 uGlobalMenuObject::IconLoader::Notify(imgIRequest *aProxy,

@@ -43,7 +43,7 @@
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 #include <imgIRequest.h>
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+#if MOZILLA_BRANCH_VERSION >= 19
 # include <imgINotificationObserver.h>
 #else
 # include <imgIDecoderObserver.h>
@@ -165,7 +165,7 @@ protected:
 private:
 
   class IconLoader:
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+#if MOZILLA_BRANCH_VERSION >= 19
     public imgINotificationObserver
 #else
     public imgIDecoderObserver
@@ -173,7 +173,7 @@ private:
   {
   public:
     NS_DECL_ISUPPORTS
-#if MOZILLA_BRANCH_MAJOR_VERSION >= 19
+#if MOZILLA_BRANCH_VERSION >= 19
     NS_DECL_IMGINOTIFICATIONOBSERVER
 #else
     NS_DECL_IMGIDECODEROBSERVER

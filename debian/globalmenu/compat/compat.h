@@ -46,6 +46,6 @@
 #endif
 #endif
 
-#if MOZILLA_BRANCH_MAJOR_VERSION < 19
+#if MOZILLA_BRANCH_VERSION < 19
 typedef nsCAutoString nsAutoCString;
 #endif

@@ -35,43 +35,15 @@
 #
 # ***** END LICENSE BLOCK *****
 
-DEPTH		= ../../..
-topsrcdir	= @top_srcdir@
-srcdir		= @srcdir@
-VPATH		= @srcdir@
+ifndef _INCLUDED_GLOBALMENU_COMPAT_MK
+_INCLUDED_GLOBALMENU_COMPAT_MK = 1
 
-include $(DEPTH)/config/autoconf.mk
+MOZILLA_BRANCH_VERSION=$(shell echo $(MOZILLA_VERSION) | sed -e 's/[ab].*//' -e 's/^\([0-9]*\).*/\1/;')
 
-IS_COMPONENT	= 1
-MODULE		= globalmenu
-LIBRARY_NAME	= globalmenu
-MODULE_NAME	= uGlobalMenuModule
+LOCAL_INCLUDES += -include $(topsrcdir)/extensions/globalmenu/compat/compat.h \
+		  -I$(topsrcdir)/extensions/globalmenu/compat/ \
+		  $(NULL)
 
-XPI_NAME	= globalmenu
+DEFINES += -DMOZILLA_BRANCH_VERSION="$(MOZILLA_BRANCH_VERSION)"
 
-CPPSRCS		= uGlobalMenuModule.cpp
-
-EXTRA_DSO_LDOPTS += $(XPCOM_GLUE_LDOPTS) \
-		    -lxul \
-		    $(NSPR_LIBS) \
-		    $(DBUSMENU_LIBS) \
-		    $(MOZ_GTK2_LIBS) \
-		    $(NULL)
-
-ifdef MOZ_DEBUG
-EXTRA_DSO_LDOPTS += -Wl,--unresolved-symbols=ignore-all
 endif
-
-SHARED_LIBRARY_LIBS = $(DEPTH)/extensions/globalmenu/src/$(LIB_PREFIX)globalmenu_s.$(LIB_SUFFIX)
-
-include $(topsrcdir)/extensions/globalmenu/compat/compat.mk
-include $(topsrcdir)/config/rules.mk
-
-LOCAL_INCLUDES += -I$(topsrcdir)/extensions/globalmenu/src
-
-CXXFLAGS += $(DBUSMENU_CFLAGS) \
-	    $(MOZ_GTK2_CFLAGS) \
-	    $(NULL)
-
-libs::
-	@$(PYTHON) $(MOZILLA_DIR)/config/buildlist.py $(FINAL_TARGET)/components/components.manifest "category profile-after-change uGlobalMenuLoader @canonical.com/globalmenu-loader;1"
