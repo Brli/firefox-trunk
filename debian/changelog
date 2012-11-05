@@ -21,6 +21,8 @@ firefox-trunk (18.0~a1~hg20121008r109581-0ubuntu2) UNRELEASED; urgency=low
   * Drop unneeded patch
     - remove debian/patches/no-internal-api-in-external-headers.patch
     - update debian/patches/series.in
+  * Build with --disable-webrtc on all architectures except for i386 and amd64
+    - update debian/config/mozconfig.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100
 

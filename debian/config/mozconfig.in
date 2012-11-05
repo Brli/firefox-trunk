@@ -74,3 +74,8 @@ ac_add_options --with-app-name=@MOZ_APP_NAME@
 %%if MOZ_UPDATE_CHANNEL == nightly
 ac_add_options --enable-profiling
 %%endif
+%%if DEB_HOST_ARCH != i386
+%%if DEB_HOST_ARCH != amd64
+ac_add_options --disable-webrtc
+%%endif
+%%endif
