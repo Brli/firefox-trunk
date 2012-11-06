@@ -254,7 +254,11 @@ uGlobalMenuObject::IconLoader::LoadIcon()
   }
 
   rv = loader->LoadImage(uri, nullptr, nullptr, nullptr, loadGroup, this,
+#if MOZILLA_BRANCH_VERSION >= 19
+                         nullptr, nsIRequest::LOAD_NORMAL,
+#else
                          nullptr, nsIRequest::LOAD_NORMAL, nullptr,
+#endif
                          nullptr, nullptr, getter_AddRefs(mIconRequest));
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to load icon");
