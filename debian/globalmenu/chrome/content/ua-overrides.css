@@ -8,6 +8,6 @@ toolbar[type="menubar"]:not([customizing="true"]) {
   border: 0 !important;
 }
 
-window[shellshowingmenubar="true"] menubar menupopup:not([type]) {
+menubar menupopup:not([type]) {
   -moz-binding: url("chrome://globalmenu/content/bindings.xml#popup") !important;
 }
