@@ -21,6 +21,12 @@ firefox-trunk (18.0~a1~hg20121008r109581-0ubuntu2) UNRELEASED; urgency=low
     - update debian/patches/series.in
   * Build with --disable-webrtc on all architectures except for i386 and amd64
     - update debian/config/mozconfig.in
+  * Switch to encrypted search for Google
+    - update debian/searchplugins/en-GB/google.xml
+    - update debian/searchplugins/en-US/google.xml
+    - update debian/searchplugins/en-ZA/google.xml
+    - update debian/searchplugins/ja/google-jp.xml
+    - update debian/searchplugins/ku/google-ku.xml
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100
 
