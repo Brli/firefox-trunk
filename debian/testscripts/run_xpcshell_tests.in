@@ -135,5 +135,4 @@ if __name__ == '__main__':
   argv.append(os.path.join(root, 'bin', 'xpcshell') if options.xpcshell == None else options.xpcshell)
   argv.extend(args)
 
-  print g['sys'].argv
   g['main']()
