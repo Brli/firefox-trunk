@@ -1,4 +1,4 @@
-firefox-trunk (19.0~a1~hg20121114r113129-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
 
   * Update globalmenu-extension to 3.7 prerelease r502
     - Fix crash in uGlobalMenu::InitializePopup

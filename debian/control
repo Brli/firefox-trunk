@@ -165,7 +165,7 @@ Package: firefox-trunk-testsuite
 Architecture: any
 Depends: ${shlibs:Depends},
 	${misc:Depends},
-	firefox-trunk (= ${binary:Version})
+	firefox-trunk (= ${binary:Version}),
 	python,
 	dbus-x11,
 	xvfb
