@@ -40,6 +40,9 @@ firefox-trunk (19.0~a1~hg20121114r113129-0ubuntu1) UNRELEASED; urgency=low
     - add debian/tests/xpcshell-tests
     - add debian/testsuite/run_xpcshell_tests.in
     - update debian/config/mozconfig.in to always build with --enable-tests
+    - add d/p/xpcshell-toolkit-components-search-fix-dirprovider.patch
+      to ensure that the directory provider returns all searchplugin paths
+      during the search service xpcshell tests
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100
 

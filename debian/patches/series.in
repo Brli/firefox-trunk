@@ -12,3 +12,4 @@ dont-override-general-useragent-locale.patch
 fix-makefile-substitution-bug.patch
 webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
+xpcshell-toolkit-components-search-fix-dirprovider.patch
