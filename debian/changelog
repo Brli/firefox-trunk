@@ -44,9 +44,11 @@ firefox-trunk (19.0~a1~hg20121114r113129-0ubuntu1) UNRELEASED; urgency=low
     the search service xpcshell tests
     - add d/p/xpcshell-toolkit-components-search-fix-dirprovider.patch
     - update debian/patches/series.in
-  * Don't assume write capabilities to the application directories during
-    the docshell xpcshell tests
-    - add d/p/xpcshell-docshell-dont-assume-rw-appdir.patch
+  * In the docshell xpcshell tests, use the do_get_profile() helper from the
+    xpcshell test harness rather than manually setting up a profile folder
+    in the application directory, which fails when the application directory
+    is read only
+    - add d/p/xpcshell-docshell-use-get-profile-helper.patch
     - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100

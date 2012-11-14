@@ -13,4 +13,4 @@ fix-makefile-substitution-bug.patch
 webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
 xpcshell-toolkit-components-search-fix-dirprovider.patch
-xpcshell-docshell-dont-assume-rw-appdir.patch
+xpcshell-docshell-use-get-profile-helper.patch
