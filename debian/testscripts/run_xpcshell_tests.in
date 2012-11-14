@@ -7,6 +7,39 @@ from optparse import OptionParser
 
 if __name__ == '__main__':
 
+  PASSTHROUGH_ARGS = [
+    '--interactive',
+    '--verbose',
+    '--manifest',
+    '--debugger',
+    '--debugger-args',
+    '--debugger-interactive',
+    '--tests-root-dir',
+    '--testing-modules-dir',
+    '--build-info-json'
+  ]
+
+  DEFAULTS = {
+    '--tests-root-dir': lambda: os.path.join(root, 'xpcshell', 'tests'),
+    '--testing-modules-dir': lambda: os.path.join(root, 'modules')
+  }
+
+  root = '/@MOZ_TESTDIR@'
+
+  args = iter(sys.argv[1:])
+  while True:
+    try:
+      arg = args.next()
+    except StopIteration:
+      break
+
+    if arg == '--harness-root-dir':
+      try:
+        root = args.next()
+        break
+      except StopIteration:
+        sys.exit(1)
+
   parser = OptionParser()
   parser.add_option('--harness-root-dir',
                     dest='root', default='/@MOZ_TESTDIR@',
@@ -20,27 +53,22 @@ if __name__ == '__main__':
   parser.add_option('--own-session-bus',
                     action='store_true', dest='wantOwnSessionBus', default=False,
                     help='Run the test with its own dbus session')
-  parser.add_option('--interactive',
-                    action='store_true', dest='interactive', default=False,
-                    help="Don't automatically run tests, drop to an xpcshell prompt")
-  parser.add_option('--verbose',
-                    action='store_true', dest='verbose', default=False,
-                    help='Always print stdout and stderr from tests')
   parser.add_option('--logfiles',
                     action='store_true', dest='logfiles', default=False,
                     help='Create log files')
-  parser.add_option('--manifest',
-                    type='string', dest='manifest', default=None,
-                    help='Manifest of test directories to use')
-  parser.add_option('--tests-root-dir',
-                    type='string', dest='testsRootDir', default=None,
-                    help='Absolute path to directory where all tests are located')
-  parser.add_option('--testing-modules-dir',
-                    dest='testingModulesDir', default=None,
-                    help='Directory where testing modules are located')
-  parser.add_option('--build-info-json',
-                    type = 'string', dest='mozInfo', default=None,
-                    help='path to a mozinfo.json including information about the build configuration')
+
+  sys.path.insert(0, os.path.join(root, 'mozbase', 'mozinfo'))
+  sys.path.insert(0, os.path.join(root, 'xpcshell'))
+
+  runner = os.path.join(root, 'xpcshell', 'runxpcshelltests.py')
+  g = {}
+  g['__file__'] = runner
+  execfile(runner, g)
+
+  runner_parser = g['XPCShellOptions']()
+  for arg in PASSTHROUGH_ARGS:
+    assert runner_parser.has_option(arg)
+    parser.add_option(runner_parser.get_option(arg))
 
   (options, args) = parser.parse_args()
 
@@ -70,46 +98,42 @@ if __name__ == '__main__':
     respawn_args.extend(sys.argv)
     sys.exit(subprocess.call(respawn_args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr))
 
-  sys.argv = []
-  sys.argv.append(os.path.join(options.root, 'xpcshell', 'runxpcshelltests.py'))
+  g['sys'].argv = []
+  argv = g['sys'].argv
+  argv.append(runner)
 
-  if options.interactive:
-    sys.argv.append('--interactive')
-  if options.verbose:
-    sys.argv.append('--verbose')
+  for arg in PASSTHROUGH_ARGS:
+    action = parser.get_option(arg).action
+    val = getattr(options, parser.get_option(arg).dest)
+    if action == 'store':
+      if val != None:
+        argv.extend([arg, val])
+    elif action == 'store_true':
+      if val == True:
+        argv.append(arg)
+    elif action == 'store_false':
+      if val == False:
+        argv.append(arg)
+    else:
+      raise RuntimeError('Unexpected argument type with action "%s"' % action)
+
+  for arg in DEFAULTS:
+    if arg not in argv:
+      argv.extend([arg, DEFAULTS[arg]()])
+
   if not options.logfiles:
-    sys.argv.append('--no-logfiles')
-  if options.manifest:
-    sys.argv.extend(['--manifest', options.manifest])
-  sys.argv.append('--tests-root-dir')
-  if options.testsRootDir:
-    sys.argv.append(options.testsRootDir)
-  else:
-    sys.argv.append(os.path.join(options.root, 'xpcshell', 'tests'))
-  sys.argv.append('--testing-modules-dir')
-  if options.testingModulesDir:
-    sys.argv.append(options.testingModulesDir)
-  else:
-    sys.argv.append(os.path.join(options.root, 'modules'))
-  if options.mozInfo:
-    sys.argv.extend(['--build-info-json', options.mozInfo])
+    argv.append('--no-logfiles')
 
   for arg in args:
     if arg.endswith('.js'):
       if len(args) > 1:
         print >>sys.stderr, 'Can only specify one file at a time'
         sys.exit(1)
-      sys.argv.extend(['--test-path', os.path.basename(arg)])
+      argv.extend(['--test-path', os.path.basename(arg)])
       args[0] = os.path.dirname(arg)
 
-  sys.argv.append(os.path.join(options.root, 'bin', 'xpcshell') if options.xpcshell == None else options.xpcshell)
-  sys.argv.extend(args)
+  argv.append(os.path.join(root, 'bin', 'xpcshell') if options.xpcshell == None else options.xpcshell)
+  argv.extend(args)
 
-  sys.path.insert(0, os.path.join(options.root, 'mozbase', 'mozinfo'))
-  sys.path.insert(0, os.path.join(options.root, 'xpcshell'))
-
-  g = globals()
-  g['__name__'] = '__main__'
-  g['__file__'] = sys.argv[0]
-
-  execfile(sys.argv[0], g)
+  print g['sys'].argv
+  g['main']()
