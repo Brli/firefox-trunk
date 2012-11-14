@@ -39,6 +39,7 @@ Build-Depends: cdbs,
 	libxml-simple-perl,
 	libjson-perl
 Standards-Version: 3.9.1
+XS-Testsuite: autopkgtest
 
 Package: @MOZ_PKG_NAME@
 Architecture: any
@@ -51,13 +52,15 @@ Recommends: xul-ext-ubufox,
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser,
-	${app:Provides}
+	${app:Provides},
+	${transitional:Provides}
 Suggests: latex-xft-fonts,
 	libthai0,
 	${support:Suggests}
-Breaks: ${app:Breaks}
-Replaces: ${app:Replaces}
-Conflicts: ${app:Conflicts}
+Breaks: ${transitional:Breaks}
+Replaces: ${transitional:Replaces}
+Conflicts: ${app:Conflicts},
+	${transitional:Conflicts}
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: Safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -71,9 +74,11 @@ Depends: ${shlibs:Depends},
 	${misc:Depends},
 	${gconf:Depends},
 	@MOZ_PKG_NAME@
-Provides: ${gs:Provides}
-Replaces: ${gs:Replaces}
-Conflicts: ${gs:Conflicts}
+Provides: ${app:Provides}
+	${transitional:Provides}
+Replaces: ${transitional:Replaces}
+Conflicts: ${app:Conflicts},
+	${transitional:Conflicts}
 Description: Safe and easy web browser from Mozilla - GNOME support
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -89,9 +94,11 @@ Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	@MOZ_PKG_NAME@ (= ${binary:Version})
-Provides: ${dbg:Provides}
-Replaces: ${dbg:Replaces}
-Conflicts: ${dbg:Conflicts}
+Provides: ${app:Provides}
+	${transitional:Provides}
+Replaces: ${transitional:Replaces}
+Conflicts: ${app:Conflicts},
+	${transitional:Conflicts}
 Description: Safe and easy web browser from Mozilla - debug symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -107,12 +114,14 @@ Priority: extra
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	@MOZ_PKG_NAME@ (= ${binary:Version})
-Provides: ${dev:Provides}
+Provides: ${app:Provides}
+	${transitional:Provides}
+Replaces: ${transitional:Replaces}
 Conflicts: xulrunner-2.0-dev,
 	xulrunner-1.9.2-dev,
 	xulrunner-1.9-dev,
-	${dev:Conflicts}
-Replaces: ${dev:Replaces}
+	${app:Conflicts},
+	${transitional:Conflicts}
 Description: Safe and easy web browser from Mozilla - development files
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -125,7 +134,9 @@ Architecture: amd64 i386 armel
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, 
-	${misc:Depends}
+	${misc:Depends},
+Provides: ${app:Provides}
+Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - Breakpad symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -140,8 +151,31 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	@MOZ_PKG_NAME@ (= ${binary:Version})
-Description: Unity appmenu integration for Firefox
+Provides: ${app:Provides}
+Conflicts: ${app:Conflicts}
+Description: Safe and easy web browser from Mozilla - Unity menubar integration
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+ .
  This package provides an extension which adds support for the Unity
- appmenu to Firefox 
+ menubar to Firefox 
+
+Package: @MOZ_PKG_NAME@-testsuite
+Architecture: any
+Depends: ${shlibs:Depends},
+	${misc:Depends},
+	@MOZ_PKG_NAME@ (= ${binary:Version}),
+	python,
+	dbus-x11,
+	xvfb
+Provides: ${app:Provides}
+Conflicts: ${app:Conflicts}
+Description: Safe and easy web browser from Mozilla - testsuite
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+ .
+ This package contains the Firefox testsuite
 
 # Language packs below here

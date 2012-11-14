@@ -39,6 +39,7 @@ Build-Depends: cdbs,
 	libxml-simple-perl,
 	libjson-perl
 Standards-Version: 3.9.1
+XS-Testsuite: autopkgtest
 
 Package: firefox-trunk
 Architecture: any
@@ -51,13 +52,15 @@ Recommends: xul-ext-ubufox,
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser,
-	${app:Provides}
+	${app:Provides},
+	${transitional:Provides}
 Suggests: latex-xft-fonts,
 	libthai0,
 	${support:Suggests}
-Breaks: ${app:Breaks}
-Replaces: ${app:Replaces}
-Conflicts: ${app:Conflicts}
+Breaks: ${transitional:Breaks}
+Replaces: ${transitional:Replaces}
+Conflicts: ${app:Conflicts},
+	${transitional:Conflicts}
 XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
 Description: Safe and easy web browser from Mozilla
  Firefox delivers safe, easy web browsing. A familiar user interface,
@@ -71,9 +74,11 @@ Depends: ${shlibs:Depends},
 	${misc:Depends},
 	${gconf:Depends},
 	firefox-trunk
-Provides: ${gs:Provides}
-Replaces: ${gs:Replaces}
-Conflicts: ${gs:Conflicts}
+Provides: ${app:Provides}
+	${transitional:Provides}
+Replaces: ${transitional:Replaces}
+Conflicts: ${app:Conflicts},
+	${transitional:Conflicts}
 Description: Safe and easy web browser from Mozilla - GNOME support
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -89,9 +94,11 @@ Priority: extra
 Depends: ${shlibs:Depends}, 
 	${misc:Depends}, 
 	firefox-trunk (= ${binary:Version})
-Provides: ${dbg:Provides}
-Replaces: ${dbg:Replaces}
-Conflicts: ${dbg:Conflicts}
+Provides: ${app:Provides}
+	${transitional:Provides}
+Replaces: ${transitional:Replaces}
+Conflicts: ${app:Conflicts},
+	${transitional:Conflicts}
 Description: Safe and easy web browser from Mozilla - debug symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -107,12 +114,14 @@ Priority: extra
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	firefox-trunk (= ${binary:Version})
-Provides: ${dev:Provides}
+Provides: ${app:Provides}
+	${transitional:Provides}
+Replaces: ${transitional:Replaces}
 Conflicts: xulrunner-2.0-dev,
 	xulrunner-1.9.2-dev,
 	xulrunner-1.9-dev,
-	${dev:Conflicts}
-Replaces: ${dev:Replaces}
+	${app:Conflicts},
+	${transitional:Conflicts}
 Description: Safe and easy web browser from Mozilla - development files
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -125,7 +134,9 @@ Architecture: amd64 i386 armel
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, 
-	${misc:Depends}
+	${misc:Depends},
+Provides: ${app:Provides}
+Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - Breakpad symbols
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
@@ -140,9 +151,32 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	firefox-trunk (= ${binary:Version})
-Description: Unity appmenu integration for Firefox
+Provides: ${app:Provides}
+Conflicts: ${app:Conflicts}
+Description: Safe and easy web browser from Mozilla - Unity menubar integration
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+ .
  This package provides an extension which adds support for the Unity
- appmenu to Firefox 
+ menubar to Firefox 
+
+Package: firefox-trunk-testsuite
+Architecture: any
+Depends: ${shlibs:Depends},
+	${misc:Depends},
+	firefox-trunk (= ${binary:Version})
+	python,
+	dbus-x11,
+	xvfb
+Provides: ${app:Provides}
+Conflicts: ${app:Conflicts}
+Description: Safe and easy web browser from Mozilla - testsuite
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+ .
+ This package contains the Firefox testsuite
 
 # Language packs below here
 
@@ -150,8 +184,8 @@ Package: firefox-trunk-locale-af
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-af-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Afrikaans language pack for Firefox
  This package contains Afrikaans translations and search plugins
  for Firefox
@@ -160,8 +194,8 @@ Package: firefox-trunk-locale-ar
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ar-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Arabic language pack for Firefox
  This package contains Arabic translations and search plugins
  for Firefox
@@ -170,8 +204,8 @@ Package: firefox-trunk-locale-ast
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ast-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Asturian language pack for Firefox
  This package contains Asturian translations and search plugins
  for Firefox
@@ -180,8 +214,8 @@ Package: firefox-trunk-locale-be
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-be-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Belarusian language pack for Firefox
  This package contains Belarusian translations and search plugins
  for Firefox
@@ -190,8 +224,8 @@ Package: firefox-trunk-locale-bg
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-bg-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Bulgarian language pack for Firefox
  This package contains Bulgarian translations and search plugins
  for Firefox
@@ -200,8 +234,8 @@ Package: firefox-trunk-locale-bn
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-bn-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Bengali language pack for Firefox
  This package contains Bengali translations and search plugins
  for Firefox
@@ -210,8 +244,8 @@ Package: firefox-trunk-locale-br
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-br-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Breton language pack for Firefox
  This package contains Breton translations and search plugins
  for Firefox
@@ -220,8 +254,8 @@ Package: firefox-trunk-locale-bs
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-bs-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Bosnian language pack for Firefox
  This package contains Bosnian translations and search plugins
  for Firefox
@@ -230,8 +264,8 @@ Package: firefox-trunk-locale-ca
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ca-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Catalan; Valencian language pack for Firefox
  This package contains Catalan; Valencian translations and search plugins
  for Firefox
@@ -240,8 +274,8 @@ Package: firefox-trunk-locale-cs
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-cs-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Czech language pack for Firefox
  This package contains Czech translations and search plugins
  for Firefox
@@ -250,8 +284,8 @@ Package: firefox-trunk-locale-cy
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-cy-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Welsh language pack for Firefox
  This package contains Welsh translations and search plugins
  for Firefox
@@ -260,8 +294,8 @@ Package: firefox-trunk-locale-da
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-da-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Danish language pack for Firefox
  This package contains Danish translations and search plugins
  for Firefox
@@ -270,8 +304,8 @@ Package: firefox-trunk-locale-de
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-de-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: German language pack for Firefox
  This package contains German translations and search plugins
  for Firefox
@@ -280,8 +314,8 @@ Package: firefox-trunk-locale-el
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-el-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Greek language pack for Firefox
  This package contains Greek translations and search plugins
  for Firefox
@@ -290,8 +324,8 @@ Package: firefox-trunk-locale-en
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-en-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: English language pack for Firefox
  This package contains English translations and search plugins
  for Firefox
@@ -300,8 +334,8 @@ Package: firefox-trunk-locale-eo
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-eo-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Esperanto language pack for Firefox
  This package contains Esperanto translations and search plugins
  for Firefox
@@ -310,8 +344,8 @@ Package: firefox-trunk-locale-es
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-es-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Spanish; Castilian language pack for Firefox
  This package contains Spanish; Castilian translations and search plugins
  for Firefox
@@ -320,8 +354,8 @@ Package: firefox-trunk-locale-et
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-et-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Estonian language pack for Firefox
  This package contains Estonian translations and search plugins
  for Firefox
@@ -330,8 +364,8 @@ Package: firefox-trunk-locale-eu
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-eu-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Basque language pack for Firefox
  This package contains Basque translations and search plugins
  for Firefox
@@ -340,8 +374,8 @@ Package: firefox-trunk-locale-fa
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-fa-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Persian language pack for Firefox
  This package contains Persian translations and search plugins
  for Firefox
@@ -350,8 +384,8 @@ Package: firefox-trunk-locale-fi
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-fi-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Finnish language pack for Firefox
  This package contains Finnish translations and search plugins
  for Firefox
@@ -360,8 +394,8 @@ Package: firefox-trunk-locale-fr
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-fr-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: French language pack for Firefox
  This package contains French translations and search plugins
  for Firefox
@@ -370,8 +404,8 @@ Package: firefox-trunk-locale-fy
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-fy-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Western Frisian language pack for Firefox
  This package contains Western Frisian translations and search plugins
  for Firefox
@@ -380,8 +414,8 @@ Package: firefox-trunk-locale-ga
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ga-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Irish language pack for Firefox
  This package contains Irish translations and search plugins
  for Firefox
@@ -390,8 +424,8 @@ Package: firefox-trunk-locale-gd
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-gd-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Gaelic; Scottish Gaelic language pack for Firefox
  This package contains Gaelic; Scottish Gaelic translations and search plugins
  for Firefox
@@ -400,8 +434,8 @@ Package: firefox-trunk-locale-gl
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-gl-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Galician language pack for Firefox
  This package contains Galician translations and search plugins
  for Firefox
@@ -410,8 +444,8 @@ Package: firefox-trunk-locale-gu
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-gu-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Gujarati language pack for Firefox
  This package contains Gujarati translations and search plugins
  for Firefox
@@ -420,8 +454,8 @@ Package: firefox-trunk-locale-he
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-he-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Hebrew language pack for Firefox
  This package contains Hebrew translations and search plugins
  for Firefox
@@ -430,8 +464,8 @@ Package: firefox-trunk-locale-hi
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-hi-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Hindi language pack for Firefox
  This package contains Hindi translations and search plugins
  for Firefox
@@ -440,8 +474,8 @@ Package: firefox-trunk-locale-hr
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-hr-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Croatian language pack for Firefox
  This package contains Croatian translations and search plugins
  for Firefox
@@ -450,8 +484,8 @@ Package: firefox-trunk-locale-hu
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-hu-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Hungarian language pack for Firefox
  This package contains Hungarian translations and search plugins
  for Firefox
@@ -460,8 +494,8 @@ Package: firefox-trunk-locale-hy
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-hy-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Armenian language pack for Firefox
  This package contains Armenian translations and search plugins
  for Firefox
@@ -470,8 +504,8 @@ Package: firefox-trunk-locale-id
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-id-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Indonesian language pack for Firefox
  This package contains Indonesian translations and search plugins
  for Firefox
@@ -480,8 +514,8 @@ Package: firefox-trunk-locale-is
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-is-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Icelandic language pack for Firefox
  This package contains Icelandic translations and search plugins
  for Firefox
@@ -490,8 +524,8 @@ Package: firefox-trunk-locale-it
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-it-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Italian language pack for Firefox
  This package contains Italian translations and search plugins
  for Firefox
@@ -500,8 +534,8 @@ Package: firefox-trunk-locale-ja
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ja-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Japanese language pack for Firefox
  This package contains Japanese translations and search plugins
  for Firefox
@@ -510,8 +544,8 @@ Package: firefox-trunk-locale-kk
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-kk-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Kazakh language pack for Firefox
  This package contains Kazakh translations and search plugins
  for Firefox
@@ -520,8 +554,8 @@ Package: firefox-trunk-locale-kn
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-kn-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Kannada language pack for Firefox
  This package contains Kannada translations and search plugins
  for Firefox
@@ -530,8 +564,8 @@ Package: firefox-trunk-locale-ko
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ko-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Korean language pack for Firefox
  This package contains Korean translations and search plugins
  for Firefox
@@ -540,8 +574,8 @@ Package: firefox-trunk-locale-ku
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ku-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Kurdish language pack for Firefox
  This package contains Kurdish translations and search plugins
  for Firefox
@@ -550,8 +584,8 @@ Package: firefox-trunk-locale-lg
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-lg-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Ganda language pack for Firefox
  This package contains Ganda translations and search plugins
  for Firefox
@@ -560,8 +594,8 @@ Package: firefox-trunk-locale-lt
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-lt-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Lithuanian language pack for Firefox
  This package contains Lithuanian translations and search plugins
  for Firefox
@@ -570,8 +604,8 @@ Package: firefox-trunk-locale-lv
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-lv-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Latvian language pack for Firefox
  This package contains Latvian translations and search plugins
  for Firefox
@@ -580,8 +614,8 @@ Package: firefox-trunk-locale-mai
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-mai-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Maithili language pack for Firefox
  This package contains Maithili translations and search plugins
  for Firefox
@@ -590,8 +624,8 @@ Package: firefox-trunk-locale-mk
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-mk-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Macedonian language pack for Firefox
  This package contains Macedonian translations and search plugins
  for Firefox
@@ -600,8 +634,8 @@ Package: firefox-trunk-locale-ml
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ml-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Malayalam language pack for Firefox
  This package contains Malayalam translations and search plugins
  for Firefox
@@ -610,8 +644,8 @@ Package: firefox-trunk-locale-mr
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-mr-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Marathi language pack for Firefox
  This package contains Marathi translations and search plugins
  for Firefox
@@ -620,8 +654,8 @@ Package: firefox-trunk-locale-nb
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-nb-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Bokmål, Norwegian; Norwegian Bokmål language pack for Firefox
  This package contains Bokmål, Norwegian; Norwegian Bokmål translations and search plugins
  for Firefox
@@ -630,8 +664,8 @@ Package: firefox-trunk-locale-nl
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-nl-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Dutch; Flemish language pack for Firefox
  This package contains Dutch; Flemish translations and search plugins
  for Firefox
@@ -640,8 +674,8 @@ Package: firefox-trunk-locale-nn
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-nn-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Norwegian Nynorsk; Nynorsk, Norwegian language pack for Firefox
  This package contains Norwegian Nynorsk; Nynorsk, Norwegian translations and search plugins
  for Firefox
@@ -650,8 +684,8 @@ Package: firefox-trunk-locale-nso
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-nso-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Sotho, Northern language pack for Firefox
  This package contains Sotho, Northern translations and search plugins
  for Firefox
@@ -660,8 +694,8 @@ Package: firefox-trunk-locale-or
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-or-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Oriya language pack for Firefox
  This package contains Oriya translations and search plugins
  for Firefox
@@ -670,8 +704,8 @@ Package: firefox-trunk-locale-pa
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-pa-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Panjabi; Punjabi language pack for Firefox
  This package contains Panjabi; Punjabi translations and search plugins
  for Firefox
@@ -680,8 +714,8 @@ Package: firefox-trunk-locale-pl
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-pl-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Polish language pack for Firefox
  This package contains Polish translations and search plugins
  for Firefox
@@ -690,8 +724,8 @@ Package: firefox-trunk-locale-pt
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-pt-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Portuguese language pack for Firefox
  This package contains Portuguese translations and search plugins
  for Firefox
@@ -700,8 +734,8 @@ Package: firefox-trunk-locale-ro
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ro-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Romanian language pack for Firefox
  This package contains Romanian translations and search plugins
  for Firefox
@@ -710,8 +744,8 @@ Package: firefox-trunk-locale-ru
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ru-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Russian language pack for Firefox
  This package contains Russian translations and search plugins
  for Firefox
@@ -720,8 +754,8 @@ Package: firefox-trunk-locale-si
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-si-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Sinhala; Sinhalese language pack for Firefox
  This package contains Sinhala; Sinhalese translations and search plugins
  for Firefox
@@ -730,8 +764,8 @@ Package: firefox-trunk-locale-sk
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-sk-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Slovak language pack for Firefox
  This package contains Slovak translations and search plugins
  for Firefox
@@ -740,8 +774,8 @@ Package: firefox-trunk-locale-sl
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-sl-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Slovenian language pack for Firefox
  This package contains Slovenian translations and search plugins
  for Firefox
@@ -750,8 +784,8 @@ Package: firefox-trunk-locale-sq
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-sq-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Albanian language pack for Firefox
  This package contains Albanian translations and search plugins
  for Firefox
@@ -760,8 +794,8 @@ Package: firefox-trunk-locale-sr
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-sr-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Serbian language pack for Firefox
  This package contains Serbian translations and search plugins
  for Firefox
@@ -770,8 +804,8 @@ Package: firefox-trunk-locale-sv
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-sv-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Swedish language pack for Firefox
  This package contains Swedish translations and search plugins
  for Firefox
@@ -780,8 +814,8 @@ Package: firefox-trunk-locale-ta
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-ta-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Tamil language pack for Firefox
  This package contains Tamil translations and search plugins
  for Firefox
@@ -790,8 +824,8 @@ Package: firefox-trunk-locale-te
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-te-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Telugu language pack for Firefox
  This package contains Telugu translations and search plugins
  for Firefox
@@ -800,8 +834,8 @@ Package: firefox-trunk-locale-th
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-th-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Thai language pack for Firefox
  This package contains Thai translations and search plugins
  for Firefox
@@ -810,8 +844,8 @@ Package: firefox-trunk-locale-tr
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-tr-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Turkish language pack for Firefox
  This package contains Turkish translations and search plugins
  for Firefox
@@ -820,8 +854,8 @@ Package: firefox-trunk-locale-uk
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-uk-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Ukrainian language pack for Firefox
  This package contains Ukrainian translations and search plugins
  for Firefox
@@ -830,8 +864,8 @@ Package: firefox-trunk-locale-vi
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-vi-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Vietnamese language pack for Firefox
  This package contains Vietnamese translations and search plugins
  for Firefox
@@ -840,8 +874,8 @@ Package: firefox-trunk-locale-zh-hans
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-zh-hans-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Simplified Chinese language pack for Firefox
  This package contains Simplified Chinese translations and search plugins
  for Firefox
@@ -850,8 +884,8 @@ Package: firefox-trunk-locale-zh-hant
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-zh-hant-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Traditional Chinese language pack for Firefox
  This package contains Traditional Chinese translations and search plugins
  for Firefox
@@ -860,8 +894,8 @@ Package: firefox-trunk-locale-zu
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: language-pack-zu-base
-Conflicts: ${lp:Conflicts}
-Provides: ${lp:Provides}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
 Description: Zulu language pack for Firefox
  This package contains Zulu translations and search plugins
  for Firefox

@@ -58,6 +58,10 @@ ifeq (,$(MOZ_PKG_NAME))
 $(error "Need to set MOZ_PKG_NAME")
 endif
 
+MOZ_PKGS	?= globalmenu gnome-support dev dbg mozsymbols testsuite
+MOZ_PKG_NAMES = $(MOZ_PKG_NAME)
+$(foreach pkg,$(MOZ_PKGS),$(eval MOZ_PKG_NAMES += $(MOZ_PKG_NAME)-$(pkg)))
+
 DEB_MAKE_MAKEFILE	:= client.mk
 # Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
 DEB_MAKE_EXTRA_ARGS	:=
@@ -75,6 +79,7 @@ MOZ_INCDIR		:= usr/include/$(MOZ_APP_NAME)
 MOZ_IDLDIR		:= usr/share/idl/$(MOZ_APP_NAME)
 MOZ_SDKDIR		:= usr/lib/$(MOZ_APP_NAME)-devel
 MOZ_ADDONDIR		:= usr/lib/$(MOZ_APP_NAME)-addons
+MOZ_TESTDIR		:= usr/lib/$(MOZ_APP_NAME)-testsuite
 
 # The profile directory is determined from the Vendor and Name fields of
 # the application.ini
@@ -83,8 +88,8 @@ PROFILE_BASE =
 else
 PROFILE_BASE = $(shell echo $(MOZ_VENDOR) | tr A-Z a-z)/
 endif
-MOZ_PROFILEDIR		= .$(PROFILE_BASE)$(MOZ_APP_BASENAME_L)
-MOZ_DEFAULT_PROFILEDIR	= .$(PROFILE_BASE)$(MOZ_DEFAULT_APP_BASENAME_L)
+MOZ_PROFILEDIR		:= .$(PROFILE_BASE)$(MOZ_APP_BASENAME_L)
+MOZ_DEFAULT_PROFILEDIR	:= .$(PROFILE_BASE)$(MOZ_DEFAULT_APP_BASENAME_L)
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
@@ -183,19 +188,9 @@ LANGPACK_DIR := $(DEB_HOST_GNU_SYSTEM)-$(DEB_HOST_GNU_CPU)/xpi
 endif
 
 ifneq ($(MOZ_PKG_NAME),$(MOZ_APP_NAME))
-$(foreach pkg, APP GM GS DEV DBG MS, $(foreach rel, CONFLICTS PROVIDES, $(ifneq ,$(PKG_$(pkg)_$(rel)_ARGS), eval $(PKG_$(pkg)_$(rel)_ARGS) += ", ")))
-PKG_APP_CONFLICTS_ARGS += "$(MOZ_APP_NAME)"
-PKG_APP_PROVIDES_ARGS += "$(MOZ_APP_NAME)"
-PKG_GM_CONFLICTS_ARGS += "$(MOZ_APP_NAME)-globalmenu"
-PKG_GM_PROVIDES_ARGS += "$(MOZ_APP_NAME)-globalmenu"
-PKG_GS_CONFLICTS_ARGS += "$(MOZ_APP_NAME)-gnome-support"
-PKG_GS_PROVIDES_ARGS += "$(MOZ_APP_NAME)-gnome-support"
-PKG_DEV_CONFLICTS_ARGS += "$(MOZ_APP_NAME)-dev"
-PKG_DEV_PROVIDES_ARGS += "$(MOZ_APP_NAME)-dev"
-PKG_DBG_CONFLICTS_ARGS += "$(MOZ_APP_NAME)-dbg"
-PKG_DBG_PROVIDES_ARGS += "$(MOZ_APP_NAME)-dbg"
-PKG_MS_CONFLICTS_ARGS += "$(MOZ_APP_NAME)-mozsymbols"
-PKG_MS_PROVIDES_ARGS += "$(MOZ_APP_NAME)-mozsymbols"
+PKG_$(MOZ_PKG_NAME)_CONFLICTS += "$(MOZ_APP_NAME)"
+PKG_$(MOZ_PKG_NAME)_PROVIDES += "$(MOZ_APP_NAME)"
+$(foreach pkg,$(MOZ_PKGS),$(foreach rel,CONFLICTS PROVIDES,$(eval PKG_$(MOZ_PKG_NAME)-$(pkg)_$(rel) += "$(MOZ_APP_NAME)-$(pkg)")))
 endif
 
 ifneq (,$(filter lucid maverick natty, $(DISTRIB_CODENAME)))
@@ -203,33 +198,28 @@ GCONF_DEPENDS := libgconf2-4
 endif
 
 ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
-ifneq (,$(PKG_SUPPORT_RECOMMENDS))
-PKG_SUPPORT_RECOMMENDS += ", "
+MOZ_PKG_SUPPORT_RECOMMENDS ?= $(MOZ_PKG_NAME)-globalmenu
 endif
-PKG_SUPPORT_RECOMMENDS += $(MOZ_PKG_NAME)-globalmenu
-endif
+MOZ_PKG_SUPPORT_SUGGESTS ?= $(MOZ_PKG_NAME)-gnome-support
 
-DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME) := -- -Vapp:Replaces="$(PKG_APP_REPLACES_ARGS)" -Vapp:Breaks="$(PKG_APP_BREAKS_ARGS)" -Vapp:Conflicts="$(PKG_APP_CONFLICTS_ARGS)" \
-					     -Vapp:Provides="$(PKG_APP_PROVIDES_ARGS)" $(PKG_APP_EXTRA_ARGS) -Vsupport:Suggests="$(PKG_SUPPORT_SUGGESTS)" \
-					     -Vsupport:Recommends="$(PKG_SUPPORT_RECOMMENDS)"
-DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-globalmenu := -- -Vgm:Replaces="$(PKG_GM_REPLACES_ARGS)" -Vgm:Breaks="$(PKG_GM_BREAKS_ARGS)" -Vgm:Conflicts="$(PKG_GM_CONFLICTS_ARGS)" \
-							-Vgm:Provides="$(PKG_GM_PROVIDES_ARGS)" $(PKG_GM_EXTRA_ARGS)
-DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-gnome-support := -- -Vgs:Replaces="$(PKG_GS_REPLACES_ARGS)" -Vgs:Breaks="$(PKG_GS_BREAKS_ARGS)" -Vgs:Conflicts="$(PKG_GS_CONFLICTS_ARGS)" \
-							   -Vgs:Provides="$(PKG_GS_PROVIDES_ARGS)" -Vgconf:Depends="$(GCONF_DEPENDS)" $(PKG_GS_EXTRA_ARGS)
-DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-dev := -- -Vdev:Replaces="$(PKG_DEV_REPLACES_ARGS)" -Vdev:Breaks="$(PKG_DEV_BREAKS_ARGS)" -Vdev:Conflicts="$(PKG_DEV_CONFLICTS_ARGS)" \
-						 -Vdev:Provides="$(PKG_DEV_PROVIDES_ARGS)" $(PKG_DEV_EXTRA_ARGS)
-DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-dbg := -- -Vdbg:Replaces="$(PKG_DBG_REPLACES_ARGS)" -Vdbg:Breaks="$(PKG_DBG_BREAKS_ARGS)" -Vdbg:Conflicts="$(PKG_DBG_CONFLICTS_ARGS)" \
-						 -Vdbg:Provides="$(PKG_DBG_PROVIDES_ARGS)" $(PKG_DBG_EXTRA_ARGS)
-DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-mozsymbols := -- -Vms:Replaces="$(PKG_MS_REPLACES_ARGS)" -Vms:Breaks="$(PKG_MS_BREAKS_ARGS)" -Vms:Conflicts="$(PKG_MS_CONFLICTS_ARGS)" \
-							-Vms:Provides="$(PKG_MS_PROVIDES_ARGS)" $(PKG_MS_EXTRA_ARGS)
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME) := --	-Vapp:Conflicts="$(PKG_$(MOZ_PKG_NAME)_CONFLICTS)" \
+						-Vapp:Provides="$(PKG_$(MOZ_PKG_NAME)_PROVIDES)" \
+						-Vsupport:Suggests="$(MOZ_PKG_SUPPORT_SUGGESTS)" \
+						-Vsupport:Recommends="$(MOZ_PKG_SUPPORT_RECOMMENDS)" \
+						$(MOZ_PKG_$(MOZ_PKG_NAME)_DH_GENCONTROL_EXTRA)
+$(foreach pkg,$(MOZ_PKGS),$(eval DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-$(pkg) = -- \
+	-Vapp:Conflicts="$(PKG_$(MOZ_PKG_NAME)-$(pkg)_CONFLICTS)" \
+	-Vapp:Provides="$(PKG_$(MOZ_PKG_NAME)-$(pkg)_PROVIDES)" \
+	$(MOZ_PKG_$(MOZ_PKG_NAME)-$(pkg)_DH_GENCONTROL_EXTRA)))
+DEB_DH_GENCONTROL_ARGS_$(MOZ_PKG_NAME)-gnome-support += -Vgconf:Depends="$(GCONF_DEPENDS)"
 LOCALE_PACKAGES := $(shell cat $(CURDIR)/debian/control | grep "^Package:[[:space:]]*$(MOZ_PKG_NAME)-locale\-" | sed -n -e 's/^Package\:[[:space:]]*\([^[:space:]]*\)/\1/ p')
 ifneq ($(MOZ_PKG_NAME),$(MOZ_APP_NAME))
-$(foreach locale_package, $(LOCALE_PACKAGES), $(eval PKG_$(locale_package)_CONFLICTS_ARGS := $(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))))
-$(foreach locale_package, $(LOCALE_PACKAGES), $(eval PKG_$(locale_package)_PROVIDES_ARGS := $(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))))
+$(foreach locale_package,$(LOCALE_PACKAGES),$(eval PKG_$(locale_package)_CONFLICTS := $(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))))
+$(foreach locale_package,$(LOCALE_PACKAGES),$(eval PKG_$(locale_package)_PROVIDES := $(subst $(MOZ_PKG_NAME),$(MOZ_APP_NAME),$(locale_package))))
 endif
-$(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS_$(locale_package) := -- -Vlp:Conflicts="$(PKG_$(locale_package)_PROVIDES_ARGS)" \
-												    -Vlp:Provides="$(PKG_$(locale_package)_PROVIDES_ARGS)" \
-												    $(PKG_$(locale_package)_EXTRA_ARGS)))
+$(foreach locale_package, $(LOCALE_PACKAGES), $(eval DEB_DH_GENCONTROL_ARGS_$(locale_package) := -- -Vapp:Conflicts="$(PKG_$(locale_package)_PROVIDES)" \
+												    -Vapp:Provides="$(PKG_$(locale_package)_PROVIDES)" \
+												    $(MOZ_PKG_$(locale_package)_DH_GENCONTROL_EXTRA)))
 
 # Defines used for the Mozilla text preprocessor
 MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
@@ -240,7 +230,7 @@ MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -D
 		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILEDIR="$(MOZ_PROFILEDIR)" \
 		-DMOZ_PKG_BASENAME="$(MOZ_PKG_BASENAME)" -DMOZ_DEFAULT_PROFILEDIR="$(MOZ_DEFAULT_PROFILEDIR)" \
 		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DMOZ_DEFAULT_APP_BASENAME="$(MOZ_DEFAULT_APP_BASENAME)" \
-		-DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)"
+		-DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -DMOZ_TESTDIR="$(MOZ_TESTDIR)"
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 MOZ_DEFINES += -DMOZ_ENABLE_BREAKPAD
@@ -273,15 +263,15 @@ ifneq (,$(DEB_PARALLEL_JOBS))
 MOZ_DEFINES += -DDEB_PARALLEL_JOBS=$(DEB_PARALLEL_JOBS)
 endif
 
-DEBIAN_EXECUTABLES = $(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/$(MOZ_PKG_BASENAME).sh \
-		     $(NULL)
+MOZ_EXECUTABLES_$(MOZ_APP_NAME) +=	$(MOZ_LIBDIR)/$(MOZ_PKG_BASENAME).sh \
+					$(NULL)
 
 pkgname_subst_files = \
 	debian/config/mozconfig \
 	$(MOZ_PKGNAME_SUBST_FILES) \
 	$(NULL)
 
-$(foreach pkg, $(MOZ_PKG_NAME) $(MOZ_PKG_NAME)-gnome-support $(MOZ_PKG_NAME)-globalmenu $(MOZ_PKG_NAME)-dev $(MOZ_PKG_NAME)-dbg $(MOZ_PKG_NAME)-mozsymbols, \
+$(foreach pkg,$(MOZ_PKG_NAMES), \
 	$(foreach dhfile, install dirs links manpages postinst preinst postrm prerm lintian-overrides, $(eval pkgname_subst_files += \
 	$(shell if [ -f $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),debian/$(pkg).$(dhfile).in) ]; then \
 		echo debian/$(pkg).$(dhfile); fi))))
@@ -319,10 +309,13 @@ $(appname_subst_files): $(foreach file,$(appname_subst_files),$(subst $(MOZ_APP_
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
-	# create build symbols
-	cd $(MOZ_OBJDIR); \
-	        $(MAKE) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
+        $(MAKE) -C $(MOZ_OBJDIR) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
 endif
+	touch $@
+
+make-testsuite: debian/stamp-maketestsuite
+debian/stamp-maketestsuite: debian/stamp-makefile-build
+	$(MAKE) -C $(MOZ_OBJDIR) package-tests
 	touch $@
 
 LANGPACK_TARGETS = $(shell cat $(CURDIR)/debian/config/locales.shipped | sed -n 's/\#.*//;/^$$/d;s/:/,/ p')
@@ -355,7 +348,7 @@ common-install-arch common-install-indep::
 			mv debian/tmp/$(dir)-$(MOZ_VERSION) debian/tmp/$(dir); \
 		fi; )
 
-common-binary-arch:: make-buildsymbols
+common-binary-arch:: make-buildsymbols make-testsuite
 
 binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
@@ -364,7 +357,6 @@ binary-install/$(MOZ_PKG_NAME)::
 ifeq (1, $(MOZ_ENABLE_GLOBALMENU))
 binary-install/$(MOZ_PKG_NAME)-globalmenu::
 	unzip -o -d debian/$(MOZ_PKG_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ $(MOZ_DISTDIR)/xpi-stage/globalmenu.xpi
-	find debian/$(MOZ_PKG_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ -type f -executable | xargs chmod -x
 endif
 
 GNOME_SUPPORT_FILES = libmozgnome.so
@@ -426,7 +418,7 @@ binary-predeb/$(MOZ_PKG_NAME)::
 	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/$(lib);)
 
 common-binary-predeb-arch::
-	$(foreach file,$(DEBIAN_EXECUTABLES),chmod a+x debian/$(file);)
+	$(foreach pkg,$(MOZ_PKG_NAMES),$(foreach file,$(MOZ_EXECUTABLES_$(pkg)),chmod a+x debian/$(pkg)/$(file);))
 	# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
