@@ -12,5 +12,8 @@ dont-override-general-useragent-locale.patch
 fix-makefile-substitution-bug.patch
 webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
-xpcshell-toolkit-components-search-fix-dirprovider.patch
+xpcshell-search-fix-dirprovider.patch
 xpcshell-docshell-use-get-profile-helper.patch
+xpcshell-contentprefs-use-get-profile-helper.patch
+addonmanager-fix-plugin-scope.patch
+xpcshell-extensions-run-upgrade-test-in-userdir.patch
