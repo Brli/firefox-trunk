@@ -21,7 +21,7 @@ class XPCShellTestsHelper(TestRunHelper):
     TestRunHelper.__init__(self, 'xpcshell/runxpcshelltests.py',
                            lambda g: g['XPCShellOptions'](),
                            pass_args=PASSTHROUGH_ARGS,
-                           paths=['mozbase/mozinfo'],
+                           paths=[],
                            need_x=True, need_dbus=True)
 
     self.add_option('--xpcshell',
@@ -37,18 +37,18 @@ def main():
     '--testing-modules-dir': lambda: os.path.join(helper.root, 'modules')
   }
 
-  def pre_run_cb(argv, options, args):
+  def pre_run_cb(options, args):
     if not options.logfiles:
-      argv.append('--no-logfiles')
+      sys.argv.append('--no-logfiles')
 
     for arg in args:
       if arg.endswith('.js'):
         if len(args) > 1:
           raise Exception('Can only specify one file at a time')
-        argv.extend(['--test-path', os.path.basename(arg)])
+        sys.argv.extend(['--test-path', os.path.basename(arg)])
         args[0] = os.path.dirname(arg)
 
-    argv.append(os.path.join(helper.root, 'bin', 'xpcshell') if options.xpcshell == None else options.xpcshell)
+    sys.argv.append(os.path.join(helper.root, 'bin', 'xpcshell') if options.xpcshell == None else options.xpcshell)
 
   helper = XPCShellTestsHelper()
   sys.exit(helper.run(defaults=DEFAULTS, pre_run_cb=pre_run_cb))

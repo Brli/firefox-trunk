@@ -120,10 +120,10 @@ class TestRunHelper(OptionParser):
 
     for arg in defaults:
       if arg not in argv:
-        argv.extend([arg, defaults[arg]()])
+        argv.extend([arg, defaults[arg]() if hasattr(defaults[arg], '__call__') else defaults[arg]])
 
     if pre_run_cb != None:
-      pre_run_cb(argv, options, args)
+      pre_run_cb(options, args)
 
     argv.extend(args)
 

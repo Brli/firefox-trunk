@@ -27,22 +27,25 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     - update debian/searchplugins/en-ZA/google.xml
     - update debian/searchplugins/ja/google-jp.xml
     - update debian/searchplugins/ku/google-ku.xml
-  * Add support for autopkgtest, package the xpcshell and reftest testsuites
-    and migrate the xpcshell-tests, reftest, crashtest and jstestbrowser
-    targets to this    
-    - add firefox-testsuite package in debian/control.in
+  * Add support for autopkgtest, package the xpcshell, reftest and
+    mochitest testsuites and migrate the xpcshell-tests, reftest, crashtest,
+    jstestbrowser and mochitest targets to this    
+    - add firefox-testsuite package in debian/control.in and drop
+      dbus-x11 and xvfb build depends
     - update debian/control
     - add debian/firefox-testsuite.install.in
     - add debian/firefox-testsuite.links.in
     - update debian/build/mozbuild.mk
     - update debian/rules
-    - drop xpcshell-tests, reftest, crashtest and jstestbrowser targets
-      from debian/build/testsuite.mk
+    - drop xpcshell-tests, reftest, crashtest, jstestbrowser and mochitest
+      targets from debian/build/testsuite.mk
     - add debian/tests/control
     - add debian/tests/crashtest
     - add debian/tests/jstestbrowser
+    - add debian/tests/mochitest
     - add debian/tests/reftest
     - add debian/tests/xpcshell-tests
+    - add debian/testscripts/run_mochitest.in
     - add debian/testscripts/run_xpcshell_tests
     - add debian/testscripts/run_reftest.in
     - add debian/testscripts/testrunhelper.py.in
@@ -79,6 +82,9 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     addon upgrade selection UI
     - add debian/patches/xpcshell-extensions-no-select-dialog.patch
     - update debian/patches/series
+  * Don't write a log file to the script directory from mochitest
+    - add debian/patches/mochitest-optional-websock-log.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100
 

@@ -8,12 +8,13 @@ class ReftestHelper(TestRunHelper):
   def __init__(self):
     PASSTHROUGH_ARGS = [
       '--appname',
-      '--timeout',
+      '--extra-profile-file',
       '--log-file',
+      '--timeout',
+      '--utility-path',
       '--debugger',
       '--debugger-args',
-      '--debugger-interactive',
-      '--extra-profile-file'
+      '--debugger-interactive'
     ]
 
     TestRunHelper.__init__(self, 'reftest/runreftest.py',
@@ -23,7 +24,8 @@ class ReftestHelper(TestRunHelper):
 
 def main():
   DEFAULTS = {
-    '--appname': lambda: os.path.join(helper.root, 'bin', '@MOZ_APP_NAME@')
+    '--appname': lambda: os.path.join(helper.root, 'bin', '@MOZ_APP_NAME@'),
+    '--utility-path': lambda: os.path.join(helper.root, 'bin')
   }
 
   helper = ReftestHelper()

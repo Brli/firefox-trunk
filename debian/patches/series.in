@@ -18,3 +18,4 @@ xpcshell-contentprefs-use-get-profile-helper.patch
 addonmanager-fix-plugin-scope.patch
 xpcshell-extensions-run-upgrade-test-in-userdir.patch
 xpcshell-extensions-no-select-dialog.patch
+mochitest-optional-websock-log.patch

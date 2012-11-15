@@ -120,6 +120,7 @@ MOZ_PKGNAME_SUBST_FILES = \
 	debian/apport/blacklist \
 	debian/apport/native-origins \
 	debian/apport/source_$(MOZ_PKG_NAME).py \
+	debian/testscripts/run_mochitest \
 	debian/testscripts/run_reftest \
 	debian/testscripts/testrunhelper.py \
 	$(NULL)
@@ -135,7 +136,8 @@ MOZ_PKGCONFIG_FILES = \
 	debian/pkgconfig/mozilla-nspr.pc \
 	$(NULL)
 
-MOZ_EXECUTABLES_$(MOZ_APP_NAME)-testsuite =	$(MOZ_TESTDIR)/run_reftest \
+MOZ_EXECUTABLES_$(MOZ_APP_NAME)-testsuite =	$(MOZ_TESTDIR)/run_mochitest \
+						$(MOZ_TESTDIR)/run_reftest \
 						$(MOZ_TESTDIR)/run_xpcshell_tests \
 						$(MOZ_LIBDIR)/xpcshell \
 						$(NULL)
