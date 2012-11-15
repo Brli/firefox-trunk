@@ -92,8 +92,8 @@ class TestRunHelper(OptionParser):
       respawn_args.extend(sys.argv)
       return subprocess.call(respawn_args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
 
-    self._runner_global['sys'].argv = []
-    argv = self._runner_global['sys'].argv
+    sys.argv = []
+    argv = sys.argv
     argv.append(self._runner_global['__file__'])
 
     for arg in self._pass_args:
