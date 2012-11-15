@@ -3,6 +3,8 @@
 @MOZ_DISTDIR@/test-package-stage/bin/xpcshell @MOZ_LIBDIR@
 @MOZ_DISTDIR@/test-package-stage/modules @MOZ_TESTDIR@
 @MOZ_DISTDIR@/test-package-stage/mozbase @MOZ_TESTDIR@
+@MOZ_DISTDIR@/test-package-stage/jsreftest @MOZ_TESTDIR@
+@MOZ_DISTDIR@/test-package-stage/reftest @MOZ_TESTDIR@
 @MOZ_DISTDIR@/test-package-stage/xpcshell @MOZ_TESTDIR@
 debian/testscripts/run_reftest @MOZ_TESTDIR@
 debian/testscripts/run_xpcshell_tests @MOZ_TESTDIR@

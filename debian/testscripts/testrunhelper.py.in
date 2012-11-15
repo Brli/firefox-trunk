@@ -49,13 +49,19 @@ class TestRunHelper(OptionParser):
 
     self._runner_global = {}
     self._runner_global['__file__'] = runner
-    execfile(runner, self._runner_global)
+    saved_argv0 = sys.argv[0]
+    sys.argv[0] = runner
+    try:
+      execfile(runner, self._runner_global)
 
-    runner_parser = get_runner_parser_cb(self._runner_global)
+      runner_parser = get_runner_parser_cb(self._runner_global)
 
-    for arg in self._pass_args:
-      assert runner_parser.has_option(arg)
-      self.add_option(runner_parser.get_option(arg))
+      for arg in self._pass_args:
+        assert runner_parser.has_option(arg)
+        self.add_option(runner_parser.get_option(arg))
+
+    finally:
+      sys.argv[0] = saved_argv0
 
   def run(self, defaults=[], pre_run_cb=None):
     (options, args) = self.parse_args()
@@ -94,7 +100,7 @@ class TestRunHelper(OptionParser):
       opt = self.get_option(arg)
       action = opt.action
       val = getattr(options, opt.dest)
-      if val == opt.default:
+      if val == opt.default and action != 'append':
         continue
       if action == 'store':
         if val != None:
@@ -105,6 +111,10 @@ class TestRunHelper(OptionParser):
       elif action == 'store_false':
         if val == False:
           argv.append(arg)
+      elif action == 'append':
+        if val != None:
+          for v in val:
+            argv.extend([arg, str(v)])
       else:
         raise RuntimeError('Unexpected argument type with action "%s"' % action)
 
@@ -116,5 +126,5 @@ class TestRunHelper(OptionParser):
       pre_run_cb(argv, options, args)
 
     argv.extend(args)
-    print argv
+
     return self._runner_global['main']()

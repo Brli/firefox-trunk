@@ -1,2 +1,2 @@
-Tests: xpcshell-tests
+Tests: xpcshell-tests jstestbrowser reftest crashtest
 Depends: @, libc-bin, make

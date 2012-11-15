@@ -13,6 +13,7 @@ class ReftestHelper(TestRunHelper):
       '--debugger',
       '--debugger-args',
       '--debugger-interactive',
+      '--extra-profile-file'
     ]
 
     TestRunHelper.__init__(self, 'reftest/runreftest.py',
