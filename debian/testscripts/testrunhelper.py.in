@@ -1,0 +1,120 @@
+#!/usr/bin/python
+
+import os
+import os.path
+import sys
+from optparse import OptionParser
+
+class TestRunHelper(OptionParser):
+
+  def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], root='/@MOZ_TESTDIR@', need_x=False, need_dbus=False):
+    OptionParser.__init__(self)
+
+    self.root = root
+    self._pass_args = pass_args
+    self._need_x = need_x
+    self._need_dbus = need_dbus
+
+    args = iter(sys.argv[1:])
+    while True:
+      try:
+        arg = args.next()
+      except StopIteration:
+        break
+
+      if arg == '--harness-root-dir':
+        try:
+          self.root = args.next()
+          break
+        except StopIteration:
+          pass
+
+    self.add_option('--harness-root-dir',
+                    dest='root', default='/@MOZ_TESTDIR@',
+                    help='Override the path to the test harness installation')
+    if self._need_x:
+      self.add_option('--own-display',
+                      action='store_true', dest='wantOwnDisplay', default=False,
+                      help='Run the test inside its own X session')
+    if self._need_dbus:
+      self.add_option('--own-session-bus',
+                      action='store_true', dest='wantOwnSessionBus', default=False,
+                      help='Run the test with its own dbus session')
+
+    for path in reversed(paths):
+      sys.path.insert(0, os.path.join(self.root, path))
+
+    runner = os.path.join(self.root, runner)
+    sys.path.insert(0, os.path.dirname(runner))
+
+    self._runner_global = {}
+    self._runner_global['__file__'] = runner
+    execfile(runner, self._runner_global)
+
+    runner_parser = get_runner_parser_cb(self._runner_global)
+
+    for arg in self._pass_args:
+      assert runner_parser.has_option(arg)
+      self.add_option(runner_parser.get_option(arg))
+
+  def run(self, defaults=[], pre_run_cb=None):
+    (options, args) = self.parse_args()
+
+    respawn_args = []
+    strip_args = []
+
+    if self._need_x and (options.wantOwnDisplay or os.getenv('DISPLAY') == None):
+      respawn_args.extend(['xvfb-run', '-a', '-s', '-screen 0 1024x768x24'])
+      strip_args.append('--own-display')
+    if self._need_dbus and (options.wantOwnSessionBus or os.getenv('DBUS_SESSION_BUS_ADDRESS') == None):
+      respawn_args.extend(['dbus-launch', '--exit-with-session'])
+      strip_args.append('--own-session-bus')
+
+    if len(respawn_args) > 0:
+      import subprocess
+
+      i = 0
+      while len(sys.argv) > 0 and i < len(sys.argv):
+        arg = sys.argv[i]
+        if arg in strip_args:
+          del sys.argv[i]
+          if self.has_option(arg) and self.get_option(arg).action == 'store':
+            del sys.argv[i]
+        else:
+          i+=1
+
+      respawn_args.extend(sys.argv)
+      return subprocess.call(respawn_args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+
+    self._runner_global['sys'].argv = []
+    argv = self._runner_global['sys'].argv
+    argv.append(self._runner_global['__file__'])
+
+    for arg in self._pass_args:
+      opt = self.get_option(arg)
+      action = opt.action
+      val = getattr(options, opt.dest)
+      if val == opt.default:
+        continue
+      if action == 'store':
+        if val != None:
+          argv.extend([arg, str(val)])
+      elif action == 'store_true':
+        if val == True:
+          argv.append(arg)
+      elif action == 'store_false':
+        if val == False:
+          argv.append(arg)
+      else:
+        raise RuntimeError('Unexpected argument type with action "%s"' % action)
+
+    for arg in defaults:
+      if arg not in argv:
+        argv.extend([arg, defaults[arg]()])
+
+    if pre_run_cb != None:
+      pre_run_cb(argv, options, args)
+
+    argv.extend(args)
+    print argv
+    return self._runner_global['main']()
