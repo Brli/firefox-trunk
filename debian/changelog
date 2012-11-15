@@ -27,8 +27,8 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     - update debian/searchplugins/en-ZA/google.xml
     - update debian/searchplugins/ja/google-jp.xml
     - update debian/searchplugins/ku/google-ku.xml
-  * Add support for autopkgtest, package the xpcshell testsuite and migrate
-    xpcshell-tests to this
+  * Add support for autopkgtest, package the xpcshell and reftest testsuites
+    and migrate xpcshell-tests to this
     - add firefox-testsuite package in debian/control.in
     - update debian/control
     - add debian/firefox-testsuite.install.in
@@ -39,6 +39,7 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     - add debian/tests/control
     - add debian/tests/xpcshell-tests
     - add debian/testsuite/run_xpcshell_tests.in
+    - add debian/testsuite/run_reftest.in
     - update debian/config/mozconfig.in to always build with --enable-tests
   * Ensure that the directory provider returns all searchplugin paths during
     the search service xpcshell tests

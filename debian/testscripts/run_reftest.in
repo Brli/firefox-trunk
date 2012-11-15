@@ -8,20 +8,16 @@ from optparse import OptionParser
 if __name__ == '__main__':
 
   PASSTHROUGH_ARGS = [
-    '--interactive',
-    '--verbose',
-    '--manifest',
+    '--appname',
+    '--timeout',
+    '--log-file',
     '--debugger',
     '--debugger-args',
     '--debugger-interactive',
-    '--tests-root-dir',
-    '--testing-modules-dir',
-    '--build-info-json'
   ]
 
   DEFAULTS = {
-    '--tests-root-dir': lambda: os.path.join(root, 'xpcshell', 'tests'),
-    '--testing-modules-dir': lambda: os.path.join(root, 'modules')
+    '--appname': lambda: os.path.join(root, 'bin', '@MOZ_APP_NAME@')
   }
 
   root = '/@MOZ_TESTDIR@'
@@ -44,28 +40,21 @@ if __name__ == '__main__':
   parser.add_option('--harness-root-dir',
                     dest='root', default='/@MOZ_TESTDIR@',
                     help='Override the path to the test harness installation')
-  parser.add_option('--xpcshell',
-                    dest='xpcshell', default=None,
-                    help='Override the path to the xpcshell binary')
   parser.add_option('--own-display',
                     action='store_true', dest='wantOwnDisplay', default=False,
                     help='Run the test inside its own X session')
   parser.add_option('--own-session-bus',
                     action='store_true', dest='wantOwnSessionBus', default=False,
                     help='Run the test with its own dbus session')
-  parser.add_option('--logfiles',
-                    action='store_true', dest='logfiles', default=False,
-                    help='Create log files')
 
-  sys.path.insert(0, os.path.join(root, 'mozbase', 'mozinfo'))
-  sys.path.insert(0, os.path.join(root, 'xpcshell'))
+  sys.path.insert(0, os.path.join(root, 'reftest'))
 
-  runner = os.path.join(root, 'xpcshell', 'runxpcshelltests.py')
+  runner = os.path.join(root, 'reftest', 'runreftest.py')
   g = {}
   g['__file__'] = runner
   execfile(runner, g)
 
-  runner_parser = g['XPCShellOptions']()
+  runner_parser = g['ReftestOptions'](g['Automation']())
   for arg in PASSTHROUGH_ARGS:
     assert runner_parser.has_option(arg)
     parser.add_option(runner_parser.get_option(arg))
@@ -124,18 +113,6 @@ if __name__ == '__main__':
     if arg not in argv:
       argv.extend([arg, DEFAULTS[arg]()])
 
-  if not options.logfiles:
-    argv.append('--no-logfiles')
-
-  for arg in args:
-    if arg.endswith('.js'):
-      if len(args) > 1:
-        print >>sys.stderr, 'Can only specify one file at a time'
-        sys.exit(1)
-      argv.extend(['--test-path', os.path.basename(arg)])
-      args[0] = os.path.dirname(arg)
-
-  argv.append(os.path.join(root, 'bin', 'xpcshell') if options.xpcshell == None else options.xpcshell)
   argv.extend(args)
-
+  print argv
   g['main']()
