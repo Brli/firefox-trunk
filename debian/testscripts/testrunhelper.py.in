@@ -70,7 +70,7 @@ class TestRunHelper(OptionParser):
     strip_args = []
 
     if self._need_x and (options.wantOwnDisplay or os.getenv('DISPLAY') == None):
-      respawn_args.extend(['xvfb-run', '-a', '-s', '-screen 0 1024x768x24'])
+      respawn_args.extend(['xvfb-run', '-a', '-s', '-screen 0 1024x768x24 -extension MIT-SCREEN-SAVER'])
       strip_args.append('--own-display')
     if self._need_dbus and (options.wantOwnSessionBus or os.getenv('DBUS_SESSION_BUS_ADDRESS') == None):
       respawn_args.extend(['dbus-launch', '--exit-with-session'])
