@@ -65,6 +65,13 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     instead
     - add d/p/xpcshell-extensions-run-upgrade-test-in-userdir.patch
     - update debian/patches/series.in
+  * Export NO_PNG_PKG_MANGLE as optipng breaks tests that are dependent
+    on image format / size
+    - update debian/build/mozbuild.mk
+  * Fix an addonmanager xpcshell test to account for us disabling the
+    addon upgrade selection UI
+    - add debian/patches/xpcshell-extensions-no-select-dialog.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100
 

@@ -167,6 +167,7 @@ MOZ_ENABLE_GLOBALMENU = 1
 endif
 endif
 
+export NO_PNG_PKG_MANGLE=1
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
 export MOZCONFIG=$(CURDIR)/debian/config/mozconfig
