@@ -11,7 +11,8 @@
 @MOZ_DISTDIR@/test-package-stage/jsreftest @MOZ_TESTDIR@
 
 @MOZ_DISTDIR@/test-package-stage/mochitest/dynamic @MOZ_TESTDIR@/mochitest
-@MOZ_DISTDIR@/test-package-stage/mochitest/extensions @MOZ_TESTDIR@/mochitest
+@MOZ_DISTDIR@/test-package-stage/mochitest/extensions/worker @MOZ_TESTDIR@/mochitest/extensions
+@MOZ_DISTDIR@/test-package-stage/mochitest/extensions/workerbootstrap @MOZ_TESTDIR@/mochitest/extensions
 @MOZ_DISTDIR@/test-package-stage/mochitest/httpd.js @MOZ_TESTDIR@/mochitest
 @MOZ_DISTDIR@/test-package-stage/mochitest/mochijar @MOZ_TESTDIR@/mochitest
 @MOZ_DISTDIR@/test-package-stage/mochitest/MochiKit @MOZ_TESTDIR@/mochitest
@@ -32,7 +33,6 @@
 @MOZ_DISTDIR@/test-package-stage/reftest/reftest @MOZ_TESTDIR@/reftest
 @MOZ_DISTDIR@/test-package-stage/reftest/runreftest.py @MOZ_TESTDIR@/reftest
 @MOZ_DISTDIR@/test-package-stage/reftest/server-locations.txt @MOZ_TESTDIR@/reftest
-@MOZ_DISTDIR@/test-package-stage/reftest/specialpowers @MOZ_TESTDIR@/reftest
 @MOZ_DISTDIR@/test-package-stage/reftest/tests @MOZ_TESTDIR@/reftest
 
 @MOZ_DISTDIR@/test-package-stage/xpcshell/head.js @MOZ_TESTDIR@/xpcshell
@@ -40,6 +40,8 @@
 @MOZ_DISTDIR@/test-package-stage/xpcshell/node-spdy @MOZ_TESTDIR@/xpcshell
 @MOZ_DISTDIR@/test-package-stage/xpcshell/runxpcshelltests.py @MOZ_TESTDIR@/xpcshell
 @MOZ_DISTDIR@/test-package-stage/xpcshell/tests @MOZ_TESTDIR@/xpcshell
+
+@MOZ_DISTDIR@/test-package-stage/mochitest/extensions/specialpowers @MOZ_TESTDIR@/extensions
 
 @MOZ_DISTDIR@/test-package-stage/mochitest/automation.py @MOZ_TESTDIR@/python
 @MOZ_DISTDIR@/test-package-stage/mochitest/automationutils.py @MOZ_TESTDIR@/python
