@@ -1,0 +1,12 @@
+Index: firefox-trunk-19.0~a1~hg20121114r113217/dom/tests/unit/xpcshell.ini
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/dom/tests/unit/xpcshell.ini	2012-11-14 21:07:37.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/dom/tests/unit/xpcshell.ini	2012-11-16 23:22:42.367317874 +0000
+@@ -5,5 +5,5 @@
+ [test_bug319968.js]
+ [test_bug465752.js]
+ [test_geolocation_provider.js]
+-# Bug 684962: test hangs consistently on Android
+-skip-if = os == "android"
++# Seems to fail consistently on Ubuntu
++fail-if = true

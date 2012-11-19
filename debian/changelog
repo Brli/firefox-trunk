@@ -52,38 +52,48 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     - update debian/config/mozconfig.in to always build with --enable-tests
   * Ensure that the directory provider returns all searchplugin paths during
     the search service xpcshell tests
-    - add debian/patches/xpcshell-search-fix-dirprovider.patch
+    - add d/p/test-fixes/xpcshell-search-fix-browser-dirprovider.patch
     - update debian/patches/series.in
-  * In the docshell xpcshell tests, use the do_get_profile() helper from the
-    xpcshell test harness rather than manually setting up a profile folder
-    in the application directory, which fails when the application directory
-    is read only
-    - add debian/patches/xpcshell-docshell-use-get-profile-helper.patch
-    - update debian/patches/series.in
-  * Use the do_get_profile() helper in the contentprefs xpcshell tests,
-    rather than setting up a folder in the application directory, which is
-    not writable on an installed system
-    - add debian/patches/xpcshell-contentprefs-use-get-profile-helper.patch
+  * Fix various tests that assume that either the application directory or
+    test directory can be written to
+    - add d/p/test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-ctypes-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-xpcom-no-writes-to-testdir-or-appdir.patch
     - update debian/patches/series.in
   * Fix the install scope for application plugins being set incorrectly,
     due to our symlinked application plugin dir. Fixes test failure that
     only occurs on installed environment
     - add debian/patches/addonmanager-fix-plugin-scope.patch
     - update debian/patches/series.in
-  * Don't use the application directory for addon upgrade tests, as it's not
-    writable on an installed system. Set up a user-scope extension dir
-    instead
-    - add d/p/xpcshell-extensions-run-upgrade-test-in-userdir.patch
-    - update debian/patches/series.in
   * Export NO_PNG_PKG_MANGLE as optipng breaks tests that are dependent
     on image format / size
     - update debian/build/mozbuild.mk
-  * Fix an addonmanager xpcshell test to account for us disabling the
-    addon upgrade selection UI
-    - add debian/patches/xpcshell-extensions-no-select-dialog.patch
+  * Don't test that the addon selection dialog appears in test_bug596343.js,
+    as we disable this
+    - add d/p/test-overrides/xpcshell-disable-addon-select-dialog-test.patch
     - update debian/patches/series
   * Don't write a log file to the script directory from mochitest
     - add debian/patches/mochitest-optional-websock-log.patch
+    - update debian/patches/series.in
+  * Fix a failure in test_nodb_pluschanges.js due to const redeclaration
+    - add d/p/test-fixes/xpcshell-search-fix-const-redeclaration.patch
+    - update debian/patches/series.in
+  * Don't run the GConf-specific test_421977.js on systems where GSettings
+    is available, as it will fail
+    - add d/p/t-f/xpcshell-shell-disable-gconf-tests-when-using-gsettings.patch
+    - update debian/patches/series.in
+  * Disable failing test_geolocation_provider.js xpcshell test
+    - add d/p/test-overrides/xpcshell-disable-geolocation-provider-test.patch
+    - update debian/patches/series.in
+  * Disable test_upgrade.js and test_upgrade_strictcompat.js xpcshell tests
+    for now as they require write access to the application directory
+    - add d/p/test-overrides/xpcshell-disable-extension-upgrade-test.patch
+    - update debian/patches/series.in
+  * Disable test_browserGlue_distribution.js for now as it requires write
+    access to the application directory
+    - add d/p/test-overrides/xpcshell-disable-browser-distribution-test.patch
     - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100

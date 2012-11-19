@@ -1,0 +1,14 @@
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/search/tests/xpcshell/test_nodb_pluschanges.js
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/components/search/tests/xpcshell/test_nodb_pluschanges.js	2012-11-14 21:08:32.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/search/tests/xpcshell/test_nodb_pluschanges.js	2012-11-19 20:40:48.733708328 +0000
+@@ -20,9 +20,6 @@
+  */
+ 
+ const Cc = Components.classes;
+-const Ci = Components.interfaces;
+-const Cu = Components.utils;
+-const Cr = Components.results;
+ 
+ Cu.import("resource://testing-common/httpd.js");
+ 

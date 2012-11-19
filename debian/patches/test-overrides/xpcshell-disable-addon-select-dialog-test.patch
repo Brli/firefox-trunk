@@ -1,25 +1,21 @@
 Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js
 ===================================================================
 --- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-14 21:08:37.000000000 +0000
-+++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-14 23:33:04.345948327 +0000
-@@ -62,14 +62,14 @@
++++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-16 14:17:01.079899651 +0000
+@@ -61,16 +61,6 @@
+ 
    startupManager();
  
-   // For a new profile it should disable showing the selection UI in the future
+-  // For a new profile it should disable showing the selection UI in the future
 -  do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
 -  Services.prefs.clearUserPref(PREF_SHOWN_SELECTION_UI);
-+  //do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
-+  //Services.prefs.clearUserPref(PREF_SHOWN_SELECTION_UI);
- 
+-
 -  gExpectedURL = URI_EXTENSION_SELECT_DIALOG;
 -  restartManager("2");
-+  //gExpectedURL = URI_EXTENSION_SELECT_DIALOG;
-+  //restartManager("2");
- 
+-
 -  do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
 -  do_check_eq(gExpectedURL, null);
-+  //do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
-+  //do_check_eq(gExpectedURL, null);
- 
+-
    gExpectedURL = URI_EXTENSION_UPDATE_DIALOG;
  
+   restartManager("3");
