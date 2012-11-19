@@ -1,7 +1,7 @@
-Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js
 ===================================================================
---- firefox-trunk-19.0~a1~hg20121114r113129.orig/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js	2012-11-14 00:37:52.000000000 +0000
-+++ firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js	2012-11-14 15:14:25.574479000 +0000
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js	2012-11-14 21:08:30.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js	2012-11-19 21:33:15.781652408 +0000
 @@ -45,34 +45,6 @@
  
  
@@ -77,9 +77,9 @@ Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/t
  function inChildProcess() {
    var appInfo = Cc["@mozilla.org/xre/app-info;1"];
    if (!appInfo || appInfo.getService(Ci.nsIXULRuntime).processType ==
-Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/tests/unit/tail_contentPrefs.js
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit/tail_contentPrefs.js
 ===================================================================
---- firefox-trunk-19.0~a1~hg20121114r113129.orig/toolkit/components/contentprefs/tests/unit/tail_contentPrefs.js	2012-11-14 00:37:52.000000000 +0000
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/components/contentprefs/tests/unit/tail_contentPrefs.js	2012-11-14 21:08:30.000000000 +0000
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,6 +0,0 @@
 -/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -88,10 +88,10 @@ Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/t
 -
 -ContentPrefTest.deleteDatabase();
 -ContentPrefTest.__dirSvc = null;
-Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/tests/unit/xpcshell.ini
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-19.0~a1~hg20121114r113129.orig/toolkit/components/contentprefs/tests/unit/xpcshell.ini	2012-11-14 00:37:52.000000000 +0000
-+++ firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/tests/unit/xpcshell.ini	2012-11-14 15:13:39.898480000 +0000
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/components/contentprefs/tests/unit/xpcshell.ini	2012-11-14 21:08:30.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit/xpcshell.ini	2012-11-19 21:33:15.785652408 +0000
 @@ -1,6 +1,6 @@
  [DEFAULT]
  head = head_contentPrefs.js
@@ -100,3 +100,22 @@ Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/contentprefs/t
  
  [test_bug248970.js]
  [test_bug503971.js]
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit_ipc/tail_contentPrefs.js
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/components/contentprefs/tests/unit_ipc/tail_contentPrefs.js	2012-11-14 21:08:30.000000000 +0000
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,3 +0,0 @@
+-
+-load("../unit/tail_contentPrefs.js");
+-
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit_ipc/xpcshell.ini
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/components/contentprefs/tests/unit_ipc/xpcshell.ini	2012-11-14 21:08:30.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit_ipc/xpcshell.ini	2012-11-19 23:52:10.541504311 +0000
+@@ -1,5 +1,5 @@
+ [DEFAULT]
+ head = head_contentPrefs.js
+-tail = tail_contentPrefs.js
++tail =
+ 
+ [test_contentPrefs_parentipc.js]

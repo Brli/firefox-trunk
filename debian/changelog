@@ -61,6 +61,7 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     - add d/p/test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
     - add d/p/test-fixes/xpcshell-ctypes-no-writes-to-appdir.patch
     - add d/p/test-fixes/xpcshell-xpcom-no-writes-to-testdir-or-appdir.patch
+    - add d/p/test-fixes/xpcshell-libpref-no-writes-to-testdir.patch
     - update debian/patches/series.in
   * Fix the install scope for application plugins being set incorrectly,
     due to our symlinked application plugin dir. Fixes test failure that
