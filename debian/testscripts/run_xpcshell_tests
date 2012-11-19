@@ -34,7 +34,8 @@ class XPCShellTestsHelper(TestRunHelper):
 def main():
   DEFAULTS = {
     '--tests-root-dir': lambda: os.path.join(helper.root, 'xpcshell', 'tests'),
-    '--testing-modules-dir': lambda: os.path.join(helper.root, 'modules')
+    '--testing-modules-dir': lambda: os.path.join(helper.root, 'modules'),
+    '--build-info-json': lambda: os.path.join(helper.root, 'python', 'mozinfo.json')
   }
 
   def pre_run_cb(options, args):
