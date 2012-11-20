@@ -51,7 +51,6 @@
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptContext.h>
 #include <jsapi.h>
-#include <mozilla/dom/Element.h>
 #if MOZILLA_BRANCH_VERSION < 15
 # include <nsIXBLService.h>
 #endif
