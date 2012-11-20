@@ -46,9 +46,9 @@
 #include <nsPIDOMWindow.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMDocument.h>
+#include <nsIDOMElement.h>
 #include <nsIPrivateDOMEvent.h>
 #include <nsIDOMEventTarget.h>
-#include <mozilla/dom/Element.h>
 #include <nsIContent.h>
 
 #include <glib-object.h>
@@ -586,19 +586,31 @@ uGlobalMenuItem::Refresh(uMenuObjectRefreshMode aMode)
 
     nsIDocument *doc = mContent->GetCurrentDoc();
     if (doc) {
-      nsAutoString value;
-      mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, value);
-      if (!value.IsEmpty()) {
-        mCommandContent = doc->GetElementById(value);
-        if (mCommandContent) {
-          mListener->RegisterForContentChanges(mCommandContent, this);
+      nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
+      NS_ASSERTION(domDoc, "nsIDocument failed QI to nsIDOMDocument");
+      if (domDoc) {
+        nsAutoString value;
+        mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::command, value);
+        if (!value.IsEmpty()) {
+          nsCOMPtr<nsIDOMElement> elem;
+          domDoc->GetElementById(value, getter_AddRefs(elem));
+          if (elem) {
+            mCommandContent = do_QueryInterface(elem);
+            if (mCommandContent) {
+              mListener->RegisterForContentChanges(mCommandContent, this);
+            }
+          }
         }
-      }
-      mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, value);
-      if (!value.IsEmpty()) {
-        mKeyContent = doc->GetElementById(value);
-        if (mKeyContent) {
-          mListener->RegisterForContentChanges(mKeyContent, this);
+        mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::key, value);
+        if (!value.IsEmpty()) {
+          nsCOMPtr<nsIDOMElement> elem;
+          domDoc->GetElementById(value, getter_AddRefs(elem));
+          if (elem) {
+            mKeyContent = do_QueryInterface(elem);
+            if (mKeyContent) {
+              mListener->RegisterForContentChanges(mKeyContent, this);
+            }
+          }
         }
       }
     }

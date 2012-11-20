@@ -1,9 +1,11 @@
 firefox-trunk (18.0~a1~hg20121008r109581-0ubuntu2) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.7 prerelease r502
+  * Update globalmenu-extension to 3.7 prerelease r504
     - Fix crash in uGlobalMenu::InitializePopup
     - Update for imagelib changes in Firefox 19
     - Update for nsCAutoString removal in Firefox 19
+    - Don't #include mozilla/dom/Element.h anywhere, as that now pulls
+      in a lot of internal headers since Firefox 19
     - Fix issue with stale entries being left in the Recently Closed
       Tabs / Windows menus
     - Make logging work correctly on debug builds
