@@ -133,7 +133,7 @@ class TestRunHelper(OptionParser):
     argv.extend(args)
 
     if self._need_wm:
-      wm = Popen(['/usr/bin/metacity'])
+      wm = Popen(['/usr/bin/metacity', '--sm-disable', '--no-composite'])
 
     try:
       return self._runner_global['main']()
