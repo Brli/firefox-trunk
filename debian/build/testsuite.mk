@@ -1,49 +1,55 @@
 #!/usr/bin/make -f
 
-LOCALE		:= en_US.UTF-8
-LOCDIR		= $(CURDIR)/$(MOZ_DISTDIR)/.locales
+MOZ_TEST_LOCALE ?= en_US.UTF-8
 
-ifeq (1,$(MOZ_WANT_UNIT_TESTS))
-ifeq (,$(MOZ_TESTS))
-TESTS = check xpcshell-tests jstestbrowser reftest crashtest mochitest
-else
-TESTS = $(MOZ_TESTS)
+MOZ_TESTS ?= check
+MOZ_TEST_FAILURES_FATAL ?= 1
+
+MOZ_TEST_X_WRAPPER ?= xvfb-run -a -s "-screen 0 1024x768x24 -extension=MIT-SCREEN-SAVER" dbus-launch --exit-with-session
+MOZ_TESTS_NEED_X ?= xpcshell-tests jstestbrowser reftest crashtest mochitest
+
+MOZ_TESTS_TZ_ENV ?= TZ=:/usr/share/zoneinfo/posix/US/Pacific
+MOZ_TESTS_NEED_TZ ?= check jstestbrowser
+
+MOZ_TESTS_NEED_LOCALE ?= xpcshell-tests jstestbrowser reftest
+
+TEST_LOCALES = $(CURDIR)/$(MOZ_OBJDIR)/_ubuntu_build_test_tmp/locales
+TEST_HOME = $(CURDIR)/$(MOZ_OBJDIR)/_ubuntu_build_test_tmp/home
+
+GET_WRAPPER = $(if $(filter $(1),$(MOZ_TESTS_NEED_X)),$(MOZ_TEST_X_WRAPPER))
+GET_TZ = $(if $(filter $(1),$(MOZ_TESTS_NEED_TZ)),$(MOZ_TESTS_TZ_ENV))
+
+DOIF_NEEDS_LOCALE = $(if $(filter $(1),$(MOZ_TESTS_NEED_LOCALE)),$(call $(2)))
+MAKE_LOCALE = $(TEST_LOCALES)/$(MOZ_TEST_LOCALE)
+GET_LOCALE_ENV = LOCPATH=$(TEST_LOCALES) LC_ALL=$(MOZ_TEST_LOCALE)
+
+ifneq (1,$(MOZ_TEST_FAILURES_FATAL))
+CMD_APPEND = || true
 endif
+
+ifneq (1,$(MOZ_WANT_UNIT_TESTS))
+MOZ_TESTS =
 endif
 
-run-tests: $(addprefix debian/stamp-,$(TESTS))
+$(TEST_LOCALES) $(TEST_HOME):: %:
+	mkdir -p $@
 
-$(addprefix debian/stamp-,$(TESTS)): debian/stamp-makefile-build
-
-# Required for js/src/trace-tests/sunspider/check-date-format-tofte.js
-$(addprefix debian/stamp-,check jstestbrowser): export TZ = :/usr/share/zoneinfo/posix/US/Pacific
-
-$(LOCDIR)/%:
-	mkdir -p $(LOCDIR)
+$(TEST_LOCALES)/$(MOZ_TEST_LOCALE): $(TEST_LOCALES)
 	localedef -f $(shell echo $(notdir $@) | cut -d '.' -f 2) -i $(shell echo $(notdir $@) | cut -d '.' -f 1) $@
 
-# Setup locales for tests which need it
-$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest): $(LOCDIR)/$(LOCALE)
-$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest): export LOCPATH=$(LOCDIR)
-$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest): export LC_ALL=$(LOCALE)
+run-tests: $(MOZ_TESTS)
 
-# Disable tests that are known to fail
-$(addprefix debian/stamp-,xpcshell-tests): debian/stamp-xpcshell-tests-disable
+$(MOZ_TESTS):: %: debian/stamp-test-%
 
-# Tests that need a X server
-$(addprefix debian/stamp-,xpcshell-tests jstestbrowser reftest crashtest mochitest): WRAPPER = xvfb-run -a -s "-screen 0 1024x768x24" dbus-launch --exit-with-session
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: TZ=$(call GET_TZ,$*)
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: WRAPPER=$(call GET_WRAPPER,$*)
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: $(call DOIF_NEEDS_LOCALE,$*,MAKE_LOCALE)
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: LOCALE_ENV=$(call DOIF_NEEDS_LOCALE,$*,GET_LOCALE_ENV)
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: $(TEST_HOME)
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: TEST_CMD=HOME=$(TEST_HOME) $(LOCALE_ENV) $(TZ) $(WRAPPER) $(MAKE) -C $(CURDIR)/$(MOZ_OBJDIR) $*
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: debian/stamp-test-%: debian/stamp-makefile-build
+	@echo "\nRunning $(TEST_CMD)\n"
+	@$(TEST_CMD) $(CMD_APPEND)
+	@touch $@
 
-# Run the test!
-$(addprefix debian/stamp-,$(TESTS)):
-	HOME="$(CURDIR)/$(MOZ_DISTDIR)" \
-	$(WRAPPER) $(MAKE) -C $(CURDIR)/$(MOZ_OBJDIR) $(subst debian/stamp-,,$@) || true
-	touch $@
-
-debian/stamp-xpcshell-tests-disable:: debian/stamp-makefile-build
-	# Hangs without network access
-	rm -f $(CURDIR)/$(MOZ_OBJDIR)$(MOZ_MOZDIR)/_tests/xpcshell/toolkit/components/places/tests/unit/test_404630.js
-
-	# Needs GConf to be running. I guess we need to start with dbus-launch to fix this
-	rm -f $(CURDIR)/$(MOZ_OBJDIR)$(MOZ_MOZDIR)/_tests/xpcshell/browser/components/shell/test/unit/test_421977.js
-	rm -f $(CURDIR)/$(MOZ_OBJDIR)$(MOZ_MOZDIR)/_tests/xpcshell/uriloader/exthandler/tests/unit/test_handlerService.js
-	touch $@
+.PHONY: run-tests $(MOZ_TESTS)

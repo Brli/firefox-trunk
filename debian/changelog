@@ -3,6 +3,89 @@ firefox-trunk (19.0~a1~hg20121118r113642-0ubuntu2) UNRELEASED; urgency=low
   * Update globalmenu-extension to 3.7 prerelease r505
   * Refresh patches
     - update debian/patches/mozilla-kde.patch
+  * firefox-gnome-support needs explicit dependency on libnotify
+    - update debian/control{,.in}
+  * Add support for autopkgtest, package the xpcshell, reftest and
+    mochitest testsuites and migrate the xpcshell-tests, reftest, crashtest,
+    jstestbrowser and mochitest targets to this    
+    - add firefox-testsuite package in debian/control.in and drop
+      dbus-x11 and xvfb build depends
+    - update debian/control
+    - add debian/firefox-testsuite.install.in
+    - add debian/firefox-testsuite.links.in
+    - update debian/build/mozbuild.mk
+    - update debian/rules
+    - drop xpcshell-tests, reftest, crashtest, jstestbrowser and mochitest
+      targets from debian/build/testsuite.mk
+    - add debian/tests/control
+    - add debian/tests/crashtest
+    - add debian/tests/jstestbrowser
+    - add debian/tests/mochitest
+    - add debian/tests/reftest
+    - add debian/tests/xpcshell-tests
+    - add debian/testscripts/run_mochitest.in
+    - add debian/testscripts/run_xpcshell_tests
+    - add debian/testscripts/run_reftest.in
+    - add debian/testscripts/testrunhelper.py.in
+    - update debian/config/mozconfig.in to always build with --enable-tests
+  * Ensure that the directory provider returns all searchplugin paths during
+    the search service xpcshell tests
+    - add d/p/test-fixes/xpcshell-search-fix-browser-dirprovider.patch
+    - update debian/patches/series.in
+  * Fix various tests that assume that either the application directory or
+    test directory can be written to
+    - add d/p/test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-ctypes-no-writes-to-appdir.patch
+    - add d/p/test-fixes/xpcshell-xpcom-no-writes-to-testdir-or-appdir.patch
+    - add d/p/test-fixes/xpcshell-libpref-no-writes-to-testdir.patch
+    - update debian/patches/series.in
+  * Fix the install scope for application plugins being set incorrectly,
+    due to our symlinked application plugin dir. Fixes test failure that
+    only occurs on installed environment
+    - add debian/patches/addonmanager-fix-plugin-scope.patch
+    - update debian/patches/series.in
+  * Export NO_PNG_PKG_MANGLE as optipng breaks tests that are dependent
+    on image format / size
+    - update debian/build/mozbuild.mk
+  * Don't test that the addon selection dialog appears in test_bug596343.js,
+    as we disable this
+    - add d/p/test-overrides/xpcshell-disable-addon-select-dialog-test.patch
+    - update debian/patches/series
+  * Don't write a log file to the script directory from mochitest
+    - add debian/patches/mochitest-optional-websock-log.patch
+    - update debian/patches/series.in
+  * Fix a failure in test_nodb_pluschanges.js due to const redeclaration
+    - add d/p/test-fixes/xpcshell-search-fix-const-redeclaration.patch
+    - update debian/patches/series.in
+  * Don't run the GConf-specific test_421977.js on systems where GSettings
+    is available, as it will fail
+    - add d/p/t-f/xpcshell-shell-disable-gconf-tests-when-using-gsettings.patch
+    - update debian/patches/series.in
+  * Disable failing test_geolocation_provider.js xpcshell test
+    - add d/p/test-overrides/xpcshell-disable-geolocation-provider-test.patch
+    - update debian/patches/series.in
+  * Disable test_upgrade.js and test_upgrade_strictcompat.js xpcshell tests
+    for now as they require write access to the application directory
+    - add d/p/test-overrides/xpcshell-disable-extension-upgrade-test.patch
+    - update debian/patches/series.in
+  * Disable test_browserGlue_distribution.js for now as it requires write
+    access to the application directory
+    - add d/p/test-overrides/xpcshell-disable-browser-distribution-test.patch
+    - update debian/patches/series.in
+  * Reset the "browser" and "embed-app" content prefs after running content
+    mochitests, so that the subsequent DOM browser-element tests don't
+    fail
+    - add d/p/test-fixes/mochitest-content-reset-permissions-when-done.patch
+    - update debian/patches/series.in
+  * Disable Web GL conformance tests as these don't work in Xvfb
+    - add d/p/test-overrides/mochitest-disable-webgl-conformance.patch
+    - update debian/patches/series.in
+  * Disable HTML fullscreen tests, as these don't work without a window
+    manager
+    - add d/p/test-overrides/mochitest-disable-fullscreen-tests.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 

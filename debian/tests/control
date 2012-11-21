@@ -1,0 +1,2 @@
+Tests: xpcshell-tests jstestbrowser reftest crashtest mochitest
+Depends: @, libc-bin, make, notify-osd

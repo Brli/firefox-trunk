@@ -1,0 +1,14 @@
+Index: firefox-trunk-19.0~a1~hg20121114r113217/content/html/content/test/test_fullscreen-api.html
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/content/html/content/test/test_fullscreen-api.html	2012-11-20 11:54:08.893349768 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/content/html/content/test/test_fullscreen-api.html	2012-11-20 12:06:57.001336119 +0000
+@@ -100,8 +100,7 @@
+ }
+ is(window.fullScreen, false, "Shouldn't be able to set window fullscreen from content");
+ 
+-addLoadEvent(nextTest);
+-SimpleTest.waitForExplicitFinish();
++todo(false, "Can't run full-screen tests in environments without a window manager");
+ 
+ </script>
+ </pre>

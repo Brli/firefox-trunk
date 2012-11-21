@@ -65,46 +65,50 @@ endif
 
 ifeq (firefox, $(MOZ_PKG_NAME))
 ifeq (,$(filter lucid maverick natty oneiric precise, $(DISTRIB_CODENAME)))
-PKG_APP_REPLACES_ARGS	:= kubuntu-firefox-installer
+MOZ_PKG_firefox_DH_GENCONTROL_EXTRA := \
+	-Vtransitional:Replaces="kubuntu-firefox-installer"
 else
 ifeq (,$(filter lucid, $(DISTRIB_CODENAME)))
-PKG_APP_REPLACES_ARGS	:= abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer
-PKG_APP_BREAKS_ARGS	:= abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
-			   firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), $(PLUGIN_BREAKS)
-PKG_APP_CONFLICTS_ARGS	:= $(PLUGIN_CONFLICTS)
+MOZ_PKG_firefox_DH_GENCONTROL_EXTRA := \
+	-Vtransitional:Replaces="abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer" \
+	-Vtransitional:Breaks="abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
+			       firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), $(PLUGIN_BREAKS)" \
+	-Vtransitional:Conflicts="$(PLUGIN_CONFLICTS)"
 else
-PKG_APP_PROVIDES_ARGS	:= firefox-3.6, firefox-3.5, firefox-3.0, firefox-2, firefox-2-dom-inspector, firefox-2-libthai
-PKG_APP_CONFLICTS_ARGS	:= firefox-3.6 (<< 3.6~hg20100117r33523), firefox-3.5 (<< 3.6~hg20100117r33523), \
-			   firefox-3.0 (<< 3.6~hg20100117r33523), firefox-3.6-gnome-support (<< 3.6~hg20100117r33523), \
-			   firefox-2 (<< 3), firefox-2-libthai (<< 3), firefox-2-dom-inspector (<< 3), \
-			   abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
-			   firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), $(PLUGIN_CONFLICTS)
-PKG_APP_REPLACES_ARGS	:= firefox-3.6, firefox-3.5, firefox-3.0, firefox-3.6-gnome-support, firefox-2, firefox-2-libthai, \
-			   firefox-2-dom-inspector, abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer
-PKG_APP_BREAKS_ARGS	:= $(PLUGIN_BREAKS)
-PKG_DEV_PROVIDES_ARGS	:= firefox-3.6-dev, firefox-3.5-dev, firefox-3.0-dev, firefox-2-dev
-PKG_DEV_REPLACES_ARGS	:= firefox-3.6-dev, firefox-3.5-dev, firefox-3.0-dev, firefox-2-dev
-PKG_DEV_CONFLICTS_ARGS	:= firefox-3.6-dev (<< 3.6~hg20100117r33523+nobinonly), firefox-3.5-dev (<< 3.6~hg20100117r33523), \
-			   firefox-3.0-dev (<< 3.6~hg20100117r33523), firefox-2-dev (<< 3)
-PKG_GS_PROVIDES_ARGS	:= firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2
-PKG_GS_CONFLICTS_ARGS	:= firefox-3.6-gnome-support (<< 3.6~hg20100117r33523+nobinonly), \
-			   firefox-3.5-gnome-support (<< 3.6~hg20100117r33523), firefox-3.0-gnome-support (<< 3.6~hg20100117r33523), \
-			   firefox-2 (<< 3)
-PKG_GS_REPLACES_ARGS	:= firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2-gnome-support
-PKG_DBG_CONFLICTS_ARGS	:= firefox-3.6-dbg (<< 3.6~hg20100117r33523+nobinonly), firefox-3.5-dbg (<< 3.6~hg20100117r33523), firefox-2-dbg (<< 3)
-PKG_DBG_REPLACES_ARGS	:= firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg
-PKG_DBG_PROVIDES_ARGS	:= firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg
+MOZ_PKG_firefox_DH_GENCONTROL_EXTRA := \
+	-Vtransitional:Provides="firefox-3.6, firefox-3.5, firefox-3.0, firefox-2, firefox-2-dom-inspector, firefox-2-libthai" \
+	-Vtransitional:Conflicts="firefox-3.6 (<< 3.6~hg20100117r33523), firefox-3.5 (<< 3.6~hg20100117r33523), \
+				  firefox-3.0 (<< 3.6~hg20100117r33523), firefox-3.6-gnome-support (<< 3.6~hg20100117r33523), \
+				  firefox-2 (<< 3), firefox-2-libthai (<< 3), firefox-2-dom-inspector (<< 3), \
+				  abrowser (<= 4.0~b11+build3+nobinonly-0ubuntu1), abrowser-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), \
+				  firefox-branding (<= 4.0~b11+build3+nobinonly-0ubuntu1), $(PLUGIN_CONFLICTS)" \
+	-Vtransitional:Replaces="firefox-3.6, firefox-3.5, firefox-3.0, firefox-3.6-gnome-support, firefox-2, firefox-2-libthai, \
+				 firefox-2-dom-inspector, abrowser, abrowser-branding, firefox-branding, kubuntu-firefox-installer" \
+	-Vtransitional:Breaks="$(PLUGIN_BREAKS)"
+MOZ_PKG_firefox-dev_DH_GENCONTROL_EXTRA := \
+	-Vtransitional:Provides="firefox-3.6-dev, firefox-3.5-dev, firefox-3.0-dev, firefox-2-dev" \
+	-Vtransitional:Replaces="firefox-3.6-dev, firefox-3.5-dev, firefox-3.0-dev, firefox-2-dev" \
+	-Vtransitional:Conflicts="firefox-3.6-dev (<< 3.6~hg20100117r33523+nobinonly), firefox-3.5-dev (<< 3.6~hg20100117r33523), \
+				  firefox-3.0-dev (<< 3.6~hg20100117r33523), firefox-2-dev (<< 3)"
+MOZ_PKG_firefox-gnome-support_DH_GENCONTROL_EXTRA := \
+	-Vtransitional:Provides="firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2" \
+	-Vtransitional:Replaces="firefox-3.6-gnome-support, firefox-3.5-gnome-support, firefox-3.0-gnome-support, firefox-2-gnome-support" \
+	-Vtransitional:Conflicts="firefox-3.6-gnome-support (<< 3.6~hg20100117r33523+nobinonly), \
+				  firefox-3.5-gnome-support (<< 3.6~hg20100117r33523), firefox-3.0-gnome-support (<< 3.6~hg20100117r33523), \
+				  firefox-2 (<< 3)"
+MOZ_PKG_firefox-dbg_DH_GENCONTROL_EXTRA := \
+	-Vtransitional:Provides="firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg" \
+	-Vtransitional:Replaces="firefox-3.6-dbg, firefox-3.5-dbg, firefox-2-dbg" \
+	-Vtransitional:Conflicts="firefox-3.6-dbg (<< 3.6~hg20100117r33523+nobinonly), firefox-3.5-dbg (<< 3.6~hg20100117r33523), firefox-2-dbg (<< 3)"
 endif
 endif
 endif
 
 ifneq (,$(filter lucid, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
+MOZ_PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
 else
 ifneq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
-PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
-else
-PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support
+MOZ_PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
 endif
 endif
 
@@ -116,6 +120,9 @@ MOZ_PKGNAME_SUBST_FILES = \
 	debian/apport/blacklist \
 	debian/apport/native-origins \
 	debian/apport/source_$(MOZ_PKG_NAME).py \
+	debian/testscripts/run_mochitest \
+	debian/testscripts/run_reftest \
+	debian/testscripts/testrunhelper.py \
 	$(NULL)
 
 MOZ_APPNAME_SUBST_FILES = \
@@ -128,6 +135,12 @@ MOZ_PKGCONFIG_FILES = \
 	debian/pkgconfig/libxul.pc \
 	debian/pkgconfig/mozilla-nspr.pc \
 	$(NULL)
+
+MOZ_EXECUTABLES_$(MOZ_APP_NAME)-testsuite =	$(MOZ_TESTDIR)/run_mochitest \
+						$(MOZ_TESTDIR)/run_reftest \
+						$(MOZ_TESTDIR)/run_xpcshell_tests \
+						$(MOZ_LIBDIR)/xpcshell \
+						$(NULL)
 
 include $(CURDIR)/debian/build/mozbuild.mk
 

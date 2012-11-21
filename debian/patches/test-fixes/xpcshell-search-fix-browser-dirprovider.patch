@@ -1,0 +1,105 @@
+Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/search/tests/xpcshell/head_search.js
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113129.orig/toolkit/components/search/tests/xpcshell/head_search.js	2012-11-14 00:37:53.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/search/tests/xpcshell/head_search.js	2012-11-14 14:08:13.854550000 +0000
+@@ -1,9 +1,13 @@
+ /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+ /* vim:set ts=2 sw=2 sts=2 et: */
+ 
+-Components.utils.import("resource://gre/modules/Services.jsm");
+-Components.utils.import("resource://gre/modules/NetUtil.jsm");
+-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
++const Cu = Components.utils;
++const Ci = Components.interfaces;
++const Cr = Components.results;
++
++Cu.import("resource://gre/modules/Services.jsm");
++Cu.import("resource://gre/modules/NetUtil.jsm");
++Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+ 
+ const XULAPPINFO_CONTRACTID = "@mozilla.org/xre/app-info;1";
+ const XULAPPINFO_CID = Components.ID("{c763b610-9d49-455a-bbd2-ede71682a1ac}");
+@@ -38,23 +42,23 @@
+     invalidateCachesOnRestart: function invalidateCachesOnRestart() {},
+ 
+     QueryInterface: function QueryInterface(iid) {
+-      if (iid.equals(Components.interfaces.nsIXULAppInfo)
+-       || iid.equals(Components.interfaces.nsIXULRuntime)
+-       || iid.equals(Components.interfaces.nsISupports))
++      if (iid.equals(Ci.nsIXULAppInfo)
++       || iid.equals(Ci.nsIXULRuntime)
++       || iid.equals(Ci.nsISupports))
+         return this;
+ 
+-      throw Components.results.NS_ERROR_NO_INTERFACE;
++      throw Cr.NS_ERROR_NO_INTERFACE;
+     }
+   };
+ 
+   var XULAppInfoFactory = {
+     createInstance: function (outer, iid) {
+       if (outer != null)
+-        throw Components.results.NS_ERROR_NO_AGGREGATION;
++        throw Cr.NS_ERROR_NO_AGGREGATION;
+       return gXULAppInfo.QueryInterface(iid);
+     }
+   };
+-  var registrar = Components.manager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
++  var registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+   registrar.registerFactory(XULAPPINFO_CID, "XULAppInfo",
+                             XULAPPINFO_CONTRACTID, XULAppInfoFactory);
+ }
+@@ -62,6 +66,44 @@
+ // Need to create and register a profile folder.
+ var gProfD = do_get_profile();
+ 
++var provider = {
++  getFile: function() {
++    throw Cr.NS_ERROR_FAILURE;
++  },
++
++  getFiles: function(prop) {
++    if (prop == "XREExtDL") {
++      return {
++        getNext: function() {
++          throw Cr.NS_ERROR_FAILURE;
++        },
++        hasMoreElements: function() {
++          return false;
++        },
++        QueryInterface: function(iid) {
++          if (iid.equals(Ci.nsISimpleEnumerator) ||
++              iid.equals(Ci.nsISupports)) {
++            return this;
++          }
++          throw Cr.NS_ERROR_NO_INTERFACE;
++        }
++      };
++    }
++    throw Cr.NS_ERROR_FAILURE;
++  },
++
++  QueryInterface: function(iid) {
++    if (iid.equals(Ci.nsIDirectoryServiceProvider2) ||
++        iid.equals(Ci.nsIDirectoryServiceProvider) ||
++        iid.equals(Ci.nsISupports)) {
++      return this;
++    }
++    throw Cr.NS_ERROR_NO_INTERFACE;
++  }
++};
++
++Services.dirsvc.registerProvider(provider);
++
+ function dumpn(text)
+ {
+   dump("search test: " + text + "\n");
+@@ -102,7 +144,7 @@
+ }
+ 
+ function  parseJsonFromStream(aInputStream) {
+-  const json = Cc["@mozilla.org/dom/json;1"].createInstance(Components.interfaces.nsIJSON);
++  const json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+   const data = json.decodeFromStream(aInputStream, aInputStream.available());
+   return data;
+ }

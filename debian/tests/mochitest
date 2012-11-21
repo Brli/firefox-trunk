@@ -1,0 +1,22 @@
+#!/bin/sh
+
+TESTSUITE_DIR=/$($(dirname $0)/../rules echo-MOZ_TESTDIR 2>/dev/null)
+TMPDIR=$(mktemp -d)
+HOME=$TMPDIR/home
+LOCPATH=$TMPDIR/locales
+
+trap "rm -rf $TMPDIR" EXIT
+
+mkdir $HOME
+mkdir $LOCPATH
+localedef -f UTF-8 -i en_US $LOCPATH/en_US.UTF-8
+
+export HOME=$HOME
+export LOCPATH=$LOCPATH
+export LC_ALL=en_US.UTF-8
+
+$TESTSUITE_DIR/run_mochitest --browser-chrome
+$TESTSUITE_DIR/run_mochitest
+$TESTSUITE_DIR/run_mochitest --chrome
+$TESTSUITE_DIR/run_mochitest --a11y
+$TESTSUITE_DIR/run_mochitest --setpref=dom.ipc.plugins.enabled=false --test-path=dom/plugins/test

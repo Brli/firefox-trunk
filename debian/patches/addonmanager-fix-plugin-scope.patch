@@ -1,0 +1,24 @@
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/PluginProvider.jsm
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/mozapps/extensions/PluginProvider.jsm	2012-11-14 21:08:35.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/PluginProvider.jsm	2012-11-14 23:28:04.569953651 +0000
+@@ -287,16 +287,19 @@
+     let path = aTags[0].fullpath;
+     // Plugins inside the application directory are in the application scope
+     let dir = Services.dirsvc.get("APlugns", Ci.nsIFile);
++    dir.normalize();
+     if (path.substring(0, dir.path.length) == dir.path)
+       return AddonManager.SCOPE_APPLICATION;
+ 
+     // Plugins inside the profile directory are in the profile scope
+     dir = Services.dirsvc.get("ProfD", Ci.nsIFile);
++    dir.normalize();
+     if (path.substring(0, dir.path.length) == dir.path)
+       return AddonManager.SCOPE_PROFILE;
+ 
+     // Plugins anywhere else in the user's home are in the user scope
+     dir = Services.dirsvc.get("Home", Ci.nsIFile);
++    dir.normalize();
+     if (path.substring(0, dir.path.length) == dir.path)
+       return AddonManager.SCOPE_USER;
+ 

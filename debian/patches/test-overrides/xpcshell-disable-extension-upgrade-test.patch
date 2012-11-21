@@ -1,0 +1,17 @@
+Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini	2012-11-14 21:08:37.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini	2012-11-17 01:43:41.379167568 +0000
+@@ -228,8 +228,8 @@
+ skip-if = os == "android"
+ [test_update_compatmode.js]
+ [test_upgrade.js]
+-# Bug 676992: test consistently hangs on Android
+-skip-if = os == "android"
++# This needs to write to the application directory
++skip-if = true
+ [test_upgrade_strictcompat.js]
+-# Bug 676992: test consistently hangs on Android
+-skip-if = os == "android"
++# This needs to write to the application directory
++skip-if = true

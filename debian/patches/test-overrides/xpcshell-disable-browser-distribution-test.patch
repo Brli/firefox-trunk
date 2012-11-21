@@ -1,0 +1,12 @@
+Index: firefox-trunk-19.0~a1~hg20121114r113217/browser/components/places/tests/unit/xpcshell.ini
+===================================================================
+--- firefox-trunk-19.0~a1~hg20121114r113217.orig/browser/components/places/tests/unit/xpcshell.ini	2012-11-14 21:07:25.000000000 +0000
++++ firefox-trunk-19.0~a1~hg20121114r113217/browser/components/places/tests/unit/xpcshell.ini	2012-11-19 20:28:31.201721432 +0000
+@@ -7,6 +7,7 @@
+ [test_browserGlue_corrupt_nobackup.js]
+ [test_browserGlue_corrupt_nobackup_default.js]
+ [test_browserGlue_distribution.js]
++skip-if = true
+ [test_browserGlue_migrate.js]
+ [test_browserGlue_prefs.js]
+ [test_browserGlue_restore.js]
