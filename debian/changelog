@@ -27,6 +27,8 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
     - update debian/searchplugins/en-ZA/google.xml
     - update debian/searchplugins/ja/google-jp.xml
     - update debian/searchplugins/ku/google-ku.xml
+  * firefox-gnome-support needs explicit dependency on libnotify
+    - update debian/control{,.in}
   * Add support for autopkgtest, package the xpcshell, reftest and
     mochitest testsuites and migrate the xpcshell-tests, reftest, crashtest,
     jstestbrowser and mochitest targets to this    
@@ -95,6 +97,18 @@ firefox-trunk (19.0~a1~hg20121114r113217-0ubuntu1) UNRELEASED; urgency=low
   * Disable test_browserGlue_distribution.js for now as it requires write
     access to the application directory
     - add d/p/test-overrides/xpcshell-disable-browser-distribution-test.patch
+    - update debian/patches/series.in
+  * Reset the "browser" and "embed-app" content prefs after running content
+    mochitests, so that the subsequent DOM browser-element tests don't
+    fail
+    - add d/p/test-fixes/mochitest-content-reset-permissions-when-done.patch
+    - update debian/patches/series.in
+  * Disable Web GL conformance tests as these don't work in Xvfb
+    - add d/p/test-overrides/mochitest-disable-webgl-conformance.patch
+    - update debian/patches/series.in
+  * Disable HTML fullscreen tests, as these don't work without a window
+    manager
+    - add d/p/test-overrides/mochitest-disable-fullscreen-tests.patch
     - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 09 Oct 2012 15:28:46 +0100
