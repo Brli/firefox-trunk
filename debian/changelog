@@ -82,6 +82,13 @@ firefox-trunk (19.0~a1~hg20121118r113642-0ubuntu2) UNRELEASED; urgency=low
   * Disable Web GL conformance tests as these don't work in Xvfb
     - add d/p/test-overrides/mochitest-disable-webgl-conformance.patch
     - update debian/patches/series.in
+  * Fix issue where some tests were being added to the mochitest tests.jar
+    using their absolute path
+    - add debian/patches/test-fixes/mochitest-tests-jar-fix.patch
+    - update debian/patches/series.in
+  * Disable test_contextmenu_nested.xul mochitest for now
+    - add d/p/test-overrides/mochitest-disable-nested-contextmenu-test.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 

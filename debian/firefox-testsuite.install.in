@@ -10,6 +10,9 @@
 
 @MOZ_DISTDIR@/test-package-stage/jsreftest @MOZ_TESTDIR@
 
+@MOZ_DISTDIR@/test-package-stage/mochitest/a11y @MOZ_TESTDIR@/mochitest
+@MOZ_DISTDIR@/test-package-stage/mochitest/browser @MOZ_TESTDIR@/mochitest
+@MOZ_DISTDIR@/test-package-stage/mochitest/chrome @MOZ_TESTDIR@/mochitest
 @MOZ_DISTDIR@/test-package-stage/mochitest/dynamic @MOZ_TESTDIR@/mochitest
 @MOZ_DISTDIR@/test-package-stage/mochitest/extensions/worker @MOZ_TESTDIR@/mochitest/extensions
 @MOZ_DISTDIR@/test-package-stage/mochitest/extensions/workerbootstrap @MOZ_TESTDIR@/mochitest/extensions
