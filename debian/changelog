@@ -82,10 +82,6 @@ firefox-trunk (19.0~a1~hg20121118r113642-0ubuntu2) UNRELEASED; urgency=low
   * Disable Web GL conformance tests as these don't work in Xvfb
     - add d/p/test-overrides/mochitest-disable-webgl-conformance.patch
     - update debian/patches/series.in
-  * Disable HTML fullscreen tests, as these don't work without a window
-    manager
-    - add d/p/test-overrides/mochitest-disable-fullscreen-tests.patch
-    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 

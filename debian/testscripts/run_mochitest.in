@@ -29,7 +29,7 @@ class MochitestHelper(TestRunHelper):
     TestRunHelper.__init__(self, 'mochitest/runtests.py',
                            lambda g: g['MochitestOptions'](g['Automation'](), g['__file__']),
                            pass_args=PASSTHROUGH_ARGS,
-                           need_x=True, need_dbus=True)
+                           need_x=True, need_dbus=True, need_wm=True)
 
     self.add_option('--no-autorun',
                     action='store_true', dest='noAutorun', default=False,

@@ -29,4 +29,3 @@ test-overrides/xpcshell-disable-geolocation-provider-test.patch
 test-overrides/xpcshell-disable-extension-upgrade-test.patch
 test-overrides/xpcshell-disable-browser-distribution-test.patch
 test-overrides/mochitest-disable-webgl-conformance.patch
-test-overrides/mochitest-disable-fullscreen-tests.patch

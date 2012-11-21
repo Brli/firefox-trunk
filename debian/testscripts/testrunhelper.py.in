@@ -4,16 +4,20 @@ import os
 import os.path
 import sys
 from optparse import OptionParser
+from subprocess import Popen
 
 class TestRunHelper(OptionParser):
 
-  def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], root='/@MOZ_TESTDIR@', need_x=False, need_dbus=False):
+  def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], root='/@MOZ_TESTDIR@', need_x=False, need_dbus=False, need_wm=False):
     OptionParser.__init__(self)
 
     self.root = root
     self._pass_args = pass_args
     self._need_x = need_x
     self._need_dbus = need_dbus
+    self._need_wm = need_wm
+
+    assert not need_wm or (need_wm and need_x)
 
     args = iter(sys.argv[1:])
     while True:
@@ -128,4 +132,11 @@ class TestRunHelper(OptionParser):
 
     argv.extend(args)
 
-    return self._runner_global['main']()
+    if self._need_wm:
+      wm = Popen(['/usr/bin/metacity'])
+
+    try:
+      return self._runner_global['main']()
+    finally:
+      if self._need_wm:
+        wm.terminate()
