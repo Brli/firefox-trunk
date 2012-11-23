@@ -15,8 +15,27 @@ export HOME=$HOME
 export LOCPATH=$LOCPATH
 export LC_ALL=en_US.UTF-8
 
+echo "*************************"
+echo "* Running browser tests *"
+echo "*************************"
 $TESTSUITE_DIR/run_mochitest --browser-chrome
+
+echo "***********************"
+echo "* Running plain tests *"
+echo "***********************"
 $TESTSUITE_DIR/run_mochitest
+
+echo "************************"
+echo "* Running chrome tests *"
+echo "************************"
 $TESTSUITE_DIR/run_mochitest --chrome
+
+echo "**********************"
+echo "* Running a11y tests *"
+echo "**********************"
 $TESTSUITE_DIR/run_mochitest --a11y
+
+echo "****************************"
+echo "* Running ipcplugins tests *"
+echo "****************************"
 $TESTSUITE_DIR/run_mochitest --setpref=dom.ipc.plugins.enabled=false --test-path=dom/plugins/test
