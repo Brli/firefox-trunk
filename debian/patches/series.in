@@ -12,7 +12,6 @@ dont-override-general-useragent-locale.patch
 fix-makefile-substitution-bug.patch
 webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
-addonmanager-fix-plugin-scope.patch
 mochitest-optional-websock-log.patch
 mochitest-allow-test-manifest-for-chrome.patch
 test-fixes/xpcshell-search-fix-browser-dirprovider.patch

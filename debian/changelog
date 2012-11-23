@@ -43,11 +43,6 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add d/p/test-fixes/xpcshell-xpcom-no-writes-to-testdir-or-appdir.patch
     - add d/p/test-fixes/xpcshell-libpref-no-writes-to-testdir.patch
     - update debian/patches/series.in
-  * Fix the install scope for application plugins being set incorrectly,
-    due to our symlinked application plugin dir. Fixes test failure that
-    only occurs on installed environment
-    - add debian/patches/addonmanager-fix-plugin-scope.patch
-    - update debian/patches/series.in
   * Export NO_PNG_PKG_MANGLE as optipng breaks tests that are dependent
     on image format / size
     - update debian/build/mozbuild.mk
