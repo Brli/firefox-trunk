@@ -58,9 +58,9 @@ def main():
       if '--a11y' in sys.argv or \
          '--browser-chrome' in sys.argv or \
          '--chrome' in sys.argv:
-        manifest = os.path.join(helper.root, 'mochitest', 'mochitest-chrome.json')
+        manifest = 'mochitest-chrome.json'
       else:
-        manifest = os.path.join(helper.root, 'mochitest', 'mochitest.json')
+        manifest = 'mochitest.json'
       if os.path.exists(manifest):
           sys.argv.extend(['--test-manifest', manifest])
 
