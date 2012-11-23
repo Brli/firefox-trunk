@@ -56,3 +56,5 @@ debian/testscripts/run_mochitest @MOZ_TESTDIR@
 debian/testscripts/run_reftest @MOZ_TESTDIR@
 debian/testscripts/run_xpcshell_tests @MOZ_TESTDIR@
 debian/testscripts/testrunhelper.py @MOZ_TESTDIR@
+
+debian/tests/mochitest*.json @MOZ_TESTDIR@/mochitest

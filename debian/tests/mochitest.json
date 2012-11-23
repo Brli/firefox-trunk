@@ -1,0 +1,11 @@
+{
+ "runtests": {},
+ "excludetests": {
+  "content/canvas/test/webgl/test_webgl_conformance_test_suite.html": "UNSUPPORTED",
+  "docshell/test/navigation/test_bug13871.html": "FAILS",
+  "docshell/test/navigation/test_not-opener.html": "FAILS",
+  "dom/tests/mochitest/bugs/test_bug458091.html": "FAILS",
+  "parser/htmlparser/tests/mochitest/test_bug672453.html": "FAILS",
+  "toolkit/content/tests/widgets/test_contextmenu_nested.xul": "FAILS"
+ }
+}

@@ -14,6 +14,7 @@ webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
 addonmanager-fix-plugin-scope.patch
 mochitest-optional-websock-log.patch
+mochitest-allow-test-manifest-for-chrome.patch
 test-fixes/xpcshell-search-fix-browser-dirprovider.patch
 test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
 test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
@@ -25,9 +26,9 @@ test-fixes/xpcshell-shell-disable-gconf-tests-when-using-gsettings.patch
 test-fixes/xpcshell-libpref-no-writes-to-testdir.patch
 test-fixes/mochitest-content-reset-permissions-when-done.patch
 test-fixes/mochitest-tests-jar-fix.patch
+test-fixes/mochitest-dont-ship-browser-postupdate-test.patch
+test-fixes/mochitest-shell-disable-gconf-tests-when-using-gsettings.patch
 test-overrides/xpcshell-disable-addon-select-dialog-test.patch
 test-overrides/xpcshell-disable-geolocation-provider-test.patch
 test-overrides/xpcshell-disable-extension-upgrade-test.patch
 test-overrides/xpcshell-disable-browser-distribution-test.patch
-test-overrides/mochitest-disable-webgl-conformance.patch
-test-overrides/mochitest-disable-nested-contextmenu-test.patch
