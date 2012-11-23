@@ -15,4 +15,4 @@ export HOME=$HOME
 export LOCPATH=$LOCPATH
 export LC_ALL=en_US.UTF-8
 
-$TESTSUITE_DIR/run_xpcshell_tests --manifest $TESTSUITE_DIR/xpcshell/tests/xpcshell.ini
+$TESTSUITE_DIR/run_xpcshell_tests --own-display --own-session-bus --manifest $TESTSUITE_DIR/xpcshell/tests/xpcshell.ini

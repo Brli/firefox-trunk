@@ -18,4 +18,4 @@ export LC_ALL=en_US.UTF-8
 # Required for js/src/trace-tests/sunspider/check-date-format-tofte.js
 export TZ=:/usr/share/zoneinfo/posix/US/Pacific
 
-$TESTSUITE_DIR/run_reftest --extra-profile-file=$TESTSUITE_DIR/jsreftest/tests/user.js $TESTSUITE_DIR/jsreftest/tests/jstests.list
+$TESTSUITE_DIR/run_reftest --own-display --own-session-bus --extra-profile-file=$TESTSUITE_DIR/jsreftest/tests/user.js $TESTSUITE_DIR/jsreftest/tests/jstests.list

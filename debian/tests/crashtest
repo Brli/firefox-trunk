@@ -15,4 +15,4 @@ export HOME=$HOME
 export LOCPATH=$LOCPATH
 export LC_ALL=en_US.UTF-8
 
-$TESTSUITE_DIR/run_reftest $TESTSUITE_DIR/reftest/tests/testing/crashtest/crashtests.list
+$TESTSUITE_DIR/run_reftest --own-display --own-session-bus $TESTSUITE_DIR/reftest/tests/testing/crashtest/crashtests.list
