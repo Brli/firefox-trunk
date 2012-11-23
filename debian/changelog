@@ -96,6 +96,9 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     mochitests so that we can maintain a distro manifest for these
     - add debian/patches/mochitest-allow-test-manifest-for-chrome.patch
     - update debian/patches/series.in
+  * Disable failing reftests
+    - add d/p/test-overrides/reftest-disable-failing-tests.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 
