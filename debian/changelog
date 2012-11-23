@@ -99,6 +99,17 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
   * Disable failing reftests
     - add d/p/test-overrides/reftest-disable-failing-tests.patch
     - update debian/patches/series.in
+  * Add a skeleton home directory containing a .config/user-dirs.dirs (which
+    is needed for devicestorage tests), and make the test helper populate
+    a temporary home directory for each test suite
+    - add debian/testscripts/skel/.config/user-dirs.dirs
+    - update debian/testscripts/testrunhelper.py.in
+    - update debian/tests/crashtest
+    - update debian/tests/jstestbrowser
+    - update debian/tests/mochitest
+    - update debian/tests/reftest
+    - update debian/tests/xpcshell-tests
+    - update debian/firefox-testsuite.install.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 

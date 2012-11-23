@@ -1,17 +1,12 @@
 #!/bin/sh
 
 TESTSUITE_DIR=/$($(dirname $0)/../rules echo-MOZ_TESTDIR 2>/dev/null)
-TMPDIR=$(mktemp -d)
-HOME=$TMPDIR/home
-LOCPATH=$TMPDIR/locales
+LOCPATH=$(mktemp -d)
 
-trap "rm -rf $TMPDIR" EXIT
+trap "rm -rf $LOCPATH" EXIT
 
-mkdir $HOME
-mkdir $LOCPATH
 localedef -f UTF-8 -i en_US $LOCPATH/en_US.UTF-8
 
-export HOME=$HOME
 export LOCPATH=$LOCPATH
 export LC_ALL=en_US.UTF-8
 

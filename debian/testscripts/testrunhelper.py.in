@@ -5,6 +5,8 @@ import os.path
 import sys
 from optparse import OptionParser
 from subprocess import Popen
+import tempfile
+import shutil
 
 class TestRunHelper(OptionParser):
 
@@ -132,6 +134,15 @@ class TestRunHelper(OptionParser):
 
     argv.extend(args)
 
+    tmphome = tempfile.mkdtemp()
+    os.environ['HOME'] = tmphome
+    for (dirpath, dirnames, filenames) in os.walk('/@MOZ_TESTDIR@/skel'):
+      relpath = os.path.relpath(dirpath, '/@MOZ_TESTDIR@/skel')
+      for dirname in dirnames:
+        os.mkdir(os.path.join(tmphome, relpath, dirname))
+      for filename in filenames:
+        shutil.copy2(os.path.join(dirpath, filename), os.path.join(tmphome, relpath))
+
     if self._need_wm:
       wm = Popen(['/usr/bin/metacity', '--sm-disable', '--no-composite'])
 
@@ -140,3 +151,4 @@ class TestRunHelper(OptionParser):
     finally:
       if self._need_wm:
         wm.terminate()
+      shutil.rmtree(tmphome)

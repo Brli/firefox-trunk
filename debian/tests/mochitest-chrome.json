@@ -3,7 +3,7 @@
  "excludetests": {
   "a11y/accessible/attributes/test_text.html": "FAILS",
   "a11y/accessible/events/test_focus_general.xul": "FAILS",
-  "browser/browser/base/content/test/browser_allTabsPanel.js": "HANGS",
+  "browser/browser/base/content/test/browser_allTabsPanel.js": "HANGS INTERMITTENT",
   "browser/browser/base/content/test/browser_canonizeURL.js": "FAILS UBUNTU-SEARCHPLUGINS",
   "browser/browser/base/content/test/browser_keywordSearch.js": "FAILS UBUNTU-SEARCHPLUGINS",
   "browser/browser/base/content/test/browser_social_chatwindow.js": "HANGS",
