@@ -54,6 +54,15 @@ def main():
       sys.argv.append('--autorun')
     if not options.noCloseWhenDone:
       sys.argv.append('--close-when-done')
+    if '--test-manifest' not in sys.argv:
+      if '--a11y' in sys.argv or \
+         '--browser-chrome' in sys.argv or \
+         '--chrome' in sys.argv:
+        manifest = os.path.join(helper.root, 'mochitest', 'mochitest-chrome.json')
+      else:
+        manifest = os.path.join(helper.root, 'mochitest', 'mochitest.json')
+      if os.path.exists(manifest):
+          sys.argv.extend(['--test-manifest', manifest])
 
   helper = MochitestHelper()
   sys.exit(helper.run(defaults=DEFAULTS, pre_run_cb=pre_run_cb))
