@@ -77,8 +77,8 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add d/p/test-fixes/mochitest-content-reset-permissions-when-done.patch
     - update debian/patches/series.in
   * Disable various failing mochitests:
-    - add debian/tests/mochitest.json
-    - add debian/tests/mochitest-chrome.json
+    - add debian/testscripts/mochitest.json
+    - add debian/testscripts/mochitest-chrome.json
     - update debian/firefox-testsuite.install.in
   * Fix issue where some tests were being added to the mochitest tests.jar
     using their absolute path in the build tree
