@@ -61,7 +61,7 @@ def main():
         manifest = 'mochitest-chrome.json'
       else:
         manifest = 'mochitest.json'
-      if os.path.exists(manifest):
+      if os.path.exists(os.path.join(helper.root, 'mochitest', manifest)):
           sys.argv.extend(['--test-manifest', manifest])
 
   helper = MochitestHelper()
