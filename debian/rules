@@ -136,7 +136,7 @@ MOZ_PKGCONFIG_FILES = \
 	debian/pkgconfig/mozilla-nspr.pc \
 	$(NULL)
 
-MOZ_EXECUTABLES_$(MOZ_APP_NAME)-testsuite =	$(MOZ_TESTDIR)/run_mochitest \
+MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_TESTDIR)/run_mochitest \
 						$(MOZ_TESTDIR)/run_reftest \
 						$(MOZ_TESTDIR)/run_xpcshell_tests \
 						$(MOZ_LIBDIR)/xpcshell \
