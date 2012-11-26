@@ -110,6 +110,7 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/reftest
     - update debian/tests/xpcshell-tests
     - update debian/firefox-testsuite.install.in
+  * Fix broken search suggestions since the switch to https
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 
