@@ -117,15 +117,19 @@ function run_test()
   let found_DDG = false;
   let found_Baidu = false;
 
-  if (_SEARCHPLUGIN_TEST_LOCALE != "zh-CN") {
-    found_Baidu = true;
+  let want_Baidu = false;
+  let want_Amazon = false;
+
+  if (_SEARCHPLUGIN_TEST_LOCALE == "zh-CN") {
+    want_Baidu = true;
   }
 
-  if (["ast", "be", "bn-BD", "ca", "cs", "es-CL", "es-ES", "es-MX", "et", "fi",
-       "fy-NL", "gu-IN", "he", "hi-IN", "hu", "id", "kk", "ko", "lv", "mai",
-       "ml", "nl", "pa-IN", "pl", "pt-BR", "ru", "sk", "sl", "sv-SE", "ta",
-       "uk", "vi", "zh-TW"].indexOf(_SEARCHPLUGIN_TEST_LOCALE) != -1) {
-    found_Amazon = true;
+  if (["en-US", "af", "ar", "bg", "bn-IN", "br", "bs", "cy", "da", "de", "el",
+       "en-GB", "en-ZA", "eo", "es-AR", "eu", "fa", "fr", "ga-IE", "gd", "gl",
+       "hr", "hy-AM", "is", "it", "ja", "kn", "ku", "lg", "lt", "mk", "mr",
+       "nb-NO", "nn-NO", "nso", "or", "pt-PT", "ro", "si", "sq", "sr", "te",
+       "th", "tr", "zh-CN", "zu"].indexOf(_SEARCHPLUGIN_TEST_LOCALE) != -1) {
+    want_Amazon = true;
   }
 
   do_test_pending();
@@ -156,9 +160,9 @@ function run_test()
       });
 
       do_check_true(found_Google);
-      do_check_true(found_Amazon);
+      do_check_true(!((found_Amazon && !want_Amazon) || (!found_Amazon && want_Amazon)));
       do_check_true(found_DDG);
-      do_check_true(found_Baidu);
+      do_check_true(!((found_Baidu && !want_Baidu) || (!found_Baidu && want_Baidu)));
 
       do_test_finished();
     }
