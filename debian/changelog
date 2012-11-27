@@ -111,6 +111,28 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/xpcshell-tests
     - update debian/firefox-testsuite.install.in
   * Fix broken search suggestions since the switch to https
+  * Add vendor xpcshell tests to verify that the search service loads
+    the expected number of search plugins from each language pack
+    - update debian/build/mozbuild.mk
+    - add debian/firefox-testsuite.dirs.in
+    - update debian/firefox-testsuite.install.in
+    - update debian/rules
+    - add debian/testscripts/xpcshell-package-tests/head_package_tests.js
+    - add debian/testscripts/xpcshell-package-tests/test_searchplugin_installs.js
+    - add debian/testscripts/xpcshell-package-tests/test_searchplugin_installs_real.js
+    - add debian/testscripts/xpcshell-package-tests/xpcshell.ini
+  * Drop the hacky perl scripts that were being used to make sure the language
+    packs ship the correct plugins. Add a xpcshell test instead
+    - update debian/build/mozbuild.mk
+    - update debian/rules
+    - remove debian/build/refresh-search-modifications.pl
+    - remove debian/build/verify-search-overrides.pl
+    - remove debian/config/search-mods.list
+    - update debian/control.in
+    - remove debian/searchplugins/compute-overrides.json
+    - add debian/testscripts/xpcshell-package-tests/test_ubuntu_searchplugins.js
+    - add debian/testscripts/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
+    - update debian/testscripts/xpcshell-package-tests/xpcshell.ini
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 

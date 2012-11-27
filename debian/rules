@@ -170,12 +170,15 @@ common-binary-fixup-arch::
 
 LOCALE_PACKAGES := $(shell cat $(CURDIR)/debian/control | grep "^Package:[[:space:]]*$(MOZ_PKG_NAME)-locale\-" | sed -n -e 's/^Package\:[[:space:]]*\([^[:space:]]*\)/\1/ p')
 
-common-binary-post-install-arch:: install-webapprt-langpack-links
+common-binary-post-install-arch:: install-webapprt-langpack-links install-searchplugin-lists
 
 install-webapprt-langpack-links: $(foreach target, $(LOCALE_PACKAGES), install-webapprt-langpack-link-$(target))
 install-webapprt-langpack-link-%: XPIS = $(notdir $(wildcard debian/$*/$(MOZ_ADDONDIR)/extensions/*.xpi))
 install-webapprt-langpack-link-%:
 	$(foreach xpi,$(XPIS),dh_link -p$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
+
+install-searchplugin-lists:
+	dh_install -p$(MOZ_PKG_NAME)-testsuite debian/searchplugin*.list $(MOZ_TESTDIR)/xpcshell/package-tests
 
 pre-build::
 	@cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml

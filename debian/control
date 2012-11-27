@@ -33,9 +33,7 @@ Build-Depends: cdbs,
 	libxrender-dev,
 	yasm-1 (>= 1.1) | yasm (>= 1.1),
 	libdbusmenu-gtk-dev,
-	unzip,
-	libxml-simple-perl,
-	libjson-perl
+	unzip
 Standards-Version: 3.9.1
 XS-Testsuite: autopkgtest
 

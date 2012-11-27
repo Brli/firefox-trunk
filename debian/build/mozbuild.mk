@@ -321,9 +321,9 @@ debian/stamp-maketestsuite: debian/stamp-makefile-build
 
 LANGPACK_TARGETS = $(shell cat $(CURDIR)/debian/config/locales.shipped | sed -n 's/\#.*//;/^$$/d;s/:/,/ p')
 
-make-langpack-xpis: $(foreach target, $(LANGPACK_TARGETS), debian/stamp-make-langpack-xpi-$(target))
-debian/stamp-make-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
-debian/stamp-make-langpack-xpi-%:
+make-langpack-xpis: $(foreach target, $(LANGPACK_TARGETS), make-langpack-xpi-$(target))
+make-langpack-xpi-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
+make-langpack-xpi-%:
 	@echo ""
 	@echo ""
 	@echo "* Building language pack xpi for $(LANGUAGE)"
@@ -336,11 +336,9 @@ debian/stamp-make-langpack-xpi-%:
 	export PYTHONPATH=$(CURDIR)/compare-locales/lib ; \
 	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
 		$(MAKE) merge-$(LANGUAGE) LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$(LANGUAGE) || exit 1 ; \
-		$(MAKE) langpack-$(LANGUAGE) LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$(LANGUAGE) || exit 1; \
+		$(MAKE) langpack-$(LANGUAGE) LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$(LANGUAGE) || exit 1;
 
-	touch $@
-
-common-build-arch:: run-tests $(pkgconfig_files) make-langpack-xpis
+common-build-arch:: run-tests $(pkgconfig_files) make-buildsymbols make-testsuite
 
 common-install-arch common-install-indep::
 	$(foreach dir,$(MOZ_LIBDIR) $(MOZ_INCDIR) $(MOZ_IDLDIR) $(MOZ_SDKDIR), \
@@ -349,7 +347,7 @@ common-install-arch common-install-indep::
 			mv debian/tmp/$(dir)-$(MOZ_VERSION) debian/tmp/$(dir); \
 		fi; )
 
-common-binary-arch:: make-buildsymbols make-testsuite
+common-binary-arch:: make-langpack-xpis
 
 binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
@@ -383,33 +381,43 @@ install-langpack-xpi-%:
 	cp $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(LANGUAGE).langpack.xpi \
 		$(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$(PKGNAME)/$(MOZ_ADDONDIR)/extensions/$(XPI_ID).xpi
 
+install-searchplugins::
+	@echo "[Searchplugins]" > debian/searchplugins.list
+	@echo "[Additions]" > debian/searchplugin-additions.list
+	@echo "[Overrides]" > debian/searchplugin-overrides.list
 install-searchplugins:: install-searchplugins-en-US $(if $(wildcard debian/searchplugins), customize-searchplugins-en-US)
 install-searchplugins:: $(foreach target, $(LANGPACK_TARGETS), install-searchplugins-$(target) $(if $(wildcard debian/searchplugins), customize-searchplugins-$(target)))
 install-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 install-searchplugins-%: PKGLANG = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 install-searchplugins-%: PKGNAME = $(if $(PKGLANG),$(MOZ_PKG_NAME)-locale-$(PKGLANG),$(MOZ_PKG_NAME))
-install-searchplugins-%: SOURCE = $(if $(PKGLANG),$(MOZ_DISTDIR)/xpi-stage/locale-$(LANGUAGE),$(MOZ_LIBDIR))
+install-searchplugins-%: SOURCE = $(if $(PKGLANG),$(MOZ_DISTDIR)/xpi-stage/locale-$(LANGUAGE),debian/tmp/$(MOZ_LIBDIR))
 install-searchplugins-%:
 	@echo ""
 	@echo "Installing $(LANGUAGE) searchplugins in to $(PKGNAME)"
 	rm -rf $(CURDIR)/debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)
 	dh_installdirs -p$(PKGNAME) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)
 	dh_install -p$(PKGNAME) $(SOURCE)/searchplugins/*.xml $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)
+	@echo "$(LANGUAGE)=$(shell echo $(foreach plugin,$(wildcard $(SOURCE)/searchplugins/*.xml),$(shell echo $(notdir $(plugin)) | sed 's/\.xml$$//')) | sed 's/ /,/g')" >> \
+		debian/searchplugins.list
 
 customize-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 customize-searchplugins-%: PKGLANG = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 customize-searchplugins-%: PKGNAME = $(if $(PKGLANG),$(MOZ_PKG_NAME)-locale-$(PKGLANG),$(MOZ_PKG_NAME))
-customize-searchplugins-%: OVERRIDES = $(shell cat debian/config/search-mods.list | sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}' | \
-					 grep ^$(LANGUAGE): | cut -d ':' -f 2 | sed -e 's/,/ /g')
-customize-searchplugins-%: ADDITIONS = $(shell cat debian/config/search-mods.list | sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}' | \
-					 grep ^$(LANGUAGE): | cut -d ':' -f 2 | sed -e 's/,/ /g')
+customize-searchplugins-%: OVERRIDES = $(foreach override,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
+				sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(override).xml) $(wildcard debian/searchplugins/en-US/$(override).xml)))
+customize-searchplugins-%: ADDITIONS = $(foreach addition,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
+				sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(addition).xml) $(wildcard debian/searchplugins/en-US/$(addition).xml)))
 customize-searchplugins-%:
 	@echo ""
 	@echo "Applying search customizations to $(PKGNAME)"
 	@$(foreach override, $(OVERRIDES), echo "Overriding $(notdir $(override))"; \
-		dh_install -p$(PKGNAME) debian/searchplugins/$(override) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
+		dh_install -p$(PKGNAME) $(override) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
 	@$(foreach addition, $(ADDITIONS), echo "Adding $(notdir $(addition))"; \
-		dh_install -p$(PKGNAME) debian/searchplugins/$(addition) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
+		dh_install -p$(PKGNAME) $(addition) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
+	@echo "$(LANGUAGE)=$(shell echo $(foreach plugin,$(ADDITIONS),$(shell echo $(notdir $(plugin)) | sed 's/\.xml$$//')) | sed 's/ /,/g')" >> \
+		debian/searchplugin-additions.list
+	@echo "$(LANGUAGE)=$(shell echo $(foreach plugin,$(OVERRIDES),$(shell echo $(notdir $(plugin)) | sed 's/\.xml$$//')) | sed 's/ /,/g')" >> \
+		debian/searchplugin-overrides.list
 
 common-binary-post-install-arch:: install-langpack-xpis install-searchplugins
 
@@ -441,59 +449,6 @@ ifeq (,$(MOZ_BRANDING_DIR))
 endif
 
 GET_FILE_CONTENTS_CMD=$(if $(wildcard $(1)),`cat $(1)`,$(if $(wildcard .tarball/$(MOZ_PKG_NAME)/$(1)),`cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(if $(TARBALL),`mkdir -p $(CURDIR)/.tarball; tar -jxf $(TARBALL) -C $(CURDIR)/.tarball > /dev/null 2>&1; mv .tarball/$(MOZ_PKG_NAME)-* .tarball/$(MOZ_PKG_NAME); cat .tarball/$(MOZ_PKG_NAME)/$(1)`,$(error File $(1) not found))))
-
-refresh-search-mod-list:: SOURCE = $(if $(wildcard $(MOZ_APP)),$(CURDIR),$(CURDIR)/.tarball/$(MOZ_PKG_NAME))
-refresh-search-mod-list::
-	@echo ""
-	@echo "*******************************************************"
-	@echo "* Refreshing the list of search engine customizations *"
-	@echo "*******************************************************"
-	@echo ""
-
-	$(shell echo "$(call GET_FILE_CONTENTS_CMD,$(MOZ_APP)/config/version.txt)" > /dev/null)
-
-	perl debian/build/refresh-search-modifications.pl -a $(MOZ_APP) -b $(SOURCE) -d searchplugins
-
-refresh-search-mod-list:: $(if $(wildcard debian/searchplugins),verify-search-overrides)
-refresh-search-mod-list::
-	rm -rf $(CURDIR)/.tarball
-
-verify-search-overrides: prepare-searchplugins-en-US $(foreach target, $(LANGPACK_TARGETS), prepare-searchplugins-$(target))
-verify-search-overrides:
-	perl debian/build/verify-search-overrides.pl -d $(CURDIR)/.searchplugins
-	rm -rf $(CURDIR)/.searchplugins
-
-prepare-searchplugins-%: SOURCE = $(if $(wildcard $(MOZ_APP)),$(CURDIR),$(CURDIR)/.tarball/$(MOZ_PKG_NAME))
-prepare-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
-prepare-searchplugins-%: LIST_FILE = $(firstword $(wildcard $(SOURCE)/l10n/$(LANGUAGE)/$(MOZ_APP)/searchplugins/list.txt) \
-						 $(wildcard $(SOURCE)/$(MOZ_APP)/locales/$(LANGUAGE)/searchplugins/list.txt))
-prepare-searchplugins-%: ENGINE_LIST = $(shell cat $(LIST_FILE))
-prepare-searchplugins-%:
-	@mkdir -p $(CURDIR)/.searchplugins/$(LANGUAGE)
-	@rm -f $(CURDIR)/.searchplugins/$(LANGUAGE)/*.xml
-	@$(foreach engine,$(ENGINE_LIST),$(MOZ_PYTHON) $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution -DMOZ_UPDATE_CHANNEL="$(CHANNEL)" $(firstword $(wildcard $(dir $(LIST_FILE))/$(engine).xml) $(wildcard $(SOURCE)/$(MOZ_APP)/locales/en-US/searchplugins/$(engine).xml)) > $(CURDIR)/.searchplugins/$(LANGUAGE)/$(engine).xml;)
-
-auto-refresh-search-mod-list::
-	cp debian/config/search-mods.list debian/config/search-mods.list.old
-
-auto-refresh-search-mod-list:: refresh-search-mod-list
-auto-refresh-search-mod-list::
-	@if ! cmp -s debian/config/search-mods.list debian/config/search-mods.list.old ; \
-	then \
-		echo "" ; \
-		echo "*******************************************************************************" ; \
-		echo "* List of search engine customizations has changed. This is likely because of *" ; \
-		echo "* a change in the search engine list upstream. Please refresh, check the      *" ; \
-		echo "* differences, and try again. To refresh, run                                 *" ; \
-		echo "* \"debian/rules refresh-search-mod-list\" in the source directory. If you      *" ; \
-		echo "* are in bzr, you will need to pass the location of the upstream tarball,     *" ; \
-		echo "* using \"TARBALL=/path/to/tarball\"                                            *" ; \
-		echo "*******************************************************************************" ; \
-		echo "" ; \
-		mv debian/config/search-mods.list.old debian/config/search-mods.list ; \
-		exit 1 ; \
-	fi
-	rm -f debian/config/search-mods.list.old
 
 ifdef LANGPACK_O_MATIC
 refresh-supported-locales:: LPOM_OPT = -l $(LANGPACK_O_MATIC)
@@ -537,12 +492,6 @@ auto-refresh-supported-locales::
 
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 clean:: auto-refresh-supported-locales
-ifneq (,$(wildcard debian/searchplugins))
-# Depends on libjson-perl, which is in universe in 10.04
-ifeq (,$(filter lucid,$(DISTRIB_CODENAME)))
-clean:: auto-refresh-search-mod-list
-endif
-endif
 endif
 
 ifdef PATCHES_DIST
@@ -594,5 +543,6 @@ clean::
 	rm -rf debian/l10n-mergedirs
 	rm -f debian/$(MOZ_PKG_BASENAME).js
 	rm -rf $(MOZ_OBJDIR)
+	rm -f debian/searchplugins.list debian/searchplugin-additions.list debian/searchplugin-overrides.list
 	find debian -name *.pyc -delete
 	find compare-locales -name *.pyc -delete

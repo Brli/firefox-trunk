@@ -60,3 +60,5 @@ debian/testscripts/testrunhelper.py @MOZ_TESTDIR@
 debian/testscripts/mochitest*.json @MOZ_TESTDIR@/mochitest
 debian/testscripts/skel @MOZ_TESTDIR@
 
+debian/testscripts/xpcshell-package-tests/* @MOZ_TESTDIR@/xpcshell/package-tests
+
