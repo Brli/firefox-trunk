@@ -1,4 +1,6 @@
 [Additions]
-amazon*
 duckduckgo
+
+[Overrides]
+amazon*
 google*

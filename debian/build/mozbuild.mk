@@ -403,14 +403,19 @@ install-searchplugins-%:
 customize-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 customize-searchplugins-%: PKGLANG = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 customize-searchplugins-%: PKGNAME = $(if $(PKGLANG),$(MOZ_PKG_NAME)-locale-$(PKGLANG),$(MOZ_PKG_NAME))
-customize-searchplugins-%: NEW = $(foreach addition,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
-				sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(addition).xml) \
-				$(wildcard debian/searchplugins/en-US/$(addition).xml)))
-customize-searchplugins-%: OVERRIDES = $(foreach addition,$(NEW),$(if $(wildcard debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(addition))),$(addition)))
-customize-searchplugins-%: ADDITIONS = $(filter-out $(OVERRIDES),$(NEW))
+customize-searchplugins-%: OVERRIDES = $(foreach override,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
+				sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(override).xml) $(wildcard debian/searchplugins/en-US/$(override).xml) no_such_plugin))
+customize-searchplugins-%: ADDITIONS = $(foreach addition,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
+				sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(addition).xml) $(wildcard debian/searchplugins/en-US/$(addition).xml) no_such_plugin))
 customize-searchplugins-%:
 	@echo ""
-	@echo "Applying search customizations to $(PKGNAME)"
+	@echo "Applying search customizations to $(LANGUAGE) in $(PKGNAME)"
+	@$(foreach override, $(OVERRIDES), \
+		$(if $(wildcard debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(override))),, \
+		$(error No plugin $(notdir $(override)) to override)))
+	@$(foreach addition, $(ADDITIONS), \
+		$(if $(wildcard debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(addition))), \
+		$(error Searchplugin $(notdir $(addition)) already exists)))
 	@$(foreach override, $(OVERRIDES), echo "Overriding $(notdir $(override))"; \
 		dh_install -p$(PKGNAME) $(override) $(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE);)
 	@$(foreach addition, $(ADDITIONS), echo "Adding $(notdir $(addition))"; \
