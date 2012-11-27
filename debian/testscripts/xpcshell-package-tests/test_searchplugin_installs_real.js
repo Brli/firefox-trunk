@@ -8,7 +8,7 @@ function run_test()
   createAppInfo("xpcshell@tests.mozilla.org", "XPCShell", "1", "1");
 
   let inifactory = Cc["@mozilla.org/xpcom/ini-parser-factory;1"].getService(Ci.nsIINIParserFactory);
-  let parser = inifactory.createINIParser(do_get_file("searchplugins.list"));
+  let parser = inifactory.createINIParser(do_get_file("data/searchplugins.list"));
 
   let searchplugins;
   try {
@@ -17,7 +17,7 @@ function run_test()
 
   do_check_true(searchplugins != undefined);
 
-  parser = inifactory.createINIParser(do_get_file("searchplugin-additions.list"));
+  parser = inifactory.createINIParser(do_get_file("data/searchplugin-additions.list"));
 
   try {
     parser.getString("Additions", _SEARCHPLUGIN_TEST_LOCALE).split(",").forEach(function(name) {

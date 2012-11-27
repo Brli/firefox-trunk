@@ -28,7 +28,7 @@ function run_test()
   _XPCSHELL_PROCESS = "parent";
 
   let inifactory = Cc["@mozilla.org/xpcom/ini-parser-factory;1"].getService(Ci.nsIINIParserFactory);
-  let parser = inifactory.createINIParser(do_get_file("searchplugins.list"));
+  let parser = inifactory.createINIParser(do_get_file("data/searchplugins.list"));
 
   let locales = parser.getKeys("Searchplugins");
   maybe_schedule_next_test(locales);

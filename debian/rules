@@ -178,7 +178,7 @@ install-webapprt-langpack-link-%:
 	$(foreach xpi,$(XPIS),dh_link -p$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
 
 install-searchplugin-lists:
-	dh_install -p$(MOZ_PKG_NAME)-testsuite debian/searchplugin*.list $(MOZ_TESTDIR)/xpcshell/package-tests
+	dh_install -p$(MOZ_PKG_NAME)-testsuite debian/searchplugin*.list $(MOZ_TESTDIR)/xpcshell/package-tests/data
 
 pre-build::
 	@cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml

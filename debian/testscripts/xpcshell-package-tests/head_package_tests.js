@@ -63,10 +63,11 @@ function createAppInfo(id, name, version, platformVersion)
     invalidateCachesOnRestart: function invalidateCachesOnRestart() {},
 
     QueryInterface: function QueryInterface(iid) {
-      if (iid.equals(Ci.nsIXULAppInfo)
-       || iid.equals(Ci.nsIXULRuntime)
-       || iid.equals(Ci.nsISupports))
+      if (iid.equals(Ci.nsIXULAppInfo) ||
+          iid.equals(Ci.nsIXULRuntime) ||
+          iid.equals(Ci.nsISupports)) {
         return this;
+      }
 
       throw Cr.NS_ERROR_NO_INTERFACE;
     }
