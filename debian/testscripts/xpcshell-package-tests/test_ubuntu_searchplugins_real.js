@@ -132,19 +132,19 @@ function run_test()
         if (host.match(/\.google\./)) {
           let is_ours = test_google(engine);
           do_check_true(!(is_ours && found_Google));
-          found_Google = is_ours | found_Google;
+          found_Google = is_ours || found_Google;
         } else if (host.match(/\.amazon\./)) {
           let is_ours = test_amazon(engine);
           do_check_true(!(is_ours && found_Amazon));
-          found_Amazon = is_ours | found_Amazon;
+          found_Amazon = is_ours || found_Amazon;
         } else if (host.match(/duckduckgo\./)) {
           let is_ours = test_duckduckgo(engine);
           do_check_true(!(is_ours && found_DDG));
-          found_DDG = is_ours | found_DDG;
-        } else if (host.match(/\.baidu\./)) {
+          found_DDG = is_ours || found_DDG;
+        } else if (host.match(/baidu\./)) {
           let is_ours = test_baidu(engine);
           do_check_true(!(is_ours && found_Baidu));
-          found_Baidu = is_ours | found_Baidu;
+          found_Baidu = is_ours || found_Baidu;
         }
       });
 

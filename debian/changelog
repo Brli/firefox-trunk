@@ -133,6 +133,8 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add debian/testscripts/xpcshell-package-tests/test_ubuntu_searchplugins.js
     - add debian/testscripts/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
     - update debian/testscripts/xpcshell-package-tests/xpcshell.ini
+  * Fix a test failure with the Italian Amazon search plugin 
+    - update debian/searchplugins/it/amazon-it.xml
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 
