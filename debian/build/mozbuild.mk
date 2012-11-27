@@ -403,10 +403,11 @@ install-searchplugins-%:
 customize-searchplugins-%: LANGUAGE = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 customize-searchplugins-%: PKGLANG = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 customize-searchplugins-%: PKGNAME = $(if $(PKGLANG),$(MOZ_PKG_NAME)-locale-$(PKGLANG),$(MOZ_PKG_NAME))
-customize-searchplugins-%: OVERRIDES = $(foreach override,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
-				sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(override).xml) $(wildcard debian/searchplugins/en-US/$(override).xml)))
-customize-searchplugins-%: ADDITIONS = $(foreach addition,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
-				sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(addition).xml) $(wildcard debian/searchplugins/en-US/$(addition).xml)))
+customize-searchplugins-%: NEW = $(foreach addition,$(shell cat $(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/list.txt) $(wildcard debian/searchplugins/list.txt)) | \
+				sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}'),$(firstword $(wildcard debian/searchplugins/$(LANGUAGE)/$(addition).xml) \
+				$(wildcard debian/searchplugins/en-US/$(addition).xml)))
+customize-searchplugins-%: OVERRIDES = $(foreach addition,$(NEW),$(if $(wildcard debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$(LANGUAGE)/$(notdir $(addition))),$(addition)))
+customize-searchplugins-%: ADDITIONS = $(filter-out $(OVERRIDES),$(NEW))
 customize-searchplugins-%:
 	@echo ""
 	@echo "Applying search customizations to $(PKGNAME)"

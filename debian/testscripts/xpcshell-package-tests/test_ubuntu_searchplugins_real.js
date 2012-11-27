@@ -121,6 +121,13 @@ function run_test()
     found_Baidu = true;
   }
 
+  if (["ast", "be", "bn-BD", "ca", "cs", "es-CL", "es-ES", "es-MX", "et", "fi",
+       "fy-NL", "gu-IN", "he", "hi-IN", "hu", "id", "kk", "ko", "lv", "mai",
+       "ml", "nl", "pa-IN", "pl", "pt-BR", "ru", "sk", "sl", "sv-SE", "ta",
+       "uk", "vi", "zh-TW"].indexOf(_SEARCHPLUGIN_TEST_LOCALE) != -1) {
+    found_Amazon = true;
+  }
+
   do_test_pending();
 
   Services.search.init({

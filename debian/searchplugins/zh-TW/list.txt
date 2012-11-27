@@ -1,0 +1,3 @@
+[Additions]
+duckduckgo
+google

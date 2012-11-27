@@ -1,6 +1,4 @@
-[Overrides]
+Additions]
 ../en-GB/amazon-en-GB
-google*
-
-[Additions]
 duckduckgo
+google

@@ -1,6 +1,4 @@
-[Overrides]
-../fr/amazon-france
-google*
-
 [Additions]
+../fr/amazon-france
 duckduckgo
+google*
