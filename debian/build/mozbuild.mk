@@ -367,6 +367,56 @@ install-langpack-xpis-%:
 			$(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$*/$(MOZ_ADDONDIR)/extensions/$$id.xpi; \
 	done
 
+CUSTOMIZE_SEARCHPLUGINS = \
+	echo ""; \
+	echo "Applying search customizations for $(2)"; \
+	for lang in $(1); do \
+		echo "Applying customizations to $$lang"; \
+		list=debian/searchplugins/$$lang/list.txt; \
+		if [ ! -f $$list ]; then \
+			list=debian/searchplugins/list.txt; \
+		fi; \
+		overrides=`sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}' < $$list`; \
+		additions=`sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}' < $$list`; \
+		for o in $$overrides; do \
+			f=`ls -1 debian/searchplugins/$$lang/$$o.xml 2>/dev/null | head -n1`; \
+			if [ -z $$f ]; then \
+				f=`ls -1 debian/searchplugins/en-US/$$o.xml 2>/dev/null | head -n1`; \
+			fi; \
+			if [ -z $$f ]; then \
+				echo "Cannot find source plugin for $$o"; \
+				exit 1; \
+			fi; \
+			if [ ! -f debian/$(2)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang/`basename $$f` ]; then \
+				echo "No plugin `basename $$f` to override"; \
+				exit 1; \
+			fi; \
+			echo "Overriding `basename $$f`"; \
+			dh_install -p$(2) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
+			applied="$$applied `basename $$f`"; \
+		done; \
+		echo $$applied | sed -n 's/\.xml//g p' | tr ' ' ',' > debian/searchplugin-overrides_$$lang.list; \
+		applied=; \
+		for a in $$additions; do \
+			f=`ls -1 debian/searchplugins/$$lang/$$a.xml 2>/dev/null | head -n1`; \
+			if [ -z $$f ]; then \
+				f=`ls -1 debian/searchplugins/en-US/$$a.xml 2>/dev/null | head -n1`; \
+			fi; \
+			if [ -z $$f ]; then \
+				echo "Cannot find source plugin for $$a"; \
+				exit 1; \
+			fi; \
+			if [ -f debian/$(2)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang/`basename $$f` ]; then \
+				echo "Plugin `basename $$f` already exists"; \
+				exit 1; \
+			fi; \
+			echo "Adding `basename $$f`"; \
+			dh_install -p$(2) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
+			applied="$$applied `basename $$f`"; \
+		done; \
+		echo $$applied | sed -n 's/\.xml//g p' | tr ' ' ',' > debian/searchplugin-additions_$$lang.list; \
+	done
+
 install-searchplugins-%: P1 = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
 install-searchplugins-%: P2 = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
 install-searchplugins-%: LANGUAGES = $(if $(P1),$(shell grep $(P1)$$ debian/config/locales.shipped | sed -n 's/\([^\:]*\)\:\?.*/\1/ p' | tr '\n' ' '),en-US)
@@ -385,54 +435,8 @@ install-searchplugins-%:
 		dh_install -p$(PKGNAME) $$src/searchplugins/*.xml $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
 		ls $$src/searchplugins/*.xml | xargs -n1 basename | sed -n 's/\.xml//g p' | tr '\n' ',' | sed -n 's/,$$// p' > debian/searchplugins_$$lang.list; \
 	done
+	@$(if $(wildcard debian/searchplugins),$(call CUSTOMIZE_SEARCHPLUGINS,$(LANGUAGES),$(PKGNAME)))
 	@echo ""
-	@echo "Applying search customizations for $(PKGNAME)"
-	@for lang in $(LANGUAGES); do \
-		echo "Applying customizations to $$lang"; \
-		list=debian/searchplugins/$$lang/list.txt; \
-		if [ ! -f $$list ]; then \
-			list=debian/searchplugins/list.txt; \
-		fi; \
-		overrides=`sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}' < $$list`; \
-		additions=`sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}' < $$list`; \
-		for o in $$overrides; do \
-			f=`ls -1 debian/searchplugins/$$lang/$$o.xml 2>/dev/null | head -n1`; \
-			if [ -z $$f ]; then \
-				f=`ls -1 debian/searchplugins/en-US/$$o.xml 2>/dev/null | head -n1`; \
-			fi; \
-			if [ -z $$f ]; then \
-				echo "Cannot find source plugin for $$o"; \
-				exit 1; \
-			fi; \
-			if [ ! -f debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang/`basename $$f` ]; then \
-				echo "No plugin `basename $$f` to override"; \
-				exit 1; \
-			fi; \
-			echo "Overriding `basename $$f`"; \
-			dh_install -p$(PKGNAME) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-			applied="$$applied `basename $$f`"; \
-		done; \
-		echo $$applied | sed -n 's/\.xml//g p' | tr ' ' ',' > debian/searchplugin-overrides_$$lang.list; \
-		applied=; \
-		for a in $$additions; do \
-			f=`ls -1 debian/searchplugins/$$lang/$$a.xml 2>/dev/null | head -n1`; \
-			if [ -z $$f ]; then \
-				f=`ls -1 debian/searchplugins/en-US/$$a.xml 2>/dev/null | head -n1`; \
-			fi; \
-			if [ -z $$f ]; then \
-				echo "Cannot find source plugin for $$a"; \
-				exit 1; \
-			fi; \
-			if [ -f debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang/`basename $$f` ]; then \
-				echo "Plugin `basename $$f` already exists"; \
-				exit 1; \
-			fi; \
-			echo "Adding `basename $$f`"; \
-			dh_install -p$(PKGNAME) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-			applied="$$applied `basename $$f`"; \
-		done; \
-		echo $$applied | sed -n 's/\.xml//g p' | tr ' ' ',' > debian/searchplugin-additions_$$lang.list; \
-	done
 
 binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
