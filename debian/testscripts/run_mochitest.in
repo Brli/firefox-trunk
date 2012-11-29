@@ -8,7 +8,6 @@ class MochitestHelper(TestRunHelper):
   def __init__(self):
     PASSTHROUGH_ARGS = [
       '--a11y',
-      '--appname',
       '--browser-chrome',
       '--chrome',
       '--console-level',
@@ -28,6 +27,7 @@ class MochitestHelper(TestRunHelper):
     TestRunHelper.__init__(self, 'mochitest/runtests.py',
                            lambda g: g['MochitestOptions'](g['Automation'](), g['__file__']),
                            pass_args=PASSTHROUGH_ARGS,
+                           root='/@MOZ_TESTDIR@',
                            need_x=True, need_dbus=True, need_wm=True)
 
     self.add_option('--no-autorun',

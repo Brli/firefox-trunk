@@ -29,13 +29,12 @@ XDG_VIDEOS_DIR="$HOME/Videos"'''
 
 class TestRunHelper(OptionParser):
 
-  def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], root='/@MOZ_TESTDIR@', need_x=False, need_dbus=False, need_wm=False):
+  def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], root=None, need_x=False, need_dbus=False, need_wm=False):
     OptionParser.__init__(self)
 
-    if root != None:
-      self.root = root
-    else:
-      self.root = '/@MOZ_TESTDIR@'
+    assert root != None
+
+    self.root = root
     self._pass_args = pass_args
     self._need_x = need_x
     self._need_dbus = need_dbus

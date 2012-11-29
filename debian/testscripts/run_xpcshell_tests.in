@@ -16,7 +16,7 @@ class XPCShellTestsHelper(TestRunHelper):
       '--testing-modules-dir'
     ]
 
-    root = None
+    root = '/@MOZ_TESTDIR@'
     args = iter(sys.argv[1:])
     while True:
       try:

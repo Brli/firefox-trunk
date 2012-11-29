@@ -7,7 +7,6 @@ from testrunhelper import TestRunHelper
 class ReftestHelper(TestRunHelper):
   def __init__(self):
     PASSTHROUGH_ARGS = [
-      '--appname',
       '--extra-profile-file',
       '--install-extension',
       '--log-file',
@@ -20,6 +19,7 @@ class ReftestHelper(TestRunHelper):
     TestRunHelper.__init__(self, 'reftest/runreftest.py',
                            lambda g: g['ReftestOptions'](g['Automation']()),
                            pass_args=PASSTHROUGH_ARGS,
+                           root='/@MOZ_TESTDIR@',
                            need_x=True, need_dbus=True)
 
 def main():
