@@ -26,9 +26,9 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add debian/tests/reftest
     - add debian/tests/xpcshell-tests
     - add debian/testscripts/run_mochitest.in
-    - add debian/testscripts/run_xpcshell_tests
+    - add debian/testscripts/run_xpcshell_tests.in
     - add debian/testscripts/run_reftest.in
-    - add debian/testscripts/testrunhelper.py.in
+    - add debian/testscripts/testrunhelper.py
     - update debian/config/mozconfig.in to always build with --enable-tests
   * Ensure that the directory provider returns all searchplugin paths during
     the search service xpcshell tests
@@ -99,16 +99,6 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
   * Disable failing reftests
     - add d/p/test-overrides/reftest-disable-failing-tests.patch
     - update debian/patches/series.in
-  * Add a skeleton home directory containing a .config/user-dirs.dirs (which
-    is needed for devicestorage tests), and make the test helper populate
-    a temporary home directory for each test suite
-    - update debian/testscripts/testrunhelper.py.in
-    - update debian/tests/crashtest
-    - update debian/tests/jstestbrowser
-    - update debian/tests/mochitest
-    - update debian/tests/reftest
-    - update debian/tests/xpcshell-tests
-    - update debian/firefox-testsuite.install.in
   * Fix broken search suggestions since the switch to https
   * Add vendor xpcshell tests to verify that the search service loads
     the expected number of search plugins from each language pack
