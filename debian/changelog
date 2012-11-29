@@ -102,7 +102,6 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
   * Add a skeleton home directory containing a .config/user-dirs.dirs (which
     is needed for devicestorage tests), and make the test helper populate
     a temporary home directory for each test suite
-    - add debian/testscripts/skel/.config/user-dirs.dirs
     - update debian/testscripts/testrunhelper.py.in
     - update debian/tests/crashtest
     - update debian/tests/jstestbrowser

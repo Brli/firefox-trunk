@@ -8,12 +8,34 @@ from subprocess import Popen
 import tempfile
 import shutil
 
+skel = {
+  '.config/user-dirs.dirs':
+'''# This file is written by xdg-user-dirs-update
+# If you want to change or add directories, just edit the line you're
+# interested in. All local changes will be retained on the next run
+# Format is XDG_xxx_DIR="$HOME/yyy", where yyy is a shell-escaped
+# homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
+# absolute path. No other format is supported.
+# 
+XDG_DESKTOP_DIR="$HOME/Desktop"
+XDG_DOWNLOAD_DIR="$HOME/Downloads"
+XDG_TEMPLATES_DIR="$HOME/Templates"
+XDG_PUBLICSHARE_DIR="$HOME/Public"
+XDG_DOCUMENTS_DIR="$HOME/Documents"
+XDG_MUSIC_DIR="$HOME/Music"
+XDG_PICTURES_DIR="$HOME/Pictures"
+XDG_VIDEOS_DIR="$HOME/Videos"'''
+}
+
 class TestRunHelper(OptionParser):
 
   def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], root='/@MOZ_TESTDIR@', need_x=False, need_dbus=False, need_wm=False):
     OptionParser.__init__(self)
 
-    self.root = root
+    if root != None:
+      self.root = root
+    else:
+      self.root = '/@MOZ_TESTDIR@'
     self._pass_args = pass_args
     self._need_x = need_x
     self._need_dbus = need_dbus
@@ -21,23 +43,6 @@ class TestRunHelper(OptionParser):
 
     assert not need_wm or (need_wm and need_x)
 
-    args = iter(sys.argv[1:])
-    while True:
-      try:
-        arg = args.next()
-      except StopIteration:
-        break
-
-      if arg == '--harness-root-dir':
-        try:
-          self.root = args.next()
-          break
-        except StopIteration:
-          pass
-
-    self.add_option('--harness-root-dir',
-                    dest='root', default='/@MOZ_TESTDIR@',
-                    help='Override the path to the test harness installation')
     if self._need_x:
       self.add_option('--own-display',
                       action='store_true', dest='wantOwnDisplay', default=False,
@@ -48,7 +53,8 @@ class TestRunHelper(OptionParser):
                       help='Run the test with its own dbus session')
 
     runner = os.path.join(self.root, runner)
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'python'))
+    if os.path.isdir(os.path.join(os.path.dirname(__file__), 'python')):
+      sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'python'))
     sys.path.insert(0, os.path.dirname(runner))
 
     for path in reversed(paths):
@@ -136,12 +142,10 @@ class TestRunHelper(OptionParser):
 
     tmphome = tempfile.mkdtemp()
     os.environ['HOME'] = tmphome
-    for (dirpath, dirnames, filenames) in os.walk('/@MOZ_TESTDIR@/skel'):
-      relpath = os.path.relpath(dirpath, '/@MOZ_TESTDIR@/skel')
-      for dirname in dirnames:
-        os.mkdir(os.path.join(tmphome, relpath, dirname))
-      for filename in filenames:
-        shutil.copy2(os.path.join(dirpath, filename), os.path.join(tmphome, relpath))
+    for name in skel:
+      os.mkdir(os.path.dirname(os.path.join(tmphome, name)))
+      with open(os.path.join(tmphome, name), 'w+') as f:
+        print >>f, skel[name]
 
     if self._need_wm:
       wm = Popen(['/usr/bin/metacity', '--sm-disable', '--no-composite'])

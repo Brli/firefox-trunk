@@ -16,12 +16,30 @@ class XPCShellTestsHelper(TestRunHelper):
       '--testing-modules-dir'
     ]
 
+    root = None
+    args = iter(sys.argv[1:])
+    while True:
+      try:
+        arg = args.next()
+      except StopIteration:
+        break
+
+      if arg == '--harness-root-dir':
+        try:
+          root = args.next()
+          break
+        except StopIteration:
+          pass
+
     TestRunHelper.__init__(self, 'xpcshell/runxpcshelltests.py',
                            lambda g: g['XPCShellOptions'](),
                            pass_args=PASSTHROUGH_ARGS,
-                           paths=[],
+                           paths=[], root=root,
                            need_x=True, need_dbus=True)
 
+    self.add_option('--harness-root-dir',
+                    dest='root',
+                    help='Override the path to the test harness installation')
     self.add_option('--xpcshell',
                     dest='xpcshell', default=None,
                     help='Override the path to the xpcshell binary')
