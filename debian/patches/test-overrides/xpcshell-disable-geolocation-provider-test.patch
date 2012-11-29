@@ -9,4 +9,4 @@ Index: firefox-trunk-19.0~a1~hg20121114r113217/dom/tests/unit/xpcshell.ini
 -# Bug 684962: test hangs consistently on Android
 -skip-if = os == "android"
 +# Seems to fail consistently on Ubuntu
-+fail-if = true
++skip-if = true
