@@ -13,9 +13,7 @@ class XPCShellTestsHelper(TestRunHelper):
       '--debugger',
       '--debugger-args',
       '--debugger-interactive',
-      '--tests-root-dir',
-      '--testing-modules-dir',
-      '--build-info-json'
+      '--testing-modules-dir'
     ]
 
     TestRunHelper.__init__(self, 'xpcshell/runxpcshelltests.py',
@@ -32,10 +30,10 @@ class XPCShellTestsHelper(TestRunHelper):
                     help='Create log files')
 
 def main():
+  abspath = lambda x: os.path.join(helper.root, x)
+
   DEFAULTS = {
-    '--tests-root-dir': lambda: os.path.join(helper.root, 'xpcshell', 'tests'),
-    '--testing-modules-dir': lambda: os.path.join(helper.root, 'modules'),
-    '--build-info-json': lambda: os.path.join(helper.root, 'python', 'mozinfo.json')
+    '--build-info-json': lambda: abspath('python/mozinfo.json') if os.path.exists(abspath('python/mozinfo.json')) else abspath('xpcshell/mozinfo.json')
   }
 
   def pre_run_cb(options, args):

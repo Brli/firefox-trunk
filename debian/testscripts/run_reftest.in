@@ -9,9 +9,9 @@ class ReftestHelper(TestRunHelper):
     PASSTHROUGH_ARGS = [
       '--appname',
       '--extra-profile-file',
+      '--install-extension',
       '--log-file',
       '--timeout',
-      '--utility-path',
       '--debugger',
       '--debugger-args',
       '--debugger-interactive'
