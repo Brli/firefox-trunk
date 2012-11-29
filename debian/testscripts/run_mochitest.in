@@ -19,7 +19,6 @@ class MochitestHelper(TestRunHelper):
       '--setpref',
       '--test-manifest',
       '--test-path',
-      '--testing-modules-dir',
       '--timeout',
       '--debugger',
       '--debugger-args',
@@ -42,7 +41,6 @@ def main():
   DEFAULTS = {
     '--appname': lambda: os.path.join(helper.root, 'bin', '@MOZ_APP_NAME@'),
     '--console-level': 'INFO',
-    '--testing-modules-dir': lambda: os.path.join(helper.root, 'modules'),
     '--utility-path': lambda: os.path.join(helper.root, 'bin'),
     '--certificate-path': lambda: os.path.join(helper.root, 'certs')
   }
