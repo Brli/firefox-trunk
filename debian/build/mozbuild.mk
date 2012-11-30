@@ -456,15 +456,15 @@ common-binary-predeb-arch::
 
 debian/searchplugins.list:
 	@echo "[Searchplugins]" > debian/searchplugins.list
-	@$(foreach file,$(sort $(wildcard debian/searchplugins_*.list)),echo "$(subst .list,,$(subst debian/searchplugins_,,$(file)))=$(shell cat $(file))" >> debian/searchplugins.list;)
+	$(foreach file,$(sort $(wildcard debian/searchplugins_*.list)),echo "$(subst .list,,$(subst debian/searchplugins_,,$(file)))=$(shell cat $(file))" >> debian/searchplugins.list;)
 
 debian/searchplugin-additions.list:
 	@echo "[Additions]" > debian/searchplugin-additions.list
-	@$(foreach file,$(sort $(wildcard debian/searchplugin-additions_*.list)),echo "$(subst .list,,$(subst debian/searchplugin-additions_,,$(file)))=$(shell cat $(file))" >> debian/searchplugin-additions.list;)
+	$(foreach file,$(sort $(wildcard debian/searchplugin-additions_*.list)),echo "$(subst .list,,$(subst debian/searchplugin-additions_,,$(file)))=$(shell cat $(file))" >> debian/searchplugin-additions.list;)
 
 debian/searchplugin-overrides.list:
 	@echo "[Overrides]" > debian/searchplugin-overrides.list
-	@$(foreach file,$(sort $(wildcard debian/searchplugin-overrides_*.list)),echo "$(subst .list,,$(subst debian/searchplugin-overrides_,,$(file)))=$(shell cat $(file))" >> debian/searchplugin-overrides.list;)
+	$(foreach file,$(sort $(wildcard debian/searchplugin-overrides_*.list)),echo "$(subst .list,,$(subst debian/searchplugin-overrides_,,$(file)))=$(shell cat $(file))" >> debian/searchplugin-overrides.list;)
 
 pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
 	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
