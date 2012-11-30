@@ -27,12 +27,12 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add debian/tests/mochitest
     - add debian/tests/reftest
     - add debian/tests/xpcshell-tests
-    - add debian/testscripts/run_mochitest.in
-    - add debian/testscripts/run_xpcshell_tests.in
-    - add debian/testscripts/run_reftest.in
-    - add debian/testscripts/testrunhelper.py
+    - add debian/testing/run_mochitest.in
+    - add debian/testing/run_xpcshell_tests.in
+    - add debian/testing/run_reftest.in
+    - add debian/testing/testrunhelper.py
     - update debian/config/mozconfig.in to always build with --enable-tests
-    - add debian/testscripts/xpcshell-build.ini
+    - add debian/testing/xpcshell-build.ini
   * Ensure that the directory provider returns all searchplugin paths during
     the search service xpcshell tests
     - add d/p/test-fixes/xpcshell-search-fix-browser-dirprovider.patch
@@ -85,8 +85,8 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add d/p/test-fixes/mochitest-content-reset-permissions-when-done.patch
     - update debian/patches/series.in
   * Disable various failing mochitests:
-    - add debian/testscripts/mochitest.json
-    - add debian/testscripts/mochitest-chrome.json
+    - add debian/testing/mochitest.json
+    - add debian/testing/mochitest-chrome.json
     - update debian/firefox-testsuite.install.in
   * Fix issue where some tests were being added to the mochitest tests.jar
     using their absolute path in the build tree
@@ -114,10 +114,10 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add debian/firefox-testsuite.dirs.in
     - update debian/firefox-testsuite.install.in
     - update debian/rules
-    - add debian/testscripts/xpcshell-package-tests/head_package_tests.js
-    - add debian/testscripts/xpcshell-package-tests/test_searchplugin_installs.js
-    - add debian/testscripts/xpcshell-package-tests/test_searchplugin_installs_real.js
-    - add debian/testscripts/xpcshell-package-tests/xpcshell.ini
+    - add debian/testing/xpcshell-package-tests/head_package_tests.js
+    - add debian/testing/xpcshell-package-tests/test_searchplugin_installs.js
+    - add debian/testing/xpcshell-package-tests/test_searchplugin_installs_real.js
+    - add debian/testing/xpcshell-package-tests/xpcshell.ini
   * Drop the hacky perl scripts that were being used to make sure the language
     packs ship the correct plugins. Add a xpcshell test instead
     - update debian/build/mozbuild.mk
@@ -127,9 +127,9 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - remove debian/config/search-mods.list
     - update debian/control.in
     - remove debian/searchplugins/compute-overrides.json
-    - add debian/testscripts/xpcshell-package-tests/test_ubuntu_searchplugins.js
-    - add debian/testscripts/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
-    - update debian/testscripts/xpcshell-package-tests/xpcshell.ini
+    - add debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins.js
+    - add debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
+    - update debian/testing/xpcshell-package-tests/xpcshell.ini
   * Fix a test failure with the Italian Amazon search plugin 
     - update debian/searchplugins/it/amazon-it.xml
 

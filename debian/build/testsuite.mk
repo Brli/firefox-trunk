@@ -53,7 +53,7 @@ $(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: debian/stamp-test-%: debian/sta
 	touch $@
 
 $(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_tests/xpcshell/xpcshell-build.ini:
-	cp $(CURDIR)/debian/testscripts/xpcshell-build.ini $@
+	cp $(CURDIR)/debian/testing/xpcshell-build.ini $@
 
 run-xpcshell-tests-build:
 	$(MOZ_PYTHON) -u $(CURDIR)/$(MOZ_MOZDIR)/config/pythonpath.py \

@@ -52,12 +52,12 @@
 @MOZ_DISTDIR@/test-package-stage/xpcshell/mozinfo.json @MOZ_TESTDIR@/python
 @MOZ_DISTDIR@/test-package-stage/xpcshell/mozinfo.py @MOZ_TESTDIR@/python
 
-debian/testscripts/run_mochitest @MOZ_TESTDIR@
-debian/testscripts/run_reftest @MOZ_TESTDIR@
-debian/testscripts/run_xpcshell_tests @MOZ_TESTDIR@
-debian/testscripts/testrunhelper.py @MOZ_TESTDIR@
+debian/testing/run_mochitest @MOZ_TESTDIR@
+debian/testing/run_reftest @MOZ_TESTDIR@
+debian/testing/run_xpcshell_tests @MOZ_TESTDIR@
+debian/testing/testrunhelper.py @MOZ_TESTDIR@
 
-debian/testscripts/mochitest*.json @MOZ_TESTDIR@/mochitest
+debian/testing/mochitest*.json @MOZ_TESTDIR@/mochitest
 
-debian/testscripts/xpcshell-package-tests/* @MOZ_TESTDIR@/xpcshell/package-tests
+debian/testing/xpcshell-package-tests/* @MOZ_TESTDIR@/xpcshell/package-tests
 
