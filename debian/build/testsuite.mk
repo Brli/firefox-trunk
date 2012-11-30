@@ -41,7 +41,7 @@ run-tests: $(MOZ_TESTS)
 
 $(MOZ_TESTS):: %: debian/stamp-test-%
 
-#$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: TZ=$(call GET_TZ,$*)
+$(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: TZ=$(call GET_TZ,$*)
 $(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: WRAPPER=$(call GET_WRAPPER,$*)
 $(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: $(call DOIF_NEEDS_LOCALE,$*,MAKE_LOCALE)
 $(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: LOCALE_ENV=$(call DOIF_NEEDS_LOCALE,$*,GET_LOCALE_ENV)
