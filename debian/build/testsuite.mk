@@ -55,7 +55,7 @@ $(patsubst %,debian/stamp-test-%,$(MOZ_TESTS)):: debian/stamp-test-%: debian/sta
 $(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_tests/xpcshell/xpcshell-build.ini:
 	cp $(CURDIR)/debian/testing/xpcshell-build.ini $@
 
-run-xpcshell-tests-build:
+run-xpcshell-tests-build: $(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_tests/xpcshell/xpcshell-build.ini
 	$(MOZ_PYTHON) -u $(CURDIR)/$(MOZ_MOZDIR)/config/pythonpath.py \
 	  -I$(CURDIR)/$(MOZ_MOZDIR)/build \
 	  -I$(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_tests/mozbase/mozinfo \
