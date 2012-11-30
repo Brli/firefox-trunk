@@ -1,0 +1,15 @@
+Index: firefox-trunk-20.0~a1~hg20121130r114518/testing/xpcshell/runxpcshelltests.py
+===================================================================
+--- firefox-trunk-20.0~a1~hg20121130r114518.orig/testing/xpcshell/runxpcshelltests.py	2012-11-30 02:13:44.000000000 +0000
++++ firefox-trunk-20.0~a1~hg20121130r114518/testing/xpcshell/runxpcshelltests.py	2012-11-30 13:28:51.621511457 +0000
+@@ -730,6 +730,10 @@
+       self.mozInfo = parse_json(open(mozInfoFile).read())
+     mozinfo.update(self.mozInfo)
+ 
++    # Allow us to skip tests that require write access to the application directory
++    if not os.access(self.appPath if self.appPath != None else self.xrePath, os.W_OK):
++      mozinfo.update({'appDirReadonly': True})
++
+     # We have to do this before we build the test list so we know whether or
+     # not to run tests that depend on having the node spdy server
+     self.trySetupNode()

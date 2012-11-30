@@ -1,0 +1,14 @@
+Index: firefox-trunk-20.0~a1~hg20121130r114518/browser/components/places/tests/unit/xpcshell.ini
+===================================================================
+--- firefox-trunk-20.0~a1~hg20121130r114518.orig/browser/components/places/tests/unit/xpcshell.ini	2012-11-30 02:05:49.000000000 +0000
++++ firefox-trunk-20.0~a1~hg20121130r114518/browser/components/places/tests/unit/xpcshell.ini	2012-11-30 12:46:35.285407263 +0000
+@@ -7,6 +7,9 @@
+ [test_browserGlue_corrupt_nobackup.js]
+ [test_browserGlue_corrupt_nobackup_default.js]
+ [test_browserGlue_distribution.js]
++# This test requires write access to the application directory
++skip-if = appDirReadonly
++
+ [test_browserGlue_migrate.js]
+ [test_browserGlue_prefs.js]
+ [test_browserGlue_restore.js]

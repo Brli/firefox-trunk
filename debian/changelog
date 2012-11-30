@@ -46,6 +46,11 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
   * Export NO_PNG_PKG_MANGLE as optipng breaks tests that are dependent
     on image format / size
     - update debian/build/mozbuild.mk
+  * Add support for skipping xpcshell tests that require write access to the
+    application directory, when running the tests on a real install (but
+    allow them to run if running tests from the build tree)
+    - add debian/patches/xpcshell-allow-omit-tests-on-real-install.patch
+    - update debian/patches/series.in
   * Don't test that the addon selection dialog appears in test_bug596343.js,
     as we disable this
     - add d/p/test-overrides/xpcshell-disable-addon-select-dialog-test.patch
@@ -69,7 +74,7 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series.in
   * Disable test_browserGlue_distribution.js for now as it requires write
     access to the application directory
-    - add d/p/test-overrides/xpcshell-disable-browser-distribution-test.patch
+    - add d/p/test-overrides/xpcshell-disable-browserglue-distribution-test.patch
     - update debian/patches/series.in
   * Reset the "browser" and "embed-app" content prefs after running content
     mochitests, so that the subsequent DOM browser-element tests don't

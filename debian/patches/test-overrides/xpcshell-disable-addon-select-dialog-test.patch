@@ -1,21 +1,41 @@
-Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js
+Index: firefox-trunk-20.0~a1~hg20121130r114518/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js
 ===================================================================
---- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-14 21:08:37.000000000 +0000
-+++ firefox-trunk-19.0~a1~hg20121114r113217/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-16 14:17:01.079899651 +0000
-@@ -61,16 +61,6 @@
+--- firefox-trunk-20.0~a1~hg20121130r114518.orig/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-30 02:14:18.000000000 +0000
++++ firefox-trunk-20.0~a1~hg20121130r114518/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-30 13:14:46.057476721 +0000
+@@ -59,17 +59,27 @@
+     name: "Test Addon 1",
+   }, profileDir);
  
-   startupManager();
- 
+-  startupManager();
+-
 -  // For a new profile it should disable showing the selection UI in the future
 -  do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
 -  Services.prefs.clearUserPref(PREF_SHOWN_SELECTION_UI);
--
++  // When running on an installed system, the selection UI is disabled in
++  // vendor-firefox.js. But ensure the selection UI is tested when running
++  // from the build tree
++  let selectionUIDisabled = false;
++  try {
++    selectionUIDisabled = Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI);
++  } catch(e) {}
+ 
 -  gExpectedURL = URI_EXTENSION_SELECT_DIALOG;
 -  restartManager("2");
--
++  startupManager();
+ 
 -  do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
 -  do_check_eq(gExpectedURL, null);
--
++  if (!selectionUIDisabled) {
++    // For a new profile it should disable showing the selection UI in the future
++    do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
++    Services.prefs.clearUserPref(PREF_SHOWN_SELECTION_UI);
++
++    gExpectedURL = URI_EXTENSION_SELECT_DIALOG;
++    restartManager("2");
++
++    do_check_true(Services.prefs.getBoolPref(PREF_SHOWN_SELECTION_UI));
++    do_check_eq(gExpectedURL, null);
++  }
+ 
    gExpectedURL = URI_EXTENSION_UPDATE_DIALOG;
  
-   restartManager("3");
