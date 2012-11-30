@@ -12,7 +12,4 @@ DISTRIB_VERSION_MAJOR 	:= $(shell lsb_release -s -r | cut -d '.' -f 1)
 DISTRIB_VERSION_MINOR 	:= $(shell lsb_release -s -r | cut -d '.' -f 2)
 DISTRIB_CODENAME	:= $(shell lsb_release -s -c)
 
-# The package name
-MOZ_PKG_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
-# The binary name to use (derived from the package name by default)
-MOZ_APP_NAME		:= $(MOZ_PKG_NAME)
+include $(CURDIR)/debian/config/branch.mk

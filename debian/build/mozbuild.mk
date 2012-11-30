@@ -32,6 +32,11 @@ endif
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
 
+# The package name
+MOZ_PKG_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
+# The binary name to use (derived from the package name by default)
+MOZ_APP_NAME		?= $(MOZ_PKG_NAME)
+
 # Define other variables used throughout the build
 # The value of "Name" to use in application.ini, which the profile location is based on.
 # Derived from the desired MOZ_APP_NAME, but can be overridden

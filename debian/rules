@@ -1,7 +1,6 @@
 #!/usr/bin/make -f
 
 include $(CURDIR)/debian/build/mozvars.mk
-include $(CURDIR)/debian/config/branch.mk
 
 MOZ_PKG_BASENAME	:= firefox
 MOZ_APP			:= browser
@@ -31,10 +30,10 @@ MOZ_SEARCHPLUGIN_DIR	= $(MOZ_LIBDIR)/distribution/searchplugins
 endif
 
 ifneq (,$(filter lucid, $(DISTRIB_CODENAME)))
-MOZ_PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
+MOZ_PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support, kmozillahelper (>= 0.6)
 else
 ifneq (,$(filter lucid maverick natty oneiric, $(DISTRIB_CODENAME)))
-MOZ_PKG_SUPPORT_SUGGESTS	:= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
+MOZ_PKG_SUPPORT_SUGGESTS	= $(MOZ_PKG_NAME)-gnome-support | firefox-kde-support
 endif
 endif
 
@@ -62,13 +61,13 @@ MOZ_PKGCONFIG_FILES = \
 	debian/pkgconfig/mozilla-nspr.pc \
 	$(NULL)
 
+include $(CURDIR)/debian/build/mozbuild.mk
+
 MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_TESTDIR)/run_mochitest \
 						$(MOZ_TESTDIR)/run_reftest \
 						$(MOZ_TESTDIR)/run_xpcshell_tests \
 						$(MOZ_LIBDIR)/xpcshell \
 						$(NULL)
-
-include $(CURDIR)/debian/build/mozbuild.mk
 
 debian/usr.bin.firefox.in:
 	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1204' ]; then \

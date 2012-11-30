@@ -9,16 +9,18 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control{,.in}
   * Add support for autopkgtest, package the xpcshell, reftest and
     mochitest testsuites and migrate the xpcshell-tests, reftest, crashtest,
-    jstestbrowser and mochitest targets to this    
-    - add firefox-testsuite package in debian/control.in and drop
-      dbus-x11 and xvfb build depends
+    jstestbrowser and mochitest targets to this. Note that tests that can't
+    be ran as an autopkgtest (eg, if they require write permissions to the
+    application directory) will still be ran at build time
+    - add firefox-testsuite package in debian/control.in
     - update debian/control
     - add debian/firefox-testsuite.install.in
     - add debian/firefox-testsuite.links.in
     - update debian/build/mozbuild.mk
     - update debian/rules
     - drop xpcshell-tests, reftest, crashtest, jstestbrowser and mochitest
-      targets from debian/build/testsuite.mk
+      targets from debian/build/testsuite.mk, add xpcshell-tests-build
+      and the ability to run xpcshell-tests with our own reduced manifest
     - add debian/tests/control
     - add debian/tests/crashtest
     - add debian/tests/jstestbrowser
@@ -30,6 +32,7 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add debian/testscripts/run_reftest.in
     - add debian/testscripts/testrunhelper.py
     - update debian/config/mozconfig.in to always build with --enable-tests
+    - add debian/testscripts/xpcshell-build.ini
   * Ensure that the directory provider returns all searchplugin paths during
     the search service xpcshell tests
     - add d/p/test-fixes/xpcshell-search-fix-browser-dirprovider.patch
