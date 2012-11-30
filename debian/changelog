@@ -118,6 +118,8 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - add debian/testing/xpcshell-package-tests/test_searchplugin_installs.js
     - add debian/testing/xpcshell-package-tests/test_searchplugin_installs_real.js
     - add debian/testing/xpcshell-package-tests/xpcshell.ini
+    - update debian/tests/control
+    - add debian/tests/xpcshell-package-tests
   * Drop the hacky perl scripts that were being used to make sure the language
     packs ship the correct plugins. Add a xpcshell test instead
     - update debian/build/mozbuild.mk
