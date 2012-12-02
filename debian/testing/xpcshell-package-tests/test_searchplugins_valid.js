@@ -2,7 +2,7 @@ function do_test(aLocale, aCallback)
 {
   do_test_pending();
   do_print("Starting test for " + aLocale);
-  do_run_test_in_subprocess_with_params("test_searchplugin_valid_real.js",
+  do_run_test_in_subprocess_with_params("test_searchplugins_valid_real.js",
                                         { "_SEARCHPLUGIN_TEST_LOCALE": aLocale },
                                         function(aSuccess) {
     do_check_true(aSuccess);
