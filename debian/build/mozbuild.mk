@@ -398,10 +398,7 @@ CUSTOMIZE_SEARCHPLUGINS = \
 			fi; \
 			echo "Overriding `basename $$f`"; \
 			dh_install -p$(2) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-			applied="$$applied `basename $$f`"; \
 		done; \
-		echo $$applied | sed -n 's/\.xml//g p' | tr ' ' ',' > debian/searchplugin-overrides_$$lang.list; \
-		applied=; \
 		for a in $$additions; do \
 			f=`ls -1 debian/searchplugins/$$lang/$$a.xml 2>/dev/null | head -n1`; \
 			if [ -z $$f ]; then \
@@ -417,9 +414,7 @@ CUSTOMIZE_SEARCHPLUGINS = \
 			fi; \
 			echo "Adding `basename $$f`"; \
 			dh_install -p$(2) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-			applied="$$applied `basename $$f`"; \
 		done; \
-		echo $$applied | sed -n 's/\.xml//g p' | tr ' ' ',' > debian/searchplugin-additions_$$lang.list; \
 	done
 
 install-searchplugins-%: P1 = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
@@ -438,7 +433,6 @@ install-searchplugins-%:
 		fi; \
 		dh_installdirs -p$(PKGNAME) $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
 		dh_install -p$(PKGNAME) $$src/searchplugins/*.xml $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-		ls $$src/searchplugins/*.xml | xargs -n1 basename | sed -n 's/\.xml//g p' | tr '\n' ',' | sed -n 's/,$$// p' > debian/searchplugins_$$lang.list; \
 	done
 	@$(if $(wildcard debian/searchplugins),$(call CUSTOMIZE_SEARCHPLUGINS,$(LANGUAGES),$(PKGNAME)))
 	@echo ""
@@ -453,18 +447,6 @@ common-binary-predeb-arch::
 	# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
-
-debian/searchplugins.list:
-	@echo "[Searchplugins]" > debian/searchplugins.list
-	$(foreach file,$(sort $(wildcard debian/searchplugins_*.list)),echo "$(subst .list,,$(subst debian/searchplugins_,,$(file)))=$(shell cat $(file))" >> debian/searchplugins.list;)
-
-debian/searchplugin-additions.list:
-	@echo "[Additions]" > debian/searchplugin-additions.list
-	$(foreach file,$(sort $(wildcard debian/searchplugin-additions_*.list)),echo "$(subst .list,,$(subst debian/searchplugin-additions_,,$(file)))=$(shell cat $(file))" >> debian/searchplugin-additions.list;)
-
-debian/searchplugin-overrides.list:
-	@echo "[Overrides]" > debian/searchplugin-overrides.list
-	$(foreach file,$(sort $(wildcard debian/searchplugin-overrides_*.list)),echo "$(subst .list,,$(subst debian/searchplugin-overrides_,,$(file)))=$(shell cat $(file))" >> debian/searchplugin-overrides.list;)
 
 pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
 	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
@@ -580,4 +562,4 @@ clean::
 	find debian -name *.pyc -delete
 	find compare-locales -name *.pyc -delete
 
-.PHONY: make-buildsymbols make-testsuite make-langpack-xpis debian/searchplugins.list debian/searchplugin-additions.list debian/searchplugin-overrides.list refresh-supported-locales auto-refresh-supported-locales enable-dist-patches get-orig-source
+.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales enable-dist-patches get-orig-source

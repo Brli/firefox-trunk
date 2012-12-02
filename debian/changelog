@@ -115,8 +115,8 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-testsuite.install.in
     - update debian/rules
     - add debian/testing/xpcshell-package-tests/head_package_tests.js
-    - add debian/testing/xpcshell-package-tests/test_searchplugin_installs.js
-    - add debian/testing/xpcshell-package-tests/test_searchplugin_installs_real.js
+    - add debian/testing/xpcshell-package-tests/test_searchplugins_valid.js
+    - add debian/testing/xpcshell-package-tests/test_searchplugins_valid_real.js
     - add debian/testing/xpcshell-package-tests/xpcshell.ini
     - update debian/tests/control
     - add debian/tests/xpcshell-package-tests

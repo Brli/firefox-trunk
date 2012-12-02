@@ -14,9 +14,10 @@ function do_test(aLocale, aCallback)
 
 function maybe_schedule_next_test(aLocales)
 {
-  if (aLocales.hasMore()) {
+  let locale;
+  if ((locale = aLocales.shift())) {
     do_execute_soon(function() {
-      do_test(aLocales.getNext(), function() {
+      do_test(locale, function() {
         maybe_schedule_next_test(aLocales);
       });
     });
@@ -27,9 +28,15 @@ function run_test()
 {
   _XPCSHELL_PROCESS = "parent";
 
-  let inifactory = Cc["@mozilla.org/xpcom/ini-parser-factory;1"].getService(Ci.nsIINIParserFactory);
-  let parser = inifactory.createINIParser(do_get_file("data/searchplugins.list"));
+  let istream = Services.io.newChannelFromURI(Services.io.newFileURI(do_get_file("data/locales.shipped"))).open();
 
-  let locales = parser.getKeys("Searchplugins");
-  maybe_schedule_next_test(locales);
+  let line = { value: "" };
+  let tests = [];
+  while (istream.readLine(line)) {
+    if (!line.value.match(/^\s*#.*/)) {
+      tests.push(line.value.replace(/^([^:]*).*/, "$1"));
+    }
+  }
+
+  maybe_schedule_next_test(tests);
 }

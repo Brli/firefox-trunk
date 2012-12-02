@@ -60,4 +60,5 @@ debian/testing/testrunhelper.py @MOZ_TESTDIR@
 debian/testing/mochitest*.json @MOZ_TESTDIR@/mochitest
 
 debian/testing/xpcshell-package-tests/* @MOZ_TESTDIR@/xpcshell/package-tests
+debian/config/locales.shipped @MOZ_TESTDIR@/xpcshell/package-tests/data
 
