@@ -134,6 +134,22 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/xpcshell-package-tests/xpcshell.ini
   * Fix a test failure with the Italian Amazon search plugin 
     - update debian/searchplugins/it/amazon-it.xml
+  * We set intl.locale.matchOS to ensure that Firefox uses the environment
+    locale. Add a test to make sure this works as expected
+    - add debian/testing/xpcshell-package-tests/test_locale_matchOS.js
+    - add debian/testing/xpcshell-package-tests/test_locale_matchOS_real.js
+    - add debian/testing/xpcshell-package-tests/data/locale-matchOS-test-addon.xpi
+    - update debian/testing/xpcshell-package-tests/head_package_tests.js
+    - update debian/testing/xpcshell-package-tests/test_searchplugins_valid.js
+    - update debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins.js
+    - update debian/testing/xpcshell-package-tests/xpcshell.ini
+    - update debian/tests/control
+    - update debian/tests/crashtest
+    - update debian/tests/jstestbrowser
+    - update debian/tests/mochitest
+    - update debian/tests/reftest
+    - update debian/tests/xpcshell-package-tests
+    - update debian/tests/xpcshell-tests
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 

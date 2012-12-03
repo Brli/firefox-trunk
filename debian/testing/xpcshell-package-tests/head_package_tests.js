@@ -87,7 +87,7 @@ function createAppInfo(id, name, version, platformVersion)
                             "@mozilla.org/xre/app-info;1", XULAppInfoFactory);
 }
 
-function do_run_test_in_subprocess_with_params(aTestFile, aParams, aCallback)
+function do_run_test_in_subprocess_with_params(aTestFile, aParams, aEnv, aCallback)
 {
   let proc = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
   proc.init(Services.dirsvc.get("XREExeF", Ci.nsIFile));
@@ -117,6 +117,18 @@ function do_run_test_in_subprocess_with_params(aTestFile, aParams, aCallback)
 
   args.push("-e", "_execute_test(); quit(_passed ? 0 : -1);");
 
+  let envs = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
+  let restoreEnv = {};
+
+  if (aEnv) {
+    for (let v in aEnv) {
+      if (envs.exists(v)) {
+        restoreEnv[v] = envs.get(v);
+      }
+      envs.set(v, aEnv[v]);
+    }
+  }
+
   do_print("Running " + aTestFile + " in subprocess");
 
   proc.runAsync(args, args.length, {
@@ -125,4 +137,10 @@ function do_run_test_in_subprocess_with_params(aTestFile, aParams, aCallback)
       aCallback(topic == "process-finished" && proc.exitValue == 0);
     }
   }}, false);
+
+  if (aEnv) {
+    for (let v in aEnv) {
+      envs.set(v, restoreEnv[v]);
+    }
+  }
 }

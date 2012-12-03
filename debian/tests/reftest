@@ -1,13 +1,7 @@
 #!/bin/sh
 
 TESTSUITE_DIR=/$($(dirname $0)/../rules echo-MOZ_TESTDIR 2>/dev/null)
-LOCPATH=$(mktemp -d)
 
-trap "rm -rf $LOCPATH" EXIT
-
-localedef -f UTF-8 -i en_US $LOCPATH/en_US.UTF-8
-
-export LOCPATH=$LOCPATH
 export LC_ALL=en_US.UTF-8
 
 $TESTSUITE_DIR/run_reftest --own-display --own-session-bus $TESTSUITE_DIR/reftest/tests/layout/reftests/reftest.list
