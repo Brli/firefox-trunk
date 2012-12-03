@@ -17,8 +17,7 @@ function run_test()
     install.addListener({
       onInstallEnded: function(install, addon) {
         do_execute_soon(function() {
-          let bundle = Services.strings.createBundle("chrome://test/locale/test.properties");
-          do_check_eq(bundle.GetStringFromName("test.matchOS"), _TEST_SELECTED_LOCALE);
+          do_check_eq(Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).getSelectedLocale("test"), _TEST_SELECTED_LOCALE);
 
           do_test_finished();
         });
