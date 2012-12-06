@@ -150,6 +150,7 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/reftest
     - update debian/tests/xpcshell-package-tests
     - update debian/tests/xpcshell-tests
+    - add debian/source/include-binaries
   * We modify the user agent, so test that it is correct
     - add debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
     - update debian/testing/xpcshell-package-tests/xpcshell.ini
