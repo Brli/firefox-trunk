@@ -63,11 +63,11 @@ Index: firefox-trunk-20.0~a1~hg20121121r113867/layout/reftests/flexbox/reftest.l
 --- firefox-trunk-20.0~a1~hg20121121r113867.orig/layout/reftests/flexbox/reftest.list	2012-11-21 23:22:21.000000000 +0000
 +++ firefox-trunk-20.0~a1~hg20121121r113867/layout/reftests/flexbox/reftest.list	2012-11-23 01:08:23.685903800 +0000
 @@ -9,7 +9,7 @@
- fails test-pref(layout.css.flexbox.enabled,true) == flexbox-align-self-baseline-horiz-2.xhtml  flexbox-align-self-baseline-horiz-2-ref.xhtml # bug 793456, and possibly others
+ fails == flexbox-align-self-baseline-horiz-2.xhtml  flexbox-align-self-baseline-horiz-2-ref.xhtml # bug 793456, and possibly others
  # This one fails on windows R (but not Ru, strangely). On Windows R, the
  # single-line <label> flex item has a different background size in test vs. ref
--random-if(winWidget) test-pref(layout.css.flexbox.enabled,true) == flexbox-align-self-baseline-horiz-3.xhtml  flexbox-align-self-baseline-horiz-3-ref.xhtml # XXXdholbert investigate
-+fails test-pref(layout.css.flexbox.enabled,true) == flexbox-align-self-baseline-horiz-3.xhtml  flexbox-align-self-baseline-horiz-3-ref.xhtml # XXXdholbert investigate
+-random-if(winWidget) == flexbox-align-self-baseline-horiz-3.xhtml  flexbox-align-self-baseline-horiz-3-ref.xhtml # XXXdholbert investigate
++fails == flexbox-align-self-baseline-horiz-3.xhtml  flexbox-align-self-baseline-horiz-3-ref.xhtml # XXXdholbert investigate
  # XXXdholbert This test needs the flexbox pref to be enabled _at startup time_
  # (when we parse ua.css) in order to pass -- so it'll fail until we enable the
  # flexbox pref by default (bug 783409):
