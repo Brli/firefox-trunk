@@ -154,6 +154,9 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
   * We modify the user agent, so test that it is correct
     - add debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
     - update debian/testing/xpcshell-package-tests/xpcshell.ini
+  * Make python-virtualenv compatible with the Python multiarch changes
+    - add debian/patches/python-virtualenv-multiarch-fix.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 
