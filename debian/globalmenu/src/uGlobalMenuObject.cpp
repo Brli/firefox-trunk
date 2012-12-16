@@ -253,7 +253,11 @@ uGlobalMenuObject::IconLoader::LoadIcon()
     return;
   }
 
+#if MOZILLA_BRANCH_VERSION >= 20
+  rv = loader->LoadImageXPCOM(uri, nullptr, nullptr, nullptr, loadGroup, this,
+#else
   rv = loader->LoadImage(uri, nullptr, nullptr, nullptr, loadGroup, this,
+#endif
 #if MOZILLA_BRANCH_VERSION >= 19
                          nullptr, nsIRequest::LOAD_NORMAL,
 #else
