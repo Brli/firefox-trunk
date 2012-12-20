@@ -39,20 +39,14 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <prtypes.h>
-#include <nsIDocument.h>
 #include <nsIAtom.h>
-#include <nsINode.h>
 #include <nsIContent.h>
-#include <nsIDocument.h>
-#include <nsIDOMWindow.h>
-#include <nsIXPConnect.h>
-#include <nsIScriptGlobalObject.h>
-#include <nsIScriptContext.h>
 #include <nsComponentManagerUtils.h>
-#include <nsIJSNativeInitializer.h>
+#include <nsArrayUtils.h>
 #include <nsIDOMNodeList.h>
+#include <nsIDOMNode.h>
+#include <nsIDOMDocument.h>
 #include <nsIAtomService.h>
-#include <jsapi.h>
 
 #include "uGlobalMenuDocListener.h"
 #include "uGlobalMenuObject.h"
@@ -60,7 +54,7 @@
 
 #include "uDebug.h"
 
-NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, nsIMutationObserverCallback)
+NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, uIGlobalMenuMutationObserver)
 
 uint32_t uGlobalMenuDocListener::sInhibitDepth = 0;
 nsTArray<nsCOMPtr<uGlobalMenuDocListener> >* uGlobalMenuDocListener::sPendingListeners;
@@ -70,82 +64,21 @@ uGlobalMenuDocListener::Init(nsIContent *rootNode)
 {
   NS_ENSURE_ARG(rootNode);
 
-  nsIXPConnect *xpconnect = uGlobalMenuService::GetXPConnect();
-  NS_ASSERTION(xpconnect, "Failed to get xpconnect");
-  if (!xpconnect) {
+  nsCOMPtr<nsIDOMDocument> doc = do_QueryInterface(rootNode->OwnerDoc());
+  NS_ASSERTION(doc, "Document failed QI to nsIDOMDocument");
+  if (!doc) {
     return NS_ERROR_FAILURE;
   }
 
-  nsIScriptGlobalObject *sgo = rootNode->OwnerDoc()->GetScriptGlobalObject();
-  nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
-  JSObject *global = sgo->GetGlobalJSObject();
-  NS_ASSERTION(global && scriptContext, "What?");
-  if (!global || !scriptContext) {
-    return NS_ERROR_FAILURE;
-  }
-
-  JSContext *cx = (JSContext *)scriptContext->GetNativeContext();
-  NS_ASSERTION(cx, "Yikes!");
-  if (!cx) {
-    return NS_ERROR_FAILURE;
-  }
-
-  jsval v;
-  nsresult rv = xpconnect->WrapNativeToJSVal(cx, global, this, nullptr,
-                                             &NS_GET_IID(nsISupports), false,
-                                             &v, nullptr);
-  if (NS_FAILED(rv)) {
-    NS_ERROR("Failed to wrap native observer to jsval");
-    return rv;
-  }
-
-  nsPIDOMWindow *owner = rootNode->OwnerDoc()->GetInnerWindow();
-
-  mObserver = do_CreateInstance("@mozilla.org/dommutationobserver;1");
-  NS_ASSERTION(mObserver, "Failed to create nsIDOMMutationObserver");
+  mObserver = do_CreateInstance("@canonical.com/globalmenu-mutation-observer-proxy;1");
+  NS_ASSERTION(mObserver, "Ah crap");
   if (!mObserver) {
     return NS_ERROR_FAILURE;
   }
 
-  nsCOMPtr<nsIJSNativeInitializer> initializer = do_QueryInterface(mObserver);
-  NS_ASSERTION(initializer, "Failed to QI to nsIJSNativeInitializer");
-  if (!initializer) {
-    return NS_ERROR_FAILURE;
-  }
+  mObserver->Init(doc, this);
 
-  rv = initializer->Initialize(owner, cx, nullptr, 1, &v);
-  if (NS_FAILED(rv)) {
-    NS_ERROR("Failed to initialize MutationObserver");
-    return rv;
-  }
-
-  nsCOMPtr<nsIDOMNode> docNode = do_QueryInterface(rootNode->OwnerDoc());
-  NS_ASSERTION(docNode, "Document failed QI to nsIDOMNode");
-  if (!docNode) {
-    return NS_ERROR_FAILURE;
-  }
-
-  JSAutoRequest ar(cx);
-
-  JSObject *options = JS_NewObject(cx, nullptr, nullptr, nullptr);
-
-#define SET_OBSERVER_OPTION(_option) \
-  if (!JS_DefineProperty(cx, options, #_option, BOOLEAN_TO_JSVAL(JS_TRUE), \
-                         nullptr, nullptr, 0)) { \
-    NS_ERROR("Failed setting options for mutation observer"); \
-    return NS_ERROR_FAILURE; \
-  }
-
-  SET_OBSERVER_OPTION(childList)
-  SET_OBSERVER_OPTION(attributes)
-  SET_OBSERVER_OPTION(subtree)
-
-  rv = mObserver->Observe(docNode, OBJECT_TO_JSVAL(options), cx);
-  if (NS_FAILED(rv)) {
-    NS_ERROR("Failed to observe");
-  }
-
-  return rv;
+  return NS_OK;
 }
 
 void
@@ -169,51 +102,30 @@ uGlobalMenuDocListener::~uGlobalMenuDocListener()
 }
 
 NS_IMETHODIMP
-uGlobalMenuDocListener::HandleMutations(nsIVariant *aRecords,
-                                        nsIDOMMutationObserver *aObserver)
+uGlobalMenuDocListener::HandleMutations(nsIArray *aRecords)
 {
   TRACE()
 
-  uint16_t vtype;
-  uint32_t count;
-  void *ptr;
-  nsIID iid;
-  aRecords->GetAsArray(&vtype, &iid, &count, &ptr);
-
-  LOG("Number of records %d", count);
-
-  NS_ASSERTION(vtype == nsIDataType::VTYPE_INTERFACE, "Invalid variant");
-  if (vtype != nsIDataType::VTYPE_INTERFACE) {
-    return NS_ERROR_FAILURE;
-  }
-
-  nsTArray<nsCOMPtr<nsIDOMMutationRecord> > mods(count);
-  nsIDOMMutationRecord **p = (nsIDOMMutationRecord **)ptr;
-  for (uint32_t i = 0; i < count; i++, p++) {
-    nsCOMPtr<nsIDOMMutationRecord> rec = dont_AddRef(*p);
-    mods.AppendElement(rec);
-  }
-
-  nsMemory::Free(ptr);
-
   if (sInhibitDepth > 0) {
-    mPendingMutations.AppendElements(mods);
+    mPendingMutations.AppendElement(aRecords);
     ScheduleListener(this);
   } else {
-    HandleMutations(mods);
+    DoHandleMutations(aRecords);
   }
 
   return NS_OK;
 }
 
 void
-uGlobalMenuDocListener::HandleMutations(nsTArray<nsCOMPtr<nsIDOMMutationRecord> >& aRecords)
+uGlobalMenuDocListener::DoHandleMutations(nsIArray *aRecords)
 {
   TRACE()
 
-  for (uint32_t i = 0; i < aRecords.Length(); i++) {
+  uint32_t length;
+  aRecords->GetLength(&length);
+  for (uint32_t i = 0; i < length; i++) {
     LOG("Beginning record %d", i);
-    nsIDOMMutationRecord *record = aRecords[i];
+    nsCOMPtr<uIGlobalMenuMutationRecord> record = do_QueryElementAt(aRecords, i);
 
     nsCOMPtr<nsIDOMNode> targetNode;
     record->GetTarget(getter_AddRefs(targetNode));
@@ -415,7 +327,9 @@ uGlobalMenuDocListener::FlushPendingMutations()
     return;
   }
 
-  HandleMutations(mPendingMutations);
+  for (uint32_t i = 0; i < mPendingMutations.Length(); i++) {
+    DoHandleMutations(mPendingMutations[i]);
+  }
   mPendingMutations.Clear();
 }
 

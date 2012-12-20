@@ -40,10 +40,12 @@
 #ifndef _U_GLOBALMENUDOCLISTENER_H
 #define _U_GLOBALMENUDOCLISTENER_H
 
-#include <nsIDOMMutationObserver.h>
 #include <nsAutoPtr.h>
 #include <nsHashKeys.h>
 #include <nsClassHashtable.h>
+#include <nsIArray.h>
+
+#include "uIGlobalMenuMutationObserver.h"
 
 #ifdef DEBUG
 #define DEBUG_chrisccoulson
@@ -53,11 +55,11 @@ class nsIContent;
 class uGlobalMenuObject;
 class nsAString;
 
-class uGlobalMenuDocListener: public nsIMutationObserverCallback
+class uGlobalMenuDocListener: public uIGlobalMenuMutationObserver
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIMUTATIONOBSERVERCALLBACK
+  NS_DECL_UIGLOBALMENUMUTATIONOBSERVER
 
   uGlobalMenuDocListener();
   nsresult Init(nsIContent *rootNode);
@@ -68,7 +70,7 @@ public:
   void Destroy();
   virtual ~uGlobalMenuDocListener();
 
-  void HandleMutations(nsTArray<nsCOMPtr<nsIDOMMutationRecord> >& aRecords);
+  void DoHandleMutations(nsIArray *aRecords);
 
   static void EnterCriticalZone() { sInhibitDepth++; }
   static void LeaveCriticalZone();
@@ -86,10 +88,10 @@ private:
 
   void FlushPendingMutations();
 
-  nsCOMPtr<nsIDOMMutationObserver> mObserver;
+  nsCOMPtr<uIGlobalMenuMutationObserverProxy> mObserver;
   nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uGlobalMenuObject *> > mContentToObserverTable;
 
-  nsTArray<nsCOMPtr<nsIDOMMutationRecord> > mPendingMutations;
+  nsTArray<nsCOMPtr<nsIArray> > mPendingMutations;
 
   static void ScheduleListener(uGlobalMenuDocListener *aListener);
 

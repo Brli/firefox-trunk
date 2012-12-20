@@ -47,6 +47,7 @@ XPI_NAME	= globalmenu
 
 XPIDLSRCS	= \
 		  uIGlobalMenuService.idl \
+		  uIGlobalMenuMutationObserver.idl \
 		  $(NULL)
 
 include $(topsrcdir)/config/rules.mk
