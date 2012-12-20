@@ -46,6 +46,7 @@
 #include <nsIDOMNodeList.h>
 #include <nsIDOMNode.h>
 #include <nsIDOMDocument.h>
+#include <nsIDOMWindow.h>
 #include <nsIAtomService.h>
 
 #include "uGlobalMenuDocListener.h"
@@ -54,7 +55,7 @@
 
 #include "uDebug.h"
 
-NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, uIGlobalMenuMutationObserver)
+NS_IMPL_ISUPPORTS1(uGlobalMenuDocListener, uIGlobalMenuMutationObserverCallback)
 
 uint32_t uGlobalMenuDocListener::sInhibitDepth = 0;
 nsTArray<nsCOMPtr<uGlobalMenuDocListener> >* uGlobalMenuDocListener::sPendingListeners;
@@ -64,19 +65,44 @@ uGlobalMenuDocListener::Init(nsIContent *rootNode)
 {
   NS_ENSURE_ARG(rootNode);
 
+  mObserver = do_CreateInstance("@canonical.com/globalmenu-mutation-observer;1");
+  NS_ASSERTION(mObserver, "Ah crap");
+  if (!mObserver) {
+    return NS_ERROR_FAILURE;
+  }
+
   nsCOMPtr<nsIDOMDocument> doc = do_QueryInterface(rootNode->OwnerDoc());
   NS_ASSERTION(doc, "Document failed QI to nsIDOMDocument");
   if (!doc) {
     return NS_ERROR_FAILURE;
   }
 
-  mObserver = do_CreateInstance("@canonical.com/globalmenu-mutation-observer-proxy;1");
-  NS_ASSERTION(mObserver, "Ah crap");
-  if (!mObserver) {
+  nsCOMPtr<nsIDOMWindow> win;
+  doc->GetDefaultView(getter_AddRefs(win));
+  if (!win) {
     return NS_ERROR_FAILURE;
   }
 
-  mObserver->Init(doc, this);
+  mObserver->Init(win, this);
+
+  nsCOMPtr<uIGlobalMenuMutationObserverInit> options =
+    do_CreateInstance("@canonical.com/globalmenu-mutation-observer-init;1");
+  NS_ASSERTION(options, "Failed to create initializer object");
+  if (!options) {
+    return NS_ERROR_FAILURE;
+  }
+
+  options->SetChildList(true);
+  options->SetAttributes(true);
+  options->SetSubtree(true);
+
+  nsCOMPtr<nsIDOMNode> docNode = do_QueryInterface(doc);
+  NS_ASSERTION(docNode, "Document failed QI to nsIDOMNode");
+  if (!docNode) {
+    return NS_ERROR_FAILURE;
+  }
+
+  mObserver->Observe(docNode, options);
 
   return NS_OK;
 }

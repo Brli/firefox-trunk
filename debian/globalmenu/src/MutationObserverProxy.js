@@ -2,6 +2,28 @@ const { classes: Cc, interfaces: Ci, results: Cr, utils: Cu } = Components;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
+function MutationObserverInit()
+{
+  this.childList = false;
+  this.attributes = false;
+  this.characterData = false;
+  this.subtree = false;
+  this.attributeOldValue = false;
+  this.characterDataOldValue = false;
+
+  this.wrappedJSObject = this;
+}
+
+MutationObserverInit.prototype = {
+  classDescription: "XPCOM MutationObserverInit",
+  classID: Components.ID("{eb2cf0b6-b438-49a4-a8d4-225fcd8edb62}"),
+  contractID: "@canonical.com/globalmenu-mutation-observer-init;1",
+
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.uIGlobalMenuMutationObserverInit
+  ])
+};
+
 function MutationRecord(aRecord)
 {
   this.type = aRecord.type;
@@ -13,53 +35,59 @@ function MutationRecord(aRecord)
 }
 
 MutationRecord.prototype = {
-  QueryInterface: XPCOMUtils.generateQI(
-    [Ci.uIGlobalMenuMutationRecord]
-  )
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.uIGlobalMenuMutationRecord
+  ])
 };
 
-function MutationObserverProxy() {}
+function MutationObserver() {}
 
-MutationObserverProxy.prototype = {
-  classDescription: "DOM Mutation Observer Proxy for Ubuntu Global Menu",
+MutationObserver.prototype = {
+  classDescription: "XPCOM MutationObserver",
   classID: Components.ID("{2084d756-7c14-4aec-8238-93e2b17a581d}"),
-  contractID: "@canonical.com/globalmenu-mutation-observer-proxy;1",
+  contractID: "@canonical.com/globalmenu-mutation-observer;1",
 
-  QueryInterface: XPCOMUtils.generateQI(
-    [Ci.uIGlobalMenuMutationObserverProxy]
-  ),
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.uIGlobalMenuMutationObserver
+  ]),
 
-  init: function(aDoc, aListener) {
+  init: function MO_init(aWindow, aCallback) {
     if (this.obs) {
       throw Components.Exception("Called init more than once",
                                  Cr.NS_ERROR_FAILURE);
     }
 
-    if (!(aListener instanceof Ci.uIGlobalMenuMutationObserver)) {
-      throw Components.Exception("Invalid listener", Cr.NS_ERROR_FAILURE);
+    if (!(aCallback instanceof Ci.uIGlobalMenuMutationObserverCallback)) {
+      throw Components.Exception("Invalid callback", Cr.NS_ERROR_FAILURE);
     }
 
-    this.obs = new aDoc.defaultView.MutationObserver(function(mutations) {
+    this.obs = new aWindow.MutationObserver(function(mutations) {
       let records = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
       mutations.forEach(function(mutation) {
         records.appendElement(new MutationRecord(mutation), false);
       });
 
-      aListener.handleMutations(records);
+      aCallback.handleMutations(records);
     });
-
-    this.obs.observe(aDoc, {childList: true, attributes: true, subtree: true}); 
   },
 
-  disconnect: function() {
+  observe: function MO_observe(aTarget, aOptions) {
+    if (!this.obs) {
+      throw Components.Exception("Called observe before init",
+                                 Cr.NS_ERROR_FAILURE);
+    }
+
+    this.obs.observe(aTarget, aOptions.wrappedJSObject);
+  },
+
+  disconnect: function MO_disconnect() {
     if (!this.obs) {
       throw Components.Exception("Called disconnect before init",
                                  Cr.NS_ERROR_FAILURE);
     }
 
     this.obs.disconnect();
-    this.obs = null;
   }
 };
 
-var NSGetFactory = XPCOMUtils.generateNSGetFactory([MutationObserverProxy]);
+var NSGetFactory = XPCOMUtils.generateNSGetFactory([MutationObserver, MutationObserverInit]);

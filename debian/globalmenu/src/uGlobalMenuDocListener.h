@@ -55,11 +55,11 @@ class nsIContent;
 class uGlobalMenuObject;
 class nsAString;
 
-class uGlobalMenuDocListener: public uIGlobalMenuMutationObserver
+class uGlobalMenuDocListener: public uIGlobalMenuMutationObserverCallback
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_UIGLOBALMENUMUTATIONOBSERVER
+  NS_DECL_UIGLOBALMENUMUTATIONOBSERVERCALLBACK
 
   uGlobalMenuDocListener();
   nsresult Init(nsIContent *rootNode);
@@ -88,7 +88,7 @@ private:
 
   void FlushPendingMutations();
 
-  nsCOMPtr<uIGlobalMenuMutationObserverProxy> mObserver;
+  nsCOMPtr<uIGlobalMenuMutationObserver> mObserver;
   nsClassHashtable<nsPtrHashKey<nsIContent>, nsTArray<uGlobalMenuObject *> > mContentToObserverTable;
 
   nsTArray<nsCOMPtr<nsIArray> > mPendingMutations;

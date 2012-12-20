@@ -38,19 +38,31 @@
 
 #include "nsIDOMNode.idl"
 #include "nsIDOMNodeList.idl"
-#include "nsIDOMDocument.idl"
+#include "nsIDOMWindow.idl"
 #include "nsIArray.idl"
 
 [scriptable, uuid(82855cc5-8fb8-4d81-95de-47e1305f5752)]
-interface uIGlobalMenuMutationObserver : nsISupports
+interface uIGlobalMenuMutationObserverCallback : nsISupports
 {
   void handleMutations(in nsIArray records);
 };
 
-[scriptable, uuid(988e6f4a-0378-46e4-8efb-7e1a7bc7c453)]
-interface uIGlobalMenuMutationObserverProxy : nsISupports
+[scriptable, uuid(748ce472-4dff-4238-bd46-415da09aa7cb)]
+interface uIGlobalMenuMutationObserverInit : nsISupports
 {
-  void init(in nsIDOMDocument doc, in uIGlobalMenuMutationObserver listener);
+  attribute boolean childList;
+  attribute boolean attributes;
+  attribute boolean characterData;
+  attribute boolean subtree;
+  attribute boolean attributeOldValue;
+  attribute boolean characterDataOldValue;
+};
+
+[scriptable, uuid(988e6f4a-0378-46e4-8efb-7e1a7bc7c453)]
+interface uIGlobalMenuMutationObserver : nsISupports
+{
+  void init(in nsIDOMWindow win, in uIGlobalMenuMutationObserverCallback callback);
+  void observe(in nsIDOMNode target, in uIGlobalMenuMutationObserverInit options);
   void disconnect();
 };
 
