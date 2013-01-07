@@ -1,4 +1,4 @@
-firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu2) UNRELEASED; urgency=low
 
   * New upstream snapshot v20.0 A1 HG20121121R113867
 
@@ -162,8 +162,13 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series.in
   * LP: #974146 - Add a "Open a New Private Window" action to the desktop file
     - update debian/firefox.desktop.in
+  * Fix LP: #1094376 - Language pack isn't used. Revert bmo: #677092 (make
+    language packs restartless) for now, as system-wide bootstrapped addons
+    with chrome are pretty broken
+    - add debian/patches/revert-restartless-language-packs.patch
+    - update debian/patches/series.in
 
- -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 07 Jan 2013 18:47:34 +0000
 
 firefox-trunk (19.0~a1~hg20121118r113642-0ubuntu1) quantal; urgency=low
 

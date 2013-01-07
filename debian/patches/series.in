@@ -16,6 +16,7 @@ python-virtualenv-multiarch-fix.patch
 mochitest-optional-websock-log.patch
 mochitest-allow-test-manifest-for-chrome.patch
 xpcshell-allow-omit-tests-on-real-install.patch
+revert-restartless-language-packs.patch
 test-fixes/xpcshell-search-fix-browser-dirprovider.patch
 test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
 test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
