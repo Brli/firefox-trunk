@@ -160,6 +160,8 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
   * Make python-virtualenv compatible with the Python multiarch changes
     - add debian/patches/python-virtualenv-multiarch-fix.patch
     - update debian/patches/series.in
+  * LP: #974146 - Add a "Open a New Private Window" action to the desktop file
+    - update debian/firefox.desktop.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 20 Nov 2012 09:43:14 +0000
 

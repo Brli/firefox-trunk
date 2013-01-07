@@ -196,13 +196,15 @@ MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rs
 StartupNotify=true
 %%if DISTRIB_VERSION >= 1104
 %%if DISTRIB_VERSION >= 1204
-Actions=NewWindow;
+Actions=NewWindow;NewPrivateWindow;
 %%define TARGET_ENV OnlyShowIn=Unity;
 %%define NEW_WINDOW_SECTION [Desktop Action NewWindow]
+%%define NEW_PRIVATE_WINDOW_SECTION [Desktop Action NewPrivateWindow]
 %%else
-X-Ayatana-Desktop-Shortcuts=NewWindow;
+X-Ayatana-Desktop-Shortcuts=NewWindow;NewPrivateWindow;
 %%define TARGET_ENV TargetEnvironment=Unity
 %%define NEW_WINDOW_SECTION [NewWindow Shortcut Group]
+%%define NEW_PRIVATE_WINDOW_SECTION [NewPrivateWindow Shortcut Group]
 %%endif
 
 %%expand __NEW_WINDOW_SECTION__
@@ -240,5 +242,10 @@ Name[vi]=Mở cửa sổ mới
 Name[zh_CN]=新建窗口
 Name[zh_TW]=開啟新視窗
 Exec=@MOZ_APP_NAME@ -new-window
+%%expand __TARGET_ENV__
+
+%%expand __NEW_PRIVATE_WINDOW_SECTION__
+Name=Open a New Private Window
+Exec=@MOZ_APP_NAME@ -private-window
 %%expand __TARGET_ENV__
 %%endif
