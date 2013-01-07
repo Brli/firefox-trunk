@@ -1,6 +1,6 @@
-firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu2) UNRELEASED; urgency=low
+firefox-trunk (20.0~a1~hg20130107r117821-0ubuntu1) raring; urgency=low
 
-  * New upstream snapshot v20.0 A1 HG20121121R113867
+  * New upstream snapshot v20.0 A1 HG20130107R117821
 
   * Update globalmenu-extension to r3.7
     - update for imagelib changes in Firefox 20
