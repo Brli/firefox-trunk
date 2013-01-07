@@ -2,7 +2,7 @@ firefox-trunk (20.0~a1~hg20121121r113867-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream snapshot v20.0 A1 HG20121121R113867
 
-  * Update globalmenu-extension to 3.7 prerelease r509
+  * Update globalmenu-extension to r3.7
     - update for imagelib changes in Firefox 20
     - implement the mutation observer in JS, as it's no longer possible
       to do it all in native code

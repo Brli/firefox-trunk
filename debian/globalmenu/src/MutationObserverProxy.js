@@ -77,6 +77,10 @@ MutationObserver.prototype = {
                                  Cr.NS_ERROR_FAILURE);
     }
 
+    if (!(aOptions instanceof Ci.uIGlobalMenuMutationObserverInit)) {
+      throw Components.Exception("Invalid options", Cr.NS_ERROR_FAILURE);
+    }
+
     this.obs.observe(aTarget, aOptions.wrappedJSObject);
   },
 
