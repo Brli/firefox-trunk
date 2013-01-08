@@ -155,6 +155,7 @@ ifeq (,$(filter i386 amd64, $(DEB_HOST_ARCH)))
 MOZ_BUILD_PGO = 0
 endif
 
+export SHELL=/bin/bash
 export NO_PNG_PKG_MANGLE=1
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
