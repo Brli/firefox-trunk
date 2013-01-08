@@ -479,18 +479,6 @@ ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 clean:: auto-refresh-supported-locales
 endif
 
-ifdef PATCHES_DIST
-CODENAME = $(PATCHES_DIST)
-else
-CODENAME = $(DISTRIB_CODENAME)
-endif
-
-ifdef PATCHES_ARCH
-ARCH = $(PATCHES_ARCH)
-else
-ARCH = $(DEB_HOST_ARCH)
-endif
-
 RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1); fi)
 
 get-orig-source: ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -a $(MOZ_APP)
