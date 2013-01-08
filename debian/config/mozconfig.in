@@ -55,9 +55,7 @@ ac_add_options --enable-debug
 ac_add_options --disable-debug
 %%endif
 ac_add_options --disable-elf-hack
-%%ifdef MOZ_ENABLE_GLOBALMENU
 ac_add_options --enable-extensions=default,globalmenu
-%%endif
 %%if MOZ_APP_BASENAME != MOZ_DEFAULT_APP_BASENAME
 ac_add_options --with-app-basename=@MOZ_APP_BASENAME@
 %%else

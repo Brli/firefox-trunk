@@ -1,3 +1,32 @@
+firefox-trunk (20.0~a1~hg20130107r117821-0ubuntu2) UNRELEASED; urgency=low
+
+  * Drop support for building on older than precise
+    - update debian/apport/source_firefox.py.in
+    - update debian/build/mozbuild.mk
+    - update debian/config/mozconfig.in
+    - update debian/control.in
+    - update debian/firefox-globalmenu.dirs.in
+    - remove debian/firefox-restart-required.update-notifier.in
+    - update debian/firefox.desktop.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/firefox.postinst.in
+    - update debian/firefox.postrm.in
+    - update debian/firefox.preinst.in
+    - update debian/firefox.prerm.in
+    - remove debian/patches/add-syspref-dir.patch
+    - update debian/patches/series.in
+    - remove debian/patches/use-new-yasm-in-lucid.patch
+    - remove debian/patches/mozilla-kde.patch
+    - remove debian/patches/firefox-kde.patch
+    - update debian/rules
+    - remove debian/usr.bin.firefox.apparmor.10.04
+    - remove debian/usr.bin.firefox.apparmor.10.10
+    - remove debian/usr.bin.firefox.apparmor.11.04
+    - remove debian/usr.bin.firefox.apparmor.9.10
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
+
 firefox-trunk (20.0~a1~hg20130107r117821-0ubuntu1) raring; urgency=low
 
   * New upstream snapshot v20.0 A1 HG20130107R117821

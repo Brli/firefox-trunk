@@ -1,11 +1,7 @@
 ubuntu-bookmarks.patch
 normalize-distribution-searchplugins.patch
 allow-lockPref-everywhere.patch
-#@DIST=lucid,maverick,natty,oneiric@mozilla-kde.patch
-#@DIST=lucid,maverick,natty,oneiric@firefox-kde.patch
-#@DIST=!lucid,maverick@unity-globalmenu-build-support.patch
-#@DIST=lucid,maverick@add-syspref-dir.patch
-#@DIST=lucid@use-new-yasm-in-lucid.patch
+unity-globalmenu-build-support.patch
 ubuntu-ua-string-changes.patch
 dont-include-hyphenation-patterns.patch
 dont-override-general-useragent-locale.patch

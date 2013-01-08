@@ -130,12 +130,7 @@ MOZ_BUILD_UNOFFICIAL = 1
 endif
 
 # enable the crash reporter only on i386, amd64 and armel
-ifeq (,$(filter lucid maverick natty oneiric,$(DISTRIB_CODENAME)))
-SUPPORTED_ARM = armhf
-else
-SUPPORTED_ARM = armel
-endif
-ifeq (,$(filter i386 amd64 $(SUPPORTED_ARM),$(DEB_HOST_ARCH)))
+ifeq (,$(filter i386 amd64 armhf,$(DEB_HOST_ARCH)))
 MOZ_ENABLE_BREAKPAD = 0
 endif
 
@@ -160,16 +155,6 @@ ifeq (,$(filter i386 amd64, $(DEB_HOST_ARCH)))
 MOZ_BUILD_PGO = 0
 endif
 
-ifneq (,$(wildcard $(CURDIR)/debian/globalmenu))
-HAVE_GLOBALMENU = 1
-endif
-
-ifeq (1,$(HAVE_GLOBALMENU))
-ifeq (,$(filter lucid maverick, $(DISTRIB_CODENAME)))
-MOZ_ENABLE_GLOBALMENU = 1
-endif
-endif
-
 export NO_PNG_PKG_MANGLE=1
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
@@ -191,9 +176,7 @@ else
 LANGPACK_DIR := $(DEB_HOST_GNU_SYSTEM)-$(DEB_HOST_GNU_CPU)/xpi
 endif
 
-ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
 MOZ_PKG_SUPPORT_RECOMMENDS ?= $(MOZ_PKG_NAME)-globalmenu
-endif
 MOZ_PKG_SUPPORT_SUGGESTS ?= $(MOZ_PKG_NAME)-gnome-support
 
 # Defines used for the Mozilla text preprocessor
@@ -227,9 +210,6 @@ MOZ_DEFINES += -DMOZ_BUILD_PGO
 endif
 ifeq (1,$(MOZ_DEBUG))
 MOZ_DEFINES += -DMOZ_DEBUG
-endif
-ifeq (1,$(MOZ_ENABLE_GLOBALMENU))
-MOZ_DEFINES += -DMOZ_ENABLE_GLOBALMENU
 endif
 ifeq (official, $(MOZ_BRANDING))
 MOZ_DEFINES += -DMOZ_OFFICIAL_BRANDING
@@ -317,12 +297,6 @@ install/$(MOZ_PKG_NAME)::
 	@echo "$(MOZ_PKG_SUPPORT_SUGGESTS)" | perl -0 -ne 's/[ \t\n]+/ /g; /\w/ and print "support:Suggests=$$_\n"' >> debian/$(MOZ_PKG_NAME).substvars
 	@echo "$(MOZ_PKG_SUPPORT_RECOMMENDS)" | perl -0 -ne 's/[ \t\n]+/ /g; /\w/ and print "support:Recommends=$$_\n"' >> debian/$(MOZ_PKG_NAME).substvars
 
-install/$(MOZ_PKG_NAME)-gnome-support::
-ifneq (,$(filter lucid maverick natty, $(DISTRIB_CODENAME)))
-	@echo "Adding libgconf2-4 dependency"
-	@echo "gconf:Depends=libgconf2-4" >> debian/$(MOZ_PKG_NAME)-gnome-support.substvars
-endif
-
 ifneq ($(MOZ_PKG_NAME),$(MOZ_APP_NAME))
 install/%::
 	@echo "Adding conflicts / provides for renamed package"
@@ -341,10 +315,8 @@ binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
 	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/native-origins.d/$(MOZ_PKG_NAME)
 
-ifeq (1, $(MOZ_ENABLE_GLOBALMENU))
 binary-install/$(MOZ_PKG_NAME)-globalmenu::
 	unzip -o -d debian/$(MOZ_PKG_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ $(MOZ_DISTDIR)/xpi-stage/globalmenu.xpi
-endif
 
 GNOME_SUPPORT_FILES = libmozgnome.so
 binary-post-install/$(MOZ_PKG_NAME):: install-searchplugins-,$(MOZ_PKG_NAME)
@@ -449,11 +421,8 @@ common-binary-predeb-arch::
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
 pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
-	cp $(CURDIR)/debian/syspref.js $(CURDIR)/debian/$(MOZ_PKG_BASENAME).js
-ifeq (1,$(HAVE_GLOBALMENU))
 	mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
-endif
 ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
 	$(error "Need to set MOZ_DEFAULT_APP_BASENAME")
 endif
@@ -556,7 +525,6 @@ clean::
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
-	rm -f debian/$(MOZ_PKG_BASENAME).js
 	rm -rf $(MOZ_OBJDIR)
 	rm -f debian/searchplugin*.list
 	find debian -name *.pyc -delete

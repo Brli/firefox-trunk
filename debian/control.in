@@ -31,11 +31,12 @@ Build-Depends: cdbs,
 	mesa-common-dev,
 	libnotify-dev (>= 0.4),
 	libxrender-dev,
-	yasm-1 (>= 1.1) | yasm (>= 1.1),
+	yasm (>= 1.1),
 	libdbusmenu-gtk-dev,
 	unzip,
 	dbus-x11,
-	xvfb
+	xvfb,
+	python (>= 2.7)
 Standards-Version: 3.9.1
 XS-Testsuite: autopkgtest
 
@@ -70,7 +71,6 @@ Architecture: any
 Section: gnome
 Depends: ${shlibs:Depends}, 
 	${misc:Depends},
-	${gconf:Depends},
 	libnotify4 | libnotify1,
 	@MOZ_PKG_NAME@
 Provides: ${app:Provides}
