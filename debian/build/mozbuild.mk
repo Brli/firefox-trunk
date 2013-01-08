@@ -223,6 +223,7 @@ MOZ_EXECUTABLES_$(MOZ_PKG_NAME) +=	$(MOZ_LIBDIR)/$(MOZ_PKG_BASENAME).sh \
 
 pkgname_subst_files = \
 	debian/config/mozconfig \
+	debian/patches/series \
 	$(MOZ_PKGNAME_SUBST_FILES) \
 	$(NULL)
 
@@ -420,7 +421,7 @@ common-binary-predeb-arch::
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
-pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) enable-dist-patches
+pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files)
 	mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
 ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
@@ -490,9 +491,6 @@ else
 ARCH = $(DEB_HOST_ARCH)
 endif
 
-enable-dist-patches:
-	perl $(CURDIR)/debian/build/enable-dist-patches.pl $(CODENAME) $(ARCH)
-
 RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1); fi)
 
 get-orig-source: ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -a $(MOZ_APP)
@@ -521,7 +519,6 @@ clean::
 		exit 1 ; \
 	fi
 	rm -f debian/control.old
-	perl $(CURDIR)/debian/build/enable-dist-patches.pl --clean $(CURDIR)/debian/patches/series
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
@@ -530,4 +527,4 @@ clean::
 	find debian -name *.pyc -delete
 	find compare-locales -name *.pyc -delete
 
-.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales enable-dist-patches get-orig-source
+.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales get-orig-source
