@@ -32,6 +32,9 @@ firefox-trunk (21.0~a1~hg20130107r117943-0ubuntu1) UNRELEASED; urgency=low
     - update d/p/test-overrides/xpcshell-disable-geolocation-provider-test.patch
   * Make sure that SHELL is set in the build environment
     - update debian/build/mozbuild.mk
+  * Don't set the MOZCONFIG environment variable, but just copy our config
+    in to the root of the source tree
+    - update debian/build/mozconfig.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

@@ -159,7 +159,6 @@ export SHELL=/bin/bash
 export NO_PNG_PKG_MANGLE=1
 export LDFLAGS
 export DEB_BUILD_HARDENING=1
-export MOZCONFIG=$(CURDIR)/debian/config/mozconfig
 ifeq (Ubuntu, $(DISTRIB))
 export MOZ_UA_VENDOR=Ubuntu
 endif
@@ -422,7 +421,10 @@ common-binary-predeb-arch::
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
-pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files)
+mozconfig: debian/config/mozconfig
+	cp $< $@
+
+pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) mozconfig
 	mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
 ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
@@ -513,6 +515,7 @@ clean::
 	rm -rf debian/l10n-mergedirs
 	rm -rf $(MOZ_OBJDIR)
 	rm -f debian/searchplugin*.list
+	rm -f mozconfig
 	find debian -name *.pyc -delete
 	find compare-locales -name *.pyc -delete
 
