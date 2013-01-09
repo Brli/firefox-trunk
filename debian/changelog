@@ -37,6 +37,10 @@ firefox-trunk (21.0~a1~hg20130107r117943-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/mozconfig.mk
   * Drop libthai suggest - this hasn't been needed for a long time
     - update debian/control
+  * Replace latex-xft-fonts suggest with ttf-lyx (yes, I know this is a
+    transitional package since 12.10, but it avoids suggesting a different
+    package for each release)
+    - update debian/control
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

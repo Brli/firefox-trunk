@@ -53,7 +53,7 @@ Provides: www-browser,
 	gnome-www-browser,
 	${app:Provides},
 	${transitional:Provides}
-Suggests: latex-xft-fonts,
+Suggests: ttf-lyx,
 	${support:Suggests}
 Breaks: ${transitional:Breaks}
 Replaces: ${transitional:Replaces}
