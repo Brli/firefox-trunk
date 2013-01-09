@@ -44,6 +44,7 @@ firefox-trunk (21.0~a1~hg20130107r117943-0ubuntu1) UNRELEASED; urgency=low
   * Use virtualenv for compare-locales
     - update debian/build/create-tarball.py
     - update debian/build/mozbuild.mk
+  * Refactor create-tarball.py
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
