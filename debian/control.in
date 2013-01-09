@@ -54,7 +54,6 @@ Provides: www-browser,
 	${app:Provides},
 	${transitional:Provides}
 Suggests: latex-xft-fonts,
-	libthai0,
 	${support:Suggests}
 Breaks: ${transitional:Breaks}
 Replaces: ${transitional:Replaces}

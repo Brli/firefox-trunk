@@ -35,6 +35,8 @@ firefox-trunk (21.0~a1~hg20130107r117943-0ubuntu1) UNRELEASED; urgency=low
   * Don't set the MOZCONFIG environment variable, but just copy our config
     in to the root of the source tree
     - update debian/build/mozconfig.mk
+  * Drop libthai suggest - this hasn't been needed for a long time
+    - update debian/control
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
