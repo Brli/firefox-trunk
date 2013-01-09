@@ -316,7 +316,7 @@ def checkout_compare_locales(cache, tag):
         ensure_cache(remote_source, cache)
         local_source = os.path.join(cache, 'compare-locales')
     source = remote_source if local_source == None else local_source
-    do_checkout(source, 'compare-locales', tag=tag)
+    do_checkout(source, 'python/compare-locales', tag=tag)
 
 def checkout_source(repo, cache, tag):
     print '\n\n*** Checking out source from %s%s ***\n' % (repo, ' using cache from %s' % cache if cache != None else '')
