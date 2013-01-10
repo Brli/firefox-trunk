@@ -51,6 +51,10 @@ firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/xpcshell-package-tests/test_locale_matchOS.js
     - update debian/testing/xpcshell-package-tests/test_searchplugins_valid.js
     - update debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins.js
+  * Add a test to make sure all of the language packs are loadable by the
+    addon manager
+    - add debian/testing/xpcshell-package-tests/test_langpack_load.js
+    - update debian/testing/xpcshell-package-tests/xpcshell.ini
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
