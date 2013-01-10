@@ -1,4 +1,4 @@
-firefox-trunk (21.0~a1~hg20130107r117943-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
 
   * Update globalmenu-extension to 3.8 prerelease r511
   * Drop support for building on older than precise
@@ -45,6 +45,7 @@ firefox-trunk (21.0~a1~hg20130107r117943-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/create-tarball.py
     - update debian/build/mozbuild.mk
   * Refactor create-tarball.py
+  * Beef up test_ubuntu_searchplugins.js a bit
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

@@ -1,3 +1,91 @@
+const TEST_MATRIX = {
+//  Locale      Amazon?   Baidu?    DDG?    Google?
+    "en-US":  [ true,     false,    true,   true ],
+    "af":     [ true,     false,    true,   true ],
+    "ar":     [ true,     false,    true,   true ],
+    "ast":    [ false,    false,    true,   true ],
+    "be":     [ false,    false,    true,   true ],
+    "bg":     [ true,     false,    true,   true ],
+    "bn-BD":  [ false,    false,    true,   true ],
+    "bn-IN":  [ true,     false,    true,   true ],
+    "br":     [ true,     false,    true,   true ],
+    "bs":     [ true,     false,    true,   true ],
+    "ca":     [ false,    false,    true,   true ],
+    "cs":     [ false,    false,    true,   true ],
+    "cy":     [ true,     false,    true,   true ],
+    "da":     [ true,     false,    true,   true ],
+    "de":     [ true,     false,    true,   true ],
+    "el":     [ true,     false,    true,   true ],
+    "en-GB":  [ true,     false,    true,   true ],
+    "en-ZA":  [ true,     false,    true,   true ],
+    "eo":     [ true,     false,    true,   true ],
+    "es-AR":  [ true,     false,    true,   true ],
+    "es-CL":  [ false,    false,    true,   true ],
+    "es-ES":  [ false,    false,    true,   true ],
+    "es-MX":  [ false,    false,    true,   true ],
+    "et":     [ false,    false,    true,   true ],
+    "eu":     [ true,     false,    true,   true ],
+    "fa":     [ true,     false,    true,   true ],
+    "fi":     [ false,    false,    true,   true ],
+    "fr":     [ true,     false,    true,   true ],
+    "fy-NL":  [ false,    false,    true,   true ],
+    "ga-IE":  [ true,     false,    true,   true ],
+    "gd":     [ true,     false,    true,   true ],
+    "gl":     [ true,     false,    true,   true ],
+    "gu-IN":  [ false,    false,    true,   true ],
+    "he":     [ false,    false,    true,   true ],
+    "hi-IN":  [ false,    false,    true,   true ],
+    "hr":     [ true,     false,    true,   true ],
+    "hu":     [ false,    false,    true,   true ],
+    "hy-AM":  [ true,     false,    true,   true ],
+    "id":     [ false,    false,    true,   true ],
+    "is":     [ true,     false,    true,   true ],
+    "it":     [ true,     false,    true,   true ],
+    "ja":     [ true,     false,    true,   true ],
+    "kk":     [ false,    false,    true,   true ],
+    "kn":     [ true,     false,    true,   true ],
+    "ko":     [ false,    false,    true,   true ],
+    "ku":     [ true,     false,    true,   true ],
+    "lg":     [ true,     false,    true,   true ],
+    "lt":     [ true,     false,    true,   true ],
+    "lv":     [ false,    false,    true,   true ],
+    "mai":    [ false,    false,    true,   true ],
+    "mk":     [ true,     false,    true,   true ],
+    "ml":     [ false,    false,    true,   true ],
+    "mr":     [ true,     false,    true,   true ],
+    "nb-NO":  [ true,     false,    true,   true ],
+    "nl":     [ false,    false,    true,   true ],
+    "nn-NO":  [ true,     false,    true,   true ],
+    "nso":    [ true,     false,    true,   true ],
+    "or":     [ true,     false,    true,   true ],
+    "pa-IN":  [ false,    false,    true,   true ],
+    "pl":     [ false,    false,    true,   true ],
+    "pt-BR":  [ false,    false,    true,   true ],
+    "pt-PT":  [ true,     false,    true,   true ],
+    "ro":     [ true,     false,    true,   true ],
+    "ru":     [ false,    false,    true,   true ],
+    "si":     [ true,     false,    true,   true ],
+    "sk":     [ false,    false,    true,   true ],
+    "sl":     [ false,    false,    true,   true ],
+    "sq":     [ true,     false,    true,   true ],
+    "sr":     [ true,     false,    true,   true ],
+    "sv-SE":  [ false,    false,    true,   true ],
+    "ta":     [ false,    false,    true,   true ],
+    "te":     [ true,     false,    true,   true ],
+    "th":     [ true,     false,    true,   true ],
+    "tr":     [ true,     false,    true,   true ],
+    "uk":     [ false,    false,    true,   true ],
+    "vi":     [ false,    false,    true,   true ],
+    "zh-CN":  [ true,     true,     true,   true ],
+    "zh-TW":  [ false,    false,    true,   true ],
+    "zu":     [ true,     false,    true,   true ]
+};
+
+const PLUGIN_AMAZON = 0;
+const PLUGIN_BAIDU = 1;
+const PLUGIN_DDG = 2;
+const PLUGIN_GOOGLE = 3;
+
 function get_query_params(aURL)
 {
   let params = {};
@@ -117,20 +205,12 @@ function run_test()
   let found_DDG = false;
   let found_Baidu = false;
 
-  let want_Baidu = false;
-  let want_Amazon = false;
+  do_check_true(_SEARCHPLUGIN_TEST_LOCALE in TEST_MATRIX);
 
-  if (_SEARCHPLUGIN_TEST_LOCALE == "zh-CN") {
-    want_Baidu = true;
-  }
-
-  if (["en-US", "af", "ar", "bg", "bn-IN", "br", "bs", "cy", "da", "de", "el",
-       "en-GB", "en-ZA", "eo", "es-AR", "eu", "fa", "fr", "ga-IE", "gd", "gl",
-       "hr", "hy-AM", "is", "it", "ja", "kn", "ku", "lg", "lt", "mk", "mr",
-       "nb-NO", "nn-NO", "nso", "or", "pt-PT", "ro", "si", "sq", "sr", "te",
-       "th", "tr", "zh-CN", "zu"].indexOf(_SEARCHPLUGIN_TEST_LOCALE) != -1) {
-    want_Amazon = true;
-  }
+  let want_Amazon = TEST_MATRIX[_SEARCHPLUGIN_TEST_LOCALE][PLUGIN_AMAZON];
+  let want_Baidu = TEST_MATRIX[_SEARCHPLUGIN_TEST_LOCALE][PLUGIN_BAIDU];
+  let want_DDG = TEST_MATRIX[_SEARCHPLUGIN_TEST_LOCALE][PLUGIN_DDG];
+  let want_Google = TEST_MATRIX[_SEARCHPLUGIN_TEST_LOCALE][PLUGIN_GOOGLE];
 
   do_test_pending();
 
@@ -159,10 +239,10 @@ function run_test()
         }
       });
 
-      do_check_true(found_Google);
       do_check_true(!((found_Amazon && !want_Amazon) || (!found_Amazon && want_Amazon)));
-      do_check_true(found_DDG);
       do_check_true(!((found_Baidu && !want_Baidu) || (!found_Baidu && want_Baidu)));
+      do_check_true(!((found_DDG && !want_DDG) || (!found_DDG && want_DDG)));
+      do_check_true(!((found_Google && !want_Google) || (!found_Google && want_Google)));
 
       do_test_finished();
     }
