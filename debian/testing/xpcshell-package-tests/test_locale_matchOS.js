@@ -23,17 +23,6 @@ function do_test(aLocale, aCallback)
   });
 }
 
-function maybe_schedule_next_test(aLocales)
-{
-  let locale;
-  if ((locale = aLocales.shift())) {
-    do_execute_soon(function() {
-      do_test(locale, function() {
-        maybe_schedule_next_test(aLocales);
-      });
-    });
-  }
-}
 function run_test()
 {
   _XPCSHELL_PROCESS = "parent";
@@ -44,7 +33,5 @@ function run_test()
     do_check_true(false);
   }
 
-  maybe_schedule_next_test(["en_US.UTF-8", "fr_FR.UTF-8", "fr_BE.UTF-8",
-                            "pt_BR.UTF-8", "pt_PT.UTF-8", "de_DE.UTF-8",
-                            "fr_BE.utf-8"]);
+  run_tests_async(Object.keys(gLocales), do_test);
 }

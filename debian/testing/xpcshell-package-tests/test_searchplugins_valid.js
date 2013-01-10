@@ -12,18 +12,6 @@ function do_test(aLocale, aCallback)
   });
 }
 
-function maybe_schedule_next_test(aLocales)
-{
-  let locale;
-  if ((locale = aLocales.shift())) {
-    do_execute_soon(function() {
-      do_test(locale, function() {
-        maybe_schedule_next_test(aLocales);
-      });
-    });
-  }
-}
-
 function run_test()
 {
   _XPCSHELL_PROCESS = "parent";
@@ -38,5 +26,5 @@ function run_test()
     }
   }
 
-  maybe_schedule_next_test(tests);
+  run_tests_async(tests, do_test);
 }

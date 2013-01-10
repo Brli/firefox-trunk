@@ -144,3 +144,17 @@ function do_run_test_in_subprocess_with_params(aTestFile, aParams, aEnv, aCallba
     }
   }
 }
+
+function run_tests_async(aTests, aCallback)
+{
+  function maybe_schedule_next_test() {
+    let i;
+    if ((i = aTests.shift())) {
+      do_execute_soon(function() {
+        aCallback(i, maybe_schedule_next_test);
+      });
+    }
+  }
+
+  maybe_schedule_next_test();
+}

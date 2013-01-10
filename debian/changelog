@@ -46,6 +46,11 @@ firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/mozbuild.mk
   * Refactor create-tarball.py
   * Beef up test_ubuntu_searchplugins.js a bit
+  * Add a helper for running tests async
+    - update debian/testing/xpcshell-package-tests/head_package_tests.js
+    - update debian/testing/xpcshell-package-tests/test_locale_matchOS.js
+    - update debian/testing/xpcshell-package-tests/test_searchplugins_valid.js
+    - update debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins.js
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
