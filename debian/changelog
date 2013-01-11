@@ -64,6 +64,10 @@ firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
     - remove d/t/xpcshell-package-tests/data/locale-matchOS-test-addon.xpi
     - update debian/source/include-binaries
     - update debian/tests/control
+  * Don't try to override the Amazon searchplugin for Kashubian or Mongolian,
+    as it doesn't exist there
+    - add debian/searchplugins/csb/list.txt
+    - add debian/searchplugins/mn/list.txt
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
