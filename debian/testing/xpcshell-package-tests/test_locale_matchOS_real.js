@@ -33,5 +33,7 @@ function run_test()
     }
   }
 
-  do_check_eq(Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).getSelectedLocale("global"), _TEST_SELECTED_LOCALE);
+  let re = new RegExp(_TEST_SELECTED_LOCALE);
+  let selected = Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIXULChromeRegistry).getSelectedLocale("global");
+  do_check_eq(selected.match(re), selected);
 }

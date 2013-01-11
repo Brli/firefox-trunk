@@ -7,7 +7,7 @@ gLocales = {
   "en_ZM.UTF-8": "en-US",
   "es_ES.UTF-8": "es-ES",
   "es_MX.UTF-8": "es-MX",
-  "es_PY.UTF-8": "es-CL"
+  "es_PY.UTF-8": "es-[A-Z][A-Z]"
 };
 
 function do_test(aLocale, aCallback)
