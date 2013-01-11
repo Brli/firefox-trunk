@@ -68,6 +68,7 @@ firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
     as it doesn't exist there
     - add debian/searchplugins/csb/list.txt
     - add debian/searchplugins/mn/list.txt
+    - update d/t/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

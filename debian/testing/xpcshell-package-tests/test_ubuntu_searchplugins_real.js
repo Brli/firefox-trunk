@@ -3,15 +3,17 @@ const TEST_MATRIX = {
     "en-US":  [ true,     false,    true,   true ],
     "af":     [ true,     false,    true,   true ],
     "ar":     [ true,     false,    true,   true ],
+    "as":     [ true,     false,    true,   true ],
     "ast":    [ false,    false,    true,   true ],
     "be":     [ false,    false,    true,   true ],
     "bg":     [ true,     false,    true,   true ],
     "bn-BD":  [ false,    false,    true,   true ],
     "bn-IN":  [ true,     false,    true,   true ],
     "br":     [ true,     false,    true,   true ],
-    "bs":     [ true,     false,    true,   true ],
+    "bs":     [ false,    false,    true,   true ],
     "ca":     [ false,    false,    true,   true ],
     "cs":     [ false,    false,    true,   true ],
+    "csb":    [ false,    false,    true,   true ],
     "cy":     [ true,     false,    true,   true ],
     "da":     [ true,     false,    true,   true ],
     "de":     [ true,     false,    true,   true ],
@@ -43,6 +45,7 @@ const TEST_MATRIX = {
     "it":     [ true,     false,    true,   true ],
     "ja":     [ true,     false,    true,   true ],
     "kk":     [ false,    false,    true,   true ],
+    "km":     [ true,     false,    true,   true ],
     "kn":     [ true,     false,    true,   true ],
     "ko":     [ false,    false,    true,   true ],
     "ku":     [ true,     false,    true,   true ],
@@ -52,6 +55,7 @@ const TEST_MATRIX = {
     "mai":    [ false,    false,    true,   true ],
     "mk":     [ true,     false,    true,   true ],
     "ml":     [ false,    false,    true,   true ],
+    "mn":     [ false,    false,    true,   true ],
     "mr":     [ true,     false,    true,   true ],
     "nb-NO":  [ true,     false,    true,   true ],
     "nl":     [ false,    false,    true,   true ],
@@ -70,6 +74,7 @@ const TEST_MATRIX = {
     "sq":     [ true,     false,    true,   true ],
     "sr":     [ true,     false,    true,   true ],
     "sv-SE":  [ false,    false,    true,   true ],
+    "sw":     [ true,     false,    true,   true ],
     "ta":     [ false,    false,    true,   true ],
     "te":     [ true,     false,    true,   true ],
     "th":     [ true,     false,    true,   true ],
@@ -85,6 +90,10 @@ const PLUGIN_AMAZON = 0;
 const PLUGIN_BAIDU = 1;
 const PLUGIN_DDG = 2;
 const PLUGIN_GOOGLE = 3;
+
+if (Services.prefs.getCharPref("app.update.channel") == "nightly") {
+  TEST_MATRIX["bs"][PLUGIN_AMAZON] = true;
+}
 
 function get_query_params(aURL)
 {

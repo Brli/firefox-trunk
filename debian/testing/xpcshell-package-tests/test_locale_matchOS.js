@@ -4,7 +4,7 @@ gLocales = {
   "fr_BE.UTF-8": "fr",
   "pt_BR.UTF-8": "pt-BR",
   "en_GB.UTF-8": "en-GB",
-  "en_ZM.UTF-8": "en-US",
+  "en_ZM.UTF-8": "en-[A-Z][A-Z]",
   "es_ES.UTF-8": "es-ES",
   "es_MX.UTF-8": "es-MX",
   "es_PY.UTF-8": "es-[A-Z][A-Z]"
