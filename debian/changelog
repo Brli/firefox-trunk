@@ -55,6 +55,9 @@ firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
     addon manager
     - add debian/testing/xpcshell-package-tests/test_langpack_load.js
     - update debian/testing/xpcshell-package-tests/xpcshell.ini
+  * Add a test to make sure language pack chrome is registered correctly
+    - add debian/testing/xpcshell-package-tests/test_langpack_chrome.js
+    - update debian/testing/xpcshell-package-tests/xpcshell.ini
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
