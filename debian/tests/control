@@ -1,2 +1,2 @@
 Tests: xpcshell-tests xpcshell-package-tests jstestbrowser reftest crashtest mochitest
-Depends: @, libc-bin, make, notify-osd, metacity, language-pack-de-base, language-pack-en-base, language-pack-fr-base, language-pack-pt-base
+Depends: @, libc-bin, make, notify-osd, metacity, language-pack-en-base, language-pack-es-base, language-pack-fr-base, language-pack-pt-base

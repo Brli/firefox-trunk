@@ -3,9 +3,11 @@ gLocales = {
   "fr_FR.UTF-8": "fr",
   "fr_BE.UTF-8": "fr",
   "pt_BR.UTF-8": "pt-BR",
-  "pt_PT.UTF-8": "pt-BR",
-  "de_DE.UTF-8": "en-US",
-  "fr_BE.utf-8": "fr"
+  "en_GB.UTF-8": "en-GB",
+  "en_ZM.UTF-8": "en-US",
+  "es_ES.UTF-8": "es-ES",
+  "es_MX.UTF-8": "es-MX",
+  "es_PY.UTF-8": "es-CL"
 };
 
 function do_test(aLocale, aCallback)
