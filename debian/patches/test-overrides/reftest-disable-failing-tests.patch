@@ -1,10 +1,10 @@
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/bugs/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/bugs/reftest.list
 ===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/bugs/reftest.list	2012-12-10 02:09:33.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/bugs/reftest.list	2012-12-10 20:23:30.620704877 +0000
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/bugs/reftest.list	2013-01-14 10:01:00.110186494 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/bugs/reftest.list	2013-01-14 10:02:08.238185284 +0000
 @@ -1314,8 +1314,8 @@
  != 481948-2.html 481948-2-ref.html
- fails-if(Android) random-if(winWidget) fails-if(gtk2Widget) == 481948-3.html 481948-3-ref.html # questionable test, see bug 488364
+ skip-if(B2G) fails-if(Android) random-if(winWidget) fails-if(gtk2Widget) == 481948-3.html 481948-3-ref.html # questionable test, see bug 488364
  == 482398-1.html 482398-1-ref.html
 -random-if(d2d) == 482592-1a.xhtml 482592-1-ref.html # bug 586771
 -random-if(d2d) == 482592-1b.xhtml 482592-1-ref.html # bug 586771
@@ -17,38 +17,15 @@ Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/bugs/reftest.list
  HTTP(..) == 621253-2-externalFilter.html 621253-2-ref.html
  == 621253-2-internalFilter.html 621253-2-ref.html
  fails-if(Android) HTTP(..) == 619511-1.html 619511-1-ref.html
--random-if(winWidget) fuzzy-if(OSX==10.8,19,17) == 621918-1.svg 621918-1-ref.svg # 1-pixel diacritic positioning discrepancy in rotated text (may depend on platform fonts)
+-skip-if(B2G) random-if(winWidget) fuzzy-if(OSX==10.8,19,17) == 621918-1.svg 621918-1-ref.svg # 1-pixel diacritic positioning discrepancy in rotated text (may depend on platform fonts)
 +fails == 621918-1.svg 621918-1-ref.svg # 1-pixel diacritic positioning discrepancy in rotated text (may depend on platform fonts)
  random-if(winWidget) HTTP(..) == 621918-2.svg 621918-2-ref.svg # same 1px issue as above, and HTTP(..) for filters.svg, used to mask antialiasing issues where glyphs touch
  fuzzy-if(d2d,5,1) == 622585-1.html 622585-1-ref.html # bug 789402
  fails-if(Android) == 625409-1.html 625409-1-ref.html
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/text-overflow/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/first-letter/reftest.list
 ===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/text-overflow/reftest.list	2012-12-10 02:09:59.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/text-overflow/reftest.list	2012-12-10 20:23:30.620704877 +0000
-@@ -7,7 +7,7 @@
- fuzzy-if(OSX==10.8,1,1) HTTP(..) == anonymous-block.html anonymous-block-ref.html
- HTTP(..) == false-marker-overlap.html false-marker-overlap-ref.html
- HTTP(..) == visibility-hidden.html visibility-hidden-ref.html
--HTTP(..) == block-padding.html block-padding-ref.html
-+fails HTTP(..) == block-padding.html block-padding-ref.html
- HTTP(..) == quirks-decorations.html quirks-decorations-ref.html
- HTTP(..) == quirks-line-height.html quirks-line-height-ref.html
- HTTP(..) == standards-decorations.html standards-decorations-ref.html
-@@ -18,7 +18,7 @@
- skip-if(Android) == clipped-elements.html clipped-elements-ref.html
- HTTP(..) == theme-overflow.html theme-overflow-ref.html
- HTTP(..) == table-cell.html table-cell-ref.html
--HTTP(..) == two-value-syntax.html two-value-syntax-ref.html
-+fails HTTP(..) == two-value-syntax.html two-value-syntax-ref.html
- HTTP(..) == single-value.html single-value-ref.html 
--HTTP(..) == atomic-under-marker.html atomic-under-marker-ref.html
-+fails HTTP(..) == atomic-under-marker.html atomic-under-marker-ref.html
- fuzzy(1,702) skip-if(Android) HTTP(..) == xulscroll.html xulscroll-ref.html
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/first-letter/reftest.list
-===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/first-letter/reftest.list	2012-12-10 02:09:38.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/first-letter/reftest.list	2012-12-10 20:23:30.620704877 +0000
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/first-letter/reftest.list	2013-01-14 10:01:00.110186494 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/first-letter/reftest.list	2013-01-14 10:01:00.106186494 +0000
 @@ -35,7 +35,7 @@
  != 229764-1.html 229764-ref.html
  == 229764-2.html 229764-ref.html
@@ -58,38 +35,10 @@ Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/first-letter/reft
  == 329069-3.html 329069-3-ref.html
  == 329069-4.html 329069-4-ref.html
  fails-if(!cocoaWidget) == 329069-5.html 329069-5-ref.html # bug 603710
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/font-face/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/mathml/reftest.list
 ===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/font-face/reftest.list	2012-12-10 02:09:39.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/font-face/reftest.list	2012-12-10 20:23:30.620704877 +0000
-@@ -27,8 +27,8 @@
- # assumes AAT fonts are only supported on MacOS
- random-if(cocoaWidget) HTTP(..) == src-list-format-7.html src-list-format-2-ref.html
- random-if(!cocoaWidget) HTTP(..) == src-list-format-7.html src-list-format-3-ref.html
--fails-if(Android) == src-list-local-full.html src-list-local-full-ref.html
--fails-if(Android) == src-list-local-full-quotes.html src-list-local-full-ref.html
-+fails == src-list-local-full.html src-list-local-full-ref.html
-+fails == src-list-local-full-quotes.html src-list-local-full-ref.html
- HTTP(..) == src-list-local-fallback.html src-list-local-fallback-ref.html
- 
- # data url tests (these don't need the HTTP server)
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/forms/reftest.list
-===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/forms/reftest.list	2012-12-10 02:09:45.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/forms/reftest.list	2012-12-10 20:23:30.620704877 +0000
-@@ -25,7 +25,7 @@
- fails-if(Android) == textbox-setsize.xul textbox-setsize-ref.xul
- fails-if(Android) == textarea-resize.html textarea-resize-ref.html
- # an offset seems to apply to the native resizer on windows so skip this test for now
--fails-if(Android) skip-if(winWidget) == textarea-resize-background.html textarea-resize-background-ref.html
-+fails skip-if(winWidget) == textarea-resize-background.html textarea-resize-background-ref.html
- fails-if(Android) != textarea-ltr.html textarea-rtl.html
- fails-if(Android) != textarea-ltr-scrollbar.html textarea-rtl-scrollbar.html
- fails-if(Android) != textarea-in-ltr-doc-scrollbar.html textarea-in-rtl-doc-scrollbar.html
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/mathml/reftest.list
-===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/mathml/reftest.list	2012-12-10 02:09:50.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/mathml/reftest.list	2012-12-10 20:23:30.620704877 +0000
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/mathml/reftest.list	2013-01-14 10:01:00.110186494 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/mathml/reftest.list	2013-01-14 10:01:00.106186494 +0000
 @@ -29,7 +29,7 @@
  == mfenced-7.html mfenced-7-ref.html
  != mfenced-8.html mfenced-8-ref.html
@@ -99,10 +48,10 @@ Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/mathml/reftest.li
  == mi-mathvariant-1.xhtml mi-mathvariant-1-ref.xhtml
  == mi-mathvariant-2.xhtml mi-mathvariant-2-ref.xhtml
  != non-spacing-accent-1.xhtml non-spacing-accent-1-ref.xhtml
-Index: firefox-trunk-20.0~a1~hg20121209r115438/parser/htmlparser/tests/reftest/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130113r118722/parser/htmlparser/tests/reftest/reftest.list
 ===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/parser/htmlparser/tests/reftest/reftest.list	2012-12-10 02:12:18.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/parser/htmlparser/tests/reftest/reftest.list	2012-12-10 20:23:30.620704877 +0000
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/parser/htmlparser/tests/reftest/reftest.list	2013-01-14 10:01:00.110186494 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/parser/htmlparser/tests/reftest/reftest.list	2013-01-14 10:01:00.106186494 +0000
 @@ -1,5 +1,5 @@
  == bug535530-1.html bug535530-1-ref.html
 -== view-source:bug535530-2.html bug535530-2-ref.html
@@ -110,23 +59,10 @@ Index: firefox-trunk-20.0~a1~hg20121209r115438/parser/htmlparser/tests/reftest/r
  == bug566280-1.html bug566280-1-ref.html
  == bug577418-1.html bug577418-1-ref.html
  == bug582788-1.html bug582788-1-ref.html
-Index: firefox-trunk-20.0~a1~hg20121209r115438/editor/reftests/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/text/reftest.list
 ===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/editor/reftests/reftest.list	2012-12-10 02:07:18.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/editor/reftests/reftest.list	2012-12-10 20:23:30.620704877 +0000
-@@ -64,7 +64,7 @@
- needs-focus == caret_after_reframe.html caret_after_reframe-ref.html
- == nobogusnode-1.html nobogusnode-ref.html
- == nobogusnode-2.html nobogusnode-ref.html
--== spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
-+fails == spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
- fails-if(Android) != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html
- == spellcheck-slash-valid.html spellcheck-slash-valid-ref.html
- == spellcheck-period-valid.html spellcheck-period-valid-ref.html
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/text/reftest.list
-===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/text/reftest.list	2012-12-10 02:10:00.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/text/reftest.list	2012-12-10 20:23:30.620704877 +0000
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/text/reftest.list	2013-01-14 10:01:00.110186494 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/text/reftest.list	2013-01-14 10:01:00.106186494 +0000
 @@ -106,7 +106,7 @@
  == wordbreak-1.html wordbreak-1-ref.html
  == wordbreak-2.html wordbreak-2-ref.html
@@ -136,7 +72,7 @@ Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/text/reftest.list
  == wordbreak-4b.html wordbreak-4b-ref.html
  == wordbreak-5.html wordbreak-5-ref.html
  == wordbreak-6.html wordbreak-6-ref.html
-@@ -195,40 +195,40 @@
+@@ -196,40 +196,40 @@
  == auto-hyphenation-8.html auto-hyphenation-4-ref.html
  == auto-hyphenation-9.html auto-hyphenation-4-ref.html
  == auto-hyphenation-10.html auto-hyphenation-4-ref.html
@@ -214,10 +150,10 @@ Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/text/reftest.list
 +fails != auto-hyphenation-sv-1.html auto-hyphenation-sv-1-notref.html # verify swedish != english
 +fails == auto-hyphenation-tr-1.html auto-hyphenation-tr-1-ref.html
 +fails == auto-hyphenation-uk-1.html auto-hyphenation-uk-1-ref.html
-Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/flexbox/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/flexbox/reftest.list
 ===================================================================
---- firefox-trunk-20.0~a1~hg20121209r115438.orig/layout/reftests/flexbox/reftest.list	2012-12-10 02:09:39.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/flexbox/reftest.list	2012-12-10 20:23:57.636704397 +0000
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/flexbox/reftest.list	2013-01-14 10:01:00.110186494 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/flexbox/reftest.list	2013-01-14 10:01:00.106186494 +0000
 @@ -10,7 +10,7 @@
  fails == flexbox-align-self-baseline-horiz-2.xhtml  flexbox-align-self-baseline-horiz-2-ref.xhtml # bug 793456, and possibly others
  # This one fails on windows R (but not Ru, strangely). On Windows R, the
@@ -227,3 +163,67 @@ Index: firefox-trunk-20.0~a1~hg20121209r115438/layout/reftests/flexbox/reftest.l
  == flexbox-align-self-baseline-horiz-4.xhtml flexbox-align-self-baseline-horiz-4-ref.xhtml
  
  == flexbox-align-self-horiz-1-block.xhtml  flexbox-align-self-horiz-1-ref.xhtml
+Index: firefox-trunk-21.0~a1~hg20130113r118722/editor/reftests/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/editor/reftests/reftest.list	2013-01-14 02:07:55.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/editor/reftests/reftest.list	2013-01-14 10:08:21.270178655 +0000
+@@ -64,7 +64,7 @@
+ needs-focus == caret_after_reframe.html caret_after_reframe-ref.html
+ == nobogusnode-1.html nobogusnode-ref.html
+ == nobogusnode-2.html nobogusnode-ref.html
+-== spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
++fails == spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
+ skip-if(B2G) fails-if(Android) != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html
+ == spellcheck-slash-valid.html spellcheck-slash-valid-ref.html
+ == spellcheck-period-valid.html spellcheck-period-valid-ref.html
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/font-face/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/font-face/reftest.list	2013-01-14 02:10:40.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/font-face/reftest.list	2013-01-14 10:05:14.690181971 +0000
+@@ -27,8 +27,8 @@
+ # assumes AAT fonts are only supported on MacOS
+ skip-if(B2G) random-if(cocoaWidget) HTTP(..) == src-list-format-7.html src-list-format-2-ref.html
+ skip-if(B2G) random-if(!cocoaWidget) HTTP(..) == src-list-format-7.html src-list-format-3-ref.html
+-fails-if(Android||B2G) == src-list-local-full.html src-list-local-full-ref.html # bug 773482
+-fails-if(Android||B2G) == src-list-local-full-quotes.html src-list-local-full-ref.html # bug 773482
++fails == src-list-local-full.html src-list-local-full-ref.html # bug 773482
++fails == src-list-local-full-quotes.html src-list-local-full-ref.html # bug 773482
+ skip-if(B2G) HTTP(..) == src-list-local-fallback.html src-list-local-fallback-ref.html
+ 
+ # data url tests (these don't need the HTTP server)
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/forms/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/forms/reftest.list	2013-01-14 02:10:45.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/forms/reftest.list	2013-01-14 10:06:09.526180996 +0000
+@@ -25,7 +25,7 @@
+ skip-if(B2G) fails-if(Android) == textbox-setsize.xul textbox-setsize-ref.xul
+ skip-if(B2G) fails-if(Android) == textarea-resize.html textarea-resize-ref.html
+ # an offset seems to apply to the native resizer on windows so skip this test for now
+-skip-if(B2G) fails-if(Android) skip-if(winWidget) == textarea-resize-background.html textarea-resize-background-ref.html
++fails == textarea-resize-background.html textarea-resize-background-ref.html
+ skip-if(B2G) fails-if(Android) != textarea-ltr.html textarea-rtl.html
+ skip-if(B2G) fails-if(Android) != textarea-ltr-scrollbar.html textarea-rtl-scrollbar.html
+ skip-if(B2G) fails-if(Android) != textarea-in-ltr-doc-scrollbar.html textarea-in-rtl-doc-scrollbar.html
+Index: firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/text-overflow/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/layout/reftests/text-overflow/reftest.list	2013-01-14 02:11:05.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/layout/reftests/text-overflow/reftest.list	2013-01-14 10:03:39.750183658 +0000
+@@ -7,7 +7,7 @@
+ fuzzy-if(OSX==10.8,1,1) HTTP(..) == anonymous-block.html anonymous-block-ref.html
+ skip-if(B2G) HTTP(..) == false-marker-overlap.html false-marker-overlap-ref.html
+ HTTP(..) == visibility-hidden.html visibility-hidden-ref.html
+-skip-if(B2G) HTTP(..) == block-padding.html block-padding-ref.html
++fails HTTP(..) == block-padding.html block-padding-ref.html
+ HTTP(..) == quirks-decorations.html quirks-decorations-ref.html
+ HTTP(..) == quirks-line-height.html quirks-line-height-ref.html
+ HTTP(..) == standards-decorations.html standards-decorations-ref.html
+@@ -18,7 +18,7 @@
+ skip-if(Android||B2G) == clipped-elements.html clipped-elements-ref.html
+ HTTP(..) == theme-overflow.html theme-overflow-ref.html
+ skip-if(B2G) HTTP(..) == table-cell.html table-cell-ref.html
+-HTTP(..) == two-value-syntax.html two-value-syntax-ref.html
++fails HTTP(..) == two-value-syntax.html two-value-syntax-ref.html
+ skip-if(B2G) HTTP(..) == single-value.html single-value-ref.html 
+-skip-if(B2G) HTTP(..) == atomic-under-marker.html atomic-under-marker-ref.html
++fails HTTP(..) == atomic-under-marker.html atomic-under-marker-ref.html
+ fuzzy(1,702) skip-if(Android||B2G) HTTP(..) == xulscroll.html xulscroll-ref.html
