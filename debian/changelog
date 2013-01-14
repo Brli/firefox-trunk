@@ -31,6 +31,7 @@ firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches
     - update d/p/test-overrides/xpcshell-disable-geolocation-provider-test.patch
     - update debian/patches/mochitest-allow-test-manifest-for-chrome.patch
+    - update debian/patches/xpcshell-allow-omit-tests-on-real-install.patch
   * Make sure that SHELL is set in the build environment
     - update debian/build/mozbuild.mk
   * Don't set the MOZCONFIG environment variable, but just copy our config

@@ -1,10 +1,10 @@
-Index: firefox-trunk-20.0~a1~hg20121130r114518/testing/xpcshell/runxpcshelltests.py
+Index: firefox-trunk-21.0~a1~hg20130113r118722/testing/xpcshell/runxpcshelltests.py
 ===================================================================
---- firefox-trunk-20.0~a1~hg20121130r114518.orig/testing/xpcshell/runxpcshelltests.py	2012-11-30 02:13:44.000000000 +0000
-+++ firefox-trunk-20.0~a1~hg20121130r114518/testing/xpcshell/runxpcshelltests.py	2012-11-30 13:28:51.621511457 +0000
-@@ -730,6 +730,10 @@
-       self.mozInfo = parse_json(open(mozInfoFile).read())
-     mozinfo.update(self.mozInfo)
+--- firefox-trunk-21.0~a1~hg20130113r118722.orig/testing/xpcshell/runxpcshelltests.py	2013-01-14 09:36:47.382212307 +0000
++++ firefox-trunk-21.0~a1~hg20130113r118722/testing/xpcshell/runxpcshelltests.py	2013-01-14 09:36:47.374212308 +0000
+@@ -745,6 +745,10 @@
+     if "appname" in self.mozInfo:
+       appDirKey = self.mozInfo["appname"] + "-appdir"
  
 +    # Allow us to skip tests that require write access to the application directory
 +    if not os.access(self.appPath if self.appPath != None else self.xrePath, os.W_OK):
