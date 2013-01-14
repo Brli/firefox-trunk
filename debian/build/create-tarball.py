@@ -166,6 +166,7 @@ class TarballCreator(OptionParser):
     self.add_option('-t', '--tag', dest='tag', help='Release tag to base the checkout on')
     self.add_option('-n', '--name', dest='name', help='The package name')
     self.add_option('-a', '--application', dest='application', help='The application to build')
+    self.add_option('-m', '--mozdir', dest='mozdir', help='The location of the Mozilla source', default='')
 
   def run(self):
     (options, args) = self.parse_args()
@@ -210,12 +211,13 @@ class TarballCreator(OptionParser):
     application = options.application
     l10nbase = options.l10nbase
     name = options.name
+    mozdir = options.mozdir
 
     with ScopedTmpdir() as tmpdir:
       with ScopedWorkingDirectory(os.path.join(tmpdir, name)) as saved_wd:
 
         checkout_source(repo, cache, '', tag=tag)
-        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, 'python/compare-locales/', tag=tag)
+        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(mozdir, 'python/compare-locales'), tag=tag)
 
         need_moz = get_setting(settings, 'need-post-checkout', False)
         if need_moz:

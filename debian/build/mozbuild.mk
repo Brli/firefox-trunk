@@ -38,20 +38,10 @@ MOZ_PKG_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ 
 MOZ_APP_NAME		?= $(MOZ_PKG_NAME)
 
 # Define other variables used throughout the build
-# The value of "Name" to use in application.ini, which the profile location is based on.
-# Derived from the desired MOZ_APP_NAME, but can be overridden
+MOZ_DEFAULT_APP_NAME	?= $(MOZ_PKG_BASENAME)
 MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
-# The default value of "Name" in the application.ini, derived from the upstream build system
-# It is used for the profile location. This should be set manually if not provided
-MOZ_DEFAULT_APP_BASENAME ?= $(shell . ./$(DEB_SRCDIR)/$(MOZ_APP)/confvars.sh; echo $$MOZ_APP_BASENAME)
-# Equal to upstreams default MOZ_APP_NAME. If not a lower case version of the "Name"
-# in application.ini, then this should be manually overridden
-MOZ_DEFAULT_APP_NAME	?= $(MOZ_DEFAULT_APP_BASENAME_L)
-# Location for searchplugins
+MOZ_DEFAULT_APP_BASENAME ?= $(shell echo $(MOZ_DEFAULT_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
 MOZ_SEARCHPLUGIN_DIR	?= $(MOZ_LIBDIR)/distribution/searchplugins
-
-MOZ_APP_BASENAME_L	:= $(shell echo $(MOZ_APP_BASENAME) | tr A-Z a-z)
-MOZ_DEFAULT_APP_BASENAME_L := $(shell echo $(MOZ_DEFAULT_APP_BASENAME) | tr A-Z a-z)
 
 ifeq (,$(MOZ_APP))
 $(error "Need to set MOZ_APP")
@@ -61,6 +51,9 @@ $(error "Need to set MOZ_APP_NAME")
 endif
 ifeq (,$(MOZ_PKG_NAME))
 $(error "Need to set MOZ_PKG_NAME")
+endif
+ifeq (,$(MOZ_PKG_BASENAME))
+$(error "Need to set MOZ_PKG_BASENAME")
 endif
 
 MOZ_PKG_NAMES = $(shell sed -n 's/Package\: \(.*\)/\1/ p' < debian/control)
@@ -91,8 +84,8 @@ PROFILE_BASE =
 else
 PROFILE_BASE = $(shell echo $(MOZ_VENDOR) | tr A-Z a-z)/
 endif
-MOZ_PROFILEDIR		:= .$(PROFILE_BASE)$(MOZ_APP_BASENAME_L)
-MOZ_DEFAULT_PROFILEDIR	:= .$(PROFILE_BASE)$(MOZ_DEFAULT_APP_BASENAME_L)
+MOZ_PROFILEDIR		:= .$(PROFILE_BASE)$(shell echo $(MOZ_APP_BASENAME) | tr A-Z a-z)
+MOZ_DEFAULT_PROFILEDIR	:= .$(PROFILE_BASE)$(shell echo $(MOZ_DEFAULT_APP_BASENAME) | tr A-Z a-z)
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
@@ -427,17 +420,14 @@ mozconfig: debian/config/mozconfig
 create-virtualenv: $(VIRTENV_PYTHON)
 $(VIRTENV_PYTHON):
 	mkdir -p debian/_virtualenv
-	$(MOZ_PYTHON) $(CURDIR)/python/virtualenv/virtualenv.py --system-site-packages $(CURDIR)/debian/_virtualenv
-	cd $(CURDIR)/python/compare-locales; $(VIRTENV_PYTHON) $(CURDIR)/python/compare-locales/setup.py install
+	$(MOZ_PYTHON) $(CURDIR)/$(MOZ_MOZDIR)/python/virtualenv/virtualenv.py --system-site-packages $(CURDIR)/debian/_virtualenv
+	cd $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales; $(VIRTENV_PYTHON) $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales/setup.py install
 
 post-patches:: create-virtualenv
 
 pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) mozconfig
 	mkdir -p $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu
 	(cd debian/globalmenu && tar -cvhf - .) | (cd $(DEB_SRCDIR)/$(MOZ_MOZDIR)/extensions/globalmenu && tar -xf -)
-ifeq (,$(MOZ_DEFAULT_APP_BASENAME))
-	$(error "Need to set MOZ_DEFAULT_APP_BASENAME")
-endif
 ifeq (,$(MOZ_BRANDING_OPTION))
 	$(error "Need to set MOZ_BRANDING_OPTION")
 endif
@@ -498,6 +488,9 @@ get-orig-source: ARGS += -t $(DEBIAN_TAG)
 endif
 ifdef LOCAL_BRANCH
 get-orig-source: ARGS += -c $(LOCAL_BRANCH)
+endif
+ifdef MOZ_MOZDIR
+get-orig-source: ARGS += -m $(MOZ_MOZDIR)
 endif
 get-orig-source:
 	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/create-tarball.py $(ARGS)
