@@ -1,4 +1,4 @@
-firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
 
   * Update globalmenu-extension to 3.8 prerelease r511
   * Drop support for building on older than precise
@@ -72,6 +72,8 @@ firefox-trunk (21.0~a1~hg20130109r118258-0ubuntu1) UNRELEASED; urgency=low
     - add debian/searchplugins/csb/list.txt
     - add debian/searchplugins/mn/list.txt
     - update d/t/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
+  * Drop revert-restartless-language-packs.patch now that bmo: #818468 has
+    landed
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
