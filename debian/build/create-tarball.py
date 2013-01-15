@@ -12,6 +12,7 @@ import urllib
 import xml.dom.minidom
 import json
 import tempfile
+import select
 
 class DependencyNotFound(Exception):
   def __init__(self, depend):
@@ -21,23 +22,6 @@ class DependencyNotFound(Exception):
 
   def __str__(self):
     return 'Dependency not found: %s. Please install package %s' % (self.path, self.package)
-
-class MissingLocaleError(Exception):
-  def __init__(self, locale):
-    super(MissingLocaleError, self).__init__(locale)
-    self.locale = locale
-
-  def __str__(self):
-    return "Locale %s is missing from the source tarball" % self.locale
-
-class RevisionNotFound(Exception):
-  def __init__(self, revision, repo):
-    super(RevisionNotFound, self).__init__(revision, repo)
-    self.revision = revision
-    self.repo = repo
-
-  def __str__(self):
-    return "Revision %s not found in %s" % (self.revision, self.repo)
 
 class InvalidTagError(Exception):
   def __init__(self, tag):
@@ -49,24 +33,20 @@ class InvalidTagError(Exception):
 
 def do_exec(args, quiet=True, ignore_error=False, cwd=None):
   if quiet == False:
-    arg_string = ''
-    for arg in args:
-      sep = ' ' if arg_string != '' else ''
-      arg_string += '%s%s' % (sep, arg)
-    if cwd != None:
-      arg_string += ' in %s' % cwd
-    print 'Running %s' % arg_string
+    print 'Running %s%s' % (' '.join([x for x in args]), '' if cwd == None else (' in %s' % cwd))
 
-  p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
   out = ''
+  p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
   while p.poll() == None:
-    for line in p.stdout:
-      out += line
+    (r, w, e) = select.select([p.stdout], [], [], 5)
+    for f in r:
+      d = f.read()
+      out += d
       if quiet == False:
-        print line.strip()
+        print d
 
   if p.returncode != 0 and ignore_error == False:
-    raise subprocess.CalledProcessError(p.returncode, args[0])
+    raise Exception("Command '%s' returned exit-status %d:\n%s" % (args[0], p.returncode, p.stderr.read()))
 
   return (p.returncode, out)
 
@@ -76,15 +56,15 @@ def ensure_cache(repo, cache):
     (ret, out) = do_exec(['hg', 'summary'], cwd=dest, quiet=True, ignore_error=True)
     if ret == 0:
       print 'Cache location %s exists, using it' % dest
-      do_exec(['hg', 'pull', repo], cwd=dest)
-      do_exec(['hg', 'update'], cwd=dest)
+      do_exec(['hg', 'pull', repo], quiet=False, cwd=dest)
+      do_exec(['hg', 'update'], quiet=False, cwd=dest)
       return
 
   if not os.path.isdir(cache):
     os.makedirs(cache)
 
   print 'Creating cache location %s' % dest
-  do_exec(['hg', 'clone', repo, dest])
+  do_exec(['hg', 'clone', repo, dest], quiet=False)
 
 def do_checkout(source, dest, tag=None):
   dest = os.path.abspath(dest)
@@ -92,17 +72,17 @@ def do_checkout(source, dest, tag=None):
   if dest_parent != '' and not os.path.isdir(dest_parent):
     os.makedirs(dest_parent)
 
-  do_exec(['hg', 'clone', source, dest])
+  do_exec(['hg', 'clone', source, dest], quiet=False)
 
   try:
     args = ['hg', 'update']
     if tag != None:
       args.append('-r')
       args.append(tag)
-    do_exec(args, cwd=dest)
+    do_exec(args, quiet=False, cwd=dest)
   except:
     if tag != None:
-      raise RevisionNotFound(tag, source)
+      raise Exception("Revision %s not found in %s" % (tag, source))
     raise
 
 def checkout_source(repo, cache, dest, tag=None):
@@ -233,7 +213,7 @@ class TarballCreator(OptionParser):
           if tag != None:
             args.append('--comm-rev=%s' % tag)
             args.append('--mozilla-rev=%s' % tag)
-          do_exec(args)
+          do_exec(args, quiet=False)
           print '\n'
 
         checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(mozdir, 'python/compare-locales'), tag=tag)
@@ -325,7 +305,7 @@ class TarballCreator(OptionParser):
                   continue
 
               if not got_locales.has_key(locale):
-                raise MissingLocaleError(locale)
+                raise Exception("Locale %s is missing from the source tarball" % locale)
 
               print '%s - Yes' % locale
 
@@ -404,7 +384,7 @@ class TarballCreator(OptionParser):
             for include in settings['includes']:
               args.append(os.path.join(topsrcdir, include))
 
-            do_exec(args)
+            do_exec(args, quiet=False)
 
 def main():
   creator = TarballCreator()
