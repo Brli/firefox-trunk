@@ -217,7 +217,6 @@ class TarballCreator(OptionParser):
       with ScopedWorkingDirectory(os.path.join(tmpdir, name)) as saved_wd:
 
         checkout_source(repo, cache, '', tag=tag)
-        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(mozdir, 'python/compare-locales'), tag=tag)
 
         need_moz = get_setting(settings, 'need-post-checkout', False)
         if need_moz:
@@ -236,6 +235,8 @@ class TarballCreator(OptionParser):
             args.append('--mozilla-rev=%s' % tag)
           do_exec(args)
           print '\n'
+
+        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(mozdir, 'python/compare-locales'), tag=tag)
 
         # XXX: In the future we may have an additional l10n source from Launchpad
         if l10nbase != None:
