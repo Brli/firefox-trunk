@@ -56,6 +56,7 @@ EXTRA_DSO_LDOPTS += $(XPCOM_GLUE_LDOPTS) \
 		    $(NSPR_LIBS) \
 		    $(DBUSMENU_LIBS) \
 		    $(MOZ_GTK2_LIBS) \
+		    $(MOZ_PANGO_LIBS) \
 		    $(NULL)
 
 ifdef MOZ_DEBUG

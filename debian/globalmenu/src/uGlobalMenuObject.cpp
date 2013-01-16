@@ -48,7 +48,6 @@
 #endif
 #include <nsNetUtil.h>
 #include <nsIImageToPixbuf.h>
-#include <nsIDOMDOMTokenList.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMElement.h>
@@ -66,12 +65,13 @@
 
 #include "uGlobalMenuObject.h"
 #include "uGlobalMenuService.h"
+#include "uGlobalMenuUtils.h"
 #include "uGlobalMenuBar.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
 
-#define MAX_LABEL_NCHARS 40
+#define MAX_WIDTH 350000
 
 typedef nsresult (nsIDOMRect::*GetRectSideMethod)(nsIDOMCSSPrimitiveValue**);
 
@@ -515,6 +515,16 @@ uGlobalMenuObject::ClearIcon()
                                     DBUSMENU_MENUITEM_PROP_ICON_DATA);
 }
 
+static bool
+IsHTMLWhitespace(const PRUnichar c)
+{
+  return c == PRUnichar(0x0009) ||
+         c == PRUnichar(0x000A) ||
+         c == PRUnichar(0x000C) ||
+         c == PRUnichar(0x000D) ||
+         c == PRUnichar(0x0020);
+}
+
 bool
 uGlobalMenuObject::ShouldShowIcon()
 {
@@ -543,21 +553,31 @@ uGlobalMenuObject::ShouldShowIcon()
     return true;
   }
 
-  nsCOMPtr<nsIDOMElement> element = do_QueryInterface(mContent);
-  if (!element) {
-    return false;
+  nsAutoString value;
+  mContent->GetAttr(kNameSpaceID_None, uWidgetAtoms::_class, value);
+
+  const nsAutoString::char_type *iter = value.BeginReading();
+  const nsAutoString::char_type *end = value.EndReading();
+
+  while (iter != end) {
+    while (iter != end && IsHTMLWhitespace(*iter)) {
+      ++iter;
+    }
+
+    const nsAutoString::char_type *start = iter;
+
+    do {
+      ++iter;
+    } while (iter != end && !IsHTMLWhitespace(*iter));
+
+    const nsDependentSubstring& sub = Substring(start, iter);
+
+    if (sub.Equals(NS_LITERAL_STRING("menuitem-with-favicon"))) {
+      return true;
+    }
   }
 
-  nsCOMPtr<nsIDOMDOMTokenList> classes;
-  element->GetClassList(getter_AddRefs(classes));
-  if (!classes) {
-    return false;
-  }
-
-  bool show;
-  classes->Contains(NS_LITERAL_STRING("menuitem-with-favicon"), &show);
-
-  return show;
+  return false;
 }
 
 void
@@ -588,55 +608,91 @@ uGlobalMenuObject::SyncLabelFromContent()
     keyLower = *tmp;
   }
 
-  PRUnichar *cur = label.BeginWriting();
-  PRUnichar *end = label.EndWriting();
+  const nsAutoString::char_type *iter = label.BeginReading();
+  const nsAutoString::char_type *end = label.EndReading();
   int length = label.Length();
   int pos = 0;
   bool foundAccessKey = false;
 
-  while (cur < end) {
-    if (*cur != PRUnichar('_')) {
-      if ((*cur != keyLower && *cur != keyUpper) || foundAccessKey) {
-        cur++;
-        pos++;
+  while (iter != end) {
+    if (*iter != PRUnichar('_')) {
+      if ((*iter != keyLower && *iter != keyUpper) || foundAccessKey) {
+        ++iter;
+        ++pos;
         continue;
       }
       foundAccessKey = true;
     }
 
-    length += 1;
-    label.SetLength(length);
+    label.SetLength(++length);
     int newLength = label.Length();
-    if (length != newLength)
-      break; 
-     
-    cur = label.BeginWriting() + pos;
-    end = label.EndWriting();
-    memmove(cur + 1, cur, (length - 1 - pos) * sizeof(PRUnichar));
-//                   \^/
-    *cur = PRUnichar('_'); // Yeah!
-//                    v
-
-    cur += 2;
-    pos += 2;
-  }
-
-  // Ellipsize long labels. I've picked an arbitrary length here
-  if (length > MAX_LABEL_NCHARS) {
-    cur = label.BeginWriting();
-    for (PRUint32 i = 1; i < 4; i++) {
-      *(cur + (MAX_LABEL_NCHARS - i)) = PRUnichar('.');
+    if (length != newLength) {
+      break;
     }
-    *(cur + MAX_LABEL_NCHARS) = 0;
-    label.SetLength(MAX_LABEL_NCHARS);
+
+    iter = label.BeginReading() + pos;
+    end = label.EndReading();
+    nsAutoString::char_type *cur = label.BeginWriting() + pos;
+
+    memmove(cur + 1, cur, (length - 1 - pos) * sizeof(PRUnichar));
+    *cur = PRUnichar('_');
+
+    iter += 2;
+    pos += 2;
   }
 
   nsAutoCString clabel;
   CopyUTF16toUTF8(label, clabel);
-  LOGTM("Setting label to \"%s\"", clabel.get());
+
+  nsAutoCString& text = clabel;
+
+  // This *COMPLETELY SUCKS*
+  // It should be done at the point where the menu is drawn (hello Unity),
+  // but unfortunately it doesn't do that and will happily fill your entire
+  // screen width with a menu if you have a bookmark with a really long title.
+  // This leaves us with no other option but to ellipsize here, with no real
+  // knowledge of Unity's render path
+  // BAH! @*&!$
+  if (uGlobalMenuUtils::GetTextWidth(clabel) > MAX_WIDTH) {
+    nsAutoCString truncated;
+    int target = MAX_WIDTH - uGlobalMenuUtils::GetEllipsisWidth();
+    int length = clabel.Length();
+
+    static nsIContent::AttrValuesArray strings[] =
+      { &uWidgetAtoms::left, &uWidgetAtoms::start, &uWidgetAtoms::center,
+        &uWidgetAtoms::right, &uWidgetAtoms::end, nullptr };
+
+    int32_t type = mContent->FindAttrValueIn(kNameSpaceID_None,
+                                             uWidgetAtoms::crop,
+                                             strings, eCaseMatters);
+    switch (type) {
+      case 0:
+      case 1:
+        // FIXME
+      case 2:
+        // FIXME
+      case 3:
+      case 4:
+      default:
+        for (uint32_t i = 0; i < length; i++) {
+          truncated.Append(clabel.CharAt(i));
+
+          if (uGlobalMenuUtils::GetTextWidth(truncated) > target) {
+            break;
+          }
+        }
+
+        truncated.Append(uGlobalMenuUtils::GetEllipsis());
+        break;
+    };
+
+    text = truncated;
+  }
+
+  LOGTM("Setting label to \"%s\"", text.get());
   dbusmenu_menuitem_property_set(mDbusMenuItem,
                                  DBUSMENU_MENUITEM_PROP_LABEL,
-                                 clabel.get());
+                                 text.get());
 }
 
 inline static void

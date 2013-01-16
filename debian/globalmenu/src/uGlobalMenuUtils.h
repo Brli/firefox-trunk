@@ -39,6 +39,7 @@
 #ifndef _U_GLOBALMENUFACTORY_H
 #define _U_GLOBALMENUFACTORY_H
 
+#include <glib-object.h>
 #include <gtk/gtk.h>
 
 class uGlobalMenuObject;
@@ -59,12 +60,29 @@ public:
 
   static GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
 
+  static int GetTextWidth(const nsACString& aText);
+
+  static const nsDependentCString GetEllipsis();
+
+  static int GetEllipsisWidth();
+
   template <class T>
   static inline void*
   FuncToVoidPtr(T a)
   {
     return reinterpret_cast<void *>(reinterpret_cast<unsigned long>(reinterpret_cast<void (*)()>(a)));
   }
+
+  void DestroyPangoLayout()
+  {
+    if (sPangoLayout) {
+      g_object_unref(sPangoLayout);
+      sPangoLayout = nullptr;
+    }
+  }
+
+private:
+  static PangoLayout *sPangoLayout;
 };
 
 #endif

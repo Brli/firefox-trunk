@@ -858,9 +858,9 @@ uGlobalMenuItem::ObserveAttributeChanged(nsIContent *aContent,
     if (aAttribute == uWidgetAtoms::command ||
         aAttribute == uWidgetAtoms::key) {
       Refresh(eRefreshFull);
-    } else if (aAttribute == uWidgetAtoms::label) {
-      SyncLabelFromContent();
-    } else if (aAttribute == uWidgetAtoms::accesskey) {
+    } else if (aAttribute == uWidgetAtoms::label ||
+               aAttribute == uWidgetAtoms::accesskey ||
+               aAttribute == uWidgetAtoms::crop) {
       SyncLabelFromContent();
     } else if (aAttribute == uWidgetAtoms::disabled) {
       SyncSensitivityFromContent();

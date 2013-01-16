@@ -1,6 +1,6 @@
 firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.8 prerelease r511
+  * Update globalmenu-extension to 3.8 prerelease r513
   * Drop support for building on older than precise
     - update debian/apport/source_firefox.py.in
     - update debian/build/mozbuild.mk

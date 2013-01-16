@@ -918,7 +918,8 @@ uGlobalMenu::ObserveAttributeChanged(nsIContent *aContent,
     if (aAttribute == uWidgetAtoms::disabled) {
       SyncSensitivityFromContent();
     } else if (aAttribute == uWidgetAtoms::label || 
-               aAttribute == uWidgetAtoms::accesskey) {
+               aAttribute == uWidgetAtoms::accesskey ||
+               aAttribute == uWidgetAtoms::crop) {
       SyncLabelFromContent();
     } else if (aAttribute == uWidgetAtoms::image) {
       SyncIconFromContent();

@@ -39,6 +39,8 @@
 #include <nsIContent.h>
 #include <nsIAtom.h>
 #include <nsIWidget.h>
+#include <nsIPrefLocalizedString.h>
+#include <nsIPrefBranch.h>
 
 #include <gdk/gdk.h>
 
@@ -47,7 +49,11 @@
 #include "uGlobalMenuItem.h"
 #include "uGlobalMenuSeparator.h"
 #include "uGlobalMenuDocListener.h"
+#include "uGlobalMenuService.h"
 #include "uWidgetAtoms.h"
+
+#include <pango/pango.h>
+#include <pango/pangocairo.h>
 
 #include "uDebug.h"
 
@@ -141,4 +147,68 @@ uGlobalMenuUtils::WidgetToGTKWindow(nsIWidget *aWidget)
   }
 
   return gtk_widget_get_toplevel(GTK_WIDGET(user_data));
+}
+
+PangoLayout* uGlobalMenuUtils::sPangoLayout;
+
+int
+uGlobalMenuUtils::GetTextWidth(const nsACString& aText)
+{
+  if (!sPangoLayout) {
+    PangoFontMap *fontmap = pango_cairo_font_map_get_default();
+    PangoContext *ctx = pango_font_map_create_context(fontmap);
+    sPangoLayout = pango_layout_new(ctx);
+    g_object_unref(ctx);
+    g_object_unref(fontmap);
+  }
+
+  pango_layout_set_text(sPangoLayout, PromiseFlatCString(aText).get(), -1);
+
+  int width, dummy;
+  pango_layout_get_size(sPangoLayout, &width, &dummy);
+
+  return width;
+}
+
+const nsDependentCString
+uGlobalMenuUtils::GetEllipsis()
+{
+  static char sBuf[4] = { 0, 0, 0, 0 };
+  if (!sBuf[0]) {
+    nsIPrefBranch *prefs = uGlobalMenuService::GetPrefService();
+
+    nsCOMPtr<nsIPrefLocalizedString> value;
+    prefs->GetComplexValue("intl.ellipsis", NS_GET_IID(nsIPrefLocalizedString),
+                           getter_AddRefs(value));
+    if (value) {
+      nsAutoString data;
+      value->GetData(getter_Copies(data));
+
+      nsAutoCString cdata;
+      CopyUTF16toUTF8(data, cdata);
+
+      const nsAutoCString::char_type *c = cdata.BeginReading();
+
+      strncpy(sBuf, c, 3);
+    } else {
+      sBuf[0] = '.';
+      sBuf[1] = '.';
+      sBuf[2] = '.';
+    }
+
+  }
+
+  return nsDependentCString(sBuf);
+}
+
+int
+uGlobalMenuUtils::GetEllipsisWidth()
+{
+  static int sEllipsisWidth = -1;
+
+  if (sEllipsisWidth == -1) {
+    sEllipsisWidth = GetTextWidth(GetEllipsis());
+  }
+
+  return sEllipsisWidth;
 }

@@ -51,6 +51,7 @@
 #endif
 
 #include <libdbusmenu-glib/server.h>
+#include <pango/pango.h>
 
 #include "uGlobalMenuDocListener.h"
 

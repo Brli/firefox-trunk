@@ -73,4 +73,5 @@ include $(topsrcdir)/config/rules.mk
 
 CXXFLAGS += $(DBUSMENU_CFLAGS) \
 	    $(MOZ_GTK2_CFLAGS) \
+	    $(MOZ_PANGO_CFLAGS) \
 	    $(NULL)
