@@ -73,7 +73,7 @@ public:
     return reinterpret_cast<void *>(reinterpret_cast<unsigned long>(reinterpret_cast<void (*)()>(a)));
   }
 
-  void DestroyPangoLayout()
+  static void DestroyPangoLayout()
   {
     if (sPangoLayout) {
       g_object_unref(sPangoLayout);
