@@ -60,9 +60,9 @@ public:
 
   static GtkWidget* WidgetToGTKWindow(nsIWidget *aWidget);
 
-  static int GetTextWidth(const nsACString& aText);
+  static int GetTextWidth(const nsAString& aText);
 
-  static const nsDependentCString GetEllipsis();
+  static const nsDependentString GetEllipsis();
 
   static int GetEllipsisWidth();
 

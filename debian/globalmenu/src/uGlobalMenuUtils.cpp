@@ -152,7 +152,7 @@ uGlobalMenuUtils::WidgetToGTKWindow(nsIWidget *aWidget)
 PangoLayout* uGlobalMenuUtils::sPangoLayout;
 
 int
-uGlobalMenuUtils::GetTextWidth(const nsACString& aText)
+uGlobalMenuUtils::GetTextWidth(const nsAString& aText)
 {
   if (!sPangoLayout) {
     PangoFontMap *fontmap = pango_cairo_font_map_get_default();
@@ -162,7 +162,7 @@ uGlobalMenuUtils::GetTextWidth(const nsACString& aText)
     g_object_unref(fontmap);
   }
 
-  pango_layout_set_text(sPangoLayout, PromiseFlatCString(aText).get(), -1);
+  pango_layout_set_text(sPangoLayout, NS_ConvertUTF16toUTF8(aText).get(), -1);
 
   int width, dummy;
   pango_layout_get_size(sPangoLayout, &width, &dummy);
@@ -170,10 +170,10 @@ uGlobalMenuUtils::GetTextWidth(const nsACString& aText)
   return width;
 }
 
-const nsDependentCString
+const nsDependentString
 uGlobalMenuUtils::GetEllipsis()
 {
-  static char sBuf[4] = { 0, 0, 0, 0 };
+  static PRUnichar sBuf[4] = { 0, 0, 0, 0 };
   if (!sBuf[0]) {
     nsIPrefBranch *prefs = uGlobalMenuService::GetPrefService();
 
@@ -184,12 +184,11 @@ uGlobalMenuUtils::GetEllipsis()
       nsAutoString data;
       value->GetData(getter_Copies(data));
 
-      nsAutoCString cdata;
-      CopyUTF16toUTF8(data, cdata);
-
-      const nsAutoCString::char_type *c = cdata.BeginReading();
-
-      strncpy(sBuf, c, 3);
+      const nsAutoString::char_type *c = data.BeginReading();
+      int i = 0;
+      while (i < 3) {
+        sBuf[i++] = *(c++);
+      }
     } else {
       sBuf[0] = '.';
       sBuf[1] = '.';
@@ -198,7 +197,7 @@ uGlobalMenuUtils::GetEllipsis()
 
   }
 
-  return nsDependentCString(sBuf);
+  return nsDependentString(sBuf);
 }
 
 int

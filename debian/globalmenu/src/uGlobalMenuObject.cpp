@@ -641,10 +641,7 @@ uGlobalMenuObject::SyncLabelFromContent()
     pos += 2;
   }
 
-  nsAutoCString clabel;
-  CopyUTF16toUTF8(label, clabel);
-
-  nsAutoCString& text = clabel;
+  nsString& text = label;
 
   // This *COMPLETELY SUCKS*
   // It should be done at the point where the menu is drawn (hello Unity),
@@ -653,10 +650,10 @@ uGlobalMenuObject::SyncLabelFromContent()
   // This leaves us with no other option but to ellipsize here, with no real
   // knowledge of Unity's render path
   // BAH! @*&!$
-  if (uGlobalMenuUtils::GetTextWidth(clabel) > MAX_WIDTH) {
-    nsAutoCString truncated;
+  if (uGlobalMenuUtils::GetTextWidth(label) > MAX_WIDTH) {
+    nsAutoString truncated;
     int target = MAX_WIDTH - uGlobalMenuUtils::GetEllipsisWidth();
-    int length = clabel.Length();
+    int length = label.Length();
 
     static nsIContent::AttrValuesArray strings[] =
       { &uWidgetAtoms::left, &uWidgetAtoms::start, &uWidgetAtoms::center,
@@ -675,7 +672,7 @@ uGlobalMenuObject::SyncLabelFromContent()
       case 4:
       default:
         for (uint32_t i = 0; i < length; i++) {
-          truncated.Append(clabel.CharAt(i));
+          truncated.Append(label.CharAt(i));
 
           if (uGlobalMenuUtils::GetTextWidth(truncated) > target) {
             break;
@@ -689,10 +686,10 @@ uGlobalMenuObject::SyncLabelFromContent()
     text = truncated;
   }
 
-  LOGTM("Setting label to \"%s\"", text.get());
+  LOGTM("Setting label to \"%s\"", NS_ConvertUTF16toUTF8(text).get());
   dbusmenu_menuitem_property_set(mDbusMenuItem,
                                  DBUSMENU_MENUITEM_PROP_LABEL,
-                                 text.get());
+                                 NS_ConvertUTF16toUTF8(text).get());
 }
 
 inline static void
