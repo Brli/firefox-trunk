@@ -48,6 +48,7 @@ class uWidgetAtoms {
 public:
 
   static nsresult RegisterAtoms();
+  static void UnregisterAtoms();
 
 #define WIDGET_ATOM(_name) static nsIAtom* _name;
 #define WIDGET_ATOM2(_name, _value) static nsIAtom* _name;

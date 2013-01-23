@@ -41,11 +41,9 @@
 #include "mozilla/ModuleUtils.h"
 #include "uGlobalMenuService.h"
 #include "uGlobalMenuLoader.h"
-#include "uGlobalMenuDocListener.h"
-#include "uGlobalMenuUtils.h"
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(uGlobalMenuService,
-                                         uGlobalMenuService::GetInstanceForService)
+                                         uGlobalMenuService::GetInstance)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(uGlobalMenuLoader, Init)
 
 NS_DEFINE_NAMED_CID(U_GLOBALMENUSERVICE_CID);
@@ -66,9 +64,7 @@ static const mozilla::Module::ContractIDEntry kGlobalMenuContracts[] = {
 static void
 UnloadMenuModule()
 {
-    uGlobalMenuUtils::DestroyPangoLayout();
     uGlobalMenuService::Shutdown();
-    uGlobalMenuDocListener::Shutdown();
 }
 
 static const mozilla::Module kGlobalMenuModule = {

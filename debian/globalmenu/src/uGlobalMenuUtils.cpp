@@ -159,7 +159,6 @@ uGlobalMenuUtils::GetTextWidth(const nsAString& aText)
     PangoContext *ctx = pango_font_map_create_context(fontmap);
     sPangoLayout = pango_layout_new(ctx);
     g_object_unref(ctx);
-    g_object_unref(fontmap);
   }
 
   pango_layout_set_text(sPangoLayout, NS_ConvertUTF16toUTF8(aText).get(), -1);
@@ -184,9 +183,10 @@ uGlobalMenuUtils::GetEllipsis()
       nsAutoString data;
       value->GetData(getter_Copies(data));
 
+      uint32_t l = data.Length();
       const nsAutoString::char_type *c = data.BeginReading();
       int i = 0;
-      while (i < 3) {
+      while (i < 3 && i < l) {
         sBuf[i++] = *(c++);
       }
     } else {

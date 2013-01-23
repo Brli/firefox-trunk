@@ -50,7 +50,6 @@
 
 #include "uGlobalMenuBar.h"
 #include "uIGlobalMenuService.h"
-#include "uGlobalMenuUtils.h"
 
 #define U_GLOBALMENUSERVICE_CID \
 { 0xa9e41684, 0xbf71, 0x46e3, { 0x93, 0xbf, 0x3c, 0xda, 0x1e, 0xc6, 0x16, 0x49 } }
@@ -66,13 +65,11 @@ class nsIXBLService;
 class nsIXPConnect;
 class nsIAtomService;
 
-class uGlobalMenuService: public uIGlobalMenuService,
-                          public nsIWindowMediatorListener
+class uGlobalMenuService: public uIGlobalMenuService
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_UIGLOBALMENUSERVICE
-  NS_DECL_NSIWINDOWMEDIATORLISTENER
 
   uGlobalMenuService() : mOnline(false),
                          mDbusProxy(NULL),
@@ -81,7 +78,7 @@ public:
 
   ~uGlobalMenuService();
 
-  static uGlobalMenuService* GetInstanceForService();
+  static uGlobalMenuService* GetInstance();
 
   static void Shutdown();
 
@@ -89,14 +86,28 @@ public:
                                     GCancellable *aCancellable,
                                     PRUint32 aXID, nsACString& aPath);
 
-  static bool InitService();
-
 #define SERVICE(Name, Interface, CID) \
   static Interface* Get##Name();
 #include "uGlobalMenuServiceList.h"
 #undef SERVICE
 
 private:
+  friend class Listener;
+
+  class Listener: public nsIWindowMediatorListener
+  {
+  public:
+    NS_DECL_ISUPPORTS
+    NS_DECL_NSIWINDOWMEDIATORLISTENER
+
+    Listener() { };
+    virtual ~Listener() { };
+
+    nsresult Init();
+    void Destroy();
+  };
+
+  static bool InitService();
   void SetOnline(bool aOnline);
   static void ProxyCreatedCallback(GObject *object,
                                    GAsyncResult *res,
@@ -123,7 +134,7 @@ private:
   GCancellable *mCancellable;
   nsTArray<nsRefPtr<uGlobalMenuBar> > mMenus;
   nsTArray<nsCOMPtr<uIGlobalMenuServiceObserver> > mListeners;
-  nsCOMPtr<nsIWindowMediator> mWindowMediator;
+  nsRefPtr<Listener> mWMListener;
 };
 
 #endif

@@ -68,6 +68,7 @@
 
 #include "uGlobalMenuService.h"
 #include "uGlobalMenuDocListener.h"
+#include "uGlobalMenuUtils.h"
 #include "uWidgetAtoms.h"
 
 #include "uDebug.h"
@@ -110,9 +111,71 @@ private:
   PRUint32 mID;
 };
 
-NS_IMPL_ISUPPORTS2(uGlobalMenuService, uIGlobalMenuService, nsIWindowMediatorListener)
+NS_IMPL_ISUPPORTS1(uGlobalMenuService::Listener, nsIWindowMediatorListener)
+
+nsresult
+uGlobalMenuService::Listener::Init()
+{
+  nsCOMPtr<nsIWindowMediator> windowMediator =
+    do_GetService("@mozilla.org/appshell/window-mediator;1");
+  NS_ASSERTION(windowMediator, "No window mediator");
+
+  if (!windowMediator) {
+    return NS_ERROR_FAILURE;
+  }
+
+  return windowMediator->AddListener(this);
+}
+
+void
+uGlobalMenuService::Listener::Destroy()
+{
+  nsCOMPtr<nsIWindowMediator> windowMediator =
+    do_GetService("@mozilla.org/appshell/window-mediator;1");
+
+  if (windowMediator) {
+    windowMediator->RemoveListener(this);
+  }
+}
+
+NS_IMETHODIMP
+uGlobalMenuService::Listener::OnWindowTitleChange(nsIXULWindow *window,
+                                                  const PRUnichar *newTitle)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+uGlobalMenuService::Listener::OnOpenWindow(nsIXULWindow *window)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+uGlobalMenuService::Listener::OnCloseWindow(nsIXULWindow *window)
+{
+  nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(window);
+  NS_ASSERTION(baseWindow, "nsIXULWindow failed QI to nsIBaseWindow");
+  if (!baseWindow) {
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  nsCOMPtr<nsIWidget> widget;
+  baseWindow->GetMainWidget(getter_AddRefs(widget));
+  NS_ASSERTION(widget, "Window has no widget");
+  if (!widget) {
+    return NS_ERROR_FAILURE;
+  }
+
+  sService->DestroyMenuForWidget(widget);
+
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS1(uGlobalMenuService, uIGlobalMenuService)
 
 uGlobalMenuService* uGlobalMenuService::sService = nullptr;
+
 #define SERVICE(Name, Interface, CID) \
 Interface* uGlobalMenuService::s##Name = nullptr;
 #include "uGlobalMenuServiceList.h"
@@ -120,7 +183,7 @@ Interface* uGlobalMenuService::s##Name = nullptr;
 bool uGlobalMenuService::sShutdown = false;
 
 /*static*/ uGlobalMenuService*
-uGlobalMenuService::GetInstanceForService()
+uGlobalMenuService::GetInstance()
 {
   if (sService) {
     NS_ADDREF(sService);
@@ -171,19 +234,10 @@ uGlobalMenuService::Shutdown()
   if (!sShutdown) {
     sShutdown = true;
 
-    if (sService) {
-      if (sService->mCancellable) {
-        g_cancellable_cancel(sService->mCancellable);
-      }
-      NS_RELEASE(sService);
-      sService = nullptr;
-    }
+    NS_IF_RELEASE(sService);
 
 #define SERVICE(Name, Interface, CID) \
-    if (s##Name) { \
-      NS_RELEASE(s##Name); \
-      s##Name = nullptr; \
-    }
+    NS_IF_RELEASE(s##Name);
 #include "uGlobalMenuServiceList.h"
 #undef SERVICE
   }
@@ -371,13 +425,12 @@ uGlobalMenuService::Init()
                            ProxyCreatedCallback,
                            NULL);
 
-  mWindowMediator = do_GetService("@mozilla.org/appshell/window-mediator;1");
-  NS_ASSERTION(mWindowMediator, "No window mediator");
-  if (!mWindowMediator) {
-    return NS_ERROR_FAILURE;
+  mWMListener = new Listener();
+  rv = mWMListener->Init();
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to initialize window mediator listener");
+    return rv;
   }
-
-  mWindowMediator->AddListener(this);
 
   // Bootstrapped addons may initialize the stylesheet service before our
   // extension chrome is registered. To workaround this, we manually register
@@ -407,11 +460,12 @@ uGlobalMenuService::Init()
 
 uGlobalMenuService::~uGlobalMenuService()
 {
-  if (mWindowMediator) {
-    mWindowMediator->RemoveListener(this);
+  if (mWMListener) {
+    mWMListener->Destroy();
   }
 
   if (mCancellable) {
+    g_cancellable_cancel(mCancellable);
     g_object_unref(mCancellable);
   }
 
@@ -421,6 +475,10 @@ uGlobalMenuService::~uGlobalMenuService()
                                          NULL);
     g_object_unref(mDbusProxy);
   }
+
+  uGlobalMenuDocListener::Shutdown();
+  uGlobalMenuUtils::DestroyPangoLayout();
+  uWidgetAtoms::UnregisterAtoms();
 }
 
 NS_IMETHODIMP
@@ -510,39 +568,5 @@ uGlobalMenuService::GetOnline(bool *online)
 {
   NS_ENSURE_ARG_POINTER(online);
   *online = mOnline;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-uGlobalMenuService::OnWindowTitleChange(nsIXULWindow *window,
-                                        const PRUnichar *newTitle)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-uGlobalMenuService::OnOpenWindow(nsIXULWindow *window)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-uGlobalMenuService::OnCloseWindow(nsIXULWindow *window)
-{
-  nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(window);
-  NS_ASSERTION(baseWindow, "nsIXULWindow failed QI to nsIBaseWindow");
-  if (!baseWindow) {
-    return NS_ERROR_INVALID_ARG;
-  }
-
-  nsCOMPtr<nsIWidget> widget;
-  baseWindow->GetMainWidget(getter_AddRefs(widget));
-  NS_ASSERTION(widget, "Window has no widget");
-  if (!widget) {
-    return NS_ERROR_FAILURE;
-  }
-
-  DestroyMenuForWidget(widget);
-
   return NS_OK;
 }

@@ -54,6 +54,7 @@
 #include <nsIDOMElement.h>
 
 #include "uIGlobalMenuService.h"
+#include "uGlobalMenuService.h"
 #include "uGlobalMenuLoader.h"
 
 #include "uDebug.h"
@@ -65,6 +66,103 @@
 //      would be doing if this extension were part of Mozilla core. The reason
 //      it is an entirely separate entity is so that the menubar service
 //      implementation is as close as possible to how it might look inside Mozilla
+
+NS_IMPL_ISUPPORTS2(uGlobalMenuLoader::Listener, uIGlobalMenuServiceObserver, nsIWindowMediatorListener)
+
+nsresult
+uGlobalMenuLoader::Listener::Init()
+{
+  nsRefPtr<uGlobalMenuService> service =
+    already_AddRefed<uGlobalMenuService>(uGlobalMenuService::GetInstance());
+  NS_ASSERTION(service, "Failed to get our own menu service!");
+
+  if (!service) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsresult rv = service->RegisterNotification(this);
+  if (NS_FAILED(rv)) {
+    return rv;
+  }
+
+  nsCOMPtr<nsIWindowMediator> wm =
+      do_GetService("@mozilla.org/appshell/window-mediator;1");
+  NS_ASSERTION(wm, "Failed to get window mediator");
+
+  if (!wm) {
+    return NS_ERROR_FAILURE;
+  }
+
+  return wm->AddListener(this);
+}
+
+void
+uGlobalMenuLoader::Listener::Destroy()
+{
+  nsRefPtr<uGlobalMenuService> service =
+    already_AddRefed<uGlobalMenuService>(uGlobalMenuService::GetInstance());
+  if (service) {
+    service->UnregisterNotification(this);
+  }
+
+  nsCOMPtr<nsIWindowMediator> wm =
+      do_GetService("@mozilla.org/appshell/window-mediator;1");
+  if (wm) {
+    wm->RemoveListener(this);
+  }
+}
+
+NS_IMETHODIMP
+uGlobalMenuLoader::Listener::OnMenuServiceOnlineChange(bool aOnline)
+{
+  if (aOnline) {
+    mLoader->RegisterAllMenus();
+  }
+
+  return NS_OK;
+}
+
+/* void onWindowTitleChange (in nsIXULWindow window, in wstring newTitle); */
+NS_IMETHODIMP
+uGlobalMenuLoader::Listener::OnWindowTitleChange(nsIXULWindow *window,
+                                                 const PRUnichar *newTitle)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void onOpenWindow (in nsIXULWindow window); */
+NS_IMETHODIMP
+uGlobalMenuLoader::Listener::OnOpenWindow(nsIXULWindow *window)
+{
+  nsCOMPtr<nsIDocShell> docShell;
+  window->GetDocShell(getter_AddRefs(docShell));
+  if (!docShell) {
+    NS_WARNING("Incoming window doesn't have a docshell");
+    return NS_ERROR_FAILURE;
+  }
+
+  bool res = mLoader->RegisterMenuFromDS(docShell);
+
+  if (!res) {
+    // If we've been called off a window open event from the window mediator,
+    // then the document probably hasn't loaded yet. To fix this, we set up a progress
+    // listener on the docshell, so we can do the actual menu load once the
+    // document has finished loading
+    nsCOMPtr<nsIWebProgress> progress = do_GetInterface(docShell);
+    if (progress) {
+       progress->AddProgressListener(mLoader, nsIWebProgress::NOTIFY_STATE_NETWORK);
+    }
+  }
+
+  return NS_OK;
+}
+
+/* void onCloseWindow (in nsIXULWindow window); */
+NS_IMETHODIMP
+uGlobalMenuLoader::Listener::OnCloseWindow(nsIXULWindow *window)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
 
 bool
 uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
@@ -134,7 +232,9 @@ uGlobalMenuLoader::RegisterMenuFromDS(nsIDocShell *aDocShell)
   }
 
   // XXX: Should we do anything with errors here?
-  rv = mService->CreateGlobalMenuBar(mainWidget, menubarContent);
+  nsRefPtr<uGlobalMenuService> service =
+    already_AddRefed<uGlobalMenuService>(uGlobalMenuService::GetInstance());
+  rv = service->CreateGlobalMenuBar(mainWidget, menubarContent);
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to create menubar");
     return false;
@@ -175,103 +275,43 @@ uGlobalMenuLoader::RegisterAllMenus()
       continue;
     }
 
-    OnOpenWindow(xulWindow);
+    mListener->OnOpenWindow(xulWindow);
   }
 }
 
-NS_IMPL_ISUPPORTS3(uGlobalMenuLoader, uIGlobalMenuServiceObserver, nsIWebProgressListener, nsISupportsWeakReference)
+uGlobalMenuLoader::~uGlobalMenuLoader()
+{
+  if (mListener) {
+    mListener->Destroy();
+  }
+}
+
+NS_IMPL_ISUPPORTS2(uGlobalMenuLoader, nsIWebProgressListener, nsISupportsWeakReference)
 
 nsresult
 uGlobalMenuLoader::Init()
 {
-  mService = do_GetService("@canonical.com/globalmenu-service;1");
-  NS_ASSERTION(mService, "Failed to get our own menu service!");
-  if (!mService) {
-    return NS_ERROR_FAILURE;
+  mListener = new Listener(this);
+  nsresult rv = mListener->Init();
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to initialize listener");
+    return rv;
   }
 
-  mService->RegisterNotification(this);
-
-  nsCOMPtr<nsIWindowMediator> wm =
-      do_GetService("@mozilla.org/appshell/window-mediator;1");
-  NS_ASSERTION(wm, "Failed to get window mediator");
-  if (!wm) {
+  nsRefPtr<uGlobalMenuService> service =
+    already_AddRefed<uGlobalMenuService>(uGlobalMenuService::GetInstance());
+  NS_ASSERTION(service, "Failed to get our own menu service!");
+  if (!service) {
     return NS_ERROR_FAILURE;
   }
-
-  wm->AddListener(this);
 
   bool online;
-  mService->GetOnline(&online);
+  service->GetOnline(&online);
   if (online) {
     RegisterAllMenus();
   }
 
   return NS_OK;
-}
-
-uGlobalMenuLoader::~uGlobalMenuLoader()
-{
-  mService->UnregisterNotification(this);
-
-  nsCOMPtr<nsIWindowMediator> wm =
-      do_GetService("@mozilla.org/appshell/window-mediator;1");
- 
-  if (wm) {
-    wm->RemoveListener(this);
-  }
-}
-
-NS_IMETHODIMP
-uGlobalMenuLoader::OnMenuServiceOnlineChange(bool aOnline)
-{
-  if (aOnline) {
-    RegisterAllMenus();
-  }
-
-  return NS_OK;
-}
-
-/* void onWindowTitleChange (in nsIXULWindow window, in wstring newTitle); */
-NS_IMETHODIMP
-uGlobalMenuLoader::OnWindowTitleChange(nsIXULWindow *window,
-                                       const PRUnichar *newTitle)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* void onOpenWindow (in nsIXULWindow window); */
-NS_IMETHODIMP
-uGlobalMenuLoader::OnOpenWindow(nsIXULWindow *window)
-{
-  nsCOMPtr<nsIDocShell> docShell;
-  window->GetDocShell(getter_AddRefs(docShell));
-  if (!docShell) {
-    NS_WARNING("Incoming window doesn't have a docshell");
-    return NS_ERROR_FAILURE;
-  }
-
-  bool res = RegisterMenuFromDS(docShell);
-
-  if (!res) {
-    // If we've been called off a window open event from the window mediator,
-    // then the document probably hasn't loaded yet. To fix this, we set up a progress
-    // listener on the docshell, so we can do the actual menu load once the
-    // document has finished loading
-    nsCOMPtr<nsIWebProgress> progress = do_GetInterface(docShell);
-    if (progress) {
-       progress->AddProgressListener(this, nsIWebProgress::NOTIFY_STATE_NETWORK);
-    }
-  }
-
-  return NS_OK;
-}
-
-/* void onCloseWindow (in nsIXULWindow window); */
-NS_IMETHODIMP
-uGlobalMenuLoader::OnCloseWindow(nsIXULWindow *window)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP

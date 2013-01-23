@@ -51,24 +51,40 @@ class nsIXULWindow;
 class nsIDocShell;
 class nsIWidget;
 
-class uGlobalMenuLoader: public uIGlobalMenuServiceObserver,
-                         public nsIWindowMediatorListener,
-                         public nsIWebProgressListener,
+class uGlobalMenuLoader: public nsIWebProgressListener,
                          public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_UIGLOBALMENUSERVICEOBSERVER
-  NS_DECL_NSIWINDOWMEDIATORLISTENER
   NS_DECL_NSIWEBPROGRESSLISTENER
 
   uGlobalMenuLoader() { };
-  ~uGlobalMenuLoader();
+  virtual ~uGlobalMenuLoader();
   nsresult Init();
 
 private:
+  friend class Listener;
+
+  class Listener: public uIGlobalMenuServiceObserver,
+                  public nsIWindowMediatorListener
+  {
+  public:
+    NS_DECL_ISUPPORTS
+    NS_DECL_UIGLOBALMENUSERVICEOBSERVER
+    NS_DECL_NSIWINDOWMEDIATORLISTENER
+
+    Listener(uGlobalMenuLoader *aLoader): mLoader(aLoader) { };
+    virtual ~Listener() { };
+
+    nsresult Init();
+    void Destroy();
+
+  private:
+    uGlobalMenuLoader *mLoader;
+  };
+
   void RegisterAllMenus();
   bool RegisterMenuFromDS(nsIDocShell *aDocShell);
 
-  nsCOMPtr<uIGlobalMenuService> mService;
+  nsRefPtr<Listener> mListener;
 };

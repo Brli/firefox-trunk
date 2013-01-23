@@ -90,3 +90,16 @@ uWidgetAtoms::RegisterAtoms()
 
   return NS_OK;
 }
+
+void
+uWidgetAtoms::UnregisterAtoms()
+{
+  nsIAtomService *as = uGlobalMenuService::GetAtomService();
+  if (!as) {
+    return;
+  }
+
+  for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(atoms); i++) {
+    NS_IF_RELEASE(*atoms[i].atom);
+  }
+}

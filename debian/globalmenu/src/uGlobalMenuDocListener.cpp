@@ -238,8 +238,8 @@ uGlobalMenuDocListener::AttributeChanged(nsIContent *aContent,
     return;
   }
 
-  nsIAtom *attribute;
-  as->GetAtom(aAttribute, &attribute);
+  nsCOMPtr<nsIAtom> attribute;
+  as->GetAtom(aAttribute, getter_AddRefs(attribute));
 
   nsTArray<uGlobalMenuObject *> *listeners =
     GetListenersForContent(aContent, false);
