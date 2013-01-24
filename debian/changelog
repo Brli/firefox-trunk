@@ -33,6 +33,7 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/mochitest-allow-test-manifest-for-chrome.patch
     - update debian/patches/xpcshell-allow-omit-tests-on-real-install.patch
     - update d/p/test-overrides/reftest-disable-failing-tests.patch
+    - update debian/patches/dont-include-hyphenation-patterns.patch
   * Make sure that SHELL is set in the build environment
     - update debian/build/mozbuild.mk
   * Don't set the MOZCONFIG environment variable, but just copy our config
