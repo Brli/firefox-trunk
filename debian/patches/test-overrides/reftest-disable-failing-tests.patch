@@ -1,7 +1,7 @@
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/bugs/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/bugs/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/bugs/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/bugs/reftest.list	2013-01-20 18:30:39.371243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/bugs/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/bugs/reftest.list	2013-01-24 19:43:22.855719933 +0000
 @@ -1314,8 +1314,8 @@
  != 481948-2.html 481948-2-ref.html
  skip-if(B2G) fails-if(Android) random-if(winWidget) fails-if(gtk2Widget) == 481948-3.html 481948-3-ref.html # questionable test, see bug 488364
@@ -13,8 +13,24 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/bugs/reftest.list
  random-if(winWidget) == 482659-1a.html 482659-1-ref.html
  == 482659-1b.html 482659-1-ref.html
  == 482659-1c.html 482659-1-ref.html
-@@ -1631,7 +1631,7 @@
- HTTP(..) == 621253-2-externalFilter.html 621253-2-ref.html
+@@ -1570,7 +1570,7 @@
+ skip-if(B2G) == 582037-2b.html 582037-2-ref.html
+ asserts(0-12) == 582146-1.html about:blank
+ skip-if(B2G) == 582476-1.svg 582476-1-ref.svg
+-== 584400-dash-length.svg 584400-dash-length-ref.svg
++skip == 584400-dash-length.svg 584400-dash-length-ref.svg
+ == 584699-1.html 584699-1-ref.html
+ == 585598-2.xhtml 585598-2-ref.xhtml
+ == 586400-1.html 586400-1-ref.html
+@@ -1626,12 +1626,12 @@
+ == 617242-1.html 617242-1-ref.html
+ != 618071.html 618071-notref.html
+ == 619117-1.html 619117-1-ref.html
+-skip-if(Android) HTTP(..) == 621253-1-externalFilter.html 621253-1-ref.html
++skip HTTP(..) == 621253-1-externalFilter.html 621253-1-ref.html
+ skip-if(Android) == 621253-1-internalFilter.html 621253-1-ref.html
+-HTTP(..) == 621253-2-externalFilter.html 621253-2-ref.html
++skip HTTP(..) == 621253-2-externalFilter.html 621253-2-ref.html
  == 621253-2-internalFilter.html 621253-2-ref.html
  fails-if(Android) HTTP(..) == 619511-1.html 619511-1-ref.html
 -skip-if(B2G) random-if(winWidget) fuzzy-if(OSX==10.8,19,17) == 621918-1.svg 621918-1-ref.svg # 1-pixel diacritic positioning discrepancy in rotated text (may depend on platform fonts)
@@ -22,36 +38,36 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/bugs/reftest.list
  random-if(winWidget) HTTP(..) == 621918-2.svg 621918-2-ref.svg # same 1px issue as above, and HTTP(..) for filters.svg, used to mask antialiasing issues where glyphs touch
  fuzzy-if(d2d,5,1) == 622585-1.html 622585-1-ref.html # bug 789402
  fails-if(Android) == 625409-1.html 625409-1-ref.html
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/first-letter/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/first-letter/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/first-letter/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/first-letter/reftest.list	2013-01-20 18:30:39.375243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/first-letter/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/first-letter/reftest.list	2013-01-24 19:47:42.311715322 +0000
 @@ -35,7 +35,7 @@
  != 229764-1.html 229764-ref.html
  == 229764-2.html 229764-ref.html
  == 329069-1.html 329069-1-ref.html
 -== 329069-2.html 329069-2-ref.html
-+fails == 329069-2.html 329069-2-ref.html
++random == 329069-2.html 329069-2-ref.html
  == 329069-3.html 329069-3-ref.html
  == 329069-4.html 329069-4-ref.html
  fails-if(!cocoaWidget) == 329069-5.html 329069-5-ref.html # bug 603710
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/mathml/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/mathml/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/mathml/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/mathml/reftest.list	2013-01-20 18:30:39.375243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/mathml/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/mathml/reftest.list	2013-01-24 19:51:26.343711342 +0000
 @@ -29,7 +29,7 @@
  == mfenced-7.html mfenced-7-ref.html
  != mfenced-8.html mfenced-8-ref.html
  == mfenced-9.html mfenced-9-ref.html
 -fails-if(winWidget) == mfenced-10.html mfenced-10-ref.html
-+fails == mfenced-10.html mfenced-10-ref.html
++random == mfenced-10.html mfenced-10-ref.html
  == mi-mathvariant-1.xhtml mi-mathvariant-1-ref.xhtml
  == mi-mathvariant-2.xhtml mi-mathvariant-2-ref.xhtml
  != non-spacing-accent-1.xhtml non-spacing-accent-1-ref.xhtml
-Index: firefox-trunk-21.0~a1~hg20130119r119358/parser/htmlparser/tests/reftest/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130123r119624/parser/htmlparser/tests/reftest/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/parser/htmlparser/tests/reftest/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/parser/htmlparser/tests/reftest/reftest.list	2013-01-20 18:30:39.375243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/parser/htmlparser/tests/reftest/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/parser/htmlparser/tests/reftest/reftest.list	2013-01-24 19:12:27.331752903 +0000
 @@ -1,5 +1,5 @@
  == bug535530-1.html bug535530-1-ref.html
 -== view-source:bug535530-2.html bug535530-2-ref.html
@@ -59,23 +75,35 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/parser/htmlparser/tests/reftest/r
  == bug566280-1.html bug566280-1-ref.html
  == bug577418-1.html bug577418-1-ref.html
  == bug582788-1.html bug582788-1-ref.html
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/text/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/text/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/text/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/text/reftest.list	2013-01-20 18:32:40.499241838 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/text/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/text/reftest.list	2013-01-24 20:23:45.075676893 +0000
 @@ -106,7 +106,7 @@
  == wordbreak-1.html wordbreak-1-ref.html
  == wordbreak-2.html wordbreak-2-ref.html
  == wordbreak-3.html wordbreak-3-ref.html
 -== wordbreak-4a.html wordbreak-4a-ref.html
-+fails == wordbreak-4a.html wordbreak-4a-ref.html
++skip == wordbreak-4a.html wordbreak-4a-ref.html
  == wordbreak-4b.html wordbreak-4b-ref.html
  == wordbreak-5.html wordbreak-5-ref.html
  == wordbreak-6.html wordbreak-6-ref.html
-@@ -196,40 +196,40 @@
- == auto-hyphenation-8.html auto-hyphenation-8-ref.html
- == auto-hyphenation-9.html auto-hyphenation-9-ref.html
- == auto-hyphenation-10.html auto-hyphenation-10-ref.html
+@@ -184,52 +184,52 @@
+ pref(gfx.font_rendering.graphite.enabled,true) HTTP(..) == glyph-decomposition-graphite.html glyph-decomposition-graphite-ref.html
+ 
+ # Tests for hyphenation with -moz-hyphens
+-== auto-hyphenation-1.html auto-hyphenation-1-ref.html
+-!= auto-hyphenation-1.html auto-hyphenation-1-notref.html
+-== auto-hyphenation-1a.html auto-hyphenation-1-ref.html
+-== auto-hyphenation-2.html auto-hyphenation-2-ref.html
+-== auto-hyphenation-3.html auto-hyphenation-3-ref.html
+-== auto-hyphenation-4.html auto-hyphenation-4-ref.html
+-== auto-hyphenation-5.html auto-hyphenation-5-ref.html
+-== auto-hyphenation-6.html auto-hyphenation-6-ref.html
+-== auto-hyphenation-7.html auto-hyphenation-7-ref.html
+-== auto-hyphenation-8.html auto-hyphenation-8-ref.html
+-== auto-hyphenation-9.html auto-hyphenation-9-ref.html
+-== auto-hyphenation-10.html auto-hyphenation-10-ref.html
 -== auto-hyphenation-af-1.html auto-hyphenation-af-1-ref.html
 -== auto-hyphenation-bg-1.html auto-hyphenation-bg-1-ref.html
 -== auto-hyphenation-ca-1.html auto-hyphenation-ca-1-ref.html
@@ -113,60 +141,158 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/text/reftest.list
 -!= auto-hyphenation-sv-1.html auto-hyphenation-sv-1-notref.html # verify swedish != english
 -== auto-hyphenation-tr-1.html auto-hyphenation-tr-1-ref.html
 -== auto-hyphenation-uk-1.html auto-hyphenation-uk-1-ref.html
-+fails == auto-hyphenation-af-1.html auto-hyphenation-af-1-ref.html
-+fails == auto-hyphenation-bg-1.html auto-hyphenation-bg-1-ref.html
-+fails == auto-hyphenation-ca-1.html auto-hyphenation-ca-1-ref.html
-+fails == auto-hyphenation-cy-1.html auto-hyphenation-cy-1-ref.html
-+fails == auto-hyphenation-da-1.html auto-hyphenation-da-1-ref.html
-+fails == auto-hyphenation-de-1901-1.html auto-hyphenation-de-1901-1-ref.html
-+fails == auto-hyphenation-de-1996-1.html auto-hyphenation-de-1996-1-ref.html
-+fails != auto-hyphenation-de-1901-1.html auto-hyphenation-de-1996-1.html
-+fails == auto-hyphenation-de-ch-1.html auto-hyphenation-de-ch-1-ref.html
-+fails == auto-hyphenation-eo-1.html auto-hyphenation-eo-1-ref.html
-+fails == auto-hyphenation-es-1.html auto-hyphenation-es-1-ref.html
-+fails == auto-hyphenation-et-1.html auto-hyphenation-et-1-ref.html
-+fails == auto-hyphenation-fi-1.html auto-hyphenation-fi-1-ref.html
-+fails == auto-hyphenation-fr-1.html auto-hyphenation-fr-1-ref.html
-+fails == auto-hyphenation-gl-1.html auto-hyphenation-gl-1-ref.html
-+fails == auto-hyphenation-hr-1.html auto-hyphenation-hr-1-ref.html
-+fails == auto-hyphenation-hsb-1.html auto-hyphenation-hsb-1-ref.html
-+fails == auto-hyphenation-hu-1.html auto-hyphenation-hu-1-ref.html
-+fails == auto-hyphenation-ia-1.html auto-hyphenation-ia-1-ref.html
-+fails == auto-hyphenation-is-1.html auto-hyphenation-is-1-ref.html
-+fails == auto-hyphenation-it-1.html auto-hyphenation-it-1-ref.html
-+fails == auto-hyphenation-kmr-1.html auto-hyphenation-kmr-1-ref.html
-+fails == auto-hyphenation-la-1.html auto-hyphenation-la-1-ref.html
-+fails == auto-hyphenation-lt-1.html auto-hyphenation-lt-1-ref.html
-+fails == auto-hyphenation-mn-1.html auto-hyphenation-mn-1-ref.html
-+fails == auto-hyphenation-nb-1.html auto-hyphenation-nb-1-ref.html
-+fails == auto-hyphenation-nl-1.html auto-hyphenation-nl-1-ref.html
-+fails == auto-hyphenation-nn-1.html auto-hyphenation-nn-1-ref.html
-+fails == auto-hyphenation-pt-1.html auto-hyphenation-pt-1-ref.html
-+fails == auto-hyphenation-ru-1.html auto-hyphenation-ru-1-ref.html
-+fails == auto-hyphenation-sh-1.html auto-hyphenation-sh-1-ref.html
-+fails == auto-hyphenation-sl-1.html auto-hyphenation-sl-1-ref.html
-+fails == auto-hyphenation-sr-1.html auto-hyphenation-sr-1-ref.html
-+fails == auto-hyphenation-sv-1.html auto-hyphenation-sv-1-ref.html # test swedish patterns
-+fails != auto-hyphenation-sv-1.html auto-hyphenation-sv-1-notref.html # verify swedish != english
-+fails == auto-hyphenation-tr-1.html auto-hyphenation-tr-1-ref.html
-+fails == auto-hyphenation-uk-1.html auto-hyphenation-uk-1-ref.html
-Index: firefox-trunk-21.0~a1~hg20130119r119358/editor/reftests/reftest.list
++skip == auto-hyphenation-1.html auto-hyphenation-1-ref.html
++skip != auto-hyphenation-1.html auto-hyphenation-1-notref.html
++skip == auto-hyphenation-1a.html auto-hyphenation-1-ref.html
++skip == auto-hyphenation-2.html auto-hyphenation-2-ref.html
++skip == auto-hyphenation-3.html auto-hyphenation-3-ref.html
++skip == auto-hyphenation-4.html auto-hyphenation-4-ref.html
++skip == auto-hyphenation-5.html auto-hyphenation-5-ref.html
++skip == auto-hyphenation-6.html auto-hyphenation-6-ref.html
++skip == auto-hyphenation-7.html auto-hyphenation-7-ref.html
++skip == auto-hyphenation-8.html auto-hyphenation-8-ref.html
++skip == auto-hyphenation-9.html auto-hyphenation-9-ref.html
++skip == auto-hyphenation-10.html auto-hyphenation-10-ref.html
++skip == auto-hyphenation-af-1.html auto-hyphenation-af-1-ref.html
++skip == auto-hyphenation-bg-1.html auto-hyphenation-bg-1-ref.html
++skip == auto-hyphenation-ca-1.html auto-hyphenation-ca-1-ref.html
++skip == auto-hyphenation-cy-1.html auto-hyphenation-cy-1-ref.html
++skip == auto-hyphenation-da-1.html auto-hyphenation-da-1-ref.html
++skip == auto-hyphenation-de-1901-1.html auto-hyphenation-de-1901-1-ref.html
++skip == auto-hyphenation-de-1996-1.html auto-hyphenation-de-1996-1-ref.html
++skip != auto-hyphenation-de-1901-1.html auto-hyphenation-de-1996-1.html
++skip == auto-hyphenation-de-ch-1.html auto-hyphenation-de-ch-1-ref.html
++skip == auto-hyphenation-eo-1.html auto-hyphenation-eo-1-ref.html
++skip == auto-hyphenation-es-1.html auto-hyphenation-es-1-ref.html
++skip == auto-hyphenation-et-1.html auto-hyphenation-et-1-ref.html
++skip == auto-hyphenation-fi-1.html auto-hyphenation-fi-1-ref.html
++skip == auto-hyphenation-fr-1.html auto-hyphenation-fr-1-ref.html
++skip == auto-hyphenation-gl-1.html auto-hyphenation-gl-1-ref.html
++skip == auto-hyphenation-hr-1.html auto-hyphenation-hr-1-ref.html
++skip == auto-hyphenation-hsb-1.html auto-hyphenation-hsb-1-ref.html
++skip == auto-hyphenation-hu-1.html auto-hyphenation-hu-1-ref.html
++skip == auto-hyphenation-ia-1.html auto-hyphenation-ia-1-ref.html
++skip == auto-hyphenation-is-1.html auto-hyphenation-is-1-ref.html
++skip == auto-hyphenation-it-1.html auto-hyphenation-it-1-ref.html
++skip == auto-hyphenation-kmr-1.html auto-hyphenation-kmr-1-ref.html
++skip == auto-hyphenation-la-1.html auto-hyphenation-la-1-ref.html
++skip == auto-hyphenation-lt-1.html auto-hyphenation-lt-1-ref.html
++skip == auto-hyphenation-mn-1.html auto-hyphenation-mn-1-ref.html
++skip == auto-hyphenation-nb-1.html auto-hyphenation-nb-1-ref.html
++skip == auto-hyphenation-nl-1.html auto-hyphenation-nl-1-ref.html
++skip == auto-hyphenation-nn-1.html auto-hyphenation-nn-1-ref.html
++skip == auto-hyphenation-pt-1.html auto-hyphenation-pt-1-ref.html
++skip == auto-hyphenation-ru-1.html auto-hyphenation-ru-1-ref.html
++skip == auto-hyphenation-sh-1.html auto-hyphenation-sh-1-ref.html
++skip == auto-hyphenation-sl-1.html auto-hyphenation-sl-1-ref.html
++skip == auto-hyphenation-sr-1.html auto-hyphenation-sr-1-ref.html
++skip == auto-hyphenation-sv-1.html auto-hyphenation-sv-1-ref.html # test swedish patterns
++skip != auto-hyphenation-sv-1.html auto-hyphenation-sv-1-notref.html # verify swedish != english
++skip == auto-hyphenation-tr-1.html auto-hyphenation-tr-1-ref.html
++skip == auto-hyphenation-uk-1.html auto-hyphenation-uk-1-ref.html
+Index: firefox-trunk-21.0~a1~hg20130123r119624/editor/reftests/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/editor/reftests/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/editor/reftests/reftest.list	2013-01-20 18:30:39.375243990 +0000
-@@ -64,7 +64,7 @@
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/editor/reftests/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/editor/reftests/reftest.list	2013-01-24 20:33:56.119666035 +0000
+@@ -17,46 +17,46 @@
+ == emptypasswd-1.html emptypasswd-ref.html
+ == emptypasswd-2.html emptypasswd-ref.html
+ == caret_on_positioned.html caret_on_positioned-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-disabled.html spellcheck-input-ref.html
+-== spellcheck-input-attr-before.html spellcheck-input-nofocus-ref.html
++fails != spellcheck-input-disabled.html spellcheck-input-ref.html
++fails == spellcheck-input-attr-before.html spellcheck-input-nofocus-ref.html
+ skip-if(B2G) fails-if(Android) != spellcheck-input-attr-before.html spellcheck-input-ref.html
+ == spellcheck-input-attr-after.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-attr-after.html spellcheck-input-ref.html
++fails != spellcheck-input-attr-after.html spellcheck-input-ref.html
+ == spellcheck-input-attr-inherit.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-attr-inherit.html spellcheck-input-ref.html
++fails != spellcheck-input-attr-inherit.html spellcheck-input-ref.html
+ == spellcheck-input-attr-dynamic.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic.html spellcheck-input-ref.html
++fails != spellcheck-input-attr-dynamic.html spellcheck-input-ref.html
+ == spellcheck-input-attr-dynamic-inherit.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic-inherit.html spellcheck-input-ref.html
++fails != spellcheck-input-attr-dynamic-inherit.html spellcheck-input-ref.html
+ == spellcheck-input-property-dynamic.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic.html spellcheck-input-ref.html
++fails != spellcheck-input-property-dynamic.html spellcheck-input-ref.html
+ == spellcheck-input-property-dynamic-inherit.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic-inherit.html spellcheck-input-ref.html
++fails != spellcheck-input-property-dynamic-inherit.html spellcheck-input-ref.html
+ == spellcheck-input-attr-dynamic-override.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic-override.html spellcheck-input-ref.html
++fails != spellcheck-input-attr-dynamic-override.html spellcheck-input-ref.html
+ == spellcheck-input-attr-dynamic-override-inherit.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic-override-inherit.html spellcheck-input-ref.html
++fails != spellcheck-input-attr-dynamic-override-inherit.html spellcheck-input-ref.html
+ == spellcheck-input-property-dynamic-override.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic-override.html spellcheck-input-ref.html
++fails != spellcheck-input-property-dynamic-override.html spellcheck-input-ref.html
+ == spellcheck-input-property-dynamic-override-inherit.html spellcheck-input-nofocus-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic-override-inherit.html spellcheck-input-ref.html
++fails != spellcheck-input-property-dynamic-override-inherit.html spellcheck-input-ref.html
+ == spellcheck-textarea-attr.html spellcheck-textarea-nofocus-ref.html
+ #the random-if(Android) tests pass on android native, but fail on android-xul, see bug 728942
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-attr.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-attr.html spellcheck-textarea-ref.html
+ needs-focus == spellcheck-textarea-focused.html spellcheck-textarea-ref.html
+ needs-focus == spellcheck-textarea-focused-reframe.html spellcheck-textarea-ref.html
+ needs-focus == spellcheck-textarea-focused-notreadonly.html spellcheck-textarea-ref2.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-nofocus.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-disabled.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-inherit.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic-inherit.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic-inherit.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic-override.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic-override-inherit.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic-override.html spellcheck-textarea-ref.html
+-skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic-override-inherit.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-nofocus.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-disabled.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-attr-inherit.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-attr-dynamic.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-attr-dynamic-inherit.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-property-dynamic.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-property-dynamic-inherit.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-attr-dynamic-override.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-attr-dynamic-override-inherit.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-property-dynamic-override.html spellcheck-textarea-ref.html
++fails != spellcheck-textarea-property-dynamic-override-inherit.html spellcheck-textarea-ref.html
+ needs-focus == caret_on_focus.html caret_on_focus-ref.html
+ needs-focus != caret_on_textarea_lastline.html caret_on_textarea_lastline-ref.html
+ needs-focus == input-text-onfocus-reframe.html input-text-onfocus-reframe-ref.html
+@@ -64,14 +64,14 @@
  needs-focus == caret_after_reframe.html caret_after_reframe-ref.html
  == nobogusnode-1.html nobogusnode-ref.html
  == nobogusnode-2.html nobogusnode-ref.html
 -== spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
-+fails == spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
- skip-if(B2G) fails-if(Android) != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html
++skip == spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
++skip != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html
  == spellcheck-slash-valid.html spellcheck-slash-valid-ref.html
  == spellcheck-period-valid.html spellcheck-period-valid-ref.html
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/font-face/reftest.list
+ == spellcheck-space-valid.html spellcheck-space-valid-ref.html
+ == spellcheck-comma-valid.html spellcheck-comma-valid-ref.html
+ == spellcheck-hyphen-multiple-valid.html spellcheck-hyphen-multiple-valid-ref.html
+-skip-if(B2G) fails-if(Android) != spellcheck-hyphen-multiple-invalid.html spellcheck-hyphen-multiple-invalid-ref.html
++skip != spellcheck-hyphen-multiple-invalid.html spellcheck-hyphen-multiple-invalid-ref.html
+ == spellcheck-dotafterquote-valid.html spellcheck-dotafterquote-valid-ref.html
+ == spellcheck-url-valid.html spellcheck-url-valid-ref.html
+ == unneeded_scroll.html unneeded_scroll-ref.html
+@@ -97,4 +97,4 @@
+ == 694880-3.html 694880-ref.html
+ == 388980-1.html 388980-1-ref.html
+ needs-focus == spellcheck-superscript-1.html spellcheck-superscript-1-ref.html
+-skip-if(B2G) fails-if(Android) needs-focus != spellcheck-superscript-2.html spellcheck-superscript-2-ref.html # bug 783658
++fails needs-focus != spellcheck-superscript-2.html spellcheck-superscript-2-ref.html # bug 783658
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/font-face/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/font-face/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/font-face/reftest.list	2013-01-20 18:30:39.375243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/font-face/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/font-face/reftest.list	2013-01-24 19:48:31.655714446 +0000
 @@ -27,8 +27,8 @@
  # assumes AAT fonts are only supported on MacOS
  skip-if(B2G) random-if(cocoaWidget) HTTP(..) == src-list-format-7.html src-list-format-2-ref.html
@@ -178,10 +304,21 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/font-face/reftest
  skip-if(B2G) HTTP(..) == src-list-local-fallback.html src-list-local-fallback-ref.html
  
  # data url tests (these don't need the HTTP server)
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/forms/reftest.list
+@@ -95,8 +95,8 @@
+ # random-if(cocoaWidget) HTTP(..) == src-format-arabic.html src-format-arabic-ot-ref.html
+ 
+ # bug 769194 - src:local() completely broken on android
+-skip-if(B2G) fails-if(Android) == local-1.html local-1-ref.html # bug 773482
+-skip-if(B2G) fails-if(Android) == local-styled-1.html local-styled-1-ref.html # bug 773482
++fails == local-1.html local-1-ref.html # bug 773482
++fails == local-styled-1.html local-styled-1-ref.html # bug 773482
+ 
+ skip-if(B2G) HTTP(..) == synthetic-weight-style.html synthetic-weight-style-ref.html # bug 773482
+ skip-if(B2G) HTTP(..) == synthetic-variations.html synthetic-variations-ref.html
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/forms/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/forms/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/forms/reftest.list	2013-01-20 18:30:39.375243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/forms/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/forms/reftest.list	2013-01-24 19:12:27.343752903 +0000
 @@ -25,7 +25,7 @@
  skip-if(B2G) fails-if(Android) == textbox-setsize.xul textbox-setsize-ref.xul
  skip-if(B2G) fails-if(Android) == textarea-resize.html textarea-resize-ref.html
@@ -191,10 +328,10 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/forms/reftest.lis
  skip-if(B2G) fails-if(Android) != textarea-ltr.html textarea-rtl.html
  skip-if(B2G) fails-if(Android) != textarea-ltr-scrollbar.html textarea-rtl-scrollbar.html
  skip-if(B2G) fails-if(Android) != textarea-in-ltr-doc-scrollbar.html textarea-in-rtl-doc-scrollbar.html
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/text-overflow/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/text-overflow/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/text-overflow/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/text-overflow/reftest.list	2013-01-20 18:30:39.375243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/text-overflow/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/text-overflow/reftest.list	2013-01-24 19:12:27.343752903 +0000
 @@ -7,7 +7,7 @@
  fuzzy-if(OSX==10.8,1,1) HTTP(..) == anonymous-block.html anonymous-block-ref.html
  skip-if(B2G) HTTP(..) == false-marker-overlap.html false-marker-overlap-ref.html
@@ -214,10 +351,10 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/text-overflow/ref
 -skip-if(B2G) HTTP(..) == atomic-under-marker.html atomic-under-marker-ref.html
 +fails HTTP(..) == atomic-under-marker.html atomic-under-marker-ref.html
  fuzzy(1,702) skip-if(Android||B2G) HTTP(..) == xulscroll.html xulscroll-ref.html
-Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/flexbox/reftest.list
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/flexbox/reftest.list
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130119r119358.orig/layout/reftests/flexbox/reftest.list	2013-01-20 18:30:39.383243990 +0000
-+++ firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/flexbox/reftest.list	2013-01-20 18:30:39.375243990 +0000
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/flexbox/reftest.list	2013-01-24 19:12:27.347752903 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/flexbox/reftest.list	2013-01-24 19:12:27.343752903 +0000
 @@ -10,7 +10,7 @@
  fails == flexbox-align-self-baseline-horiz-2.xhtml  flexbox-align-self-baseline-horiz-2-ref.xhtml # bug 793456, and possibly others
  # This one fails on windows R (but not Ru, strangely). On Windows R, the
@@ -227,3 +364,584 @@ Index: firefox-trunk-21.0~a1~hg20130119r119358/layout/reftests/flexbox/reftest.l
  == flexbox-align-self-baseline-horiz-4.xhtml flexbox-align-self-baseline-horiz-4-ref.xhtml
  
  == flexbox-align-self-horiz-1-block.xhtml  flexbox-align-self-horiz-1-ref.xhtml
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/reftest-sanity/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/reftest-sanity/reftest.list	2013-01-24 02:13:04.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/reftest-sanity/reftest.list	2013-01-24 19:40:31.063722985 +0000
+@@ -36,8 +36,8 @@
+ != blank.html default.html
+ HTTP != blank.html default.html
+ 
+-skip-if(B2G) HTTP(..) == filter-1.xhtml filter-1-ref.xhtml
+-skip-if(B2G) HTTP(..) == filter-2.xhtml filter-2-ref.xhtml # bug 773482
++skip HTTP(..) == filter-1.xhtml filter-1-ref.xhtml
++skip HTTP(..) == filter-2.xhtml filter-2-ref.xhtml # bug 773482
+ 
+ # test that the MozReftestInvalidate event fires
+ == invalidation.html about:blank
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/box-shadow/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/box-shadow/reftest.list	2013-01-24 02:12:25.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/box-shadow/reftest.list	2013-01-24 19:41:30.495721929 +0000
+@@ -11,7 +11,7 @@
+ == boxshadow-rounding.html boxshadow-rounding-ref.html
+ fails-if(Android) == boxshadow-button.html boxshadow-button-ref.html
+ fails-if(Android) == boxshadow-fileupload.html boxshadow-fileupload-ref.html
+-== boxshadow-inner-basic.html boxshadow-inner-basic-ref.svg
++skip == boxshadow-inner-basic.html boxshadow-inner-basic-ref.svg
+ random-if(layersGPUAccelerated) == boxshadow-mixed.html boxshadow-mixed-ref.html
+ random-if(d2d) == boxshadow-rounded-spread.html boxshadow-rounded-spread-ref.html
+ HTTP(..) == boxshadow-dynamic.xul boxshadow-dynamic-ref.xul
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/canvas/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/canvas/reftest.list	2013-01-24 02:12:32.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/canvas/reftest.list	2013-01-24 19:44:15.703718993 +0000
+@@ -43,7 +43,7 @@
+ != text-bidi-ltr-test.html text-bidi-ltr-notref.html # for bug 698185
+ == text-bidi-rtl-test.html text-bidi-rtl-ref.html
+ 
+-fails-if(B2G) != text-font-lang.html text-font-lang-notref.html
++skip != text-font-lang.html text-font-lang-notref.html
+ 
+ == text-measure.html text-measure-ref.html
+ 
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/css-valuesandunits/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/css-valuesandunits/reftest.list	2013-01-24 02:12:40.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/css-valuesandunits/reftest.list	2013-01-24 19:46:52.199716213 +0000
+@@ -5,6 +5,6 @@
+ == unit-rem-root-fontsize.html unit-rem-ref-root-fontsize.html
+ == unit-rem-root-fontsize.html unit-rem-ref2-root-fontsize.html
+ == unit-rem-root-width.html unit-rem-ref-root-width.html
+-== unit-rem.svg unit-rem-ref.svg
++fails == unit-rem.svg unit-rem-ref.svg
+ == unit-vh-vw.html unit-vh-vw-ref.html
+ == unit-vh-vw-zoom.html unit-vh-vw-zoom-ref.html
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/font-matching/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/font-matching/reftest.list	2013-01-24 02:12:45.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/font-matching/reftest.list	2013-01-24 19:50:54.679711904 +0000
+@@ -12,10 +12,10 @@
+ != defaultfont-bolditalic.html defaultfont-bold.html
+ 
+ != defaultjapanese-bold.html defaultjapanese.html
+-!= defaultjapanese-italic.html defaultjapanese.html
+-!= defaultjapanese-oblique.html defaultjapanese.html
++fails != defaultjapanese-italic.html defaultjapanese.html
++fails != defaultjapanese-oblique.html defaultjapanese.html
+ != defaultjapanese-bolditalic.html defaultjapanese.html
+-!= defaultjapanese-bolditalic.html defaultjapanese-bold.html
++fails != defaultjapanese-bolditalic.html defaultjapanese-bold.html
+ 
+ random-if(cocoaWidget) != impact-bold.html impact.html # bug 539418
+ != impact-italic.html impact.html
+@@ -72,7 +72,7 @@
+ 
+ # bug 724231 - applying synthetic styles to a single @font-face font
+ # should apply artificial obliquing, not switch to a true styled face
+-!= synthetic-style-1.html synthetic-style-1-notref.html
++fails != synthetic-style-1.html synthetic-style-1-notref.html
+ != synthetic-style-2.html synthetic-style-2-notref.html
+ 
+ # Bug 765906 - synthetic bold should be used if necessary together with system fallback.
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/ogg-video/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/ogg-video/reftest.list	2013-01-24 02:13:00.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/ogg-video/reftest.list	2013-01-24 19:53:29.503709153 +0000
+@@ -1,20 +1,20 @@
+-fails-if(Android||B2G) HTTP(..) == aspect-ratio-1a.xhtml aspect-ratio-1-ref.html # bug 773482
+-fails-if(Android||B2G) HTTP(..) == aspect-ratio-1b.xhtml aspect-ratio-1-ref.html # bug 773482
++fails HTTP(..) == aspect-ratio-1a.xhtml aspect-ratio-1-ref.html # bug 773482
++fails HTTP(..) == aspect-ratio-1b.xhtml aspect-ratio-1-ref.html # bug 773482
+ fails-if(Android||B2G) skip-if(gtk2Widget) HTTP(..) == aspect-ratio-2a.xhtml aspect-ratio-2-ref.html # bug 773482
+ fails-if(Android||B2G) skip-if(gtk2Widget) HTTP(..) == aspect-ratio-2b.xhtml aspect-ratio-2-ref.html # bug 773482
+ HTTP(..) == aspect-ratio-3a.xhtml aspect-ratio-3-ref.xhtml
+ HTTP(..) == aspect-ratio-3b.xhtml aspect-ratio-3-ref.xhtml
+ fails-if(Android||B2G) random-if(layersGPUAccelerated) fails-if(/^Windows\x20NT\x205\.1/.test(http.oscpu))  == encoded-aspect-ratio-1.html encoded-aspect-ratio-1-ref.html # bug 623460 for WinXP # bug 773482
+-fails-if(Android||B2G) HTTP(..) == basic-1.xhtml basic-1-ref.html # bug 773482
+-skip-if(Android||B2G) HTTP(..) == canvas-1a.xhtml basic-1-ref.html # bug 773482
+-fails-if(Android||B2G) HTTP(..) == canvas-1b.xhtml basic-1-ref.html # bug 773482
++fails HTTP(..) == basic-1.xhtml basic-1-ref.html # bug 773482
++fails HTTP(..) == canvas-1a.xhtml basic-1-ref.html # bug 773482
++fails HTTP(..) == canvas-1b.xhtml basic-1-ref.html # bug 773482
+ == clipping-1a.html clipping-1-ref.html
+ == empty-1a.html empty-1-ref.html
+ == empty-1b.html empty-1-ref.html
+ #these is skipped because we hang on the htmlparser tests when this is ran
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-1a.xhtml aspect-ratio-1-ref.html
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-1b.xhtml aspect-ratio-1-ref.html
+-skip-if(Android||B2G) HTTP(..) == offset-1.xhtml offset-1-ref.html
++fails HTTP(..) == offset-1.xhtml offset-1-ref.html
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-2a.xhtml aspect-ratio-2-ref.html
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-2b.xhtml aspect-ratio-2-ref.html
+ skip-if(Android||B2G) skip-if(gtk2Widget) fuzzy-if(/^Windows\x20NT\x205\.1/.test(http.oscpu),1,56000) fuzzy-if(cocoaWidget,1,56000) HTTP(..) == zoomed-1.xhtml zoomed-1-ref.html # bug 778995 for fuzzy
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/scoped-style/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/scoped-style/reftest.list	2013-01-24 02:13:04.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/scoped-style/reftest.list	2013-01-24 19:56:10.175706298 +0000
+@@ -16,7 +16,7 @@
+ == scoped-style-016.html scoped-style-016-ref.html
+ == scoped-style-017.html scoped-style-017-ref.html
+ == scoped-style-018.html scoped-style-018-ref.html
+-== scoped-style-019.svg scoped-style-019-ref.svg
++fails == scoped-style-019.svg scoped-style-019-ref.svg
+ == scoped-style-020.html scoped-style-020-ref.html
+ == scoped-style-021.html scoped-style-021-ref.html
+ == scoped-style-important-001.html scoped-style-important-001-ref.html
+@@ -38,9 +38,9 @@
+ == scoped-style-dynamic-010.html scoped-style-dynamic-010-ref.html
+ == scoped-style-dynamic-011.html scoped-style-dynamic-011-ref.html
+ == scoped-style-dynamic-012.svg scoped-style-dynamic-012-ref.svg
+-== scoped-style-dynamic-013.svg scoped-style-dynamic-013-ref.svg
++fails == scoped-style-dynamic-013.svg scoped-style-dynamic-013-ref.svg
+ == scoped-style-dynamic-014.svg scoped-style-dynamic-014-ref.svg
+-== scoped-style-dynamic-015.svg scoped-style-dynamic-015-ref.svg
++fails == scoped-style-dynamic-015.svg scoped-style-dynamic-015-ref.svg
+ == scoped-style-import.html scoped-style-import-ref.html
+ == scoped-style-media.html scoped-style-media-ref.html
+ == scoped-style-namespace.html scoped-style-namespace-ref.html
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/as-image/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/as-image/reftest.list	2013-01-24 02:13:05.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/as-image/reftest.list	2013-01-24 19:57:34.335704803 +0000
+@@ -127,13 +127,13 @@
+ 
+ # test that scripting feature is not supported in images or referenced documents
+ skip-if(B2G) == svg-image-script-1.svg lime100x100.svg # bug 773482
+-== svg-image-script-2.svg lime100x100.svg
++fails == svg-image-script-2.svg lime100x100.svg
+ 
+ # tests for external resources vs. data URIs in SVG as an image
+ == svg-image-datauri-1.html            lime100x100.svg
+ HTTP == svg-image-datauri-1.html       lime100x100.svg
+-== svg-image-external-1.html           blue100x100.svg
+-HTTP == svg-image-external-1.html      blue100x100.svg
++fails == svg-image-external-1.html           blue100x100.svg
++fails HTTP == svg-image-external-1.html      blue100x100.svg
+ skip-if(B2G) == svg-stylesheet-datauri-1.html       lime100x100.svg
+ skip-if(B2G) HTTP == svg-stylesheet-datauri-1.html  lime100x100.svg
+ == svg-stylesheet-external-1.html      blue100x100.svg
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/filters/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/filters/reftest.list	2013-01-24 02:13:06.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/filters/reftest.list	2013-01-24 19:58:49.631703465 +0000
+@@ -13,7 +13,7 @@
+ == feComponentTransfer-1.svg feComponentTransfer-1-ref.svg
+ == feComponentTransfer-2.svg feComponentTransfer-2-ref.svg
+ 
+-== feComposite-1.svg feComposite-1-ref.svg
++fails == feComposite-1.svg feComposite-1-ref.svg
+ == feComposite-2.svg feComposite-2-ref.svg
+ 
+ == feConvolveMatrix-1.svg feConvolveMatrix-1-ref.svg
+@@ -35,7 +35,7 @@
+ == feImage-1.svg feImage-1-ref.svg
+ 
+ == feMerge-1.svg feMerge-1-ref.svg
+-== feMerge-2.svg feMerge-2-ref.svg
++fails == feMerge-2.svg feMerge-2-ref.svg
+ 
+ == feMorphology-1.svg feMorphology-1-ref.svg
+ == feMorphology-2.svg feMorphology-2-ref.svg
+@@ -44,7 +44,7 @@
+ == feOffset-2.svg feOffset-2-ref.svg
+ 
+ == feTile-1.svg feTile-1-ref.svg
+-== feTile-2.svg feTile-2-ref.svg
++fails == feTile-2.svg feTile-2-ref.svg
+ 
+ # no tests for feTurbulence
+ 
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/moz-only/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/moz-only/reftest.list	2013-01-24 02:13:06.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/moz-only/reftest.list	2013-01-24 20:07:47.055693915 +0000
+@@ -2,17 +2,17 @@
+ # XBL tests
+ == xbl-basic-01.svg                             pass.svg
+ == xbl-basic-02.svg                             pass.svg
+-skip-if(B2G) == xbl-basic-03.svg                             pass.svg # bug 773482
+-skip-if(B2G) == xbl-grad-ref--grad-in-binding-01.svg         pass.svg
++fails == xbl-basic-03.svg                             pass.svg # bug 773482
++fails == xbl-grad-ref--grad-in-binding-01.svg         pass.svg
+ == xbl-grad-ref--grad-in-binding-02.svg         pass.svg
+ == xbl-grad-ref--grad-in-bound-01.svg           pass.svg
+ fails == xbl-grad-ref--grad-in-bound-02.svg     pass-black.svg
+ fails == xbl-grad-ref--grad-in-resources-01.svg pass.svg
+ fails == xbl-grad-ref--grad-in-resources-02.svg pass.svg
+-== xbl-grad-ref--grad-in-binding-03.svg         pass.svg
+-== xbl-grad-ref--grad-in-bound-03.svg           pass.svg
+-== xbl-grad-ref--grad-in-binding-04.svg         pass.svg
+-== xbl-grad-ref--grad-in-bound-04.svg           pass.svg
++fails == xbl-grad-ref--grad-in-binding-03.svg         pass.svg
++fails == xbl-grad-ref--grad-in-bound-03.svg           pass.svg
++fails == xbl-grad-ref--grad-in-binding-04.svg         pass.svg
++fails == xbl-grad-ref--grad-in-bound-04.svg           pass.svg
+ 
+ # Tests for zooming with the full page zoom UI
+ skip-if(B2G) == feImage-zoom-01a.svg                         feImage-zoom-01-ref.svg # bug 773482
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/reftest.list	2013-01-24 02:13:07.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/reftest.list	2013-01-24 20:19:00.511681949 +0000
+@@ -32,7 +32,7 @@
+ fuzzy-if(/^Windows\x20NT\x206\.1/.test(http.oscpu),1,2) == clipPath-and-shape-rendering-01.svg clipPath-and-shape-rendering-01-ref.svg # bug 614840
+ == clipPath-and-transform-01.svg pass.svg
+ == clipPath-basic-01.svg pass.svg
+-== clipPath-basic-02.svg pass.svg
++fails == clipPath-basic-02.svg pass.svg
+ == clipPath-basic-03.svg pass.svg
+ == clipPath-basic-04.svg pass.svg
+ == clipPath-basic-05.svg pass.svg
+@@ -78,18 +78,18 @@
+ skip-if(B2G) == dynamic-filter-contents-01a.svg dynamic-filter-contents-01-ref.svg
+ skip-if(B2G) == dynamic-filter-contents-01b.svg dynamic-filter-contents-01-ref.svg
+ skip-if(B2G) == dynamic-gradient-contents-01.svg pass.svg
+-skip-if(B2G) == dynamic-gradient-contents-02.svg pass.svg
++fails == dynamic-gradient-contents-02.svg pass.svg
+ skip-if(B2G) == dynamic-inner-svg-01.svg pass.svg
+ == dynamic-link-style-01.svg pass.svg
+-skip-if(B2G) == dynamic-marker-01.svg pass.svg
++skip == dynamic-marker-01.svg pass.svg # times out
+ skip-if(B2G) == dynamic-marker-02.svg dynamic-marker-02-ref.svg
+ skip-if(B2G) == dynamic-marker-03.svg pass.svg
+ == dynamic-mask-01.svg pass.svg
+ skip-if(B2G) == dynamic-mask-contents-01.svg pass.svg
+-skip-if(B2G) == dynamic-pattern-01.svg pass.svg
+-skip-if(B2G) == dynamic-pattern-02.svg pass.svg
++skip == dynamic-pattern-01.svg pass.svg # times out
++fails == dynamic-pattern-02.svg pass.svg
+ skip-if(B2G) == dynamic-pattern-contents-01.svg pass.svg
+-skip-if(B2G) == dynamic-pattern-contents-02.svg pass.svg
++skip == dynamic-pattern-contents-02.svg pass.svg # times out
+ == dynamic-rect-01.svg dynamic-rect-01-ref.svg
+ == dynamic-rect-02.svg dynamic-rect-02-ref.svg
+ == dynamic-rect-03.svg dynamic-rect-03-ref.svg
+@@ -99,15 +99,15 @@
+ == dynamic-small-object-scaled-up-01.svg pass.svg
+ == dynamic-small-object-scaled-up-02.svg pass.svg
+ == dynamic-switch-01.svg pass.svg
+-== dynamic-text-01.svg dynamic-text-01-ref.svg
+-fuzzy-if(d2d&&layersGPUAccelerated,2,12739) == dynamic-text-02.svg dynamic-text-02-ref.svg # bug 776038 for Win7
+-fuzzy-if(d2d&&layersGPUAccelerated,2,10539) == dynamic-text-03.svg dynamic-text-03-ref.svg # bug 776038 for Win7
++fails == dynamic-text-01.svg dynamic-text-01-ref.svg
++fails == dynamic-text-02.svg dynamic-text-02-ref.svg # bug 776038 for Win7
++fails == dynamic-text-03.svg dynamic-text-03-ref.svg # bug 776038 for Win7
+ random-if(/^Windows\x20NT\x205\.1/.test(http.oscpu)) == dynamic-text-04.svg dynamic-text-04-ref.svg # bug 421587 for WinXP
+ skip-if(B2G) == dynamic-text-05.svg pass.svg
+ skip-if(B2G) == dynamic-text-06.svg pass.svg
+-== dynamic-text-07.svg dynamic-text-07-ref.svg
++fails == dynamic-text-07.svg dynamic-text-07-ref.svg
+ == dynamic-text-08.svg dynamic-text-08-ref.svg
+-skip-if(B2G) == dynamic-textPath-01.svg dynamic-textPath-01-ref.svg
++skip == dynamic-textPath-01.svg dynamic-textPath-01-ref.svg # times out
+ == dynamic-use-01.svg pass.svg
+ == dynamic-use-02.svg pass.svg
+ skip-if(B2G) == dynamic-use-03.svg pass.svg
+@@ -125,11 +125,11 @@
+ == use-02-extref.svg use-02-extref-ref.svg
+ == use-extref-dataURI-01.svg pass.svg
+ == use-children.svg pass.svg
+-== fallback-color-01a.svg pass.svg
++fails == fallback-color-01a.svg pass.svg
+ == fallback-color-01b.svg pass.svg
+ == fallback-color-02a.svg fallback-color-02-ref.svg
+ == fallback-color-02b.svg fallback-color-02-ref.svg
+-== fallback-color-03.svg pass.svg
++fails == fallback-color-03.svg pass.svg
+ == fallback-color-04.svg pass.svg
+ == filter-basic-01.svg pass.svg
+ == filter-basic-02.svg pass.svg
+@@ -215,7 +215,7 @@
+ == path-04.svg pass.svg
+ == path-05.svg pass.svg
+ == path-06.svg path-06-ref.svg
+-== path-07.svg path-07-ref.svg
++fails == path-07.svg path-07-ref.svg
+ == pathLength-01.svg pass.svg
+ == pathLength-02.svg pass.svg
+ == pattern-invalid-01.svg pattern-invalid-01-ref.svg
+@@ -223,12 +223,12 @@
+ == pattern-live-01b.svg pattern-live-01-ref.svg
+ == pattern-live-01c.svg pattern-live-01-ref.svg
+ == pattern-scale-01a.svg pattern-scale-01-ref.svg
+-== pattern-scale-01b.svg pattern-scale-01-ref.svg
++fails == pattern-scale-01b.svg pattern-scale-01-ref.svg
+ == pattern-scale-01c.svg pattern-scale-01-ref.svg
+ == pattern-transform-presence-01.svg pattern-transform-presence-01-ref.svg
+ == pattern-transformed-01.svg pattern-transformed-01-ref.svg
+ == polygon-marker-01.svg pass.svg
+-== polygon-points-negative-01.svg pass.svg
++fails == polygon-points-negative-01.svg pass.svg
+ == polyline-points-invalid-01.svg pass.svg
+ == pseudo-classes-01.svg pass.svg
+ # This test depends on :visited styles (which are asynchronous), so we run
+@@ -247,7 +247,7 @@
+ == rootElement-null-01.svg pass.svg
+ == script-empty-01.svg pass.svg
+ == selector-01.svg pass.svg
+-== stroke-width-percentage-01.svg pass.svg
++fails == stroke-width-percentage-01.svg pass.svg
+ == style-property-on-script-element-01.svg pass.svg
+ == style-without-type-attribute.svg pass.svg
+ == svg-in-foreignObject-01.xhtml svg-in-foreignObject-01-ref.xhtml
+@@ -272,7 +272,7 @@
+ == text-in-link-02.svg text-in-link-02-ref.svg
+ == text-in-link-03.svg text-in-link-03-ref.svg
+ # Tests for bug 546813: sanity-check using HTML text, then test SVG behavior.
+-skip-if(B2G) != text-language-00.xhtml text-language-00-ref.xhtml
++fails != text-language-00.xhtml text-language-00-ref.xhtml
+ skip-if(B2G) random-if(gtk2Widget) != text-language-01.xhtml text-language-01-ref.xhtml # Fails on Linux tryserver due to lack of CJK fonts.
+ fuzzy-if(OSX==10.8,46,26) == text-layout-01.svg text-layout-01-ref.svg
+ == text-layout-02.svg text-layout-02-ref.svg
+@@ -285,7 +285,7 @@
+ == text-stroke-scaling-01.svg text-stroke-scaling-01-ref.svg
+ == stroke-dasharray-and-pathLength-01.svg pass.svg
+ == stroke-dasharray-and-text-01.svg stroke-dasharray-and-text-01-ref.svg 
+-== stroke-linecap-square-w-zero-length-segs-01.svg pass.svg
++fails == stroke-linecap-square-w-zero-length-segs-01.svg pass.svg
+ == stroke-linecap-square-w-zero-length-segs-02.svg pass.svg
+ == textPath-01.svg textPath-01-ref.svg
+ == textPath-02.svg pass.svg
+@@ -299,24 +299,24 @@
+ == zero-stroke-01.svg pass.svg
+ == tspan-dxdy-01.svg tspan-dxdy-ref.svg
+ == tspan-dxdy-02.svg tspan-dxdy-ref.svg
+-== tspan-dxdy-03.svg tspan-dxdy-ref.svg
+-== tspan-dxdy-04.svg tspan-dxdy-ref.svg
+-== tspan-dxdy-05.svg tspan-dxdy-ref.svg
+-== tspan-dxdy-06.svg tspan-dxdy-ref.svg
+-== tspan-dxdy-textPath-01.svg tspan-dxdy-textPath-01-ref.svg
++fails == tspan-dxdy-03.svg tspan-dxdy-ref.svg
++fails == tspan-dxdy-04.svg tspan-dxdy-ref.svg
++fails == tspan-dxdy-05.svg tspan-dxdy-ref.svg
++fails == tspan-dxdy-06.svg tspan-dxdy-ref.svg
++fails == tspan-dxdy-textPath-01.svg tspan-dxdy-textPath-01-ref.svg
+ skip-if(B2G) random-if(/^Windows\x20NT\x205\.1/.test(http.oscpu)) == tspan-rotate-01.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
+ skip-if(B2G) random-if(/^Windows\x20NT\x205\.1/.test(http.oscpu)) == tspan-rotate-02.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
+-skip-if(B2G) random-if(/^Windows\x20NT\x205\.1/.test(http.oscpu)) == tspan-rotate-03.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
+-skip-if(B2G) random-if(/^Windows\x20NT\x205\.1/.test(http.oscpu)) == tspan-rotate-04.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
+-random-if(/^Windows\x20NT\x205\.1/.test(http.oscpu)) == tspan-rotate-05.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP
+-skip-if(B2G) random-if(/^Windows\x20NT\x205\.1/.test(http.oscpu)) == tspan-rotate-06.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
+-== tspan-rotate-textPath-01.svg tspan-rotate-textPath-01-ref.svg
++fails  == tspan-rotate-03.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
++fails == tspan-rotate-04.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
++fails == tspan-rotate-05.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP
++fails == tspan-rotate-06.svg tspan-rotate-ref.svg # Bug 629718 for random failure on WinXP # bug 773482
++fails == tspan-rotate-textPath-01.svg tspan-rotate-textPath-01-ref.svg
+ skip-if(B2G) == tspan-xy-01.svg tspan-xy-ref.svg # bug 773482
+ skip-if(B2G) == tspan-xy-02.svg tspan-xy-ref.svg # bug 773482
+-skip-if(B2G) == tspan-xy-03.svg tspan-xy-ref.svg # bug 773482
+-skip-if(B2G) == tspan-xy-04.svg tspan-xy-ref.svg # bug 773482
+-skip-if(B2G) == tspan-xy-05.svg tspan-xy-ref.svg # bug 773482
+-skip-if(B2G) == tspan-xy-06.svg tspan-xy-ref.svg # bug 773482
++fails == tspan-xy-03.svg tspan-xy-ref.svg # bug 773482
++fails == tspan-xy-04.svg tspan-xy-ref.svg # bug 773482
++fails == tspan-xy-05.svg tspan-xy-ref.svg # bug 773482
++fails == tspan-xy-06.svg tspan-xy-ref.svg # bug 773482
+ skip-if(B2G) == tspan-xy-anchor-middle-01.svg tspan-xy-anchor-middle-ref.svg # bug 773482
+ skip-if(B2G) == tspan-xy-anchor-end-01.svg tspan-xy-anchor-end-ref.svg # bug 773482
+ == userSpaceOnUse-and-pattern-01.svg userSpaceOnUse-and-pattern-01-ref.svg
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/event/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/smil/event/reftest.list	2013-01-24 02:13:08.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/event/reftest.list	2013-01-24 20:03:01.935698982 +0000
+@@ -29,4 +29,4 @@
+ == event-target-surgery-3.svg green-box-ref.svg
+ == event-target-non-svg-1.xhtml green-box-ref.xhtml
+ skip-if(B2G) == accesskey-entity-1.svg green-box-ref.svg
+-skip-if(B2G) == accesskey-entity-2.svg green-box-ref.svg # bug 773482
++fails == accesskey-entity-2.svg green-box-ref.svg # bug 773482
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/motion/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/smil/motion/reftest.list	2013-01-24 02:13:08.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/motion/reftest.list	2013-01-24 20:00:42.551701458 +0000
+@@ -1,12 +1,12 @@
+ # Tests related to SVG Animation (using SMIL), focusing on the animateMotion
+ # element.
+ 
+-skip-if(B2G) == animateMotion-by-1.svg      lime.svg # bug 773482
++fails == animateMotion-by-1.svg      lime.svg # bug 773482
+ skip-if(B2G) == animateMotion-from-to-1.svg lime.svg # bug 773482
+ == animateMotion-indefinite-to-1.svg lime.svg
+ == animateMotion-indefinite-to-2.svg lime.svg
+-skip-if(B2G) == animateMotion-rotate-1a.svg lime.svg # bug 773482
+-skip-if(B2G) == animateMotion-rotate-1b.svg lime.svg # bug 773482
++fails == animateMotion-rotate-1a.svg lime.svg # bug 773482
++fails == animateMotion-rotate-1b.svg lime.svg # bug 773482
+ == animateMotion-rotate-2.svg  lime.svg
+ == animateMotion-to-overridden-1.svg lime.svg
+ == animateMotion-values-linear-1.svg animateMotion-values-linear-1-ref.svg
+@@ -15,5 +15,5 @@
+ 
+ # Tests involving <mpath> sub-element
+ skip-if(B2G) == animateMotion-mpath-pathLength-1.svg lime.svg # bug 773482
+-skip-if(B2G) == animateMotion-mpath-targetChange-1.svg lime.svg # bug 773482
++fails == animateMotion-mpath-targetChange-1.svg lime.svg # bug 773482
+ == animateMotion-mpath-target-transform-1.svg lime.svg
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/smil/reftest.list	2013-01-24 02:13:08.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/reftest.list	2013-01-24 20:06:00.279695813 +0000
+@@ -94,7 +94,7 @@
+ skip-if(B2G) == anim-conditions-02.svg lime.svg # bug 773482
+ 
+ # animate some <length> attributes:
+-skip-if(B2G) == anim-filter-primitive-size-01.svg lime.svg # bug 773482
++fails == anim-filter-primitive-size-01.svg lime.svg # bug 773482
+ skip-if(B2G) == anim-filter-size-01.svg lime.svg # bug 773482
+ == anim-length-reset-01.svg lime.svg
+ == anim-nonpixel-length-reset-01.svg lime.svg
+@@ -106,7 +106,7 @@
+ skip-if(B2G) == anim-feDistantLight-01.svg anim-feDistantLight-01-ref.svg # bug 773482
+ skip-if(B2G) == anim-feOffset-01.svg lime.svg # bug 773482
+ skip-if(B2G) == anim-feSpotLight-01.svg anim-feSpotLight-01-ref.svg # bug 773482
+-skip-if(B2G) == anim-offset-01.svg lime.svg # bug 773482
++fails == anim-offset-01.svg lime.svg # bug 773482
+ == anim-pathLength-01.svg anim-pathLength-01-ref.svg
+ 
+ # animate some <number-optional-number> attributes:
+@@ -119,15 +119,15 @@
+ skip-if(B2G) == anim-filter-filterRes-01.svg lime.svg
+ 
+ # animate some <angle> attributes:
+-skip-if(B2G) == anim-marker-orient-01.svg lime.svg # bug 773482
+-skip-if(B2G) == anim-marker-orient-02.svg lime.svg # bug 773482
++fails == anim-marker-orient-01.svg lime.svg # bug 773482
++fails == anim-marker-orient-02.svg lime.svg # bug 773482
+ 
+ #animate points list:
+ skip-if(B2G) == anim-polygon-points-01.svg anim-polygon-points-01-ref.svg
+ == anim-polyline-points-01.svg anim-polyline-points-01-ref.svg
+ 
+ # animate path data:
+-skip-if(B2G) fuzzy-if(/^Windows\x20NT\x205\.1/.test(http.oscpu),2,1) fuzzy-if(cocoaWidget&&layersGPUAccelerated,1,13) == anim-path-d-01.svg anim-path-d-01-ref.svg # Bug 726400 # bug 773482
++fails == anim-path-d-01.svg anim-path-d-01-ref.svg # Bug 726400 # bug 773482
+ 
+ # animate some enumeration attributes:
+ skip-if(B2G) == anim-feComposite-operator-01.svg lime.svg
+@@ -147,7 +147,7 @@
+ 
+ # animate some string attributes:
+ == anim-filter-href-01.svg lime.svg
+-== anim-gradient-href-01.svg lime.svg
++fails == anim-gradient-href-01.svg lime.svg
+ skip-if(B2G) == anim-image-href-01.svg lime.svg
+ skip-if(B2G) == anim-pattern-href-01.svg lime.svg
+ skip-if(B2G) == anim-use-href-01.svg lime.svg # bug 773482
+@@ -231,7 +231,7 @@
+ == anim-pattern-attr-presence-01.svg anim-pattern-attr-presence-01-ref.svg
+ fails == anim-pattern-attr-presence-02.svg anim-pattern-attr-presence-02-ref.svg
+ # ^ bug 621651
+-fuzzy-if(cocoaWidget&&layersGPUAccelerated,1,2) == anim-gradient-attr-presence-01.svg anim-gradient-attr-presence-01-ref.svg
++fails == anim-gradient-attr-presence-01.svg anim-gradient-attr-presence-01-ref.svg
+ 
+ == api-sanity-1.svg lime.svg
+ 
+@@ -245,7 +245,7 @@
+ == inactivate-with-active-unchanged-2.svg anim-standard-ref.svg
+ 
+ # interaction between xml mapped attributes and their css equivalents
+-== mapped-attr-vs-css-prop-1.svg lime.svg
++fails == mapped-attr-vs-css-prop-1.svg lime.svg
+ 
+ == smil-transitions-interaction-1a.svg lime.svg
+ == smil-transitions-interaction-1b.svg lime.svg
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/syncbase/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/smil/syncbase/reftest.list	2013-01-24 02:13:09.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/syncbase/reftest.list	2013-01-24 20:02:29.239699563 +0000
+@@ -82,12 +82,12 @@
+ skip-if(B2G) == sandwich-priority-3.svg green-box-ref.svg # bug 773482
+ skip-if(B2G) == sandwich-priority-4.svg green-box-ref.svg # bug 773482
+ == sandwich-priority-5.svg green-box-ref.svg
+-skip-if(B2G) == sandwich-priority-6.svg green-box-ref.svg # bug 773482
++fails == sandwich-priority-6.svg green-box-ref.svg # bug 773482
+ skip-if(B2G) == sandwich-priority-7.svg green-box-ref.svg # bug 773482
+ skip-if(B2G) == sandwich-priority-8.svg green-box-ref.svg # bug 773482
+ skip-if(B2G) == sandwich-priority-9.svg green-box-ref.svg
+ == sandwich-priority-10.svg green-box-ref.svg
+-== sandwich-priority-11.svg green-box-ref.svg
++fails == sandwich-priority-11.svg green-box-ref.svg
+ skip-if(B2G) == sandwich-priority-12.svg green-box-ref.svg # bug 773482
+ 
+ # Cross-time container dependencies
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/transform/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/smil/transform/reftest.list	2013-01-24 02:13:11.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/smil/transform/reftest.list	2013-01-24 20:01:46.463700323 +0000
+@@ -1,14 +1,14 @@
+ # Tests related to SVG Animation (using SMIL), focusing on the animateTransform
+ # element.
+ 
+-== additive-1.svg additive-1-ref.svg
++fails == additive-1.svg additive-1-ref.svg
+ == animate-width-1.svg lime.svg
+ fuzzy-if(cocoaWidget&&layersGPUAccelerated,1,18) == paced-1.svg paced-1-ref.svg
+ == rotate-angle-1.svg rotate-angle-ref.svg
+ == rotate-angle-2.svg rotate-angle-ref.svg
+ == rotate-angle-3.svg rotate-angle-ref.svg
+-fuzzy-if(Android,16,2) == rotate-angle-4.svg rotate-angle-ref.svg
+-== rotate-angle-5.svg rotate-angle-ref.svg
++fails == rotate-angle-4.svg rotate-angle-ref.svg
++fails == rotate-angle-5.svg rotate-angle-ref.svg
+ == scale-1.svg scale-1-ref.svg
+ fuzzy-if(cocoaWidget&&layersGPUAccelerated,1,45) == skew-1.svg skew-1-ref.svg
+ random-if(Android&&!browserIsRemote) == translate-clipPath-1.svg lime.svg # bug 760266
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/svg-integration/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/svg/svg-integration/reftest.list	2013-01-24 02:13:11.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/svg/svg-integration/reftest.list	2013-01-24 20:08:24.543693249 +0000
+@@ -26,7 +26,7 @@
+ == filter-html-zoomed-01.xhtml filter-html-01-ref.svg
+ == mask-html-01.xhtml mask-html-01-ref.svg
+ skip-if(B2G) == mask-html-01-extref-01.xhtml mask-html-01-ref.svg
+-skip-if(B2G) == mask-html-01-extref-02.xhtml mask-html-01-ref.svg
++fails == mask-html-01-extref-02.xhtml mask-html-01-ref.svg
+ == mask-html-zoomed-01.xhtml mask-html-01-ref.svg
+ == mask-html-xbl-bound-01.html mask-html-01-ref.svg
+ == mask-transformed-html-01.xhtml ../pass.svg
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/webm-video/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/reftests/webm-video/reftest.list	2013-01-24 02:13:20.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/reftests/webm-video/reftest.list	2013-01-24 19:55:08.087707401 +0000
+@@ -1,20 +1,20 @@
+-fails-if(Android||B2G) HTTP(..) == aspect-ratio-1a.xhtml aspect-ratio-1-ref.html
+-fails-if(Android||B2G) HTTP(..) == aspect-ratio-1b.xhtml aspect-ratio-1-ref.html
++fails HTTP(..) == aspect-ratio-1a.xhtml aspect-ratio-1-ref.html
++fails HTTP(..) == aspect-ratio-1b.xhtml aspect-ratio-1-ref.html
+ fails-if(Android||B2G) skip-if(gtk2Widget) HTTP(..) == aspect-ratio-2a.xhtml aspect-ratio-2-ref.html
+ fails-if(Android||B2G) skip-if(gtk2Widget) HTTP(..) == aspect-ratio-2b.xhtml aspect-ratio-2-ref.html
+ HTTP(..) == aspect-ratio-3a.xhtml aspect-ratio-3-ref.xhtml
+ HTTP(..) == aspect-ratio-3b.xhtml aspect-ratio-3-ref.xhtml
+ fails-if(Android||B2G) random-if(layersGPUAccelerated) fails-if(/^Windows\x20NT\x205\.1/.test(http.oscpu))  == encoded-aspect-ratio-1.html encoded-aspect-ratio-1-ref.html # bug 623460 for WinXP
+-fails-if(Android||B2G) HTTP(..) == basic-1.xhtml basic-1-ref.html
+-skip-if(Android||B2G) HTTP(..) == canvas-1a.xhtml basic-1-ref.html
+-fails-if(Android||B2G) HTTP(..) == canvas-1b.xhtml basic-1-ref.html
++fails HTTP(..) == basic-1.xhtml basic-1-ref.html
++fails HTTP(..) == canvas-1a.xhtml basic-1-ref.html
++fails HTTP(..) == canvas-1b.xhtml basic-1-ref.html
+ == clipping-1a.html clipping-1-ref.html
+ == empty-1a.html empty-1-ref.html
+ == empty-1b.html empty-1-ref.html
+ #these is skipped because we hang on the htmlparser tests when this is ran
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-1a.xhtml aspect-ratio-1-ref.html
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-1b.xhtml aspect-ratio-1-ref.html
+-skip-if(Android||B2G) HTTP(..) == offset-1.xhtml offset-1-ref.html
++fails HTTP(..) == offset-1.xhtml offset-1-ref.html
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-2a.xhtml aspect-ratio-2-ref.html
+ random skip-if(Android||B2G) HTTP(..) == object-aspect-ratio-2b.xhtml aspect-ratio-2-ref.html
+ skip-if(Android||B2G) skip-if(gtk2Widget) fuzzy-if(/^Windows\x20NT\x205\.1/.test(http.oscpu),1,56000) fuzzy-if(cocoaWidget,1,56000) HTTP(..) == zoomed-1.xhtml zoomed-1-ref.html # bug 778995 for fuzzy
+Index: firefox-trunk-21.0~a1~hg20130123r119624/content/test/reftest/xml-stylesheet/reftest.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/content/test/reftest/xml-stylesheet/reftest.list	2013-01-24 02:08:32.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/content/test/reftest/xml-stylesheet/reftest.list	2013-01-24 20:25:07.487675428 +0000
+@@ -1,7 +1,7 @@
+ == css_relative_href.xml pass.svg
+ HTTP == css_relative_href_also_external.xml pass.svg
+ HTTP == css_relative_href_also_external_override.xml pass.svg
+-== embedded_dtd_id.svg pass.svg
++fails == embedded_dtd_id.svg pass.svg
+ != error_no_href.svg fail.svg
+ fails == lreas_selflink_dtd_id.svg pass.svg
+ == lreas_selflink_empty_href.svg pass.svg

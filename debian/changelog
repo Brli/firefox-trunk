@@ -75,6 +75,14 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - update d/t/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
   * Drop revert-restartless-language-packs.patch now that bmo: #818468 has
     landed
+  * Disable additional failing reftests
+    - update d/p/test-overrides/reftest-disable-failing-tests.patch
+  * Disable some failing crashtests
+    - add d/p/test-overrides/crashtest-disable-failing-tests.patch
+    - update debian/patches/series.in
+  * Disable some additional failing mochitests
+    - update debian/testing/mochitest.json
+    - update debian/testing/mochitest-chrome.json
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

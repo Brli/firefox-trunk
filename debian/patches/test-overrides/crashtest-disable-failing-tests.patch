@@ -1,0 +1,69 @@
+Index: firefox-trunk-21.0~a1~hg20130123r119624/content/base/crashtests/crashtests.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/content/base/crashtests/crashtests.list	2013-01-24 02:07:58.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/content/base/crashtests/crashtests.list	2013-01-24 19:31:01.279733109 +0000
+@@ -88,8 +88,8 @@
+ load 610571-1.html
+ load 604262-1.html
+ load 628599-1.html
+-load 637214-1.svg
+-load 637214-2.svg
++skip load 637214-1.svg # times out
++skip load 637214-2.svg # times out
+ load 642022-1.html
+ load 646184.html
+ load 658845-1.svg
+Index: firefox-trunk-21.0~a1~hg20130123r119624/layout/svg/crashtests/crashtests.list
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130123r119624.orig/layout/svg/crashtests/crashtests.list	2013-01-24 02:13:27.000000000 +0000
++++ firefox-trunk-21.0~a1~hg20130123r119624/layout/svg/crashtests/crashtests.list	2013-01-24 19:33:19.751730649 +0000
+@@ -28,18 +28,18 @@
+ load 344887-1.svg
+ load 344892-1.svg
+ load 344898-1.svg
+-load 344904-1.svg
++skip load 344904-1.svg # times out
+ load 345418-1.svg
+ load 348982-1.xhtml
+ load 354777-1.xhtml
+-load 359516-1.svg
+-load 361015-1.svg
++skip load 359516-1.svg # times out
++skip load 361015-1.svg # times out
+ load 361587-1.svg
+ load 363611-1.xhtml
+ load 364688-1.svg
+ load 366956-1.svg
+ load 366956-2.svg
+-load 367111-1.svg
++skip load 367111-1.svg # times out
+ load 367368-1.xhtml
+ load 369233-1.svg
+ load 369438-1.svg
+@@ -62,7 +62,7 @@
+ asserts(1) load 386566-1.svg # Bug 713626
+ load 386690-1.svg
+ load 387290-1.svg
+-load 402408-1.svg
++skips load 402408-1.svg # times out
+ load 404677-1.xhtml
+ load 409565-1.xhtml
+ load 409573-1.svg
+@@ -106,7 +106,7 @@
+ load 610954-1.html
+ load 612662-1.svg
+ load 612662-2.svg
+-load 612736-1.svg
++skip load 612736-1.svg # times out
+ load 612736-2.svg
+ load 614367-1.svg
+ load 620034-1.html
+@@ -142,7 +142,7 @@
+ load 779971-1.svg
+ load 780764-1.svg
+ load 782141-1.svg
+-load 784061-1.svg
++skip load 784061-1.svg # times out
+ load 788831-1.svg
+ load 790072.svg
+ load 791826-1.svg
