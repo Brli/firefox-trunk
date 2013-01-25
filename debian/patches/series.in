@@ -30,5 +30,3 @@ test-overrides/xpcshell-disable-geolocation-provider-test.patch
 test-overrides/xpcshell-disable-extension-upgrade-test.patch
 test-overrides/xpcshell-disable-browserglue-distribution-test.patch
 test-overrides/reftest-disable-failing-tests.patch
-test-overrides/crashtest-disable-failing-tests.patch
-test-overrides/xpcshell-disable-failing-handlerService-test.patch
