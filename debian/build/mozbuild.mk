@@ -68,6 +68,8 @@ DEB_MAKE_CLEAN_TARGET	:= cleansrcdir
 DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
+# scour breaks the testsuite
+DEB_DH_SCOUR_ARGS := -N$(MOZ_PKG_NAME)-testsuite
 
 MOZ_VERSION		:= $(shell cat $(DEB_SRCDIR)/$(MOZ_APP)/config/version.txt)
 MOZ_LIBDIR		:= usr/lib/$(MOZ_APP_NAME)

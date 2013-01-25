@@ -83,6 +83,9 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
   * Disable some additional failing mochitests
     - update debian/testing/mochitest.json
     - update debian/testing/mochitest-chrome.json
+  * Don't run dh_scour on the testsuite package, as this screws up a lot
+    of reftests and crashtests
+    - update debian/build/mozbuild.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
