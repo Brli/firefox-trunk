@@ -88,6 +88,8 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series.in
   * Install Arabic, Korean, Japanese and Chinese fonts for the autopkg tests
     - update debian/tests/control
+  * Testpilot only enabled on beta now
+    - update debian/firefox.install.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
