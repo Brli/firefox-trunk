@@ -117,6 +117,7 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - remove d/p/test-fixes/xpcshell-shell-disable-gconf-tests-when-using-gsettings.patch
     - remove d/p/test-fixes/mochitest-shell-disable-gconf-tests-when-using-gsettings.patch
     - update debian/patches/series.in
+  * Tidy up mochitest-allow-test-manifest-for-chrome.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

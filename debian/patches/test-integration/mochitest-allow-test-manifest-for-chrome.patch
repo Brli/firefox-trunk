@@ -1,35 +1,27 @@
-Index: firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/browser-harness.xul
+Index: firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/browser-harness.xul
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130113r118722.orig/testing/mochitest/browser-harness.xul	2013-01-14 09:35:35.566213583 +0000
-+++ firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/browser-harness.xul	2013-01-14 09:36:02.534213104 +0000
-@@ -11,6 +11,8 @@
+--- firefox-trunk-21.0~a1~hg20130130r120261.orig/testing/mochitest/browser-harness.xul	2013-01-30 21:23:04.061263523 +0000
++++ firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/browser-harness.xul	2013-01-30 21:36:18.509249406 +0000
+@@ -11,6 +11,7 @@
          width="1024">
    <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/MozillaLogger.js"/>
    <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/LogController.js"/>
-+  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/TestRunner.js"/>
 +  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/setup.js"/>
    <script type="application/javascript" src="chrome://mochikit/content/chrome-harness.js"/>
    <style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
      #results {
-@@ -175,10 +177,11 @@
-       scriptLoader.loadSubScript('chrome://mochikit/content/server.js',
-                                  srvScope);
- 
--      var fileNames = [];
+@@ -178,6 +179,7 @@
+       var fileNames = [];
        var fileNameRegexp = /browser_.+\.js$/;
--      srvScope.arrayOfTestFiles(links, fileNames, fileNameRegexp);
--      return fileNames.map(function (f) new browserTest(f));
-+      srvScope.arrayOfTestFiles(links, gTestList, fileNameRegexp);
-+      gTestBase = "chrome://mochitests/content";
-+      gTestList = filterTests(gConfig.testManifest, gConfig.runOnly);
-+      return gTestList.map(function (f) new browserTest(f));
+       srvScope.arrayOfTestFiles(links, fileNames, fileNameRegexp);
++      fileNames = filterTests(gConfig.testManifest, gConfig.runOnly, fileNames, "chrome://mochitests/content");
+       return fileNames.map(function (f) new browserTest(f));
      }
  
-     function setStatus(aStatusString) {
-Index: firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/tests/SimpleTest/setup.js
+Index: firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/tests/SimpleTest/setup.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130113r118722.orig/testing/mochitest/tests/SimpleTest/setup.js	2013-01-14 09:35:35.566213583 +0000
-+++ firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/tests/SimpleTest/setup.js	2013-01-14 09:35:35.558213584 +0000
+--- firefox-trunk-21.0~a1~hg20130130r120261.orig/testing/mochitest/tests/SimpleTest/setup.js	2013-01-30 21:23:04.061263523 +0000
++++ firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/tests/SimpleTest/setup.js	2013-01-30 21:38:05.353247508 +0000
 @@ -111,6 +111,7 @@
  
  
@@ -38,36 +30,93 @@ Index: firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/tests/SimpleTes
  var RunSet = {}
  RunSet.runall = function(e) {
    // Filter tests to include|exclude tests based on data in params.filter.
-@@ -241,10 +242,10 @@
+@@ -199,14 +200,22 @@
+ 
+ // Open the file referenced by runOnly|exclude and use that to compare against
+ // gTestList.  Return a modified version of gTestList
+-function filterTests(filterFile, runOnly) {
++function filterTests(filterFile, runOnly, testList, testBase) {
+   var filteredTests = [];
+   var removedTests = [];
+   var runtests = {};
+   var excludetests = {};
+ 
++  if (testList == null) {
++    testList = gTestList;
++  }
++
++  if (testBase == null) {
++    testBase = gTestBase;
++  }
++
+   if (filterFile == null) {
+-    return gTestList;
++    return testList;
+   }
+ 
+   var datafile = "http://mochi.test:8888/" + filterFile;
+@@ -217,7 +226,7 @@
+     var filter = JSON.parse(objXml.responseText);
+   } catch (ex) {
+     dump("INFO | setup.js | error loading or parsing '" + datafile + "'\n");
+-    return gTestList;
++    return testList;
+   }
+ 
+   if ('runtests' in filter) {
+@@ -232,19 +241,19 @@
+       excludetests = filter;
+   }
+ 
+-  // Start with gTestList, and put everything that's in 'runtests' in
++  // Start with testList, and put everything that's in 'runtests' in
+   // filteredTests.
+   if (Object.keys(runtests).length) {
+-    for (var i = 0; i < gTestList.length; i++) {
+-      var test_path = gTestList[i];
++    for (var i = 0; i < testList.length; i++) {
++      var test_path = testList[i];
+       var tmp_path = test_path.replace(/^\//, '');
        for (var f in runtests) {
          // Remove leading /tests/ if exists
          file = f.replace(/^\//, '')
 -        file = file.replace(/^tests\//, '')
-+        file = file.replace(RegExp("^" + gTestBase + "/"), '')
++        file = file.replace(RegExp("^" + testBase + "/"), '')
  
-         // Match directory or filename, gTestList has tests/<path>
+-        // Match directory or filename, gTestList has tests/<path>
 -        if (tmp_path.match("^tests/" + file) != null) {
-+        if (tmp_path.match("^" + gTestBase + "/" + file) != null) {
++        // Match directory or filename, testList has tests/<path>
++        if (tmp_path.match("^" + testBase + "/" + file) != null) {
            filteredTests.push(test_path);
            break;
          }
-@@ -266,10 +267,10 @@
+@@ -252,7 +261,7 @@
+     }
+   }
+   else {
+-    filteredTests = gTestList.slice(0);
++    filteredTests = testList.slice(0);
+   }
+ 
+   // Continue with filteredTests, and deselect everything that's in
+@@ -266,10 +275,10 @@
        for (var f in excludetests) {
          // Remove leading /tests/ if exists
          file = f.replace(/^\//, '')
 -        file = file.replace(/^tests\//, '')
-+        file = file.replace(RegExp("^" + gTestBase + "/"), '');
++        file = file.replace(RegExp("^" + testBase + "/"), '');
  
-         // Match directory or filename, gTestList has tests/<path>
+-        // Match directory or filename, gTestList has tests/<path>
 -        if (tmp_path.match("^tests/" + file) != null) {
-+        if (tmp_path.match("^" + gTestBase + "/" + file) != null) {
++        // Match directory or filename, testList has tests/<path>
++        if (tmp_path.match("^" + testBase + "/" + file) != null) {
            found = true;
            break;
          }
-Index: firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/harness-overlay.xul
+Index: firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/harness-overlay.xul
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130113r118722.orig/testing/mochitest/harness-overlay.xul	2013-01-14 09:35:35.566213583 +0000
-+++ firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/harness-overlay.xul	2013-01-14 09:35:35.562213584 +0000
+--- firefox-trunk-21.0~a1~hg20130130r120261.orig/testing/mochitest/harness-overlay.xul	2013-01-30 21:23:04.061263523 +0000
++++ firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/harness-overlay.xul	2013-01-30 21:23:04.053263523 +0000
 @@ -52,6 +52,7 @@
      document.getElementById("test-table").innerHTML += tableContent;
    }
@@ -76,10 +125,10 @@ Index: firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/harness-overlay
    populate();
  
    hookup();
-Index: firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/server.js
+Index: firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/server.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130113r118722.orig/testing/mochitest/server.js	2013-01-14 09:35:35.566213583 +0000
-+++ firefox-trunk-21.0~a1~hg20130113r118722/testing/mochitest/server.js	2013-01-14 09:35:35.562213584 +0000
+--- firefox-trunk-21.0~a1~hg20130130r120261.orig/testing/mochitest/server.js	2013-01-30 21:23:04.061263523 +0000
++++ firefox-trunk-21.0~a1~hg20130130r120261/testing/mochitest/server.js	2013-01-30 21:23:04.053263523 +0000
 @@ -601,7 +601,7 @@
          SCRIPT({type: "text/javascript",
                   src: "/tests/SimpleTest/setup.js"}),
