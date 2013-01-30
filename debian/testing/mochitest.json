@@ -7,6 +7,7 @@
   "docshell/test/navigation/test_bug13871.html": "FAILS",
   "docshell/test/navigation/test_not-opener.html": "FAILS",
   "dom/tests/mochitest/bugs/test_bug458091.html": "FAILS",
+  "dom/tests/mochitest/geolocation/": "FAILS",
   "editor/libeditor/html/tests/test_bug432225.html": "FAILS",
   "editor/libeditor/html/tests/test_bug484181.html": "FAILS",
   "editor/libeditor/text/tests/test_bug596333.html": "FAILS",

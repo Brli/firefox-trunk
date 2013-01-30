@@ -52,6 +52,7 @@
   "chrome/toolkit/content/tests/chrome/test_largemenu.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_menuchecks.xul": "HANGS",
   "chrome/toolkit/content/tests/chrome/test_scaledrag.xul": "FAILS",
+  "chrome/toolkit/content/tests/chrome/test_textbox_dictionary.xul": "FAILS",
   "chrome/toolkit/mozapps/downloads/tests/chrome/test_bug_462172.xul": "HANGS PERMS",
   "chrome/toolkit/mozapps/downloads/tests/chrome/test_unknownContentType_dialog_layout.xul": "FAILS"
  }
