@@ -11,7 +11,6 @@ no_neon_on_arm.patch
 python-virtualenv-multiarch-fix.patch
 test-integration/mochitest-optional-websock-log.patch
 test-integration/mochitest-allow-test-manifest-for-chrome.patch
-test-integration/xpcshell-allow-omit-tests-on-real-install.patch
 test-fixes/xpcshell-search-fix-browser-dirprovider.patch
 test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
 test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
@@ -24,7 +23,6 @@ test-fixes/mochitest-content-reset-permissions-when-done.patch
 test-fixes/mochitest-tests-jar-fix.patch
 test-fixes/mochitest-dont-ship-browser-postupdate-test.patch
 test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
-test-integration/xpcshell-disable-extension-upgrade-test-for-adt.patch
-test-integration/xpcshell-disable-browserglue-distribution-test-for-adt.patch
+test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
 test-overrides/reftest-disable-failing-tests.patch
 test-overrides/xpcshell-disable-failing-tests.patch

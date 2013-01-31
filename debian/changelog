@@ -118,6 +118,15 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - remove d/p/test-fixes/mochitest-shell-disable-gconf-tests-when-using-gsettings.patch
     - update debian/patches/series.in
   * Tidy up mochitest-allow-test-manifest-for-chrome.patch
+  * Drop the ability to automatically skip xpcshell tests on an installed system that
+    require write access to the application directory, preferring to just disable
+    them instead. In reality, we weren't ever going to use this feature
+    - remove d/p/test-integration/xpcshell-allow-omit-tests-on-real-install.patch
+    - rename d/p/test-integration/xpcshell-disable-browserglue-distribution-test-for-adt.patch =>
+        d/p/test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
+    - update d/p/test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
+    - remove d/p/xpcshell-disable-extension-upgrade-test-for-adt.patch (merged
+      in to the last patch)
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
