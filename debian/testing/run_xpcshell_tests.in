@@ -13,7 +13,10 @@ class XPCShellTestsHelper(TestRunHelper):
       '--debugger',
       '--debugger-args',
       '--debugger-interactive',
-      '--testing-modules-dir'
+      '--testing-modules-dir',
+      '--tests-root-dir',
+      '--xunit-file',
+      '--xunit-name'
     ]
 
     root = '/@MOZ_TESTDIR@'
@@ -57,6 +60,10 @@ def main():
   def pre_run_cb(options, args):
     if not options.logfiles:
       sys.argv.append('--no-logfiles')
+
+    if '--xunit-file' in sys.argv and '--tests-root-dir' not in sys.argv and \
+       '--manifest' in sys.argv:
+        sys.argv.extend(['--tests-root-dir', os.path.dirname(options.manifest)])
 
     for arg in args:
       if arg.endswith('.js'):

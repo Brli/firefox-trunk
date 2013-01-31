@@ -13,7 +13,10 @@ class ReftestHelper(TestRunHelper):
       '--timeout',
       '--debugger',
       '--debugger-args',
-      '--debugger-interactive'
+      '--debugger-interactive',
+      '--xunit-file',
+      '--xunit-name',
+      '--tests-root-dir'
     ]
 
     TestRunHelper.__init__(self, 'reftest/runreftest.py',
@@ -28,8 +31,13 @@ def main():
     '--utility-path': lambda: os.path.join(helper.root, 'bin')
   }
 
+  def pre_run_cb(options, args):
+    if '--xunit-file' in sys.argv and '--tests-root-dir' not in sys.argv and \
+       args[0].startswith(helper.root):
+      sys.argv.extend(['--tests-root-dir', os.path.join(helper.root, 'reftest', 'tests')])
+
   helper = ReftestHelper()
-  sys.exit(helper.run(defaults=DEFAULTS))
+  sys.exit(helper.run(defaults=DEFAULTS, pre_run_cb=pre_run_cb))
 
 if __name__ == '__main__':
   main()

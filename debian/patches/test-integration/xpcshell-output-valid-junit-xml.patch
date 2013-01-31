@@ -1,0 +1,13 @@
+Index: firefox-trunk-21.0~a1~hg20130130r120261/testing/xpcshell/runxpcshelltests.py
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130130r120261.orig/testing/xpcshell/runxpcshelltests.py	2013-01-30 22:45:20.377175810 +0000
++++ firefox-trunk-21.0~a1~hg20130130r120261/testing/xpcshell/runxpcshelltests.py	2013-01-31 13:56:33.963828456 +0000
+@@ -550,7 +550,7 @@
+ 
+     testsuite.setAttribute("tests", str(total))
+     testsuite.setAttribute("failures", str(failed))
+-    testsuite.setAttribute("skip", str(skipped))
++    testsuite.setAttribute("skipped", str(skipped))
+ 
+     doc.writexml(fh, addindent="  ", newl="\n", encoding="utf-8")
+ 
