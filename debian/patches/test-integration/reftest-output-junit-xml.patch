@@ -1,600 +1,7 @@
-Index: firefox-trunk-21.0~a1~hg20130130r120261/layout/tools/reftest/reftest.js
+Index: firefox-trunk-21.0~a1~hg20130131r120360/layout/tools/reftest/reftest-cmdline.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130130r120261.orig/layout/tools/reftest/reftest.js	2013-01-30 02:11:44.000000000 +0000
-+++ firefox-trunk-21.0~a1~hg20130130r120261/layout/tools/reftest/reftest.js	2013-01-31 13:54:49.395830314 +0000
-@@ -64,32 +64,20 @@
- var gURIUseCounts;
- // Map from URI spec to the canvas rendered for that URI
- var gURICanvases;
--var gTestResults = {
--  // Successful...
--  Pass: 0,
--  LoadOnly: 0,
--  // Unexpected...
--  Exception: 0,
--  FailedLoad: 0,
--  UnexpectedFail: 0,
--  UnexpectedPass: 0,
--  AssertionUnexpected: 0,
--  AssertionUnexpectedFixed: 0,
--  // Known problems...
--  KnownFail : 0,
--  AssertionKnown: 0,
--  Random : 0,
--  Skip: 0,
--  Slow: 0,
--};
-+var gTestResults = [];
- var gTotalTests = 0;
- var gState;
- var gCurrentURL;
-+var gCurrentTestResult;
- var gTestLog = [];
- var gServer;
- var gCount = 0;
- var gAssertionCount = 0;
- 
-+var gXUnitFile;
-+var gXUnitName;
-+var gTestRootURI;
-+
- var gIOService;
- var gDebug;
- var gWindowUtils;
-@@ -122,6 +110,25 @@
- const EXPECTED_DEATH = 3;  // test must be skipped to avoid e.g. crash/hang
- const EXPECTED_FUZZY = 4;
- 
-+// Successful...
-+const STATUS_PASS = 0;
-+const STATUS_LOAD_ONLY = 1;
-+// Known problems...
-+const STATUS_KNOWN_FAIL = 2;
-+const STATUS_ASSERTION_KNOWN = 3;
-+const STATUS_RANDOM = 4;
-+const STATUS_SKIP = 5;
-+const STATUS_SLOW = 6;
-+// Unexpected...
-+const STATUS_EXCEPTION = 7;
-+const STATUS_FAILED_LOAD = 8;
-+const STATUS_UNEXPECTED_FAIL = 9;
-+const STATUS_UNEXPECTED_PASS = 10;
-+const STATUS_ASSERTION_UNEXPECTED = 11;
-+const STATUS_ASSERTION_UNEXPECTED_FIXED = 12;
-+
-+const STATUS_MAX = 13;
-+
- // types of preference value we might want to set for a specific test
- const PREF_BOOLEAN = 0;
- const PREF_STRING  = 1;
-@@ -166,15 +173,41 @@
- 
- function FlushTestLog()
- {
--    if (!gVerbose) {
--        // In verbose mode, we've dumped all these messages already.
--        for (var i = 0; i < gTestLog.length; ++i) {
--            gDumpLog("REFTEST INFO | Saved log: " + gTestLog[i] + "\n");
-+    gCurrentTestResult.testLog = "";
-+
-+    for (var i = 0; i < gTestLog.length; ++i) {
-+        let line = "REFTEST INFO | Saved log: " + gTestLog[i] + "\n";
-+        if (!gVerbose) {
-+            // In verbose mode, we've dumped all these messages already.
-+            gDumpLog(line);
-         }
-+        gCurrentTestResult.testLog += line;
-     }
-     gTestLog = [];
- }
- 
-+function isFail(status)
-+{
-+    return status >= STATUS_EXCEPTION ? true : false;
-+}
-+
-+function SaveResultAndDumpLog(status, str)
-+{
-+    if (!gCurrentTestResult) {
-+        gCurrentTestResult = { path: "preinit" };
-+        gTestResults.unshift(gCurrentTestResult);
-+    }
-+
-+    if (!("status" in gCurrentTestResult)) {
-+        gCurrentTestResult.status = status;
-+        if (isFail(status)) {
-+            gCurrentTestResult.failureMsg = str;
-+        }
-+    }
-+
-+    gDumpLog(str);
-+}
-+
- function AllocateCanvas()
- {
-     if (gRecycledCanvases.length > 0)
-@@ -365,8 +398,7 @@
-             StartHTTPServer();
-     } catch (ex) {
-         //gBrowser.loadURI('data:text/plain,' + ex);
--        ++gTestResults.Exception;
--        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
-+        SaveResultAndDumpLog(STATUS_EXCEPTION, "REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
-         DoneTests();
-     }
- 
-@@ -439,10 +471,22 @@
-         if ("skipslowtests" in args && args.skipslowtests)
-             gRunSlowTests = false;
- 
-+        if ("xunitFile" in args && args["xunitFile"]) {
-+            gXUnitFile = args["xunitFile"];
-+
-+            gTestRootURI = "";
-+            if ("testRootURI" in args && args["testRootURI"]) {
-+                gTestRootURI = args["testRootURI"];
-+            }
-+
-+            if ("xunitName" in args && args["xunitName"]) {
-+                gXUnitName = args["xunitName"];
-+            }
-+        }
-+
-         uri = args.uri;
-     } catch (e) {
--        ++gTestResults.Exception;
--        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
-+        SaveResultAndDumpLog(STATUS_EXCEPTION, "REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
-         DoneTests();
-     }
- #endif
-@@ -493,8 +537,7 @@
-         StartCurrentTest();
-     } catch (ex) {
-         //gBrowser.loadURI('data:text/plain,' + ex);
--        ++gTestResults.Exception;
--        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
-+        SaveResultAndDumpLog(STATUS_EXCEPTION, "REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
-         DoneTests();
-     }
- }
-@@ -956,6 +999,7 @@
-                           expected: expected_status,
-                           allowSilentFail: allow_silent_fail,
-                           prettyPath: prettyPath,
-+                          listPath: listURL.spec,
-                           minAsserts: minAsserts,
-                           maxAsserts: maxAsserts,
-                           needsFocus: needs_focus,
-@@ -982,6 +1026,7 @@
-                           expected: expected_status,
-                           allowSilentFail: allow_silent_fail,
-                           prettyPath: prettyPath,
-+                          listPath: listURL.spec,
-                           minAsserts: minAsserts,
-                           maxAsserts: maxAsserts,
-                           needsFocus: needs_focus,
-@@ -1011,6 +1056,7 @@
-                           expected: expected_status,
-                           allowSilentFail: allow_silent_fail,
-                           prettyPath: prettyPath,
-+                          listPath: listURL.spec,
-                           minAsserts: minAsserts,
-                           maxAsserts: maxAsserts,
-                           needsFocus: needs_focus,
-@@ -1125,18 +1171,20 @@
-     // make sure we don't run tests that are expected to kill the browser
-     while (gURLs.length > 0) {
-         var test = gURLs[0];
-+        var result = { path: test.prettyPath, listPath: test.listPath };
-+        gTestResults.unshift(result);
-         if (test.expected == EXPECTED_DEATH) {
--            ++gTestResults.Skip;
-+            result.status = STATUS_SKIP;
-             gDumpLog("REFTEST TEST-KNOWN-FAIL | " + test.url1.spec + " | (SKIP)\n");
-             gURLs.shift();
-         } else if (test.needsFocus && !Focus()) {
-             // FIXME: Marking this as a known fail is dangerous!  What
-             // if it starts failing all the time?
--            ++gTestResults.Skip;
-+            result.status = STATUS_SKIP;
-             gDumpLog("REFTEST TEST-KNOWN-FAIL | " + test.url1.spec + " | (SKIPPED; COULDN'T GET FOCUS)\n");
-             gURLs.shift();
-         } else if (test.slow && !gRunSlowTests) {
--            ++gTestResults.Slow;
-+            result.status = STATUS_SLOW;
-             gDumpLog("REFTEST TEST-KNOWN-SLOW | " + test.url1.spec + " | (SLOW)\n");
-             gURLs.shift();
-         } else {
-@@ -1160,6 +1208,7 @@
- {
-     gState = aState;
-     gCurrentURL = gURLs[0]["url" + aState].spec;
-+    gCurrentTestResult = gTestResults[0];
- 
-     RestoreChangedPreferences();
- 
-@@ -1215,13 +1264,13 @@
-             if (e == "bad pref") {
-                 var test = gURLs[0];
-                 if (test.expected == EXPECTED_FAIL) {
--                    gDumpLog("REFTEST TEST-KNOWN-FAIL | " + test.url1.spec +
--                             " | (SKIPPED; " + badPref + " not known or wrong type)\n");
--                    ++gTestResults.Skip;
-+                    SaveResultAndDumpLog(STATUS_SKIP,
-+                        "REFTEST TEST-KNOWN-FAIL | " + test.url1.spec +
-+                        " | (SKIPPED; " + badPref + " not known or wrong type)\n");
-                 } else {
--                    gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + test.url1.spec +
--                             " | " + badPref + " not known or wrong type\n");
--                    ++gTestResults.UnexpectedFail;
-+                    SaveResultAndDumpLog(STATUS_UNEXPECTED_FAIL,
-+                        "REFTEST TEST-UNEXPECTED-FAIL | " + test.url1.spec +
-+                        " | " + badPref + " not known or wrong type\n");
-                 }
-             } else {
-                 throw e;
-@@ -1258,38 +1307,143 @@
-     }
- }
- 
-+function WriteXUnitResults(counts)
-+{
-+    let doc = document.implementation.createDocument(null, null, null);
-+    let root = doc.createElement("testsuite");
-+    doc.appendChild(root);
-+    root.setAttribute("name", gXUnitName ? gXUnitName : "reftest");
-+
-+    root.setAttribute("tests", gTotalTests);
-+    let count = counts[STATUS_EXCEPTION] + counts[STATUS_FAILED_LOAD] +
-+                counts[STATUS_UNEXPECTED_FAIL] + counts[STATUS_UNEXPECTED_PASS] +
-+                counts[STATUS_ASSERTION_UNEXPECTED] +
-+                counts[STATUS_ASSERTION_UNEXPECTED_FIXED];
-+    root.setAttribute("failures", count);
-+    count = counts[STATUS_SKIP] + counts[STATUS_SLOW];
-+    root.setAttribute("skipped", count);
-+
-+    function addResultToXMLDocument(res, path, testLog, time)
-+    {
-+        let testcase = doc.createElement("testcase");
-+        root.appendChild(testcase);
-+
-+        if (path == null) {
-+            path = res.path;
-+        }
-+        if (testLog == null && "testLog" in res) {
-+            testLog = res.testLog;
-+        }
-+        if (time == null && "time" in res) {
-+            time = res.time;
-+        }
-+
-+        if (path == "preinit") {
-+            // Special case for failures that occur during initialization
-+            var relPath = "preinit/";
-+            testcase.setAttribute("name", "preinit");
-+        } else if (!path.startsWith(gTestRootURI)) {
-+            // For data: URI's
-+            var relPath = res.listPath.substr(gTestRootURI.length);
-+            testcase.setAttribute("name", path);
-+        } else {
-+            var relPath = path.substr(gTestRootURI.length);
-+            testcase.setAttribute("name", relPath.substr(relPath.lastIndexOf("/") + 1));
-+
-+        }
-+        testcase.setAttribute("classname", relPath.substr(0, relPath.lastIndexOf("/")).replace(/\//g, ".").replace(/^\./, ""));
-+        testcase.setAttribute("time", time ? time / 1000 : 0);
-+
-+        if (isFail(res.status)) {
-+            let failure = doc.createElement("failure");
-+            testcase.appendChild(failure);
-+
-+            failure.setAttribute("message", res.failureMsg);
-+            if (res.status == STATUS_UNEXPECTED_PASS ||
-+                res.status == STATUS_ASSERTION_UNEXPECTED_FIXED) {
-+                failure.setAttribute("type", "TEST-UNEXPECTED-PASS");
-+            } else {
-+                failure.setAttribute("type", "TEST-UNEXPECTED-FAIL");
-+            }
-+
-+            let cdata = doc.createCDATASection(testLog);
-+            failure.appendChild(cdata);
-+        } else if (res.status == STATUS_SLOW || res.status == STATUS_SKIP) {
-+            let skipped = doc.createElement("skipped");
-+            testcase.appendChild(skipped);
-+        }
-+    }
-+
-+    gTestResults.reverse().forEach(function(res) {
-+        if ("scriptResults" in res) {
-+            let index = 1;
-+            res.scriptResults.forEach(function(scriptResult) {
-+                let testLog = "testLog" in res ? res.testLog : null;
-+                addResultToXMLDocument(scriptResult, res.path + "." + index++, testLog, res.time);
-+            });
-+        } else {
-+            addResultToXMLDocument(res);
-+        }
-+    });
-+
-+    var f = FileUtils.File(gXUnitFile);
-+    if (f.exists()) {
-+        f.remove(false);
-+    }
-+    var strm = FileUtils.openFileOutputStream(f, FileUtils.MODE_WRONLY | FileUtils.MODE_CREATE);
-+    var xmls = new XMLSerializer();
-+    xmls.serializeToStream(doc, strm, "UTF-8");
-+}
-+
- function DoneTests()
- {
-     gDumpLog("REFTEST FINISHED: Slowest test took " + gSlowestTestTime +
-          "ms (" + gSlowestTestURL + ")\n");
- 
-+    var counts = [];
-+    for (let i = 0; i < STATUS_MAX; i++) {
-+        counts.push(0);
-+    }
-+    gTestResults.forEach(function(res) {
-+        if ("scriptResults" in res) {
-+            res.scriptResults.forEach(function(scriptResult) {
-+                counts[scriptResult.status]++;
-+            });
-+        } else {
-+            counts[res.status]++;
-+        }
-+    });
-     gDumpLog("REFTEST INFO | Result summary:\n");
--    var count = gTestResults.Pass + gTestResults.LoadOnly;
-+    var count = counts[STATUS_PASS] + counts[STATUS_LOAD_ONLY];
-     gDumpLog("REFTEST INFO | Successful: " + count + " (" +
--             gTestResults.Pass + " pass, " +
--             gTestResults.LoadOnly + " load only)\n");
--    count = gTestResults.Exception + gTestResults.FailedLoad +
--            gTestResults.UnexpectedFail + gTestResults.UnexpectedPass +
--            gTestResults.AssertionUnexpected +
--            gTestResults.AssertionUnexpectedFixed;
-+             counts[STATUS_PASS] + " pass, " +
-+             counts[STATUS_LOAD_ONLY] + " load only)\n");
-+    count = counts[STATUS_EXCEPTION] + counts[STATUS_FAILED_LOAD] +
-+            counts[STATUS_UNEXPECTED_FAIL] + counts[STATUS_UNEXPECTED_PASS] +
-+            counts[STATUS_ASSERTION_UNEXPECTED] +
-+            counts[STATUS_ASSERTION_UNEXPECTED_FIXED];
-     gDumpLog("REFTEST INFO | Unexpected: " + count + " (" +
--             gTestResults.UnexpectedFail + " unexpected fail, " +
--             gTestResults.UnexpectedPass + " unexpected pass, " +
--             gTestResults.AssertionUnexpected + " unexpected asserts, " +
--             gTestResults.AssertionUnexpectedFixed + " unexpected fixed asserts, " +
--             gTestResults.FailedLoad + " failed load, " +
--             gTestResults.Exception + " exception)\n");
--    count = gTestResults.KnownFail + gTestResults.AssertionKnown +
--            gTestResults.Random + gTestResults.Skip + gTestResults.Slow;
-+             counts[STATUS_UNEXPECTED_FAIL] + " unexpected fail, " +
-+             counts[STATUS_UNEXPECTED_PASS] + " unexpected pass, " +
-+             counts[STATUS_ASSERTION_UNEXPECTED] + " unexpected asserts, " +
-+             counts[STATUS_ASSERTION_UNEXPECTED_FIXED] + " unexpected fixed asserts, " +
-+             counts[STATUS_FAILED_LOAD] + " failed load, " +
-+             counts[STATUS_EXCEPTION] + " exception)\n");
-+    count = counts[STATUS_KNOWN_FAIL] + counts[STATUS_ASSERTION_KNOWN] +
-+            counts[STATUS_RANDOM] + counts[STATUS_SKIP] + counts[STATUS_SLOW];
-     gDumpLog("REFTEST INFO | Known problems: " + count + " (" +
--             gTestResults.KnownFail + " known fail, " +
--             gTestResults.AssertionKnown + " known asserts, " +
--             gTestResults.Random + " random, " +
--             gTestResults.Skip + " skipped, " +
--             gTestResults.Slow + " slow)\n");
-+             counts[STATUS_KNOWN_FAIL] + " known fail, " +
-+             counts[STATUS_ASSERTION_KNOWN] + " known asserts, " +
-+             counts[STATUS_RANDOM] + " random, " +
-+             counts[STATUS_SKIP] + " skipped, " +
-+             counts[STATUS_SLOW] + " slow)\n");
- 
-     gDumpLog("REFTEST INFO | Total canvas count = " + gRecycledCanvases.length + "\n");
- 
-+    if (gXUnitFile) {
-+        WriteXUnitResults(counts);
-+    }
-+
-     gDumpLog("REFTEST TEST-START | Shutdown\n");
-     function onStopped() {
-         let appStartup = CC["@mozilla.org/toolkit/app-startup;1"].getService(CI.nsIAppStartup);
-@@ -1338,8 +1492,8 @@
-         // browser element
-         flags |= ctx.DRAWWINDOW_USE_WIDGET_LAYERS;
-     } else if (gBrowserIsRemote) {
--        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL + " | can't drawWindow remote content\n");
--        ++gTestResults.Exception;
-+        SaveResultAndDumpLog(STATUS_EXCEPTION,
-+            "REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL + " | can't drawWindow remote content\n");
-     }
- 
-     if (gDrawWindowFlags != flags) {
-@@ -1416,28 +1570,30 @@
-         gSlowestTestURL  = gCurrentURL;
-     }
- 
-+    gCurrentTestResult.time = testRunTime;
-+
-     // Not 'const ...' because of 'EXPECTED_*' value dependency.
-     var outputs = {};
-     const randomMsg = "(EXPECTED RANDOM)";
-     outputs[EXPECTED_PASS] = {
--        true:  {s: "TEST-PASS"                  , n: "Pass"},
--        false: {s: "TEST-UNEXPECTED-FAIL"       , n: "UnexpectedFail"}
-+        true:  {s: "TEST-PASS"                  , n: STATUS_PASS},
-+        false: {s: "TEST-UNEXPECTED-FAIL"       , n: STATUS_UNEXPECTED_FAIL}
-     };
-     outputs[EXPECTED_FAIL] = {
--        true:  {s: "TEST-UNEXPECTED-PASS"       , n: "UnexpectedPass"},
--        false: {s: "TEST-KNOWN-FAIL"            , n: "KnownFail"}
-+        true:  {s: "TEST-UNEXPECTED-PASS"       , n: STATUS_UNEXPECTED_PASS},
-+        false: {s: "TEST-KNOWN-FAIL"            , n: STATUS_KNOWN_FAIL}
-     };
-     outputs[EXPECTED_RANDOM] = {
--        true:  {s: "TEST-PASS" + randomMsg      , n: "Random"},
--        false: {s: "TEST-KNOWN-FAIL" + randomMsg, n: "Random"}
-+        true:  {s: "TEST-PASS" + randomMsg      , n: STATUS_RANDOM},
-+        false: {s: "TEST-KNOWN-FAIL" + randomMsg, n: STATUS_RANDOM}
-     };
-     outputs[EXPECTED_FUZZY] = outputs[EXPECTED_PASS];
- 
-     var output;
- 
-     if (gURLs[0].type == TYPE_LOAD) {
--        ++gTestResults.LoadOnly;
--        gDumpLog("REFTEST TEST-PASS | " + gURLs[0].prettyPath + " | (LOAD ONLY)\n");
-+        SaveResultAndDumpLog(STATUS_LOAD_ONLY,
-+            "REFTEST TEST-PASS | " + gURLs[0].prettyPath + " | (LOAD ONLY)\n");
-         gCurrentCanvas = null;
-         FinishTestItem();
-         return;
-@@ -1460,12 +1616,11 @@
- 
-         if (errorMsg) {
-             output = outputs[expected][false];
--            ++gTestResults[output.n];
-             var result = "REFTEST " + output.s + " | " +
-                 gURLs[0].prettyPath + " | " + // the URL being tested
-                 errorMsg;
- 
--            gDumpLog(result);
-+            SaveResultAndDumpLog(output.n, result);
-             FinishTestItem();
-             return;
-         }
-@@ -1483,14 +1638,18 @@
-             outputPair = outputs[expected];
-         }
-         var index = 0;
-+        gCurrentTestResult.scriptResults = [];
-         scriptResults.forEach(function(result) {
-                 var output = outputPair[result.passed];
- 
--                ++gTestResults[output.n];
-+                gCurrentTestResult.scriptResults[index] = {status: output.n};
-                 result = "REFTEST " + output.s + " | " +
-                     gURLs[0].prettyPath + " | " + // the URL being tested
-                     result.description + " item " + (++index) + "\n";
-                 gDumpLog(result);
-+                if (isFail(output.n)) {
-+                    gCurrentTestResult.scriptResults[index].failureMsg = result;
-+                }
-             });
- 
-         if (anyFailed && expected == EXPECTED_PASS) {
-@@ -1506,8 +1665,8 @@
-         gCurrentCanvas = gURICanvases[gCurrentURL];
-     }
-     if (gCurrentCanvas == null) {
--        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | program error managing snapshots\n");
--        ++gTestResults.Exception;
-+        SaveResultAndDumpLog(STATUS_EXCEPTION,
-+            "REFTEST TEST-UNEXPECTED-FAIL | | program error managing snapshots\n");
-     }
-     if (gState == 1) {
-         gCanvas1 = gCurrentCanvas;
-@@ -1557,8 +1716,6 @@
- 
-             output = outputs[expected][test_passed];
- 
--            ++gTestResults[output.n];
--
-             var result = "REFTEST " + output.s + " | " +
-                          gURLs[0].prettyPath + " | "; // the URL being tested
-             switch (gURLs[0].type) {
-@@ -1585,7 +1742,7 @@
-                 result += "\n";
-             }
- 
--            gDumpLog(result);
-+            SaveResultAndDumpLog(output.n, result);
- 
-             if (!test_passed && expected == EXPECTED_PASS) {
-                 FlushTestLog();
-@@ -1608,9 +1765,8 @@
- 
- function LoadFailed(why)
- {
--    ++gTestResults.FailedLoad;
--    gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " +
--         gURLs[0]["url" + gState].spec + " | load failed: " + why + "\n");
-+    SaveResultAndDumpLog(STATUS_FAILED_LOAD,
-+        "REFTEST TEST-UNEXPECTED-FAIL | " + gURLs[0]["url" + gState].spec + " | load failed: " + why + "\n");
-     FlushTestLog();
-     FinishTestItem();
- }
-@@ -1646,10 +1802,10 @@
-         let path = String(file.path);
-         if (path.match(/\.(dmp|extra)$/) && !gUnexpectedCrashDumpFiles[path]) {
-             if (!foundCrashDumpFile) {
--                ++gTestResults.UnexpectedFail;
-                 foundCrashDumpFile = true;
--                gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL +
--                         " | This test left crash dumps behind, but we weren't expecting it to!\n");
-+                SaveResultAndDumpLog(STATUS_UNEXPECTED_FAIL,
-+                    "REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL +
-+                    " | This test left crash dumps behind, but we weren't expecting it to!\n");
-             }
-             gDumpLog("REFTEST INFO | Found unexpected crash dump file" + path +
-                      ".\n");
-@@ -1699,20 +1855,20 @@
-         expectedAssertions += " assertions";
- 
-         if (numAsserts < minAsserts) {
--            ++gTestResults.AssertionUnexpectedFixed;
--            gDumpLog("REFTEST TEST-UNEXPECTED-PASS | " + gURLs[0].prettyPath +
--                 " | assertion count " + numAsserts + " is less than " +
--                 expectedAssertions + "\n");
-+            SaveResultAndDumpLog(STATUS_ASSERTION_UNEXPECTED_FIXED,
-+                "REFTEST TEST-UNEXPECTED-PASS | " + gURLs[0].prettyPath +
-+                " | assertion count " + numAsserts + " is less than " +
-+                expectedAssertions + "\n");
-         } else if (numAsserts > maxAsserts) {
--            ++gTestResults.AssertionUnexpected;
--            gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + gURLs[0].prettyPath +
--                 " | assertion count " + numAsserts + " is more than " +
--                 expectedAssertions + "\n");
-+            SaveResultAndDumpLog(STATUS_ASSERTION_UNEXPECTED,
-+                "REFTEST TEST-UNEXPECTED-FAIL | " + gURLs[0].prettyPath +
-+                " | assertion count " + numAsserts + " is more than " +
-+                expectedAssertions + "\n");
-         } else if (numAsserts != 0) {
--            ++gTestResults.AssertionKnown;
--            gDumpLog("REFTEST TEST-KNOWN-FAIL | " + gURLs[0].prettyPath +
--                 " | assertion count " + numAsserts + " matches " +
--                 expectedAssertions + "\n");
-+            SaveResultAndDumpLog(STATUS_ASSERTION_KNOWN,
-+                "REFTEST TEST-KNOWN-FAIL | " + gURLs[0].prettyPath +
-+                " | assertion count " + numAsserts + " matches " +
-+                expectedAssertions + "\n");
-         }
-     }
- 
-@@ -1819,8 +1975,7 @@
- 
- function RecvException(what)
- {
--    gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | "+ what +"\n");
--    ++gTestResults.Exception;
-+    SaveResultAndDumpLog(STATUS_EXCEPTION, "REFTEST TEST-UNEXPECTED-FAIL | | "+ what +"\n");
- }
- 
- function RecvFailedLoad(why)
-@@ -1842,8 +1997,8 @@
-     } else if (type == "warning") {
-         LogWarning(msg);
-     } else {
--        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | unknown log type "+ type +"\n");
--        ++gTestResults.Exception;
-+        SaveResultAndDumpLog(STATUS_EXCEPTION,
-+            "REFTEST TEST-UNEXPECTED-FAIL | | unknown log type "+ type +"\n");
-     }
- }
- 
-Index: firefox-trunk-21.0~a1~hg20130130r120261/layout/tools/reftest/reftest-cmdline.js
-===================================================================
---- firefox-trunk-21.0~a1~hg20130130r120261.orig/layout/tools/reftest/reftest-cmdline.js	2013-01-30 02:11:44.000000000 +0000
-+++ firefox-trunk-21.0~a1~hg20130130r120261/layout/tools/reftest/reftest-cmdline.js	2013-01-31 04:06:15.768833665 +0000
+--- firefox-trunk-21.0~a1~hg20130131r120360.orig/layout/tools/reftest/reftest-cmdline.js	2013-02-01 08:56:08.079875636 +0000
++++ firefox-trunk-21.0~a1~hg20130131r120360/layout/tools/reftest/reftest-cmdline.js	2013-02-01 08:56:08.075875636 +0000
 @@ -52,6 +52,41 @@
      catch (e) {
      }
@@ -637,10 +44,602 @@ Index: firefox-trunk-21.0~a1~hg20130130r120261/layout/tools/reftest/reftest-cmdl
      /* Ignore the platform's online/offline status while running reftests. */
      var ios = Components.classes["@mozilla.org/network/io-service;1"]
                .getService(Components.interfaces.nsIIOService2);
-Index: firefox-trunk-21.0~a1~hg20130130r120261/layout/tools/reftest/runreftest.py
+Index: firefox-trunk-21.0~a1~hg20130131r120360/layout/tools/reftest/reftest.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130130r120261.orig/layout/tools/reftest/runreftest.py	2013-01-30 02:11:44.000000000 +0000
-+++ firefox-trunk-21.0~a1~hg20130130r120261/layout/tools/reftest/runreftest.py	2013-01-31 14:40:04.543782069 +0000
+--- firefox-trunk-21.0~a1~hg20130131r120360.orig/layout/tools/reftest/reftest.js	2013-02-01 08:56:08.079875636 +0000
++++ firefox-trunk-21.0~a1~hg20130131r120360/layout/tools/reftest/reftest.js	2013-02-01 08:56:08.075875636 +0000
+@@ -64,32 +64,21 @@
+ var gURIUseCounts;
+ // Map from URI spec to the canvas rendered for that URI
+ var gURICanvases;
+-var gTestResults = {
+-  // Successful...
+-  Pass: 0,
+-  LoadOnly: 0,
+-  // Unexpected...
+-  Exception: 0,
+-  FailedLoad: 0,
+-  UnexpectedFail: 0,
+-  UnexpectedPass: 0,
+-  AssertionUnexpected: 0,
+-  AssertionUnexpectedFixed: 0,
+-  // Known problems...
+-  KnownFail : 0,
+-  AssertionKnown: 0,
+-  Random : 0,
+-  Skip: 0,
+-  Slow: 0,
+-};
++var gTestResults = [];
++var gTestCounters;
+ var gTotalTests = 0;
+ var gState;
+ var gCurrentURL;
++var gCurrentTestResult;
+ var gTestLog = [];
+ var gServer;
+ var gCount = 0;
+ var gAssertionCount = 0;
+ 
++var gXUnitFile;
++var gXUnitName;
++var gTestRootURI;
++
+ var gIOService;
+ var gDebug;
+ var gWindowUtils;
+@@ -122,6 +111,27 @@
+ const EXPECTED_DEATH = 3;  // test must be skipped to avoid e.g. crash/hang
+ const EXPECTED_FUZZY = 4;
+ 
++var Result = {
++    // Successful...
++    Pass: 0,
++    LoadOnly: 1,
++
++    // Known problems...
++    KnownFail: 2,
++    AssertionKnown: 3,
++    Random: 4,
++    Skip: 5,
++    Slow: 6,
++
++    // Unexpected...
++    Exception: 7,
++    FailedLoad: 8,
++    UnexpectedFail: 9,
++    UnexpectedPass: 10,
++    AssertionUnexpected: 11,
++    AssertionUnexpectedFixed: 12
++};
++
+ // types of preference value we might want to set for a specific test
+ const PREF_BOOLEAN = 0;
+ const PREF_STRING  = 1;
+@@ -164,15 +174,47 @@
+     gTestLog.push(str);
+ }
+ 
+-function FlushTestLog()
++function isFail(status)
++{
++    return status >= Result.Exception ? true : false;
++}
++
++function LogTestResult(status, str, time)
+ {
+-    if (!gVerbose) {
+-        // In verbose mode, we've dumped all these messages already.
+-        for (var i = 0; i < gTestLog.length; ++i) {
+-            gDumpLog("REFTEST INFO | Saved log: " + gTestLog[i] + "\n");
++    if (!gCurrentTestResult) {
++        gCurrentTestResult = { path: "preinit" };
++        gTestResults.unshift(gCurrentTestResult);
++    }
++
++    gDumpLog(str);
++
++    if (isFail(status)) {
++        if (!("failures" in gCurrentTestResult)) {
++            gCurrentTestResult.failures = [];
++        }
++        let failure = { status: status, msg: str };
++        gCurrentTestResult.failures.push(failure);
++        if (status != Result.UnexpectedPass &&
++            status != Result.AssertionUnexpectedFixed) {
++            failure.log = "";
++            for (var i = 0; i < gTestLog.length; ++i) {
++                let line = "REFTEST INFO | Saved log: " + gTestLog[i] + "\n";
++                if (!gVerbose) {
++                    // In verbose mode, we've dumped all these messages already.
++                    gDumpLog(line);
++                }
++                failure.log += line;
++            }
++            gTestLog = [];
+         }
++    } else {
++        gCurrentTestResult.status = status;
+     }
+-    gTestLog = [];
++    if (time) {
++        gCurrentTestResult.time = time;
++    }
++
++    gTestCounters[status]++;
+ }
+ 
+ function AllocateCanvas()
+@@ -236,6 +278,11 @@
+       gContainingWindow = win;
+     }
+ 
++    gTestCounters = new Array(Object.keys(Result).length);
++    for (let i = 0; i < gTestCounters.length; ++i) {
++        gTestCounters[i] = 0;
++    }
++
+     if (gBrowserIsIframe) {
+       gBrowser = gContainingWindow.document.createElementNS(XHTML_NS, "iframe");
+       gBrowser.setAttribute("mozbrowser", "");
+@@ -365,8 +412,7 @@
+             StartHTTPServer();
+     } catch (ex) {
+         //gBrowser.loadURI('data:text/plain,' + ex);
+-        ++gTestResults.Exception;
+-        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
++        LogTestResult(Result.Exception, "REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
+         DoneTests();
+     }
+ 
+@@ -439,10 +485,22 @@
+         if ("skipslowtests" in args && args.skipslowtests)
+             gRunSlowTests = false;
+ 
++        if ("xunitFile" in args && args["xunitFile"]) {
++            gXUnitFile = args["xunitFile"];
++
++            gTestRootURI = "";
++            if ("testRootURI" in args && args["testRootURI"]) {
++                gTestRootURI = args["testRootURI"];
++            }
++
++            if ("xunitName" in args && args["xunitName"]) {
++                gXUnitName = args["xunitName"];
++            }
++        }
++
+         uri = args.uri;
+     } catch (e) {
+-        ++gTestResults.Exception;
+-        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
++        LogTestResult(Result.Exception, "REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
+         DoneTests();
+     }
+ #endif
+@@ -493,8 +551,7 @@
+         StartCurrentTest();
+     } catch (ex) {
+         //gBrowser.loadURI('data:text/plain,' + ex);
+-        ++gTestResults.Exception;
+-        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
++        LogTestResult(Result.Exception, "REFTEST TEST-UNEXPECTED-FAIL | | EXCEPTION: " + ex + "\n");
+         DoneTests();
+     }
+ }
+@@ -956,6 +1013,7 @@
+                           expected: expected_status,
+                           allowSilentFail: allow_silent_fail,
+                           prettyPath: prettyPath,
++                          listPath: listURL.spec,
+                           minAsserts: minAsserts,
+                           maxAsserts: maxAsserts,
+                           needsFocus: needs_focus,
+@@ -982,6 +1040,7 @@
+                           expected: expected_status,
+                           allowSilentFail: allow_silent_fail,
+                           prettyPath: prettyPath,
++                          listPath: listURL.spec,
+                           minAsserts: minAsserts,
+                           maxAsserts: maxAsserts,
+                           needsFocus: needs_focus,
+@@ -1011,6 +1070,7 @@
+                           expected: expected_status,
+                           allowSilentFail: allow_silent_fail,
+                           prettyPath: prettyPath,
++                          listPath: listURL.spec,
+                           minAsserts: minAsserts,
+                           maxAsserts: maxAsserts,
+                           needsFocus: needs_focus,
+@@ -1125,19 +1185,21 @@
+     // make sure we don't run tests that are expected to kill the browser
+     while (gURLs.length > 0) {
+         var test = gURLs[0];
++        gCurrentTestResult = { path: test.prettyPath, listPath: test.listPath };
++        gTestResults.unshift(gCurrentTestResult);
+         if (test.expected == EXPECTED_DEATH) {
+-            ++gTestResults.Skip;
+-            gDumpLog("REFTEST TEST-KNOWN-FAIL | " + test.url1.spec + " | (SKIP)\n");
++            LogTestResult(Result.Skip,
++                "REFTEST TEST-KNOWN-FAIL | " + test.url1.spec + " | (SKIP)\n");
+             gURLs.shift();
+         } else if (test.needsFocus && !Focus()) {
+             // FIXME: Marking this as a known fail is dangerous!  What
+             // if it starts failing all the time?
+-            ++gTestResults.Skip;
+-            gDumpLog("REFTEST TEST-KNOWN-FAIL | " + test.url1.spec + " | (SKIPPED; COULDN'T GET FOCUS)\n");
++            LogTestResult(Result.Skip,
++                "REFTEST TEST-KNOWN-FAIL | " + test.url1.spec + " | (SKIPPED; COULDN'T GET FOCUS)\n");
+             gURLs.shift();
+         } else if (test.slow && !gRunSlowTests) {
+-            ++gTestResults.Slow;
+-            gDumpLog("REFTEST TEST-KNOWN-SLOW | " + test.url1.spec + " | (SLOW)\n");
++            LogTestResult(Result.Slow,
++                "REFTEST TEST-KNOWN-SLOW | " + test.url1.spec + " | (SLOW)\n");
+             gURLs.shift();
+         } else {
+             break;
+@@ -1215,13 +1277,13 @@
+             if (e == "bad pref") {
+                 var test = gURLs[0];
+                 if (test.expected == EXPECTED_FAIL) {
+-                    gDumpLog("REFTEST TEST-KNOWN-FAIL | " + test.url1.spec +
+-                             " | (SKIPPED; " + badPref + " not known or wrong type)\n");
+-                    ++gTestResults.Skip;
++                    LogTestResult(Result.Skip,
++                        "REFTEST TEST-KNOWN-FAIL | " + test.url1.spec +
++                        " | (SKIPPED; " + badPref + " not known or wrong type)\n");
+                 } else {
+-                    gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + test.url1.spec +
+-                             " | " + badPref + " not known or wrong type\n");
+-                    ++gTestResults.UnexpectedFail;
++                    LogTestResult(Result.UnexpectedFail,
++                        "REFTEST TEST-UNEXPECTED-FAIL | " + test.url1.spec +
++                        " | " + badPref + " not known or wrong type\n");
+                 }
+             } else {
+                 throw e;
+@@ -1258,38 +1320,118 @@
+     }
+ }
+ 
++function WriteXUnitResults(counts)
++{
++    let doc = document.implementation.createDocument(null, null, null);
++    let root = doc.createElement("testsuite");
++    doc.appendChild(root);
++    root.setAttribute("name", gXUnitName ? gXUnitName : "reftest");
++
++    let count = 0;
++    Object.keys(Result).forEach(function(key) {
++        count += gTestCounters[Result[key]];
++    });
++    root.setAttribute("tests", count);
++    count = gTestCounters[Result.Exception] + gTestCounters[Result.FailedLoad] +
++            gTestCounters[Result.UnexpectedFail] + gTestCounters[Result.UnexpectedPass] +
++            gTestCounters[Result.AssertionUnexpected] +
++            gTestCounters[Result.AssertionUnexpectedFixed];
++    root.setAttribute("failures", count);
++    count = gTestCounters[Result.Skip] + gTestCounters[Result.Slow];
++    root.setAttribute("skipped", count);
++
++    function addFailure(testcase, res)
++    {
++        let failure = doc.createElement("failure");
++        testcase.appendChild(failure);
++
++        failure.setAttribute("message", res.msg);
++        if (res.status == Result.UnexpectedPass ||
++            res.status == Result.AssertionUnexpectedFixed) {
++            failure.setAttribute("type", "TEST-UNEXPECTED-PASS");
++        } else {
++            failure.setAttribute("type", "TEST-UNEXPECTED-FAIL");
++        }
++
++        let cdata = doc.createCDATASection(res.log);
++        failure.appendChild(cdata);
++    }
++
++    gTestResults.reverse().forEach(function(res) {
++        let testcase = doc.createElement("testcase");
++        root.appendChild(testcase);
++
++        if (res.path == "preinit") {
++            // Special case for failures that occur during initialization
++            var relPath = "preinit/";
++            testcase.setAttribute("name", "preinit");
++        } else if (!res.path.startsWith(gTestRootURI)) {
++            // For data: URI's
++            var relPath = res.listPath.substr(gTestRootURI.length);
++            testcase.setAttribute("name", res.path);
++        } else {
++            var relPath = res.path.substr(gTestRootURI.length);
++            testcase.setAttribute("name", relPath.substr(relPath.lastIndexOf("/") + 1));
++
++        }
++        testcase.setAttribute("classname", relPath.substr(0, relPath.lastIndexOf("/")).replace(/\//g, ".").replace(/^\./, ""));
++        testcase.setAttribute("time", res.time ? res.time / 1000 : 0);
++
++        if ("failures" in res) {
++            res.failures.forEach(function(failure) {
++                addFailure(testcase, failure);
++            });
++        } else if (res.status == Result.Slow || res.status == Result.Skip) {
++            let skipped = doc.createElement("skipped");
++            testcase.appendChild(skipped);
++        }
++    });
++
++    var f = FileUtils.File(gXUnitFile);
++    if (f.exists()) {
++        f.remove(false);
++    }
++    var strm = FileUtils.openFileOutputStream(f, FileUtils.MODE_WRONLY | FileUtils.MODE_CREATE);
++    var xmls = new XMLSerializer();
++    xmls.serializeToStream(doc, strm, "UTF-8");
++}
++
+ function DoneTests()
+ {
+     gDumpLog("REFTEST FINISHED: Slowest test took " + gSlowestTestTime +
+          "ms (" + gSlowestTestURL + ")\n");
+ 
+     gDumpLog("REFTEST INFO | Result summary:\n");
+-    var count = gTestResults.Pass + gTestResults.LoadOnly;
++    var count = gTestCounters[Result.Pass] + gTestCounters[Result.LoadOnly];
+     gDumpLog("REFTEST INFO | Successful: " + count + " (" +
+-             gTestResults.Pass + " pass, " +
+-             gTestResults.LoadOnly + " load only)\n");
+-    count = gTestResults.Exception + gTestResults.FailedLoad +
+-            gTestResults.UnexpectedFail + gTestResults.UnexpectedPass +
+-            gTestResults.AssertionUnexpected +
+-            gTestResults.AssertionUnexpectedFixed;
++             gTestCounters[Result.Pass] + " pass, " +
++             gTestCounters[Result.LoadOnly] + " load only)\n");
++    count = gTestCounters[Result.Exception] + gTestCounters[Result.FailedLoad] +
++            gTestCounters[Result.UnexpectedFail] + gTestCounters[Result.UnexpectedPass] +
++            gTestCounters[Result.AssertionUnexpected] +
++            gTestCounters[Result.AssertionUnexpectedFixed];
+     gDumpLog("REFTEST INFO | Unexpected: " + count + " (" +
+-             gTestResults.UnexpectedFail + " unexpected fail, " +
+-             gTestResults.UnexpectedPass + " unexpected pass, " +
+-             gTestResults.AssertionUnexpected + " unexpected asserts, " +
+-             gTestResults.AssertionUnexpectedFixed + " unexpected fixed asserts, " +
+-             gTestResults.FailedLoad + " failed load, " +
+-             gTestResults.Exception + " exception)\n");
+-    count = gTestResults.KnownFail + gTestResults.AssertionKnown +
+-            gTestResults.Random + gTestResults.Skip + gTestResults.Slow;
++             gTestCounters[Result.UnexpectedFail] + " unexpected fail, " +
++             gTestCounters[Result.UnexpectedPass] + " unexpected pass, " +
++             gTestCounters[Result.AssertionUnexpected] + " unexpected asserts, " +
++             gTestCounters[Result.AssertionUnexpectedFixed] + " unexpected fixed asserts, " +
++             gTestCounters[Result.FailedLoad] + " failed load, " +
++             gTestCounters[Result.Exception] + " exception)\n");
++    count = gTestCounters[Result.KnownFail] + gTestCounters[Result.AssertionKnown] +
++            gTestCounters[Result.Random] + gTestCounters[Result.Skip] + gTestCounters[Result.Slow];
+     gDumpLog("REFTEST INFO | Known problems: " + count + " (" +
+-             gTestResults.KnownFail + " known fail, " +
+-             gTestResults.AssertionKnown + " known asserts, " +
+-             gTestResults.Random + " random, " +
+-             gTestResults.Skip + " skipped, " +
+-             gTestResults.Slow + " slow)\n");
++             gTestCounters[Result.KnownFail] + " known fail, " +
++             gTestCounters[Result.AssertionKnown] + " known asserts, " +
++             gTestCounters[Result.Random] + " random, " +
++             gTestCounters[Result.Skip] + " skipped, " +
++             gTestCounters[Result.Slow] + " slow)\n");
+ 
+     gDumpLog("REFTEST INFO | Total canvas count = " + gRecycledCanvases.length + "\n");
+ 
++    if (gXUnitFile) {
++        WriteXUnitResults();
++    }
++
+     gDumpLog("REFTEST TEST-START | Shutdown\n");
+     function onStopped() {
+         let appStartup = CC["@mozilla.org/toolkit/app-startup;1"].getService(CI.nsIAppStartup);
+@@ -1338,8 +1480,8 @@
+         // browser element
+         flags |= ctx.DRAWWINDOW_USE_WIDGET_LAYERS;
+     } else if (gBrowserIsRemote) {
+-        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL + " | can't drawWindow remote content\n");
+-        ++gTestResults.Exception;
++        LogTestResult(Result.Exception,
++            "REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL + " | can't drawWindow remote content\n");
+     }
+ 
+     if (gDrawWindowFlags != flags) {
+@@ -1420,24 +1562,25 @@
+     var outputs = {};
+     const randomMsg = "(EXPECTED RANDOM)";
+     outputs[EXPECTED_PASS] = {
+-        true:  {s: "TEST-PASS"                  , n: "Pass"},
+-        false: {s: "TEST-UNEXPECTED-FAIL"       , n: "UnexpectedFail"}
++        true:  {s: "TEST-PASS"                  , n: Result.Pass},
++        false: {s: "TEST-UNEXPECTED-FAIL"       , n: Result.UnexpectedFail}
+     };
+     outputs[EXPECTED_FAIL] = {
+-        true:  {s: "TEST-UNEXPECTED-PASS"       , n: "UnexpectedPass"},
+-        false: {s: "TEST-KNOWN-FAIL"            , n: "KnownFail"}
++        true:  {s: "TEST-UNEXPECTED-PASS"       , n: Result.UnexpectedPass},
++        false: {s: "TEST-KNOWN-FAIL"            , n: Result.KnownFail}
+     };
+     outputs[EXPECTED_RANDOM] = {
+-        true:  {s: "TEST-PASS" + randomMsg      , n: "Random"},
+-        false: {s: "TEST-KNOWN-FAIL" + randomMsg, n: "Random"}
++        true:  {s: "TEST-PASS" + randomMsg      , n: Result.Random},
++        false: {s: "TEST-KNOWN-FAIL" + randomMsg, n: Result.Random}
+     };
+     outputs[EXPECTED_FUZZY] = outputs[EXPECTED_PASS];
+ 
+     var output;
+ 
+     if (gURLs[0].type == TYPE_LOAD) {
+-        ++gTestResults.LoadOnly;
+-        gDumpLog("REFTEST TEST-PASS | " + gURLs[0].prettyPath + " | (LOAD ONLY)\n");
++        LogTestResult(Result.LoadOnly,
++            "REFTEST TEST-PASS | " + gURLs[0].prettyPath + " | (LOAD ONLY)\n",
++            testRunTime);
+         gCurrentCanvas = null;
+         FinishTestItem();
+         return;
+@@ -1460,12 +1603,11 @@
+ 
+         if (errorMsg) {
+             output = outputs[expected][false];
+-            ++gTestResults[output.n];
+             var result = "REFTEST " + output.s + " | " +
+                 gURLs[0].prettyPath + " | " + // the URL being tested
+                 errorMsg;
+ 
+-            gDumpLog(result);
++            LogTestResult(output.n, result);
+             FinishTestItem();
+             return;
+         }
+@@ -1484,18 +1626,13 @@
+         }
+         var index = 0;
+         scriptResults.forEach(function(result) {
+-                var output = outputPair[result.passed];
+-
+-                ++gTestResults[output.n];
+-                result = "REFTEST " + output.s + " | " +
+-                    gURLs[0].prettyPath + " | " + // the URL being tested
+-                    result.description + " item " + (++index) + "\n";
+-                gDumpLog(result);
+-            });
++            var output = outputPair[result.passed];
+ 
+-        if (anyFailed && expected == EXPECTED_PASS) {
+-            FlushTestLog();
+-        }
++            result = "REFTEST " + output.s + " | " +
++                gURLs[0].prettyPath + " | " + // the URL being tested
++                result.description + " item " + (++index) + "\n";
++            LogTestResult(output.n, result);
++        });
+ 
+         FinishTestItem();
+         return;
+@@ -1506,8 +1643,8 @@
+         gCurrentCanvas = gURICanvases[gCurrentURL];
+     }
+     if (gCurrentCanvas == null) {
+-        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | program error managing snapshots\n");
+-        ++gTestResults.Exception;
++        LogTestResult(Result.Exception,
++            "REFTEST TEST-UNEXPECTED-FAIL | | program error managing snapshots\n");
+     }
+     if (gState == 1) {
+         gCanvas1 = gCurrentCanvas;
+@@ -1557,8 +1694,6 @@
+ 
+             output = outputs[expected][test_passed];
+ 
+-            ++gTestResults[output.n];
+-
+             var result = "REFTEST " + output.s + " | " +
+                          gURLs[0].prettyPath + " | "; // the URL being tested
+             switch (gURLs[0].type) {
+@@ -1585,11 +1720,7 @@
+                 result += "\n";
+             }
+ 
+-            gDumpLog(result);
+-
+-            if (!test_passed && expected == EXPECTED_PASS) {
+-                FlushTestLog();
+-            }
++            LogTestResult(output.n, result, testRunTime);
+ 
+             if (gURLs[0].prefSettings1.length == 0) {
+                 UpdateCanvasCache(gURLs[0].url1, gCanvas1);
+@@ -1608,10 +1739,8 @@
+ 
+ function LoadFailed(why)
+ {
+-    ++gTestResults.FailedLoad;
+-    gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " +
+-         gURLs[0]["url" + gState].spec + " | load failed: " + why + "\n");
+-    FlushTestLog();
++    LogTestResult(Result.FailedLoad,
++        "REFTEST TEST-UNEXPECTED-FAIL | " + gURLs[0]["url" + gState].spec + " | load failed: " + why + "\n");
+     FinishTestItem();
+ }
+ 
+@@ -1646,10 +1775,10 @@
+         let path = String(file.path);
+         if (path.match(/\.(dmp|extra)$/) && !gUnexpectedCrashDumpFiles[path]) {
+             if (!foundCrashDumpFile) {
+-                ++gTestResults.UnexpectedFail;
+                 foundCrashDumpFile = true;
+-                gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL +
+-                         " | This test left crash dumps behind, but we weren't expecting it to!\n");
++                LogTestResult(Result.UnexpectedFail,
++                    "REFTEST TEST-UNEXPECTED-FAIL | " + gCurrentURL +
++                    " | This test left crash dumps behind, but we weren't expecting it to!\n");
+             }
+             gDumpLog("REFTEST INFO | Found unexpected crash dump file" + path +
+                      ".\n");
+@@ -1699,20 +1828,20 @@
+         expectedAssertions += " assertions";
+ 
+         if (numAsserts < minAsserts) {
+-            ++gTestResults.AssertionUnexpectedFixed;
+-            gDumpLog("REFTEST TEST-UNEXPECTED-PASS | " + gURLs[0].prettyPath +
+-                 " | assertion count " + numAsserts + " is less than " +
+-                 expectedAssertions + "\n");
++            LogTestResult(Result.AssertionUnexpectedFixed,
++                "REFTEST TEST-UNEXPECTED-PASS | " + gURLs[0].prettyPath +
++                " | assertion count " + numAsserts + " is less than " +
++                expectedAssertions + "\n");
+         } else if (numAsserts > maxAsserts) {
+-            ++gTestResults.AssertionUnexpected;
+-            gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | " + gURLs[0].prettyPath +
+-                 " | assertion count " + numAsserts + " is more than " +
+-                 expectedAssertions + "\n");
++            LogTestResult(Result.AssertionUnexpected,
++                "REFTEST TEST-UNEXPECTED-FAIL | " + gURLs[0].prettyPath +
++                " | assertion count " + numAsserts + " is more than " +
++                expectedAssertions + "\n");
+         } else if (numAsserts != 0) {
+-            ++gTestResults.AssertionKnown;
+-            gDumpLog("REFTEST TEST-KNOWN-FAIL | " + gURLs[0].prettyPath +
+-                 " | assertion count " + numAsserts + " matches " +
+-                 expectedAssertions + "\n");
++            LogTestResult(Result.AssertionKnown,
++                "REFTEST TEST-KNOWN-FAIL | " + gURLs[0].prettyPath +
++                " | assertion count " + numAsserts + " matches " +
++                expectedAssertions + "\n");
+         }
+     }
+ 
+@@ -1819,8 +1948,7 @@
+ 
+ function RecvException(what)
+ {
+-    gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | "+ what +"\n");
+-    ++gTestResults.Exception;
++    LogTestResult(Result.Exception, "REFTEST TEST-UNEXPECTED-FAIL | | "+ what +"\n");
+ }
+ 
+ function RecvFailedLoad(why)
+@@ -1842,8 +1970,8 @@
+     } else if (type == "warning") {
+         LogWarning(msg);
+     } else {
+-        gDumpLog("REFTEST TEST-UNEXPECTED-FAIL | | unknown log type "+ type +"\n");
+-        ++gTestResults.Exception;
++        LogTestResult(Result.Exception,
++            "REFTEST TEST-UNEXPECTED-FAIL | | unknown log type "+ type +"\n");
+     }
+ }
+ 
+Index: firefox-trunk-21.0~a1~hg20130131r120360/layout/tools/reftest/runreftest.py
+===================================================================
+--- firefox-trunk-21.0~a1~hg20130131r120360.orig/layout/tools/reftest/runreftest.py	2013-02-01 08:56:08.079875636 +0000
++++ firefox-trunk-21.0~a1~hg20130131r120360/layout/tools/reftest/runreftest.py	2013-02-01 08:56:08.075875636 +0000
 @@ -120,6 +120,14 @@
        reftestlist = self.getManifestPath(testPath)
        if cmdlineArgs == None:
