@@ -10,8 +10,9 @@ webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
 python-virtualenv-multiarch-fix.patch
 test-integration/mochitest-optional-websock-log.patch
-test-integration/mochitest-allow-test-manifest-for-chrome.patch
 test-integration/reftest-output-junit-xml.patch
+test-integration/mochitest-output-junit-xml.patch
+test-integration/mochitest-allow-test-manifest-for-chrome.patch
 test-integration/xpcshell-output-valid-junit-xml.patch
 test-fixes/xpcshell-search-fix-browser-dirprovider.patch
 test-fixes/xpcshell-docshell-no-writes-to-appdir.patch

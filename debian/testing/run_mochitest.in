@@ -19,6 +19,7 @@ class MochitestHelper(TestRunHelper):
       '--test-manifest',
       '--test-path',
       '--timeout',
+      '--xunit-file',
       '--debugger',
       '--debugger-args',
       '--debugger-interactive',

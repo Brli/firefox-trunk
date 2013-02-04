@@ -1,0 +1,645 @@
+# HG changeset patch
+# Parent bd077f8f8f97d2cb211d2ae04371929381b33930
+# User Chris Coulson <chris.coulson@canonical.com>
+
+diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-harness.xul
+--- a/testing/mochitest/browser-harness.xul
++++ b/testing/mochitest/browser-harness.xul
+@@ -108,57 +108,68 @@
+         setTimeout(runTests, 0);
+     }
+ 
+     var gErrorCount = 0;
+ 
+     function browserTest(aTestFile) {
+       this.path = aTestFile;
+       this.dumper = gDumper;
+-      this.results = [];
+       this.scope = null;
+-      this.duration = 0;
++      this.iterations = [];
++      this.currentIteration = null;
+     }
+     browserTest.prototype = {
+       get passCount() {
+-        return this.results.filter(function (t) !t.info && !t.todo && t.pass).length;
++        return this.iterations.reduce(function(p, c, i, a) p + c.results.filter(function(t) !t.info && !t.todo && t.pass).length, 0);
+       },
+       get todoCount() {
+-        return this.results.filter(function (t) !t.info && t.todo && t.pass).length;
++        return this.iterations.reduce(function(p, c, i, a) p + c.results.filter(function(t) !t.info && t.todo && t.pass).length, 0);
+       },
+       get failCount() {
+-        return this.results.filter(function (t) !t.info && !t.pass).length;
++        return this.iterations.reduce(function(p, c, i, a) p + c.results.filter(function(t) !t.info && !t.pass).length, 0);
++      },
++      get testCount() {
++        return this.iterations.reduce(function(p, c, i, a) p + c.results.filter(function(t) !t.info).length, 0);
++      },
++      get iterationCount() {
++        return this.iterations.length;
+       },
+ 
+       addResult: function addResult(result) {
+-        this.results.push(result);
++        this.currentIteration.results.push(result);
+ 
+         this.dumper.dump(result.result + " | " + this.path + " | " + result.msg + "\n");
+       },
+ 
++      startNextIteration: function startNextIteration() {
++        this.currentIteration = {duration: 0, results: []};
++        this.iterations.push(this.currentIteration);
++      },
++
+       setDuration: function setDuration(duration) {
+-        this.duration = duration;
++        this.currentIteration.duration = duration;
+       },
+ 
+       get htmlLog() {
+         let txtToHTML = Cc["@mozilla.org/txttohtmlconv;1"].
+                         getService(Ci.mozITXTToHTMLConv);
+         function _entityEncode(str) {
+           return txtToHTML.scanTXT(str, Ci.mozITXTToHTMLConv.kEntities);
+         }
+         var path = _entityEncode(this.path);
+-        var html = this.results.map(function (t) {
++        var html = this.iterations.reduce(function(p, c, i, a) p + "\n" + c.results.map(function(t) {
+           var classname = t.info ? "info" : "result " + (t.pass ? "passed" : "failed");
+           var text = t.result + " | " + path + " | " + _entityEncode(t.msg);
+           if (!t.info && !t.pass) {
+             return '<p class="' + classname + '" id=\"ERROR' + (gErrorCount++) + '">' +
+                    text + " <a href=\"javascript:scrollTo('ERROR" + gErrorCount + "')\">NEXT ERROR</a></p>";
+           }
+           return '<p class="' + classname + '">' + text + "</p>";
+-        }).join("\n");
++        }).join("\n"), "");
+         if (this.duration) {
+           html += "<p class=\"info\">TEST-END | " + path + " | finished in " +
+                   this.duration + " ms</p>";
+         }
+         return html;
+       }
+     };
+ 
+@@ -227,16 +238,72 @@
+              "<p>Todo: " + todoCount + "</p>\n</div>\n<div id=\"log\">\n";
+ 
+       return log + aTests.map(function (f) {
+                                 return "<p class=\"testHeader\">Running " + f.path + "...</p>\n" + f.htmlLog;
+                               }).join("\n") + "</div>";
+     }
+ 
+     function testsFinished(aTests) {
++      if (gConfig.xunitFile) {
++        var doc = document.implementation.createDocument(null, null, null);
++        var root = doc.createElement("testsuite");
++        doc.appendChild(root);
++        root.setAttribute("name", gConfig.xunitName ? gConfig.xunitName : "mochitest.browser");
++        root.setAttribute("tests", aTests.reduce(function(p, c, i, a) p + c.testCount, 0));
++        root.setAttribute("failures", aTests.reduce(function(p, c, i, a) p + c.failCount, 0));
++
++        var iter = 0;
++        var suffix = "";
++        if (gConfig.repeat > 0) {
++          suffix = "." + iter;
++        }
++
++        var tests = [];
++        do {
++          tests = aTests.filter(function(t) iter < t.iterationCount);
++          tests.forEach(function(t) {
++            var testcase = doc.createElement("testcase");
++            root.appendChild(testcase);
++
++            var relPath = t.path.substr("chrome://mochitests/content".length);
++            testcase.setAttribute("name", relPath.substr(relPath.lastIndexOf("/") + 1) + suffix);
++            testcase.setAttribute("classname", relPath.substr(0, relPath.lastIndexOf("/")).replace(/\//g, ".").replace(/^\./, ""));
++            testcase.setAttribute("time", t.iterations[iter].duration / 1000);
++
++            var msgs = [];
++            t.iterations[iter].results.forEach(function(res) {
++              if (res.info) {
++                msgs.push(res.result + " | " + t.path + " | " + res.msg);
++              } else if ((!res.pass == !res.todo) && !res.info) {
++                var failure = doc.createElement("failure");
++                testcase.appendChild(failure);
++
++                failure.setAttribute("type", res.result);
++                failure.setAttribute("message", res.result + " | " + t.path + " | " + res.msg);
++                var cdata = doc.createCDATASection(msgs.join("\n"));
++                failure.appendChild(cdata);
++                msgs = [];
++              }
++            });
++          });
++
++          iter++;
++        } while (tests.length > 0);
++
++        var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
++        file.initWithPath(gConfig.xunitFile);
++        var strm = Cc["@mozilla.org/network/file-output-stream;1"]
++                   .createInstance(Ci.nsIFileOutputStream);
++        // WRONLY | CREATE | TRUNCATE
++        strm.init(file, 42, 0644, strm.DEFER_OPEN);
++        var xmls = new XMLSerializer();
++        xmls.serializeToStream(doc, strm, "UTF-8");
++      }
++
+       // Focus our window, to display the results
+       window.focus();
+ 
+       if (gConfig.closeWhenDone) {
+         let appStartup = Cc["@mozilla.org/toolkit/app-startup;1"].getService(Ci.nsIAppStartup);
+         appStartup.quit(Ci.nsIAppStartup.eForceQuit);
+         return;
+       }
+diff --git a/testing/mochitest/browser-test.js b/testing/mochitest/browser-test.js
+--- a/testing/mochitest/browser-test.js
++++ b/testing/mochitest/browser-test.js
+@@ -314,16 +314,17 @@ Tester.prototype = {
+ 
+             this.finish();
+           }.bind(this));
+         }).bind(this));
+         return;
+       }
+ 
+       this.currentTestIndex++;
++      this.currentTest.startNextIteration();
+       this.execTest();
+     }).bind(this));
+   },
+ 
+   execTest: function Tester_execTest() {
+     this.dumper.dump("TEST-START | " + this.currentTest.path + "\n");
+ 
+     this.SimpleTest.reset();
+diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
+--- a/testing/mochitest/runtests.py
++++ b/testing/mochitest/runtests.py
+@@ -246,16 +246,21 @@ class MochitestOptions(optparse.OptionPa
+                     help = "Filename of the output file where we can store a .json list of failures to be run in the future with --run-only-tests.")
+     defaults["failureFile"] = None
+ 
+     self.add_option("--run-slower",
+                     action = "store_true", dest = "runSlower",
+                     help = "Delay execution between test files.")
+     defaults["runSlower"] = False
+ 
++    self.add_option("--xunit-file",
++                    action = "store", type="string", dest = "xunitFile",
++                    help = "specify a filename to output xUnit results to")
++    defaults["xunitFile"] = None
++
+     # -h, --help are automatically handled by OptionParser
+ 
+     self.set_defaults(**defaults)
+ 
+     usage = """\
+ Usage instructions for runtests.py.
+ All arguments are optional.
+ If --chrome is specified, chrome tests will be run instead of web content tests.
+@@ -650,16 +655,19 @@ class Mochitest(object):
+         if hasattr(options, 'runOnly') and options.runOnly:
+           self.urlOpts.append("runOnly=true")
+         else:
+           self.urlOpts.append("runOnly=false")
+       if options.failureFile:
+         self.urlOpts.append("failureFile=%s" % self.getFullPath(options.failureFile))
+       if options.runSlower:
+         self.urlOpts.append("runSlower=true")
++      if options.xunitFile:
++        self.urlOpts.append("xunitFile=%s" % encodeURIComponent(options.xunitFile))
++        self.urlOpts.append("xunitName=mochitest.plain")
+ 
+   def cleanup(self, manifest, options):
+     """ remove temporary files and profile """
+     os.remove(manifest)
+     shutil.rmtree(options.profilePath)
+ 
+   def startVMwareRecording(self, options):
+     """ starts recording inside VMware VM using the recording helper dll """
+@@ -815,16 +823,22 @@ class Mochitest(object):
+       val = options.__dict__[opt]
+       if first:
+         first = False
+       else:
+         content += ", "
+ 
+       content += '"' + opt + '": '
+       content += jsonString(val)
++
++    if options.xunitFile:
++      if not first:
++        content += ", "
++      content += '"xunitName": "mochitest.%s"' % testRoot
++
+     content += "}"
+ 
+     with open(os.path.join(options.profilePath, "testConfig.js"), "w") as config:
+       config.write(content)
+ 
+   def addChromeToProfile(self, options):
+     "Adds MochiKit chrome tests to the profile."
+ 
+diff --git a/testing/mochitest/tests/SimpleTest/SimpleTest.js b/testing/mochitest/tests/SimpleTest/SimpleTest.js
+--- a/testing/mochitest/tests/SimpleTest/SimpleTest.js
++++ b/testing/mochitest/tests/SimpleTest/SimpleTest.js
+@@ -278,16 +278,19 @@ SimpleTest._logResult = function(test, p
+     var resultString = test.result ? passString : failString;
+     var url = SimpleTest._getCurrentTestURL();
+     var diagnostic = test.name + (test.diag ? " - " + test.diag : "");
+     var msg = [resultString, url, diagnostic].join(" | ");
+     if (parentRunner) {
+         if (isError) {
+             parentRunner.addFailedTest(url);
+             parentRunner.error(msg);
++            test.failureType = resultString;
++            test.failureMsg = msg;
++            test.testLog = parentRunner.flushLog();
+         } else {
+             parentRunner.log(msg);
+         }
+     } else if (typeof dump === "function") {
+         dump(msg + "\n");
+     } else {
+         // Non-Mozilla browser?  Just do nothing.
+     }
+@@ -1047,16 +1050,22 @@ var is = SimpleTest.is;
+ var isnot = SimpleTest.isnot;
+ var ise = SimpleTest.ise;
+ var todo = SimpleTest.todo;
+ var todo_is = SimpleTest.todo_is;
+ var todo_isnot = SimpleTest.todo_isnot;
+ var isDeeply = SimpleTest.isDeeply;
+ var info = SimpleTest.info;
+ 
++// Shovel messages to the runner, so that it can keep a record and write
++// it to the JUnit results file on failure
++if (parentRunner) {
++    dump = parentRunner.dump;
++}
++
+ var gOldOnError = window.onerror;
+ window.onerror = function simpletestOnerror(errorMsg, url, lineNumber) {
+     // Log the message.
+     // XXX Chrome mochitests sometimes trigger this window.onerror handler,
+     // but there are a number of uncaught JS exceptions from those tests.
+     // For now, for tests that self identify as having unintentional uncaught
+     // exceptions, just dump it so that the error is visible but doesn't cause
+     // a test failure.  See bug 652494.
+diff --git a/testing/mochitest/tests/SimpleTest/TestRunner.js b/testing/mochitest/tests/SimpleTest/TestRunner.js
+--- a/testing/mochitest/tests/SimpleTest/TestRunner.js
++++ b/testing/mochitest/tests/SimpleTest/TestRunner.js
+@@ -70,20 +70,23 @@ function flattenArguments(lst/* ...*/) {
+  *
+ **/
+ var TestRunner = {};
+ TestRunner.logEnabled = false;
+ TestRunner._currentTest = 0;
+ TestRunner.currentTestURL = "";
+ TestRunner.originalTestURL = "";
+ TestRunner._urls = [];
++TestRunner._results = [];
+ 
+ TestRunner.timeout = 5 * 60 * 1000; // 5 minutes.
+ TestRunner.maxTimeouts = 4; // halt testing after too many timeouts
+ TestRunner.runSlower = false;
++TestRunner.xunitFile = null;
++TestRunner.xunitName = null;
+ 
+ TestRunner._expectingProcessCrash = false;
+ 
+ /**
+  * Make sure the tests don't hang indefinitely.
+ **/
+ TestRunner._numTimeouts = 0;
+ TestRunner._currentTestStartTime = new Date().valueOf();
+@@ -175,32 +178,47 @@ TestRunner.generateFailureList = functio
+     }
+ };
+ 
+ /**
+  * If logEnabled is true, this is the logger that will be used.
+ **/
+ TestRunner.logger = LogController;
+ 
++TestRunner._dumpLog = [];
++
++TestRunner.dump = function(msg) {
++    TestRunner._dumpLog.push(msg);
++    dump(msg);
++};
++
+ TestRunner.log = function(msg) {
++    TestRunner._dumpLog.push(msg + "\n");
+     if (TestRunner.logEnabled) {
+         TestRunner.logger.log(msg);
+     } else {
+         dump(msg + "\n");
+     }
+ };
+ 
+ TestRunner.error = function(msg) {
++    TestRunner._dumpLog.push(msg + "\n");
+     if (TestRunner.logEnabled) {
+         TestRunner.logger.error(msg);
+     } else {
+         dump(msg + "\n");
+     }
+ };
+ 
++TestRunner.flushLog = function() {
++    var res = TestRunner._dumpLog.join("");
++    TestRunner._dumpLog = [];
++    return res;
++};
++
+ /**
+  * Toggle element visibility
+ **/
+ TestRunner._toggle = function(el) {
+     if (el.className == "noshow") {
+         el.className = "";
+         el.style.cssText = "";
+     } else {
+@@ -272,16 +290,17 @@ TestRunner.runTests = function (/*url...
+ };
+ 
+ /**
+  * Used for running a set of tests in a loop for debugging purposes
+  * Takes an array of URLs
+ **/
+ TestRunner.resetTests = function(listURLs) {
+   TestRunner._currentTest = 0;
++  TestRunner._results = [];
+   // Reset our "Current-test" line - functionality depends on it
+   $("current-test").innerHTML = TestRunner.originalTestURL;
+   if (TestRunner.logEnabled)
+     TestRunner.log("SimpleTest START Loop " + TestRunner._currentLoop);
+ 
+   TestRunner._urls = listURLs;
+   $('testframe').src="";
+   TestRunner._checkForHangs();
+@@ -318,24 +337,92 @@ TestRunner.loopTest = function(testPath)
+     }
+   }
+   while (numLoops >= 0) {
+     checkComplete();
+     numLoops--;
+   }
+ }
+ 
++TestRunner.saveXUnitResults = function() {
++    if (!TestRunner._xUnitDocument) {
++        TestRunner._xUnitDocument = document.implementation
++                                            .createDocument(null, null, null);
++        var root = TestRunner._xUnitDocument.createElement("testsuite");
++        TestRunner._xUnitDocument.appendChild(root);
++        root.setAttribute("name", TestRunner.xunitName ? TestRunner.xunitName : "mochitest");
++    }
++
++    var doc = TestRunner._xUnitDocument
++    var root = doc.documentElement;
++
++    var suffix = "";
++    if (TestRunner.repeat > 0) {
++        suffix = "." + TestRunner._currentLoop;
++    }
++
++    TestRunner._results.forEach(function(res) {
++        var testcase = doc.createElement("testcase");
++        root.appendChild(testcase);
++
++        var relPath = res.path.substr(window.location.pathname.substr(0, window.location.pathname.lastIndexOf("/")).length);
++        dump("mainPath=" + window.location.pathname + ", path=" + res.path + ", relPath=" + relPath + "\n");
++        testcase.setAttribute("name", relPath.substr(relPath.lastIndexOf("/") + 1) + suffix);
++        testcase.setAttribute("classname", relPath.substr(0, relPath.lastIndexOf("/")).replace(/\//g, ".").replace(/^\./, ""));
++        testcase.setAttribute("time", res.time ? res.time : "0");
++
++        if ("failures" in res) {
++            res.failures.forEach(function(fail) {
++                var failure = doc.createElement("failure");
++                testcase.appendChild(failure);
++
++                failure.setAttribute("type", fail.type);
++                failure.setAttribute("message", fail.msg);
++                var cdata = doc.createCDATASection(fail.log);
++                failure.appendChild(cdata);
++            });
++        }
++    });
++};
++
++TestRunner.writeXUnitResults = function() {
++    var doc = TestRunner._xUnitDocument;
++    var root = doc.documentElement;
++
++    var count = parseInt($("pass-count").innerHTML) +
++                parseInt($("fail-count").innerHTML) +
++                parseInt($("todo-count").innerHTML);
++    root.setAttribute("tests", count);
++    root.setAttribute("failures", $("fail-count").innerHTML);
++
++    var Cc = SpecialPowers.wrap(Components).classes;
++    var Ci = Components.interfaces;
++
++    var file = Cc["@mozilla.org/file/local;1"]
++               .createInstance(Ci.nsIFile);
++    file.initWithPath(TestRunner.xunitFile);
++    var strm = Cc["@mozilla.org/network/file-output-stream;1"]
++               .createInstance(Ci.nsIFileOutputStream);
++    // WRONLY | CREATE | TRUNCATE
++    strm.init(file, 42, 0644, strm.DEFER_OPEN);
++    var xmls = new XMLSerializer();
++    var str = xmls.serializeToString(doc);
++    strm.write(str, str.length);
++};
++
+ /**
+  * Run the next test. If no test remains, calls onComplete().
+  **/
+ TestRunner._haltTests = false;
+ TestRunner.runNextTest = function() {
+     if (TestRunner._currentTest < TestRunner._urls.length &&
+         !TestRunner._haltTests)
+     {
++        TestRunner._dumpLog = [];
++
+         var url = TestRunner._urls[TestRunner._currentTest];
+         TestRunner.currentTestURL = url;
+ 
+         $("current-test-path").innerHTML = url;
+ 
+         TestRunner._currentTestStartTime = new Date().valueOf();
+         TestRunner._timeoutFactor = 1;
+ 
+@@ -347,17 +434,21 @@ TestRunner.runNextTest = function() {
+         TestRunner._makeIframe("about:blank", 0);
+ 
+         if (parseInt($("pass-count").innerHTML) == 0 &&
+             parseInt($("fail-count").innerHTML) == 0 &&
+             parseInt($("todo-count").innerHTML) == 0)
+         {
+           // No |$('testframe').contentWindow|, so manually update: ...
+           // ... the log,
+-          TestRunner.error("TEST-UNEXPECTED-FAIL | (SimpleTest/TestRunner.js) | No checks actually run.");
++          var msg = "TEST-UNEXPECTED-FAIL | (SimpleTest/TestRunner.js) | No checks actually run.";
++          TestRunner.error(msg);
++          TestRunner._results.push({ url: "SimpleTest/TestRunner.js",
++                                     failures: [{ failureType: "TEST-UNEXPECTED-FAIL",
++                                                  failureMsg: msg }] });
+           // ... the count,
+           $("fail-count").innerHTML = 1;
+           // ... the indicator.
+           var indicator = $("indicator");
+           indicator.innerHTML = "Status: Fail (No checks actually run)";
+           indicator.style.backgroundColor = "red";
+         }
+ 
+@@ -369,81 +460,99 @@ TestRunner.runNextTest = function() {
+         TestRunner.log("Todo:   " + $("todo-count").innerHTML);
+         // If we are looping, don't send this cause it closes the log file
+         if (TestRunner.repeat == 0) {
+           TestRunner.log("SimpleTest FINISHED");
+         }
+ 
+         if (TestRunner.repeat == 0 && TestRunner.onComplete) {
+              TestRunner.onComplete();
+-         }
++        }
++
++        if (TestRunner.xunitFile) {
++          TestRunner.saveXUnitResults();
++        }
+ 
+         if (TestRunner._currentLoop < TestRunner.repeat) {
+           TestRunner._currentLoop++;
+           TestRunner.resetTests(TestRunner._urls);
+         } else {
+           // Loops are finished
+           if (TestRunner.logEnabled) {
+             TestRunner.log("TEST-INFO | Ran " + TestRunner._currentLoop + " Loops");
+             TestRunner.log("SimpleTest FINISHED");
+           }
+ 
++          if (TestRunner.xunitFile) {
++            TestRunner.writeXUnitResults();
++          }
++
+           if (TestRunner.onComplete)
+             TestRunner.onComplete();
+        }
+        TestRunner.generateFailureList();
+     }
+ };
+ 
+ TestRunner.expectChildProcessCrash = function() {
+     TestRunner._expectingProcessCrash = true;
+ };
+ 
+ /**
+  * This stub is called by SimpleTest when a test is finished.
+ **/
+ TestRunner.testFinished = function(tests) {
++    function pushError(name) {
++        var msg = "TEST-UNEXPECTED-FAIL | " + TestRunner.currentTestURL + " | " + name;
++        TestRunner.error(msg);
++        tests.push({ result: false, failureType: "TEST-UNEXPECTED-FAIL",
++                     failureMsg: msg, testLog: TestRunner.flushLog() });
++        TestRunner.addFailedTest(TestRunner.currentTestURL);
++    }
++
+     function cleanUpCrashDumpFiles() {
+         if (!SpecialPowers.removeExpectedCrashDumpFiles(TestRunner._expectingProcessCrash)) {
+-            TestRunner.error("TEST-UNEXPECTED-FAIL | " +
+-                             TestRunner.currentTestURL +
+-                             " | This test did not leave any crash dumps behind, but we were expecting some!");
+-            tests.push({ result: false });
++            pushError("This test did not leave any crash dumps behind, but we were expecting some!");
+         }
+         var unexpectedCrashDumpFiles =
+             SpecialPowers.findUnexpectedCrashDumpFiles();
+         TestRunner._expectingProcessCrash = false;
+         if (unexpectedCrashDumpFiles.length) {
+-            TestRunner.error("TEST-UNEXPECTED-FAIL | " +
+-                             TestRunner.currentTestURL +
+-                             " | This test left crash dumps behind, but we " +
+-                             "weren't expecting it to!");
+-            tests.push({ result: false });
++            pushError("This test left crash dumps behind, but we weren't expecting it to!");
+             unexpectedCrashDumpFiles.sort().forEach(function(aFilename) {
+                 TestRunner.log("TEST-INFO | Found unexpected crash dump file " +
+                                aFilename + ".");
+             });
+         }
+     }
+ 
+     function runNextTest() {
+         if (TestRunner.currentTestURL != TestRunner.getLoadedTestURL()) {
+-            TestRunner.error("TEST-UNEXPECTED-FAIL | " +
+-                             TestRunner.currentTestURL +
+-                             " | " + TestRunner.getLoadedTestURL() +
+-                             " finished in a non-clean fashion, probably" +
+-                             " because it didn't call SimpleTest.finish()");
+-            tests.push({ result: false });
++            pushError(TestRunner.getLoadedTestURL() + " finished in a non-clean fashion, probably" +
++                      " because it didn't call SimpleTest.finish()");
+         }
+ 
+         var runtime = new Date().valueOf() - TestRunner._currentTestStartTime;
+         TestRunner.log("TEST-END | " +
+                        TestRunner.currentTestURL +
+                        " | finished in " + runtime + "ms");
+ 
++        // Save only the path of the test
++        var result = { path: TestRunner.currentTestURL.replace(/^([^:]*:\/\/[^\/]*)?(.*)/, "$2"),
++                       time: runtime / 1000 };
++        TestRunner._results.push(result);
++        if (TestRunner.currentTestURL in TestRunner._failedTests) {
++            result.failures = [];
++            tests.map(function(f) { return !test.result == !test.todo; }).forEach(function(test) {
++                result.failures.push({ type: test.failureType,
++                                       msg: test.failureMsg,
++                                       log: test.testLog });
++            });
++        }
++
+         TestRunner.updateUI(tests);
+         TestRunner._currentTest++;
+         if (TestRunner.runSlower) {
+             setTimeout(TestRunner.runNextTest, 1000);
+         } else {
+             TestRunner.runNextTest();
+         }
+     }
+diff --git a/testing/mochitest/tests/SimpleTest/setup.js b/testing/mochitest/tests/SimpleTest/setup.js
+--- a/testing/mochitest/tests/SimpleTest/setup.js
++++ b/testing/mochitest/tests/SimpleTest/setup.js
+@@ -104,16 +104,23 @@ if (!params.quiet) {
+   TestRunner.logger.addListener("dumpListener", consoleLevel + "", dumpListener);
+ }
+ 
+ // A temporary hack for android 4.0 where Fennec utilizes the pandaboard so much it reboots
+ if (params.runSlower) {
+   TestRunner.runSlower = true;
+ }
+ 
++if (params.xunitFile) {
++  TestRunner.xunitFile = decodeURIComponent(params.xunitFile);
++}
++
++if (params.xunitName) {
++  TestRunner.xunitName = params.xunitName;
++}
+ 
+ var gTestList = [];
+ var RunSet = {}
+ RunSet.runall = function(e) {
+   // Filter tests to include|exclude tests based on data in params.filter.
+   // This allows for including or excluding tests from the gTestList
+   gTestList = filterTests(params.testManifest, params.runOnly);
+ 
