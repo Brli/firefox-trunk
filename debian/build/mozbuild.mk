@@ -311,8 +311,8 @@ binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
 	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/native-origins.d/$(MOZ_PKG_NAME)
 
-binary-install/$(MOZ_PKG_NAME)-globalmenu::
-	unzip -o -d debian/$(MOZ_PKG_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ $(MOZ_DISTDIR)/xpi-stage/globalmenu.xpi
+#binary-install/$(MOZ_PKG_NAME)-globalmenu::
+#	unzip -o -d debian/$(MOZ_PKG_NAME)-globalmenu/$(MOZ_ADDONDIR)/extensions/globalmenu@ubuntu.com/ $(MOZ_DISTDIR)/xpi-stage/globalmenu.xpi
 
 GNOME_SUPPORT_FILES = libmozgnome.so
 binary-post-install/$(MOZ_PKG_NAME):: install-searchplugins-,$(MOZ_PKG_NAME)

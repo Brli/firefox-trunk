@@ -139,6 +139,11 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series.in
     - update debian/testing/run_mochitest.in
   * Drop debian/patches/python-virtualenv-multiarch-fix.patch - fixed upstream
+  * Disable the menubar addon
+    - update debian/config/mozconfig.in
+    - update debian/build/mozconfig.mk
+    - update debian/firefox-globalmenu.dirs.in
+    - update debian/firefox-globalmenu.links.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
