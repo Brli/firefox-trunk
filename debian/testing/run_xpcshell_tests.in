@@ -16,7 +16,7 @@ class XPCShellTestsHelper(TestRunHelper):
       '--testing-modules-dir',
       '--tests-root-dir',
       '--xunit-file',
-      '--xunit-name'
+      '--xunit-suite-name'
     ]
 
     root = '/@MOZ_TESTDIR@'
