@@ -67,6 +67,28 @@ diff --git a/testing/mochitest/harness-overlay.xul b/testing/mochitest/harness-o
      window.addEventListener("load", loadTests, false);
    ]]>
    </script>
+diff --git a/testing/mochitest/server.js b/testing/mochitest/server.js
+--- a/testing/mochitest/server.js
++++ b/testing/mochitest/server.js
+@@ -596,17 +596,17 @@ function testListing(metadata, response)
+                  src: "/tests/SimpleTest/LogController.js"}),
+         SCRIPT({type: "text/javascript",
+                  src: "/tests/SimpleTest/TestRunner.js"}),
+         SCRIPT({type: "text/javascript",
+                  src: "/tests/SimpleTest/MozillaLogger.js"}),
+         SCRIPT({type: "text/javascript",
+                  src: "/tests/SimpleTest/setup.js"}),
+         SCRIPT({type: "text/javascript"},
+-               "window.onload =  hookup; gTestList=" + tests + ";"
++               "window.onload =  hookup; gTestList=" + tests + "; gTestBase=\"tests\";"
+         )
+       ),
+       BODY(
+         DIV({class: "container"},
+           H2("--> ", A({href: "#", id: "runtests"}, "Run Tests"), " <--"),
+             P({style: "float: right;"},
+             SMALL(
+               "Based on the ",
 diff --git a/testing/mochitest/tests/SimpleTest/setup.js b/testing/mochitest/tests/SimpleTest/setup.js
 --- a/testing/mochitest/tests/SimpleTest/setup.js
 +++ b/testing/mochitest/tests/SimpleTest/setup.js
