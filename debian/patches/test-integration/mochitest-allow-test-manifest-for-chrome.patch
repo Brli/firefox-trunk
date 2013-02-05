@@ -1,7 +1,7 @@
 diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-harness.xul
 --- a/testing/mochitest/browser-harness.xul
 +++ b/testing/mochitest/browser-harness.xul
-@@ -6,16 +6,17 @@
+@@ -6,16 +6,19 @@
  
  <window id="browserTestHarness"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -10,6 +10,8 @@ diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-h
          width="1024">
    <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/MozillaLogger.js"/>
    <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/LogController.js"/>
++  <!-- We need this to make setup.js happy. Perhaps filterTests() should also exist in chrome-harness.js? -->
++  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/TestRunner.js"/>
 +  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/setup.js"/>
    <script type="application/javascript" src="chrome://mochikit/content/chrome-harness.js"/>
    <style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
@@ -19,7 +21,7 @@ diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-h
        -moz-user-select: text;
      }
  
-@@ -181,20 +182,21 @@
+@@ -181,20 +184,21 @@
  
        // load server.js in so we can share template functions
        var scriptLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"].
