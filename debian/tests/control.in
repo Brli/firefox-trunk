@@ -1,2 +1,2 @@
 Tests: xpcshell-tests xpcshell-package-tests jstestbrowser reftest crashtest mochitest
-Depends: firefox-trunk-testsuite
+Depends: @MOZ_PKG_NAME@-testsuite

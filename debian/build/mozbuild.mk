@@ -19,10 +19,13 @@ MOZ_NO_OPTIMIZE		?= 0
 # We need this to execute before the debian/control target gets called
 clean::
 	cp debian/control debian/control.old
+	cp debian/tests/control debian/tests/control.old
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 	touch debian/control.in
+	touch debian/tests/control.in
 else
 	touch debian/control
+	touch debian/tests/control
 endif
 
 -include /usr/share/cdbs/1/rules/debhelper.mk
@@ -237,6 +240,9 @@ pkgconfig_files = \
 	$(MOZ_PKGCONFIG_FILES) \
 	$(NULL)
 
+debian/tests/control: debian/tests/control.in
+	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/tests/control.in > debian/tests/control
+
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/config/locales.shipped debian/config/locales.all
 	@echo ""
 	@echo "*****************************"
@@ -244,7 +250,8 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@echo "*****************************"
 	@echo ""
 
-	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.in > debian/control
+	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' \
+	    -e 's/@MOZ_LOCALE_PKGS@/$(shell perl debian/build/dump-langpack-control-entries.pl -l | sed 's/\(\,\?\)\([^\,]*\)\(\,\?\)/\1$(MOZ_PKG_NAME)\-locale\-\2 (= $${binary:Version})\3 /g')/g' < debian/control.in > debian/control
 	perl debian/build/dump-langpack-control-entries.pl > debian/control.tmp
 	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
@@ -500,7 +507,7 @@ get-orig-source:
 echo-%:
 	@echo "$($*)"
 
-clean::
+clean:: debian/tests/control
 	@if ! cmp -s debian/control debian/control.old ; \
 	then \
 		echo "" ; \
@@ -513,6 +520,18 @@ clean::
 		exit 1 ; \
 	fi
 	rm -f debian/control.old
+	@if ! cmp -s debian/tests/control debian/tests/control.old ; \
+	then \
+		echo "" ; \
+		echo "*******************************************************************************" ; \
+		echo "* debian/tests/control file is out of date. Please refresh and try again      *" ; \
+		echo "* To refresh, run \"debian/rules debian/tests/control\" in the source directory *" ; \
+		echo "*******************************************************************************" ; \
+		echo "" ; \
+		rm -f debian/control.old ; \
+		exit 1 ; \
+	fi
+	rm -f debian/tests/control.old
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
