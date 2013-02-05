@@ -520,5 +520,6 @@ clean::
 	rm -f debian/searchplugin*.list
 	rm -f mozconfig
 	rm -rf debian/_virtualenv
+	rm -rf debian/tests/_results
 
 .PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales get-orig-source create-virtualenv

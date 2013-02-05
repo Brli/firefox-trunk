@@ -144,6 +144,14 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/mozconfig.mk
     - update debian/firefox-globalmenu.dirs.in
     - update debian/firefox-globalmenu.links.in
+  * Turn on JUnit XML output for all tests
+    - update debian/build/mozbuild.mk
+    - update debian/tests/crashtest
+    - update debian/tests/jstestbrowser
+    - update debian/tests/mochitest
+    - update debian/tests/reftest
+    - update debian/tests/xpcshell-package-tests
+    - update debian/tests/xpcshell-tests
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

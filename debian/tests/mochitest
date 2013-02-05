@@ -3,28 +3,29 @@
 TESTSUITE_DIR=/$($(dirname $0)/../rules echo-MOZ_TESTDIR 2>/dev/null)
 
 export LC_ALL=en_US.UTF-8
+mkdir -p $(dirname $0)/_results
 
 echo "*************************"
 echo "* Running browser tests *"
 echo "*************************"
-$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --browser-chrome
+$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --xunit-file $(dirname $0)/_results/mochitest-browser-chrome.xml --browser-chrome
 
 echo "***********************"
 echo "* Running plain tests *"
 echo "***********************"
-$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus
+$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --xunit-file $(dirname $0)/_results/mochitest-plain.xml
 
 echo "************************"
 echo "* Running chrome tests *"
 echo "************************"
-$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --chrome
+$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --xunit-file $(dirname $0)/_results/mochitest-chrome.xml --chrome
 
 echo "**********************"
 echo "* Running a11y tests *"
 echo "**********************"
-$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --a11y
+$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --xunit-file $(dirname $0)/_results/mochitest-a11y.xml --a11y
 
 echo "****************************"
 echo "* Running ipcplugins tests *"
 echo "****************************"
-$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --setpref=dom.ipc.plugins.enabled=false --test-path=dom/plugins/test
+$TESTSUITE_DIR/run_mochitest --own-display --own-session-bus --xunit-file $(dirname $0)/_results/mochitest-ipcplugins.xml --xunit-name "mochitest.ipcplugins" --setpref=dom.ipc.plugins.enabled=false --test-path=dom/plugins/test

@@ -180,7 +180,7 @@ diff --git a/testing/mochitest/browser-test.js b/testing/mochitest/browser-test.
 diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
 --- a/testing/mochitest/runtests.py
 +++ b/testing/mochitest/runtests.py
-@@ -246,16 +246,21 @@ class MochitestOptions(optparse.OptionPa
+@@ -246,16 +246,26 @@ class MochitestOptions(optparse.OptionPa
                      help = "Filename of the output file where we can store a .json list of failures to be run in the future with --run-only-tests.")
      defaults["failureFile"] = None
  
@@ -194,6 +194,11 @@ diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
 +                    help = "specify a filename to output xUnit results to")
 +    defaults["xunitFile"] = None
 +
++    self.add_option("--xunit-name",
++                    action = "store", type="string", dest = "xunitName",
++                    help = "specify a suite name for the xUnit output")
++    defaults["xunitName"] = None
++
      # -h, --help are automatically handled by OptionParser
  
      self.set_defaults(**defaults)
@@ -202,7 +207,7 @@ diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
  Usage instructions for runtests.py.
  All arguments are optional.
  If --chrome is specified, chrome tests will be run instead of web content tests.
-@@ -650,16 +655,19 @@ class Mochitest(object):
+@@ -650,16 +660,19 @@ class Mochitest(object):
          if hasattr(options, 'runOnly') and options.runOnly:
            self.urlOpts.append("runOnly=true")
          else:
@@ -213,7 +218,7 @@ diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
          self.urlOpts.append("runSlower=true")
 +      if options.xunitFile:
 +        self.urlOpts.append("xunitFile=%s" % encodeURIComponent(options.xunitFile))
-+        self.urlOpts.append("xunitName=mochitest.plain")
++        self.urlOpts.append("xunitName=%s" % (options.xunitName if options.xunitName != None else "mochitest.plain"))
  
    def cleanup(self, manifest, options):
      """ remove temporary files and profile """
@@ -222,7 +227,7 @@ diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
  
    def startVMwareRecording(self, options):
      """ starts recording inside VMware VM using the recording helper dll """
-@@ -815,16 +823,22 @@ class Mochitest(object):
+@@ -815,16 +828,22 @@ class Mochitest(object):
        val = options.__dict__[opt]
        if first:
          first = False
@@ -235,7 +240,7 @@ diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
 +    if options.xunitFile:
 +      if not first:
 +        content += ", "
-+      content += '"xunitName": "mochitest.%s"' % testRoot
++      content += '"xunitName": "%s"' % (options.xunitName if options.xunitName != None else "mochitest.%s" % testRoot)
 +
      content += "}"
  
@@ -500,20 +505,24 @@ diff --git a/testing/mochitest/tests/SimpleTest/TestRunner.js b/testing/mochites
            indicator.style.backgroundColor = "red";
          }
  
-@@ -369,81 +460,99 @@ TestRunner.runNextTest = function() {
+@@ -367,83 +458,102 @@ TestRunner.runNextTest = function() {
+         TestRunner.log("Passed: " + $("pass-count").innerHTML);
+         TestRunner.log("Failed: " + $("fail-count").innerHTML);
          TestRunner.log("Todo:   " + $("todo-count").innerHTML);
          // If we are looping, don't send this cause it closes the log file
          if (TestRunner.repeat == 0) {
            TestRunner.log("SimpleTest FINISHED");
          }
  
-         if (TestRunner.repeat == 0 && TestRunner.onComplete) {
-              TestRunner.onComplete();
--         }
-+        }
-+
 +        if (TestRunner.xunitFile) {
 +          TestRunner.saveXUnitResults();
++        }
++
+         if (TestRunner.repeat == 0 && TestRunner.onComplete) {
+-             TestRunner.onComplete();
+-         }
++          TestRunner.writeXUnitResults();
++          TestRunner.onComplete();
 +        }
  
          if (TestRunner._currentLoop < TestRunner.repeat) {
