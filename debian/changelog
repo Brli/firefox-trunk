@@ -90,8 +90,6 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/control
   * Testpilot only enabled on beta now
     - update debian/firefox.install.in
-  * Update python-virtualenv-multiarch-fix.patch with the upstream fix from
-    Barry Warsaw
   * Move some test integration patches in to a new directory
     - debian/patches/mochitest-allow-test-manifest-for-chrome.patch =>
         d/p/test-integration/mochitest-allow-test-manifest-for-chrome.patch
@@ -140,6 +138,7 @@ firefox-trunk (21.0~a1~hg20130113r118722-0ubuntu1) UNRELEASED; urgency=low
     - add d/p/test-integration/mochitest-output-junit-xml.patch
     - update debian/patches/series.in
     - update debian/testing/run_mochitest.in
+  * Drop debian/patches/python-virtualenv-multiarch-fix.patch - fixed upstream
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

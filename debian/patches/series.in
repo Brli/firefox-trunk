@@ -8,7 +8,6 @@ dont-override-general-useragent-locale.patch
 fix-makefile-substitution-bug.patch
 webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
-python-virtualenv-multiarch-fix.patch
 test-integration/mochitest-optional-websock-log.patch
 test-integration/reftest-output-junit-xml.patch
 test-integration/mochitest-output-junit-xml.patch
