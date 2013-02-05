@@ -1,5 +1,5 @@
 # HG changeset patch
-# Parent bd077f8f8f97d2cb211d2ae04371929381b33930
+# Parent 7ffcb24dae1c27dd8b812d7527df802812b70765
 # User Chris Coulson <chris.coulson@canonical.com>
 
 diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-harness.xul
@@ -122,7 +122,7 @@ diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-h
 +            t.iterations[iter].results.forEach(function(res) {
 +              if (res.info) {
 +                msgs.push(res.result + " | " + t.path + " | " + res.msg);
-+              } else if ((!res.pass == !res.todo) && !res.info) {
++              } else if (!res.pass) {
 +                var failure = doc.createElement("failure");
 +                testcase.appendChild(failure);
 +
