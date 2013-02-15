@@ -156,6 +156,7 @@ firefox-trunk (21.0~a1~hg20130205r120792-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.preinst.in
     - update debian/patches/dont-include-hyphenation-patterns.patch
     - update debian/rules
+    - update debian/build/mozbuild.mk
   * Drop the menubar addon
     - remove debian/globalmenu
     - update debian/build/mozbuild.mk

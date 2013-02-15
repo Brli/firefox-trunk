@@ -45,6 +45,7 @@ MOZ_DEFAULT_APP_NAME	?= $(MOZ_PKG_BASENAME)
 MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
 MOZ_DEFAULT_APP_BASENAME ?= $(shell echo $(MOZ_DEFAULT_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
 MOZ_SEARCHPLUGIN_DIR	?= $(MOZ_LIBDIR)/distribution/searchplugins
+MOZ_EN_US_SEARCHPLUGIN_SRCDIR ?= $(MOZ_LIBDIR)/searchplugins
 
 ifeq (,$(MOZ_APP))
 $(error "Need to set MOZ_APP")
@@ -399,12 +400,12 @@ install-searchplugins-%:
 	@for lang in $(LANGUAGES); do \
 		echo "Installing searchplugins for $$lang"; \
 		rm -rf debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-		src=$(MOZ_DISTDIR)/xpi-stage/locale-$$lang; \
+		src=$(MOZ_DISTDIR)/xpi-stage/locale-$$lang/searchplugins; \
 		if [ ! -d $$src ]; then \
-			src=debian/tmp/$(MOZ_LIBDIR); \
+			src=debian/tmp/$(MOZ_EN_US_SEARCHPLUGIN_SRCDIR); \
 		fi; \
 		dh_installdirs -p$(PKGNAME) $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-		dh_install -p$(PKGNAME) $$src/searchplugins/*.xml $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
+		dh_install -p$(PKGNAME) $$src/*.xml $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
 	done
 	@$(if $(wildcard debian/searchplugins),$(call CUSTOMIZE_SEARCHPLUGINS,$(LANGUAGES),$(PKGNAME)))
 	@echo ""

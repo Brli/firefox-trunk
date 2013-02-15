@@ -24,6 +24,7 @@ MOZ_BRANDING_OPTION	:= --with-branding=$(MOZ_BRANDING_DIR)
 endif
 
 MOZ_SEARCHPLUGIN_DIR	= $(MOZ_LIBDIR)/browser/distribution/searchplugins
+MOZ_EN_US_SEARCHPLUGIN_SRCDIR = $(MOZ_LIBDIR)/browser/searchplugins
 
 MOZ_PKGNAME_SUBST_FILES = \
 	debian/usr.bin.$(MOZ_PKG_NAME) \
