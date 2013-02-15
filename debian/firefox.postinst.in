@@ -111,13 +111,6 @@ EOM
 
     finish_mv_conffile "/etc/${MOZ_PKG_NAME}/pref/firefox.js" "/etc/${MOZ_PKG_NAME}/syspref.js"
 
-    if [ -d $MOZ_LIBDIR/distribution/extensions ] && [ ! -h $MOZ_LIBDIR/distribution/extensions ]; then \
-        rmdir --ignore-fail-on-non-empty $MOZ_LIBDIR/distribution/extensions
-    fi
-    if [ ! -e $MOZ_LIBDIR/distribution/extensions ]; then
-        ln -s ${MOZ_ADDONDIR}/distribution/extensions $MOZ_LIBDIR/distribution/extensions
-    fi
-
     if [ -d $MOZ_LIBDIR/plugins ] && [ ! -h $MOZ_LIBDIR/plugins ]; then \
         rmdir --ignore-fail-on-non-empty $MOZ_LIBDIR/plugins
     fi
