@@ -1,3 +1,4 @@
+# vim:noexpandtab:
 Source: firefox-trunk
 Section: web
 Priority: optional
@@ -31,7 +32,6 @@ Build-Depends: cdbs,
 	libnotify-dev (>= 0.4),
 	libxrender-dev,
 	yasm (>= 1.1),
-	libdbusmenu-gtk-dev,
 	unzip,
 	dbus-x11,
 	xvfb,
@@ -147,7 +147,9 @@ Package: firefox-trunk-globalmenu
 Architecture: any
 Depends: ${shlibs:Depends},
 	${misc:Depends},
-	firefox-trunk (= ${binary:Version})
+	libdbusmenu-glib4,
+	libdbusmenu-gtk4,
+	firefox-trunk
 Provides: ${app:Provides}
 Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - Unity menubar integration
@@ -155,8 +157,8 @@ Description: Safe and easy web browser from Mozilla - Unity menubar integration
  enhanced security features including protection from online identity theft,
  and integrated search let you get the most out of the web.
  .
- This package provides an extension which adds support for the Unity
- menubar to Firefox 
+ This package depends on the libraries which allow Firefox to take
+ advantage of the Unity menubar
 
 Package: firefox-trunk-testsuite
 Architecture: any

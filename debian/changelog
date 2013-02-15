@@ -1,6 +1,5 @@
 firefox-trunk (21.0~a1~hg20130205r120792-0ubuntu1) UNRELEASED; urgency=low
 
-  * Update globalmenu-extension to 3.8 prerelease r519
   * Drop support for building on older than precise
     - update debian/apport/source_firefox.py.in
     - update debian/build/mozbuild.mk
@@ -140,11 +139,6 @@ firefox-trunk (21.0~a1~hg20130205r120792-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series.in
     - update debian/testing/run_mochitest.in
   * Drop debian/patches/python-virtualenv-multiarch-fix.patch - fixed upstream
-  * Disable the menubar addon
-    - update debian/config/mozconfig.in
-    - update debian/build/mozconfig.mk
-    - update debian/firefox-globalmenu.dirs.in
-    - update debian/firefox-globalmenu.links.in
   * Turn on JUnit XML output for all tests
     - update debian/build/mozbuild.mk
     - update debian/tests/crashtest
@@ -162,6 +156,15 @@ firefox-trunk (21.0~a1~hg20130205r120792-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.preinst.in
     - update debian/patches/dont-include-hyphenation-patterns.patch
     - update debian/rules
+  * Drop the menubar addon
+    - remove debian/globalmenu
+    - update debian/build/mozbuild.mk
+    - update debian/config/mozconfig.in
+    - update debian/control.in
+    - remove debian/firefox-globalmenu.dirs.in
+    - remove debian/firefox-globalmenu.links.in
+    - remove debian/patches/unity-globalmenu-build-support.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 

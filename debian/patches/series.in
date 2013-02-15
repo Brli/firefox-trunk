@@ -1,7 +1,6 @@
 ubuntu-bookmarks.patch
 normalize-distribution-searchplugins.patch
 allow-lockPref-everywhere.patch
-unity-globalmenu-build-support.patch
 ubuntu-ua-string-changes.patch
 dont-include-hyphenation-patterns.patch
 dont-override-general-useragent-locale.patch
