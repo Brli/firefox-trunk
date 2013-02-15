@@ -1,0 +1,4897 @@
+# HG changeset patch
+# Parent a4c63dd37fd89fe5c6c5cbe9aeb1da49152e8c57
+# User Chris Coulson <chris.coulson@canonical.com>
+
+diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/browser-menubar.inc
+--- a/browser/base/content/browser-menubar.inc
++++ b/browser/base/content/browser-menubar.inc
+@@ -1,16 +1,20 @@
+ # -*- Mode: Java; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ # This Source Code Form is subject to the terms of the Mozilla Public
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+        <menubar id="main-menubar"
+                 onpopupshowing="if (event.target.parentNode.parentNode == this &amp;&amp;
++#ifdef MOZ_WIDGET_GTK
++                                    document.documentElement.getAttribute('shellshowingmenubar') != 'true')
++#else
+                                     !('@mozilla.org/widget/nativemenuservice;1' in Cc))
++#endif
+                                   this.setAttribute('openedwithkey',
+                                                     event.target.parentNode.openedWithKey);"
+                 style="border:0px;padding:0px;margin:0px;-moz-appearance:none">
+             <menu id="file-menu" label="&fileMenu.label;"
+                   accesskey="&fileMenu.accesskey;">
+               <menupopup id="menu_FilePopup">
+                 <menuitem id="menu_newNavigatorTab"
+                           label="&tabCmd.label;"
+diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
+--- a/browser/base/content/browser.css
++++ b/browser/base/content/browser.css
+@@ -207,16 +207,20 @@ splitmenu {
+   -moz-binding: url("chrome://browser/content/urlbarBindings.xml#menuitem-iconic-tooltip");
+ }
+ 
+ %ifdef MENUBAR_CAN_AUTOHIDE
+ %ifndef CAN_DRAW_IN_TITLEBAR
+ #appmenu-toolbar-button > .toolbarbutton-text {
+   display: -moz-box;
+ }
++
++window[shellshowingmenubar="true"] #appmenu-toolbar-button {
++  display: none;
++}
+ %endif
+ 
+ #appmenu_offlineModeRecovery:not([checked=true]) {
+   display: none;
+ }
+ %endif
+ 
+ /* Hide menu elements intended for keyboard access support */
+@@ -313,16 +317,23 @@ toolbarbutton.bookmark-item {
+ }
+ 
+ %ifdef MENUBAR_CAN_AUTOHIDE
+ #toolbar-menubar:not([autohide="true"]) ~ #nav-bar > #bookmarks-menu-button-container,
+ #toolbar-menubar:not([autohide="true"]) ~ toolbar > #personal-bookmarks > #bookmarks-menu-button,
+ #toolbar-menubar:not([autohide="true"]) > #personal-bookmarks > #bookmarks-menu-button {
+   display: none;
+ }
++
++%ifdef MOZ_WIDGET_GTK
++window[shellshowingmenubar="true"] #nav-bar > #bookmarks-menu-button-container,
++window[shellshowingmenubar="true"] #personal-bookmarks > #bookmarks-menu-button {
++  display: none;
++}
++%endif
+ %endif
+ 
+ #editBMPanel_tagsSelector {
+   /* override default listbox width from xul.css */
+   width: auto;
+ }
+ 
+ menupopup[emptyplacesresult="true"] > .hide-if-empty-places-result {
+diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
+--- a/browser/base/content/browser.js
++++ b/browser/base/content/browser.js
+@@ -1863,17 +1863,16 @@ var gBrowserInit = {
+ var BrowserStartup        = gBrowserInit.onLoad.bind(gBrowserInit);
+ var BrowserShutdown       = gBrowserInit.onUnload.bind(gBrowserInit);
+ #ifdef XP_MACOSX
+ var nonBrowserWindowStartup        = gBrowserInit.nonBrowserWindowStartup.bind(gBrowserInit);
+ var nonBrowserWindowDelayedStartup = gBrowserInit.nonBrowserWindowDelayedStartup.bind(gBrowserInit);
+ var nonBrowserWindowShutdown       = gBrowserInit.nonBrowserWindowShutdown.bind(gBrowserInit);
+ #endif
+ 
+-
+ function HandleAppCommandEvent(evt) {
+   switch (evt.command) {
+   case "Back":
+     BrowserBack();
+     break;
+   case "Forward":
+     BrowserForward();
+     break;
+@@ -4868,16 +4867,20 @@ function onViewToolbarsPopupShowing(aEve
+   }
+ 
+   var firstMenuItem = aInsertPoint || popup.firstChild;
+ 
+   let toolbarNodes = Array.slice(gNavToolbox.childNodes);
+   toolbarNodes.push(document.getElementById("addon-bar"));
+ 
+   for (let toolbar of toolbarNodes) {
++    if (toolbar.id == "toolbar-menubar" &&
++        document.documentElement.getAttribute("shellshowingmenubar") == "true") {
++      continue;
++    }
+     let toolbarName = toolbar.getAttribute("toolbarname");
+     if (toolbarName) {
+       let menuItem = document.createElement("menuitem");
+       let hidingAttribute = toolbar.getAttribute("type") == "menubar" ?
+                             "autohide" : "collapsed";
+       menuItem.setAttribute("id", "toggle_" + toolbar.id);
+       menuItem.setAttribute("toolbarId", toolbar.id);
+       menuItem.setAttribute("type", "checkbox");
+diff --git a/browser/components/places/content/places.xul b/browser/components/places/content/places.xul
+--- a/browser/components/places/content/places.xul
++++ b/browser/components/places/content/places.xul
+@@ -152,17 +152,17 @@
+                      command="OrganizerCommand:Forward"
+                      tooltiptext="&forwardButton.tooltip;"
+                      disabled="true"/>
+ 
+ #ifdef XP_MACOSX
+         <toolbarbutton type="menu" class="tabbable"
+               onpopupshowing="document.getElementById('placeContent').focus()"
+ #else
+-      <menubar id="placesMenu">
++      <menubar id="placesMenu" _moz-menubarkeeplocal="true">
+         <menu accesskey="&organize.accesskey;" class="menu-iconic"
+ #endif
+               id="organizeButton" label="&organize.label;"
+               tooltiptext="&organize.tooltip;">
+           <menupopup id="organizeButtonPopup">
+             <menuitem id="newbookmark"
+                       command="placesCmd_new:bookmark"
+                       label="&cmd.new_bookmark.label;"
+diff --git a/toolkit/content/widgets/popup.xml b/toolkit/content/widgets/popup.xml
+--- a/toolkit/content/widgets/popup.xml
++++ b/toolkit/content/widgets/popup.xml
+@@ -20,18 +20,24 @@
+       <property name="position" onget="return this.getAttribute('position');"
+                                 onset="this.setAttribute('position', val); return val;"/>
+       <property name="popupBoxObject">
+         <getter>
+           return this.boxObject.QueryInterface(Components.interfaces.nsIPopupBoxObject);
+         </getter>
+       </property>
+ 
+-      <property name="state" readonly="true"
+-                onget="return this.popupBoxObject.popupState"/>
++      <property name="state" readonly="true">
++        <getter><![CDATA[
++          if (this.hasAttribute('_moz-menupopupstate'))
++            return this.getAttribute('_moz-menupopupstate');
++          else
++            return this.popupBoxObject.popupState;
++        ]]></getter>
++      </property>
+ 
+       <property name="triggerNode" readonly="true"
+                 onget="return this.popupBoxObject.triggerNode"/>
+ 
+       <property name="anchorNode" readonly="true"
+                 onget="return this.popupBoxObject.anchorNode"/>
+ 
+       <method name="openPopup">
+diff --git a/toolkit/content/xul.css b/toolkit/content/xul.css
+--- a/toolkit/content/xul.css
++++ b/toolkit/content/xul.css
+@@ -284,16 +284,28 @@ toolbar[type="menubar"][autohide="true"]
+ toolbar[type="menubar"][autohide="true"][inactive="true"]:not([customizing="true"]) {
+   min-height: 0 !important;
+   height: 0 !important;
+   -moz-appearance: none !important;
+   border-style: none !important;
+ }
+ %endif
+ 
++%ifdef MOZ_WIDGET_GTK
++window[shellshowingmenubar="true"] menubar {
++  display: none !important;
++}
++
++window[shellshowingmenubar="true"]
++toolbar[type="menubar"]:not([customizing="true"]) {
++  min-height: 0 !important;
++  border: 0 !important;
++}
++%endif
++
+ toolbarseparator {
+   -moz-binding: url("chrome://global/content/bindings/toolbar.xml#toolbardecoration");
+ }
+ 
+ toolbarspacer {
+   -moz-binding: url("chrome://global/content/bindings/toolbar.xml#toolbardecoration");
+ }
+ 
+diff --git a/widget/Makefile.in b/widget/Makefile.in
+--- a/widget/Makefile.in
++++ b/widget/Makefile.in
+@@ -70,21 +70,22 @@ EXPORTS		= \
+ 		nsWidgetsCID.h \
+ 		nsIPluginWidget.h \
+ 		nsINativeKeyBindings.h \
+ 		nsIDeviceContextSpec.h \
+ 		nsIRollupListener.h \
+ 		nsIWidgetListener.h \
+ 		$(NULL)
+ 
++ifneq (,$(filter cocoa gtk2 gtk3,$(MOZ_WIDGET_TOOLKIT)))
++EXPORTS		+= nsINativeMenuService.h
++endif
++
+ ifeq ($(MOZ_WIDGET_TOOLKIT),cocoa)
+-EXPORTS		+= \
+-		nsINativeMenuService.h \
+-		nsIPrintDialogService.h \
+-		$(NULL)
++EXPORTS		+= nsIPrintDialogService.h
+ endif
+ 
+ ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
+ EXPORTS		+= nsIDragSessionOS2.h
+ endif
+ 
+ ifneq (,$(filter android gonk,$(MOZ_WIDGET_TOOLKIT)))
+ EXPORTS		+= \
+diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
+--- a/widget/gtk2/Makefile.in
++++ b/widget/gtk2/Makefile.in
+@@ -41,16 +41,24 @@ CPPSRCS = \
+   nsFilePicker.cpp \
+   nsSound.cpp \
+   nsNativeKeyBindings.cpp \
+   nsScreenGtk.cpp \
+   nsScreenManagerGtk.cpp \
+   nsImageToPixbuf.cpp \
+   nsGtkIMModule.cpp \
+   WidgetTraceEvent.cpp \
++  nsNativeMenuService.cpp \
++  nsNativeMenuDocListener.cpp \
++  nsDbusmenu.cpp \
++  nsMenu.cpp \
++  nsMenuBar.cpp \
++  nsMenuItem.cpp \
++  nsMenuObject.cpp \
++  nsMenuSeparator.cpp \
+   $(NULL)
+ 
+ ifdef MOZ_X11
+ CPPSRCS         += nsIdleServiceGTK.cpp
+ endif
+ 
+ ifdef NS_PRINTING
+ CPPSRCS		+= \
+@@ -101,14 +109,15 @@ endif
+ endif
+ 
+ DEFINES		+= -DCAIRO_GFX -DMOZ_APP_NAME='"$(MOZ_APP_NAME)"'
+ 
+ INCLUDES	+= \
+ 		-I$(srcdir)/../xpwidgets \
+ 		-I$(srcdir)/../shared \
+ 		-I$(topsrcdir)/layout/generic \
++		-I$(topsrcdir)/layout/style \
+ 		-I$(topsrcdir)/layout/xul/base/src \
+ 		-I$(topsrcdir)/other-licenses/atk-1.0 \
+ 		$(NULL)
+ ifdef MOZ_X11
+ INCLUDES   	+= -I$(srcdir)/../shared/x11
+ endif
+diff --git a/widget/gtk2/nsDbusmenu.cpp b/widget/gtk2/nsDbusmenu.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsDbusmenu.cpp
+@@ -0,0 +1,59 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsDbusmenu.h"
++#include "prlink.h"
++#include "mozilla/Util.h"
++
++#define FUNC(name, type, params) \
++nsDbusmenuFunctions::_##name##_fn nsDbusmenuFunctions::s_##name;
++DBUSMENU_GLIB_FUNCTIONS
++DBUSMENU_GTK_FUNCTIONS
++#undef FUNC
++
++static PRLibrary *gDbusmenuGlib = nullptr;
++static PRLibrary *gDbusmenuGtk = nullptr;
++
++typedef void (*nsDbusmenuFunc)();
++struct nsDbusmenuDynamicFunction {
++    const char *functionName;
++    nsDbusmenuFunc *function;
++};
++
++/* static */ nsresult
++nsDbusmenuFunctions::Init()
++{
++#define FUNC(name, type, params) \
++    { #name, (nsDbusmenuFunc *)&nsDbusmenuFunctions::s_##name },
++    static const nsDbusmenuDynamicFunction kDbusmenuGlibSymbols[] = {
++        DBUSMENU_GLIB_FUNCTIONS
++    };
++    static const nsDbusmenuDynamicFunction kDbusmenuGtkSymbols[] = {
++        DBUSMENU_GTK_FUNCTIONS
++    };
++
++#define LOAD_LIBRARY(symbol, name) \
++    if (!g##symbol) { \
++        g##symbol = PR_LoadLibrary(name); \
++        if (!g##symbol) { \
++            return NS_ERROR_FAILURE; \
++        } \
++    } \
++    for (uint32_t i = 0; i < mozilla::ArrayLength(k##symbol##Symbols); ++i) { \
++        *k##symbol##Symbols[i].function = \
++            PR_FindFunctionSymbol(g##symbol, k##symbol##Symbols[i].functionName); \
++        if (!*k##symbol##Symbols[i].function) { \
++            return NS_ERROR_FAILURE; \
++        } \
++    }
++
++    LOAD_LIBRARY(DbusmenuGlib, "libdbusmenu-glib.so.4")
++    LOAD_LIBRARY(DbusmenuGtk, "libdbusmenu-gtk.so.4")
++#undef LOAD_LIBRARY
++
++    return NS_OK;
++}
+diff --git a/widget/gtk2/nsDbusmenu.h b/widget/gtk2/nsDbusmenu.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsDbusmenu.h
+@@ -0,0 +1,95 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsDbusmenu_h__
++#define __nsDbusmenu_h__
++
++#include "nsError.h"
++
++#include <glib.h>
++#include <gdk/gdk.h>
++
++#define DBUSMENU_GLIB_FUNCTIONS \
++    FUNC(dbusmenu_menuitem_child_add_position, gboolean, (DbusmenuMenuitem *mi, DbusmenuMenuitem *child, guint position)) \
++    FUNC(dbusmenu_menuitem_child_append, gboolean, (DbusmenuMenuitem *mi, DbusmenuMenuitem *child)) \
++    FUNC(dbusmenu_menuitem_child_delete, gboolean, (DbusmenuMenuitem *mi, DbusmenuMenuitem *child)) \
++    FUNC(dbusmenu_menuitem_new, DbusmenuMenuitem*, (void)) \
++    FUNC(dbusmenu_menuitem_property_get, const gchar*, (DbusmenuMenuitem *mi, const gchar *property)) \
++    FUNC(dbusmenu_menuitem_property_get_bool, gboolean, (DbusmenuMenuitem *mi, const gchar *property)) \
++    FUNC(dbusmenu_menuitem_property_remove, void, (DbusmenuMenuitem *mi, const gchar *property)) \
++    FUNC(dbusmenu_menuitem_property_set, gboolean, (DbusmenuMenuitem *mi, const gchar *property, const gchar *value)) \
++    FUNC(dbusmenu_menuitem_property_set_bool, gboolean, (DbusmenuMenuitem *mi, const gchar *property, const gboolean value)) \
++    FUNC(dbusmenu_menuitem_property_set_int, gboolean, (DbusmenuMenuitem *mi, const gchar *property, const gint value)) \
++    FUNC(dbusmenu_menuitem_show_to_user, void, (DbusmenuMenuitem *mi, guint timestamp)) \
++    FUNC(dbusmenu_server_new, DbusmenuServer*, (const gchar *object)) \
++    FUNC(dbusmenu_server_set_root, void, (DbusmenuServer *server, DbusmenuMenuitem *root)) \
++    FUNC(dbusmenu_server_set_status, void, (DbusmenuServer *server, DbusmenuStatus status))
++
++#define DBUSMENU_GTK_FUNCTIONS \
++    FUNC(dbusmenu_menuitem_property_set_image, gboolean, (DbusmenuMenuitem *menuitem, const gchar *property, const GdkPixbuf *data)) \
++    FUNC(dbusmenu_menuitem_property_set_shortcut, gboolean, (DbusmenuMenuitem *menuitem, guint key, GdkModifierType modifier))
++
++typedef struct _DbusmenuMenuitem DbusmenuMenuitem;
++typedef struct _DbusmenuServer DbusmenuServer;
++
++enum DbusmenuStatus {
++    DBUSMENU_STATUS_NORMAL,
++    DBUSMENU_STATUS_NOTICE
++};
++
++#define DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU "submenu"
++#define DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY "children-display"
++#define DBUSMENU_MENUITEM_PROP_ENABLED "enabled"
++#define DBUSMENU_MENUITEM_PROP_ICON_DATA "icon-data"
++#define DBUSMENU_MENUITEM_PROP_LABEL "label"
++#define DBUSMENU_MENUITEM_PROP_SHORTCUT "shortcut"
++#define DBUSMENU_MENUITEM_PROP_TYPE "type"
++#define DBUSMENU_MENUITEM_PROP_TOGGLE_STATE "toggle-state"
++#define DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE "toggle-type"
++#define DBUSMENU_MENUITEM_PROP_VISIBLE "visible"
++#define DBUSMENU_MENUITEM_SIGNAL_ABOUT_TO_SHOW "about-to-show"
++#define DBUSMENU_MENUITEM_SIGNAL_EVENT "event"
++#define DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED "item-activated"
++#define DBUSMENU_MENUITEM_TOGGLE_CHECK "checkmark"
++#define DBUSMENU_MENUITEM_TOGGLE_RADIO "radio"
++#define DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED 1
++#define DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED 0
++#define DBUSMENU_SERVER_PROP_DBUS_OBJECT "dbus-object"
++
++class nsDbusmenuFunctions
++{
++public:
++    static nsresult Init();
++
++#define FUNC(name, type, params) \
++    typedef type (*_##name##_fn) params; \
++    static _##name##_fn s_##name;
++    DBUSMENU_GLIB_FUNCTIONS
++    DBUSMENU_GTK_FUNCTIONS
++#undef FUNC
++
++};
++
++#define dbusmenu_menuitem_child_add_position nsDbusmenuFunctions::s_dbusmenu_menuitem_child_add_position
++#define dbusmenu_menuitem_child_append nsDbusmenuFunctions::s_dbusmenu_menuitem_child_append
++#define dbusmenu_menuitem_child_delete nsDbusmenuFunctions::s_dbusmenu_menuitem_child_delete
++#define dbusmenu_menuitem_new nsDbusmenuFunctions::s_dbusmenu_menuitem_new
++#define dbusmenu_menuitem_property_get nsDbusmenuFunctions::s_dbusmenu_menuitem_property_get
++#define dbusmenu_menuitem_property_get_bool nsDbusmenuFunctions::s_dbusmenu_menuitem_property_get_bool
++#define dbusmenu_menuitem_property_remove nsDbusmenuFunctions::s_dbusmenu_menuitem_property_remove
++#define dbusmenu_menuitem_property_set nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set
++#define dbusmenu_menuitem_property_set_bool nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set_bool
++#define dbusmenu_menuitem_property_set_int nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set_int
++#define dbusmenu_menuitem_show_to_user nsDbusmenuFunctions::s_dbusmenu_menuitem_show_to_user
++#define dbusmenu_server_new nsDbusmenuFunctions::s_dbusmenu_server_new
++#define dbusmenu_server_set_root nsDbusmenuFunctions::s_dbusmenu_server_set_root
++#define dbusmenu_server_set_status nsDbusmenuFunctions::s_dbusmenu_server_set_status
++
++#define dbusmenu_menuitem_property_set_image nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set_image
++#define dbusmenu_menuitem_property_set_shortcut nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set_shortcut
++
++#endif /* __nsDbusmenu_h__ */
+diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenu.cpp
+@@ -0,0 +1,728 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsMenu.h"
++#include "nsString.h"
++#include "nsGUIEvent.h"
++#include "nsBindingManager.h"
++#include "nsIScriptGlobalObject.h"
++#include "nsIScriptContext.h"
++#include "jsapi.h"
++#include "mozilla/Services.h"
++#include "nsIAtom.h"
++#include "nsIDocument.h"
++#include "nsGkAtoms.h"
++#include "nsITimer.h"
++#include "nsComponentManagerUtils.h"
++#include "nsIRunnable.h"
++#include "nsContentUtils.h"
++#include "nsLayoutUtils.h"
++#include "nsCRT.h"
++
++#include "nsNativeMenuDocListener.h"
++#include "nsNativeMenuUtils.h"
++#include "nsMenuBar.h"
++
++#include <glib-object.h>
++
++using namespace mozilla;
++
++static bool
++IsRecycledItemCompatible(DbusmenuMenuitem *aRecycled,
++                         nsMenuObject *aNewItem)
++{
++  // If the recycled item was a separator, it can only be reused as a separator
++  if ((nsCRT::strcmp(dbusmenu_menuitem_property_get(
++                        aRecycled, DBUSMENU_MENUITEM_PROP_TYPE), "separator") == 0) !=
++      (aNewItem->GetType() == nsMenuObject::eMenuSeparatorType)) {
++    return false;
++  }
++
++  // Everything else is fine
++  return true;
++}
++
++void
++nsMenu::RecycleList::Flush()
++{
++    while(mList.Length() > 0) {
++        dbusmenu_menuitem_child_delete(mOwner->GetDbusMenuItem(), Shift());
++    }
++
++    dbusmenu_menuitem_property_set(mOwner->GetDbusMenuItem(),
++                                   DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
++                                   DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU);
++}
++
++DbusmenuMenuitem*
++nsMenu::RecycleList::Shift(nsMenuObject *aObj)
++{
++    if (mList.Length() == 0) {
++        return nullptr;
++    }
++
++    ++mMarker;
++    DbusmenuMenuitem *recycled = mList[0];
++
++    if (aObj && !IsRecycledItemCompatible(recycled, aObj)) {
++        Flush();
++        return nullptr;
++    }
++
++    mList.RemoveElementAt(0);
++
++    return recycled;
++}
++
++nsMenu::RecycleList::RecycleList(nsMenu *aOwner) :
++    mOwner(aOwner)
++{
++    mFreeEvent = NS_NewNonOwningRunnableMethod(mOwner,
++                                               &nsMenu::FlushRecycleList);
++    NS_DispatchToCurrentThread(mFreeEvent);
++}
++
++nsMenu::RecycleList::~RecycleList()
++{
++    Flush();
++    mFreeEvent->Revoke();
++}
++
++DbusmenuMenuitem*
++nsMenu::RecycleList::RecycleForAppend(nsMenuObject *aObj)
++{
++    if (!aObj) {
++        return nullptr;
++    }
++
++    return Shift(aObj);
++}
++
++DbusmenuMenuitem*
++nsMenu::RecycleList::RecycleForInsert(nsMenuObject *aObj,
++                                      uint32_t aIndex,
++                                      uint32_t *aCorrectedIndex)
++{
++    if (aCorrectedIndex) {
++        *aCorrectedIndex = aIndex;
++    }
++
++    if (!aObj) {
++        return nullptr;
++    }
++
++    DbusmenuMenuitem *recycled = nullptr;
++    if (aIndex < mMarker) {
++        ++mMarker;
++    } else if (aIndex > mMarker) {
++        if (aCorrectedIndex) {
++            *aCorrectedIndex += mList.Length();
++        }
++    } else {
++        recycled = Shift(aObj);
++    }
++
++    return recycled;
++}
++
++void
++nsMenu::RecycleList::TakeItem(DbusmenuMenuitem *aObj,
++                              uint32_t aIndex)
++{
++    if (!aObj) {
++        return;
++    }
++
++    if (mList.Length() == 0) {
++        // This is an empty list. Ensure we add this node to it
++        mMarker = aIndex;
++    } else if ((mMarker != 0 && aIndex < mMarker - 1) ||
++               aIndex > mMarker) {
++        // If this node is not adjacent to any previously removed nodes, then
++        // free the existing nodes already and restart the process
++        Flush();
++        mMarker = aIndex;
++    }
++
++    if (aIndex == mMarker) {
++        mList.AppendElement(aObj);
++    } else {
++        --mMarker;
++
++        mList.InsertElementAt(0, aObj);
++    }
++}
++
++void
++nsMenu::SetPopupState(PopupState aState)
++{
++    mFlags = Flags(mFlags & ~7);
++    mFlags = Flags(mFlags | (aState & 7));
++
++    if (!mPopupContent) {
++        return;
++    }
++
++    nsAutoString state;
++    switch (aState) {
++        case ePopupStateShowing:
++            state.Assign(NS_LITERAL_STRING("showing"));
++            break;
++        case ePopupStateOpenFromAboutToShow:
++        case ePopupStateOpenFromOpenedEvent:
++            state.Assign(NS_LITERAL_STRING("open"));
++            break;
++        case ePopupStateHiding:
++            state.Assign(NS_LITERAL_STRING("hiding"));
++            break;
++        default:
++            break;
++    }
++
++    nsCOMPtr<nsIAtom> atom =
++        do_GetAtom(NS_LITERAL_CSTRING("_moz-menupopupstate"));
++    nsCOMPtr<nsIRunnable> event;
++    if (state.IsEmpty()) {
++        event = new nsUnsetAttrRunnable(mPopupContent, atom);
++    } else {
++        event = new nsSetAttrRunnable(mPopupContent, atom, state);
++    }
++    nsContentUtils::AddScriptRunner(event);
++}
++
++/* static */ gboolean
++nsMenu::menu_about_to_show_cb(DbusmenuMenuitem *menu,
++                              gpointer user_data)
++{
++    nsMenu *self = static_cast<nsMenu *>(user_data);
++
++    if (self->IgnoreFirstAboutToShow()) {
++        self->ClearIgnoreFirstAboutToShow();
++        return FALSE;
++    }
++
++    self->AboutToOpen(eFromAboutToShowSignal);
++
++    return FALSE;
++}
++
++/* static */ void
++nsMenu::menu_event_cb(DbusmenuMenuitem *menu,
++                      const gchar *name,
++                      GVariant *value,
++                      guint timestamp,
++                      gpointer user_data)
++{
++    nsMenu *self = static_cast<nsMenu *>(user_data);
++
++    nsAutoCString event(name);
++
++    if (event.Equals(NS_LITERAL_CSTRING("closed"))) {
++        self->OnClose();
++        return;
++    }
++
++    if (event.Equals(NS_LITERAL_CSTRING("opened"))) {
++        self->AboutToOpen(eFromOpenedEvent);
++        return;
++    }
++}
++
++static void
++DispatchMouseEvent(nsIContent *aTarget, uint32_t aMsg)
++{
++    if (!aTarget) {
++        return;
++    }
++
++    nsMouseEvent event(true, aMsg, nullptr, nsMouseEvent::eReal);
++    aTarget->DispatchDOMEvent(&event, nullptr, nullptr, nullptr);
++}
++
++void
++nsMenu::AboutToOpen(AboutToOpenOrigin aOrigin)
++{
++    // This function can be called in 2 ways:
++    // - "about-to-show" signal from dbusmenu
++    // - "opened" event from dbusmenu
++    // Unity sends both of these, but we only want to respond to one of them.
++    // Unity-2D only sends the second one.
++    // To complicate things even more, Unity doesn't send us a closed event
++    // when a menuitem is activated, so we need to accept consecutive
++    // about-to-show signals without corresponding "closed" events (else we would
++    // just ignore all calls to this function once the menu is open). So, the
++    // way this works is:
++    // - If we were called from an "about-to-show" signal, ignore the "opened"
++    //   event and accept consecutive "about-to-show" signals
++    // - If we were called from an "opened" event, accept any consecutve call
++    //   without a corresponding "closed" event
++
++    if (GetPopupState() == ePopupStateShowing ||
++        (GetPopupState() == ePopupStateOpenFromAboutToShow &&
++         aOrigin == eFromOpenedEvent)) {
++        return;
++    }
++
++    nsNativeMenuAutoSuspendMutations as;
++
++    if (NeedsRebuild()) {
++        Build();
++    }
++
++    SetPopupState(ePopupStateShowing);
++    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWING);
++
++    for (uint32_t i = 0; i < mMenuObjects.Length(); ++i) {
++        mMenuObjects[i]->ContainerIsOpening();
++    }
++
++    PopupState openState = aOrigin == eFromOpenedEvent ?
++        ePopupStateOpenFromOpenedEvent : ePopupStateOpenFromAboutToShow;
++    SetPopupState(openState);
++    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::open,
++                      NS_LITERAL_STRING("true"), true);
++    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWN);
++}
++
++void
++nsMenu::OnClose()
++{
++    if (GetPopupState() != ePopupStateShowing &&
++        GetPopupState() != ePopupStateOpenFromAboutToShow &&
++        GetPopupState() != ePopupStateOpenFromOpenedEvent) {
++        return;
++    }
++
++    nsNativeMenuAutoSuspendMutations as;
++
++    SetPopupState(ePopupStateHiding);
++
++    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDING);
++    SetPopupState(ePopupStateClosed);
++
++    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDDEN);
++
++    mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::open, true);
++}
++
++void
++nsMenu::Build()
++{
++    while (mMenuObjects.Length() > 0) {
++        RemoveMenuObjectAt(0, true);
++    }
++
++    InitializePopup();
++
++    if (!mPopupContent) {
++        return;
++    }
++
++    ClearNeedsRebuild();
++
++    for (uint32_t i = 0; i < mPopupContent->GetChildCount(); ++i) {
++        nsIContent *childContent = mPopupContent->GetChildAt(i);
++
++        bool success = false;
++        nsMenuObject *child = CreateChild(childContent, &success);
++
++        if (child) {
++            success = AppendMenuObject(child);
++        }
++
++        NS_WARN_IF_FALSE(success, "Failed to build menu. Marking invalid");
++        if (!success) {
++            SetNeedsRebuild();
++            return;
++        }
++    }
++}
++
++void
++nsMenu::InitializeDbusMenuItem()
++{
++    // This happens automatically when we add children, but we have to
++    // do this manually for menus which don't initially have children,
++    // so we can receive about-to-show which triggers a build of the menu
++    dbusmenu_menuitem_property_set(mDbusMenuItem,
++                                   DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
++                                   DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU);
++
++    g_signal_connect(G_OBJECT(mDbusMenuItem), "about-to-show",
++                     G_CALLBACK(menu_about_to_show_cb), this);
++    g_signal_connect(G_OBJECT(mDbusMenuItem), "event",
++                     G_CALLBACK(menu_event_cb), this);
++}
++
++void
++nsMenu::Refresh(nsMenuObject::RefreshType aType)
++{
++    if (aType == nsMenuObject::eRefreshTypeFull) {
++        SyncLabelFromContent();
++        SyncSensitivityFromContent();
++    }
++
++    SyncVisibilityFromContent();
++    SyncIconFromContent();
++}
++
++void
++nsMenu::InitializePopup()
++{
++    nsCOMPtr<nsIContent> oldPopupContent;
++    oldPopupContent.swap(mPopupContent);
++
++    int32_t dummy;
++    nsCOMPtr<nsIAtom> tag = mContent->OwnerDoc()->BindingManager()->ResolveTag(mContent, &dummy);
++    if (tag == nsGkAtoms::menupopup) {
++        mPopupContent = mContent;
++        return;
++    }
++
++    for (uint32_t i = 0; i < mContent->GetChildCount(); ++i) {
++        nsIContent *child = mContent->GetChildAt(i);
++
++        tag = child->OwnerDoc()->BindingManager()->ResolveTag(child, &dummy);
++        if (tag == nsGkAtoms::menupopup) {
++            mPopupContent = child;
++            break;
++        }
++    }
++
++    if (oldPopupContent == mPopupContent) {
++        return;
++    }
++
++    if (oldPopupContent && oldPopupContent != mContent) {
++        mListener->UnregisterForContentChanges(oldPopupContent, this);
++    }
++
++    if (!mPopupContent) {
++        return;
++    }
++
++    SetPopupState(ePopupStateClosed);
++
++    nsCOMPtr<nsIXPConnect> xpconnect = services::GetXPConnect();
++    nsIScriptGlobalObject *sgo = mPopupContent->OwnerDoc()->GetScriptGlobalObject();
++    if (sgo) {
++        nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
++        JSObject *global = sgo->GetGlobalJSObject();
++        if (scriptContext && global) {
++            JSContext *cx = scriptContext->GetNativeContext();
++            if (cx) {
++                nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
++                xpconnect->WrapNative(cx, global, mPopupContent,
++                                      NS_GET_IID(nsISupports),
++                                      getter_AddRefs(wrapper));
++            }
++        }
++    }
++
++    if (mPopupContent != mContent) {
++        mListener->RegisterForContentChanges(mPopupContent, this);
++    }
++}
++
++bool
++nsMenu::RemoveMenuObjectAt(uint32_t aIndex, bool aRecycle)
++{
++    NS_ASSERTION(aIndex < mMenuObjects.Length(), "Invalid index");
++    if (aIndex >= mMenuObjects.Length()) {
++        return false;
++    }
++
++    nsMenuObject *child = mMenuObjects[aIndex];
++
++    // We add contiguous blocks of removed nodes to a recycle list, so that
++    // we can reuse them again if they can be reinserted in to the menu without
++    // changing its structure. The list is cleaned in an idle event, so nodes
++    // must be removed and inserted without running the event loop if they are
++    // to benefit from this recycling feature.
++    // This feature allows menu contents to be refreshed by removing all children
++    // and inserting new ones, without altering the overall structure. It is used
++    // by the history menu in Firefox in order to reduce flicker on opening caused
++    // by multiple resizes of the menu popup window
++    if (aRecycle) {
++        if (!mRecycleList) {
++            mRecycleList = new RecycleList(this);
++        }
++
++        mRecycleList->TakeItem(child->GetDbusMenuItem(), aIndex);
++    } else {
++        mRecycleList = nullptr;
++        dbusmenu_menuitem_child_delete(mDbusMenuItem,
++                                       child->GetDbusMenuItem());
++    }
++
++    mMenuObjects.RemoveElementAt(aIndex);
++
++    return true;
++}
++
++bool
++nsMenu::RemoveMenuObject(nsIContent *aChild, bool aRecycle)
++{
++    uint32_t index = IndexOf(aChild);
++    NS_ASSERTION(index != NoIndex, "Child not found");
++    if (index == NoIndex) {
++        return false;
++    }
++
++    return RemoveMenuObjectAt(index, aRecycle);
++}
++
++bool
++nsMenu::InsertMenuObjectAfter(nsMenuObject *aChild, nsIContent *aPrevSibling)
++{
++    uint32_t index = IndexOf(aPrevSibling);
++    NS_ASSERTION(index != NoIndex || !aPrevSibling,
++                 "Previous sibling not found");
++    if (index == NoIndex && aPrevSibling) {
++        return false;
++    }
++
++    uint32_t correctedIndex = ++index;
++    DbusmenuMenuitem *recycled = nullptr;
++    if (mRecycleList) {
++        recycled = mRecycleList->RecycleForInsert(aChild, index, &correctedIndex);
++    }
++
++    gboolean res = TRUE;
++    if (recycled) {
++        aChild->AdoptDbusMenuItem(recycled);
++    } else {
++        res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
++                                                   aChild->GetDbusMenuItem(),
++                                                   correctedIndex);
++    }
++
++    return res && mMenuObjects.InsertElementAt(index, aChild);
++}
++
++bool
++nsMenu::AppendMenuObject(nsMenuObject *aChild)
++{
++    DbusmenuMenuitem *recycled = nullptr;
++    if (mRecycleList) {
++        // If any nodes were just removed from the end of the menu, then recycle
++        // one now
++        recycled = mRecycleList->RecycleForAppend(aChild);
++    }
++
++    gboolean res = TRUE;
++    if (recycled) {
++        aChild->AdoptDbusMenuItem(recycled);
++    } else {
++        res = dbusmenu_menuitem_child_append(mDbusMenuItem,
++                                             aChild->GetDbusMenuItem());
++    }
++
++    return res && mMenuObjects.AppendElement(aChild);
++}
++
++bool
++nsMenu::CanOpen() const
++{
++    bool isVisible = dbusmenu_menuitem_property_get_bool(mDbusMenuItem,
++                                                         DBUSMENU_MENUITEM_PROP_VISIBLE);
++    bool isDisabled = mContent->AttrValueIs(kNameSpaceID_None,
++                                            nsGkAtoms::disabled,
++                                            nsGkAtoms::_true,
++                                            eCaseMatters);
++
++    return (isVisible && !isDisabled);
++}
++
++nsMenu::nsMenu() :
++    nsMenuObjectContainer(),
++    mFlags(Flags(0))
++{
++    MOZ_COUNT_CTOR(nsMenu);
++}
++
++nsresult
++nsMenu::Init(nsMenuObject *aParent,
++             nsNativeMenuDocListener *aListener,
++             nsIContent *aContent)
++{
++    NS_ENSURE_ARG(aParent);
++    NS_ENSURE_ARG(aListener);
++    NS_ENSURE_ARG(aContent);
++
++    mParent = aParent;
++    mListener = aListener;
++    mContent = aContent;
++
++    SetNeedsRebuild();
++
++    if (mParent->GetType() == nsMenuObject::eMenuBarType &&
++        GetMenuBar()->GetState() != nsMenuBar::eMenuBarStateRegistered) {
++        SetIgnoreFirstAboutToShow();
++    }
++
++    return NS_OK;
++}
++
++nsMenu::~nsMenu()
++{
++    // The recycle list doesn't hold a strong ref to our dbusmenuitem or
++    // any of it's children, so we need to drop them now to avoid crashing later
++    mRecycleList = nullptr;
++
++    // Although nsTArray will take care of this in its destructor,
++    // we have to manually ensure children are removed from our dbusmenu
++    // item, just in case our parent recycles it
++    while (mMenuObjects.Length() > 0) {
++        RemoveMenuObjectAt(0, false);
++    }
++
++    if (mListener && mPopupContent && mContent != mPopupContent) {
++        mListener->UnregisterForContentChanges(mPopupContent, this);
++    }
++
++    if (mDbusMenuItem) {
++        g_signal_handlers_disconnect_by_func(mDbusMenuItem,
++                                             nsNativeMenuUtils::FuncToVoidPtr(menu_about_to_show_cb),
++                                             this);
++        g_signal_handlers_disconnect_by_func(mDbusMenuItem,
++                                             nsNativeMenuUtils::FuncToVoidPtr(menu_event_cb),
++                                             this);
++    }
++
++    MOZ_COUNT_DTOR(nsMenu);
++}
++
++/* static */ nsMenuObject*
++nsMenu::Create(nsMenuObject *aParent,
++               nsNativeMenuDocListener *aListener,
++               nsIContent *aContent)
++{
++    nsMenu *menu = new nsMenu();
++    if (NS_FAILED(menu->Init(aParent, aListener, aContent))) {
++        delete menu;
++        return nullptr;
++    }
++
++    return static_cast<nsMenuObject *>(menu);
++}
++
++static void
++DoOpen(nsITimer *aTimer, void *aClosure)
++{
++    DbusmenuMenuitem *mi = static_cast<DbusmenuMenuitem *>(aClosure);
++    dbusmenu_menuitem_show_to_user(mi, 0);
++
++    NS_RELEASE(aTimer);
++    g_object_unref(mi);
++}
++
++void
++nsMenu::OpenMenuDelayed()
++{
++    if (!CanOpen()) {
++        return;
++    }
++
++    // Here, we synchronously fire popupshowing and popupshown events and then
++    // open the menu after a short delay. This allows the menu to refresh before
++    // it's shown, and avoids an issue where keyboard focus is not on the first
++    // item of the history menu in Firefox when opening it with the keyboard,
++    // because extra items to appear at the top of the menu
++
++    SetPopupState(ePopupStateClosed);
++    AboutToOpen(eFromAboutToShowSignal);
++    SetPopupState(ePopupStateClosed);
++
++    nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID);
++    if (!timer) {
++        return;
++    }
++
++    if (NS_FAILED(timer->InitWithFuncCallback(DoOpen, mDbusMenuItem, 100,
++                                              nsITimer::TYPE_ONE_SHOT))) {
++        return;
++    }
++
++    g_object_ref(mDbusMenuItem);
++    timer.forget();
++}
++
++void
++nsMenu::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
++{
++    NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
++                 "Received an event that wasn't meant for us!");
++
++    if (aAttribute == nsGkAtoms::open) {
++        return;
++    }
++
++    if (aContent == mContent) {
++        if (aAttribute == nsGkAtoms::disabled) {
++            SyncSensitivityFromContent();
++        } else if (aAttribute == nsGkAtoms::label || 
++                   aAttribute == nsGkAtoms::accesskey ||
++                   aAttribute == nsGkAtoms::crop) {
++            SyncLabelFromContent();
++        } else if (aAttribute == nsGkAtoms::image) {
++            SyncIconFromContent();
++        } else if (aAttribute == nsGkAtoms::hidden ||
++                   aAttribute == nsGkAtoms::collapsed) {
++            SyncVisibilityFromContent();
++        }
++    }
++}
++
++void
++nsMenu::OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
++                          nsIContent *aPrevSibling)
++{
++    NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
++                 "Received an event that wasn't meant for us!");
++
++    if (NeedsRebuild()) {
++        return;
++    }
++
++    if (aContainer == mPopupContent) {
++        bool success = false;
++        nsMenuObject *child = CreateChild(aChild, &success);
++
++        if (child) {
++            success = InsertMenuObjectAfter(child, aPrevSibling);
++        }
++
++        NS_WARN_IF_FALSE(success, "Failed to insert menuitem - marking menu as needing a rebuild");
++        if (!success) {
++            SetNeedsRebuild();
++        }
++    } else {
++        Build();
++    }
++}
++
++void
++nsMenu::OnContentRemoved(nsIContent *aContainer, nsIContent *aChild)
++{
++    NS_ASSERTION(aContainer == mContent || aContainer == mPopupContent,
++                 "Received an event that wasn't meant for us!");
++
++    if (NeedsRebuild()) {
++        return;
++    }
++
++    if (aContainer == mPopupContent) {
++        bool success = RemoveMenuObject(aChild, true);
++        NS_WARN_IF_FALSE(success, "Failed to remove menuitem - marking menu as needing a rebuild");
++        if (!success) {
++            SetNeedsRebuild();
++        }
++    } else {
++        Build();
++    }
++}
+diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenu.h
+@@ -0,0 +1,150 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsMenu_h__
++#define __nsMenu_h__
++
++#include "nsCOMPtr.h"
++#include "nsIContent.h"
++#include "nsThreadUtils.h"
++
++#include "nsMenuObject.h"
++#include "nsNativeMenuDocListener.h"
++#include "nsDbusmenu.h"
++
++#include <glib.h>
++
++class nsNativeMenuDocListener;
++class nsIAtom;
++
++class nsMenu MOZ_FINAL : public nsMenuObjectContainer
++{
++public:
++    ~nsMenu();
++
++    static nsMenuObject* Create(nsMenuObject *aParent,
++                                nsNativeMenuDocListener *aListener,
++                                nsIContent *aContent);
++
++    nsMenuObject::Type GetType() const { return nsMenuObject::eMenuType; }
++
++    void OpenMenuDelayed();
++
++    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
++    void OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
++                           nsIContent *aPrevSibling);
++    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild);
++
++private:
++    enum Flags MOZ_ENUM_TYPE(uint8_t) {
++        eMenuFlagPopupState0 = (1 << 0),
++        eMenuFlagPopupState1 = (1 << 1),
++        eMenuFlagPopupState2 = (1 << 2),
++        eMenuFlagNeedsRebuild = (1 << 3),
++        eMenuFlagIgnoreFirstAboutToShow = (1 << 4)
++    };
++
++    enum AboutToOpenOrigin {
++        eFromAboutToShowSignal,
++        eFromOpenedEvent
++    };
++
++    enum PopupState {
++        ePopupStateClosed,
++        ePopupStateShowing,
++        ePopupStateOpenFromAboutToShow,
++        ePopupStateOpenFromOpenedEvent,
++        ePopupStateHiding
++    };
++
++    class RecycleList MOZ_FINAL {
++    public:
++        RecycleList(nsMenu *aOwner);
++        ~RecycleList();
++
++        DbusmenuMenuitem* RecycleForAppend(nsMenuObject *aObj);
++        DbusmenuMenuitem* RecycleForInsert(nsMenuObject *aObj,
++                                           uint32_t aIndex,
++                                           uint32_t *aCorrectedIndex);
++        void TakeItem(DbusmenuMenuitem *aObj, uint32_t aIndex);
++
++    private:
++        void Flush();
++        DbusmenuMenuitem* Shift(nsMenuObject *aObj = nullptr);
++
++        uint32_t mMarker;
++        nsTArray<DbusmenuMenuitem *> mList;
++        nsMenu *mOwner;
++        nsRefPtr<nsRunnableMethod<nsMenu, void, false> > mFreeEvent;
++    };
++
++    nsMenu();
++    nsresult Init(nsMenuObject *aParent,
++                  nsNativeMenuDocListener *aListener,
++                  nsIContent *aContent);
++
++    bool NeedsRebuild() const {
++        return mFlags & eMenuFlagNeedsRebuild ? true : false;
++    }
++    void SetNeedsRebuild() {
++        mFlags = Flags(mFlags | eMenuFlagNeedsRebuild);
++    }
++    void ClearNeedsRebuild() {
++        mFlags = Flags(mFlags & ~eMenuFlagNeedsRebuild);
++    }
++
++    bool IgnoreFirstAboutToShow() const {
++        return mFlags & eMenuFlagIgnoreFirstAboutToShow ? true : false;
++    }
++    void SetIgnoreFirstAboutToShow() {
++        mFlags = Flags(mFlags | eMenuFlagIgnoreFirstAboutToShow);
++    }
++    void ClearIgnoreFirstAboutToShow() {
++        mFlags = Flags(mFlags & ~eMenuFlagIgnoreFirstAboutToShow);
++    }
++
++    PopupState GetPopupState() const {
++        return PopupState(mFlags & 7);
++    }
++    void SetPopupState(PopupState aState);
++
++    static gboolean menu_about_to_show_cb(DbusmenuMenuitem *menu,
++                                          gpointer user_data);
++    static void menu_event_cb(DbusmenuMenuitem *menu,
++                              const gchar *name,
++                              GVariant *value,
++                              guint timestamp,
++                              gpointer user_data);
++    void AboutToOpen(AboutToOpenOrigin aOrigin);
++    void OnClose();
++    void Build();
++    void InitializeDbusMenuItem();
++    void Refresh(nsMenuObject::RefreshType aType);
++    void InitializePopup();
++    bool RemoveMenuObjectAt(uint32_t aIndex, bool aRecycle);
++    bool RemoveMenuObject(nsIContent *aChild, bool aRecycle);
++    bool InsertMenuObjectAfter(nsMenuObject *aChild, nsIContent *aPrevSibling);
++    bool AppendMenuObject(nsMenuObject *aChild);
++    bool CanOpen() const;
++    void FlushRecycleList() { mRecycleList = nullptr; }
++
++    nsMenuObject::PropertyFlags GetSupportedProperties() const {
++        return nsMenuObject::PropertyFlags(
++            nsMenuObject::ePropLabel |
++            nsMenuObject::ePropEnabled |
++            nsMenuObject::ePropVisible |
++            nsMenuObject::ePropIconData |
++            nsMenuObject::ePropChildDisplay
++        );
++    }
++
++    nsCOMPtr<nsIContent> mPopupContent;
++    nsAutoPtr<RecycleList> mRecycleList;
++    Flags mFlags;
++};
++
++#endif /* __nsMenu_h__ */
+diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuBar.cpp
+@@ -0,0 +1,602 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsMenuBar.h"
++#include "nsIWidget.h"
++#include "nsIDOMKeyEvent.h"
++#include "mozilla/Preferences.h"
++#include "nsIAtom.h"
++#include "mozilla/dom/Element.h"
++#include "nsTArray.h"
++#include "nsIDOMEvent.h"
++#include "nsUnicharUtils.h"
++
++#include "nsNativeMenuService.h"
++#include "nsMenu.h"
++
++#include <glib.h>
++#include <glib-object.h>
++#include <gdk/gdkx.h>
++
++using namespace mozilla;
++
++NS_IMPL_ISUPPORTS1(nsMenuBar::DocumentEventListener, nsIDOMEventListener)
++
++NS_IMETHODIMP
++nsMenuBar::DocumentEventListener::HandleEvent(nsIDOMEvent *aEvent)
++{
++    nsAutoString type;
++    nsresult rv = aEvent->GetType(type);
++    if (NS_FAILED(rv)) {
++        NS_WARNING("Failed to determine event type");
++        return rv;
++    }
++
++    if (type.Equals(NS_LITERAL_STRING("focus"))) {
++        mOwner->Focus();
++    } else if (type.Equals(NS_LITERAL_STRING("blur"))) {
++        mOwner->Blur();
++    } else if (type.Equals(NS_LITERAL_STRING("keypress"))) {
++        rv = mOwner->Keypress(aEvent);
++    } else if (type.Equals(NS_LITERAL_STRING("keydown"))) {
++        rv = mOwner->KeyDown(aEvent);
++    } else if (type.Equals(NS_LITERAL_STRING("keyup"))) {
++        rv = mOwner->KeyUp(aEvent);
++    }
++
++    return rv;
++}
++
++bool
++nsMenuBar::RemoveMenuObjectAt(uint32_t aIndex)
++{
++    NS_ASSERTION(aIndex < mMenuObjects.Length(), "Invalid index");
++    if (aIndex >= mMenuObjects.Length()) {
++        return false;
++    }
++
++    gboolean res = dbusmenu_menuitem_child_delete(mDbusMenuItem,
++                                                  mMenuObjects[aIndex]->GetDbusMenuItem());
++    mMenuObjects.RemoveElementAt(aIndex);
++
++    return !!res;
++}
++
++bool
++nsMenuBar::RemoveMenuObject(nsIContent *aChild)
++{
++    uint32_t index = IndexOf(aChild);
++    NS_ASSERTION(index != NoIndex, "Child node not found");
++    if (index == NoIndex) {
++        return false;
++    }
++
++    return RemoveMenuObjectAt(index);
++}
++
++bool
++nsMenuBar::InsertMenuObjectAfter(nsMenuObject *aChild,
++                                 nsIContent *aPrevSibling)
++{
++    uint32_t index = IndexOf(aPrevSibling);
++    NS_ASSERTION(index != NoIndex || !aPrevSibling, "Previous sibling not found");
++    if (index == NoIndex && aPrevSibling) {
++        return false;
++    }
++
++    ++index;
++
++    gboolean res = dbusmenu_menuitem_child_add_position(mDbusMenuItem,
++                                                        aChild->GetDbusMenuItem(),
++                                                        index);
++    return res && mMenuObjects.InsertElementAt(index, aChild);
++}
++
++bool
++nsMenuBar::AppendMenuObject(nsMenuObject *aChild)
++{
++    gboolean res = dbusmenu_menuitem_child_append(mDbusMenuItem,
++                                                  aChild->GetDbusMenuItem());
++    return res && mMenuObjects.AppendElement(aChild);
++}
++
++void
++nsMenuBar::Build()
++{
++    for (uint32_t i = 0; i < mContent->GetChildCount(); ++i) {
++        nsIContent *childContent = mContent->GetChildAt(i);
++
++        bool success = false;
++        nsMenuObject *child = CreateChild(childContent, &success);
++
++        if (child) {
++            success = AppendMenuObject(child);
++        }
++
++        NS_ASSERTION(success, "Failed to append item to menubar");
++    }
++}
++
++void
++nsMenuBar::DisconnectDocumentEventListeners()
++{
++    mDocument->RemoveEventListener(NS_LITERAL_STRING("focus"),
++                                   mEventListener,
++                                   true);
++    mDocument->RemoveEventListener(NS_LITERAL_STRING("blur"),
++                                   mEventListener,
++                                   true);
++    mDocument->RemoveEventListener(NS_LITERAL_STRING("keypress"),
++                                   mEventListener,
++                                   false);
++    mDocument->RemoveEventListener(NS_LITERAL_STRING("keydown"),
++                                   mEventListener,
++                                   false);
++    mDocument->RemoveEventListener(NS_LITERAL_STRING("keyup"),
++                                   mEventListener,
++                                   false);
++}
++
++void
++nsMenuBar::DisconnectUnmapEventHandler()
++{
++    g_signal_handlers_disconnect_by_func(mTopLevel,
++                                         nsNativeMenuUtils::FuncToVoidPtr(unmap_event_cb),
++                                         this);
++}
++
++void
++nsMenuBar::SetShellShowingMenuBar(bool aShowing)
++{
++    nsIDocument *doc = mContent->OwnerDoc();
++    if (!doc) {
++        return;
++    }
++
++    nsCOMPtr<nsIAtom> atom =
++        do_GetAtom(NS_LITERAL_CSTRING("shellshowingmenubar"));
++    doc->GetRootElement()->SetAttr(kNameSpaceID_None, atom,
++                                   aShowing ?
++                                    NS_LITERAL_STRING("true") :
++                                    NS_LITERAL_STRING("false"), true);
++}
++
++void
++nsMenuBar::ReRegister()
++{
++    mState = eMenuBarStateRegistering;
++    mCancellable.Init();
++
++    nsNativeMenuService::GetSingleton()->RegisterNativeMenuBar(this);
++}
++
++void
++nsMenuBar::Focus()
++{
++    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
++    mContent->SetAttr(kNameSpaceID_None, atom, NS_LITERAL_STRING("false"), true);
++}
++
++void
++nsMenuBar::Blur()
++{
++    // We do this here in case we lose focus before getting the
++    // keyup event, which leaves the menubar state looking like
++    // the alt key is stuck down
++    dbusmenu_server_set_status(mServer, DBUSMENU_STATUS_NORMAL);
++}
++
++static bool
++ShouldHandleKeyEvent(nsIDOMEvent *aEvent)
++{
++    bool handled;
++    bool trusted = false;
++    aEvent->GetPreventDefault(&handled);
++    aEvent->GetIsTrusted(&trusted);
++
++    if (handled || !trusted) {
++        return false;
++    }
++
++    return true;
++}
++
++nsMenuBar::ModifierFlags
++nsMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aEvent)
++{
++    ModifierFlags modifiers = ModifierFlags(0);
++    bool modifier;
++
++    aEvent->GetAltKey(&modifier);
++    if (modifier) {
++        modifiers = ModifierFlags(modifiers | eModifierAlt);
++    }
++
++    aEvent->GetShiftKey(&modifier);
++    if (modifier) {
++        modifiers = ModifierFlags(modifiers | eModifierShift);
++    }
++
++    aEvent->GetCtrlKey(&modifier);
++    if (modifier) {
++        modifiers = ModifierFlags(modifiers | eModifierCtrl);
++    }
++
++    aEvent->GetMetaKey(&modifier);
++    if (modifier) {
++        modifiers = ModifierFlags(modifiers | eModifierMeta);
++    }
++
++    return modifiers;
++}
++
++nsresult
++nsMenuBar::Keypress(nsIDOMEvent *aEvent)
++{
++    if (!ShouldHandleKeyEvent(aEvent)) {
++        return NS_OK;
++    }
++
++    nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aEvent);
++    if (!keyEvent) {
++        return NS_OK;
++    }
++
++    ModifierFlags modifiers = GetModifiersFromEvent(keyEvent);
++    if (((modifiers & mAccessKeyMask) == 0) ||
++        ((modifiers & ~mAccessKeyMask) != 0)) {
++        return NS_OK;
++    }
++
++    uint32_t charCode;
++    keyEvent->GetCharCode(&charCode);
++    if (charCode == 0) {
++        return NS_OK;
++    }
++
++    PRUnichar ch = PRUnichar(charCode);
++    PRUnichar chl = ToLowerCase(ch);
++    PRUnichar chu = ToUpperCase(ch);
++
++    nsMenuObject *found = nullptr;
++    for (uint32_t i = 0; i < mMenuObjects.Length(); ++i) {
++        nsAutoString accesskey;
++        mMenuObjects[i]->GetContentNode()->GetAttr(kNameSpaceID_None,
++                                                   nsGkAtoms::accesskey,
++                                                   accesskey);
++        const nsAutoString::char_type *key = accesskey.BeginReading();
++        if (*key == chu || *key == chl) {
++            found = mMenuObjects[i];
++            break;
++        }
++    }
++
++    if (!found) {
++        return NS_OK;
++    }
++
++    NS_ASSERTION(found->GetType() == nsMenuObject::eMenuType, "Expecting a menu here");
++
++    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
++    mContent->SetAttr(kNameSpaceID_None, atom, NS_LITERAL_STRING("true"), true);
++    (static_cast<nsMenu *>(found))->OpenMenuDelayed();
++    aEvent->StopPropagation();
++    aEvent->PreventDefault();
++
++    return NS_OK;
++}
++
++nsresult
++nsMenuBar::KeyDown(nsIDOMEvent *aEvent)
++{
++    if (!ShouldHandleKeyEvent(aEvent)) {
++        return NS_OK;
++    }
++
++    nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aEvent);
++    if (!keyEvent) {
++        return NS_OK;
++    }
++
++    uint32_t keyCode;
++    keyEvent->GetKeyCode(&keyCode);
++    ModifierFlags modifiers = GetModifiersFromEvent(keyEvent);
++    if ((keyCode != mAccessKey) || ((modifiers & ~mAccessKeyMask) != 0)) {
++        return NS_OK;
++    }
++
++    dbusmenu_server_set_status(mServer, DBUSMENU_STATUS_NOTICE);
++
++    return NS_OK;
++}
++
++nsresult
++nsMenuBar::KeyUp(nsIDOMEvent *aEvent)
++{
++    if (!ShouldHandleKeyEvent(aEvent)) {
++        return NS_OK;
++    }
++
++    nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(aEvent);
++    if (!keyEvent) {
++        return NS_OK;
++    }
++
++    uint32_t keyCode;
++    keyEvent->GetKeyCode(&keyCode);
++    if (keyCode == mAccessKey) {
++        dbusmenu_server_set_status(mServer, DBUSMENU_STATUS_NORMAL);
++    }
++
++    return NS_OK;
++}
++
++/* static */ gboolean
++nsMenuBar::unmap_event_cb(GtkWidget *widget, GdkEvent *event,
++                          gpointer user_data)
++{
++    nsMenuBar *self = static_cast<nsMenuBar *>(user_data);
++    self->ReRegister();
++
++    return TRUE;
++}
++
++nsMenuBar::nsMenuBar() :
++    nsMenuObjectContainer(),
++    mTopLevel(nullptr),
++    mServer(nullptr),
++    mState(eMenuBarStateUnregistered)
++{
++    MOZ_COUNT_CTOR(nsMenuBar);
++}
++
++nsresult
++nsMenuBar::Init(nsIWidget *aParent, nsIContent *aMenuBarNode)
++{
++    NS_ENSURE_ARG(aParent);
++    NS_ENSURE_ARG(aMenuBarNode);
++
++    mContent = aMenuBarNode;
++
++    GdkWindow *gdkWin = static_cast<GdkWindow *>(
++        aParent->GetNativeData(NS_NATIVE_WINDOW));
++    if (!gdkWin) {
++        return NS_ERROR_FAILURE;
++    }
++
++    gpointer user_data = nullptr;
++    gdk_window_get_user_data(gdkWin, &user_data);
++    if (!user_data || !GTK_IS_CONTAINER(user_data)) {
++        return NS_ERROR_FAILURE;
++    }
++
++    mTopLevel = gtk_widget_get_toplevel(GTK_WIDGET(user_data));
++    if (!mTopLevel) {
++        return NS_ERROR_FAILURE;
++    }
++
++    g_object_ref(mTopLevel);
++
++    mListener = nsNativeMenuDocListener::Create(mContent);
++    if (!mListener) {
++        return NS_ERROR_FAILURE;
++    }
++
++    nsAutoCString path;
++    path.Append(NS_LITERAL_CSTRING("/com/canonical/menu/"));
++    char xid[10];
++    sprintf(xid, "%X", static_cast<uint32_t>(
++        GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel))));
++    path.Append(xid);
++
++    mServer = dbusmenu_server_new(path.get());
++    if (!mServer) {
++        return NS_ERROR_FAILURE;
++    }
++
++    // This triggers the creation of the root node, and hooks
++    // us up to the doc listener
++    GetDbusMenuItem();
++    if (!mDbusMenuItem) {
++        return NS_ERROR_FAILURE;
++    }
++
++    dbusmenu_server_set_root(mServer, mDbusMenuItem);
++
++    mEventListener = new DocumentEventListener(this);
++
++    nsIDocument *doc = mContent->OwnerDoc();
++    if (!doc) {
++        return NS_ERROR_FAILURE;
++    }
++    mDocument = do_QueryInterface(doc);
++
++    mAccessKey = Preferences::GetInt("ui.key.menuAccessKey");
++    if (mAccessKey == nsIDOMKeyEvent::DOM_VK_SHIFT) {
++        mAccessKeyMask = eModifierShift;
++    } else if (mAccessKey == nsIDOMKeyEvent::DOM_VK_CONTROL) {
++        mAccessKeyMask = eModifierCtrl;
++    } else if (mAccessKey == nsIDOMKeyEvent::DOM_VK_ALT) {
++        mAccessKeyMask = eModifierAlt;
++    } else if (mAccessKey == nsIDOMKeyEvent::DOM_VK_META) {
++        mAccessKeyMask = eModifierMeta;
++    } else {
++        mAccessKeyMask = eModifierAlt;
++    }
++
++    return NS_OK;
++}
++
++nsMenuBar::~nsMenuBar()
++{
++    nsNativeMenuService *service = nsNativeMenuService::GetSingleton();
++    if (service) {
++        service->NotifyNativeMenuBarDestroyed(this);
++    }
++
++    if (mContent) {
++        SetShellShowingMenuBar(false);
++    }
++
++    if (mTopLevel) {
++        DisconnectUnmapEventHandler();
++        g_object_unref(mTopLevel);
++    }
++
++    if (mListener) {
++        mListener->Stop();
++    }
++
++    if (mDocument) {
++        DisconnectDocumentEventListeners();
++    }
++
++    if (mServer) {
++        g_object_unref(mServer);
++    }
++
++    MOZ_COUNT_DTOR(nsMenuBar);
++}
++
++/* static */ nsMenuBar*
++nsMenuBar::Create(nsIWidget *aParent, nsIContent *aMenuBarNode)
++{
++    nsMenuBar *menubar = new nsMenuBar();
++    if (NS_FAILED(menubar->Init(aParent, aMenuBarNode))) {
++        delete menubar;
++        return nullptr;
++    }
++
++    return menubar;
++}
++
++uint32_t
++nsMenuBar::GetWindowId() const
++{
++    return static_cast<uint32_t>(GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel)));
++}
++
++nsAdoptingCString
++nsMenuBar::GetObjectPath() const
++{
++    gchar *tmp;
++    g_object_get(mServer, DBUSMENU_SERVER_PROP_DBUS_OBJECT, &tmp, NULL);
++    nsAdoptingCString result(tmp);
++
++    return result;
++}
++
++void
++nsMenuBar::NotifyWillRegister()
++{
++    if (mState != eMenuBarStateUnregistered) {
++        return;
++    }
++    mState = eMenuBarStateRegistering;
++
++    mCancellable.Init();
++
++    mDocument->AddEventListener(NS_LITERAL_STRING("focus"),
++                                mEventListener,
++                                true);
++    mDocument->AddEventListener(NS_LITERAL_STRING("blur"),
++                                mEventListener,
++                                true);
++    mDocument->AddEventListener(NS_LITERAL_STRING("keypress"),
++                                mEventListener,
++                                false);
++    mDocument->AddEventListener(NS_LITERAL_STRING("keydown"),
++                                mEventListener,
++                                false);
++    mDocument->AddEventListener(NS_LITERAL_STRING("keyup"),
++                                mEventListener,
++                                false);
++
++    // Clear this. Not sure if we really need to though
++    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
++    mContent->SetAttr(kNameSpaceID_None, atom, NS_LITERAL_STRING("false"),
++                      true);
++
++    mListener->Start();
++
++    {
++        nsNativeMenuAutoSuspendMutations as;
++        Build();
++    }
++
++    // Unity forgets our window if it is unmapped by the application, which
++    // happens with some extensions that add "minimize to tray" type
++    // functionality. We hook on to the MapNotify event to re-register our menu
++    // with Unity
++    g_signal_connect(G_OBJECT(mTopLevel), "unmap-event",
++                     G_CALLBACK(unmap_event_cb), this);
++
++    SetShellShowingMenuBar(true);
++}
++
++void
++nsMenuBar::NotifyRegistered()
++{
++    NS_ASSERTION(mState == eMenuBarStateRegistering, "Inconsistent state");
++
++    mState = eMenuBarStateRegistered;
++    mCancellable.Finish();
++}
++
++void
++nsMenuBar::NotifyUnregistered()
++{
++    if (mState == eMenuBarStateUnregistered) {
++        return;
++    }
++    mState = eMenuBarStateUnregistered;
++
++    mCancellable.Cancel();
++
++    SetShellShowingMenuBar(false);
++    DisconnectUnmapEventHandler();
++    while (mMenuObjects.Length() > 0) {
++        RemoveMenuObjectAt(0);
++    }
++    mListener->Stop();
++    DisconnectDocumentEventListeners();
++}
++
++void
++nsMenuBar::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
++{
++
++}
++
++void
++nsMenuBar::OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
++                             nsIContent *aPrevSibling)
++{
++    NS_ASSERTION(aContainer == mContent,
++                 "Received an event that wasn't meant for us");
++
++    bool success = false;
++    nsMenuObject *child = CreateChild(aChild, &success);
++
++    if (child) {
++        success = InsertMenuObjectAfter(child, aPrevSibling);
++    }
++
++    NS_ASSERTION(success, "Failed to insert item in to menubar");
++}
++
++void
++nsMenuBar::OnContentRemoved(nsIContent *aContainer, nsIContent *aChild)
++{
++    NS_ASSERTION(aContainer == mContent,
++                 "Received an event that wasn't meant for us");
++
++    bool success = false;
++    success = RemoveMenuObject(aChild);
++    NS_ASSERTION(success, "Failed to remove item from menubar");
++}
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuBar.h
+@@ -0,0 +1,111 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsMenuBar_h__
++#define __nsMenuBar_h__
++
++#include "nsCOMPtr.h"
++#include "nsIDOMEventTarget.h"
++#include "nsString.h"
++#include "nsINativeMenuService.h"
++#include "nsIDOMEventListener.h"
++
++#include "nsNativeMenuUtils.h"
++#include "nsMenuObject.h"
++#include "nsDbusmenu.h"
++
++#include <glib.h>
++#include <gdk/gdk.h>
++#include <gtk/gtk.h>
++
++class nsIWidget;
++class nsIContent;
++class nsIDOMEvent;
++class nsIDOMKeyEvent;
++
++class nsMenuBar MOZ_FINAL : public nsMenuObjectContainer
++{
++public:
++    enum MenuBarState {
++        eMenuBarStateUnregistered,
++        eMenuBarStateRegistering,
++        eMenuBarStateRegistered
++    };
++
++    ~nsMenuBar();
++
++    static nsMenuBar* Create(nsIWidget *aParent, nsIContent *aMenuBarNode);
++
++    nsMenuObject::Type GetType() const { return nsMenuObject::eMenuBarType; }
++
++    uint32_t GetWindowId() const;
++    nsAdoptingCString GetObjectPath() const;
++    nsAutoGCancellable& GetCancellable() { return mCancellable; }
++    MenuBarState GetState() const { return mState; }
++    GtkWidget* GetTopLevelWindow() { return mTopLevel; }
++    void NotifyWillRegister();
++    void NotifyRegistered();
++    void NotifyUnregistered();
++
++    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
++    void OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
++                           nsIContent *aPrevSibling);
++    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild);
++
++private:
++    enum ModifierFlags {
++        eModifierShift = (1 << 0),
++        eModifierCtrl = (1 << 1),
++        eModifierAlt = (1 << 2),
++        eModifierMeta = (1 << 3)
++    };
++
++    class DocumentEventListener MOZ_FINAL : public nsIDOMEventListener {
++    public:
++        NS_DECL_ISUPPORTS
++        NS_DECL_NSIDOMEVENTLISTENER
++
++        DocumentEventListener(nsMenuBar *aOwner) : mOwner(aOwner) { };
++        ~DocumentEventListener() { };
++
++    private:
++        nsMenuBar *mOwner;
++    };
++ 
++    nsMenuBar();
++    nsresult Init(nsIWidget *aParent, nsIContent *aMenuBarNode);
++    bool RemoveMenuObjectAt(uint32_t aIndex);
++    bool RemoveMenuObject(nsIContent *aChild);
++    bool InsertMenuObjectAfter(nsMenuObject *aChild, nsIContent *aPrevSibling);
++    bool AppendMenuObject(nsMenuObject *aChild);
++    void Build();
++    void DisconnectDocumentEventListeners();
++    void DisconnectUnmapEventHandler();
++    void SetShellShowingMenuBar(bool aShowing);
++    void ReRegister();
++    void Focus();
++    void Blur();
++    ModifierFlags GetModifiersFromEvent(nsIDOMKeyEvent *aEvent);
++    nsresult Keypress(nsIDOMEvent *aEvent);
++    nsresult KeyDown(nsIDOMEvent *aEvent);
++    nsresult KeyUp(nsIDOMEvent *aEvent);
++
++    static gboolean unmap_event_cb(GtkWidget *widget, GdkEvent *event,
++                                   gpointer user_data);
++
++    GtkWidget *mTopLevel;
++    DbusmenuServer *mServer;
++    nsCOMPtr<nsIDOMEventTarget> mDocument;
++    nsAutoGCancellable mCancellable;
++    nsRefPtr<DocumentEventListener> mEventListener;
++
++    uint32_t mAccessKey;
++    ModifierFlags mAccessKeyMask;
++    MenuBarState mState;
++};
++
++#endif /* __nsMenuBar_h__ */
+diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuItem.cpp
+@@ -0,0 +1,529 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsMenuItem.h"
++#include "nsIDocument.h"
++#include "mozilla/dom/Element.h"
++#include "nsString.h"
++#include "nsIAtom.h"
++#include "nsGkAtoms.h"
++#include "mozilla/Preferences.h"
++#include "nsIDOMKeyEvent.h"
++#include "nsReadableUtils.h"
++#include "mozilla/Util.h"
++#include "nsGtkKeyUtils.h"
++#include "nsIDOMEventTarget.h"
++#include "nsIDOMDocument.h"
++#include "nsIDOMXULCommandEvent.h"
++#include "nsIDOMEvent.h"
++#include "nsIRunnable.h"
++#include "nsContentUtils.h"
++#include "nsThreadUtils.h"
++#include "nsCRT.h"
++
++#include "nsNativeMenuDocListener.h"
++#include "nsNativeMenuUtils.h"
++#include "nsMenuBar.h"
++
++#include <gdk/gdk.h>
++#include <gdk/gdkkeysyms.h>
++#include <gdk/gdkx.h>
++#include <gtk/gtk.h>
++
++using namespace mozilla;
++using namespace mozilla::widget;
++
++struct keyCodeData {
++    const char* str;
++    size_t strlength;
++    uint32_t keycode;
++};
++
++static struct keyCodeData gKeyCodes[] = {
++#define NS_DEFINE_VK(aDOMKeyName, aDOMKeyCode) \
++  { #aDOMKeyName, sizeof(#aDOMKeyName) - 1, aDOMKeyCode }
++#include "nsVKList.h"
++#undef NS_DEFINE_VK
++};
++
++static uint32_t
++GetKeyCode(nsAString& aKeyName)
++{
++    NS_ConvertUTF16toUTF8 keyName(aKeyName);
++    ToUpperCase(keyName); // We want case-insensitive comparison with data
++                          // stored as uppercase.
++
++    uint32_t keyNameLength = keyName.Length();
++    const char* keyNameStr = keyName.get();
++    for (uint16_t i = 0; i < ArrayLength(gKeyCodes); ++i) {
++        if (keyNameLength == gKeyCodes[i].strlength &&
++            !nsCRT::strcmp(gKeyCodes[i].str, keyNameStr)) {
++            return gKeyCodes[i].keycode;
++        }
++    }
++
++    return 0;
++}
++
++class nsMenuItemUncheckSiblingsEvent MOZ_FINAL : public nsRunnable {
++public:
++    NS_IMETHODIMP Run() {
++        if (!mContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::type,
++                                   nsGkAtoms::radio, eCaseMatters)) {
++            // If we're not a radio button, we don't care
++            return NS_OK;
++        }
++
++        nsAutoString name;
++        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::name, name);
++
++        nsIContent *parent = mContent->GetParent();
++        if (!parent) {
++            return NS_OK;
++        }
++
++        for (uint32_t i = 0; i < parent->GetChildCount(); ++i) {
++            nsIContent *sibling = parent->GetChildAt(i);
++
++            nsAutoString otherName;
++            sibling->GetAttr(kNameSpaceID_None, nsGkAtoms::name, otherName);
++
++            if (sibling != mContent && otherName == name && 
++                sibling->AttrValueIs(kNameSpaceID_None, nsGkAtoms::type,
++                                     nsGkAtoms::radio, eCaseMatters)) {
++                sibling->UnsetAttr(kNameSpaceID_None, nsGkAtoms::checked, true);
++            }
++        }
++
++        return NS_OK;
++    }
++
++    nsMenuItemUncheckSiblingsEvent(nsIContent *aContent) :
++        mContent(aContent) { };
++
++private:
++    nsCOMPtr<nsIContent> mContent;
++};
++
++class nsMenuItemRefreshEvent MOZ_FINAL : public nsRunnable {
++public:
++    NS_IMETHODIMP Run() {
++        mMenuItem->RefreshUnblocked(mType);
++        return NS_OK;
++    }
++
++    nsMenuItemRefreshEvent(nsMenuItem *aMenuItem,
++                           nsMenuObject::RefreshType aType) :
++        mMenuItem(aMenuItem),
++        mType(aType) { };
++
++private:
++    nsMenuItem *mMenuItem;
++    nsMenuObject::RefreshType mType;
++};
++
++class nsMenuItemCommandContentAttrChangeEvent MOZ_FINAL : public nsRunnable {
++public:
++    NS_IMETHODIMP Run() {
++        if (mAttribute == nsGkAtoms::label) {
++            mMenuItem->SyncLabelFromCommand();
++        } else if (mAttribute == nsGkAtoms::disabled) {
++            mMenuItem->SyncSensitivityFromCommand();
++        } else if (mAttribute == nsGkAtoms::checked) {
++            mMenuItem->SyncStateFromCommand();
++        }
++
++        return NS_OK;
++    }
++
++    nsMenuItemCommandContentAttrChangeEvent(nsMenuItem *aMenuItem,
++                                            nsIAtom *aAttribute) :
++        mMenuItem(aMenuItem),
++        mAttribute(aAttribute) { };
++
++private:
++    nsMenuItem *mMenuItem;
++    nsCOMPtr<nsIAtom> mAttribute;
++};
++
++/* static */ void
++nsMenuItem::item_activated_cb(DbusmenuMenuitem *menuitem,
++                              guint timestamp,
++                              gpointer user_data)
++{
++    nsMenuItem *item = static_cast<nsMenuItem *>(user_data);
++    item->Activate(timestamp);
++}
++
++void
++nsMenuItem::Activate(uint32_t aTimestamp)
++{
++    gdk_x11_window_set_user_time(
++        gtk_widget_get_window(GetMenuBar()->GetTopLevelWindow()),
++        aTimestamp);
++
++    nsNativeMenuAutoSuspendMutations as;
++
++    // This first bit seems backwards, but it's not really. If autocheck is
++    // not set or autocheck==true, then the checkbox state is usually updated
++    // by the input event that clicked on the menu item. In this case, we need
++    // to manually update the checkbox state. If autocheck==false, then the input 
++    // event doesn't toggle the checkbox state, and it is up  to the handler on
++    // this node to do it instead. In this case, we leave it alone
++
++    // XXX: it is important to update the checkbox state before dispatching
++    //      the event, as the handler might check the new state
++    if (!mContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::autocheck,
++                               nsGkAtoms::_false, eCaseMatters) &&
++        (GetMenuItemType() == eCheckBoxType ||
++         (GetMenuItemType() == eRadioType && !IsChecked()))) {
++        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::checked,
++                          IsChecked() ?
++                          NS_LITERAL_STRING("false") :  NS_LITERAL_STRING("true"),
++                          true);
++    }
++
++    nsIDocument *doc = mContent->OwnerDoc();
++    nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
++    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
++    if (!domDoc || !target) {
++        return;
++    }
++
++    nsCOMPtr<nsIDOMEvent> event;
++    domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
++                        getter_AddRefs(event));
++    nsCOMPtr<nsIDOMXULCommandEvent> command = do_QueryInterface(event);
++    if (!command) {
++        return;
++    }
++
++    command->InitCommandEvent(NS_LITERAL_STRING("command"),
++                              true, true, doc->GetWindow(), 0,
++                              false, false, false, false, nullptr);
++
++    event->SetTrusted(true);
++    bool dummy;
++    target->DispatchEvent(event, &dummy);
++}
++
++void
++nsMenuItem::SyncStateFromCommand()
++{
++    nsAutoString checked;
++    if (mCommandContent && mCommandContent->GetAttr(kNameSpaceID_None,
++                                                    nsGkAtoms::checked,
++                                                    checked)) {
++        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::checked, checked,
++                          true);
++    }
++}
++
++void
++nsMenuItem::SyncLabelFromCommand()
++{
++    nsAutoString label;
++    if (mCommandContent && mCommandContent->GetAttr(kNameSpaceID_None,
++                                                    nsGkAtoms::label,
++                                                    label)) {
++        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::label, label,
++                          true);
++    }
++}
++
++void
++nsMenuItem::SyncSensitivityFromCommand()
++{
++    if (mCommandContent) {
++        if (mCommandContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::disabled,
++                                         nsGkAtoms::_true, eCaseMatters)) {
++            mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
++                              NS_LITERAL_STRING("true"), true);
++        } else {
++            mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::disabled, true);
++        }
++    }
++}
++
++void
++nsMenuItem::SyncStateFromContent()
++{
++    if (!IsCheckboxOrRadioItem()) {
++        return;
++    }
++
++    SetCheckState(mContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::checked,
++                                        nsGkAtoms::_true, eCaseMatters));
++    dbusmenu_menuitem_property_set_int(mDbusMenuItem,
++                                       DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
++                                       IsChecked() ?
++                                         DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED : 
++                                         DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED);
++}
++
++void
++nsMenuItem::SyncTypeAndStateFromContent()
++{
++    static nsIContent::AttrValuesArray attrs[] =
++        { &nsGkAtoms::checkbox, &nsGkAtoms::radio, nullptr };
++    int32_t type = mContent->FindAttrValueIn(kNameSpaceID_None,
++                                             nsGkAtoms::type,
++                                             attrs, eCaseMatters);
++
++    if (type >= 0 && type < 2) {
++        if (type == 0) {
++            dbusmenu_menuitem_property_set(mDbusMenuItem,
++                                           DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
++                                           DBUSMENU_MENUITEM_TOGGLE_CHECK);
++            SetMenuItemType(eCheckBoxType);
++        } else if (type == 1) {
++            dbusmenu_menuitem_property_set(mDbusMenuItem,
++                                           DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
++                                           DBUSMENU_MENUITEM_TOGGLE_RADIO);
++            SetMenuItemType(eRadioType);
++        }
++
++        SyncStateFromContent();
++    } else {
++        dbusmenu_menuitem_property_remove(mDbusMenuItem,
++                                          DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE);
++        dbusmenu_menuitem_property_remove(mDbusMenuItem,
++                                          DBUSMENU_MENUITEM_PROP_TOGGLE_STATE);
++        SetMenuItemType(eNormalType);
++    }
++}
++
++void
++nsMenuItem::SyncAccelFromContent()
++{
++    if (!mKeyContent) {
++        dbusmenu_menuitem_property_remove(mDbusMenuItem,
++                                          DBUSMENU_MENUITEM_PROP_SHORTCUT);
++        return;
++    }
++
++    nsAutoString modifiers;
++    mKeyContent->GetAttr(kNameSpaceID_None, nsGkAtoms::modifiers, modifiers);
++
++    uint32_t modifier = 0;
++
++    if (!modifiers.IsEmpty()) {
++        char* str = ToNewUTF8String(modifiers);
++        char *token = strtok(str, ", \t");
++        while(token) {
++            if (nsCRT::strcmp(token, "shift") == 0) {
++                modifier |= GDK_SHIFT_MASK;
++            } else if (nsCRT::strcmp(token, "alt") == 0) {
++                modifier |= GDK_MOD1_MASK;
++            } else if (nsCRT::strcmp(token, "meta") == 0) {
++                modifier |= GDK_META_MASK;
++            } else if (nsCRT::strcmp(token, "control") == 0) {
++                modifier |= GDK_CONTROL_MASK;
++            } else if (nsCRT::strcmp(token, "accel") == 0) {
++                int32_t accel = Preferences::GetInt("ui.key.accelKey");
++                if (accel == nsIDOMKeyEvent::DOM_VK_META) {
++                    modifier |= GDK_META_MASK;
++                } else if (accel == nsIDOMKeyEvent::DOM_VK_ALT) {
++                    modifier |= GDK_MOD1_MASK;
++                } else {
++                    modifier |= GDK_CONTROL_MASK;
++                }
++            }
++
++            token = strtok(nullptr, ", \t");
++        }
++
++        nsMemory::Free(str);
++    }
++
++    nsAutoString keyStr;
++    mKeyContent->GetAttr(kNameSpaceID_None, nsGkAtoms::key, keyStr);
++
++    guint key = 0;
++    if (!keyStr.IsEmpty()) {
++        key = gdk_unicode_to_keyval(*keyStr.BeginReading());
++    }
++
++    if (key == 0) {
++        mKeyContent->GetAttr(kNameSpaceID_None, nsGkAtoms::keycode, keyStr);
++        if (!keyStr.IsEmpty())
++            key = KeymapWrapper::GuessGDKKeyval(GetKeyCode(keyStr));
++    }
++
++    if (key == 0) {
++        key = GDK_VoidSymbol;
++    }
++
++    if (key != GDK_VoidSymbol) {
++        dbusmenu_menuitem_property_set_shortcut(mDbusMenuItem, key,
++                                                static_cast<GdkModifierType>(modifier));
++    } else {
++        dbusmenu_menuitem_property_remove(mDbusMenuItem,
++                                          DBUSMENU_MENUITEM_PROP_SHORTCUT);
++    }
++}
++
++void
++nsMenuItem::InitializeDbusMenuItem()
++{
++    g_signal_connect(G_OBJECT(mDbusMenuItem),
++                     DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
++                     G_CALLBACK(item_activated_cb), this);
++}
++
++void
++nsMenuItem::Refresh(nsMenuObject::RefreshType aType)
++{
++    if (aType == eRefreshTypeFull) {
++        if (mCommandContent) {
++            mListener->UnregisterForContentChanges(mCommandContent, this);
++            mCommandContent = nullptr;
++        }
++        if (mKeyContent) {
++            mListener->UnregisterForContentChanges(mKeyContent, this);
++            mKeyContent = nullptr;
++        }
++
++        nsIDocument *doc = mContent->GetCurrentDoc();
++        nsAutoString command;
++        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::command, command);
++        if (!command.IsEmpty()) {
++            mCommandContent = doc->GetElementById(command);
++            if (mCommandContent) {
++                mListener->RegisterForContentChanges(mCommandContent, this);
++            }
++        }
++
++        nsAutoString key;
++        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::key, key);
++        if (!key.IsEmpty()) {
++            mKeyContent = doc->GetElementById(key);
++            if (mKeyContent) {
++                mListener->RegisterForContentChanges(mKeyContent, this);
++            }
++        }
++    }
++
++    nsContentUtils::AddScriptRunner(new nsMenuItemRefreshEvent(this, aType));
++}
++
++void
++nsMenuItem::RefreshUnblocked(nsMenuObject::RefreshType aType)
++{
++    SyncStateFromCommand();
++    SyncLabelFromCommand();
++    SyncSensitivityFromCommand();
++
++    if (aType == eRefreshTypeFull) {
++        SyncTypeAndStateFromContent();
++        SyncAccelFromContent();
++        SyncLabelFromContent();
++        SyncSensitivityFromContent();
++    }
++
++    SyncVisibilityFromContent();
++    SyncIconFromContent();
++}
++
++nsMenuItem::nsMenuItem() :
++    nsMenuObject(),
++    mFlags(Flags(0))
++{
++    MOZ_COUNT_CTOR(nsMenuItem);
++}
++
++nsresult
++nsMenuItem::Init(nsMenuObject *aParent,
++                 nsNativeMenuDocListener *aListener,
++                 nsIContent *aContent)
++{
++    NS_ENSURE_ARG(aParent);
++    NS_ENSURE_ARG(aListener);
++    NS_ENSURE_ARG(aContent);
++
++    mParent = aParent;
++    mListener = aListener;
++    mContent = aContent;
++
++    return NS_OK;
++}
++
++nsMenuItem::~nsMenuItem()
++{
++    if (mListener) {
++        if (mCommandContent) {
++            mListener->UnregisterForContentChanges(mCommandContent, this);
++        }
++        if (mKeyContent) {
++            mListener->UnregisterForContentChanges(mKeyContent, this);
++        }
++    }
++
++    if (mDbusMenuItem) {
++        g_signal_handlers_disconnect_by_func(mDbusMenuItem,
++                                             nsNativeMenuUtils::FuncToVoidPtr(item_activated_cb),
++                                             this);
++    }
++
++    MOZ_COUNT_DTOR(nsMenuItem);
++}
++
++/* static */ nsMenuObject*
++nsMenuItem::Create(nsMenuObject *aParent,
++                   nsNativeMenuDocListener *aListener,
++                   nsIContent *aContent)
++{
++    nsMenuItem *menuitem = new nsMenuItem();
++    if (NS_FAILED(menuitem->Init(aParent, aListener, aContent))) {
++        delete menuitem;
++        return nullptr;
++    }
++
++    return static_cast<nsMenuObject *>(menuitem);
++}
++
++void
++nsMenuItem::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
++{
++    NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
++                 aContent == mKeyContent,
++                 "Received an event that wasn't meant for us!");
++
++    if (aContent == mContent && aAttribute == nsGkAtoms::checked &&
++        aContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::checked,
++                              nsGkAtoms::_true, eCaseMatters)) {
++        nsContentUtils::AddScriptRunner(
++            new nsMenuItemUncheckSiblingsEvent(mContent));
++    }
++
++    if (aContent == mContent) {
++        if (aAttribute == nsGkAtoms::command ||
++            aAttribute == nsGkAtoms::key) {
++            Refresh(eRefreshTypeFull);
++        } else if (aAttribute == nsGkAtoms::label ||
++                   aAttribute == nsGkAtoms::accesskey ||
++                   aAttribute == nsGkAtoms::crop) {
++            SyncLabelFromContent();
++        } else if (aAttribute == nsGkAtoms::disabled) {
++            SyncSensitivityFromContent();
++        } else if (aAttribute == nsGkAtoms::type) {
++            SyncTypeAndStateFromContent();
++        } else if (aAttribute == nsGkAtoms::checked) {
++            SyncStateFromContent();
++        } else if (aAttribute == nsGkAtoms::image) {
++            SyncIconFromContent();
++        } else if (aAttribute == nsGkAtoms::hidden ||
++                   aAttribute == nsGkAtoms::collapsed) {
++            SyncVisibilityFromContent();
++        }
++    } else if (aContent == mCommandContent) {
++        nsContentUtils::AddScriptRunner(
++            new nsMenuItemCommandContentAttrChangeEvent(this, aAttribute));
++    } else if (aContent == mKeyContent) {
++        SyncAccelFromContent();
++    }
++}
+diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuItem.h
+@@ -0,0 +1,115 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsMenuItem_h__
++#define __nsMenuItem_h__
++
++#include "nsIContent.h"
++#include "nsCOMPtr.h"
++
++#include "nsMenuObject.h"
++#include "nsDbusmenu.h"
++
++#include <glib.h>
++
++class nsNativeMenuDocListener;
++class nsIAtom;
++class nsMenuItemRefreshEvent;
++class nsMenuItemCommandContentAttrChangeEvent;
++
++class nsMenuItem MOZ_FINAL : public nsMenuObject
++{
++public:
++    ~nsMenuItem();
++
++    nsMenuObject::Type GetType() const { return nsMenuObject::eMenuItemType; }
++
++    static nsMenuObject* Create(nsMenuObject *aParent,
++                                nsNativeMenuDocListener *aListener,
++                                nsIContent *aContent);
++
++    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
++
++private:
++    friend class nsMenuItemRefreshEvent;
++    friend class nsMenuItemCommandContentAttrChangeEvent;
++
++    enum Flags MOZ_ENUM_TYPE(uint8_t) {
++        eMenuItemFlagType0 = (1 << 0),
++        eMenuItemFlagType1 = (1 << 1),
++        eMenuItemFlagToggleState = (1 << 2)
++    };
++
++    enum ToggleType {
++        eNormalType,
++        eRadioType,
++        eCheckBoxType
++    };
++
++    nsMenuItem();
++    nsresult Init(nsMenuObject *aParent,
++                  nsNativeMenuDocListener *aListener,
++                  nsIContent *aContent);
++
++    ToggleType GetMenuItemType() const {
++        return ToggleType(mFlags & 3);
++    }
++    void SetMenuItemType(ToggleType aType) {
++        mFlags = Flags(mFlags & ~3);
++        mFlags = Flags(mFlags | (aType & 3));
++    }
++    bool IsCheckboxOrRadioItem() const {
++        return GetMenuItemType() == eRadioType ||
++               GetMenuItemType() == eCheckBoxType;
++    }
++
++    bool IsChecked() const {
++        return mFlags & eMenuItemFlagToggleState ? true : false;
++    }
++    void SetCheckState(bool aState) {
++        if (aState) {
++            mFlags = Flags(mFlags | eMenuItemFlagToggleState);
++        } else {
++            mFlags = Flags(mFlags & ~eMenuItemFlagToggleState);
++        }
++    }
++
++    static void item_activated_cb(DbusmenuMenuitem *menuitem,
++                                  guint timestamp,
++                                  gpointer user_data);
++    void Activate(uint32_t aTimestamp);
++
++    void SyncStateFromCommand();
++    void SyncLabelFromCommand();
++    void SyncSensitivityFromCommand();
++    void SyncStateFromContent();
++    void SyncTypeAndStateFromContent();
++    void SyncAccelFromContent();
++
++    void InitializeDbusMenuItem();
++    void Refresh(nsMenuObject::RefreshType aType);
++    void RefreshUnblocked(nsMenuObject::RefreshType aType);
++
++    nsMenuObject::PropertyFlags GetSupportedProperties() const {
++        return nsMenuObject::PropertyFlags(
++            nsMenuObject::ePropLabel |
++            nsMenuObject::ePropEnabled |
++            nsMenuObject::ePropVisible |
++            nsMenuObject::ePropIconData |
++            nsMenuObject::ePropShortcut |
++            nsMenuObject::ePropToggleType |
++            nsMenuObject::ePropToggleState
++        );
++    }
++
++    nsCOMPtr<nsIContent> mKeyContent;
++    nsCOMPtr<nsIContent> mCommandContent;
++
++    Flags mFlags;
++};
++
++#endif /* __nsMenuItem_h__ */
+diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuObject.cpp
+@@ -0,0 +1,709 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsMenuObject.h"
++#include "nsUnicharUtils.h"
++#include "nsIDocument.h"
++#include "nsIPresShell.h"
++#include "nsComputedDOMStyle.h"
++#include "nsStyleContext.h"
++#include "nsStyleStruct.h"
++#include "nsStyleConsts.h"
++#include "nsGkAtoms.h"
++#include "mozilla/LookAndFeel.h"
++#include "nsIAtom.h"
++#include "nsString.h"
++#include "nsIRunnable.h"
++#include "nsThreadUtils.h"
++#include "nsAttrValue.h"
++#include "mozilla/dom/Element.h"
++#include "nsILoadGroup.h"
++#include "nsContentUtils.h"
++#include "imgLoader.h"
++#include "imgRequestProxy.h"
++#include "imgIRequest.h"
++#include "nsPresContext.h"
++#include "imgIContainer.h"
++#include "nsImageToPixbuf.h"
++#include "mozilla/Util.h"
++#include "nsServiceManagerUtils.h"
++#include "nsNetUtil.h"
++#include "mozilla/Preferences.h"
++
++#include "nsNativeMenuUtils.h"
++#include "nsMenu.h"
++#include "nsMenuItem.h"
++#include "nsMenuSeparator.h"
++#include "nsNativeMenuDocListener.h"
++#include "nsMenuBar.h"
++
++#include <glib-object.h>
++#include <gdk/gdk.h>
++#include <pango/pango.h>
++
++using namespace mozilla;
++
++#define MAX_WIDTH 350000
++
++// Must be kept in sync with nsMenuObjectPropertyFlags
++const char *property_strings[] = {
++  DBUSMENU_MENUITEM_PROP_LABEL,
++  DBUSMENU_MENUITEM_PROP_ENABLED,
++  DBUSMENU_MENUITEM_PROP_VISIBLE,
++  DBUSMENU_MENUITEM_PROP_ICON_DATA,
++  DBUSMENU_MENUITEM_PROP_TYPE,
++  DBUSMENU_MENUITEM_PROP_SHORTCUT,
++  DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
++  DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
++  DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
++  NULL
++};
++
++const nsMenuObjectContainer::storage_type::index_type nsMenuObjectContainer::NoIndex = nsMenuObjectContainer::storage_type::NoIndex;
++
++static enum {
++    eImagesInMenusUninitialized,
++    eImagesInMenus,
++    eNoImagesInMenus
++} gImagesInMenus = eImagesInMenusUninitialized;
++
++PangoLayout* gPangoLayout = nullptr;
++nsIAtom* gMenuitemWithFaviconAtom = nullptr;
++
++NS_IMPL_ISUPPORTS1(nsMenuObject::IconLoader, imgINotificationObserver)
++
++NS_IMETHODIMP
++nsMenuObject::IconLoader::Notify(imgIRequest *aProxy,
++                                 int32_t aType, const nsIntRect *aRect)
++{
++    if (!mOwner) {
++        return NS_OK;
++    }
++
++    if (aProxy != mImageRequest) {
++        return NS_ERROR_FAILURE;
++    }
++
++    if (aType == imgINotificationObserver::LOAD_COMPLETE) {
++        mImageRequest->Cancel(NS_BINDING_ABORTED);
++        mImageRequest = nullptr;
++        return NS_OK;
++    }
++
++    if (aType != imgINotificationObserver::FRAME_COMPLETE) {
++        return NS_OK;
++    }
++
++    if (mIconLoaded) {
++        return NS_OK;
++    }
++
++    mIconLoaded = true;
++
++    nsCOMPtr<imgIContainer> img;
++    mImageRequest->GetImage(getter_AddRefs(img));
++    if (!img) {
++        return NS_ERROR_FAILURE;
++    }
++
++    int32_t origWidth, origHeight;
++    img->GetWidth(&origWidth);
++    img->GetHeight(&origHeight);
++
++    bool needsClip = false;
++
++    if (!mImageRect.IsEmpty()) {
++        if (mImageRect.XMost() > origWidth || mImageRect.YMost() > origHeight) {
++            // -moz-image-region is larger than the image
++            mImageRect.SetRect(0, 0, origWidth, origHeight);
++        }
++
++        if (!(mImageRect.x == 0 && mImageRect.y == 0 &&
++              mImageRect.width == origWidth &&
++              mImageRect.height == origHeight)) {
++            needsClip = true;
++        }
++    }
++
++    if ((!needsClip && (origWidth > 100 || origHeight > 100)) ||
++        (needsClip && (mImageRect.width > 100 || mImageRect.height > 100))) {
++        // The icon data needs to go across DBus. Make sure the icon
++        // data isn't too large, else our connection gets terminated and
++        // GDbus helpfully aborts the application. Thank you :)
++        NS_WARNING("Icon data too large");
++        mOwner->ClearIcon();
++        return NS_OK;
++    }
++
++    nsCOMPtr<imgIContainer> clippedImg;
++    if (needsClip) {
++        img->ExtractFrame(0, mImageRect, 0, getter_AddRefs(clippedImg));
++        if (!clippedImg) {
++            return NS_ERROR_FAILURE;
++        }
++    }
++
++    GdkPixbuf *pixbuf =
++        nsImageToPixbuf::ImageToPixbuf(clippedImg ? clippedImg : img);
++    if (pixbuf) {
++        dbusmenu_menuitem_property_set_image(mOwner->GetDbusMenuItem(),
++                                             DBUSMENU_MENUITEM_PROP_ICON_DATA,
++                                             pixbuf);
++        g_object_unref(pixbuf);
++    }
++
++    return NS_OK;
++}
++
++void
++nsMenuObject::IconLoader::ScheduleIconLoad()
++{
++    nsCOMPtr<nsIRunnable> event =
++        NS_NewRunnableMethod(this, &nsMenuObject::IconLoader::LoadIcon);
++    NS_DispatchToCurrentThread(event);
++}
++
++void
++nsMenuObject::IconLoader::LoadIcon()
++{
++    if (!mOwner) {
++        // Our menuitem has gone away
++        return;
++    }
++
++    nsIDocument *doc = mOwner->GetContentNode()->GetCurrentDoc();
++    if (!doc) {
++        return;
++    }
++
++    nsCOMPtr<nsIURI> uri;
++    nsIntRect imageRect;
++    imgRequestProxy *imageRequest = nullptr;
++
++    nsAutoString uriString;
++    if (mOwner->GetContentNode()->GetAttr(kNameSpaceID_None, nsGkAtoms::image,
++                                          uriString)) {
++        NS_NewURI(getter_AddRefs(uri), uriString);
++    } else {
++        nsIPresShell *shell = doc->GetShell();
++        if (!shell) {
++            return;
++        }
++
++        nsRefPtr<nsStyleContext> sc =
++            nsComputedDOMStyle::GetStyleContextForElementNoFlush(
++                mOwner->GetContentNode()->AsElement(), nullptr, shell);
++        if (!sc) {
++            return;
++        }
++
++        const nsStyleList *list = sc->GetStyleList();
++        imageRequest = list->GetListStyleImage();
++        if (imageRequest) {
++            imageRequest->GetURI(getter_AddRefs(uri));
++
++            nsPresContext *pc = shell->GetPresContext();
++            if (!pc) {
++                return;
++            }
++
++            imageRect = list->mImageRegion.ToNearestPixels(
++                            pc->AppUnitsPerDevPixel());
++        }
++    }
++
++    if (!uri) {
++        mImageRect.SetEmpty();
++        mOwner->ClearIcon();
++        mURI = nullptr;
++
++        if (mImageRequest) {
++            mImageRequest->Cancel(NS_BINDING_ABORTED);
++            mImageRequest = nullptr;
++        }
++
++        return;
++    }
++
++    bool equal = false;
++    bool same;
++    equal = mURI && NS_SUCCEEDED(mURI->Equals(uri, &same)) && same;
++    equal = equal && imageRect == mImageRect;
++    if (equal) {
++        return;
++    }
++
++    if (mImageRequest) {
++        mImageRequest->Cancel(NS_BINDING_ABORTED);
++        mImageRequest = nullptr;
++    }
++
++    mIconLoaded = false;
++
++    if (imageRequest) {
++        mImageRect = imageRect;
++        imageRequest->Clone(this, getter_AddRefs(mImageRequest));
++    } else {
++        nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
++        nsRefPtr<imgLoader> loader =
++            nsContentUtils::GetImgLoaderForDocument(doc);
++        if (!loader || !loadGroup) {
++            NS_WARNING("Failed to get loader or load group for image load");
++            return;
++        }
++
++        loader->LoadImage(uri, nullptr, nullptr, nullptr, loadGroup, this,
++                          nullptr, nsIRequest::LOAD_NORMAL, nullptr,
++                          nullptr, getter_AddRefs(mImageRequest));
++        if (!mImageRequest) {
++            NS_WARNING("Failed to load icon");
++            return;
++        }
++
++        mImageRect.SetEmpty();
++    }
++
++    mURI = uri;
++
++    if (mImageRequest) {
++        mImageRequest->RequestDecode();
++    }
++}
++
++void
++nsMenuObject::IconLoader::Destroy()
++{
++    if (mImageRequest) {
++        mImageRequest->CancelAndForgetObserver(NS_BINDING_ABORTED);
++        mImageRequest = nullptr;
++    }
++
++    mOwner = nullptr;
++}
++
++typedef nsMenuObject* (*nsMenuObjectConstructor)(nsMenuObject*,
++                                                 nsNativeMenuDocListener*,
++                                                 nsIContent*);
++struct nsMenuObjectConstructorMapEntry {
++  nsIAtom **tag;
++  nsMenuObjectConstructor constructor;
++};
++
++static const nsMenuObjectConstructorMapEntry kConstructorMap[] = {
++  { &nsGkAtoms::menu, nsMenu::Create },
++  { &nsGkAtoms::menuitem, nsMenuItem::Create },
++  { &nsGkAtoms::menuseparator, nsMenuSeparator::Create }
++};
++
++static nsMenuObjectConstructor
++GetMenuObjectConstructor(nsIContent *aContent)
++{
++    if (!aContent->IsXUL()) {
++        return nullptr;
++    }
++
++    for (uint32_t i = 0; i < ArrayLength(kConstructorMap); ++i) {
++        if (aContent->Tag() == *kConstructorMap[i].tag) {
++            return kConstructorMap[i].constructor;
++        }
++    }
++
++    return nullptr;
++}
++
++static bool
++ContentIsSupported(nsIContent *aContent)
++{
++    return GetMenuObjectConstructor(aContent) ? true : false;
++}
++
++static int
++CalculateTextWidth(const nsAString& aText)
++{
++    if (!gPangoLayout) {
++        PangoFontMap *fontmap = pango_cairo_font_map_get_default();
++        PangoContext *ctx = pango_font_map_create_context(fontmap);
++        gPangoLayout = pango_layout_new(ctx);
++        g_object_unref(ctx);
++    }
++
++    pango_layout_set_text(gPangoLayout, NS_ConvertUTF16toUTF8(aText).get(), -1);
++
++    int width, dummy;
++    pango_layout_get_size(gPangoLayout, &width, &dummy);
++
++    return width;
++}
++
++static const nsDependentString
++GetEllipsis()
++{
++    static PRUnichar sBuf[4] = { 0, 0, 0, 0 };
++    if (!sBuf[0]) {
++        nsAdoptingString ellipsis = Preferences::GetLocalizedString("intl.ellipsis");
++        if (!ellipsis.IsEmpty()) {
++            uint32_t l = ellipsis.Length();
++            const nsAdoptingString::char_type *c = ellipsis.BeginReading();
++            uint32_t i = 0;
++            while (i < 3 && i < l) {
++                sBuf[i++] = *(c++);
++            }
++        } else {
++            sBuf[0] = '.';
++            sBuf[1] = '.';
++            sBuf[2] = '.';
++        }
++    }
++
++    return nsDependentString(sBuf);
++}
++
++static int
++EllipsisWidth()
++{
++    static int sEllipsisWidth = -1;
++
++    if (sEllipsisWidth == -1) {
++        sEllipsisWidth = CalculateTextWidth(GetEllipsis());
++    }
++
++    return sEllipsisWidth;
++}
++
++
++void
++nsMenuObject::RemoveUnsupportedProperties()
++{
++    PropertyFlags supported = GetSupportedProperties();
++    PropertyFlags mask = PropertyFlags(1);
++
++    for (uint32_t i = 0; property_strings[i]; ++i) {
++        if (!(mask & supported)) {
++            dbusmenu_menuitem_property_remove(mDbusMenuItem, property_strings[i]);
++        }
++        mask = PropertyFlags(mask << 1);
++    }
++}
++
++bool
++nsMenuObject::ShouldShowIcon() const
++{
++    // Ideally we want to know the visibility of the anonymous XUL image in
++    // our menuitem, but this isn't created because we don't have a frame.
++    // The following works by default (because xul.css hides images in menuitems
++    // that don't have the "menuitem-with-favicon" class, when eIntID_ImagesInMenus
++    // is false). It's possible a third party theme could override this, but,
++    // oh well...
++    if (gImagesInMenus == eImagesInMenusUninitialized) {
++        gImagesInMenus = LookAndFeel::GetInt(LookAndFeel::eIntID_ImagesInMenus) ?
++            eImagesInMenus : eNoImagesInMenus;
++    }
++
++    if (gImagesInMenus == eImagesInMenus) {
++        return true;
++    }
++
++    if (!gMenuitemWithFaviconAtom) {
++        gMenuitemWithFaviconAtom =
++            NS_NewAtom(NS_LITERAL_CSTRING("menuitem-with-favicon"));
++    }
++
++    const nsAttrValue *classes = mContent->GetClasses();
++    if (!classes) {
++        return false;
++    }
++
++    for (uint32_t i = 0; i < classes->GetAtomCount(); ++i) {
++        if (classes->AtomAt(i) == gMenuitemWithFaviconAtom) {
++            return true;
++        }
++    }
++
++    return false;
++}
++
++void
++nsMenuObject::ClearIcon()
++{
++    dbusmenu_menuitem_property_remove(mDbusMenuItem,
++                                      DBUSMENU_MENUITEM_PROP_ICON_DATA);
++}
++
++void
++nsMenuObject::SyncLabelFromContent()
++{
++    // Gecko stores the label and access key in separate attributes
++    // so we need to convert label="Foo_Bar"/accesskey="F" in to
++    // label="_Foo__Bar" for dbusmenu
++
++    nsAutoString label;
++    mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::label, label);
++
++    nsAutoString accesskey;
++    mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::accesskey, accesskey);
++
++    const nsAutoString::char_type *akey = accesskey.BeginReading();
++    PRUnichar keyLower = ToLowerCase(*akey);
++    PRUnichar keyUpper = ToUpperCase(*akey);
++
++    const nsAutoString::char_type *iter = label.BeginReading();
++    const nsAutoString::char_type *end = label.EndReading();
++    int length = label.Length();
++    int pos = 0;
++    bool foundAccessKey = false;
++
++    while (iter != end) {
++        if (*iter != PRUnichar('_')) {
++            if ((*iter != keyLower && *iter != keyUpper) || foundAccessKey) {
++                ++iter;
++                ++pos;
++                continue;
++            }
++            foundAccessKey = true;
++        }
++
++        label.SetLength(++length);
++
++        iter = label.BeginReading() + pos;
++        end = label.EndReading();
++        nsAutoString::char_type *cur = label.BeginWriting() + pos;
++
++        memmove(cur + 1, cur, (length - 1 - pos) * sizeof(nsAutoString::char_type));
++        *cur = nsAutoString::char_type('_');
++
++        iter += 2;
++        pos += 2;
++    }
++
++    nsString& text = label;
++
++    // This *COMPLETELY SUCKS*
++    // This should be done at the point where the menu is drawn (hello Unity),
++    // but unfortunately it doesn't do that and will happily fill your entire
++    // screen width with a menu if you have a bookmark with a really long title.
++    // This leaves us with no other option but to ellipsize here, with no proper
++    // knowledge of Unity's render path, font size etc. This is better than nothing
++    // BAH! @*&!$
++    if (CalculateTextWidth(label) > MAX_WIDTH) {
++        nsAutoString truncated;
++        int target = MAX_WIDTH - EllipsisWidth();
++        uint32_t length = label.Length();
++
++        static nsIContent::AttrValuesArray strings[] = {
++            &nsGkAtoms::left, &nsGkAtoms::start,
++            &nsGkAtoms::center, &nsGkAtoms::right,
++            &nsGkAtoms::end, nullptr
++        };
++
++        int32_t type = mContent->FindAttrValueIn(kNameSpaceID_None,
++                                                 nsGkAtoms::crop,
++                                                 strings, eCaseMatters);
++
++        switch (type) {
++            case 0:
++            case 1:
++                // FIXME: Implement left cropping (do we really care?)
++            case 2:
++                // FIXME: Implement center cropping (do we really care?)
++            case 3:
++            case 4:
++            default:
++                for (uint32_t i = 0; i < length; i++) {
++                    truncated.Append(label.CharAt(i));
++                    if (CalculateTextWidth(truncated) > target) {
++                        break;
++                    }
++                }
++
++                truncated.Append(GetEllipsis());
++        }
++
++        text = truncated;
++    }
++
++    dbusmenu_menuitem_property_set(mDbusMenuItem,
++                                   DBUSMENU_MENUITEM_PROP_LABEL,
++                                   NS_ConvertUTF16toUTF8(text).get());
++}
++
++void
++nsMenuObject::SyncVisibilityFromContent()
++{
++    nsIDocument *doc = mContent->OwnerDoc();
++    if (!doc) {
++        return;
++    }
++
++    nsIPresShell *shell = doc->GetShell();
++    if (!shell) {
++        return;
++    }
++
++    nsRefPtr<nsStyleContext> sc =
++        nsComputedDOMStyle::GetStyleContextForElementNoFlush(
++            mContent->AsElement(), nullptr, shell);
++    if (!sc) {
++        return;
++    }
++
++    bool vis = true;
++    if (sc->GetStyleDisplay()->mDisplay == NS_STYLE_DISPLAY_NONE ||
++        sc->GetStyleVisibility()->mVisible == NS_STYLE_VISIBILITY_COLLAPSE) {
++        vis = false;
++    }
++
++    dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
++                                        DBUSMENU_MENUITEM_PROP_VISIBLE,
++                                        vis);
++}
++
++void
++nsMenuObject::SyncSensitivityFromContent()
++{
++    bool disabled = mContent->AttrValueIs(kNameSpaceID_None,
++                                          nsGkAtoms::disabled,
++                                          nsGkAtoms::_true, eCaseMatters);
++
++    dbusmenu_menuitem_property_set_bool(mDbusMenuItem,
++                                        DBUSMENU_MENUITEM_PROP_ENABLED,
++                                        !disabled);
++
++}
++
++void
++nsMenuObject::SyncIconFromContent()
++{
++    if (ShouldShowIcon()) {
++        if (!mIconLoader) {
++            mIconLoader = new IconLoader(this);
++        }
++
++        mIconLoader->ScheduleIconLoad();
++    } else {
++        if (mIconLoader) {
++            mIconLoader->Destroy();
++            mIconLoader = nullptr;
++        }
++
++        ClearIcon();
++    }
++}
++
++nsMenuObject::~nsMenuObject()
++{
++    if (mIconLoader) {
++        mIconLoader->Destroy();
++    }
++
++    if (mListener) {
++        mListener->UnregisterForContentChanges(mContent, this);
++    }
++
++    if (mDbusMenuItem) {
++        g_object_unref(mDbusMenuItem);
++        mDbusMenuItem = nullptr;
++    }
++}
++
++DbusmenuMenuitem*
++nsMenuObject::GetDbusMenuItem()
++{
++    if (!mDbusMenuItem) {
++        mDbusMenuItem = dbusmenu_menuitem_new();
++        InitializeDbusMenuItem();
++        Refresh(eRefreshTypeFull);
++
++        mListener->RegisterForContentChanges(mContent, this);
++    }
++
++    return mDbusMenuItem;
++}
++
++nsMenuBar*
++nsMenuObject::GetMenuBar()
++{
++    nsMenuObject *tmp = static_cast<nsMenuObject *>(this);
++    while (tmp) {
++        if (tmp->GetType() == eMenuBarType) {
++            return static_cast<nsMenuBar *>(tmp);
++        }
++        tmp = tmp->GetParent();
++    }
++
++    NS_ERROR("Huh, we're not in a menubar?");
++    return nullptr;
++}
++
++void
++nsMenuObject::AdoptDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem)
++{
++    NS_ASSERTION(mDbusMenuItem == nullptr, "This node already has a DbusmenuMenuitem");
++    if (mDbusMenuItem) {
++        return;
++    }
++
++    mDbusMenuItem = aDbusMenuItem;
++    g_object_ref(mDbusMenuItem);
++
++    RemoveUnsupportedProperties();
++    InitializeDbusMenuItem();
++    Refresh(eRefreshTypeFull);
++
++    mListener->RegisterForContentChanges(mContent, this);
++}
++
++void
++nsMenuObject::ContainerIsOpening()
++{
++    Refresh(eRefreshTypeContainerOpening);
++}
++
++/* static */ nsIContent*
++nsMenuObject::GetPreviousSupportedSibling(nsIContent *aContent)
++{
++    do {
++        aContent = aContent->GetPreviousSibling();
++    } while (aContent && !ContentIsSupported(aContent));
++
++    return aContent;
++}
++
++uint32_t
++nsMenuObjectContainer::IndexOf(nsIContent *aChild)
++{
++    if (!aChild) {
++        return NoIndex;
++    }
++
++    for (uint32_t i = 0; i < mMenuObjects.Length(); ++i) {
++        if (mMenuObjects[i]->GetContentNode() == aChild) {
++            return i;
++        }
++    }
++
++    return NoIndex;
++}
++
++nsMenuObject*
++nsMenuObjectContainer::CreateChild(nsIContent *aContent, bool *aSuccess)
++{
++    if (aSuccess) {
++        *aSuccess = true;
++    }
++
++    nsMenuObjectConstructor constructor = GetMenuObjectConstructor(aContent);
++    if (!constructor) {
++        return nullptr;
++    }
++
++    nsMenuObject *res = constructor(this, mListener, aContent);
++    if (!res && aSuccess) {
++        *aSuccess = false;
++    }
++
++    return res;
++}
+diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuObject.h
+@@ -0,0 +1,148 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsMenuObject_h__
++#define __nsMenuObject_h__
++
++#include "nsIContent.h"
++#include "imgINotificationObserver.h"
++#include "nsAutoPtr.h"
++#include "imgRequestProxy.h"
++#include "nsRect.h"
++#include "nsCOMPtr.h"
++#include "nsTArray.h"
++#include "nsIURI.h"
++
++#include "nsNativeMenuDocListener.h"
++#include "nsDbusmenu.h"
++
++class nsIAtom;
++class nsMenuBar;
++
++class nsMenuObject
++{
++public:
++    enum Type {
++        eMenuBarType,
++        eMenuType,
++        eMenuItemType,
++        eMenuSeparatorType
++    };
++
++    enum RefreshType {
++        eRefreshTypeFull,
++        eRefreshTypeContainerOpening
++    };
++
++    enum PropertyFlags {
++        ePropLabel = (1 << 0),
++        ePropEnabled = (1 << 1),
++        ePropVisible = (1 << 2),
++        ePropIconData = (1 << 3),
++        ePropType = (1 << 4),
++        ePropShortcut = (1 << 5),
++        ePropToggleType = (1 << 6),
++        ePropToggleState = (1 << 7),
++        ePropChildDisplay = (1 << 8)
++    };
++
++    virtual ~nsMenuObject();
++
++    DbusmenuMenuitem* GetDbusMenuItem();
++    nsMenuObject* GetParent() const { return mParent; }
++    nsIContent* GetContentNode() const { return mContent; }
++    virtual Type GetType() const = 0;
++    nsMenuBar* GetMenuBar();
++
++    void AdoptDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem);
++
++    void ContainerIsOpening();
++
++    virtual void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute) {
++        NS_ERROR("Unhandled AttributeChanged() notification");
++    }
++    virtual void OnContentInserted(nsIContent *aContainer,
++                                   nsIContent *aChild,
++                                   nsIContent *aPrevSibling) {
++        NS_ERROR("Unhandled ContentInserted() notification");
++    }
++    virtual void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild) {
++        NS_ERROR("Unhandled ContentRemoved() notification");
++    }
++
++    static nsIContent* GetPreviousSupportedSibling(nsIContent *aContent);
++
++protected:
++    nsMenuObject() :
++        mDbusMenuItem(nullptr),
++        mParent(nullptr) { };
++
++    void SyncLabelFromContent();
++    void SyncVisibilityFromContent();
++    void SyncSensitivityFromContent();
++    void SyncIconFromContent();
++   
++    DbusmenuMenuitem *mDbusMenuItem;
++    nsCOMPtr<nsIContent> mContent;
++    nsRefPtr<nsNativeMenuDocListener> mListener;
++    nsMenuObject *mParent;
++
++private:
++    friend class IconLoader;
++
++    class IconLoader MOZ_FINAL : public imgINotificationObserver {
++    public:
++        NS_DECL_ISUPPORTS
++        NS_DECL_IMGINOTIFICATIONOBSERVER
++
++        IconLoader(nsMenuObject *aOwner) : mOwner(aOwner),
++                                           mIconLoaded(false) { };
++
++        void ScheduleIconLoad();
++        void LoadIcon();
++        void Destroy();
++
++    private:
++        ~IconLoader() { };
++
++        nsMenuObject *mOwner;
++        nsRefPtr<imgRequestProxy> mImageRequest;
++        nsCOMPtr<nsIURI> mURI;
++        bool mIconLoaded;
++        nsIntRect mImageRect;
++    };
++
++    virtual void InitializeDbusMenuItem() { };
++    virtual void Refresh(RefreshType aType) { };
++    virtual PropertyFlags GetSupportedProperties() const {
++        return PropertyFlags(0);
++    }
++
++    void RemoveUnsupportedProperties();
++    bool ShouldShowIcon() const;
++    void ClearIcon();
++
++    nsRefPtr<IconLoader> mIconLoader;
++};
++
++class nsMenuObjectContainer : public nsMenuObject
++{
++public:
++    typedef nsTArray<nsAutoPtr<nsMenuObject> > storage_type;
++
++    nsMenuObject* CreateChild(nsIContent *aContent, bool *aSuccess);
++
++    static const storage_type::index_type NoIndex;
++
++protected:
++    nsMenuObjectContainer() : nsMenuObject() { };
++    uint32_t IndexOf(nsIContent *aChild);
++
++    storage_type mMenuObjects;
++};
++
++#endif /* __nsMenuObject_h__ */
+diff --git a/widget/gtk2/nsMenuSeparator.cpp b/widget/gtk2/nsMenuSeparator.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuSeparator.cpp
+@@ -0,0 +1,75 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsMenuSeparator.h"
++#include "nsIContent.h"
++#include "nsIAtom.h"
++
++#include "nsNativeMenuDocListener.h"
++#include "nsDbusmenu.h"
++
++void
++nsMenuSeparator::InitializeDbusMenuItem()
++{
++    dbusmenu_menuitem_property_set(mDbusMenuItem,
++                                   DBUSMENU_MENUITEM_PROP_TYPE,
++                                   "separator");
++}
++
++void
++nsMenuSeparator::Refresh(nsMenuObject::RefreshType aType)
++{
++    SyncVisibilityFromContent();
++}
++
++nsMenuSeparator::nsMenuSeparator()
++{
++    MOZ_COUNT_CTOR(nsMenuSeparator);
++}
++
++nsresult
++nsMenuSeparator::Init(nsMenuObject *aParent,
++                      nsNativeMenuDocListener *aListener,
++                      nsIContent *aContent)
++{
++    NS_ENSURE_ARG(aParent);
++    NS_ENSURE_ARG(aListener);
++    NS_ENSURE_ARG(aContent);
++
++    mParent = aParent;
++    mListener = aListener;
++    mContent = aContent;
++
++    return NS_OK;
++}
++
++nsMenuSeparator::~nsMenuSeparator()
++{
++    MOZ_COUNT_DTOR(nsMenuSeparator);
++}
++
++/* static */ nsMenuObject*
++nsMenuSeparator::Create(nsMenuObject *aParent,
++                        nsNativeMenuDocListener *aListener,
++                        nsIContent *aContent)
++{
++    nsMenuSeparator *sep = new nsMenuSeparator();
++    if (NS_FAILED(sep->Init(aParent, aListener, aContent))) {
++        delete sep;
++        return nullptr;
++    }
++
++    return static_cast<nsMenuObject *>(sep);
++}
++
++void
++nsMenuSeparator::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
++{
++    NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");
++
++    SyncVisibilityFromContent();
++}
+diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuSeparator.h
+@@ -0,0 +1,49 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsMenuSeparator_h__
++#define __nsMenuSeparator_h__
++
++#include "nsMenuObject.h"
++
++class nsNativeMenuDocListener;
++class nsIContent;
++class nsIAtom;
++
++class nsMenuSeparator MOZ_FINAL : public nsMenuObject
++{
++public:
++    ~nsMenuSeparator();
++
++    nsMenuObject::Type GetType() const {
++        return nsMenuObject::eMenuSeparatorType;
++    }
++
++    static nsMenuObject* Create(nsMenuObject *aParent,
++                                nsNativeMenuDocListener *aListener,
++                                nsIContent *aContent);
++
++    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
++
++private:
++    nsMenuSeparator();
++    nsresult Init(nsMenuObject *aParent,
++                  nsNativeMenuDocListener *aListener,
++                  nsIContent *aContent);
++
++    void InitializeDbusMenuItem();
++    void Refresh(nsMenuObject::RefreshType aType);
++
++    nsMenuObject::PropertyFlags GetSupportedProperties() const {
++        return nsMenuObject::PropertyFlags(
++            nsMenuObject::ePropVisible |
++            nsMenuObject::ePropType
++        );
++    };
++};
++
++#endif /* __nsMenuSeparator_h__ */
+diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuDocListener.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuDocListener.cpp
+@@ -0,0 +1,338 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsNativeMenuDocListener.h"
++
++#include "nsIDocument.h"
++#include "mozilla/dom/Element.h"
++#include "nsINode.h"
++#include "nsContentUtils.h"
++#include "nsIRunnable.h"
++#include "nsThreadUtils.h"
++
++#include "nsMenuObject.h"
++
++uint32_t nsNativeMenuDocListener::sInhibitDepth = 0;
++
++nsTArray<nsRefPtr<nsNativeMenuDocListener> > *gPendingListeners;
++static const nsTArray<nsRefPtr<nsNativeMenuDocListener> >::index_type NoIndex = nsTArray<nsRefPtr<nsNativeMenuDocListener> >::NoIndex;
++
++class nsNativeMenuDocListenerFlushEvent MOZ_FINAL : public nsRunnable {
++public:
++    NS_IMETHODIMP Run() {
++        nsNativeMenuDocListener::FlushAllListeners();
++        return NS_OK;
++    };
++
++    nsNativeMenuDocListenerFlushEvent() { };
++};
++
++NS_IMPL_ISUPPORTS1(nsNativeMenuDocListener, nsIMutationObserver)
++
++void
++nsNativeMenuDocListener::DoAttributeChanged(nsIContent *aContent,
++                                            nsIAtom *aAttribute)
++{
++    nsTObserverArray<nsMenuObject *> *listeners;
++    if (!mContentToObserverTable.Get(aContent, &listeners)) {
++        return;
++    }
++
++    nsTObserverArray<nsMenuObject *>::ForwardIterator iter(*listeners);
++    while (iter.HasMore()) {
++        iter.GetNext()->OnAttributeChanged(aContent, aAttribute);
++    }
++}
++
++void
++nsNativeMenuDocListener::DoContentInserted(nsIContent *aContainer,
++                                           nsIContent *aChild,
++                                           nsIContent *aPrevSibling)
++{
++    nsTObserverArray<nsMenuObject *> *listeners;
++    if (!mContentToObserverTable.Get(aContainer, &listeners)) {
++        return;
++    }
++
++    nsTObserverArray<nsMenuObject *>::ForwardIterator iter(*listeners);
++    while (iter.HasMore()) {
++        iter.GetNext()->OnContentInserted(aContainer, aChild, aPrevSibling);
++    }
++}
++
++void
++nsNativeMenuDocListener::DoContentRemoved(nsIContent *aContainer,
++                                          nsIContent *aChild)
++{
++    nsTObserverArray<nsMenuObject *> *listeners;
++    if (!mContentToObserverTable.Get(aContainer, &listeners)) {
++        return;
++    }
++
++    nsTObserverArray<nsMenuObject *>::ForwardIterator iter(*listeners);
++    while (iter.HasMore()) {
++        iter.GetNext()->OnContentRemoved(aContainer, aChild);
++    }
++}
++
++void
++nsNativeMenuDocListener::FlushPendingMutations()
++{
++    for (uint32_t i = 0; i < mPendingMutations.Length(); ++i) {
++        MutationRecord *m = mPendingMutations[i];
++
++        switch (m->mType) {
++            case MutationRecord::eAttributeChanged:
++                DoAttributeChanged(m->mTarget, m->mAttribute);
++                break;
++            case MutationRecord::eContentInserted:
++                DoContentInserted(m->mTarget, m->mChild, m->mPrevSibling);
++                break;
++            case MutationRecord::eContentRemoved:
++                DoContentRemoved(m->mTarget, m->mChild);
++                break;
++            default:
++                NS_NOTREACHED("Invalid type");
++        }
++    }
++
++    mPendingMutations.Clear();
++}
++
++/* static */ void
++nsNativeMenuDocListener::ScheduleListener(nsNativeMenuDocListener *aListener)
++{
++    NS_ASSERTION(sInhibitDepth > 0, "Shouldn't be doing this now");
++
++    if (!gPendingListeners) {
++        gPendingListeners = new nsTArray<nsRefPtr<nsNativeMenuDocListener> >;
++    }
++
++    if (gPendingListeners->IndexOf(aListener) == NoIndex) {
++        gPendingListeners->AppendElement(aListener);
++    }
++}
++
++/* static */ void
++nsNativeMenuDocListener::RemoveListener(nsNativeMenuDocListener *aListener)
++{
++    if (!gPendingListeners) {
++        return;
++    }
++
++    gPendingListeners->RemoveElement(aListener);
++}
++
++/* static */ void
++nsNativeMenuDocListener::FlushAllListeners()
++{
++    if (sInhibitDepth == 1 && gPendingListeners) {
++        while (gPendingListeners->Length() > 0) {
++            (*gPendingListeners)[0]->FlushPendingMutations();
++            gPendingListeners->RemoveElementAt(0);
++        }
++
++        delete gPendingListeners;
++        gPendingListeners = nullptr;
++    }
++
++    NS_ASSERTION(sInhibitDepth > 0, "Negative inhibit depth!");
++    sInhibitDepth--;
++}
++
++/* static */ void
++nsNativeMenuDocListener::RemoveMutationBlocker()
++{
++    if (sInhibitDepth == 1 && gPendingListeners) {
++        nsContentUtils::AddScriptRunner(new nsNativeMenuDocListenerFlushEvent());
++    } else {
++        NS_ASSERTION(sInhibitDepth > 0, "Negative inhibit depth!");
++        sInhibitDepth--;
++    }
++}
++
++nsNativeMenuDocListener::nsNativeMenuDocListener() :
++    mDocument(nullptr)
++{
++    MOZ_COUNT_CTOR(nsNativeMenuDocListener);
++    mContentToObserverTable.Init();
++}
++
++nsNativeMenuDocListener::~nsNativeMenuDocListener()
++{
++    NS_ASSERTION(mContentToObserverTable.Count() == 0,
++                 "Some nodes forgot to unregister listeners");
++    RemoveListener(this);
++    MOZ_COUNT_DTOR(nsNativeMenuDocListener);
++}
++
++nsresult
++nsNativeMenuDocListener::Init(nsIContent *aRootNode)
++{
++    NS_ENSURE_ARG(aRootNode);
++
++    mRootNode = aRootNode;
++
++    return NS_OK;
++}
++
++void
++nsNativeMenuDocListener::AttributeChanged(nsIDocument *aDocument,
++                                          mozilla::dom::Element *aElement,
++                                          int32_t aNameSpaceID,
++                                          nsIAtom *aAttribute,
++                                          int32_t aModType)
++{
++    if (sInhibitDepth == 0) {
++        DoAttributeChanged(aElement, aAttribute);
++        return;
++    }
++
++    MutationRecord *m = *mPendingMutations.AppendElement(new MutationRecord);
++    m->mType = MutationRecord::eAttributeChanged;
++    m->mTarget = aElement;
++    m->mAttribute = aAttribute;
++
++    ScheduleListener(this);
++}
++
++void
++nsNativeMenuDocListener::ContentAppended(nsIDocument *aDocument,
++                                         nsIContent *aContainer,
++                                         nsIContent *aFirstNewContent,
++                                         int32_t aNewIndexInContainer)
++{
++    for (nsIContent *c = aFirstNewContent; c; c = c->GetNextSibling()) {
++        ContentInserted(aDocument, aContainer, c, 0);
++    }
++}
++
++void
++nsNativeMenuDocListener::ContentInserted(nsIDocument *aDocument,
++                                         nsIContent *aContainer,
++                                         nsIContent *aChild,
++                                         int32_t aIndexInContainer)
++{
++    nsIContent *prevSibling = nsMenuObject::GetPreviousSupportedSibling(aChild);
++
++    if (sInhibitDepth == 0) {
++        DoContentInserted(aContainer, aChild, prevSibling);
++        return;
++    }
++
++    MutationRecord *m = *mPendingMutations.AppendElement(new MutationRecord);
++    m->mType = MutationRecord::eContentInserted;
++    m->mTarget = aContainer;
++    m->mChild = aChild;
++    m->mPrevSibling = prevSibling;
++
++    ScheduleListener(this);
++}
++
++void
++nsNativeMenuDocListener::ContentRemoved(nsIDocument *aDocument,
++                                        nsIContent *aContainer,
++                                        nsIContent *aChild,
++                                        int32_t aIndexInContainer,
++                                        nsIContent *aPreviousSibling)
++{
++    if (sInhibitDepth == 0) {
++        DoContentRemoved(aContainer, aChild);
++        return;
++    }
++
++    MutationRecord *m = *mPendingMutations.AppendElement(new MutationRecord);
++    m->mType = MutationRecord::eContentRemoved;
++    m->mTarget = aContainer;
++    m->mChild = aChild;
++
++    ScheduleListener(this);
++}                                                           
++
++void
++nsNativeMenuDocListener::NodeWillBeDestroyed(const nsINode *aNode)
++{
++    mDocument = nullptr;
++}
++
++/* static */ already_AddRefed<nsNativeMenuDocListener>
++nsNativeMenuDocListener::Create(nsIContent *aRootNode)
++{
++    nsRefPtr<nsNativeMenuDocListener> listener = new nsNativeMenuDocListener();
++    if (NS_FAILED(listener->Init(aRootNode))) {
++        return nullptr;
++    }
++
++    return listener.forget();
++}
++
++void
++nsNativeMenuDocListener::RegisterForContentChanges(nsIContent *aContent,
++                                                   nsMenuObject *aMenuObject)
++{
++    NS_ASSERTION(aContent && aMenuObject, "Invalid parameters");
++    if (!aContent || !aMenuObject) {
++        return;
++    }
++
++    nsTObserverArray<nsMenuObject *> *listeners;
++    if (!mContentToObserverTable.Get(aContent, &listeners)) {
++        listeners = new nsTObserverArray<nsMenuObject *>;
++        mContentToObserverTable.Put(aContent, listeners);
++    }
++
++    listeners->AppendElement(aMenuObject);
++}
++
++void
++nsNativeMenuDocListener::UnregisterForContentChanges(nsIContent *aContent,
++                                                     nsMenuObject *aMenuObject)
++{
++    NS_ASSERTION(aContent && aMenuObject, "Invalid parameters");
++    if (!aContent || !aMenuObject) {
++        return;
++    }
++
++    nsTObserverArray<nsMenuObject *> *listeners;
++    if (!mContentToObserverTable.Get(aContent, &listeners)) {
++        return;
++    }
++
++    listeners->RemoveElement(aMenuObject);
++
++    // XXX: This will destroy the array. If we are in the process of dispatching
++    //      event to the final listener, won't we crash in the iterator?
++    if (listeners->Length() == 0) {
++        mContentToObserverTable.Remove(aContent);
++    }
++}
++
++void
++nsNativeMenuDocListener::Start()
++{
++    if (mDocument) {
++        return;
++    }
++
++    mDocument = mRootNode->OwnerDoc();
++    if (!mDocument) {
++        return;
++    }
++
++    mDocument->AddMutationObserver(this);
++}
++
++void
++nsNativeMenuDocListener::Stop()
++{
++    if (mDocument) {
++        mDocument->RemoveMutationObserver(this);
++        mDocument = nullptr;
++    }
++
++    mPendingMutations.Clear();
++}
+diff --git a/widget/gtk2/nsNativeMenuDocListener.h b/widget/gtk2/nsNativeMenuDocListener.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuDocListener.h
+@@ -0,0 +1,97 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsNativeMenuDocListener_h__
++#define __nsNativeMenuDocListener_h__
++
++#include "nsStubMutationObserver.h"
++#include "nsTObserverArray.h"
++#include "nsClassHashtable.h"
++#include "nsTArray.h"
++#include "nsAutoPtr.h"
++#include "nsIContent.h"
++#include "nsIAtom.h"
++
++class nsIDocument;
++class nsMenuObject;
++
++class nsNativeMenuAutoSuspendMutations;
++class nsNativeMenuDocListenerFlushEvent;
++
++class nsNativeMenuDocListener MOZ_FINAL : nsStubMutationObserver
++{
++public:
++    NS_DECL_ISUPPORTS
++    NS_DECL_NSIMUTATIONOBSERVER_ATTRIBUTECHANGED
++    NS_DECL_NSIMUTATIONOBSERVER_CONTENTAPPENDED
++    NS_DECL_NSIMUTATIONOBSERVER_CONTENTINSERTED
++    NS_DECL_NSIMUTATIONOBSERVER_CONTENTREMOVED
++    NS_DECL_NSIMUTATIONOBSERVER_NODEWILLBEDESTROYED
++
++    static already_AddRefed<nsNativeMenuDocListener> Create(nsIContent *aRootNode);
++
++    void RegisterForContentChanges(nsIContent *aContent,
++                                   nsMenuObject *aMenuObject);
++    void UnregisterForContentChanges(nsIContent *aContent,
++                                     nsMenuObject *aMenuObject);
++    void Start();
++    void Stop();
++
++private:
++    friend class nsNativeMenuAutoSuspendMutations;
++    friend class nsNativeMenuDocListenerFlushEvent;
++
++    struct MutationRecord {
++        enum RecordType {
++            eAttributeChanged,
++            eContentInserted,
++            eContentRemoved
++        } mType;
++
++        nsCOMPtr<nsIContent> mTarget;
++        nsCOMPtr<nsIContent> mChild;
++        nsCOMPtr<nsIContent> mPrevSibling;
++        nsCOMPtr<nsIAtom> mAttribute;
++    };
++
++    nsNativeMenuDocListener();
++    ~nsNativeMenuDocListener();
++    nsresult Init(nsIContent *aRootNode);
++
++    void DoAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
++    void DoContentInserted(nsIContent *aContainer,
++                           nsIContent *aChild,
++                           nsIContent *aPrevSibling);
++    void DoContentRemoved(nsIContent *aContainer, nsIContent *aChild);
++    void FlushPendingMutations();
++    static void ScheduleListener(nsNativeMenuDocListener *aListener);
++    static void RemoveListener(nsNativeMenuDocListener *aListener);
++    static void AddMutationBlocker() { ++sInhibitDepth; }
++    static void FlushAllListeners();
++    static void RemoveMutationBlocker();
++
++    nsCOMPtr<nsIContent> mRootNode;
++    nsIDocument *mDocument;
++    nsClassHashtable<nsPtrHashKey<nsIContent>, nsTObserverArray<nsMenuObject *> > mContentToObserverTable;
++    nsTArray<nsAutoPtr<MutationRecord> >mPendingMutations;
++
++    static uint32_t sInhibitDepth;
++};
++
++class nsNativeMenuAutoSuspendMutations
++{
++public:
++    nsNativeMenuAutoSuspendMutations() {
++        nsNativeMenuDocListener::AddMutationBlocker();
++    }
++
++    ~nsNativeMenuAutoSuspendMutations() {
++        nsNativeMenuDocListener::RemoveMutationBlocker();
++    }
++};
++
++#endif /* __nsNativeMenuDocListener_h__ */
+diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuService.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuService.cpp
+@@ -0,0 +1,350 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsNativeMenuService.h"
++
++#include "nsIWidget.h"
++#include "nsIContent.h"
++#include "nsServiceManagerUtils.h"
++#include "nsAutoPtr.h"
++#include "nsCOMPtr.h"
++#include "nsWindow.h"
++#include "mozilla/Services.h"
++#include "nsXPCOM.h"
++#include "nsIObserverService.h"
++#include "nsCRT.h"
++
++#include "nsNativeMenuDocListener.h"
++#include "nsMenuBar.h"
++#include "nsDbusmenu.h"
++
++#include <stdlib.h>
++#include <glib-object.h>
++#include <pango/pango.h>
++
++using namespace mozilla;
++
++nsNativeMenuService *nsNativeMenuService::sService = nullptr;
++bool nsNativeMenuService::sShutdown = false;
++
++extern PangoLayout* gPangoLayout;
++extern nsTArray<nsRefPtr<nsNativeMenuDocListener> >* gPendingListeners;
++extern nsIAtom* gMenuitemWithFaviconAtom;
++
++static const nsTArray<nsMenuBar *>::index_type NoIndex = nsTArray<nsMenuBar *>::NoIndex;
++
++NS_IMPL_ISUPPORTS2(nsNativeMenuService, nsINativeMenuService, nsIObserver)
++
++/* static */ void
++nsNativeMenuService::EnsureInitialized()
++{
++    if (!sService) {
++        nsCOMPtr<nsINativeMenuService> service =
++            do_GetService("@mozilla.org/widget/nativemenuservice;1");
++    }
++    NS_ASSERTION(sService != nullptr, "Failed to create native menu service");
++}
++
++void
++nsNativeMenuService::SetOnline(bool aOnline)
++{
++    if (aOnline != mOnline) {
++        mOnline = aOnline;
++        if (aOnline) {
++            for (uint32_t i = 0; i < mMenuBars.Length(); ++i) {
++                RegisterNativeMenuBar(mMenuBars[i]);
++            }
++        } else {
++            for (uint32_t i = 0; i < mMenuBars.Length(); ++i) {
++                mMenuBars[i]->NotifyUnregistered();
++            }
++        }
++    }
++}
++
++/* static */ void
++nsNativeMenuService::name_owner_changed_cb(GObject *gobject,
++                                           GParamSpec *pspec,
++                                           gpointer user_data)
++{
++    if (!sService) {
++        return;
++    }
++
++    sService->OnNameOwnerChanged();
++}
++
++/* static */ void
++nsNativeMenuService::proxy_created_cb(GObject *source_object,
++                                      GAsyncResult *res,
++                                      gpointer user_data)
++{
++    GError *error = nullptr;
++    GDBusProxy *proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
++    if (error && g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
++        g_error_free(error);
++        return;
++    }
++
++    if (error) {
++        g_error_free(error);
++    }
++
++    // We need this check because we can't assume that GDBus cancellation
++    // is reliable (see https://launchpad.net/bugs/953562)
++    if (!sService) {
++        if (proxy) {
++            g_object_unref(proxy);
++        }
++        return;
++    }
++
++    sService->OnProxyCreated(proxy);
++}
++
++/* static */ void
++nsNativeMenuService::register_native_menubar_cb(GObject *source_object,
++                                                GAsyncResult *res,
++                                                gpointer user_data)
++{
++    GError *error = nullptr;
++    GVariant *results = g_dbus_proxy_call_finish(G_DBUS_PROXY(source_object),
++                                                 res, &error);
++    if (results) {
++        // XXX: Should we do anything with this?
++        g_variant_unref(results);
++    }
++
++    if (error && g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
++        g_error_free(error);
++        return;
++    }
++
++    bool success = error ? false : true;
++    if (error) {
++        g_error_free(error);
++    }
++
++    if (!sService) {
++        return;
++    }
++
++    nsMenuBar *menuBar = static_cast<nsMenuBar *>(user_data);
++
++    sService->OnNativeMenuBarRegistered(menuBar, success);
++}
++    
++void
++nsNativeMenuService::OnNameOwnerChanged()
++{
++    char *owner = g_dbus_proxy_get_name_owner(mDbusProxy);
++    SetOnline(owner ? true : false);
++    g_free(owner);
++}
++
++void
++nsNativeMenuService::OnProxyCreated(GDBusProxy *aProxy)
++{
++    mDbusProxy = aProxy;
++    mCancellable.Finish();
++
++    if (!mDbusProxy) {
++        SetOnline(false);
++        return;
++    }
++
++    g_signal_connect(mDbusProxy, "notify::g-name-owner",
++                     G_CALLBACK(name_owner_changed_cb), nullptr);
++
++    char *owner = g_dbus_proxy_get_name_owner(mDbusProxy);
++    if (owner) {
++        // Ensure that SetOnline completes registration of menubars
++        mOnline = false;
++    }
++    SetOnline(owner ? true : false);
++    g_free(owner);
++}
++
++void
++nsNativeMenuService::OnNativeMenuBarRegistered(nsMenuBar *aMenuBar,
++                                               bool aSuccess)
++{
++    // We need this check because we can't assume that GDBus cancellation
++    // is reliable (see https://launchpad.net/bugs/953562)
++    if (mMenuBars.IndexOf(aMenuBar) == NoIndex) {
++        return;
++    }
++
++    if (aSuccess) {
++        aMenuBar->NotifyRegistered();
++    } else {
++        aMenuBar->NotifyUnregistered();
++    }
++}
++
++nsNativeMenuService::~nsNativeMenuService()
++{
++    SetOnline(false);
++
++    if (mDbusProxy) {
++        g_signal_handlers_disconnect_by_func(mDbusProxy,
++                                             nsNativeMenuUtils::FuncToVoidPtr(name_owner_changed_cb),
++                                             NULL);
++        g_object_unref(mDbusProxy);
++    }
++
++    if (gPendingListeners) {
++        delete gPendingListeners;
++        gPendingListeners = nullptr;
++    }
++    if (gPangoLayout) {
++        g_object_unref(gPangoLayout);
++        gPangoLayout = nullptr;
++    }
++    NS_IF_RELEASE(gMenuitemWithFaviconAtom);
++}
++
++nsresult
++nsNativeMenuService::Init()
++{
++    nsresult rv = nsDbusmenuFunctions::Init();
++    if (NS_FAILED(rv)) {
++        return rv;
++    }
++
++    mCancellable.Init();
++
++    g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION,
++                             static_cast<GDBusProxyFlags>(
++                             G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES |
++                             G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | 
++                             G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START),
++                             nullptr,
++                             "com.canonical.AppMenu.Registrar",
++                             "/com/canonical/AppMenu/Registrar",
++                             "com.canonical.AppMenu.Registrar",
++                             mCancellable, proxy_created_cb, nullptr);
++
++    const char *desktop = getenv("XDG_CURRENT_DESKTOP");
++    if (nsCRT::strcmp(desktop, "Unity") == 0) {
++        mOnline = true;
++    }
++
++    nsCOMPtr<nsIObserverService> os = services::GetObserverService();
++    if (os) {
++        os->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID, false);
++    }
++
++    return NS_OK;
++}
++
++/* static */ nsNativeMenuService*
++nsNativeMenuService::GetInstance()
++{
++    if (sService) {
++        NS_ADDREF(sService);
++        return sService;
++    }
++
++    if (sShutdown) {
++        return nullptr;
++    }
++
++    sService = new nsNativeMenuService();
++    NS_ADDREF(sService);
++
++    if (NS_FAILED(sService->Init())) {
++        NS_RELEASE(sService);
++        sService = nullptr;
++        return nullptr;
++    }
++
++    NS_ADDREF(sService);
++    return sService;
++}
++
++/* static */ nsNativeMenuService*
++nsNativeMenuService::GetSingleton()
++{
++    EnsureInitialized();
++    return sService;
++}
++
++NS_IMETHODIMP
++nsNativeMenuService::Observe(nsISupports *aSubject,
++                             const char *aTopic,
++                             const PRUnichar *aData)
++{
++    if (!nsCRT::strcmp(NS_XPCOM_SHUTDOWN_OBSERVER_ID, aTopic)) {
++        sShutdown = true;
++        nsCOMPtr<nsIObserverService> os = services::GetObserverService();
++        if (os) {
++            os->RemoveObserver(sService, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
++        }
++        NS_IF_RELEASE(sService);
++    }
++
++    return NS_OK;
++}
++
++void
++nsNativeMenuService::NotifyNativeMenuBarDestroyed(nsMenuBar *aMenuBar)
++{
++    mMenuBars.RemoveElement(aMenuBar);
++}
++
++void
++nsNativeMenuService::RegisterNativeMenuBar(nsMenuBar *aMenuBar)
++{
++    if (!mOnline) {
++        return;
++    }
++
++    if (aMenuBar->GetState() == nsMenuBar::eMenuBarStateUnregistered) {
++        aMenuBar->NotifyWillRegister();
++    }
++
++    if (!mDbusProxy ||
++        aMenuBar->GetState() == nsMenuBar::eMenuBarStateRegistered) {
++        return;
++    }
++
++    uint32_t xid = aMenuBar->GetWindowId();
++    nsAdoptingCString path = aMenuBar->GetObjectPath();
++    if (xid == 0 || path.IsEmpty()) {
++        NS_WARNING("Menubar has invalid XID or object path");
++        return;
++    }
++
++    nsAutoGCancellable& cancellable = aMenuBar->GetCancellable();
++
++    g_dbus_proxy_call(mDbusProxy, "RegisterWindow",
++                      g_variant_new("(uo)", xid, path.get()),
++                      G_DBUS_CALL_FLAGS_NONE, -1, cancellable,
++                      register_native_menubar_cb, aMenuBar);
++}
++
++NS_IMETHODIMP
++nsNativeMenuService::CreateNativeMenuBar(nsIWidget *aParent,
++                                         nsIContent *aMenuBarNode)
++{
++    NS_ENSURE_ARG(aParent);
++    NS_ENSURE_ARG(aMenuBarNode);
++
++    nsMenuBar *menubar = nsMenuBar::Create(aParent, aMenuBarNode);
++    if (!menubar) {
++        NS_WARNING("Failed to create menubar");
++        return NS_ERROR_FAILURE;
++    }
++
++    mMenuBars.AppendElement(menubar);
++    RegisterNativeMenuBar(menubar);
++
++    static_cast<nsWindow *>(aParent)->SetMenuBar(menubar);
++
++    return NS_OK;
++}
+diff --git a/widget/gtk2/nsNativeMenuService.h b/widget/gtk2/nsNativeMenuService.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuService.h
+@@ -0,0 +1,74 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsNativeMenuService_h__
++#define __nsNativeMenuService_h__
++
++#include "nsTArray.h"
++#include "nsIObserver.h"
++#include "nsINativeMenuService.h"
++
++#include "nsNativeMenuUtils.h"
++
++#include <gio/gio.h>
++
++class nsMenuBar;
++
++class nsNativeMenuService MOZ_FINAL : public nsINativeMenuService,
++                                      public nsIObserver
++{
++public:
++    NS_DECL_ISUPPORTS
++    NS_DECL_NSIOBSERVER
++
++    NS_IMETHOD CreateNativeMenuBar(nsIWidget* aParent, nsIContent* aMenuBarNode);
++
++    nsresult Init();
++
++    /* Returns the singleton addreffed for the service manager */
++    static nsNativeMenuService* GetInstance();
++
++    /* Returns the singleton without increasing the reference count */
++    static nsNativeMenuService* GetSingleton();
++
++    /* Called by a menubar when the window that owns it destroys it */
++    void NotifyNativeMenuBarDestroyed(nsMenuBar *aMenuBar);
++
++    void RegisterNativeMenuBar(nsMenuBar *aMenuBar);
++
++private:
++    nsNativeMenuService() :
++        mDbusProxy(nullptr),
++        mOnline(false) { };
++    ~nsNativeMenuService();
++
++    static void EnsureInitialized();
++    void SetOnline(bool aOnline);
++    static void name_owner_changed_cb(GObject *gobject,
++                                      GParamSpec *pspec,
++                                      gpointer user_data);
++    static void proxy_created_cb(GObject *source_object,
++                                 GAsyncResult *res,
++                                 gpointer user_data);
++    static void register_native_menubar_cb(GObject *source_object,
++                                           GAsyncResult *res,
++                                           gpointer user_data);
++    void OnNameOwnerChanged();
++    void OnProxyCreated(GDBusProxy *aProxy);
++    void OnNativeMenuBarRegistered(nsMenuBar *aMenuBar,
++                                   bool aSuccess);
++
++    nsAutoGCancellable mCancellable;
++    GDBusProxy *mDbusProxy;
++    bool mOnline;
++    nsTArray<nsMenuBar *> mMenuBars;
++
++    static bool sShutdown;
++    static nsNativeMenuService *sService;
++};
++
++#endif /* __nsNativeMenuService_h__ */
+diff --git a/widget/gtk2/nsNativeMenuUtils.h b/widget/gtk2/nsNativeMenuUtils.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuUtils.h
+@@ -0,0 +1,65 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsNativeMenuUtils_h__
++#define __nsNativeMenuUtils_h__
++
++#include <glib-object.h>
++#include <gio/gio.h>
++
++class nsAutoGCancellable
++{
++public:
++    nsAutoGCancellable() : mCancellable(nullptr) { };
++
++    ~nsAutoGCancellable() {
++        if (mCancellable) {
++            g_cancellable_cancel(mCancellable);
++            g_object_unref(mCancellable);
++        }
++    }
++
++    void Init() {
++        Cancel();
++        mCancellable = g_cancellable_new();
++    }
++
++    void Finish() {
++        if (mCancellable) {
++            g_object_unref(mCancellable);
++            mCancellable = nullptr;
++        }
++    }
++
++    void Cancel() {
++        if (mCancellable) {
++            g_cancellable_cancel(mCancellable);
++            g_object_unref(mCancellable);
++            mCancellable = nullptr;
++        }
++    }
++
++    operator GCancellable*() const {
++        return mCancellable;
++    }
++
++private:
++    GCancellable *mCancellable;
++};
++
++class nsNativeMenuUtils
++{
++public:
++    template <class T>
++    static inline void*
++    FuncToVoidPtr(T a)
++    {
++        return reinterpret_cast<void *>(reinterpret_cast<unsigned long>(reinterpret_cast<void (*)()>(a)));
++    }
++};
++
++#endif /* __nsNativeMenuUtils_h__ */
+diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
+--- a/widget/gtk2/nsWidgetFactory.cpp
++++ b/widget/gtk2/nsWidgetFactory.cpp
+@@ -37,16 +37,18 @@
+ #include "nsImageToPixbuf.h"
+ #include "nsPrintDialogGTK.h"
+ 
+ #if defined(MOZ_X11)
+ #include "nsIdleServiceGTK.h"
+ #include "GfxInfoX11.h"
+ #endif
+ 
++#include "nsNativeMenuService.h"
++
+ #ifdef NATIVE_THEME_SUPPORT
+ #include "nsNativeThemeGTK.h"
+ #endif
+ 
+ #include "nsIComponentRegistrar.h"
+ #include "nsComponentManagerUtils.h"
+ #include "nsAutoPtr.h"
+ #include <gtk/gtk.h>
+@@ -113,16 +115,19 @@ nsNativeThemeGTKConstructor(nsISupports 
+ namespace mozilla {
+ namespace widget {
+ // This constructor should really be shared with all platforms.
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(GfxInfo, Init)
+ }
+ }
+ #endif
+ 
++NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(nsNativeMenuService,
++                                         nsNativeMenuService::GetInstance)
++
+ #ifdef NS_PRINTING
+ NS_GENERIC_FACTORY_CONSTRUCTOR(nsDeviceContextSpecGTK)
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintOptionsGTK, Init)
+ NS_GENERIC_FACTORY_CONSTRUCTOR(nsPrinterEnumeratorGTK)
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintSession, Init)
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintDialogServiceGTK, Init)
+ #endif
+ 
+@@ -223,16 +228,17 @@ NS_DEFINE_NAMED_CID(NS_PRINTSESSION_CID)
+ NS_DEFINE_NAMED_CID(NS_DEVICE_CONTEXT_SPEC_CID);
+ NS_DEFINE_NAMED_CID(NS_PRINTDIALOGSERVICE_CID);
+ #endif 
+ NS_DEFINE_NAMED_CID(NS_IMAGE_TO_PIXBUF_CID);
+ #if defined(MOZ_X11)
+ NS_DEFINE_NAMED_CID(NS_IDLE_SERVICE_CID);
+ NS_DEFINE_NAMED_CID(NS_GFXINFO_CID);
+ #endif
++NS_DEFINE_NAMED_CID(NS_NATIVEMENUSERVICE_CID);
+ 
+ 
+ static const mozilla::Module::CIDEntry kWidgetCIDs[] = {
+     { &kNS_WINDOW_CID, false, NULL, nsWindowConstructor },
+     { &kNS_CHILD_CID, false, NULL, nsChildWindowConstructor },
+     { &kNS_APPSHELL_CID, false, NULL, nsAppShellConstructor },
+     { &kNS_FILEPICKER_CID, false, NULL, nsFilePickerConstructor },
+     { &kNS_SOUND_CID, false, NULL, nsSoundConstructor },
+@@ -258,16 +264,17 @@ static const mozilla::Module::CIDEntry k
+     { &kNS_DEVICE_CONTEXT_SPEC_CID, false, NULL, nsDeviceContextSpecGTKConstructor },
+     { &kNS_PRINTDIALOGSERVICE_CID, false, NULL, nsPrintDialogServiceGTKConstructor },
+ #endif 
+     { &kNS_IMAGE_TO_PIXBUF_CID, false, NULL, nsImageToPixbufConstructor },
+ #if defined(MOZ_X11)
+     { &kNS_IDLE_SERVICE_CID, false, NULL, nsIdleServiceGTKConstructor },
+     { &kNS_GFXINFO_CID, false, NULL, mozilla::widget::GfxInfoConstructor },
+ #endif
++    { &kNS_NATIVEMENUSERVICE_CID, true, NULL, nsNativeMenuServiceConstructor },
+     { NULL }
+ };
+ 
+ static const mozilla::Module::ContractIDEntry kWidgetContracts[] = {
+     { "@mozilla.org/widget/window/gtk;1", &kNS_WINDOW_CID },
+     { "@mozilla.org/widgets/child_window/gtk;1", &kNS_CHILD_CID },
+     { "@mozilla.org/widget/appshell/gtk;1", &kNS_APPSHELL_CID },
+     { "@mozilla.org/filepicker;1", &kNS_FILEPICKER_CID },
+@@ -294,16 +301,17 @@ static const mozilla::Module::ContractID
+     { "@mozilla.org/gfx/devicecontextspec;1", &kNS_DEVICE_CONTEXT_SPEC_CID },
+     { NS_PRINTDIALOGSERVICE_CONTRACTID, &kNS_PRINTDIALOGSERVICE_CID },
+ #endif 
+     { "@mozilla.org/widget/image-to-gdk-pixbuf;1", &kNS_IMAGE_TO_PIXBUF_CID },
+ #if defined(MOZ_X11)
+     { "@mozilla.org/widget/idleservice;1", &kNS_IDLE_SERVICE_CID },
+     { "@mozilla.org/gfx/info;1", &kNS_GFXINFO_CID },
+ #endif
++    { "@mozilla.org/widget/nativemenuservice;1", &kNS_NATIVEMENUSERVICE_CID },
+     { NULL }
+ };
+ 
+ static void
+ nsWidgetGtk2ModuleDtor()
+ {
+   nsLookAndFeel::Shutdown();
+   nsFilePicker::Shutdown();
+diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
+--- a/widget/gtk2/nsWindow.cpp
++++ b/widget/gtk2/nsWindow.cpp
+@@ -4722,16 +4722,21 @@ nsWindow::HideWindowChrome(bool aShouldH
+     XSync(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()) , False);
+ #else
+     gdk_flush ();
+ #endif /* MOZ_X11 */
+ 
+     return NS_OK;
+ }
+ 
++void
++nsWindow::SetMenuBar(nsMenuBar *aMenuBar) {
++    mMenuBar = aMenuBar;
++}
++
+ bool
+ nsWindow::CheckForRollup(gdouble aMouseX, gdouble aMouseY,
+                          bool aIsWheel, bool aAlwaysRollup)
+ {
+     nsIRollupListener* rollupListener = GetActiveRollupListener();
+     nsCOMPtr<nsIWidget> rollupWidget;
+     if (rollupListener) {
+         rollupWidget = rollupListener->GetRollupWidget();
+diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
+--- a/widget/gtk2/nsWindow.h
++++ b/widget/gtk2/nsWindow.h
+@@ -31,16 +31,18 @@
+ #endif /* MOZ_X11 */
+ 
+ #ifdef ACCESSIBILITY
+ #include "mozilla/a11y/Accessible.h"
+ #endif
+ 
+ #include "nsGtkIMModule.h"
+ 
++#include "nsMenuBar.h"
++
+ #ifdef MOZ_LOGGING
+ 
+ // make sure that logging is enabled before including prlog.h
+ #define FORCE_PR_LOG
+ 
+ #include "prlog.h"
+ #include "nsTArray.h"
+ 
+@@ -147,16 +149,18 @@ public:
+                                            bool aDoCapture);
+     NS_IMETHOD         GetAttention(int32_t aCycleCount);
+ 
+     virtual bool       HasPendingInputEvent();
+ 
+     NS_IMETHOD         MakeFullScreen(bool aFullScreen);
+     NS_IMETHOD         HideWindowChrome(bool aShouldHide);
+ 
++    void               SetMenuBar(nsMenuBar *aMenuBar);
++
+     /**
+      * GetLastUserInputTime returns a timestamp for the most recent user input
+      * event.  This is intended for pointer grab requests (including drags).
+      */
+     static guint32     GetLastUserInputTime();
+ 
+     // utility method, -1 if no change should be made, otherwise returns a
+     // value that can be passed to gdk_window_set_decorations
+@@ -448,16 +452,18 @@ private:
+      * The instance is created when the top level widget is created.  And when
+      * the widget is destroyed, it's released.  All child windows refer its
+      * ancestor widget's instance.  So, one set of IM contexts is created for
+      * all windows in a hierarchy.  If the children are released after the top
+      * level window is released, the children still have a valid pointer,
+      * however, IME doesn't work at that time.
+      */
+     nsRefPtr<nsGtkIMModule> mIMModule;
++
++    nsAutoPtr<nsMenuBar> mMenuBar;
+ };
+ 
+ class nsChildWindow : public nsWindow {
+ public:
+     nsChildWindow();
+     ~nsChildWindow();
+ };
+ 
+diff --git a/xpfe/appshell/src/nsWebShellWindow.cpp b/xpfe/appshell/src/nsWebShellWindow.cpp
+--- a/xpfe/appshell/src/nsWebShellWindow.cpp
++++ b/xpfe/appshell/src/nsWebShellWindow.cpp
+@@ -53,30 +53,31 @@
+ #include "nsIDocumentLoaderFactory.h"
+ #include "nsIObserverService.h"
+ #include "prprf.h"
+ 
+ #include "nsIScreenManager.h"
+ #include "nsIScreen.h"
+ 
+ #include "nsIContent.h" // for menus
++#include "nsIAtom.h"
+ #include "nsIScriptSecurityManager.h"
+ 
+ // For calculating size
+ #include "nsIPresShell.h"
+ #include "nsPresContext.h"
+ 
+ #include "nsIBaseWindow.h"
+ #include "nsIDocShellTreeItem.h"
+ #include "nsIDocShellTreeNode.h"
+ 
+ #include "nsIMarkupDocumentViewer.h"
+ #include "mozilla/Attributes.h"
+ 
+-#ifdef XP_MACOSX
++#if defined(XP_MACOSX) || defined(MOZ_WIDGET_GTK)
+ #include "nsINativeMenuService.h"
+ #define USE_NATIVE_MENUS
+ #endif
+ 
+ using namespace mozilla;
+ 
+ /* Define Class IDs */
+ static NS_DEFINE_CID(kWindowCID,           NS_WINDOW_CID);
+@@ -428,18 +429,23 @@ static void LoadNativeMenus(nsIDOMDocume
+                                   getter_AddRefs(menubarElements));
+ 
+   nsCOMPtr<nsIDOMNode> menubarNode;
+   if (menubarElements)
+     menubarElements->Item(0, getter_AddRefs(menubarNode));
+   if (!menubarNode)
+     return;
+ 
++  nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
++#ifdef MOZ_WIDGET_GTK
++  nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("_moz-menubarkeeplocal"));
++  if (menubarContent->AttrValueIs(kNameSpaceID_None, atom, nsGkAtoms::_true, eCaseMatters))
++    return;
++#endif
+   nsCOMPtr<nsINativeMenuService> nms = do_GetService("@mozilla.org/widget/nativemenuservice;1");
+-  nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
+   if (nms && menubarContent)
+     nms->CreateNativeMenuBar(aParentWindow, menubarContent);
+ }
+ #endif
+ 
+ namespace mozilla {
+ 
+ class WebShellWindowTimerCallback MOZ_FINAL : public nsITimerCallback

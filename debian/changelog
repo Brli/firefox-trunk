@@ -165,6 +165,9 @@ firefox-trunk (21.0~a1~hg20130205r120792-0ubuntu1) UNRELEASED; urgency=low
     - remove debian/firefox-globalmenu.links.in
     - remove debian/patches/unity-globalmenu-build-support.patch
     - update debian/patches/series.in
+  * Add native support for the Unity menubar (no addon) (disabled for now)
+    - add debian/patches/unity-menubar.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
