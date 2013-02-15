@@ -483,7 +483,7 @@ new file mode 100644
 +  // If the recycled item was a separator, it can only be reused as a separator
 +  if ((nsCRT::strcmp(dbusmenu_menuitem_property_get(
 +                        aRecycled, DBUSMENU_MENUITEM_PROP_TYPE), "separator") == 0) !=
-+      (aNewItem->GetType() == nsMenuObject::eMenuSeparatorType)) {
++      (aNewItem->Type() == nsMenuObject::eType_MenuSeparator)) {
 +    return false;
 +  }
 +
@@ -603,10 +603,10 @@ new file mode 100644
 +}
 +
 +void
-+nsMenu::SetPopupState(PopupState aState)
++nsMenu::SetPopupState(EPopupState aState)
 +{
-+    mFlags = Flags(mFlags & ~7);
-+    mFlags = Flags(mFlags | (aState & 7));
++    mFlags &= ~(((1U << NSMENU_NUMBER_OF_POPUPSTATE_BITS) - 1U) << NSMENU_POPUPSTATE_SHIFT);
++    mFlags |= (aState << NSMENU_POPUPSTATE_SHIFT);
 +
 +    if (!mPopupContent) {
 +        return;
@@ -614,14 +614,14 @@ new file mode 100644
 +
 +    nsAutoString state;
 +    switch (aState) {
-+        case ePopupStateShowing:
++        case ePopupState_Showing:
 +            state.Assign(NS_LITERAL_STRING("showing"));
 +            break;
-+        case ePopupStateOpenFromAboutToShow:
-+        case ePopupStateOpenFromOpenedEvent:
++        case ePopupState_OpenFromAboutToShow:
++        case ePopupState_OpenFromOpenedEvent:
 +            state.Assign(NS_LITERAL_STRING("open"));
 +            break;
-+        case ePopupStateHiding:
++        case ePopupState_Hiding:
 +            state.Assign(NS_LITERAL_STRING("hiding"));
 +            break;
 +        default:
@@ -650,7 +650,7 @@ new file mode 100644
 +        return FALSE;
 +    }
 +
-+    self->AboutToOpen(eFromAboutToShowSignal);
++    self->AboutToOpen(eAboutToOpenOrigin_FromAboutToShowSignal);
 +
 +    return FALSE;
 +}
@@ -672,7 +672,7 @@ new file mode 100644
 +    }
 +
 +    if (event.Equals(NS_LITERAL_CSTRING("opened"))) {
-+        self->AboutToOpen(eFromOpenedEvent);
++        self->AboutToOpen(eAboutToOpenOrigin_FromOpenedEvent);
 +        return;
 +    }
 +}
@@ -689,7 +689,7 @@ new file mode 100644
 +}
 +
 +void
-+nsMenu::AboutToOpen(AboutToOpenOrigin aOrigin)
++nsMenu::AboutToOpen(EAboutToOpenOrigin aOrigin)
 +{
 +    // This function can be called in 2 ways:
 +    // - "about-to-show" signal from dbusmenu
@@ -706,9 +706,9 @@ new file mode 100644
 +    // - If we were called from an "opened" event, accept any consecutve call
 +    //   without a corresponding "closed" event
 +
-+    if (GetPopupState() == ePopupStateShowing ||
-+        (GetPopupState() == ePopupStateOpenFromAboutToShow &&
-+         aOrigin == eFromOpenedEvent)) {
++    if (PopupState() == ePopupState_Showing ||
++        (PopupState() == ePopupState_OpenFromAboutToShow &&
++         aOrigin == eAboutToOpenOrigin_FromOpenedEvent)) {
 +        return;
 +    }
 +
@@ -718,15 +718,15 @@ new file mode 100644
 +        Build();
 +    }
 +
-+    SetPopupState(ePopupStateShowing);
++    SetPopupState(ePopupState_Showing);
 +    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWING);
 +
 +    for (uint32_t i = 0; i < mMenuObjects.Length(); ++i) {
 +        mMenuObjects[i]->ContainerIsOpening();
 +    }
 +
-+    PopupState openState = aOrigin == eFromOpenedEvent ?
-+        ePopupStateOpenFromOpenedEvent : ePopupStateOpenFromAboutToShow;
++    EPopupState openState = aOrigin == eAboutToOpenOrigin_FromOpenedEvent ?
++        ePopupState_OpenFromOpenedEvent : ePopupState_OpenFromAboutToShow;
 +    SetPopupState(openState);
 +    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::open,
 +                      NS_LITERAL_STRING("true"), true);
@@ -736,18 +736,18 @@ new file mode 100644
 +void
 +nsMenu::OnClose()
 +{
-+    if (GetPopupState() != ePopupStateShowing &&
-+        GetPopupState() != ePopupStateOpenFromAboutToShow &&
-+        GetPopupState() != ePopupStateOpenFromOpenedEvent) {
++    if (PopupState() != ePopupState_Showing &&
++        PopupState() != ePopupState_OpenFromAboutToShow &&
++        PopupState() != ePopupState_OpenFromOpenedEvent) {
 +        return;
 +    }
 +
 +    nsNativeMenuAutoSuspendMutations as;
 +
-+    SetPopupState(ePopupStateHiding);
++    SetPopupState(ePopupState_Hiding);
 +
 +    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDING);
-+    SetPopupState(ePopupStateClosed);
++    SetPopupState(ePopupState_Closed);
 +
 +    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDDEN);
 +
@@ -804,9 +804,9 @@ new file mode 100644
 +}
 +
 +void
-+nsMenu::Refresh(nsMenuObject::RefreshType aType)
++nsMenu::Refresh(nsMenuObject::ERefreshType aType)
 +{
-+    if (aType == nsMenuObject::eRefreshTypeFull) {
++    if (aType == nsMenuObject::eRefreshType_Full) {
 +        SyncLabelFromContent();
 +        SyncSensitivityFromContent();
 +    }
@@ -850,7 +850,7 @@ new file mode 100644
 +        return;
 +    }
 +
-+    SetPopupState(ePopupStateClosed);
++    SetPopupState(ePopupState_Closed);
 +
 +    nsCOMPtr<nsIXPConnect> xpconnect = services::GetXPConnect();
 +    nsIScriptGlobalObject *sgo = mPopupContent->OwnerDoc()->GetScriptGlobalObject();
@@ -985,7 +985,7 @@ new file mode 100644
 +
 +nsMenu::nsMenu() :
 +    nsMenuObjectContainer(),
-+    mFlags(Flags(0))
++    mFlags(0)
 +{
 +    MOZ_COUNT_CTOR(nsMenu);
 +}
@@ -1005,8 +1005,8 @@ new file mode 100644
 +
 +    SetNeedsRebuild();
 +
-+    if (mParent->GetType() == nsMenuObject::eMenuBarType &&
-+        GetMenuBar()->GetState() != nsMenuBar::eMenuBarStateRegistered) {
++    if (mParent->Type() == nsMenuObject::eType_MenuBar &&
++        MenuBar()->State() != nsMenuBar::eState_Registered) {
 +        SetIgnoreFirstAboutToShow();
 +    }
 +
@@ -1079,9 +1079,9 @@ new file mode 100644
 +    // item of the history menu in Firefox when opening it with the keyboard,
 +    // because extra items to appear at the top of the menu
 +
-+    SetPopupState(ePopupStateClosed);
-+    AboutToOpen(eFromAboutToShowSignal);
-+    SetPopupState(ePopupStateClosed);
++    SetPopupState(ePopupState_Closed);
++    AboutToOpen(eAboutToOpenOrigin_FromAboutToShowSignal);
++    SetPopupState(ePopupState_Closed);
 +
 +    nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID);
 +    if (!timer) {
@@ -1175,7 +1175,7 @@ diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.h
-@@ -0,0 +1,150 @@
+@@ -0,0 +1,154 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1199,6 +1199,10 @@ new file mode 100644
 +class nsNativeMenuDocListener;
 +class nsIAtom;
 +
++#define NSMENU_NUMBER_OF_POPUPSTATE_BITS 3U
++#define NSMENU_NUMBER_OF_FLAGS           2U
++#define NSMENU_POPUPSTATE_SHIFT          NSMENU_NUMBER_OF_FLAGS
++
 +class nsMenu MOZ_FINAL : public nsMenuObjectContainer
 +{
 +public:
@@ -1208,7 +1212,7 @@ new file mode 100644
 +                                nsNativeMenuDocListener *aListener,
 +                                nsIContent *aContent);
 +
-+    nsMenuObject::Type GetType() const { return nsMenuObject::eMenuType; }
++    nsMenuObject::EType Type() const { return nsMenuObject::eType_Menu; }
 +
 +    void OpenMenuDelayed();
 +
@@ -1218,25 +1222,22 @@ new file mode 100644
 +    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild);
 +
 +private:
-+    enum Flags MOZ_ENUM_TYPE(uint8_t) {
-+        eMenuFlagPopupState0 = (1 << 0),
-+        eMenuFlagPopupState1 = (1 << 1),
-+        eMenuFlagPopupState2 = (1 << 2),
-+        eMenuFlagNeedsRebuild = (1 << 3),
-+        eMenuFlagIgnoreFirstAboutToShow = (1 << 4)
++    enum {
++        eFlag_NeedsRebuild = 1 << 0,
++        eFlag_IgnoreFirstAboutToShow = 1 << 1
 +    };
 +
-+    enum AboutToOpenOrigin {
-+        eFromAboutToShowSignal,
-+        eFromOpenedEvent
++    enum EAboutToOpenOrigin {
++        eAboutToOpenOrigin_FromAboutToShowSignal,
++        eAboutToOpenOrigin_FromOpenedEvent
 +    };
 +
-+    enum PopupState {
-+        ePopupStateClosed,
-+        ePopupStateShowing,
-+        ePopupStateOpenFromAboutToShow,
-+        ePopupStateOpenFromOpenedEvent,
-+        ePopupStateHiding
++    enum EPopupState {
++        ePopupState_Closed,
++        ePopupState_Showing,
++        ePopupState_OpenFromAboutToShow,
++        ePopupState_OpenFromOpenedEvent,
++        ePopupState_Hiding
 +    };
 +
 +    class RecycleList MOZ_FINAL {
@@ -1266,29 +1267,32 @@ new file mode 100644
 +                  nsIContent *aContent);
 +
 +    bool NeedsRebuild() const {
-+        return mFlags & eMenuFlagNeedsRebuild ? true : false;
++        return mFlags & eFlag_NeedsRebuild ? true : false;
 +    }
 +    void SetNeedsRebuild() {
-+        mFlags = Flags(mFlags | eMenuFlagNeedsRebuild);
++        mFlags |= eFlag_NeedsRebuild;
 +    }
 +    void ClearNeedsRebuild() {
-+        mFlags = Flags(mFlags & ~eMenuFlagNeedsRebuild);
++        mFlags &= ~eFlag_NeedsRebuild;
 +    }
 +
 +    bool IgnoreFirstAboutToShow() const {
-+        return mFlags & eMenuFlagIgnoreFirstAboutToShow ? true : false;
++        return mFlags & eFlag_IgnoreFirstAboutToShow ? true : false;
 +    }
 +    void SetIgnoreFirstAboutToShow() {
-+        mFlags = Flags(mFlags | eMenuFlagIgnoreFirstAboutToShow);
++        mFlags |= eFlag_IgnoreFirstAboutToShow;
 +    }
 +    void ClearIgnoreFirstAboutToShow() {
-+        mFlags = Flags(mFlags & ~eMenuFlagIgnoreFirstAboutToShow);
++        mFlags &= ~eFlag_IgnoreFirstAboutToShow;
 +    }
 +
-+    PopupState GetPopupState() const {
-+        return PopupState(mFlags & 7);
-+    }
-+    void SetPopupState(PopupState aState);
++    EPopupState PopupState() const {
++        return EPopupState(
++            (mFlags &
++             (((1U << NSMENU_NUMBER_OF_POPUPSTATE_BITS) - 1U)
++              << NSMENU_POPUPSTATE_SHIFT)) >> NSMENU_POPUPSTATE_SHIFT);
++    };
++    void SetPopupState(EPopupState aState);
 +
 +    static gboolean menu_about_to_show_cb(DbusmenuMenuitem *menu,
 +                                          gpointer user_data);
@@ -1297,11 +1301,11 @@ new file mode 100644
 +                              GVariant *value,
 +                              guint timestamp,
 +                              gpointer user_data);
-+    void AboutToOpen(AboutToOpenOrigin aOrigin);
++    void AboutToOpen(EAboutToOpenOrigin aOrigin);
 +    void OnClose();
 +    void Build();
 +    void InitializeDbusMenuItem();
-+    void Refresh(nsMenuObject::RefreshType aType);
++    void Refresh(nsMenuObject::ERefreshType aType);
 +    void InitializePopup();
 +    bool RemoveMenuObjectAt(uint32_t aIndex, bool aRecycle);
 +    bool RemoveMenuObject(nsIContent *aChild, bool aRecycle);
@@ -1310,7 +1314,7 @@ new file mode 100644
 +    bool CanOpen() const;
 +    void FlushRecycleList() { mRecycleList = nullptr; }
 +
-+    nsMenuObject::PropertyFlags GetSupportedProperties() const {
++    nsMenuObject::PropertyFlags SupportedProperties() const {
 +        return nsMenuObject::PropertyFlags(
 +            nsMenuObject::ePropLabel |
 +            nsMenuObject::ePropEnabled |
@@ -1322,7 +1326,7 @@ new file mode 100644
 +
 +    nsCOMPtr<nsIContent> mPopupContent;
 +    nsAutoPtr<RecycleList> mRecycleList;
-+    Flags mFlags;
++    uint8_t mFlags;
 +};
 +
 +#endif /* __nsMenu_h__ */
@@ -1330,7 +1334,7 @@ diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.cpp
-@@ -0,0 +1,602 @@
+@@ -0,0 +1,599 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1485,23 +1489,19 @@ new file mode 100644
 +void
 +nsMenuBar::SetShellShowingMenuBar(bool aShowing)
 +{
-+    nsIDocument *doc = mContent->OwnerDoc();
-+    if (!doc) {
-+        return;
-+    }
-+
 +    nsCOMPtr<nsIAtom> atom =
 +        do_GetAtom(NS_LITERAL_CSTRING("shellshowingmenubar"));
-+    doc->GetRootElement()->SetAttr(kNameSpaceID_None, atom,
-+                                   aShowing ?
-+                                    NS_LITERAL_STRING("true") :
-+                                    NS_LITERAL_STRING("false"), true);
++    mContent->OwnerDoc()->GetRootElement()->SetAttr(kNameSpaceID_None, atom,
++                                                    aShowing ?
++                                                    NS_LITERAL_STRING("true") :
++                                                    NS_LITERAL_STRING("false"),
++                                                    true);
 +}
 +
 +void
 +nsMenuBar::ReRegister()
 +{
-+    mState = eMenuBarStateRegistering;
++    mState = eState_Registering;
 +    mCancellable.Init();
 +
 +    nsNativeMenuService::GetSingleton()->RegisterNativeMenuBar(this);
@@ -1511,7 +1511,8 @@ new file mode 100644
 +nsMenuBar::Focus()
 +{
 +    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
-+    mContent->SetAttr(kNameSpaceID_None, atom, NS_LITERAL_STRING("false"), true);
++    mContent->SetAttr(kNameSpaceID_None, atom,
++                      NS_LITERAL_STRING("false"), true);
 +}
 +
 +void
@@ -1598,9 +1599,9 @@ new file mode 100644
 +    nsMenuObject *found = nullptr;
 +    for (uint32_t i = 0; i < mMenuObjects.Length(); ++i) {
 +        nsAutoString accesskey;
-+        mMenuObjects[i]->GetContentNode()->GetAttr(kNameSpaceID_None,
-+                                                   nsGkAtoms::accesskey,
-+                                                   accesskey);
++        mMenuObjects[i]->ContentNode()->GetAttr(kNameSpaceID_None,
++                                                nsGkAtoms::accesskey,
++                                                accesskey);
 +        const nsAutoString::char_type *key = accesskey.BeginReading();
 +        if (*key == chu || *key == chl) {
 +            found = mMenuObjects[i];
@@ -1612,7 +1613,7 @@ new file mode 100644
 +        return NS_OK;
 +    }
 +
-+    NS_ASSERTION(found->GetType() == nsMenuObject::eMenuType, "Expecting a menu here");
++    NS_ASSERTION(found->Type() == nsMenuObject::eType_Menu, "Expecting a menu here");
 +
 +    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
 +    mContent->SetAttr(kNameSpaceID_None, atom, NS_LITERAL_STRING("true"), true);
@@ -1682,7 +1683,7 @@ new file mode 100644
 +    nsMenuObjectContainer(),
 +    mTopLevel(nullptr),
 +    mServer(nullptr),
-+    mState(eMenuBarStateUnregistered)
++    mState(eState_Unregistered)
 +{
 +    MOZ_COUNT_CTOR(nsMenuBar);
 +}
@@ -1808,13 +1809,13 @@ new file mode 100644
 +}
 +
 +uint32_t
-+nsMenuBar::GetWindowId() const
++nsMenuBar::WindowId() const
 +{
 +    return static_cast<uint32_t>(GDK_WINDOW_XID(gtk_widget_get_window(mTopLevel)));
 +}
 +
 +nsAdoptingCString
-+nsMenuBar::GetObjectPath() const
++nsMenuBar::ObjectPath() const
 +{
 +    gchar *tmp;
 +    g_object_get(mServer, DBUSMENU_SERVER_PROP_DBUS_OBJECT, &tmp, NULL);
@@ -1826,10 +1827,10 @@ new file mode 100644
 +void
 +nsMenuBar::NotifyWillRegister()
 +{
-+    if (mState != eMenuBarStateUnregistered) {
++    if (mState != eState_Unregistered) {
 +        return;
 +    }
-+    mState = eMenuBarStateRegistering;
++    mState = eState_Registering;
 +
 +    mCancellable.Init();
 +
@@ -1874,19 +1875,19 @@ new file mode 100644
 +void
 +nsMenuBar::NotifyRegistered()
 +{
-+    NS_ASSERTION(mState == eMenuBarStateRegistering, "Inconsistent state");
++    NS_ASSERTION(mState == eState_Registering, "Inconsistent state");
 +
-+    mState = eMenuBarStateRegistered;
++    mState = eState_Registered;
 +    mCancellable.Finish();
 +}
 +
 +void
 +nsMenuBar::NotifyUnregistered()
 +{
-+    if (mState == eMenuBarStateUnregistered) {
++    if (mState == eState_Unregistered) {
 +        return;
 +    }
-+    mState = eMenuBarStateUnregistered;
++    mState = eState_Unregistered;
 +
 +    mCancellable.Cancel();
 +
@@ -1970,23 +1971,23 @@ new file mode 100644
 +class nsMenuBar MOZ_FINAL : public nsMenuObjectContainer
 +{
 +public:
-+    enum MenuBarState {
-+        eMenuBarStateUnregistered,
-+        eMenuBarStateRegistering,
-+        eMenuBarStateRegistered
++    enum EState {
++        eState_Unregistered,
++        eState_Registering,
++        eState_Registered
 +    };
 +
 +    ~nsMenuBar();
 +
 +    static nsMenuBar* Create(nsIWidget *aParent, nsIContent *aMenuBarNode);
 +
-+    nsMenuObject::Type GetType() const { return nsMenuObject::eMenuBarType; }
++    nsMenuObject::EType Type() const { return nsMenuObject::eType_MenuBar; }
 +
-+    uint32_t GetWindowId() const;
-+    nsAdoptingCString GetObjectPath() const;
-+    nsAutoGCancellable& GetCancellable() { return mCancellable; }
-+    MenuBarState GetState() const { return mState; }
-+    GtkWidget* GetTopLevelWindow() { return mTopLevel; }
++    uint32_t WindowId() const;
++    nsAdoptingCString ObjectPath() const;
++    nsAutoGCancellable& Cancellable() { return mCancellable; }
++    EState State() const { return mState; }
++    GtkWidget* TopLevelWindow() { return mTopLevel; }
 +    void NotifyWillRegister();
 +    void NotifyRegistered();
 +    void NotifyUnregistered();
@@ -2045,7 +2046,7 @@ new file mode 100644
 +
 +    uint32_t mAccessKey;
 +    ModifierFlags mAccessKeyMask;
-+    MenuBarState mState;
++    EState mState;
 +};
 +
 +#endif /* __nsMenuBar_h__ */
@@ -2053,7 +2054,7 @@ diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.cpp
-@@ -0,0 +1,529 @@
+@@ -0,0 +1,534 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2173,13 +2174,13 @@ new file mode 100644
 +    }
 +
 +    nsMenuItemRefreshEvent(nsMenuItem *aMenuItem,
-+                           nsMenuObject::RefreshType aType) :
++                           nsMenuObject::ERefreshType aType) :
 +        mMenuItem(aMenuItem),
 +        mType(aType) { };
 +
 +private:
 +    nsMenuItem *mMenuItem;
-+    nsMenuObject::RefreshType mType;
++    nsMenuObject::ERefreshType mType;
 +};
 +
 +class nsMenuItemCommandContentAttrChangeEvent MOZ_FINAL : public nsRunnable {
@@ -2219,7 +2220,7 @@ new file mode 100644
 +nsMenuItem::Activate(uint32_t aTimestamp)
 +{
 +    gdk_x11_window_set_user_time(
-+        gtk_widget_get_window(GetMenuBar()->GetTopLevelWindow()),
++        gtk_widget_get_window(MenuBar()->TopLevelWindow()),
 +        aTimestamp);
 +
 +    nsNativeMenuAutoSuspendMutations as;
@@ -2235,8 +2236,8 @@ new file mode 100644
 +    //      the event, as the handler might check the new state
 +    if (!mContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::autocheck,
 +                               nsGkAtoms::_false, eCaseMatters) &&
-+        (GetMenuItemType() == eCheckBoxType ||
-+         (GetMenuItemType() == eRadioType && !IsChecked()))) {
++        (MenuItemType() == eMenuItemType_CheckBox ||
++         (MenuItemType() == eMenuItemType_Radio && !IsChecked()))) {
 +        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::checked,
 +                          IsChecked() ?
 +                          NS_LITERAL_STRING("false") :  NS_LITERAL_STRING("true"),
@@ -2335,12 +2336,12 @@ new file mode 100644
 +            dbusmenu_menuitem_property_set(mDbusMenuItem,
 +                                           DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
 +                                           DBUSMENU_MENUITEM_TOGGLE_CHECK);
-+            SetMenuItemType(eCheckBoxType);
++            SetMenuItemType(eMenuItemType_CheckBox);
 +        } else if (type == 1) {
 +            dbusmenu_menuitem_property_set(mDbusMenuItem,
 +                                           DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
 +                                           DBUSMENU_MENUITEM_TOGGLE_RADIO);
-+            SetMenuItemType(eRadioType);
++            SetMenuItemType(eMenuItemType_Radio);
 +        }
 +
 +        SyncStateFromContent();
@@ -2349,7 +2350,7 @@ new file mode 100644
 +                                          DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE);
 +        dbusmenu_menuitem_property_remove(mDbusMenuItem,
 +                                          DBUSMENU_MENUITEM_PROP_TOGGLE_STATE);
-+        SetMenuItemType(eNormalType);
++        SetMenuItemType(eMenuItemType_Normal);
 +    }
 +}
 +
@@ -2432,9 +2433,9 @@ new file mode 100644
 +}
 +
 +void
-+nsMenuItem::Refresh(nsMenuObject::RefreshType aType)
++nsMenuItem::Refresh(nsMenuObject::ERefreshType aType)
 +{
-+    if (aType == eRefreshTypeFull) {
++    if (aType == eRefreshType_Full) {
 +        if (mCommandContent) {
 +            mListener->UnregisterForContentChanges(mCommandContent, this);
 +            mCommandContent = nullptr;
@@ -2464,17 +2465,22 @@ new file mode 100644
 +        }
 +    }
 +
-+    nsContentUtils::AddScriptRunner(new nsMenuItemRefreshEvent(this, aType));
++    if (nsContentUtils::IsSafeToRunScript()) {
++        RefreshUnblocked(aType);
++    } else {
++        nsContentUtils::AddScriptRunner(new nsMenuItemRefreshEvent(this,
++                                                                   aType));
++    }
 +}
 +
 +void
-+nsMenuItem::RefreshUnblocked(nsMenuObject::RefreshType aType)
++nsMenuItem::RefreshUnblocked(nsMenuObject::ERefreshType aType)
 +{
 +    SyncStateFromCommand();
 +    SyncLabelFromCommand();
 +    SyncSensitivityFromCommand();
 +
-+    if (aType == eRefreshTypeFull) {
++    if (aType == eRefreshType_Full) {
 +        SyncTypeAndStateFromContent();
 +        SyncAccelFromContent();
 +        SyncLabelFromContent();
@@ -2487,7 +2493,7 @@ new file mode 100644
 +
 +nsMenuItem::nsMenuItem() :
 +    nsMenuObject(),
-+    mFlags(Flags(0))
++    mFlags(0)
 +{
 +    MOZ_COUNT_CTOR(nsMenuItem);
 +}
@@ -2559,7 +2565,7 @@ new file mode 100644
 +    if (aContent == mContent) {
 +        if (aAttribute == nsGkAtoms::command ||
 +            aAttribute == nsGkAtoms::key) {
-+            Refresh(eRefreshTypeFull);
++            Refresh(eRefreshType_Full);
 +        } else if (aAttribute == nsGkAtoms::label ||
 +                   aAttribute == nsGkAtoms::accesskey ||
 +                   aAttribute == nsGkAtoms::crop) {
@@ -2587,7 +2593,7 @@ diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.h
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,120 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2606,6 +2612,10 @@ new file mode 100644
 +
 +#include <glib.h>
 +
++#define NSMENUITEM_NUMBER_OF_TYPE_BITS 2U
++#define NSMENUITEM_NUMBER_OF_FLAGS     1U
++#define NSMENUITEM_TYPE_SHIFT          NSMENUITEM_NUMBER_OF_TYPE_BITS
++
 +class nsNativeMenuDocListener;
 +class nsIAtom;
 +class nsMenuItemRefreshEvent;
@@ -2616,7 +2626,7 @@ new file mode 100644
 +public:
 +    ~nsMenuItem();
 +
-+    nsMenuObject::Type GetType() const { return nsMenuObject::eMenuItemType; }
++    nsMenuObject::EType Type() const { return nsMenuObject::eType_MenuItem; }
 +
 +    static nsMenuObject* Create(nsMenuObject *aParent,
 +                                nsNativeMenuDocListener *aListener,
@@ -2628,16 +2638,14 @@ new file mode 100644
 +    friend class nsMenuItemRefreshEvent;
 +    friend class nsMenuItemCommandContentAttrChangeEvent;
 +
-+    enum Flags MOZ_ENUM_TYPE(uint8_t) {
-+        eMenuItemFlagType0 = (1 << 0),
-+        eMenuItemFlagType1 = (1 << 1),
-+        eMenuItemFlagToggleState = (1 << 2)
++    enum {
++        eMenuItemFlag_ToggleState = (1 << 0)
 +    };
 +
-+    enum ToggleType {
-+        eNormalType,
-+        eRadioType,
-+        eCheckBoxType
++    enum EMenuItemType {
++        eMenuItemType_Normal,
++        eMenuItemType_Radio,
++        eMenuItemType_CheckBox
 +    };
 +
 +    nsMenuItem();
@@ -2645,26 +2653,29 @@ new file mode 100644
 +                  nsNativeMenuDocListener *aListener,
 +                  nsIContent *aContent);
 +
-+    ToggleType GetMenuItemType() const {
-+        return ToggleType(mFlags & 3);
++    EMenuItemType MenuItemType() const {
++        return EMenuItemType(
++            (mFlags &
++             (((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U)
++              << NSMENUITEM_TYPE_SHIFT)) >> NSMENUITEM_TYPE_SHIFT);
 +    }
-+    void SetMenuItemType(ToggleType aType) {
-+        mFlags = Flags(mFlags & ~3);
-+        mFlags = Flags(mFlags | (aType & 3));
++    void SetMenuItemType(EMenuItemType aType) {
++        mFlags &= ~(((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U) << NSMENUITEM_TYPE_SHIFT);
++        mFlags |= (aType << NSMENUITEM_TYPE_SHIFT);
 +    }
 +    bool IsCheckboxOrRadioItem() const {
-+        return GetMenuItemType() == eRadioType ||
-+               GetMenuItemType() == eCheckBoxType;
++        return MenuItemType() == eMenuItemType_Radio ||
++               MenuItemType() == eMenuItemType_CheckBox;
 +    }
 +
 +    bool IsChecked() const {
-+        return mFlags & eMenuItemFlagToggleState ? true : false;
++        return mFlags & eMenuItemFlag_ToggleState ? true : false;
 +    }
 +    void SetCheckState(bool aState) {
 +        if (aState) {
-+            mFlags = Flags(mFlags | eMenuItemFlagToggleState);
++            mFlags |= eMenuItemFlag_ToggleState;
 +        } else {
-+            mFlags = Flags(mFlags & ~eMenuItemFlagToggleState);
++            mFlags &= ~eMenuItemFlag_ToggleState;
 +        }
 +    }
 +
@@ -2681,10 +2692,10 @@ new file mode 100644
 +    void SyncAccelFromContent();
 +
 +    void InitializeDbusMenuItem();
-+    void Refresh(nsMenuObject::RefreshType aType);
-+    void RefreshUnblocked(nsMenuObject::RefreshType aType);
++    void Refresh(nsMenuObject::ERefreshType aType);
++    void RefreshUnblocked(nsMenuObject::ERefreshType aType);
 +
-+    nsMenuObject::PropertyFlags GetSupportedProperties() const {
++    nsMenuObject::PropertyFlags SupportedProperties() const {
 +        return nsMenuObject::PropertyFlags(
 +            nsMenuObject::ePropLabel |
 +            nsMenuObject::ePropEnabled |
@@ -2699,7 +2710,7 @@ new file mode 100644
 +    nsCOMPtr<nsIContent> mKeyContent;
 +    nsCOMPtr<nsIContent> mCommandContent;
 +
-+    Flags mFlags;
++    uint8_t mFlags;
 +};
 +
 +#endif /* __nsMenuItem_h__ */
@@ -2707,7 +2718,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,709 @@
+@@ -0,0 +1,708 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2885,7 +2896,7 @@ new file mode 100644
 +        return;
 +    }
 +
-+    nsIDocument *doc = mOwner->GetContentNode()->GetCurrentDoc();
++    nsIDocument *doc = mOwner->ContentNode()->GetCurrentDoc();
 +    if (!doc) {
 +        return;
 +    }
@@ -2895,7 +2906,7 @@ new file mode 100644
 +    imgRequestProxy *imageRequest = nullptr;
 +
 +    nsAutoString uriString;
-+    if (mOwner->GetContentNode()->GetAttr(kNameSpaceID_None, nsGkAtoms::image,
++    if (mOwner->ContentNode()->GetAttr(kNameSpaceID_None, nsGkAtoms::image,
 +                                          uriString)) {
 +        NS_NewURI(getter_AddRefs(uri), uriString);
 +    } else {
@@ -2906,23 +2917,25 @@ new file mode 100644
 +
 +        nsRefPtr<nsStyleContext> sc =
 +            nsComputedDOMStyle::GetStyleContextForElementNoFlush(
-+                mOwner->GetContentNode()->AsElement(), nullptr, shell);
++                mOwner->ContentNode()->AsElement(), nullptr, shell);
 +        if (!sc) {
 +            return;
 +        }
 +
 +        const nsStyleList *list = sc->GetStyleList();
-+        imageRequest = list->GetListStyleImage();
-+        if (imageRequest) {
-+            imageRequest->GetURI(getter_AddRefs(uri));
++        if (list) {
++            imageRequest = list->GetListStyleImage();
++            if (imageRequest) {
++                imageRequest->GetURI(getter_AddRefs(uri));
 +
-+            nsPresContext *pc = shell->GetPresContext();
-+            if (!pc) {
-+                return;
++                nsPresContext *pc = shell->GetPresContext();
++                if (!pc) {
++                    return;
++                }
++
++                imageRect = list->mImageRegion.ToNearestPixels(
++                                pc->AppUnitsPerDevPixel());
 +            }
-+
-+            imageRect = list->mImageRegion.ToNearestPixels(
-+                            pc->AppUnitsPerDevPixel());
 +        }
 +    }
 +
@@ -3050,7 +3063,7 @@ new file mode 100644
 +}
 +
 +static const nsDependentString
-+GetEllipsis()
++Ellipsis()
 +{
 +    static PRUnichar sBuf[4] = { 0, 0, 0, 0 };
 +    if (!sBuf[0]) {
@@ -3078,7 +3091,7 @@ new file mode 100644
 +    static int sEllipsisWidth = -1;
 +
 +    if (sEllipsisWidth == -1) {
-+        sEllipsisWidth = CalculateTextWidth(GetEllipsis());
++        sEllipsisWidth = CalculateTextWidth(Ellipsis());
 +    }
 +
 +    return sEllipsisWidth;
@@ -3088,7 +3101,7 @@ new file mode 100644
 +void
 +nsMenuObject::RemoveUnsupportedProperties()
 +{
-+    PropertyFlags supported = GetSupportedProperties();
++    PropertyFlags supported = SupportedProperties();
 +    PropertyFlags mask = PropertyFlags(1);
 +
 +    for (uint32_t i = 0; property_strings[i]; ++i) {
@@ -3229,7 +3242,7 @@ new file mode 100644
 +                    }
 +                }
 +
-+                truncated.Append(GetEllipsis());
++                truncated.Append(Ellipsis());
 +        }
 +
 +        text = truncated;
@@ -3243,12 +3256,7 @@ new file mode 100644
 +void
 +nsMenuObject::SyncVisibilityFromContent()
 +{
-+    nsIDocument *doc = mContent->OwnerDoc();
-+    if (!doc) {
-+        return;
-+    }
-+
-+    nsIPresShell *shell = doc->GetShell();
++    nsIPresShell *shell = mContent->OwnerDoc()->GetShell();
 +    if (!shell) {
 +        return;
 +    }
@@ -3261,8 +3269,10 @@ new file mode 100644
 +    }
 +
 +    bool vis = true;
-+    if (sc->GetStyleDisplay()->mDisplay == NS_STYLE_DISPLAY_NONE ||
-+        sc->GetStyleVisibility()->mVisible == NS_STYLE_VISIBILITY_COLLAPSE) {
++    const nsStyleDisplay *sd = sc->GetStyleDisplay();
++    const nsStyleVisibility *sv = sc->GetStyleVisibility();
++    if ((sd && sd->mDisplay == NS_STYLE_DISPLAY_NONE) ||
++        (sv && sv->mVisible == NS_STYLE_VISIBILITY_COLLAPSE)) {
 +        vis = false;
 +    }
 +
@@ -3325,7 +3335,7 @@ new file mode 100644
 +    if (!mDbusMenuItem) {
 +        mDbusMenuItem = dbusmenu_menuitem_new();
 +        InitializeDbusMenuItem();
-+        Refresh(eRefreshTypeFull);
++        Refresh(eRefreshType_Full);
 +
 +        mListener->RegisterForContentChanges(mContent, this);
 +    }
@@ -3334,14 +3344,14 @@ new file mode 100644
 +}
 +
 +nsMenuBar*
-+nsMenuObject::GetMenuBar()
++nsMenuObject::MenuBar()
 +{
 +    nsMenuObject *tmp = static_cast<nsMenuObject *>(this);
 +    while (tmp) {
-+        if (tmp->GetType() == eMenuBarType) {
++        if (tmp->Type() == eType_MenuBar) {
 +            return static_cast<nsMenuBar *>(tmp);
 +        }
-+        tmp = tmp->GetParent();
++        tmp = tmp->Parent();
 +    }
 +
 +    NS_ERROR("Huh, we're not in a menubar?");
@@ -3361,7 +3371,7 @@ new file mode 100644
 +
 +    RemoveUnsupportedProperties();
 +    InitializeDbusMenuItem();
-+    Refresh(eRefreshTypeFull);
++    Refresh(eRefreshType_Full);
 +
 +    mListener->RegisterForContentChanges(mContent, this);
 +}
@@ -3369,7 +3379,7 @@ new file mode 100644
 +void
 +nsMenuObject::ContainerIsOpening()
 +{
-+    Refresh(eRefreshTypeContainerOpening);
++    Refresh(eRefreshType_ContainerOpening);
 +}
 +
 +/* static */ nsIContent*
@@ -3390,7 +3400,7 @@ new file mode 100644
 +    }
 +
 +    for (uint32_t i = 0; i < mMenuObjects.Length(); ++i) {
-+        if (mMenuObjects[i]->GetContentNode() == aChild) {
++        if (mMenuObjects[i]->ContentNode() == aChild) {
 +            return i;
 +        }
 +    }
@@ -3450,16 +3460,16 @@ new file mode 100644
 +class nsMenuObject
 +{
 +public:
-+    enum Type {
-+        eMenuBarType,
-+        eMenuType,
-+        eMenuItemType,
-+        eMenuSeparatorType
++    enum EType {
++        eType_MenuBar,
++        eType_Menu,
++        eType_MenuItem,
++        eType_MenuSeparator
 +    };
 +
-+    enum RefreshType {
-+        eRefreshTypeFull,
-+        eRefreshTypeContainerOpening
++    enum ERefreshType {
++        eRefreshType_Full,
++        eRefreshType_ContainerOpening
 +    };
 +
 +    enum PropertyFlags {
@@ -3477,10 +3487,10 @@ new file mode 100644
 +    virtual ~nsMenuObject();
 +
 +    DbusmenuMenuitem* GetDbusMenuItem();
-+    nsMenuObject* GetParent() const { return mParent; }
-+    nsIContent* GetContentNode() const { return mContent; }
-+    virtual Type GetType() const = 0;
-+    nsMenuBar* GetMenuBar();
++    nsMenuObject* Parent() const { return mParent; }
++    nsIContent* ContentNode() const { return mContent; }
++    virtual EType Type() const = 0;
++    nsMenuBar* MenuBar();
 +
 +    void AdoptDbusMenuItem(DbusmenuMenuitem *aDbusMenuItem);
 +
@@ -3541,8 +3551,8 @@ new file mode 100644
 +    };
 +
 +    virtual void InitializeDbusMenuItem() { };
-+    virtual void Refresh(RefreshType aType) { };
-+    virtual PropertyFlags GetSupportedProperties() const {
++    virtual void Refresh(ERefreshType aType) { };
++    virtual PropertyFlags SupportedProperties() const {
 +        return PropertyFlags(0);
 +    }
 +
@@ -3598,7 +3608,7 @@ new file mode 100644
 +}
 +
 +void
-+nsMenuSeparator::Refresh(nsMenuObject::RefreshType aType)
++nsMenuSeparator::Refresh(nsMenuObject::ERefreshType aType)
 +{
 +    SyncVisibilityFromContent();
 +}
@@ -3676,8 +3686,8 @@ new file mode 100644
 +public:
 +    ~nsMenuSeparator();
 +
-+    nsMenuObject::Type GetType() const {
-+        return nsMenuObject::eMenuSeparatorType;
++    nsMenuObject::EType Type() const {
++        return nsMenuObject::eType_MenuSeparator;
 +    }
 +
 +    static nsMenuObject* Create(nsMenuObject *aParent,
@@ -3693,9 +3703,9 @@ new file mode 100644
 +                  nsIContent *aContent);
 +
 +    void InitializeDbusMenuItem();
-+    void Refresh(nsMenuObject::RefreshType aType);
++    void Refresh(nsMenuObject::ERefreshType aType);
 +
-+    nsMenuObject::PropertyFlags GetSupportedProperties() const {
++    nsMenuObject::PropertyFlags SupportedProperties() const {
 +        return nsMenuObject::PropertyFlags(
 +            nsMenuObject::ePropVisible |
 +            nsMenuObject::ePropType
@@ -3708,7 +3718,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuD
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,338 @@
+@@ -0,0 +1,343 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3859,7 +3869,12 @@ new file mode 100644
 +nsNativeMenuDocListener::RemoveMutationBlocker()
 +{
 +    if (sInhibitDepth == 1 && gPendingListeners) {
-+        nsContentUtils::AddScriptRunner(new nsNativeMenuDocListenerFlushEvent());
++        if (nsContentUtils::IsSafeToRunScript()) {
++            FlushAllListeners();
++        } else {
++            nsContentUtils::AddScriptRunner(
++                new nsNativeMenuDocListenerFlushEvent());
++        }
 +    } else {
 +        NS_ASSERTION(sInhibitDepth > 0, "Negative inhibit depth!");
 +        sInhibitDepth--;
@@ -4398,7 +4413,7 @@ new file mode 100644
 +    return NS_OK;
 +}
 +
-+/* static */ nsNativeMenuService*
++/* static */ already_AddRefed<nsNativeMenuService>
 +nsNativeMenuService::GetInstance()
 +{
 +    if (sService) {
@@ -4460,23 +4475,23 @@ new file mode 100644
 +        return;
 +    }
 +
-+    if (aMenuBar->GetState() == nsMenuBar::eMenuBarStateUnregistered) {
++    if (aMenuBar->State() == nsMenuBar::eState_Unregistered) {
 +        aMenuBar->NotifyWillRegister();
 +    }
 +
 +    if (!mDbusProxy ||
-+        aMenuBar->GetState() == nsMenuBar::eMenuBarStateRegistered) {
++        aMenuBar->State() == nsMenuBar::eState_Registered) {
 +        return;
 +    }
 +
-+    uint32_t xid = aMenuBar->GetWindowId();
-+    nsAdoptingCString path = aMenuBar->GetObjectPath();
++    uint32_t xid = aMenuBar->WindowId();
++    nsAdoptingCString path = aMenuBar->ObjectPath();
 +    if (xid == 0 || path.IsEmpty()) {
 +        NS_WARNING("Menubar has invalid XID or object path");
 +        return;
 +    }
 +
-+    nsAutoGCancellable& cancellable = aMenuBar->GetCancellable();
++    nsAutoGCancellable& cancellable = aMenuBar->Cancellable();
 +
 +    g_dbus_proxy_call(mDbusProxy, "RegisterWindow",
 +                      g_variant_new("(uo)", xid, path.get()),
@@ -4508,7 +4523,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.h b/widget/gtk2/nsNativeMenuService
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.h
-@@ -0,0 +1,74 @@
+@@ -0,0 +1,75 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4522,6 +4537,7 @@ new file mode 100644
 +#include "nsTArray.h"
 +#include "nsIObserver.h"
 +#include "nsINativeMenuService.h"
++#include "nsCOMPtr.h"
 +
 +#include "nsNativeMenuUtils.h"
 +
@@ -4541,7 +4557,7 @@ new file mode 100644
 +    nsresult Init();
 +
 +    /* Returns the singleton addreffed for the service manager */
-+    static nsNativeMenuService* GetInstance();
++    static already_AddRefed<nsNativeMenuService> GetInstance();
 +
 +    /* Returns the singleton without increasing the reference count */
 +    static nsNativeMenuService* GetSingleton();

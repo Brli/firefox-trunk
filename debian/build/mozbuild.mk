@@ -44,8 +44,6 @@ MOZ_APP_NAME		?= $(MOZ_PKG_NAME)
 MOZ_DEFAULT_APP_NAME	?= $(MOZ_PKG_BASENAME)
 MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
 MOZ_DEFAULT_APP_BASENAME ?= $(shell echo $(MOZ_DEFAULT_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
-MOZ_SEARCHPLUGIN_DIR	?= $(MOZ_LIBDIR)/distribution/searchplugins
-MOZ_EN_US_SEARCHPLUGIN_SRCDIR ?= $(MOZ_LIBDIR)/searchplugins
 
 ifeq (,$(MOZ_APP))
 $(error "Need to set MOZ_APP")
@@ -82,6 +80,8 @@ MOZ_IDLDIR		:= usr/share/idl/$(MOZ_APP_NAME)
 MOZ_SDKDIR		:= usr/lib/$(MOZ_APP_NAME)-devel
 MOZ_ADDONDIR		:= usr/lib/$(MOZ_APP_NAME)-addons
 MOZ_TESTDIR		:= usr/lib/$(MOZ_APP_NAME)-testsuite
+
+MOZ_APP_SUBDIR	?=
 
 # The profile directory is determined from the Vendor and Name fields of
 # the application.ini
@@ -365,12 +365,12 @@ CUSTOMIZE_SEARCHPLUGINS = \
 				echo "Cannot find source plugin for $$o"; \
 				exit 1; \
 			fi; \
-			if [ ! -f debian/$(2)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang/`basename $$f` ]; then \
+			if [ ! -f debian/$(2)/$(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/distribution/searchplugins/locale/$$lang/`basename $$f` ]; then \
 				echo "No plugin `basename $$f` to override"; \
 				exit 1; \
 			fi; \
 			echo "Overriding `basename $$f`"; \
-			dh_install -p$(2) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
+			dh_install -p$(2) $$f $(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/distribution/searchplugins/locale/$$lang; \
 		done; \
 		for a in $$additions; do \
 			f=`ls -1 debian/searchplugins/$$lang/$$a.xml 2>/dev/null | head -n1`; \
@@ -381,12 +381,12 @@ CUSTOMIZE_SEARCHPLUGINS = \
 				echo "Cannot find source plugin for $$a"; \
 				exit 1; \
 			fi; \
-			if [ -f debian/$(2)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang/`basename $$f` ]; then \
+			if [ -f debian/$(2)/$(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/distribution/searchplugins/locale/$$lang/`basename $$f` ]; then \
 				echo "Plugin `basename $$f` already exists"; \
 				exit 1; \
 			fi; \
 			echo "Adding `basename $$f`"; \
-			dh_install -p$(2) $$f $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
+			dh_install -p$(2) $$f $(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/distribution/searchplugins/locale/$$lang; \
 		done; \
 	done
 
@@ -399,13 +399,13 @@ install-searchplugins-%:
 	@echo "Installing searchplugins for $(PKGNAME)"
 	@for lang in $(LANGUAGES); do \
 		echo "Installing searchplugins for $$lang"; \
-		rm -rf debian/$(PKGNAME)/$(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-		src=$(MOZ_DISTDIR)/xpi-stage/locale-$$lang/searchplugins; \
+		rm -rf debian/$(PKGNAME)/$(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/distribution/searchplugins/locale/$$lang; \
+		src=$(MOZ_DISTDIR)/xpi-stage/locale-$$lang/$(MOZ_APP_SUBDIR)/searchplugins; \
 		if [ ! -d $$src ]; then \
-			src=debian/tmp/$(MOZ_EN_US_SEARCHPLUGIN_SRCDIR); \
+			src=debian/tmp/$(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/searchplugins; \
 		fi; \
-		dh_installdirs -p$(PKGNAME) $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
-		dh_install -p$(PKGNAME) $$src/*.xml $(MOZ_SEARCHPLUGIN_DIR)/locale/$$lang; \
+		dh_installdirs -p$(PKGNAME) $(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/distribution/searchplugins/locale/$$lang; \
+		dh_install -p$(PKGNAME) $$src/*.xml $(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/distribution/searchplugins/locale/$$lang; \
 	done
 	@$(if $(wildcard debian/searchplugins),$(call CUSTOMIZE_SEARCHPLUGINS,$(LANGUAGES),$(PKGNAME)))
 	@echo ""

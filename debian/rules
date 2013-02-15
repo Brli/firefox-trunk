@@ -7,6 +7,8 @@ MOZ_APP			:= browser
 MOZ_VENDOR		:= Mozilla
 MOZ_MOZDIR		:=
 
+MOZ_APP_SUBDIR	:= browser
+
 MOZ_BRANDING		:= $(CHANNEL)
 ifneq (,$(filter release beta, $(MOZ_BRANDING)))
 MOZ_BRANDING		:= official
@@ -22,9 +24,6 @@ MOZ_BRANDING_OPTION	:= --enable-official-branding
 else
 MOZ_BRANDING_OPTION	:= --with-branding=$(MOZ_BRANDING_DIR)
 endif
-
-MOZ_SEARCHPLUGIN_DIR	= $(MOZ_LIBDIR)/browser/distribution/searchplugins
-MOZ_EN_US_SEARCHPLUGIN_SRCDIR = $(MOZ_LIBDIR)/browser/searchplugins
 
 MOZ_PKGNAME_SUBST_FILES = \
 	debian/usr.bin.$(MOZ_PKG_NAME) \
