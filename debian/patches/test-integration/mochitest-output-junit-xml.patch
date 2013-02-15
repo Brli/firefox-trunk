@@ -2,10 +2,10 @@
 # Parent 7ffcb24dae1c27dd8b812d7527df802812b70765
 # User Chris Coulson <chris.coulson@canonical.com>
 
-Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/browser-harness.xul
+Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-harness.xul
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130205r120792.orig/testing/mochitest/browser-harness.xul	2013-02-06 03:57:53.514199378 -0800
-+++ firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/browser-harness.xul	2013-02-06 03:59:34.000000000 -0800
+--- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/browser-harness.xul	2013-02-15 09:25:43.231380572 +0000
++++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-harness.xul	2013-02-15 09:26:02.000000000 +0000
 @@ -113,29 +113,40 @@
      function browserTest(aTestFile) {
        this.path = aTestFile;
@@ -72,7 +72,7 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/browser-harness
          if (this.duration) {
            html += "<p class=\"info\">TEST-END | " + path + " | finished in " +
                    this.duration + " ms</p>";
-@@ -232,6 +243,62 @@
+@@ -233,6 +244,62 @@
      }
  
      function testsFinished(aTests) {
@@ -135,11 +135,11 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/browser-harness
        // Focus our window, to display the results
        window.focus();
  
-Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/browser-test.js
+Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-test.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130205r120792.orig/testing/mochitest/browser-test.js	2013-02-06 03:57:53.514199378 -0800
-+++ firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/browser-test.js	2013-02-06 03:57:53.502199378 -0800
-@@ -319,6 +319,7 @@
+--- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/browser-test.js	2013-02-15 09:25:43.231380572 +0000
++++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-test.js	2013-02-15 09:25:43.223380572 +0000
+@@ -321,6 +321,7 @@
        }
  
        this.currentTestIndex++;
@@ -147,13 +147,13 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/browser-test.js
        this.execTest();
      }).bind(this));
    },
-Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/runtests.py
+Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/runtests.py
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130205r120792.orig/testing/mochitest/runtests.py	2013-02-06 03:57:53.514199378 -0800
-+++ firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/runtests.py	2013-02-06 03:57:53.502199378 -0800
-@@ -257,6 +257,16 @@
-                     help = "Delay execution between test files.")
-     defaults["runSlower"] = False
+--- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/runtests.py	2013-02-15 09:25:43.231380572 +0000
++++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/runtests.py	2013-02-15 09:25:43.223380572 +0000
+@@ -262,6 +262,16 @@
+                     help = "launches tests in immersive browser")
+     defaults["immersiveMode"] = False
  
 +    self.add_option("--xunit-file",
 +                    action = "store", type="string", dest = "xunitFile",
@@ -168,7 +168,7 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/runtests.py
      # -h, --help are automatically handled by OptionParser
  
      self.set_defaults(**defaults)
-@@ -663,6 +673,9 @@
+@@ -677,6 +687,9 @@
          self.urlOpts.append("failureFile=%s" % self.getFullPath(options.failureFile))
        if options.runSlower:
          self.urlOpts.append("runSlower=true")
@@ -178,7 +178,7 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/runtests.py
  
    def cleanup(self, manifest, options):
      """ remove temporary files and profile """
-@@ -828,6 +841,12 @@
+@@ -848,6 +861,12 @@
  
        content += '"' + opt + '": '
        content += jsonString(val)
@@ -191,10 +191,10 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/runtests.py
      content += "}"
  
      with open(os.path.join(options.profilePath, "testConfig.js"), "w") as config:
-Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTest/SimpleTest.js
+Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/SimpleTest.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130205r120792.orig/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-06 03:57:53.514199378 -0800
-+++ firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-06 03:57:53.502199378 -0800
+--- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-15 09:25:43.231380572 +0000
++++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-15 09:25:43.227380572 +0000
 @@ -283,6 +283,9 @@
          if (isError) {
              parentRunner.addFailedTest(url);
@@ -218,10 +218,10 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTes
  var gOldOnError = window.onerror;
  window.onerror = function simpletestOnerror(errorMsg, url, lineNumber) {
      // Log the message.
-Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTest/TestRunner.js
+Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/TestRunner.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130205r120792.orig/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-06 03:57:53.514199378 -0800
-+++ firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-06 03:59:51.538197280 -0800
+--- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-15 09:25:43.231380572 +0000
++++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-15 09:25:43.227380572 +0000
 @@ -75,10 +75,13 @@
  TestRunner.currentTestURL = "";
  TestRunner.originalTestURL = "";
@@ -474,10 +474,10 @@ Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTes
          TestRunner.updateUI(tests);
          TestRunner._currentTest++;
          if (TestRunner.runSlower) {
-Index: firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTest/setup.js
+Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/setup.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130205r120792.orig/testing/mochitest/tests/SimpleTest/setup.js	2013-02-06 03:57:53.514199378 -0800
-+++ firefox-trunk-21.0~a1~hg20130205r120792/testing/mochitest/tests/SimpleTest/setup.js	2013-02-06 03:59:34.000000000 -0800
+--- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/tests/SimpleTest/setup.js	2013-02-15 09:25:43.231380572 +0000
++++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/setup.js	2013-02-15 09:26:02.000000000 +0000
 @@ -109,6 +109,13 @@
    TestRunner.runSlower = true;
  }

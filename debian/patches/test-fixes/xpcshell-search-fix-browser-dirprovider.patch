@@ -1,14 +1,15 @@
-Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/search/tests/xpcshell/head_search.js
+Index: firefox-trunk-21.0~a1~hg20130213r121727/toolkit/components/search/tests/xpcshell/head_search.js
 ===================================================================
---- firefox-trunk-19.0~a1~hg20121114r113129.orig/toolkit/components/search/tests/xpcshell/head_search.js	2012-11-14 00:37:53.000000000 +0000
-+++ firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/search/tests/xpcshell/head_search.js	2012-11-14 14:08:13.854550000 +0000
-@@ -1,9 +1,13 @@
+--- firefox-trunk-21.0~a1~hg20130213r121727.orig/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-15 09:31:15.063374675 +0000
++++ firefox-trunk-21.0~a1~hg20130213r121727/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-15 09:31:48.215374086 +0000
+@@ -1,12 +1,16 @@
  /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
  /* vim:set ts=2 sw=2 sts=2 et: */
  
 -Components.utils.import("resource://gre/modules/Services.jsm");
 -Components.utils.import("resource://gre/modules/NetUtil.jsm");
 -Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+-Components.utils.import("resource://gre/modules/FileUtils.jsm");
 +const Cu = Components.utils;
 +const Ci = Components.interfaces;
 +const Cr = Components.results;
@@ -16,10 +17,14 @@ Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/search/tests/x
 +Cu.import("resource://gre/modules/Services.jsm");
 +Cu.import("resource://gre/modules/NetUtil.jsm");
 +Cu.import("resource://gre/modules/XPCOMUtils.jsm");
++Cu.import("resource://gre/modules/FileUtils.jsm");
+ 
+-Components.utils.import("resource://testing-common/AppInfo.jsm");
++Cu.import("resource://testing-common/AppInfo.jsm");
  
  const XULAPPINFO_CONTRACTID = "@mozilla.org/xre/app-info;1";
  const XULAPPINFO_CID = Components.ID("{c763b610-9d49-455a-bbd2-ede71682a1ac}");
-@@ -38,23 +42,23 @@
+@@ -49,23 +53,23 @@
      invalidateCachesOnRestart: function invalidateCachesOnRestart() {},
  
      QueryInterface: function QueryInterface(iid) {
@@ -49,7 +54,7 @@ Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/search/tests/x
    registrar.registerFactory(XULAPPINFO_CID, "XULAppInfo",
                              XULAPPINFO_CONTRACTID, XULAppInfoFactory);
  }
-@@ -62,6 +66,44 @@
+@@ -73,6 +77,44 @@
  // Need to create and register a profile folder.
  var gProfD = do_get_profile();
  
@@ -94,7 +99,7 @@ Index: firefox-trunk-19.0~a1~hg20121114r113129/toolkit/components/search/tests/x
  function dumpn(text)
  {
    dump("search test: " + text + "\n");
-@@ -102,7 +144,7 @@
+@@ -122,7 +164,7 @@
  }
  
  function  parseJsonFromStream(aInputStream) {
