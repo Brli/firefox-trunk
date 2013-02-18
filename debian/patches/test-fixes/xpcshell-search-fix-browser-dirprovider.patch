@@ -1,7 +1,7 @@
-Index: firefox-trunk-21.0~a1~hg20130213r121727/toolkit/components/search/tests/xpcshell/head_search.js
+Index: firefox-trunk-21.0~a1~hg20130217r122184/toolkit/components/search/tests/xpcshell/head_search.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-15 09:31:15.063374675 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-15 09:31:48.215374086 +0000
+--- firefox-trunk-21.0~a1~hg20130217r122184.orig/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-18 09:44:47.007748218 +0000
++++ firefox-trunk-21.0~a1~hg20130217r122184/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-18 09:44:47.003748218 +0000
 @@ -1,12 +1,16 @@
  /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
  /* vim:set ts=2 sw=2 sts=2 et: */
@@ -22,39 +22,9 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/toolkit/components/search/tests/x
 -Components.utils.import("resource://testing-common/AppInfo.jsm");
 +Cu.import("resource://testing-common/AppInfo.jsm");
  
- const XULAPPINFO_CONTRACTID = "@mozilla.org/xre/app-info;1";
- const XULAPPINFO_CID = Components.ID("{c763b610-9d49-455a-bbd2-ede71682a1ac}");
-@@ -49,23 +53,23 @@
-     invalidateCachesOnRestart: function invalidateCachesOnRestart() {},
- 
-     QueryInterface: function QueryInterface(iid) {
--      if (iid.equals(Components.interfaces.nsIXULAppInfo)
--       || iid.equals(Components.interfaces.nsIXULRuntime)
--       || iid.equals(Components.interfaces.nsISupports))
-+      if (iid.equals(Ci.nsIXULAppInfo)
-+       || iid.equals(Ci.nsIXULRuntime)
-+       || iid.equals(Ci.nsISupports))
-         return this;
- 
--      throw Components.results.NS_ERROR_NO_INTERFACE;
-+      throw Cr.NS_ERROR_NO_INTERFACE;
-     }
-   };
- 
-   var XULAppInfoFactory = {
-     createInstance: function (outer, iid) {
-       if (outer != null)
--        throw Components.results.NS_ERROR_NO_AGGREGATION;
-+        throw Cr.NS_ERROR_NO_AGGREGATION;
-       return gXULAppInfo.QueryInterface(iid);
-     }
-   };
--  var registrar = Components.manager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-+  var registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
-   registrar.registerFactory(XULAPPINFO_CID, "XULAppInfo",
-                             XULAPPINFO_CONTRACTID, XULAppInfoFactory);
- }
-@@ -73,6 +77,44 @@
+ const BROWSER_SEARCH_PREF = "browser.search.";
+ const NS_APP_SEARCH_DIR = "SrchPlugns";
+@@ -19,6 +23,44 @@
  // Need to create and register a profile folder.
  var gProfD = do_get_profile();
  
@@ -99,7 +69,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/toolkit/components/search/tests/x
  function dumpn(text)
  {
    dump("search test: " + text + "\n");
-@@ -122,7 +164,7 @@
+@@ -68,7 +110,7 @@
  }
  
  function  parseJsonFromStream(aInputStream) {
