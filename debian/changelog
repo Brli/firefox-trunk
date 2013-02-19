@@ -169,6 +169,9 @@ firefox-trunk (21.0~a1~hg20130205r120792-0ubuntu1) UNRELEASED; urgency=low
   * Add native support for the Unity menubar (no addon)
     - add debian/patches/unity-menubar.patch
     - update debian/patches/series.in
+  * Fix test_browserGlue_distribution.js test after application components
+    moved to browser/
+    - update debian/testing/xpcshell-build.ini
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 08 Jan 2013 00:43:23 +0000
 
