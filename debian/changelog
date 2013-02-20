@@ -1,4 +1,6 @@
-firefox-trunk (21.0~a1~hg20130205r120792-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (21.0~a1~hg20130218r122221-0ubuntu1) raring; urgency=low
+
+  * New upstream snapshot v21.0 A1 HG 20130218R122221
 
   * Drop support for building on older than precise
     - update debian/apport/source_firefox.py.in
