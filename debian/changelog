@@ -1,3 +1,13 @@
+firefox-trunk (21.0~a1~hg20130218r122221-0ubuntu2) UNRELEASED; urgency=low
+
+  * Make sure that the 'appname' field of our mozinfo.json is set to
+    'firefox' and not 'firefox-trunk' on nightlies, as it breaks browser
+    xpcshell tests
+    - update debian/build/mozbuild.mk
+    - add debian/build/fix-mozinfo-appname.py
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 Feb 2013 18:56:12 +0000
+
 firefox-trunk (21.0~a1~hg20130218r122221-0ubuntu1) raring; urgency=low
 
   * New upstream snapshot v21.0 A1 HG 20130218R122221
