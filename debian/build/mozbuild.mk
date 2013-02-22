@@ -297,7 +297,7 @@ debian/stamp-make-langpack-xpi-%:
 		$(MAKE) langpack-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
 	@touch $@
 
-common-build-arch:: make-langpack-xpis $(pkgconfig_files) make-buildsymbols make-testsuite run-tests
+common-build-arch:: make-langpack-xpis $(pkgconfig_files) make-testsuite run-tests
 
 install/$(MOZ_PKG_NAME)::
 	@echo "Adding suggests / recommends on support packages"
@@ -317,6 +317,8 @@ common-install-arch common-install-indep::
 		then \
 			mv debian/tmp/$(dir)-$(MOZ_VERSION) debian/tmp/$(dir); \
 		fi; )
+
+common-binary-arch:: make-buildsymbols
 
 binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
