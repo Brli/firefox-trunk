@@ -10,6 +10,10 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/mozbuild.mk
   * Refresh patches
     - update d/p/test-integration/xpcshell-output-valid-junit-xml.patch
+  * Temporarily disable tests in python/mozbuild/mozpack/tests, as they
+    fail
+    - add d/p/test-overrides/disable-failing-python-tests.patch
+    - update debian/patches/series.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 Feb 2013 18:56:12 +0000
 

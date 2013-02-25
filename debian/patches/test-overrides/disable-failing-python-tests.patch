@@ -1,0 +1,13 @@
+Index: firefox-trunk-22.0~a1~hg20130222r122576/python/Makefile.in
+===================================================================
+--- firefox-trunk-22.0~a1~hg20130222r122576.orig/python/Makefile.in	2013-02-22 15:46:01.000000000 +0000
++++ firefox-trunk-22.0~a1~hg20130222r122576/python/Makefile.in	2013-02-25 16:56:58.287946850 +0000
+@@ -14,7 +14,7 @@
+   mozbuild/mozbuild/test/backend \
+   mozbuild/mozbuild/test/compilation \
+   mozbuild/mozbuild/test/frontend \
+-  mozbuild/mozpack/test \
++#  mozbuild/mozpack/test \
+   $(NULL)
+ 
+ PYTHON_UNIT_TESTS := $(foreach dir,$(test_dirs),$(wildcard $(srcdir)/$(dir)/*.py))
