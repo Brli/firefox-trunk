@@ -2,10 +2,10 @@
 # Parent 7ffcb24dae1c27dd8b812d7527df802812b70765
 # User Chris Coulson <chris.coulson@canonical.com>
 
-Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-harness.xul
+Index: firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/browser-harness.xul
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/browser-harness.xul	2013-02-15 09:25:43.231380572 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-harness.xul	2013-02-15 09:26:02.000000000 +0000
+--- firefox-trunk-22.0~a1~hg20130226r122889.orig/testing/mochitest/browser-harness.xul	2013-02-26 09:54:02.520229684 +0000
++++ firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/browser-harness.xul	2013-02-26 09:54:02.512229684 +0000
 @@ -113,29 +113,40 @@
      function browserTest(aTestFile) {
        this.path = aTestFile;
@@ -135,11 +135,11 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-harness
        // Focus our window, to display the results
        window.focus();
  
-Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-test.js
+Index: firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/browser-test.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/browser-test.js	2013-02-15 09:25:43.231380572 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-test.js	2013-02-15 09:25:43.223380572 +0000
-@@ -321,6 +321,7 @@
+--- firefox-trunk-22.0~a1~hg20130226r122889.orig/testing/mochitest/browser-test.js	2013-02-26 09:54:02.520229684 +0000
++++ firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/browser-test.js	2013-02-26 09:54:02.512229684 +0000
+@@ -324,6 +324,7 @@
        }
  
        this.currentTestIndex++;
@@ -147,10 +147,10 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/browser-test.js
        this.execTest();
      }).bind(this));
    },
-Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/runtests.py
+Index: firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/runtests.py
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/runtests.py	2013-02-15 09:25:43.231380572 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/runtests.py	2013-02-15 09:25:43.223380572 +0000
+--- firefox-trunk-22.0~a1~hg20130226r122889.orig/testing/mochitest/runtests.py	2013-02-26 09:54:02.520229684 +0000
++++ firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/runtests.py	2013-02-26 09:54:02.512229684 +0000
 @@ -262,6 +262,16 @@
                      help = "launches tests in immersive browser")
      defaults["immersiveMode"] = False
@@ -168,7 +168,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/runtests.py
      # -h, --help are automatically handled by OptionParser
  
      self.set_defaults(**defaults)
-@@ -677,6 +687,9 @@
+@@ -679,6 +689,9 @@
          self.urlOpts.append("failureFile=%s" % self.getFullPath(options.failureFile))
        if options.runSlower:
          self.urlOpts.append("runSlower=true")
@@ -178,7 +178,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/runtests.py
  
    def cleanup(self, manifest, options):
      """ remove temporary files and profile """
-@@ -848,6 +861,12 @@
+@@ -850,6 +863,12 @@
  
        content += '"' + opt + '": '
        content += jsonString(val)
@@ -191,10 +191,10 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/runtests.py
      content += "}"
  
      with open(os.path.join(options.profilePath, "testConfig.js"), "w") as config:
-Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/SimpleTest.js
+Index: firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/tests/SimpleTest/SimpleTest.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-15 09:25:43.231380572 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-15 09:25:43.227380572 +0000
+--- firefox-trunk-22.0~a1~hg20130226r122889.orig/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-26 09:54:02.520229684 +0000
++++ firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/tests/SimpleTest/SimpleTest.js	2013-02-26 09:54:02.512229684 +0000
 @@ -283,6 +283,9 @@
          if (isError) {
              parentRunner.addFailedTest(url);
@@ -205,7 +205,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
          } else {
              parentRunner.log(msg);
          }
-@@ -1052,6 +1055,12 @@
+@@ -1090,6 +1093,12 @@
  var isDeeply = SimpleTest.isDeeply;
  var info = SimpleTest.info;
  
@@ -218,16 +218,19 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
  var gOldOnError = window.onerror;
  window.onerror = function simpletestOnerror(errorMsg, url, lineNumber) {
      // Log the message.
-Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/TestRunner.js
+Index: firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/tests/SimpleTest/TestRunner.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-15 09:25:43.231380572 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-15 09:25:43.227380572 +0000
-@@ -75,10 +75,13 @@
+--- firefox-trunk-22.0~a1~hg20130226r122889.orig/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-26 09:54:02.520229684 +0000
++++ firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/tests/SimpleTest/TestRunner.js	2013-02-26 10:00:16.548216306 +0000
+@@ -76,6 +76,7 @@
  TestRunner.currentTestURL = "";
  TestRunner.originalTestURL = "";
  TestRunner._urls = [];
 +TestRunner._results = [];
- 
+ TestRunner._lastAssertionCount = 0;
+ TestRunner._expectedMinAsserts = 0;
+ TestRunner._expectedMaxAsserts = 0;
+@@ -83,6 +84,8 @@
  TestRunner.timeout = 5 * 60 * 1000; // 5 minutes.
  TestRunner.maxTimeouts = 4; // halt testing after too many timeouts
  TestRunner.runSlower = false;
@@ -236,7 +239,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
  
  TestRunner._expectingProcessCrash = false;
  
-@@ -180,7 +183,15 @@
+@@ -196,7 +199,15 @@
  **/
  TestRunner.logger = LogController;
  
@@ -252,7 +255,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
      if (TestRunner.logEnabled) {
          TestRunner.logger.log(msg);
      } else {
-@@ -189,6 +200,7 @@
+@@ -205,6 +216,7 @@
  };
  
  TestRunner.error = function(msg) {
@@ -260,7 +263,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
      if (TestRunner.logEnabled) {
          TestRunner.logger.error(msg);
      } else {
-@@ -196,6 +208,12 @@
+@@ -212,6 +224,12 @@
      }
  };
  
@@ -273,7 +276,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
  /**
   * Toggle element visibility
  **/
-@@ -277,6 +295,7 @@
+@@ -293,6 +311,7 @@
  **/
  TestRunner.resetTests = function(listURLs) {
    TestRunner._currentTest = 0;
@@ -281,7 +284,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
    // Reset our "Current-test" line - functionality depends on it
    $("current-test").innerHTML = TestRunner.originalTestURL;
    if (TestRunner.logEnabled)
-@@ -323,6 +342,72 @@
+@@ -339,6 +358,72 @@
    }
  }
  
@@ -354,7 +357,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
  /**
   * Run the next test. If no test remains, calls onComplete().
   **/
-@@ -331,6 +416,8 @@
+@@ -347,6 +432,8 @@
      if (TestRunner._currentTest < TestRunner._urls.length &&
          !TestRunner._haltTests)
      {
@@ -363,7 +366,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
          var url = TestRunner._urls[TestRunner._currentTest];
          TestRunner.currentTestURL = url;
  
-@@ -352,7 +439,11 @@
+@@ -370,7 +457,11 @@
          {
            // No |$('testframe').contentWindow|, so manually update: ...
            // ... the log,
@@ -376,7 +379,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
            // ... the count,
            $("fail-count").innerHTML = 1;
            // ... the indicator.
-@@ -372,9 +463,16 @@
+@@ -390,9 +481,16 @@
            TestRunner.log("SimpleTest FINISHED");
          }
  
@@ -395,7 +398,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
  
          if (TestRunner._currentLoop < TestRunner.repeat) {
            TestRunner._currentLoop++;
-@@ -386,6 +484,10 @@
+@@ -404,6 +502,10 @@
              TestRunner.log("SimpleTest FINISHED");
            }
  
@@ -406,7 +409,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
            if (TestRunner.onComplete)
              TestRunner.onComplete();
         }
-@@ -401,22 +503,23 @@
+@@ -419,32 +521,31 @@
   * This stub is called by SimpleTest when a test is finished.
  **/
  TestRunner.testFinished = function(tests) {
@@ -418,6 +421,17 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
 +        TestRunner.addFailedTest(TestRunner.currentTestURL);
 +    }
 +
+     // Prevent a test from calling finish() multiple times before we
+     // have a chance to unload it.
+     if (TestRunner._currentTest == TestRunner._lastTestFinished) {
+-        TestRunner.error("TEST-UNEXPECTED-FAIL | " +
+-                         TestRunner.currentTestURL +
+-                         " | called finish() multiple times");
++        pushError("called finish() multiple times");
+         return;
+     }
+     TestRunner._lastTestFinished = TestRunner._currentTest;
+ 
      function cleanUpCrashDumpFiles() {
          if (!SpecialPowers.removeExpectedCrashDumpFiles(TestRunner._expectingProcessCrash)) {
 -            TestRunner.error("TEST-UNEXPECTED-FAIL | " +
@@ -439,7 +453,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
              unexpectedCrashDumpFiles.sort().forEach(function(aFilename) {
                  TestRunner.log("TEST-INFO | Found unexpected crash dump file " +
                                 aFilename + ".");
-@@ -426,12 +529,8 @@
+@@ -454,12 +555,8 @@
  
      function runNextTest() {
          if (TestRunner.currentTestURL != TestRunner.getLoadedTestURL()) {
@@ -454,7 +468,7 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
          }
  
          var runtime = new Date().valueOf() - TestRunner._currentTestStartTime;
-@@ -439,6 +538,19 @@
+@@ -467,6 +564,19 @@
                         TestRunner.currentTestURL +
                         " | finished in " + runtime + "ms");
  
@@ -472,12 +486,12 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTes
 +        }
 +
          TestRunner.updateUI(tests);
-         TestRunner._currentTest++;
-         if (TestRunner.runSlower) {
-Index: firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/setup.js
+ 
+         var interstitialURL;
+Index: firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/tests/SimpleTest/setup.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/testing/mochitest/tests/SimpleTest/setup.js	2013-02-15 09:25:43.231380572 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/testing/mochitest/tests/SimpleTest/setup.js	2013-02-15 09:26:02.000000000 +0000
+--- firefox-trunk-22.0~a1~hg20130226r122889.orig/testing/mochitest/tests/SimpleTest/setup.js	2013-02-26 09:54:02.520229684 +0000
++++ firefox-trunk-22.0~a1~hg20130226r122889/testing/mochitest/tests/SimpleTest/setup.js	2013-02-26 09:54:02.516229684 +0000
 @@ -109,6 +109,13 @@
    TestRunner.runSlower = true;
  }
