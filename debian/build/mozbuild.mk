@@ -276,7 +276,7 @@ endif
 make-testsuite: debian/stamp-maketestsuite
 debian/stamp-maketestsuite: debian/stamp-makefile-build
 ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
-	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
+	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
 endif
 	$(MAKE) -C $(MOZ_OBJDIR) package-tests
 	@touch $@
