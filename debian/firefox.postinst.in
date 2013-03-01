@@ -110,13 +110,6 @@ EOM
     finish_rm_conffile "/etc/${MOZ_PKG_NAME}/profile/chrome/userContent-example.css"
 
     finish_mv_conffile "/etc/${MOZ_PKG_NAME}/pref/firefox.js" "/etc/${MOZ_PKG_NAME}/syspref.js"
-
-    if [ -d $MOZ_LIBDIR/plugins ] && [ ! -h $MOZ_LIBDIR/plugins ]; then \
-        rmdir --ignore-fail-on-non-empty $MOZ_LIBDIR/plugins
-    fi
-    if [ ! -e $MOZ_LIBDIR/plugins ]; then
-        ln -s ${MOZ_ADDONDIR}/plugins $MOZ_LIBDIR/plugins
-    fi
 fi
 
 echo "Please restart all running instances of $MOZ_APP_NAME, or you will experience problems."
