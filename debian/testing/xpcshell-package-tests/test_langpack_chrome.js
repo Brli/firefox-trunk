@@ -5,12 +5,18 @@ function run_test()
 {
   Services.prefs.setBoolPref("intl.locale.matchOS", false);
 
-  let appIni = Services.dirsvc.get("CurProcD", Ci.nsIFile);
+  let appIni = Services.dirsvc.get("CurProcD", Ci.nsIFile).parent;
   appIni.append("application.ini");
+  let appIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
+                                                                   Ci.nsIINIParserFactory).createINIParser(appIni);
 
-  let parser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1", Ci.nsIINIParserFactory).createINIParser(appIni);
+  let platformIni = Services.dirsvc.get("GreD", Ci.nsIFile);
+  platformIni.append("platform.ini");
+  let platformIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
+                                                                        Ci.nsIINIParserFactory).createINIParser(platformIni);
 
-  createAppInfo(parser.getString("App", "ID"), parser.getString("App", "Name"), parser.getString("App", "Version"), parser.getString("Gecko", "MaxVersion"));
+  createAppInfo(appIniParser.getString("App", "ID"), appIniParser.getString("App", "Name"),
+                appIniParser.getString("App", "Version"), platformIniParser.getString("Build", "Milestone"));
 
   Cc["@mozilla.org/addons/integration;1"].getService(Ci.nsIObserver).observe(null, "addons-startup", null);
 
