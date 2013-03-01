@@ -43,6 +43,9 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     disabled
     - add d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
     - update debian/patches/series.in
+  * Disable browser_google.js as this fails with our searchplugins, and we
+    have our own tests
+    - update debian/testing/mochitest-chrome.json
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results

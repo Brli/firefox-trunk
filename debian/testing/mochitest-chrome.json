@@ -9,6 +9,7 @@
   "browser/browser/base/content/test/browser_clearplugindata.js": "FAILS",
   "browser/browser/base/content/test/browser_keywordSearch.js": "FAILS UBUNTU-SEARCHPLUGINS",
   "browser/browser/base/content/test/social/browser_social_chatwindow.js": "HANGS",
+  "browser/browser/components/search/test/browser_google.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
   "browser/browser/devtools/debugger/test/browser_dbg_createChrome.js": "FAILS",
   "browser/browser/devtools/inspector/test/browser_inspector_initialization.js": "FAILS",
   "browser/toolkit/mozapps/extensions/test/browser/browser_bug557956.js": "FAILS UBUNTU-EXTENSIONS",
