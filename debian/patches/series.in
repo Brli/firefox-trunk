@@ -24,6 +24,7 @@ test-fixes/xpcshell-libpref-no-writes-to-testdir.patch
 test-fixes/mochitest-content-reset-permissions-when-done.patch
 test-fixes/mochitest-tests-jar-fix.patch
 test-fixes/mochitest-dont-ship-browser-postupdate-test.patch
+test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
 test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
 test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
 test-overrides/reftest-disable-failing-tests.patch

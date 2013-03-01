@@ -39,6 +39,10 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     were moved in to browser/)
     - update debian/firefox.links.in
     - update debian/firefox.postinst.in
+  * Skip browser_pluginCrashCommentAndURL.js on builds with crash reporting
+    disabled
+    - add d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
+    - update debian/patches/series.in
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
