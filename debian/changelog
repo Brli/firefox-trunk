@@ -28,6 +28,10 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     as it requires write access to the application directory
     - update d/p/test-integration/xpchshell-disable-tests-which-need-appdir-write-access.patch
     - update debian/testing/xpcshell-build.ini
+  * Disable telemetry xpcshell tests. Telemetry is not enabled on Ubuntu builds
+    and the test_TelemetryPing.js fails anyway because the HG revision is
+    not embedded in the ping
+    - update d/p/test-integration/xpcshell-disable-failing-tests.patch
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
