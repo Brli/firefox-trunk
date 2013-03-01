@@ -18,6 +18,8 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/series.in
   * Unbreak test_ubuntu_searchplugins.js after the install layout changes
     - update debian/testing/xpcshell-package-tests/xpcshell.ini
+  * Unbreak test_locale_matchOS.js after the install layout changes
+    - update debian/testing/xpcshell-package-tests/test_locale_matchOS_real.js
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
