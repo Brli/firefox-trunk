@@ -1,5 +1,6 @@
 firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
 
+  [ Chris Coulson <chris.coulson@canonical.com> ]
   * Make sure that the 'appname' field of our mozinfo.json is set to
     'firefox' and not 'firefox-trunk' on nightlies, as it breaks browser
     xpcshell tests
@@ -15,6 +16,16 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     fail
     - add d/p/test-overrides/disable-failing-python-tests.patch
     - update debian/patches/series.in
+
+  [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
+  * Allow the autopkgtest harness to specify a location for test results
+    - update debian/tests/crashtest
+    - update debian/tests/jstestbrowser
+    - update debian/tests/mochitest
+    - update debian/tests/reftest
+    - update debian/tests/xpcshell-package-tests
+    - update debian/tests/xpcshell-tests
+    - update debian/build/mozbuild.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 Feb 2013 18:56:12 +0000
 

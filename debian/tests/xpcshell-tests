@@ -1,8 +1,8 @@
 #!/bin/sh
 
 TESTSUITE_DIR=/$($(dirname $0)/../rules echo-MOZ_TESTDIR 2>/dev/null)
+TESTRESULTS_DIR=${ADTRESULTSDIR:-"/tmp/testresults"}
 
 export LC_ALL=en_US.UTF-8
-mkdir -p $(dirname $0)/_results
 
-$TESTSUITE_DIR/run_xpcshell_tests --own-display --own-session-bus --xunit-file $(dirname $0)/_results/xpcshell-tests.xml --xunit-suite-name "xpcshell" --manifest $TESTSUITE_DIR/xpcshell/tests/xpcshell.ini
+$TESTSUITE_DIR/run_xpcshell_tests --own-display --own-session-bus --xunit-file $TESTRESULTS_DIR/xpcshell-tests.xml --xunit-suite-name "xpcshell" --manifest $TESTSUITE_DIR/xpcshell/tests/xpcshell.ini

@@ -1,11 +1,11 @@
 #!/bin/sh
 
 TESTSUITE_DIR=/$($(dirname $0)/../rules echo-MOZ_TESTDIR 2>/dev/null)
+TESTRESULTS_DIR=${ADTRESULTSDIR:-"/tmp/testresults"}
 
 export LC_ALL=en_US.UTF-8
-mkdir -p $(dirname $0)/_results
 
 # Required for js/src/trace-tests/sunspider/check-date-format-tofte.js
 export TZ=:/usr/share/zoneinfo/posix/US/Pacific
 
-$TESTSUITE_DIR/run_reftest --own-display --own-session-bus --xunit-file $(dirname $0)/_results/jstestbrowser.xml --xunit-name "jstestbrowser" --tests-root-dir $TESTSUITE_DIR/jsreftest/tests --extra-profile-file=$TESTSUITE_DIR/jsreftest/tests/user.js $TESTSUITE_DIR/jsreftest/tests/jstests.list
+$TESTSUITE_DIR/run_reftest --own-display --own-session-bus --xunit-file $TESTRESULTS_DIR/jstestbrowser.xml --xunit-name "jstestbrowser" --tests-root-dir $TESTSUITE_DIR/jsreftest/tests --extra-profile-file=$TESTSUITE_DIR/jsreftest/tests/user.js $TESTSUITE_DIR/jsreftest/tests/jstests.list

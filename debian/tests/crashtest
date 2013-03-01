@@ -1,8 +1,8 @@
 #!/bin/sh
 
 TESTSUITE_DIR=/$($(dirname $0)/../rules echo-MOZ_TESTDIR 2>/dev/null)
+TESTRESULTS_DIR=${ADTRESULTSDIR:-"/tmp/testresults"}
 
 export LC_ALL=en_US.UTF-8
-mkdir -p $(dirname $0)/_results
 
-$TESTSUITE_DIR/run_reftest --own-display --own-session-bus --xunit-file $(dirname $0)/_results/crashtest.xml --xunit-name "crashtest" $TESTSUITE_DIR/reftest/tests/testing/crashtest/crashtests.list
+$TESTSUITE_DIR/run_reftest --own-display --own-session-bus --xunit-file $TESTRESULTS_DIR/crashtest.xml --xunit-name "crashtest" $TESTSUITE_DIR/reftest/tests/testing/crashtest/crashtests.list
