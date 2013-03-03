@@ -5,6 +5,8 @@ TESTRESULTS_DIR=${ADTRESULTSDIR:-"/tmp/testresults"}
 
 export LC_ALL=en_US.UTF-8
 
+mkdir -p $TESTRESULTS_DIR
+
 echo "*************************"
 echo "* Running browser tests *"
 echo "*************************"
