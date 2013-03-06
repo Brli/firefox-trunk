@@ -68,6 +68,10 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/xpcshell-tests
     - update debian/build/mozbuild.mk
 
+  [ Drey ]
+  * Use a local favicon in the DuckDuckGo searchplugin 
+    - update debian/searchplugins/en-US/duckduckgo.xml
+
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 Feb 2013 18:56:12 +0000
 
 firefox-trunk (21.0~a1~hg20130218r122221-0ubuntu1) raring; urgency=low
