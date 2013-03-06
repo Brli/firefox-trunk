@@ -53,6 +53,8 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/reftest
     - update debian/tests/xpcshell-package-tests
     - update debian/tests/xpcshell-tests
+  * Don't mark textarea-resize-background.html as failing
+    - update d/p/test-overrides/reftest-disable-failing-tests.patch
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
