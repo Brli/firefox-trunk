@@ -36,9 +36,11 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update d/p/test-fixes/xpcshell-search-fix-const-redeclaration.patch
   * Move the plugins/ symlink underneath browser/ so that these load again
     (fixes plugin related mochitest failures since the application parts
-    were moved in to browser/)
+    were moved in to browser/). Ensure that we still ship a plugins/ symlink
+    in the gredir in the test suite though
     - update debian/firefox.links.in
     - update debian/firefox.postinst.in
+    - update debian/firefox-testsuite.links.in
   * Skip browser_pluginCrashCommentAndURL.js on builds with crash reporting
     disabled
     - add d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
