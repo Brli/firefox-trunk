@@ -1,43 +1,21 @@
-Index: firefox-trunk-21.0~a1~hg20130217r122184/toolkit/components/search/tests/xpcshell/head_search.js
+Index: firefox-trunk-22.0~a1~hg20130306r123930/toolkit/components/search/tests/xpcshell/head_search.js
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130217r122184.orig/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-18 09:44:47.007748218 +0000
-+++ firefox-trunk-21.0~a1~hg20130217r122184/toolkit/components/search/tests/xpcshell/head_search.js	2013-02-18 09:44:47.003748218 +0000
-@@ -1,12 +1,16 @@
- /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
- /* vim:set ts=2 sw=2 sts=2 et: */
- 
--Components.utils.import("resource://gre/modules/Services.jsm");
--Components.utils.import("resource://gre/modules/NetUtil.jsm");
--Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
--Components.utils.import("resource://gre/modules/FileUtils.jsm");
-+const Cu = Components.utils;
-+const Ci = Components.interfaces;
-+const Cr = Components.results;
-+
-+Cu.import("resource://gre/modules/Services.jsm");
-+Cu.import("resource://gre/modules/NetUtil.jsm");
-+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-+Cu.import("resource://gre/modules/FileUtils.jsm");
- 
--Components.utils.import("resource://testing-common/AppInfo.jsm");
-+Cu.import("resource://testing-common/AppInfo.jsm");
- 
- const BROWSER_SEARCH_PREF = "browser.search.";
- const NS_APP_SEARCH_DIR = "SrchPlugns";
-@@ -19,6 +23,44 @@
+--- firefox-trunk-22.0~a1~hg20130306r123930.orig/toolkit/components/search/tests/xpcshell/head_search.js	2013-03-07 22:46:39.736528839 +0000
++++ firefox-trunk-22.0~a1~hg20130306r123930/toolkit/components/search/tests/xpcshell/head_search.js	2013-03-07 22:56:44.604518091 +0000
+@@ -19,6 +19,44 @@
  // Need to create and register a profile folder.
  var gProfD = do_get_profile();
  
 +var provider = {
 +  getFile: function() {
-+    throw Cr.NS_ERROR_FAILURE;
++    throw Components.results.NS_ERROR_FAILURE;
 +  },
 +
 +  getFiles: function(prop) {
 +    if (prop == "XREExtDL") {
 +      return {
 +        getNext: function() {
-+          throw Cr.NS_ERROR_FAILURE;
++          throw Components.results.NS_ERROR_FAILURE;
 +        },
 +        hasMoreElements: function() {
 +          return false;
@@ -47,11 +25,11 @@ Index: firefox-trunk-21.0~a1~hg20130217r122184/toolkit/components/search/tests/x
 +              iid.equals(Ci.nsISupports)) {
 +            return this;
 +          }
-+          throw Cr.NS_ERROR_NO_INTERFACE;
++          throw Components.results.NS_ERROR_NO_INTERFACE;
 +        }
 +      };
 +    }
-+    throw Cr.NS_ERROR_FAILURE;
++    throw Components.results.NS_ERROR_FAILURE;
 +  },
 +
 +  QueryInterface: function(iid) {
@@ -60,7 +38,7 @@ Index: firefox-trunk-21.0~a1~hg20130217r122184/toolkit/components/search/tests/x
 +        iid.equals(Ci.nsISupports)) {
 +      return this;
 +    }
-+    throw Cr.NS_ERROR_NO_INTERFACE;
++    throw Components.results.NS_ERROR_NO_INTERFACE;
 +  }
 +};
 +
@@ -69,12 +47,3 @@ Index: firefox-trunk-21.0~a1~hg20130217r122184/toolkit/components/search/tests/x
  function dumpn(text)
  {
    dump("search test: " + text + "\n");
-@@ -68,7 +110,7 @@
- }
- 
- function  parseJsonFromStream(aInputStream) {
--  const json = Cc["@mozilla.org/dom/json;1"].createInstance(Components.interfaces.nsIJSON);
-+  const json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-   const data = json.decodeFromStream(aInputStream, aInputStream.available());
-   return data;
- }
