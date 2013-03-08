@@ -89,6 +89,15 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Don't run test_nice_plugin_name.js as part of the build whilst the
     failure is investigated
     - update debian/testing/xpcshell-build.ini
+  * Split mochitests in to separate autopkgtest test scripts so that we can
+    propagate error codes from test harness failure without affecting other
+    mochitest stages
+    - update debian/tests/control
+    - update debian/tests/mochitest
+    - add debian/tests/mochitest-browser
+    - add debian/tests/mochitest-chrome
+    - add debian/tests/mochitest-a11y
+    - add debian/tests/mochitest-ipcplugins
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
