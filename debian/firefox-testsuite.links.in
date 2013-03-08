@@ -1,4 +1,3 @@
 @MOZ_LIBDIR@ @MOZ_TESTDIR@/bin
-@MOZ_ADDONDIR@/plugins @MOZ_LIBDIR@/plugins
 @MOZ_TESTDIR@/extensions/specialpowers @MOZ_TESTDIR@/mochitest/extensions/specialpowers
 @MOZ_TESTDIR@/extensions/specialpowers @MOZ_TESTDIR@/reftest/specialpowers

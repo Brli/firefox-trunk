@@ -54,7 +54,8 @@ def main():
   abspath = lambda x: os.path.join(helper.root, x)
 
   DEFAULTS = {
-    '--build-info-json': lambda: abspath('python/mozinfo.json') if os.path.exists(abspath('python/mozinfo.json')) else abspath('xpcshell/mozinfo.json')
+    '--build-info-json': lambda: abspath('python/mozinfo.json') if os.path.exists(abspath('python/mozinfo.json')) else abspath('xpcshell/mozinfo.json'),
+    '--test-plugin-path': lambda: abspath('plugins')
   }
 
   def pre_run_cb(options, args):

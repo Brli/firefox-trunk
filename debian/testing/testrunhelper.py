@@ -81,6 +81,8 @@ class TestRunHelper(OptionParser):
     respawn_args = []
     strip_args = []
 
+    os.putenv('MOZ_PLUGIN_PATH', os.path.join(self.root, 'plugins'))
+
     if self._need_x and (options.wantOwnDisplay or os.getenv('DISPLAY') == None):
       respawn_args.extend(['xvfb-run', '-a', '-s', '-screen 0 1024x768x24 -extension MIT-SCREEN-SAVER'])
       strip_args.append('--own-display')

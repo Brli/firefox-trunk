@@ -1,5 +1,5 @@
 @MOZ_DISTDIR@/test-package-stage/bin/components @MOZ_LIBDIR@
-@MOZ_DISTDIR@/test-package-stage/bin/plugins @MOZ_ADDONDIR@
+@MOZ_DISTDIR@/test-package-stage/bin/plugins @MOZ_TESTDIR@
 @MOZ_DISTDIR@/test-package-stage/bin/certutil @MOZ_LIBDIR@
 @MOZ_DISTDIR@/test-package-stage/bin/pk12util @MOZ_LIBDIR@
 @MOZ_DISTDIR@/test-package-stage/bin/screentopng @MOZ_LIBDIR@

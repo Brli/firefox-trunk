@@ -61,6 +61,12 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - drop d/p/test-fixes/xpcshell-search-fix-const-redeclaration.patch
     - update d/p/test-fixes/xpcshell-search-fix-browser-dirprovider.patch
     - update debian/patches/series.in
+  * Install the test plugins in the testsuite directory so that they
+    aren't visible to the normal browser
+    - update debian/firefox-testsuite.install.in
+    - update debian/firefox-testsuite.links.in
+    - update debian/testing/run_xpcshell_tests.in
+    - update debian/testing/testrunhelper.py
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
