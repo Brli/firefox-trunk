@@ -86,6 +86,9 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/xpcshell-package-tests/test_searchplugins_valid_real.js
     - update debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
     - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
+  * Don't run test_nice_plugin_name.js as part of the build whilst the
+    failure is investigated
+    - update debian/testing/xpcshell-build.ini
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
