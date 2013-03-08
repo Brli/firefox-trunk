@@ -77,6 +77,8 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/xpcshell-package-tests
     - update debian/tests/xpcshell-tests
     - update debian/build/mozbuild.mk
+  * Fix test_ubuntu_useragent.js to work on channels other than Nightly
+    - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
 
   [ Drey ]
   * Use a local favicon in the DuckDuckGo searchplugin (LP: #1120991)
