@@ -67,16 +67,6 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox-testsuite.links.in
     - update debian/testing/run_xpcshell_tests.in
     - update debian/testing/testrunhelper.py
-
-  [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
-  * Allow the autopkgtest harness to specify a location for test results
-    - update debian/tests/crashtest
-    - update debian/tests/jstestbrowser
-    - update debian/tests/mochitest
-    - update debian/tests/reftest
-    - update debian/tests/xpcshell-package-tests
-    - update debian/tests/xpcshell-tests
-    - update debian/build/mozbuild.mk
   * Fix test_ubuntu_useragent.js to work on channels other than Nightly
     - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
   * In test_ubuntu_useragent.js, check for the hardcoded buildid on official
@@ -96,6 +86,16 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/xpcshell-package-tests/test_searchplugins_valid_real.js
     - update debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
     - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
+
+  [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
+  * Allow the autopkgtest harness to specify a location for test results
+    - update debian/tests/crashtest
+    - update debian/tests/jstestbrowser
+    - update debian/tests/mochitest
+    - update debian/tests/reftest
+    - update debian/tests/xpcshell-package-tests
+    - update debian/tests/xpcshell-tests
+    - update debian/build/mozbuild.mk
 
   [ Drey ]
   * Use a local favicon in the DuckDuckGo searchplugin (LP: #1120991)
