@@ -79,6 +79,15 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/mozbuild.mk
   * Fix test_ubuntu_useragent.js to work on channels other than Nightly
     - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
+  * In test_ubuntu_useragent.js, check for the hardcoded buildid on official
+    branded builds, and set up the appinfo with the actual build ID
+    - update debian/testing/xpcshell-package-tests/head_package_tests.js
+    - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
+  * In test_langpack_chrome.js, only test the actual translation of
+    general.useragent.locale on non-nightly builds, as the nightly translations
+    aren't as complete. On nightly builds, just check that the correct locale
+    is selected for the global package
+    - update debian/testing/xpcshell-package-tests/test_langpack_chrome.js
 
   [ Drey ]
   * Use a local favicon in the DuckDuckGo searchplugin (LP: #1120991)

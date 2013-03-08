@@ -48,14 +48,24 @@ Services.dirsvc.registerProvider(provider);
 
 function createAppInfo(id, name, version, platformVersion)
 {
+  let appIni = Services.dirsvc.get("CurProcD", Ci.nsIFile).parent;
+  appIni.append("application.ini");
+  let appIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
+                                                                   Ci.nsIINIParserFactory).createINIParser(appIni);
+
+  let platformIni = Services.dirsvc.get("GreD", Ci.nsIFile);
+  platformIni.append("platform.ini");
+  let platformIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
+                                                                        Ci.nsIINIParserFactory).createINIParser(platformIni);
+
   gXULAppInfo = {
     vendor: "Mozilla",
     name: name,
     ID: id,
     version: version,
-    appBuildID: "20121202",
+    appBuildID: appIniParser.getString("App", "BuildID").slice(0,8),
     platformVersion: platformVersion,
-    platformBuildID: "20121202",
+    platformBuildID: platformIniParser.getString("Build", "BuildID").slice(0,8),
     inSafeMode: false,
     logConsoleErrors: true,
     OS: "XPCShell",
