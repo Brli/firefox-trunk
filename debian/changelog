@@ -88,6 +88,14 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     aren't as complete. On nightly builds, just check that the correct locale
     is selected for the global package
     - update debian/testing/xpcshell-package-tests/test_langpack_chrome.js
+  * Move duplicated code in to one place
+    - update debian/testing/xpcshell-package-tests/head_package_tests.js
+    - update debian/testing/xpcshell-package-tests/test_langpack_chrome.js
+    - update debian/testing/xpcshell-package-tests/test_langpack_load.js
+    - update debian/testing/xpcshell-package-tests/test_locale_matchOS_real.js
+    - update debian/testing/xpcshell-package-tests/test_searchplugins_valid_real.js
+    - update debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
+    - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
 
   [ Drey ]
   * Use a local favicon in the DuckDuckGo searchplugin (LP: #1120991)

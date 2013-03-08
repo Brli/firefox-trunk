@@ -6,18 +6,7 @@ function run_test()
   do_check_true(!!_TEST_SELECTED_LOCALE);
   _XPCSHELL_PROCESS = "child-" + Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment).get("LC_ALL");
 
-  let appIni = Services.dirsvc.get("CurProcD", Ci.nsIFile).parent;
-  appIni.append("application.ini");
-  let appIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
-                                                                   Ci.nsIINIParserFactory).createINIParser(appIni);
-
-  let platformIni = Services.dirsvc.get("GreD", Ci.nsIFile);
-  platformIni.append("platform.ini");
-  let platformIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
-                                                                        Ci.nsIINIParserFactory).createINIParser(platformIni);
-
-  createAppInfo(appIniParser.getString("App", "ID"), appIniParser.getString("App", "Name"),
-                appIniParser.getString("App", "Version"), platformIniParser.getString("Build", "Milestone"));
+  createAppInfo();
 
   Cc["@mozilla.org/addons/integration;1"].getService(Ci.nsIObserver).observe(null, "addons-startup", null);
 

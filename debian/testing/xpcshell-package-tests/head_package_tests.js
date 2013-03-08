@@ -46,30 +46,11 @@ var provider = {
 
 Services.dirsvc.registerProvider(provider);
 
-function createAppInfo(id, name, version, platformVersion)
+var gXULAppInfo;
+
+function createAppInfo(overrides)
 {
-  let appIni = Services.dirsvc.get("CurProcD", Ci.nsIFile).parent;
-  appIni.append("application.ini");
-  let appIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
-                                                                   Ci.nsIINIParserFactory).createINIParser(appIni);
-
-  let platformIni = Services.dirsvc.get("GreD", Ci.nsIFile);
-  platformIni.append("platform.ini");
-  let platformIniParser = Components.manager.getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
-                                                                        Ci.nsIINIParserFactory).createINIParser(platformIni);
-
   gXULAppInfo = {
-    vendor: "Mozilla",
-    name: name,
-    ID: id,
-    version: version,
-    appBuildID: appIniParser.getString("App", "BuildID").slice(0,8),
-    platformVersion: platformVersion,
-    platformBuildID: platformIniParser.getString("Build", "BuildID").slice(0,8),
-    inSafeMode: false,
-    logConsoleErrors: true,
-    OS: "XPCShell",
-    XPCOMABI: "noarch-spidermonkey",
     invalidateCachesOnRestart: function invalidateCachesOnRestart() {},
 
     QueryInterface: function QueryInterface(iid) {
@@ -82,6 +63,47 @@ function createAppInfo(id, name, version, platformVersion)
       throw Cr.NS_ERROR_NO_INTERFACE;
     }
   };
+
+  const APP = 0;
+  const PLATFORM = 1;
+
+  let parsers = [];
+
+  let appIni = Services.dirsvc.get("CurProcD", Ci.nsIFile).parent;
+  appIni.append("application.ini");
+  parsers.push(Components.manager
+                         .getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
+                                                     Ci.nsIINIParserFactory).createINIParser(appIni));
+
+  let platformIni = Services.dirsvc.get("GreD", Ci.nsIFile);
+  platformIni.append("platform.ini");
+  parsers.push(Components.manager
+                         .getClassObjectByContractID("@mozilla.org/xpcom/ini-parser-factory;1",
+                                                     Ci.nsIINIParserFactory).createINIParser(platformIni));
+
+  const DEFAULTS = {
+    vendor: { ini: APP, section: "App", key: "Vendor" },
+    name: { ini: APP, section: "App", key: "Name" },
+    ID: { ini: APP, section: "App", key: "ID" },
+    version: { ini: APP, section: "App", key: "Version" },
+    appBuildID: { ini: APP, section: "App", key: "BuildID" },
+    platformVersion: { ini: PLATFORM, section: "Build", key: "Milestone" },
+    platformBuildID: { ini: PLATFORM, section: "Build", key: "BuildID" },
+    inSafeMode: false,
+    logConsoleErrors: true,
+    OS: "XPCShell",
+    XPCOMABI: "noarch-spidermonkey",
+  };
+
+  Object.keys(DEFAULTS).forEach(function(prop) {
+    if (typeof(overrides) == "object" && prop in overrides) {
+      gXULAppInfo[prop] = overrides[prop];
+    } else if (typeof(DEFAULTS[prop]) == "object") {
+      gXULAppInfo[prop] = parsers[DEFAULTS[prop].ini].getString(DEFAULTS[prop].section, DEFAULTS[prop].key);
+    } else {
+      gXULAppInfo[prop] = DEFAULTS[prop];
+    }
+  });
 
   var XULAppInfoFactory = {
     createInstance: function (outer, iid) {

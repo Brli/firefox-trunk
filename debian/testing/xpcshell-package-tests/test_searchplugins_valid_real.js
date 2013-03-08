@@ -5,7 +5,7 @@ function run_test()
 
   //Services.prefs.setBoolPref("browser.search.log", true);
   Services.prefs.setCharPref("general.useragent.locale", _SEARCHPLUGIN_TEST_LOCALE);
-  createAppInfo("xpcshell@tests.mozilla.org", "XPCShell", "1", "1");
+  createAppInfo({id: "xpcshell@tests.mozilla.org", version: "1", platformVersion: "1"});
 
   let expected = 0;
 
