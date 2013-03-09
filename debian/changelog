@@ -98,6 +98,8 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - add debian/tests/mochitest-chrome
     - add debian/tests/mochitest-a11y
     - add debian/tests/mochitest-ipcplugins
+  * Fix an exception that caused mochitests to hang after hitting failures
+    - update d/p/test-integration/mochitest-output-junit-xml.patch
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
