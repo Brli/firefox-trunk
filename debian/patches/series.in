@@ -29,3 +29,4 @@ test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
 test-overrides/reftest-disable-failing-tests.patch
 test-overrides/xpcshell-disable-failing-tests.patch
 test-overrides/disable-failing-python-tests.patch
+test-fixes/crashtest-no-network-access.patch

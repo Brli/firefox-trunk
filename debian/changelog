@@ -100,6 +100,9 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - add debian/tests/mochitest-ipcplugins
   * Fix an exception that caused mochitests to hang after hitting failures
     - update d/p/test-integration/mochitest-output-junit-xml.patch
+  * Don't access the network from 395609.xul to see if it fixes a hang
+    - add d/p/test-fixes/crashtest-no-network-access.patch
+    - update debian/patches/series.in
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
