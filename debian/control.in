@@ -188,7 +188,8 @@ Depends: ${shlibs:Depends},
 	ttf-arphic-ukai,
 	fonts-nanum,
 	fonts-nanum-coding,
-	fonts-unfonts-core
+	fonts-unfonts-core,
+	ttf-liberation
 Provides: ${app:Provides}
 Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - testsuite

@@ -103,6 +103,9 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Don't access the network from 395609.xul to see if it fixes a hang
     - add d/p/test-fixes/crashtest-no-network-access.patch
     - update debian/patches/series.in
+  * Make the testsuite depend on ttf-liberation to fix a mochitest
+    failure in browser_fontinspector.js
+    - update debian/control.in
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
