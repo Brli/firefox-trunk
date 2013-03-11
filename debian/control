@@ -192,7 +192,9 @@ Depends: ${shlibs:Depends},
 	ttf-liberation,
 	gnome-session,
 	gnome-settings-daemon,
-	dpkg-dev
+	dpkg-dev,
+	ubuntu-settings,
+	light-themes
 Provides: ${app:Provides}
 Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - testsuite

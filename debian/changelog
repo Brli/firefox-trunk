@@ -130,6 +130,8 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/xpcshell-tests
   * We need dpkg-dev to run the autopkgtests
     - update debian/control.in
+  * Make the testsuite depend on ubuntu-settings and light-themes
+    - update debian/control.in
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
