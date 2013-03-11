@@ -109,6 +109,15 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Disable test_notifications_popup.html for now until we have time to
     investigate why it hangs
     - update debian/testing/mochitest.json
+  * Run tests that need a display in an actual session with
+    gnome-settings-daemon running (plus a WM):
+    - update debian/testing/testrunhelper.py
+    - update debian/firefox-testsuite.install.in
+    - add debian/testing/run-test.desktop
+    - update debian/testing/run_mochitest.in
+    - update debian/testing/run_reftest.in
+    - update debian/testing/run_xpcshell_tests.in
+    - update debian/control.in
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results

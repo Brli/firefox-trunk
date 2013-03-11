@@ -38,7 +38,7 @@ class XPCShellTestsHelper(TestRunHelper):
                            lambda g: g['XPCShellOptions'](),
                            pass_args=PASSTHROUGH_ARGS,
                            paths=[], root=root,
-                           need_x=True, need_dbus=True)
+                           need_x=True)
 
     self.add_option('--harness-root-dir',
                     dest='root',

@@ -189,7 +189,9 @@ Depends: ${shlibs:Depends},
 	fonts-nanum,
 	fonts-nanum-coding,
 	fonts-unfonts-core,
-	ttf-liberation
+	ttf-liberation,
+	gnome-session,
+	gnome-settings-daemon
 Provides: ${app:Provides}
 Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - testsuite

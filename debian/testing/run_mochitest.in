@@ -30,7 +30,7 @@ class MochitestHelper(TestRunHelper):
                            lambda g: g['MochitestOptions'](g['Automation'](), g['__file__']),
                            pass_args=PASSTHROUGH_ARGS,
                            root='/@MOZ_TESTDIR@',
-                           need_x=True, need_dbus=True, need_wm=True)
+                           need_x=True)
 
     self.add_option('--no-autorun',
                     action='store_true', dest='noAutorun', default=False,

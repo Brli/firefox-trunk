@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Run Testsuite
+Exec=sh -c 'sleep 5; $UBUNTU_MOZ_TEST_RUNNER $UBUNTU_MOZ_TEST_ARGS'
+Terminal=false
+Type=Application
+Categories=

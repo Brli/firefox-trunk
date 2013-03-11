@@ -23,7 +23,7 @@ class ReftestHelper(TestRunHelper):
                            lambda g: g['ReftestOptions'](g['Automation']()),
                            pass_args=PASSTHROUGH_ARGS,
                            root='/@MOZ_TESTDIR@',
-                           need_x=True, need_dbus=True)
+                           need_x=True)
 
 def main():
   DEFAULTS = {
