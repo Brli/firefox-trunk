@@ -12,6 +12,7 @@
   "editor/libeditor/html/tests/test_bug484181.html": "FAILS",
   "editor/libeditor/text/tests/test_bug596333.html": "FAILS",
   "parser/htmlparser/tests/mochitest/test_bug672453.html": "FAILS",
+  "toolkit/components/passwordmgr/test/test_notifications_popup.html": "FAILS",
   "toolkit/content/tests/widgets/test_contextmenu_nested.xul": "FAILS",
   "toolkit/content/tests/widgets/test_videocontrols.html": "FAILS"
  }

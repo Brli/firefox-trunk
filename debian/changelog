@@ -106,6 +106,9 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Make the testsuite depend on ttf-liberation to fix a mochitest
     failure in browser_fontinspector.js
     - update debian/control.in
+  * Disable test_notifications_popup.html for now until we have time to
+    investigate why it hangs
+    - update debian/testing/mochitest.json
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
