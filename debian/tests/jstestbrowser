@@ -11,4 +11,4 @@ export LC_ALL=en_US.UTF-8
 export TZ=:/usr/share/zoneinfo/posix/US/Pacific
 
 mkdir -p $TESTRESULTS_DIR
-$TESTSUITE_DIR/run_reftest --own-display --own-session-bus --xunit-file $TESTRESULTS_DIR/jstestbrowser.xml --xunit-name "jstestbrowser" --tests-root-dir $TESTSUITE_DIR/jsreftest/tests --extra-profile-file=$TESTSUITE_DIR/jsreftest/tests/user.js $TESTSUITE_DIR/jsreftest/tests/jstests.list
+$TESTSUITE_DIR/run_reftest --own-session --xunit-file $TESTRESULTS_DIR/jstestbrowser.xml --xunit-name "jstestbrowser" --tests-root-dir $TESTSUITE_DIR/jsreftest/tests --extra-profile-file=$TESTSUITE_DIR/jsreftest/tests/user.js $TESTSUITE_DIR/jsreftest/tests/jstests.list

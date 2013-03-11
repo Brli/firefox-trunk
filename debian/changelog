@@ -118,6 +118,16 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/run_reftest.in
     - update debian/testing/run_xpcshell_tests.in
     - update debian/control.in
+    - update debian/tests/mochitest
+    - update debian/tests/mochitest-browser
+    - update debian/tests/mochitest-chrome
+    - update debian/tests/mochitest-a11y
+    - update debian/tests/mochitest-ipcplugins
+    - update debian/tests/crashtest
+    - update debian/tests/jstestbrowser
+    - update debian/tests/reftest
+    - update debian/tests/xpcshell-package-tests
+    - update debian/tests/xpcshell-tests
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results

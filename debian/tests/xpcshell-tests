@@ -8,4 +8,4 @@ TESTRESULTS_DIR=${ADTRESULTSDIR:-"/tmp/testresults"}
 export LC_ALL=en_US.UTF-8
 
 mkdir -p $TESTRESULTS_DIR
-$TESTSUITE_DIR/run_xpcshell_tests --own-display --own-session-bus --xunit-file $TESTRESULTS_DIR/xpcshell-tests.xml --xunit-suite-name "xpcshell" --manifest $TESTSUITE_DIR/xpcshell/tests/xpcshell.ini
+$TESTSUITE_DIR/run_xpcshell_tests --own-session --xunit-file $TESTRESULTS_DIR/xpcshell-tests.xml --xunit-suite-name "xpcshell" --manifest $TESTSUITE_DIR/xpcshell/tests/xpcshell.ini
