@@ -142,6 +142,9 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - remove d/p/test-integration/mochitest-output-junit-xml.patch
     - add d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/series.in
+  * Don't mark layout/reftests/mathml/mfenced-10.html as random, as it
+    appears to actually pass
+    - update d/p/test-overrides/reftest-disable-failing-tests.patch
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results

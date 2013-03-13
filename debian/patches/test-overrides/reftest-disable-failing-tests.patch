@@ -1,7 +1,7 @@
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bugs/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/bugs/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bugs/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/bugs/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bugs/reftest.list	2013-03-13 17:38:38.172494286 +0000
 @@ -56,9 +56,9 @@
  fails == 25888-3l-block.html 25888-3l-ref.html # Bug 25888
  fails == 25888-3r-block.html 25888-3r-ref.html # Bug 25888
@@ -49,8 +49,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bugs/reftest.list
  fails-if(Android) == 625409-1.html 625409-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/first-letter/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/first-letter/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/first-letter/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/first-letter/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/first-letter/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -35,7 +35,7 @@
  != 229764-1.html 229764-ref.html
  == 229764-2.html 229764-ref.html
@@ -62,21 +62,21 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/first-letter/reft
  fails-if(!cocoaWidget) == 329069-5.html 329069-5-ref.html # bug 603710
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/mathml/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/mathml/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/mathml/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/mathml/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/mathml/reftest.list	2013-03-13 17:40:56.608491826 +0000
 @@ -29,7 +29,7 @@
  == mfenced-7.html mfenced-7-ref.html
  != mfenced-8.html mfenced-8-ref.html
  == mfenced-9.html mfenced-9-ref.html
 -fails-if(winWidget) == mfenced-10.html mfenced-10-ref.html
-+random == mfenced-10.html mfenced-10-ref.html
++== mfenced-10.html mfenced-10-ref.html
  == mi-mathvariant-1.xhtml mi-mathvariant-1-ref.xhtml
  == mi-mathvariant-2.xhtml mi-mathvariant-2-ref.xhtml
  != non-spacing-accent-1.xhtml non-spacing-accent-1-ref.xhtml
 Index: firefox-trunk-22.0~a1~hg20130313r124504/parser/htmlparser/tests/reftest/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/parser/htmlparser/tests/reftest/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/parser/htmlparser/tests/reftest/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/parser/htmlparser/tests/reftest/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/parser/htmlparser/tests/reftest/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -1,5 +1,5 @@
  == bug535530-1.html bug535530-1-ref.html
 -== view-source:bug535530-2.html bug535530-2-ref.html
@@ -86,8 +86,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/parser/htmlparser/tests/reftest/r
  == bug582788-1.html bug582788-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/text/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/text/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -106,7 +106,7 @@
  == wordbreak-1.html wordbreak-1-ref.html
  == wordbreak-2.html wordbreak-2-ref.html
@@ -201,8 +201,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text/reftest.list
 +skip == auto-hyphenation-uk-1.html auto-hyphenation-uk-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/editor/reftests/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/editor/reftests/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/editor/reftests/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/editor/reftests/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/editor/reftests/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -17,46 +17,46 @@
  == emptypasswd-1.html emptypasswd-ref.html
  == emptypasswd-2.html emptypasswd-ref.html
@@ -298,8 +298,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/editor/reftests/reftest.list
 +fails needs-focus != spellcheck-superscript-2.html spellcheck-superscript-2-ref.html # bug 783658
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/font-face/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/font-face/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/font-face/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/font-face/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/font-face/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -27,8 +27,8 @@
  # assumes AAT fonts are only supported on MacOS
  skip-if(B2G) random-if(cocoaWidget) HTTP(..) == src-list-format-7.html src-list-format-2-ref.html
@@ -322,8 +322,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/font-face/reftest
  skip-if(B2G) HTTP(..) == synthetic-weight-style.html synthetic-weight-style-ref.html # bug 773482
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text-overflow/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/text-overflow/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text-overflow/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/text-overflow/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text-overflow/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -7,18 +7,18 @@
  fuzzy-if(OSX==10.8,1,1) HTTP(..) == anonymous-block.html anonymous-block-ref.html
  skip-if(B2G) HTTP(..) == false-marker-overlap.html false-marker-overlap-ref.html
@@ -349,8 +349,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/text-overflow/ref
  fuzzy(1,702) skip-if(Android||B2G) HTTP(..) == xulscroll.html xulscroll-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/box-shadow/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/box-shadow/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/box-shadow/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/box-shadow/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/box-shadow/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -11,7 +11,7 @@
  == boxshadow-rounding.html boxshadow-rounding-ref.html
  fails-if(Android) == boxshadow-button.html boxshadow-button-ref.html
@@ -362,8 +362,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/box-shadow/reftes
  HTTP(..) == boxshadow-dynamic.xul boxshadow-dynamic-ref.xul
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/flexbox/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/flexbox/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/flexbox/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/flexbox/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/flexbox/reftest.list	2013-03-13 17:38:38.176494286 +0000
 @@ -15,7 +15,7 @@
  fails == flexbox-align-self-baseline-horiz-2.xhtml  flexbox-align-self-baseline-horiz-2-ref.xhtml # bug 793456, and possibly others
  # This one fails on windows R (but not Ru, strangely). On Windows R, the
@@ -375,8 +375,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/flexbox/reftest.l
  # builds) until we enable the flexbox pref in those builds in bug 841876:
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bidi/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/bidi/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bidi/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/bidi/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bidi/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -42,10 +42,10 @@
  == unicode-bidi-plaintext-textarea-2.html unicode-bidi-plaintext-textarea-ref.html
  == unicode-bidi-plaintext-textarea-3.html unicode-bidi-plaintext-textarea-ref.html
@@ -401,8 +401,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/bidi/reftest.list
  == 779003-1-dynamic.html 779003-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/counters/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/counters/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/counters/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/counters/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/counters/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -57,7 +57,7 @@
  == t120403-content-none-00-c-test.html t120403-content-none-00-c-reference.html
  == t120403-display-none-00-c-test.html t120403-display-none-00-c-reference.html
@@ -414,8 +414,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/counters/reftest.
  == counter-reset-integer-range.html counter-reset-integer-range-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/list-item/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/list-item/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/list-item/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/list-item/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/list-item/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -1,4 +1,4 @@
 -fuzzy-if(OSX==10.8,55,4) == numbering-1.html numbering-1-ref.html
 +fuzzy(7,1) == numbering-1.html numbering-1-ref.html
@@ -424,8 +424,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/list-item/reftest
  asserts(1) == ol-reversed-1b.html ol-reversed-1-ref.html # bug 478135
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/selection/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/selection/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/selection/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/selection/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/selection/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -31,6 +31,6 @@
  random-if(Android||B2G) fails-if(cocoaWidget) == themed-widget.html themed-widget-ref.html
  == addrange-1.html addrange-ref.html
@@ -436,8 +436,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/selection/reftest
  == dom-mutations.html dom-mutations-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/svg/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/svg/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/svg/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/svg/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/svg/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -289,7 +289,7 @@
  == text-layout-07.svg text-layout-07-ref.svg
  pref(svg.text.css-frames.enabled,true) == text-layout-08.svg text-layout-08-ref.svg
@@ -449,8 +449,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/svg/reftest.list
  == stroke-dasharray-and-pathLength-01.svg pass.svg
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/table-anonymous-boxes/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-13 09:08:25.317038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -27,7 +27,7 @@
  == 372641-1c.xhtml 372641-1-ref.xhtml
  == 372649-1.html 372649-1-ref.html
@@ -462,8 +462,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/table-anonymous-b
  == 407115-1.html 407115-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/xul/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/xul/reftest.list	2013-03-13 09:08:25.321038240 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/xul/reftest.list	2013-03-13 09:08:25.321038240 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/xul/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/xul/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -4,4 +4,4 @@
  random-if(Android||B2G) fails-if(winWidget) == menulist-shrinkwrap-2.xul menulist-shrinkwrap-2-ref.xul
  == textbox-overflow-1.xul textbox-overflow-1-ref.xul # for bug 749658
@@ -472,8 +472,8 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/xul/reftest.list
 +fuzzy(1,2) == accesskey.xul accesskey-ref.xul
 Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/transform-3d/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/transform-3d/reftest.list	2013-03-13 02:14:49.000000000 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/transform-3d/reftest.list	2013-03-13 09:09:36.473036976 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/reftests/transform-3d/reftest.list	2013-03-13 17:38:38.184494286 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/layout/reftests/transform-3d/reftest.list	2013-03-13 17:38:38.180494286 +0000
 @@ -33,8 +33,8 @@
  skip-if(B2G) == preserve3d-4a.html green-rect.html
  == preserve3d-5a.html preserve3d-5-ref.html
