@@ -132,6 +132,14 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control.in
   * Make the testsuite depend on ubuntu-settings and light-themes
     - update debian/control.in
+  * Drop the JUnit XML changes from the mochitest and reftest addons
+    and add this support to automation.py instead. This avoids duplication,
+    means we only need 1 patch and makes it possible to add all types of log
+    messages to the results (eg, screenshots of hung tests)
+    - remove d/p/test-integration/reftest-output-junit-xml.patch
+    - remove d/p/test-integration/mochitest-output-junit-xml.patch
+    - add d/p/test-integration/automation-output-junit-xml.patch
+    - update debian/patches/series.in
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
