@@ -12,6 +12,7 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches
     - update d/p/test-integration/xpcshell-output-valid-junit-xml.patch
     - update d/p/test-integration/mochitest-output-junit-xml.patch
+    - update d/p/test-overrides/reftest-disable-failing-tests.patch
   * Temporarily disable tests in python/mozbuild/mozpack/tests, as they
     fail
     - add d/p/test-overrides/disable-failing-python-tests.patch
