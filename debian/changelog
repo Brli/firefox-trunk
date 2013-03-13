@@ -128,6 +128,7 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/reftest
     - update debian/tests/xpcshell-package-tests
     - update debian/tests/xpcshell-tests
+    - update d/p/test-overrides/reftest-disable-failing-tests.patch
   * We need dpkg-dev to run the autopkgtests
     - update debian/control.in
   * Make the testsuite depend on ubuntu-settings and light-themes
