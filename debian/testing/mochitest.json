@@ -6,6 +6,8 @@
   "content/media/test/test_a4_tone.html": "FAILS",
   "docshell/test/navigation/test_bug13871.html": "FAILS",
   "docshell/test/navigation/test_not-opener.html": "FAILS",
+  "dom/plugins/test/test_crashing.html": "FAILS",
+  "dom/plugins/test/test_hanging.html": "FAILS",
   "dom/tests/mochitest/bugs/test_bug458091.html": "FAILS",
   "dom/tests/mochitest/geolocation/": "FAILS",
   "editor/libeditor/html/tests/test_bug432225.html": "FAILS",
