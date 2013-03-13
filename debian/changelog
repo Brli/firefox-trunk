@@ -148,6 +148,9 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Skip dom/plugins/test/test_{crashing,hanging}.html for now,
     as they don't seem to generate a minidump as expected
     - update debian/testing/mochitest.json
+  * Disable crashreporter tests that require write access to the test
+    directory
+    - update d/p/test-overrides/xpcshell-disable-failing-tests.patch
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results

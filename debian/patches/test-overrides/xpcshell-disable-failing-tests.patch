@@ -1,7 +1,7 @@
-Index: firefox-trunk-22.0~a1~hg20130301r123350/uriloader/exthandler/tests/unit/xpcshell.ini
+Index: firefox-trunk-22.0~a1~hg20130313r124504/uriloader/exthandler/tests/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/uriloader/exthandler/tests/unit/xpcshell.ini	2013-03-01 13:43:40.249629123 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/uriloader/exthandler/tests/unit/xpcshell.ini	2013-03-01 13:43:40.229629124 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/uriloader/exthandler/tests/unit/xpcshell.ini	2013-03-13 19:58:42.780344946 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/uriloader/exthandler/tests/unit/xpcshell.ini	2013-03-13 19:58:42.772344947 +0000
 @@ -5,6 +5,5 @@
  [test_getTypeFromExtension_ext_to_type_mapping.js]
  [test_getTypeFromExtension_with_empty_Content_Type.js]
@@ -10,10 +10,10 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/uriloader/exthandler/tests/unit/x
 -fail-if = os == "android"
 +fail-if = true
  [test_punycodeURIs.js]
-Index: firefox-trunk-22.0~a1~hg20130301r123350/extensions/cookie/test/unit/xpcshell.ini
+Index: firefox-trunk-22.0~a1~hg20130313r124504/extensions/cookie/test/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/extensions/cookie/test/unit/xpcshell.ini	2013-03-01 13:43:40.249629123 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/extensions/cookie/test/unit/xpcshell.ini	2013-03-01 13:43:40.233629123 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/extensions/cookie/test/unit/xpcshell.ini	2013-03-13 19:58:42.780344946 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/extensions/cookie/test/unit/xpcshell.ini	2013-03-13 19:58:42.776344947 +0000
 @@ -7,6 +7,8 @@
  [test_bug667087.js]
  [test_cookies_async_failure.js]
@@ -23,10 +23,10 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/extensions/cookie/test/unit/xpcsh
  [test_cookies_privatebrowsing.js]
  [test_cookies_profile_close.js]
  [test_cookies_read.js]
-Index: firefox-trunk-22.0~a1~hg20130301r123350/services/sync/tests/unit/xpcshell.ini
+Index: firefox-trunk-22.0~a1~hg20130313r124504/services/sync/tests/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/services/sync/tests/unit/xpcshell.ini	2013-03-01 13:43:40.249629123 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/services/sync/tests/unit/xpcshell.ini	2013-03-01 13:43:40.237629123 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/services/sync/tests/unit/xpcshell.ini	2013-03-13 19:58:42.780344946 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/services/sync/tests/unit/xpcshell.ini	2013-03-13 19:58:42.776344947 +0000
 @@ -136,8 +136,8 @@
  [test_history_engine.js]
  [test_history_store.js]
@@ -38,10 +38,10 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/services/sync/tests/unit/xpcshell
  [test_places_guid_downgrade.js]
  [test_password_store.js]
  [test_password_tracker.js]
-Index: firefox-trunk-22.0~a1~hg20130301r123350/toolkit/components/downloads/test/unit/xpcshell.ini
+Index: firefox-trunk-22.0~a1~hg20130313r124504/toolkit/components/downloads/test/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/toolkit/components/downloads/test/unit/xpcshell.ini	2013-03-01 13:43:40.249629123 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/toolkit/components/downloads/test/unit/xpcshell.ini	2013-03-01 13:43:40.241629123 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/toolkit/components/downloads/test/unit/xpcshell.ini	2013-03-13 19:58:42.780344946 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/toolkit/components/downloads/test/unit/xpcshell.ini	2013-03-13 19:58:42.776344947 +0000
 @@ -16,8 +16,8 @@
  skip-if = os == "android"
  [test_download_manager.js]
@@ -53,10 +53,10 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/toolkit/components/downloads/test
  [test_guid.js]
  [test_history_expiration.js]
  [test_offline_support.js]
-Index: firefox-trunk-22.0~a1~hg20130301r123350/dom/tests/unit/xpcshell.ini
+Index: firefox-trunk-22.0~a1~hg20130313r124504/dom/tests/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/dom/tests/unit/xpcshell.ini	2013-03-01 13:43:40.249629123 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/dom/tests/unit/xpcshell.ini	2013-03-01 13:43:40.245629123 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/dom/tests/unit/xpcshell.ini	2013-03-13 19:58:42.780344946 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/dom/tests/unit/xpcshell.ini	2013-03-13 19:58:42.776344947 +0000
 @@ -5,8 +5,8 @@
  [test_bug319968.js]
  [test_bug465752.js]
@@ -68,10 +68,10 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/dom/tests/unit/xpcshell.ini
  [test_geolocation_timeout.js]
  [test_geolocation_timeout_wrap.js]
  skip-if = os == "mac"
-Index: firefox-trunk-22.0~a1~hg20130301r123350/toolkit/components/telemetry/tests/unit/xpcshell.ini
+Index: firefox-trunk-22.0~a1~hg20130313r124504/toolkit/components/telemetry/tests/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/toolkit/components/telemetry/tests/unit/xpcshell.ini	2013-03-01 02:17:22.000000000 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/toolkit/components/telemetry/tests/unit/xpcshell.ini	2013-03-01 13:45:11.561625857 +0000
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/toolkit/components/telemetry/tests/unit/xpcshell.ini	2013-03-13 19:58:42.780344946 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/toolkit/components/telemetry/tests/unit/xpcshell.ini	2013-03-13 19:58:42.776344947 +0000
 @@ -3,8 +3,14 @@
  tail = 
  
@@ -88,4 +88,34 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/toolkit/components/telemetry/test
 +skip-if = true
  [test_TelemetryStopwatch.js]
 +# Telemetry is disabled on Ubuntu
++skip-if = true
+Index: firefox-trunk-22.0~a1~hg20130313r124504/toolkit/crashreporter/test/unit/xpcshell.ini
+===================================================================
+--- firefox-trunk-22.0~a1~hg20130313r124504.orig/toolkit/crashreporter/test/unit/xpcshell.ini	2013-03-13 02:19:27.000000000 +0000
++++ firefox-trunk-22.0~a1~hg20130313r124504/toolkit/crashreporter/test/unit/xpcshell.ini	2013-03-13 20:00:42.220342824 +0000
+@@ -3,18 +3,21 @@
+ tail = 
+ 
+ [test_crash_moz_crash.js]
++skip-if = true
+ [test_crash_purevirtual.js]
++skip-if = true
+ [test_crash_runtimeabort.js]
++skip-if = true
+ [test_crash_oom.js]
+-skip-if = os == 'win' && debug
++skip-if = true
+ 
+ [test_crashreporter.js]
+ [test_crashreporter_crash.js]
++skip-if = true
+ [test_crashreporter_crash_profile_lock.js]
++skip-if = true
+ [test_override_exception_handler.js]
+ run-if = os == 'win'
+ 
+ [test_crashreporter_appmem.js]
+-run-if = os == 'win' || os == 'linux'
+-# we need to skip this due to bug 838613
+-skip-if = os=='linux' && bits==32
 +skip-if = true
