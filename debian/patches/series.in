@@ -4,7 +4,6 @@ allow-lockPref-everywhere.patch
 ubuntu-ua-string-changes.patch
 dont-include-hyphenation-patterns.patch
 dont-override-general-useragent-locale.patch
-fix-makefile-substitution-bug.patch
 webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
 unity-menubar.patch
