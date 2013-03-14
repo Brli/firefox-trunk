@@ -1,3 +1,1 @@
-@MOZ_LIBDIR@ @MOZ_TESTDIR@/bin
-@MOZ_TESTDIR@/extensions/specialpowers @MOZ_TESTDIR@/mochitest/extensions/specialpowers
-@MOZ_TESTDIR@/extensions/specialpowers @MOZ_TESTDIR@/reftest/specialpowers
+@MOZ_LIBDIR@ @MOZ_LIBDIR@/testing/bin

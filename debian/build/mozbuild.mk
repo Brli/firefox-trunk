@@ -79,7 +79,6 @@ MOZ_INCDIR		:= usr/include/$(MOZ_APP_NAME)
 MOZ_IDLDIR		:= usr/share/idl/$(MOZ_APP_NAME)
 MOZ_SDKDIR		:= usr/lib/$(MOZ_APP_NAME)-devel
 MOZ_ADDONDIR		:= usr/lib/$(MOZ_APP_NAME)-addons
-MOZ_TESTDIR		:= usr/lib/$(MOZ_APP_NAME)-testsuite
 
 MOZ_APP_SUBDIR	?=
 
@@ -188,7 +187,7 @@ MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -D
 		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILEDIR="$(MOZ_PROFILEDIR)" \
 		-DMOZ_PKG_BASENAME="$(MOZ_PKG_BASENAME)" -DMOZ_DEFAULT_PROFILEDIR="$(MOZ_DEFAULT_PROFILEDIR)" \
 		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DMOZ_DEFAULT_APP_BASENAME="$(MOZ_DEFAULT_APP_BASENAME)" \
-		-DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)" -DMOZ_TESTDIR="$(MOZ_TESTDIR)"
+		-DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)"
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 MOZ_DEFINES += -DMOZ_ENABLE_BREAKPAD
@@ -279,6 +278,10 @@ ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
 	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
 endif
 	$(MAKE) -C $(MOZ_OBJDIR) package-tests
+ifneq (,$(wildcard debian/testing/extra))
+	cd debian/testing/extra; \
+		zip -rq9D $(CURDIR)/debian/extra.test.zip *
+endif
 	@touch $@
 
 make-langpack-xpis: $(foreach target,$(shell sed -n 's/\#.*//;/^$$/d;s/\([^\:]*\)\:\?.*/\1/ p' < $(CURDIR)/debian/config/locales.shipped),debian/stamp-make-langpack-xpi-$(target))
@@ -540,5 +543,6 @@ clean:: debian/tests/control
 	rm -f debian/searchplugin*.list
 	rm -f mozconfig
 	rm -rf debian/_virtualenv
+	rm -f debian/extra.test.zip
 
 .PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales get-orig-source create-virtualenv

@@ -29,7 +29,6 @@ class MochitestHelper(TestRunHelper):
     TestRunHelper.__init__(self, 'mochitest/runtests.py',
                            lambda g: g['MochitestOptions'](g['Automation'](), g['__file__']),
                            pass_args=PASSTHROUGH_ARGS,
-                           root='/@MOZ_TESTDIR@',
                            need_x=True)
 
     self.add_option('--no-autorun',
@@ -41,7 +40,7 @@ class MochitestHelper(TestRunHelper):
 
 def main():
   DEFAULTS = {
-    '--appname': lambda: os.path.join(helper.root, 'bin', '@MOZ_APP_NAME@'),
+    '--appname': lambda: os.path.join(helper.xredir, '@MOZ_APP_NAME@'),
     '--console-level': 'INFO',
     '--utility-path': lambda: os.path.join(helper.root, 'bin'),
     '--certificate-path': lambda: os.path.join(helper.root, 'certs')

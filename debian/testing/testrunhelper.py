@@ -7,6 +7,9 @@ from optparse import OptionParser
 from subprocess import Popen
 import tempfile
 import shutil
+import atexit
+import re
+import traceback
 
 skel = {
   '.config/user-dirs.dirs':
@@ -30,28 +33,76 @@ XDG_VIDEOS_DIR="$HOME/Videos"''',
 '''[GNOME Session]
 Name=Test Session
 RequiredComponents=gnome-settings-daemon;metacity;
-DesktopName=GNOME'''
+DesktopName=GNOME''',
+
+  '.config/autostart/run-test.desktop':
+'''[Desktop Entry]
+Name=Run Testsuite
+Exec=sh -c 'sleep 5; $UBUNTU_MOZ_TEST_RUNNER $UBUNTU_MOZ_TEST_ARGS'
+Terminal=false
+Type=Application
+Categories='''
 }
+
+def create_tmpdir():
+  tmp = tempfile.mkdtemp()
+
+  def clean():
+    shutil.rmtree(tmp)
+
+  atexit.register(clean)
+
+  return tmp
 
 class TestRunHelper(OptionParser):
 
-  def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], root=None, need_x=False):
+  def __init__(self, runner, get_runner_parser_cb, pass_args=[], paths=[], need_x=False):
     OptionParser.__init__(self)
+    self.__tmpdir = None
+    self._xredir = None
 
-    assert root != None
+    self.root = os.path.dirname(__file__)
 
-    self.root = root
+    args = iter(sys.argv[1:])
+    while True:
+      try:
+        arg = args.next()
+      except StopIteration:
+        break
+
+      if arg == '--harness-root-dir':
+        try:
+          self.root = args.next()
+          break
+        except StopIteration:
+          pass
+
+    self._orig_root = self.root
     self._pass_args = pass_args
     self._need_x = need_x
 
+    self._pass_args.append('--xre-path')
+
+    self.add_option('--harness-root-dir',
+                    dest='root',
+                    help='Override the path to the test harness installation')
     if self._need_x:
       self.add_option('--own-session',
                       action='store_true', dest='wantOwnSession', default=False,
                       help='Run the test inside its own X session')
 
+    if not os.path.exists(os.path.join(self.root, runner)):
+      for f in os.listdir(self.root):
+        if re.match(r'[a-z\-]*-[0-9\.ab]*\.en-US\.linux-\S*\.tests\.zip', f) or f == 'extra.test.zip':
+          os.system('unzip -qu %s -d %s' % (os.path.join(self.root, f), self._tmpdir))
+
+      assert os.path.exists(os.path.join(self._tmpdir, runner))
+      self.root = self._tmpdir
+
+      if os.path.exists(os.path.join(self._orig_root, 'bin', 'libxpcom.so')):
+        os.symlink(os.path.join(self._orig_root, 'bin'), os.path.join(self.root, 'gre'))
+
     runner = os.path.join(self.root, runner)
-    if os.path.isdir(os.path.join(os.path.dirname(__file__), 'python')):
-      sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'python'))
     sys.path.insert(0, os.path.dirname(runner))
 
     for path in reversed(paths):
@@ -60,7 +111,9 @@ class TestRunHelper(OptionParser):
     self._runner_global = {}
     self._runner_global['__file__'] = runner
     saved_argv0 = sys.argv[0]
+    saved_cwd = os.getcwd()
     sys.argv[0] = runner
+    os.chdir(self.root)
     try:
       execfile(runner, self._runner_global)
 
@@ -72,20 +125,40 @@ class TestRunHelper(OptionParser):
 
     finally:
       sys.argv[0] = saved_argv0
+      os.chdir(saved_cwd)
+
+  @property
+  def _tmpdir(self):
+    if self.__tmpdir != None:
+      return self.__tmpdir
+
+    self.__tmpdir = create_tmpdir()
+    return self.__tmpdir
+
+  @property
+  def xredir(self):
+    if self._xredir != None:
+      return self._xredir
+
+    for r in [os.path.join(self.root, 'gre'), os.path.join(self.root, os.pardir, 'bin')]:
+      if os.path.exists(os.path.join(r, 'libxpcom.so')):
+        self._xredir = r
+        break
+
+    return self._xredir
 
   def run(self, defaults=[], pre_run_cb=None):
     (options, args) = self.parse_args()
 
-    tmphome = None
     if os.getenv('DESKTOP_AUTOSTART_ID') == None:
       # If we were started by the session manager, use the current homedir
-      tmphome = tempfile.mkdtemp()
+      os.mkdir(os.path.join(self._tmpdir, 'home'))
       for name in skel:
-        os.system('mkdir -p %s' % os.path.dirname(os.path.join(tmphome, name))) 
-        with open(os.path.join(tmphome, name), 'w+') as f:
+        os.system('mkdir -p %s' % os.path.dirname(os.path.join(self._tmpdir, 'home', name))) 
+        with open(os.path.join(self._tmpdir, 'home', name), 'w+') as f:
           print >>f, skel[name]
 
-      os.environ['HOME'] = tmphome
+      os.environ['HOME'] = os.path.join(self._tmpdir, 'home')
 
     try:
       if self._need_x and (options.wantOwnSession or os.getenv('DISPLAY') == None):
@@ -96,20 +169,27 @@ class TestRunHelper(OptionParser):
           arg = sys.argv[i]
           if arg == '--own-session':
             del sys.argv[i]
+          elif arg == '--harness-root-dir':
+            del sys.argv[i]
+            del sys.argv[i]
           else:
             i += 1
 
-        os.environ['UBUNTU_MOZ_TEST_ARGS'] = ' '.join(sys.argv[1:])
-        os.environ['UBUNTU_MOZ_TEST_RUNNER'] = sys.argv[0]
-        respawn_args = ['xvfb-run', '-a', '-s', '-screen 0 1024x768x24 -extension MIT-SCREEN-SAVER', 'dbus-launch', '--exit-with-session', 'gnome-session', '--autostart', os.path.join(self.root, 'autostart'), '--session', 'test']
-        subprocess.call(respawn_args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+        extra_args = ['--harness-root-dir', self.root]
+        if '--xre-path' not in sys.argv and self.xredir != None:
+          extra_args.extend(['--xre-path', self.xredir])
 
-        if not os.path.exists(os.path.join(tmphome, '.test_return')):
+        os.environ['UBUNTU_MOZ_TEST_ARGS'] = ' '.join(extra_args + sys.argv[1:])
+        os.environ['UBUNTU_MOZ_TEST_RUNNER'] = sys.executable + ' ' + sys.argv[0]
+        session_args = ['xvfb-run', '-a', '-s', '-screen 0 1024x768x24 -extension MIT-SCREEN-SAVER', 'dbus-launch', '--exit-with-session', 'gnome-session', '--session', 'test']
+        subprocess.call(session_args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+
+        if not os.path.exists(os.path.join(os.environ['HOME'], '.test_return')):
           return 1
-        with open(os.path.join(tmphome, '.test_return'), 'r') as f:
+        with open(os.path.join(os.environ['HOME'], '.test_return'), 'r') as f:
           return int(f.read().strip())
 
-      os.environ['MOZ_PLUGIN_PATH'] = os.path.join(self.root, 'plugins')
+      os.environ['MOZ_PLUGIN_PATH'] = os.path.join(self.root, 'bin/plugins')
 
       sys.argv = []
       argv = sys.argv
@@ -141,16 +221,22 @@ class TestRunHelper(OptionParser):
         if arg not in argv:
           argv.extend([arg, defaults[arg]() if hasattr(defaults[arg], '__call__') else defaults[arg]])
 
+      if '--xre-path' not in sys.argv and self.xredir != None:
+        argv.extend(['--xre-path', self.xredir])
+
       if pre_run_cb != None:
         pre_run_cb(options, args)
 
       argv.extend(args)
 
+      os.chdir(self.root)
       return self._runner_global['main']()
 
     except:
       with open(os.path.join(os.getenv('HOME'), '.test_return'), 'w+') as f:
         print >>f, '1'
+
+      traceback.print_exc()
 
     finally:
       if os.getenv('DESKTOP_AUTOSTART_ID') != None:
@@ -158,5 +244,3 @@ class TestRunHelper(OptionParser):
           with open(os.path.join(os.getenv('HOME'), '.test_return'), 'w+') as f:
             print >>f, '0'
         os.system('gnome-session-quit --logout --no-prompt')
-      elif tmphome != None:
-        shutil.rmtree(tmphome)

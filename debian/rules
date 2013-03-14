@@ -35,7 +35,6 @@ MOZ_PKGNAME_SUBST_FILES = \
 	debian/apport/source_$(MOZ_PKG_NAME).py \
 	debian/testing/run_mochitest \
 	debian/testing/run_reftest \
-	debian/testing/run_xpcshell_tests \
 	$(NULL)
 
 MOZ_APPNAME_SUBST_FILES = \
@@ -48,10 +47,9 @@ MOZ_PKGCONFIG_FILES = \
 
 include $(CURDIR)/debian/build/mozbuild.mk
 
-MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_TESTDIR)/run_mochitest \
-						$(MOZ_TESTDIR)/run_reftest \
-						$(MOZ_TESTDIR)/run_xpcshell_tests \
-						$(MOZ_LIBDIR)/xpcshell \
+MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_LIBDIR)/testing/run_mochitest \
+						$(MOZ_LIBDIR)/testing/run_reftest \
+						$(MOZ_LIBDIR)/testing/run_xpcshell_tests \
 						$(NULL)
 
 debian/usr.bin.firefox.in:

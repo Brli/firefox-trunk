@@ -22,18 +22,16 @@ class ReftestHelper(TestRunHelper):
     TestRunHelper.__init__(self, 'reftest/runreftest.py',
                            lambda g: g['ReftestOptions'](g['Automation']()),
                            pass_args=PASSTHROUGH_ARGS,
-                           root='/@MOZ_TESTDIR@',
                            need_x=True)
 
 def main():
   DEFAULTS = {
-    '--appname': lambda: os.path.join(helper.root, 'bin', '@MOZ_APP_NAME@'),
+    '--appname': lambda: os.path.join(helper.xredir, '@MOZ_APP_NAME@'),
     '--utility-path': lambda: os.path.join(helper.root, 'bin')
   }
 
   def pre_run_cb(options, args):
-    if '--xunit-file' in sys.argv and '--tests-root-dir' not in sys.argv and \
-       args[0].startswith(helper.root):
+    if '--xunit-file' in sys.argv and '--tests-root-dir' not in sys.argv:
       sys.argv.extend(['--tests-root-dir', os.path.join(helper.root, 'reftest', 'tests')])
 
   helper = ReftestHelper()

@@ -16,9 +16,6 @@ test-fixes/xpcshell-search-fix-browser-dirprovider.patch
 test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
 test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
 test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
-test-fixes/xpcshell-ctypes-no-writes-to-appdir.patch
-test-fixes/xpcshell-xpcom-no-writes-to-testdir-or-appdir.patch
-test-fixes/xpcshell-libpref-no-writes-to-testdir.patch
 test-fixes/mochitest-content-reset-permissions-when-done.patch
 test-fixes/mochitest-tests-jar-fix.patch
 test-fixes/mochitest-dont-ship-browser-postupdate-test.patch

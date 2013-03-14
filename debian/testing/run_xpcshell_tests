@@ -19,30 +19,12 @@ class XPCShellTestsHelper(TestRunHelper):
       '--xunit-suite-name'
     ]
 
-    root = '/@MOZ_TESTDIR@'
-    args = iter(sys.argv[1:])
-    while True:
-      try:
-        arg = args.next()
-      except StopIteration:
-        break
-
-      if arg == '--harness-root-dir':
-        try:
-          root = args.next()
-          break
-        except StopIteration:
-          pass
-
     TestRunHelper.__init__(self, 'xpcshell/runxpcshelltests.py',
                            lambda g: g['XPCShellOptions'](),
                            pass_args=PASSTHROUGH_ARGS,
-                           paths=[], root=root,
+                           paths=[],
                            need_x=True)
 
-    self.add_option('--harness-root-dir',
-                    dest='root',
-                    help='Override the path to the test harness installation')
     self.add_option('--xpcshell',
                     dest='xpcshell', default=None,
                     help='Override the path to the xpcshell binary')
@@ -51,11 +33,9 @@ class XPCShellTestsHelper(TestRunHelper):
                     help='Create log files')
 
 def main():
-  abspath = lambda x: os.path.join(helper.root, x)
 
   DEFAULTS = {
-    '--build-info-json': lambda: abspath('python/mozinfo.json') if os.path.exists(abspath('python/mozinfo.json')) else abspath('xpcshell/mozinfo.json'),
-    '--test-plugin-path': lambda: abspath('plugins')
+    '--test-plugin-path': lambda: os.path.join(helper.root, 'bin/plugins')
   }
 
   def pre_run_cb(options, args):

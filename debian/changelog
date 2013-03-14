@@ -1,4 +1,4 @@
-firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Make sure that the 'appname' field of our mozinfo.json is set to
@@ -151,6 +151,46 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Disable crashreporter tests that require write access to the test
     directory
     - update d/p/test-overrides/xpcshell-disable-failing-tests.patch
+  * Don't install the testsuite unpacked on the filesystem in the
+    traditional manner, but just install the packed zip and have the
+    test scripts bootstrap a temporary environment with the expanded
+    testsuite. The advantage of this is that we don't need to carry
+    patches for tests that modify the test directory. What we are
+    interested in testing are the components that the user normally runs,
+    and the testsuite doesn't form part of this - so it doesn't matter
+    where it's installed and runs from
+    - update debian/build/mozbuild.mk
+    - remove debian/firefox-testsuite.dirs.in
+    - update debian/firefox-testsuite.install.in
+    - update debian/firefox-testsuite.links.in
+    - update debian/patches/series.in
+    - remove d/p/test-fixes/xpcshell-ctypes-no-writes-to-appdir.patch
+    - remove d/p/test-fixes/xpcshell-libpref-no-writes-to-testdir.patch
+    - remove d/p/test-fixes/xpcshell-xpcom-no-writes-to-testdir-or-appdir.patch
+    - update debian/rules
+    - rename debian/testing/mochitest-chrome.json =>
+        debian/testing/extra/mochitest/mochitest-chrome.json
+    - rename debian/testing/mochitest.json =>
+        debian/testing/extra/mochitest/mochitest.json
+    - rename debian/testing/xpcshell-package-tests/* =>
+        debian/testing/extra/xpcshell/package-tests/*
+    - remove debian/testing/run-tests.desktop
+    - update debian/testing/run_mochitest.in
+    - update debian/testing/run_reftest.in
+    - rename debian/testing/run_xpcshell_tests.in =>
+        debian/testing/run_xpcshell_tests
+    - update debian/testing/run_xpcshell_tests
+    - update debian/testing/testrunhelper.py
+    - update debian/tests/crashtest
+    - update debian/tests/jstestbrowser
+    - update debian/tests/mochitest
+    - update debian/tests/mochitest-a11y
+    - update debian/tests/mochitest-browser
+    - update debian/tests/mochitest-chrome
+    - update debian/tests/mochitest-ipcplugins
+    - update debian/tests/reftest
+    - update debian/tests/xpcshell-package-tests
+    - update debian/tests/xpcshell-tests
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results
@@ -166,7 +206,7 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu1) UNRELEASED; urgency=low
   * Use a local favicon in the DuckDuckGo searchplugin (LP: #1120991)
     - update debian/searchplugins/en-US/duckduckgo.xml
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 Feb 2013 18:56:12 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 14 Mar 2013 12:37:57 +0000
 
 firefox-trunk (21.0~a1~hg20130218r122221-0ubuntu1) raring; urgency=low
 
