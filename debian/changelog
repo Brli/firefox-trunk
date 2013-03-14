@@ -32,12 +32,7 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
     and the test_TelemetryPing.js fails anyway because the HG revision is
     not embedded in the ping
     - update d/p/test-integration/xpcshell-disable-failing-tests.patch
-  * Fix a const redeclaration error in test_purpose.js
-    - update d/p/test-fixes/xpcshell-search-fix-const-redeclaration.patch
   * Move the plugins/ symlink underneath browser/ so that these load again
-    (fixes plugin related mochitest failures since the application parts
-    were moved in to browser/). Ensure that we still ship a plugins/ symlink
-    in the gredir in the test suite though
     - update debian/firefox.links.in
     - update debian/firefox.postinst.in
     - update debian/firefox-testsuite.links.in
@@ -61,12 +56,6 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
     - drop d/p/test-fixes/xpcshell-search-fix-const-redeclaration.patch
     - update d/p/test-fixes/xpcshell-search-fix-browser-dirprovider.patch
     - update debian/patches/series.in
-  * Install the test plugins in the testsuite directory so that they
-    aren't visible to the normal browser
-    - update debian/firefox-testsuite.install.in
-    - update debian/firefox-testsuite.links.in
-    - update debian/testing/run_xpcshell_tests.in
-    - update debian/testing/testrunhelper.py
   * Fix test_ubuntu_useragent.js to work on channels other than Nightly
     - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
   * In test_ubuntu_useragent.js, check for the hardcoded buildid on official
@@ -95,8 +84,6 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
     - add debian/tests/mochitest-chrome
     - add debian/tests/mochitest-a11y
     - add debian/tests/mochitest-ipcplugins
-  * Fix an exception that caused mochitests to hang after hitting failures
-    - update d/p/test-integration/mochitest-output-junit-xml.patch
   * Don't access the network from 395609.xul to see if it fixes a hang
     - add d/p/test-fixes/crashtest-no-network-access.patch
     - update debian/patches/series.in
