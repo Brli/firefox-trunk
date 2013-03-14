@@ -1,6 +1,8 @@
 @MOZ_DISTDIR@/@MOZ_APP_NAME@-@MOZ_VERSION@.en-US.linux-*.tests.zip @MOZ_LIBDIR@/testing
 debian/extra.test.zip @MOZ_LIBDIR@/testing
 
+@MOZ_DISTDIR@/bin/xpcshell @MOZ_LIBDIR@
+
 debian/testing/run_mochitest @MOZ_LIBDIR@/testing
 debian/testing/run_reftest @MOZ_LIBDIR@/testing
 debian/testing/run_xpcshell_tests @MOZ_LIBDIR@/testing
