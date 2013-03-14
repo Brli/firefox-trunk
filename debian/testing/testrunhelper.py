@@ -232,7 +232,7 @@ class TestRunHelper(OptionParser):
       os.chdir(self.root)
       return self._runner_global['main']()
 
-    except:
+    except Exception:
       with open(os.path.join(os.getenv('HOME'), '.test_return'), 'w+') as f:
         print >>f, '1'
 

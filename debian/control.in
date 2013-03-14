@@ -194,7 +194,8 @@ Depends: ${shlibs:Depends},
 	gnome-settings-daemon,
 	dpkg-dev,
 	ubuntu-settings,
-	light-themes
+	light-themes,
+	unzip
 Provides: ${app:Provides}
 Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - testsuite
