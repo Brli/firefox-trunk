@@ -28,13 +28,3 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/toolkit/mozapps/extensions/test/x
 -skip-if = os == "android"
 +# This needs to write to the application directory
 +skip-if = true
-Index: firefox-trunk-22.0~a1~hg20130301r123350/dom/plugins/test/unit/xpcshell.ini
-===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/dom/plugins/test/unit/xpcshell.ini	2013-03-01 02:09:48.000000000 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/dom/plugins/test/unit/xpcshell.ini	2013-03-01 12:19:00.745810802 +0000
-@@ -12,3 +12,5 @@
- # Bug 676953: test fails consistently on Android
- fail-if = os == "android"
- [test_nice_plugin_name.js]
-+# This needs to write to the application directory
-+skip-if = true

@@ -25,10 +25,6 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
     - update debian/testing/xpcshell-package-tests/test_langpack_load.js
   * Unbreak test_langpack_chrome.js after the install layout changes
    - update debian/testing/xpcshell-package-tests/test_langpack_chrome.js
-  * Don't run dom/plugins/test/unit/test_nice_plugin_name.js as an autopkgtest,
-    as it requires write access to the application directory
-    - update d/p/test-integration/xpchshell-disable-tests-which-need-appdir-write-access.patch
-    - update debian/testing/xpcshell-build.ini
   * Disable telemetry xpcshell tests. Telemetry is not enabled on Ubuntu builds
     and the test_TelemetryPing.js fails anyway because the HG revision is
     not embedded in the ping
@@ -87,9 +83,6 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
     - update debian/testing/xpcshell-package-tests/test_searchplugins_valid_real.js
     - update debian/testing/xpcshell-package-tests/test_ubuntu_searchplugins_real.js
     - update debian/testing/xpcshell-package-tests/test_ubuntu_useragent.js
-  * Don't run test_nice_plugin_name.js as part of the build whilst the
-    failure is investigated
-    - update debian/testing/xpcshell-build.ini
   * Split mochitests in to separate autopkgtest test scripts so that we can
     propagate error codes from test harness failure without affecting other
     mochitest stages
