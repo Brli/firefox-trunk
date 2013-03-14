@@ -279,8 +279,11 @@ ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
 endif
 	$(MAKE) -C $(MOZ_OBJDIR) package-tests
 ifneq (,$(wildcard debian/testing/extra))
-	cd debian/testing/extra; \
-		zip -rq9D $(CURDIR)/debian/extra.test.zip *
+    cp -r debian/testing/extra debian/testing/extra-stage
+    mkdir -p debian/testing/extra-stage/xpcshell/package-tests/data
+    cp debian/config/locales.shipped debian/testing/extra-stage/xpcshell/package-tests/data
+	cd debian/testing/extra-stage; \
+		zip -rq9D $(CURDIR)/debian/testing/extra.test.zip *
 endif
 	@touch $@
 
@@ -543,6 +546,7 @@ clean:: debian/tests/control
 	rm -f debian/searchplugin*.list
 	rm -f mozconfig
 	rm -rf debian/_virtualenv
-	rm -f debian/extra.test.zip
+	rm -f debian/testing/extra.test.zip
+    rm -rf debian/testing/extra-stage
 
 .PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales get-orig-source create-virtualenv
