@@ -148,9 +148,6 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
   * Skip dom/plugins/test/test_{crashing,hanging}.html for now,
     as they don't seem to generate a minidump as expected
     - update debian/testing/mochitest.json
-  * Disable crashreporter tests that require write access to the test
-    directory
-    - update d/p/test-overrides/xpcshell-disable-failing-tests.patch
   * Don't install the testsuite unpacked on the filesystem in the
     traditional manner, but just install the packed zip and have the
     test scripts bootstrap a temporary environment with the expanded
