@@ -1,7 +1,7 @@
-Index: firefox-trunk-22.0~a1~hg20130313r124504/build/automation.py.in
+Index: firefox-trunk-22.0~a1~hg20130314r124794/build/automation.py.in
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/build/automation.py.in	2013-03-13 16:12:55.308585669 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/build/automation.py.in	2013-03-13 16:12:55.300585669 +0000
+--- firefox-trunk-22.0~a1~hg20130314r124794.orig/build/automation.py.in	2013-03-15 11:07:36.325751093 +0000
++++ firefox-trunk-22.0~a1~hg20130314r124794/build/automation.py.in	2013-03-15 11:12:41.529763631 +0000
 @@ -19,6 +19,7 @@
  import tempfile
  import sqlite3
@@ -189,7 +189,7 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/build/automation.py.in
  
    def fillCertificateDB(self, profileDir, certPath, utilityPath, xrePath):
      pwfilePath = os.path.join(profileDir, ".crtdbpw")
-@@ -1133,11 +1297,57 @@
+@@ -1133,11 +1297,61 @@
    def checkForCrashes(self, profileDir, symbolsPath):
      return automationutils.checkForCrashes(os.path.join(profileDir, "minidumps"), symbolsPath, self.lastTestSeen)
  
@@ -228,7 +228,11 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/build/automation.py.in
 +          failure.setAttribute("type", f.type)
 +          failure.setAttribute("message", f.message)
 +
-+          text = doc.createCDATASection(('\n'.join(f.log)).decode("utf-8"))
++          cdata = ('\n'.join(f.log)).decode("utf-8")
++          cdata = cdata.replace("]]>", "]] >")
++          cdata = cdata.replace("\x07", "")
++
++          text = doc.createCDATASection(cdata)
 +          failure.appendChild(text)
 +
 +    testsuite.setAttribute("tests", str(passed + failed))
@@ -248,7 +252,7 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/build/automation.py.in
      """
      Run the app, log the duration it took to execute, return the status code.
      Kills the app if it runs for longer than |maxTime| seconds, or outputs nothing for |timeout| seconds.
-@@ -1152,6 +1362,11 @@
+@@ -1152,6 +1366,11 @@
      if timeout == -1:
        timeout = self.DEFAULT_TIMEOUT
  
@@ -260,7 +264,7 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/build/automation.py.in
      # copy env so we don't munge the caller's environment
      env = dict(env);
      env["NO_EM_RESTART"] = "1"
-@@ -1199,9 +1414,17 @@
+@@ -1199,9 +1418,17 @@
        # app is launched.
        onLaunch()
  
@@ -278,10 +282,10 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/build/automation.py.in
      # Do a final check for zombie child processes.
      zombieProcesses = self.checkForZombies(processLog)
  
-Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/tools/reftest/reftest.js
+Index: firefox-trunk-22.0~a1~hg20130314r124794/layout/tools/reftest/reftest.js
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/tools/reftest/reftest.js	2013-03-13 16:12:55.308585669 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/tools/reftest/reftest.js	2013-03-13 16:12:55.300585669 +0000
+--- firefox-trunk-22.0~a1~hg20130314r124794.orig/layout/tools/reftest/reftest.js	2013-03-15 11:07:36.325751093 +0000
++++ firefox-trunk-22.0~a1~hg20130314r124794/layout/tools/reftest/reftest.js	2013-03-15 11:07:36.317751093 +0000
 @@ -1129,17 +1129,17 @@
          var test = gURLs[0];
          if (test.expected == EXPECTED_DEATH) {
@@ -317,10 +321,10 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/tools/reftest/reftest.js
                               " | " + badPref + " not known or wrong type\n");
                      ++gTestResults.UnexpectedFail;
                  }
-Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/tools/reftest/runreftest.py
+Index: firefox-trunk-22.0~a1~hg20130314r124794/layout/tools/reftest/runreftest.py
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/layout/tools/reftest/runreftest.py	2013-03-13 16:12:55.308585669 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/layout/tools/reftest/runreftest.py	2013-03-13 16:12:55.300585669 +0000
+--- firefox-trunk-22.0~a1~hg20130314r124794.orig/layout/tools/reftest/runreftest.py	2013-03-15 11:07:36.325751093 +0000
++++ firefox-trunk-22.0~a1~hg20130314r124794/layout/tools/reftest/runreftest.py	2013-03-15 11:07:36.321751093 +0000
 @@ -120,6 +120,15 @@
        reftestlist = self.getManifestPath(testPath)
        if cmdlineArgs == None:
@@ -361,10 +365,10 @@ Index: firefox-trunk-22.0~a1~hg20130313r124504/layout/tools/reftest/runreftest.p
      self.set_defaults(**defaults)
  
    def verifyCommonOptions(self, options, reftest):
-Index: firefox-trunk-22.0~a1~hg20130313r124504/testing/mochitest/runtests.py
+Index: firefox-trunk-22.0~a1~hg20130314r124794/testing/mochitest/runtests.py
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124504.orig/testing/mochitest/runtests.py	2013-03-13 16:12:55.308585669 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124504/testing/mochitest/runtests.py	2013-03-13 16:12:55.300585669 +0000
+--- firefox-trunk-22.0~a1~hg20130314r124794.orig/testing/mochitest/runtests.py	2013-03-15 11:07:36.325751093 +0000
++++ firefox-trunk-22.0~a1~hg20130314r124794/testing/mochitest/runtests.py	2013-03-15 11:07:36.321751093 +0000
 @@ -715,6 +715,28 @@
                                      "VMware recording: (%s)" % str(e))
        self.vmwareHelper = None
