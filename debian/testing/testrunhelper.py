@@ -10,6 +10,7 @@ import shutil
 import atexit
 import re
 import traceback
+import time
 
 skel = {
   '.config/user-dirs.dirs':
@@ -181,7 +182,7 @@ class TestRunHelper(OptionParser):
 
         os.environ['UBUNTU_MOZ_TEST_ARGS'] = ' '.join(extra_args + sys.argv[1:])
         os.environ['UBUNTU_MOZ_TEST_RUNNER'] = sys.executable + ' ' + sys.argv[0]
-        session_args = ['xvfb-run', '-a', '-s', '-screen 0 1024x768x24 -extension MIT-SCREEN-SAVER', 'dbus-launch', '--exit-with-session', 'gnome-session', '--session', 'test']
+        session_args = ['xvfb-run', '-a', '-s', '-screen 0 1280x1024x24 -extension MIT-SCREEN-SAVER', 'dbus-launch', '--exit-with-session', 'gnome-session', '--session', 'test']
         subprocess.call(session_args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
 
         if not os.path.exists(os.path.join(os.environ['HOME'], '.test_return')):
@@ -243,4 +244,8 @@ class TestRunHelper(OptionParser):
         if not os.path.exists(os.path.join(os.getenv('HOME'), '.test_return')):
           with open(os.path.join(os.getenv('HOME'), '.test_return'), 'w+') as f:
             print >>f, '0'
-        os.system('gnome-session-quit --logout --no-prompt')
+        i = 0
+        while i < 5:
+          os.system('gnome-session-quit --logout --no-prompt --force')
+          i += 1
+          time.sleep(10)
