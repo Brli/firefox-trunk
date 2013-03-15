@@ -25,3 +25,4 @@ test-overrides/reftest-disable-failing-tests.patch
 test-overrides/xpcshell-disable-failing-tests.patch
 test-overrides/disable-failing-python-tests.patch
 test-fixes/crashtest-no-network-access.patch
+test-fixes/xpcshell-xunit-output-no-bell.patch
