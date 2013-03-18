@@ -1,16 +1,22 @@
 Index: firefox-trunk-22.0~a1~hg20130317r125128/layout/reftests/bugs/reftest.list
 ===================================================================
 --- firefox-trunk-22.0~a1~hg20130317r125128.orig/layout/reftests/bugs/reftest.list	2013-03-18 18:35:57.875271202 +0000
-+++ firefox-trunk-22.0~a1~hg20130317r125128/layout/reftests/bugs/reftest.list	2013-03-18 18:35:57.867271202 +0000
-@@ -55,7 +55,7 @@
++++ firefox-trunk-22.0~a1~hg20130317r125128/layout/reftests/bugs/reftest.list	2013-03-18 18:54:46.779317577 +0000
+@@ -55,10 +55,10 @@
  fails == 25888-2r-block.html 25888-2r-ref.html # Bug 25888
  fails == 25888-3l-block.html 25888-3l-ref.html # Bug 25888
  fails == 25888-3r-block.html 25888-3r-ref.html # Bug 25888
 -skip-if(B2G) == 28811-1a.html 28811-1-ref.html
-+fails == 28811-1a.html 28811-1-ref.html
- == 28811-1b.html 28811-1-ref.html
- skip-if(B2G) == 28811-2a.html 28811-2-ref.html
- == 28811-2b.html 28811-2-ref.html
+-== 28811-1b.html 28811-1-ref.html
+-skip-if(B2G) == 28811-2a.html 28811-2-ref.html
+-== 28811-2b.html 28811-2-ref.html
++random == 28811-1a.html 28811-1-ref.html
++random == 28811-1b.html 28811-1-ref.html
++random == 28811-2a.html 28811-2-ref.html
++random == 28811-2b.html 28811-2-ref.html
+ == 40596-1a.html 40596-1-ref.html
+ != 40596-1b.html 40596-1-ref.html
+ == 40596-1c.html 40596-1-ref.html
 @@ -408,9 +408,9 @@
  != 321402-1.html about:blank
  != 321402-2.html about:blank
