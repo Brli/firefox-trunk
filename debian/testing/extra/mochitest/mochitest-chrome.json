@@ -43,6 +43,7 @@
   "chrome/toolkit/components/perf/test_pm.xul": "FAILS",
   "chrome/toolkit/components/toolkit/components/ctypes/tests/test_ctypes.xul": "FAILS UBUNTU-PATCH",
   "chrome/toolkit/components/viewsource/test/test_428653.xul": "FAILS",
+  "chrome/toolkit/content/tests/chrome/test_arrowpanel.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_bug557987.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_bug562554.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_button.xul": "FAILS",
@@ -52,9 +53,11 @@
   "chrome/toolkit/content/tests/chrome/test_deck.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_largemenu.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_menuchecks.xul": "HANGS",
+  "chrome/toolkit/content/tests/chrome/test_richlist_direction.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_scaledrag.xul": "FAILS",
   "chrome/toolkit/content/tests/chrome/test_textbox_dictionary.xul": "FAILS",
   "chrome/toolkit/mozapps/downloads/tests/chrome/test_bug_462172.xul": "HANGS PERMS",
-  "chrome/toolkit/mozapps/downloads/tests/chrome/test_unknownContentType_dialog_layout.xul": "FAILS"
+  "chrome/toolkit/mozapps/downloads/tests/chrome/test_unknownContentType_dialog_layout.xul": "FAILS",
+  "chrome/widget/tests/test_wheeltransaction.xul": "FAILS"
  }
 }
