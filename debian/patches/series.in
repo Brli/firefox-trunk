@@ -11,7 +11,6 @@ test-integration/mochitest-optional-websock-log.patch
 test-integration/automation-output-junit-xml.patch
 test-integration/mochitest-allow-test-manifest-for-chrome.patch
 test-integration/xpcshell-output-valid-junit-xml.patch
-test-fixes/xpcshell-search-fix-browser-dirprovider.patch
 test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
 test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
 test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
@@ -26,3 +25,4 @@ test-overrides/xpcshell-disable-failing-tests.patch
 test-overrides/disable-failing-python-tests.patch
 test-fixes/crashtest-no-network-access.patch
 test-fixes/xpcshell-xunit-output-no-bell.patch
+test-fixes/xpcshell-search-fix-json-cache-test.patch
