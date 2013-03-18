@@ -14,6 +14,7 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
     - update d/p/test-integration/mochitest-output-junit-xml.patch
     - update d/p/test-overrides/reftest-disable-failing-tests.patch
     - update debian/patches/ubuntu-ua-string-changes.patch
+    - update debian/patches/no_neon_on_arm.patch
   * Remove obsolete patches
     - remove debian/patches/fix-makefile-substitution-bug.patch
   * Temporarily disable tests in python/mozbuild/mozpack/tests, as they
