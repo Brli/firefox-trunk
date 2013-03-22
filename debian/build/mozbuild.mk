@@ -222,7 +222,6 @@ MOZ_EXECUTABLES_$(MOZ_PKG_NAME) +=	$(MOZ_LIBDIR)/$(MOZ_PKG_BASENAME).sh \
 
 pkgname_subst_files = \
 	debian/config/mozconfig \
-	debian/patches/series \
 	$(MOZ_PKGNAME_SUBST_FILES) \
 	$(NULL)
 
