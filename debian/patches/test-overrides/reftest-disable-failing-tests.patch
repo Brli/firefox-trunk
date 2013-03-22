@@ -10,10 +10,10 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list
 -== 28811-1b.html 28811-1-ref.html
 -skip-if(B2G) == 28811-2a.html 28811-2-ref.html
 -== 28811-2b.html 28811-2-ref.html
-+random == 28811-1a.html 28811-1-ref.html
-+random == 28811-1b.html 28811-1-ref.html
-+random == 28811-2a.html 28811-2-ref.html
-+random == 28811-2b.html 28811-2-ref.html
++random == 28811-1a.html 28811-1-ref.html # https://launchpad.net/bugs/1158919
++random == 28811-1b.html 28811-1-ref.html # https://launchpad.net/bugs/1158919
++random == 28811-2a.html 28811-2-ref.html # https://launchpad.net/bugs/1158919
++random == 28811-2b.html 28811-2-ref.html # https://launchpad.net/bugs/1158919
  == 40596-1a.html 40596-1-ref.html
  != 40596-1b.html 40596-1-ref.html
  == 40596-1c.html 40596-1-ref.html
@@ -24,9 +24,9 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list
 -== 321402-4.xul 321402-4-ref.xul
 -== 321402-5.xul 321402-5-ref.xul
 -== 321402-6.xul 321402-6-ref.xul
-+fuzzy(33,1) == 321402-4.xul 321402-4-ref.xul
-+fuzzy(33,1) == 321402-5.xul 321402-5-ref.xul
-+fuzzy(33,1) == 321402-6.xul 321402-6-ref.xul
++fuzzy(33,1) == 321402-4.xul 321402-4-ref.xul # subpixel AA?
++fuzzy(33,1) == 321402-5.xul 321402-5-ref.xul # subpixel AA?
++fuzzy(33,1) == 321402-6.xul 321402-6-ref.xul # subpixel AA?
  == 321738-1.html 321738-1-ref.html
  == 322436-1.html 322436-1-ref.html
  == 322461-1.xml 322461-1-ref.html
@@ -36,8 +36,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list
  == 482398-1.html 482398-1-ref.html
 -random-if(d2d) == 482592-1a.xhtml 482592-1-ref.html # bug 586771
 -random-if(d2d) == 482592-1b.xhtml 482592-1-ref.html # bug 586771
-+fails == 482592-1a.xhtml 482592-1-ref.html # bug 586771
-+fails == 482592-1b.xhtml 482592-1-ref.html # bug 586771
++fuzzy(13,2) == 482592-1a.xhtml 482592-1-ref.html # bug 586771 # subpixel AA?
++fuzzy(13,2) == 482592-1b.xhtml 482592-1-ref.html # bug 586771 # subpixel AA?
  random-if(winWidget) == 482659-1a.html 482659-1-ref.html
  == 482659-1b.html 482659-1-ref.html
  == 482659-1c.html 482659-1-ref.html
@@ -46,7 +46,7 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list
  == 621253-2-internalFilter.html 621253-2-ref.html
  fails-if(Android) HTTP(..) == 619511-1.html 619511-1-ref.html
 -skip-if(B2G) random-if(winWidget) fuzzy-if(OSX==10.8,19,17) == 621918-1.svg 621918-1-ref.svg # 1-pixel diacritic positioning discrepancy in rotated text (may depend on platform fonts)
-+fails == 621918-1.svg 621918-1-ref.svg # 1-pixel diacritic positioning discrepancy in rotated text (may depend on platform fonts)
++fuzzy(49,3) == 621918-1.svg 621918-1-ref.svg # 1-pixel diacritic positioning discrepancy in rotated text (may depend on platform fonts)
  random-if(winWidget) HTTP(..) == 621918-2.svg 621918-2-ref.svg # same 1px issue as above, and HTTP(..) for filters.svg, used to mask antialiasing issues where glyphs touch
  fuzzy-if(d2d,5,1) == 622585-1.html 622585-1-ref.html # bug 789402
  fails-if(Android) == 625409-1.html 625409-1-ref.html
@@ -59,23 +59,10 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/first-letter/reft
  == 229764-2.html 229764-ref.html
  == 329069-1.html 329069-1-ref.html
 -== 329069-2.html 329069-2-ref.html
-+fails == 329069-2.html 329069-2-ref.html
++fails == 329069-2.html 329069-2-ref.html # https://launchpad.net/bugs/1158924
  == 329069-3.html 329069-3-ref.html
  == 329069-4.html 329069-4-ref.html
  fails-if(!cocoaWidget) == 329069-5.html 329069-5-ref.html # bug 603710
-Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/mathml/reftest.list
-===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/mathml/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/mathml/reftest.list	2013-03-22 17:40:16.553616861 +0000
-@@ -29,7 +29,7 @@
- == mfenced-7.html mfenced-7-ref.html
- != mfenced-8.html mfenced-8-ref.html
- == mfenced-9.html mfenced-9-ref.html
--fails-if(winWidget) == mfenced-10.html mfenced-10-ref.html
-+== mfenced-10.html mfenced-10-ref.html
- == mi-mathvariant-1.xhtml mi-mathvariant-1-ref.xhtml
- == mi-mathvariant-2.xhtml mi-mathvariant-2-ref.xhtml
- != non-spacing-accent-1.xhtml non-spacing-accent-1-ref.xhtml
 Index: firefox-trunk-22.0~a1~hg20130321r125760/parser/htmlparser/tests/reftest/reftest.list
 ===================================================================
 --- firefox-trunk-22.0~a1~hg20130321r125760.orig/parser/htmlparser/tests/reftest/reftest.list	2013-03-22 17:40:16.557616861 +0000
@@ -83,7 +70,7 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/parser/htmlparser/tests/reftest/r
 @@ -1,5 +1,5 @@
  == bug535530-1.html bug535530-1-ref.html
 -== view-source:bug535530-2.html bug535530-2-ref.html
-+fails == view-source:bug535530-2.html bug535530-2-ref.html
++fuzzy(13,15) == view-source:bug535530-2.html bug535530-2-ref.html # subpixel AA?
  == bug566280-1.html bug566280-1-ref.html
  == bug577418-1.html bug577418-1-ref.html
  == bug582788-1.html bug582788-1-ref.html
@@ -96,7 +83,7 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text/reftest.list
  == wordbreak-2.html wordbreak-2-ref.html
  == wordbreak-3.html wordbreak-3-ref.html
 -== wordbreak-4a.html wordbreak-4a-ref.html
-+skip == wordbreak-4a.html wordbreak-4a-ref.html
++fails == wordbreak-4a.html wordbreak-4a-ref.html # https://launchpad.net/bugs/1158928
  == wordbreak-4b.html wordbreak-4b-ref.html
  == wordbreak-5.html wordbreak-5-ref.html
  == wordbreak-6.html wordbreak-6-ref.html
