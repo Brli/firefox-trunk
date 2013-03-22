@@ -100,7 +100,7 @@ class TestRunHelper(OptionParser):
       assert os.path.exists(os.path.join(self._tmpdir, runner))
       self.root = self._tmpdir
 
-      if os.path.exists(os.path.join(self._orig_root, 'bin', 'libxpcom.so')):
+      if os.path.exists(os.path.join(self._orig_root, 'bin', 'libxul.so')):
         os.symlink(os.path.join(self._orig_root, 'bin'), os.path.join(self.root, 'gre'))
 
     runner = os.path.join(self.root, runner)
