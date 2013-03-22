@@ -194,7 +194,8 @@ Depends: ${shlibs:Depends},
 	gnome-settings-daemon,
 	ubuntu-settings,
 	light-themes,
-	unzip
+	unzip,
+	hunspell-en-us
 Provides: ${app:Provides}
 Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - testsuite
