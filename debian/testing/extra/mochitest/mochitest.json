@@ -2,10 +2,10 @@
  "runtests": {},
  "excludetests": {
   "content/canvas/test/webgl/test_webgl_conformance_test_suite.html": "UNSUPPORTED",
-  "dom/plugins/test/test_crashing.html": "FAILS: https://launchpad.net/bugs/1158781",
-  "dom/plugins/test/test_hanging.html": "FAILS: https://launchpad.net/bugs/1158781",
-  "editor/libeditor/html/tests/test_bug432225.html": "FAILS: https://launchpad.net/bugs/1158784",
-  "editor/libeditor/html/tests/test_bug484181.html": "FAILS: https://launchpad.net/bugs/1158784",
-  "toolkit/content/tests/widgets/test_contextmenu_nested.xul": "FAILS: https://launchpad.net/bugs/1158796",
+  "dom/plugins/test/test_crashing.html": "FAILS, https://launchpad.net/bugs/1158781",
+  "dom/plugins/test/test_hanging.html": "FAILS, https://launchpad.net/bugs/1158781",
+  "editor/libeditor/html/tests/test_bug432225.html": "FAILS, https://launchpad.net/bugs/1158784",
+  "editor/libeditor/html/tests/test_bug484181.html": "FAILS, https://launchpad.net/bugs/1158784",
+  "toolkit/content/tests/widgets/test_contextmenu_nested.xul": "FAILS, https://launchpad.net/bugs/1158796",
  }
 }

@@ -1,9 +1,8 @@
 {
  "runtests": {},
  "excludetests": {
-  "a11y/accessible/attributes/test_text.html": "FAILS",
-  "a11y/accessible/events/test_focus_general.xul": "FAILS",
-  "a11y/accessible/events/test_textattrchange.html": "HANGS",
+  "a11y/accessible/events/test_focus_general.*": "FAILS, https://launchpad.net/bugs/1158821",
+  "a11y/accessible/events/test_textattrchange.html": "FAILS, https://launchpad.net/bugs/1158836",
   "browser/browser/base/content/test/browser_allTabsPanel.js": "HANGS INTERMITTENT",
   "browser/browser/base/content/test/browser_canonizeURL.js": "FAILS UBUNTU-SEARCHPLUGINS",
   "browser/browser/base/content/test/browser_clearplugindata.js": "FAILS",
