@@ -2,6 +2,11 @@
  "runtests": {},
  "excludetests": {
   "content/canvas/test/webgl/test_webgl_conformance_test_suite.html": "UNSUPPORTED",
+  "dom/media/tests/mochitest/test_peerConnection_basicAudio.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841150, https://bugzilla.mozilla.org/show_bug.cgi?id=839677",
+  "dom/media/tests/mochitest/test_peerConnection_basicAudioVideo.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841150",
+  "dom/media/tests/mochitest/test_peerConnection_basicAudioVideoCombined.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841150",
+  "dom/media/tests/mochitest/test_peerConnection_basicVideo.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841150",
+  "dom/media/tests/mochitest/test_peerConnection_bug840344.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841496",
   "dom/plugins/test/test_crashing.html": "FAILS, https://launchpad.net/bugs/1158781",
   "dom/plugins/test/test_hanging.html": "FAILS, https://launchpad.net/bugs/1158781",
   "editor/libeditor/html/tests/test_bug432225.html": "FAILS, https://launchpad.net/bugs/1158784",
