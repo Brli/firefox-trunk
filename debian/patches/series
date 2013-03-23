@@ -7,7 +7,6 @@ dont-override-general-useragent-locale.patch
 webapprt-support-for-langpacks.patch
 no_neon_on_arm.patch
 unity-menubar.patch
-test-integration/mochitest-optional-websock-log.patch
 test-integration/automation-output-junit-xml.patch
 test-integration/mochitest-allow-test-manifest-for-chrome.patch
 test-integration/xpcshell-output-valid-junit-xml.patch
