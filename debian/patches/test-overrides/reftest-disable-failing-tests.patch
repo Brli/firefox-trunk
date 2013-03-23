@@ -1,7 +1,7 @@
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/bugs/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/bugs/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list	2013-03-23 08:03:22.399808948 +0000
 @@ -55,10 +55,10 @@
  fails == 25888-2r-block.html 25888-2r-ref.html # Bug 25888
  fails == 25888-3l-block.html 25888-3l-ref.html # Bug 25888
@@ -52,8 +52,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bugs/reftest.list
  fails-if(Android) == 625409-1.html 625409-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/first-letter/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/first-letter/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/first-letter/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/first-letter/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/first-letter/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -35,7 +35,7 @@
  != 229764-1.html 229764-ref.html
  == 229764-2.html 229764-ref.html
@@ -65,8 +65,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/first-letter/reft
  fails-if(!cocoaWidget) == 329069-5.html 329069-5-ref.html # bug 603710
 Index: firefox-trunk-22.0~a1~hg20130321r125760/parser/htmlparser/tests/reftest/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/parser/htmlparser/tests/reftest/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/parser/htmlparser/tests/reftest/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/parser/htmlparser/tests/reftest/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/parser/htmlparser/tests/reftest/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -1,5 +1,5 @@
  == bug535530-1.html bug535530-1-ref.html
 -== view-source:bug535530-2.html bug535530-2-ref.html
@@ -76,8 +76,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/parser/htmlparser/tests/reftest/r
  == bug582788-1.html bug582788-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/text/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/text/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -106,7 +106,7 @@
  == wordbreak-1.html wordbreak-1-ref.html
  == wordbreak-2.html wordbreak-2-ref.html
@@ -198,107 +198,10 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text/reftest.list
 +skip != auto-hyphenation-sv-1.html auto-hyphenation-sv-1-notref.html # verify swedish != english
 +skip == auto-hyphenation-tr-1.html auto-hyphenation-tr-1-ref.html
 +skip == auto-hyphenation-uk-1.html auto-hyphenation-uk-1-ref.html
-Index: firefox-trunk-22.0~a1~hg20130321r125760/editor/reftests/reftest.list
-===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/editor/reftests/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/editor/reftests/reftest.list	2013-03-22 17:40:16.553616861 +0000
-@@ -17,46 +17,46 @@
- == emptypasswd-1.html emptypasswd-ref.html
- == emptypasswd-2.html emptypasswd-ref.html
- == caret_on_positioned.html caret_on_positioned-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-disabled.html spellcheck-input-ref.html
-+fails != spellcheck-input-disabled.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-attr-before.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-attr-before.html spellcheck-input-ref.html
-+fails != spellcheck-input-attr-before.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-attr-after.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-attr-after.html spellcheck-input-ref.html
-+fails != spellcheck-input-attr-after.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-attr-inherit.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-attr-inherit.html spellcheck-input-ref.html
-+fails != spellcheck-input-attr-inherit.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-attr-dynamic.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic.html spellcheck-input-ref.html
-+fails != spellcheck-input-attr-dynamic.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-attr-dynamic-inherit.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic-inherit.html spellcheck-input-ref.html
-+fails != spellcheck-input-attr-dynamic-inherit.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-property-dynamic.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic.html spellcheck-input-ref.html
-+fails != spellcheck-input-property-dynamic.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-property-dynamic-inherit.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic-inherit.html spellcheck-input-ref.html
-+fails != spellcheck-input-property-dynamic-inherit.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-attr-dynamic-override.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic-override.html spellcheck-input-ref.html
-+fails != spellcheck-input-attr-dynamic-override.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-attr-dynamic-override-inherit.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-attr-dynamic-override-inherit.html spellcheck-input-ref.html
-+fails != spellcheck-input-attr-dynamic-override-inherit.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-property-dynamic-override.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic-override.html spellcheck-input-ref.html
-+fails != spellcheck-input-property-dynamic-override.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-input-property-dynamic-override-inherit.html spellcheck-input-nofocus-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-input-property-dynamic-override-inherit.html spellcheck-input-ref.html
-+fails != spellcheck-input-property-dynamic-override-inherit.html spellcheck-input-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-textarea-attr.html spellcheck-textarea-nofocus-ref.html
- #the random-if(Android) tests pass on android native, but fail on android-xul, see bug 728942
--skip-if(B2G) random-if(Android) != spellcheck-textarea-attr.html spellcheck-textarea-ref.html
-+fails != spellcheck-textarea-attr.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
- needs-focus == spellcheck-textarea-focused.html spellcheck-textarea-ref.html
- needs-focus == spellcheck-textarea-focused-reframe.html spellcheck-textarea-ref.html
- needs-focus == spellcheck-textarea-focused-notreadonly.html spellcheck-textarea-ref2.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-nofocus.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-disabled.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-inherit.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic-inherit.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic-inherit.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic-override.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-attr-dynamic-override-inherit.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic-override.html spellcheck-textarea-ref.html
--skip-if(B2G) random-if(Android) != spellcheck-textarea-property-dynamic-override-inherit.html spellcheck-textarea-ref.html
-+fails != spellcheck-textarea-nofocus.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-disabled.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-attr-inherit.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-attr-dynamic.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-attr-dynamic-inherit.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-property-dynamic.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-property-dynamic-inherit.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-attr-dynamic-override.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-attr-dynamic-override-inherit.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-property-dynamic-override.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
-+fails != spellcheck-textarea-property-dynamic-override-inherit.html spellcheck-textarea-ref.html # https://launchpad.net/bugs/1158931
- needs-focus == caret_on_focus.html caret_on_focus-ref.html
- needs-focus != caret_on_textarea_lastline.html caret_on_textarea_lastline-ref.html
- needs-focus == input-text-onfocus-reframe.html input-text-onfocus-reframe-ref.html
-@@ -65,13 +65,13 @@
- == nobogusnode-1.html nobogusnode-ref.html
- == nobogusnode-2.html nobogusnode-ref.html
- == spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html
-+fails != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-slash-valid.html spellcheck-slash-valid-ref.html
- == spellcheck-period-valid.html spellcheck-period-valid-ref.html
- == spellcheck-space-valid.html spellcheck-space-valid-ref.html
- == spellcheck-comma-valid.html spellcheck-comma-valid-ref.html
- == spellcheck-hyphen-multiple-valid.html spellcheck-hyphen-multiple-valid-ref.html
--skip-if(B2G) fails-if(Android) != spellcheck-hyphen-multiple-invalid.html spellcheck-hyphen-multiple-invalid-ref.html
-+fails != spellcheck-hyphen-multiple-invalid.html spellcheck-hyphen-multiple-invalid-ref.html # https://launchpad.net/bugs/1158931
- == spellcheck-dotafterquote-valid.html spellcheck-dotafterquote-valid-ref.html
- == spellcheck-url-valid.html spellcheck-url-valid-ref.html
- == unneeded_scroll.html unneeded_scroll-ref.html
-@@ -97,4 +97,4 @@
- == 694880-3.html 694880-ref.html
- == 388980-1.html 388980-1-ref.html
- needs-focus == spellcheck-superscript-1.html spellcheck-superscript-1-ref.html
--skip-if(B2G) fails-if(Android) needs-focus != spellcheck-superscript-2.html spellcheck-superscript-2-ref.html # bug 783658
-+fails needs-focus != spellcheck-superscript-2.html spellcheck-superscript-2-ref.html # bug 783658 # https://launchpad.net/bugs/1158931
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/font-face/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/font-face/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/font-face/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/font-face/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/font-face/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -27,8 +27,8 @@
  # assumes AAT fonts are only supported on MacOS
  skip-if(B2G) random-if(cocoaWidget) HTTP(..) == src-list-format-7.html src-list-format-2-ref.html
@@ -321,8 +224,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/font-face/reftest
  skip-if(B2G) HTTP(..) == synthetic-weight-style.html synthetic-weight-style-ref.html # bug 773482
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text-overflow/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/text-overflow/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text-overflow/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/text-overflow/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text-overflow/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -7,18 +7,18 @@
  fuzzy-if(OSX==10.8,1,1) HTTP(..) == anonymous-block.html anonymous-block-ref.html
  skip-if(B2G) HTTP(..) == false-marker-overlap.html false-marker-overlap-ref.html
@@ -348,8 +251,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/text-overflow/ref
  fuzzy(1,702) skip-if(Android||B2G) HTTP(..) == xulscroll.html xulscroll-ref.html
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/box-shadow/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/box-shadow/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/box-shadow/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/box-shadow/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/box-shadow/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -11,7 +11,7 @@
  == boxshadow-rounding.html boxshadow-rounding-ref.html
  fails-if(Android) == boxshadow-button.html boxshadow-button-ref.html
@@ -361,8 +264,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/box-shadow/reftes
  HTTP(..) == boxshadow-dynamic.xul boxshadow-dynamic-ref.xul
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/flexbox/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/flexbox/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/flexbox/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/flexbox/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/flexbox/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -15,7 +15,7 @@
  fails == flexbox-align-self-baseline-horiz-2.xhtml  flexbox-align-self-baseline-horiz-2-ref.xhtml # bug 793456, and possibly others
  # This one fails on windows R (but not Ru, strangely). On Windows R, the
@@ -374,8 +277,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/flexbox/reftest.l
  # builds) until we enable the flexbox pref in those builds in bug 841876:
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bidi/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/bidi/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bidi/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/bidi/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bidi/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -42,10 +42,10 @@
  == unicode-bidi-plaintext-textarea-2.html unicode-bidi-plaintext-textarea-ref.html
  == unicode-bidi-plaintext-textarea-3.html unicode-bidi-plaintext-textarea-ref.html
@@ -401,8 +304,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/bidi/reftest.list
 +fuzzy(22,10) == 779003-1-dynamic.html 779003-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/counters/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/counters/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/counters/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/counters/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/counters/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -57,7 +57,7 @@
  == t120403-content-none-00-c-test.html t120403-content-none-00-c-reference.html
  == t120403-display-none-00-c-test.html t120403-display-none-00-c-reference.html
@@ -414,8 +317,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/counters/reftest.
  == counter-reset-integer-range.html counter-reset-integer-range-ref.html
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/list-item/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/list-item/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/list-item/reftest.list	2013-03-22 17:40:16.553616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/list-item/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/list-item/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -1,4 +1,4 @@
 -fuzzy-if(OSX==10.8,55,4) == numbering-1.html numbering-1-ref.html
 +fuzzy(7,1) == numbering-1.html numbering-1-ref.html
@@ -424,8 +327,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/list-item/reftest
  asserts(1) == ol-reversed-1b.html ol-reversed-1-ref.html # bug 478135
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/selection/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/selection/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/selection/reftest.list	2013-03-22 17:40:16.557616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/selection/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/selection/reftest.list	2013-03-23 08:03:22.403808948 +0000
 @@ -31,6 +31,6 @@
  random-if(Android||B2G) fails-if(cocoaWidget) == themed-widget.html themed-widget-ref.html
  == addrange-1.html addrange-ref.html
@@ -436,8 +339,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/selection/reftest
  == dom-mutations.html dom-mutations-ref.html
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/svg/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/svg/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/svg/reftest.list	2013-03-22 17:40:16.557616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/svg/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/svg/reftest.list	2013-03-23 08:03:22.407808947 +0000
 @@ -293,7 +293,7 @@
  == text-layout-07.svg text-layout-07-ref.svg
  pref(svg.text.css-frames.enabled,true) == text-layout-08.svg text-layout-08-ref.svg
@@ -449,8 +352,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/svg/reftest.list
  == stroke-dasharray-and-pathLength-01.svg pass.svg
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/table-anonymous-boxes/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-22 17:40:16.557616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/table-anonymous-boxes/reftest.list	2013-03-23 08:03:22.407808947 +0000
 @@ -27,7 +27,7 @@
  == 372641-1c.xhtml 372641-1-ref.xhtml
  == 372649-1.html 372649-1-ref.html
@@ -462,8 +365,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/table-anonymous-b
  == 407115-1.html 407115-1-ref.html
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/xul/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/xul/reftest.list	2013-03-22 17:40:16.557616861 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/xul/reftest.list	2013-03-22 17:40:16.557616861 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/xul/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/xul/reftest.list	2013-03-23 08:03:22.407808947 +0000
 @@ -4,4 +4,4 @@
  random-if(Android||B2G) fails-if(winWidget) == menulist-shrinkwrap-2.xul menulist-shrinkwrap-2-ref.xul
  == textbox-overflow-1.xul textbox-overflow-1-ref.xul # for bug 749658
@@ -472,8 +375,8 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/xul/reftest.list
 +fuzzy(1,2) == accesskey.xul accesskey-ref.xul
 Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/transform-3d/reftest.list
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/transform-3d/reftest.list	2013-03-22 02:15:30.000000000 +0000
-+++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/transform-3d/reftest.list	2013-03-22 17:41:12.053614923 +0000
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/layout/reftests/transform-3d/reftest.list	2013-03-23 08:03:22.411808947 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/transform-3d/reftest.list	2013-03-23 08:03:22.407808947 +0000
 @@ -33,8 +33,8 @@
  skip-if(B2G) == preserve3d-4a.html green-rect.html
  == preserve3d-5a.html preserve3d-5-ref.html
@@ -485,3 +388,16 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/layout/reftests/transform-3d/reft
  == scale3d-xz.html scale3d-1-ref.html
  == translatez-1a.html translatez-1-ref.html
  != translatez-1b.html translatez-1-ref.html
+Index: firefox-trunk-22.0~a1~hg20130321r125760/editor/reftests/reftest.list
+===================================================================
+--- firefox-trunk-22.0~a1~hg20130321r125760.orig/editor/reftests/reftest.list	2013-03-22 02:11:34.000000000 +0000
++++ firefox-trunk-22.0~a1~hg20130321r125760/editor/reftests/reftest.list	2013-03-23 08:07:29.775800311 +0000
+@@ -64,7 +64,7 @@
+ needs-focus == caret_after_reframe.html caret_after_reframe-ref.html
+ == nobogusnode-1.html nobogusnode-ref.html
+ == nobogusnode-2.html nobogusnode-ref.html
+-== spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html
++fails == spellcheck-hyphen-valid.html spellcheck-hyphen-valid-ref.html # https://launchpad.net/bugs/1159073
+ skip-if(B2G) fails-if(Android) != spellcheck-hyphen-invalid.html spellcheck-hyphen-invalid-ref.html
+ == spellcheck-slash-valid.html spellcheck-slash-valid-ref.html
+ == spellcheck-period-valid.html spellcheck-period-valid-ref.html
