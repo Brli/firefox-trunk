@@ -4,6 +4,7 @@
   "a11y/accessible/events/test_focus_general.*": "FAILS, https://launchpad.net/bugs/1158821",
   "a11y/accessible/events/test_textattrchange.html": "FAILS, https://launchpad.net/bugs/1158836",
   "browser/browser/components/search/test/browser_google.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
+  "browser/browser/devtools/debugger/test/browser_dbg_createChrome.js": "FAILS, https://launchpad.net/bugs/1159078",
   "browser/toolkit/mozapps/extensions/test/browser/browser_bug557956.js": "FAILS UBUNTU-EXTENSIONS",
   "browser/toolkit/mozapps/extensions/test/browser/browser_bug562797.js": "FAILS UBUNTU-EXTENSIONS",
   "browser/toolkit/mozapps/extensions/test/browser/browser_bug572561.js": "FAILS UBUNTU-EXTENSIONS",

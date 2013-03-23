@@ -2,6 +2,7 @@
  "runtests": {},
  "excludetests": {
   "content/canvas/test/webgl/test_webgl_conformance_test_suite.html": "UNSUPPORTED",
+  "content/media/test/test_a4_tone.html": "FAILS, https://launchpad.net/bugs/1159075",
   "dom/media/tests/mochitest/test_peerConnection_basicAudio.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841150, https://bugzilla.mozilla.org/show_bug.cgi?id=839677",
   "dom/media/tests/mochitest/test_peerConnection_basicAudioVideo.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841150",
   "dom/media/tests/mochitest/test_peerConnection_basicAudioVideoCombined.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841150",
@@ -11,6 +12,7 @@
   "dom/plugins/test/test_hanging.html": "FAILS, https://launchpad.net/bugs/1158781",
   "editor/libeditor/html/tests/test_bug432225.html": "FAILS, https://launchpad.net/bugs/1158784",
   "editor/libeditor/html/tests/test_bug484181.html": "FAILS, https://launchpad.net/bugs/1158784",
+  "toolkit/components/passwordmgr/test/test_notifications_popup.html": "FAILS, https://launchpad.net/bugs/1159077",
   "toolkit/content/tests/widgets/test_contextmenu_nested.xul": "FAILS, https://launchpad.net/bugs/1158796"
  }
 }
