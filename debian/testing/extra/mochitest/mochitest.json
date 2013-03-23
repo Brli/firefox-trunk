@@ -10,6 +10,7 @@
   "dom/media/tests/mochitest/test_peerConnection_bug840344.html": "FAILS, https://bugzilla.mozilla.org/show_bug.cgi?id=841496",
   "dom/plugins/test/test_crashing.html": "FAILS, https://launchpad.net/bugs/1158781",
   "dom/plugins/test/test_hanging.html": "FAILS, https://launchpad.net/bugs/1158781",
+  "dom/tests/mochitest/geolocation/": "FAILS, https://launchpad.net/bugs/TBD",
   "editor/libeditor/html/tests/test_bug432225.html": "FAILS, https://launchpad.net/bugs/1158784",
   "editor/libeditor/html/tests/test_bug484181.html": "FAILS, https://launchpad.net/bugs/1158784",
   "toolkit/components/passwordmgr/test/test_notifications_popup.html": "FAILS, https://launchpad.net/bugs/1159077",
