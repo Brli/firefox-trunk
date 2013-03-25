@@ -100,7 +100,7 @@ Index: firefox-trunk-22.0~a1~hg20130321r125760/build/automation.py.in
 +
 +class XunitLogHandler(logging.Handler):
 +
-+  RE = re.compile(r'.*TEST-(UNEXPECTED|PASS|KNOWN|START)-?(PASS|FAIL|SLOW)?\S*\s+\|\s+(\S+)\s*\|?\s*(.*)')
++  RE = re.compile(r'.*TEST-(UNEXPECTED|PASS|KNOWN|START)-?(PASS|FAIL|SLOW)?\(?[^\)]*\)?\s+\|\s+(\S+)\s*\|?\s*(.*)')
 +
 +  def __init__(self, root):
 +    logging.Handler.__init__(self)
