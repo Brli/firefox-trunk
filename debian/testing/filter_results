@@ -148,7 +148,7 @@ def main():
           failure.setAttribute('type', 'TEST-UNEXPECTED-PASS')
           failure.setAttribute('message', 'This test should have failed (inserted by filter_results)')
 
-    if adjust > 0:
+    if adjust != 0:
       old_count = int(doc.documentElement.getAttribute("failures"))
       new_count = old_count + adjust
       print 'Adjusting failure count from %d to %d' % (old_count, new_count)
