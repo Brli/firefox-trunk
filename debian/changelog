@@ -192,6 +192,19 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
   * Fix LP: #1158931 by making the testsuite depend on hunspell-en-us
     - update debian/control.in
   * Drop unneeded test-integration/mochitest-optional-websock-log.patch
+  * Stop patching upstream manifests to mark tests as failing, as this is
+    too much of a maintenance burden. Instead, post-process the test
+    results using our own manifest
+    - update debian/patches/series
+    - remove d/p/test-overrides/reftest-disable-failing-tests.patch
+    - remove d/p/test-overrides/xpcshell-disable-failing-tests.patch
+    - update debian/rules
+    - update debian/testing/extra/mochitest/mochitest-chrome.json
+    - update debian/testing/extra/mochitest/mochitest.json
+    - add debian/testing/filter_results
+    - update debian/tests/control.in
+    - add debian/tests/post-process
+    - add debian/testing/results-filter-manifest.json
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results

@@ -19,8 +19,6 @@ test-fixes/mochitest-dont-ship-browser-postupdate-test.patch
 test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
 test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
 test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
-test-overrides/reftest-disable-failing-tests.patch
-test-overrides/xpcshell-disable-failing-tests.patch
 test-overrides/disable-failing-python-tests.patch
 test-fixes/crashtest-no-network-access.patch
 test-fixes/xpcshell-xunit-output-no-bell.patch
