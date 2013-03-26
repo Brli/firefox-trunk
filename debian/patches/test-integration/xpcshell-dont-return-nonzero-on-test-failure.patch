@@ -1,13 +1,39 @@
-Index: firefox-trunk-22.0~a1~hg20130325r126070/testing/xpcshell/runxpcshelltests.py
+Index: firefox-trunk-22.0~a1~hg20130325r126106/testing/xpcshell/runxpcshelltests.py
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130325r126070.orig/testing/xpcshell/runxpcshelltests.py	2013-03-25 21:03:32.531799737 +0000
-+++ firefox-trunk-22.0~a1~hg20130325r126070/testing/xpcshell/runxpcshelltests.py	2013-03-25 21:04:27.651798758 +0000
-@@ -1018,7 +1018,7 @@
-                            "(Use --keep-going to keep running tests after killing one with SIGINT)")
+--- firefox-trunk-22.0~a1~hg20130325r126106.orig/testing/xpcshell/runxpcshelltests.py	2013-03-26 09:47:08.000000000 +0000
++++ firefox-trunk-22.0~a1~hg20130325r126106/testing/xpcshell/runxpcshelltests.py	2013-03-26 10:10:42.232833422 +0000
+@@ -729,6 +729,8 @@
+         self.testingModulesDir = testingModulesDir
+         self.pluginsPath = pluginsPath
+ 
++        self.testCount = 0
++
+         # If we have an interactive debugger, disable ctrl-c.
+         if self.debuggerInfo and self.debuggerInfo["interactive"]:
+             signal.signal(signal.SIGINT, lambda signum, frame: None)
+@@ -738,7 +740,6 @@
+             self.log.error("Error: No test dirs or test manifest specified!")
              return False
  
--        return self.failCount == 0
-+        return True
+-        self.testCount = 0
+         self.passCount = 0
+         self.failCount = 0
+         self.todoCount = 0
+@@ -1087,6 +1088,8 @@
+                              "dom.basic.foo")
  
- class XPCShellOptions(OptionParser):
-     def __init__(self):
+ def main():
++    global gotSIGINT
++
+     parser = XPCShellOptions()
+     options, args = parser.parse_args()
+ 
+@@ -1103,7 +1106,7 @@
+         print >>sys.stderr, "Error: You must specify a test filename in interactive mode!"
+         sys.exit(1)
+ 
+-    if not xpcsh.runTests(args[0], testdirs=args[1:], **options.__dict__):
++    if not xpcsh.runTests(args[0], testdirs=args[1:], **options.__dict__) and (xpcsh.testCount == 0 or gotSIGINT):
+         sys.exit(1)
+ 
+ if __name__ == '__main__':
