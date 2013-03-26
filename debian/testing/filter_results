@@ -119,7 +119,7 @@ def main():
             if 'condition' in flt and flt['condition'] != None:
 
               def reftest_fuzzy(maxDiff, diffCount):
-                m = re.match('image comparison \(==\), max difference: ([0-9]*), number of differing pixels: ([0-9])',
+                m = re.match('image comparison \(==\), max difference: ([0-9]*), number of differing pixels: ([0-9]*)',
                              failure.getAttribute('message'))
                 if m == None:
                   return False
