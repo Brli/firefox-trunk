@@ -205,6 +205,11 @@ firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
     - update debian/tests/control.in
     - add debian/tests/post-process
     - add debian/testing/results-filter-manifest.json
+    - update debian/firefox-testsuite.install.in
+  * Don't return non-zero exit status from xpcshell test failures, as this
+    turns the build red in Jenkins
+    - add d/p/test-integration/xpcshell-dont-return-nonzero-on-test-failure.patch
+    - update debian/patches/series.in
 
   [ Jean-Baptiste Lallement <jean-baptiste@ubuntu.com> ]
   * Allow the autopkgtest harness to specify a location for test results

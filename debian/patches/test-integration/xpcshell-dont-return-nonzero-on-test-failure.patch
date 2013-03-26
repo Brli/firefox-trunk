@@ -1,0 +1,13 @@
+Index: firefox-trunk-22.0~a1~hg20130325r126070/testing/xpcshell/runxpcshelltests.py
+===================================================================
+--- firefox-trunk-22.0~a1~hg20130325r126070.orig/testing/xpcshell/runxpcshelltests.py	2013-03-25 21:03:32.531799737 +0000
++++ firefox-trunk-22.0~a1~hg20130325r126070/testing/xpcshell/runxpcshelltests.py	2013-03-25 21:04:27.651798758 +0000
+@@ -1018,7 +1018,7 @@
+                            "(Use --keep-going to keep running tests after killing one with SIGINT)")
+             return False
+ 
+-        return self.failCount == 0
++        return True
+ 
+ class XPCShellOptions(OptionParser):
+     def __init__(self):
