@@ -1,3 +1,8 @@
+Description: Disable xpcshell tests that always fail in Jenkins because they
+ require write access to the application directory
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
 Index: firefox-trunk-22.0~a1~hg20130301r123350/browser/components/places/tests/unit/xpcshell.ini
 ===================================================================
 --- firefox-trunk-22.0~a1~hg20130301r123350.orig/browser/components/places/tests/unit/xpcshell.ini	2013-03-01 12:18:24.429812101 +0000

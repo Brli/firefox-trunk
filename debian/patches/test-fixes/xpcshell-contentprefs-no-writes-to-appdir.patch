@@ -1,3 +1,8 @@
+Description: Fix toolkit/components/contentprefs xpcshell tests to not write
+ to the application directory
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
 Index: firefox-trunk-19.0~a1~hg20121114r113217/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js
 ===================================================================
 --- firefox-trunk-19.0~a1~hg20121114r113217.orig/toolkit/components/contentprefs/tests/unit/head_contentPrefs.js	2012-11-14 21:08:30.000000000 +0000

@@ -1,3 +1,8 @@
+Description: Add JUnit XML output support for reftest and mochitest harnesses.
+ This is required for integration with Jenkins
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
 Index: firefox-trunk-22.0~a1~hg20130325r126070/build/automation.py.in
 ===================================================================
 --- firefox-trunk-22.0~a1~hg20130325r126070.orig/build/automation.py.in	2013-03-25 21:20:32.999781604 +0000

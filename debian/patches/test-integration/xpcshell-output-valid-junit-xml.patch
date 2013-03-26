@@ -1,3 +1,7 @@
+Description: Make the xpcshell JUnit output match the schema
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
 Index: firefox-trunk-22.0~a1~hg20130222r122576/testing/xpcshell/selftest.py
 ===================================================================
 --- firefox-trunk-22.0~a1~hg20130222r122576.orig/testing/xpcshell/selftest.py	2013-02-22 16:16:25.320690105 +0000

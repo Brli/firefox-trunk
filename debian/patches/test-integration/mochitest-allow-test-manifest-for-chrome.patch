@@ -1,3 +1,10 @@
+Description: Allow specifying a test manifest for chrome mochitests
+ By default, the upstream mochitest harness only allows specifying a JSON
+ manifest for plain mochitests. This patch extends that to all mochitests so
+ that we can skip problematic chrome tests
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
 diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-harness.xul
 --- a/testing/mochitest/browser-harness.xul
 +++ b/testing/mochitest/browser-harness.xul

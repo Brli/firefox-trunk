@@ -1,3 +1,8 @@
+Description: Make toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js
+ work when the selection UI is disabled
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
 Index: firefox-trunk-20.0~a1~hg20121130r114518/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js
 ===================================================================
 --- firefox-trunk-20.0~a1~hg20121130r114518.orig/toolkit/mozapps/extensions/test/xpcshell/test_bug596343.js	2012-11-30 02:14:18.000000000 +0000

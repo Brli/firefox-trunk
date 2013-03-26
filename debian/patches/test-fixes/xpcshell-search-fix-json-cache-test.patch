@@ -1,3 +1,8 @@
+Description: Fix test_json_cache.js to work when search plugins aren't installed
+ in to the application searchplugin directory
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
 Index: firefox-trunk-22.0~a1~hg20130317r125128/toolkit/components/search/tests/xpcshell/test_json_cache.js
 ===================================================================
 --- firefox-trunk-22.0~a1~hg20130317r125128.orig/toolkit/components/search/tests/xpcshell/test_json_cache.js	2013-03-18 20:17:17.000000000 +0000
