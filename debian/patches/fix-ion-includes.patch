@@ -1,0 +1,12 @@
+Index: firefox-20.0+build1/js/src/ion/shared/IonAssemblerBufferWithConstantPools.h
+===================================================================
+--- firefox-20.0+build1.orig/js/src/ion/shared/IonAssemblerBufferWithConstantPools.h	2013-03-28 01:42:40.000000000 +0000
++++ firefox-20.0+build1/js/src/ion/shared/IonAssemblerBufferWithConstantPools.h	2013-03-28 16:42:16.454468581 +0000
+@@ -10,6 +10,7 @@
+ #include "ion/shared/IonAssemblerBuffer.h"
+ #include "assembler/wtf/SegmentedVector.h"
+ #include "ion/IonSpewer.h"
++#include "ion/IonAllocPolicy.h"
+ namespace js {
+ namespace ion {
+ typedef Vector<BufferOffset, 512, IonAllocPolicy> LoadOffsets;
