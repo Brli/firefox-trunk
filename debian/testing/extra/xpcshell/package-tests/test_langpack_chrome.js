@@ -53,7 +53,6 @@ function run_test()
     "kn": "kn-IN",
     "ko": "ko-KR",
     "lv": "lv-LV",
-    "mai": "en-US",
     "mk": "mk-MK",
     "mr": "mr-IN",
     "pa-IN": "pa",
