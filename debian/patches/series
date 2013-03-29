@@ -24,4 +24,3 @@ test-fixes/crashtest-no-network-access.patch
 test-fixes/xpcshell-xunit-output-no-bell.patch
 test-fixes/xpcshell-search-fix-json-cache-test.patch
 test-integration/xpcshell-dont-return-nonzero-on-test-failure.patch
-fix-ion-includes.patch
