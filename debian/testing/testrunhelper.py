@@ -142,7 +142,7 @@ class TestRunHelper(OptionParser):
       return self._xredir
 
     for r in [os.path.join(self.root, 'gre'), os.path.join(self.root, os.pardir, 'bin')]:
-      if os.path.exists(os.path.join(r, 'libxpcom.so')):
+      if os.path.exists(os.path.join(r, 'libxul.so')):
         self._xredir = r
         break
 
