@@ -1,4 +1,6 @@
-firefox-trunk (22.0~a1~hg20130222r122576-0ubuntu2) UNRELEASED; urgency=low
+firefox-trunk (22.0~a1~hg20130329r126606-0ubuntu1-0ubuntu1) raring; urgency=low
+
+  * New upstream snaphot v22.0 A1 HG20130329R126606
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Make sure that the 'appname' field of our mozinfo.json is set to
