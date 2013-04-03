@@ -6,6 +6,9 @@ firefox-trunk (22.0~a1~hg20130329r126606-0ubuntu1-0ubuntu2) UNRELEASED; urgency=
     in objdir/dist and causes dh_strip to fail later on
     - update debian/build/mozbuild.mk
     - update debian/firefox-testsuite.install.in
+  * Build conflict on python-progressbar, as having this installed causes the
+    jit test harness to fail
+    - update debian/control.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 

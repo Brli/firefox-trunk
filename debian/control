@@ -36,6 +36,7 @@ Build-Depends: cdbs,
 	dbus-x11,
 	xvfb,
 	python (>= 2.7)
+Build-Conflicts: python-progressbar
 Standards-Version: 3.9.1
 XS-Testsuite: autopkgtest
 
