@@ -286,6 +286,13 @@ ifneq (,$(wildcard debian/testing/extra))
 endif
 	@touch $@
 
+install-testsuite: debian/stamp-installtestsuite
+debian/stamp-installtestsuite: debian/stamp-maketestsuite
+	install $(MOZ_DISTDIR)/bin/xpcshell debian/tmp/$(MOZ_LIBDIR)
+	install -d debian/tmp/$(MOZ_LIBDIR)/testing
+	install $(MOZ_DISTDIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).en-US.linux-*.tests.zip debian/tmp/$(MOZ_LIBDIR)/testing
+	@touch $@
+
 make-langpack-xpis: $(foreach target,$(shell sed -n 's/\#.*//;/^$$/d;s/\([^\:]*\)\:\?.*/\1/ p' < $(CURDIR)/debian/config/locales.shipped),debian/stamp-make-langpack-xpi-$(target))
 debian/stamp-make-langpack-xpi-%:
 	@echo ""
@@ -322,6 +329,8 @@ common-install-arch common-install-indep::
 		then \
 			mv debian/tmp/$(dir)-$(MOZ_VERSION) debian/tmp/$(dir); \
 		fi; )
+
+common-install-arch:: install-testsuite
 
 common-binary-arch:: make-buildsymbols
 

@@ -1,3 +1,14 @@
+firefox-trunk (22.0~a1~hg20130329r126606-0ubuntu1-0ubuntu2) UNRELEASED; urgency=low
+
+  * Manually stage the testsuite in debian/tmp and dh_install it in to the
+    package from there rather than from objdir/dist, as dh_install is called
+    after we have created the breakpad symbols, which modifies the files
+    in objdir/dist and causes dh_strip to fail later on
+    - update debian/build/mozbuild.mk
+    - update debian/firefox-testsuite.install.in
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
+
 firefox-trunk (22.0~a1~hg20130329r126606-0ubuntu1-0ubuntu1) raring; urgency=low
 
   * New upstream snaphot v22.0 A1 HG20130329R126606
