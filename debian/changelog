@@ -11,6 +11,8 @@ firefox-trunk (23.0~a1~hg20130404r127580-0ubuntu1) UNRELEASED; urgency=low
   * Build conflict on python-progressbar, as having this installed causes the
     jit test harness to fail
     - update debian/control.in
+  * Disable unsupported W3C webgl tests
+    - update debian/testing/extra/mochitest/mochitest.json
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
 
