@@ -54,6 +54,7 @@ function run_test()
     "ko": "ko-KR",
     "lv": "lv-LV",
     "mk": "mk-MK",
+    "mn": "mn-MN",
     "mr": "mr-IN",
     "pa-IN": "pa",
     "pl": "pl-PL",
