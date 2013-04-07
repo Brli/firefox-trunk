@@ -1,7 +1,3 @@
-# HG changeset patch
-# Parent 41aeb9b4cfb8c9ae9cd4768b981035284f1d7f59
-# User Chris Coulson <chris.coulson@canonical.com>
-
 diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/browser-menubar.inc
 --- a/browser/base/content/browser-menubar.inc
 +++ b/browser/base/content/browser-menubar.inc
@@ -29,7 +25,7 @@ diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/bro
 diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
 --- a/browser/base/content/browser.css
 +++ b/browser/base/content/browser.css
-@@ -207,16 +207,20 @@ splitmenu {
+@@ -199,16 +199,20 @@ splitmenu {
    -moz-binding: url("chrome://browser/content/urlbarBindings.xml#menuitem-iconic-tooltip");
  }
  
@@ -50,7 +46,7 @@ diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
  %endif
  
  /* Hide menu elements intended for keyboard access support */
-@@ -313,16 +317,23 @@ toolbarbutton.bookmark-item {
+@@ -305,16 +309,23 @@ toolbarbutton.bookmark-item {
  }
  
  %ifdef MENUBAR_CAN_AUTOHIDE
@@ -77,7 +73,7 @@ diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
 diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -1875,17 +1875,16 @@ var gBrowserInit = {
+@@ -1891,17 +1891,16 @@ var gBrowserInit = {
  var BrowserStartup        = gBrowserInit.onLoad.bind(gBrowserInit);
  var BrowserShutdown       = gBrowserInit.onUnload.bind(gBrowserInit);
  #ifdef XP_MACOSX
@@ -95,7 +91,7 @@ diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
    case "Forward":
      BrowserForward();
      break;
-@@ -4935,16 +4934,20 @@ function onViewToolbarsPopupShowing(aEve
+@@ -4841,16 +4840,20 @@ function onViewToolbarsPopupShowing(aEve
    }
  
    var firstMenuItem = aInsertPoint || popup.firstChild;
@@ -203,7 +199,7 @@ diff --git a/toolkit/content/xul.css b/toolkit/content/xul.css
 diff --git a/widget/Makefile.in b/widget/Makefile.in
 --- a/widget/Makefile.in
 +++ b/widget/Makefile.in
-@@ -70,21 +70,22 @@ EXPORTS		= \
+@@ -38,21 +38,22 @@ EXPORTS		= \
  		nsWidgetsCID.h \
  		nsIPluginWidget.h \
  		nsINativeKeyBindings.h \
@@ -233,7 +229,7 @@ diff --git a/widget/Makefile.in b/widget/Makefile.in
 diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
 --- a/widget/gtk2/Makefile.in
 +++ b/widget/gtk2/Makefile.in
-@@ -41,16 +41,24 @@ CPPSRCS = \
+@@ -39,16 +39,24 @@ CPPSRCS = \
    nsFilePicker.cpp \
    nsSound.cpp \
    nsNativeKeyBindings.cpp \
@@ -258,7 +254,7 @@ diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
  
  ifdef NS_PRINTING
  CPPSRCS		+= \
-@@ -101,14 +109,15 @@ endif
+@@ -99,14 +107,15 @@ endif
  endif
  
  DEFINES		+= -DCAIRO_GFX -DMOZ_APP_NAME='"$(MOZ_APP_NAME)"'
@@ -2718,7 +2714,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,704 @@
+@@ -0,0 +1,684 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2754,6 +2750,7 @@ new file mode 100644
 +#include "nsServiceManagerUtils.h"
 +#include "nsNetUtil.h"
 +#include "mozilla/Preferences.h"
++#include "ImageOps.h"
 +
 +#include "nsNativeMenuUtils.h"
 +#include "nsMenu.h"
@@ -2767,6 +2764,7 @@ new file mode 100644
 +#include <pango/pango.h>
 +
 +using namespace mozilla;
++using mozilla::image::ImageOps;
 +
 +#define MAX_WIDTH 350000
 +
@@ -2819,11 +2817,11 @@ new file mode 100644
 +        return NS_OK;
 +    }
 +
-+    if (mIconLoaded) {
++    if (IconLoaded()) {
 +        return NS_OK;
 +    }
 +
-+    mIconLoaded = true;
++    SetIconLoaded();
 +
 +    nsCOMPtr<imgIContainer> img;
 +    mImageRequest->GetImage(getter_AddRefs(img));
@@ -2831,27 +2829,17 @@ new file mode 100644
 +        return NS_ERROR_FAILURE;
 +    }
 +
-+    int32_t origWidth, origHeight;
-+    img->GetWidth(&origWidth);
-+    img->GetHeight(&origHeight);
-+
-+    bool needsClip = false;
-+
-+    if (!mImageRect.IsEmpty()) {
-+        if (mImageRect.XMost() > origWidth || mImageRect.YMost() > origHeight) {
-+            // -moz-image-region is larger than the image
-+            mImageRect.SetRect(0, 0, origWidth, origHeight);
-+        }
-+
-+        if (!(mImageRect.x == 0 && mImageRect.y == 0 &&
-+              mImageRect.width == origWidth &&
-+              mImageRect.height == origHeight)) {
-+            needsClip = true;
-+        }
++    int32_t width, height;
++    if (!IsFromImageAttr() && (mImageRect.width > 0 || mImageRect.height > 0)) {
++        img = ImageOps::Clip(img, mImageRect);
++        width = mImageRect.width;
++        height = mImageRect.height;
++    } else {
++        img->GetWidth(&width);
++        img->GetHeight(&height);
 +    }
 +
-+    if ((!needsClip && (origWidth > 100 || origHeight > 100)) ||
-+        (needsClip && (mImageRect.width > 100 || mImageRect.height > 100))) {
++    if (width > 100 || height > 100) {
 +        // The icon data needs to go across DBus. Make sure the icon
 +        // data isn't too large, else our connection gets terminated and
 +        // GDbus helpfully aborts the application. Thank you :)
@@ -2860,16 +2848,7 @@ new file mode 100644
 +        return NS_OK;
 +    }
 +
-+    nsCOMPtr<imgIContainer> clippedImg;
-+    if (needsClip) {
-+        img->ExtractFrame(0, mImageRect, 0, getter_AddRefs(clippedImg));
-+        if (!clippedImg) {
-+            return NS_ERROR_FAILURE;
-+        }
-+    }
-+
-+    GdkPixbuf *pixbuf =
-+        nsImageToPixbuf::ImageToPixbuf(clippedImg ? clippedImg : img);
++    GdkPixbuf *pixbuf = nsImageToPixbuf::ImageToPixbuf(img);
 +    if (pixbuf) {
 +        dbusmenu_menuitem_property_set_image(mOwner->GetDbusMenuItem(),
 +                                             DBUSMENU_MENUITEM_PROP_ICON_DATA,
@@ -2907,7 +2886,7 @@ new file mode 100644
 +
 +    nsAutoString uriString;
 +    if (mOwner->ContentNode()->GetAttr(kNameSpaceID_None, nsGkAtoms::image,
-+                                          uriString)) {
++                                       uriString)) {
 +        NS_NewURI(getter_AddRefs(uri), uriString);
 +    } else {
 +        nsIPresShell *shell = doc->GetShell();
@@ -2938,7 +2917,6 @@ new file mode 100644
 +    }
 +
 +    if (!uri) {
-+        mImageRect.SetEmpty();
 +        mOwner->ClearIcon();
 +        mURI = nullptr;
 +
@@ -2950,11 +2928,9 @@ new file mode 100644
 +        return;
 +    }
 +
-+    bool equal = false;
 +    bool same;
-+    equal = mURI && NS_SUCCEEDED(mURI->Equals(uri, &same)) && same;
-+    equal = equal && imageRect == mImageRect;
-+    if (equal) {
++    if (mURI && NS_SUCCEEDED(mURI->Equals(uri, &same)) && same && 
++        (!imageRequest || imageRect == mImageRect)) {
 +        return;
 +    }
 +
@@ -2963,12 +2939,14 @@ new file mode 100644
 +        mImageRequest = nullptr;
 +    }
 +
-+    mIconLoaded = false;
++    ClearIconLoaded();
 +
 +    if (imageRequest) {
++        ClearIsFromImageAttr();
 +        mImageRect = imageRect;
 +        imageRequest->Clone(this, getter_AddRefs(mImageRequest));
 +    } else {
++        SetIsFromImageAttr();
 +        nsCOMPtr<nsILoadGroup> loadGroup = doc->GetDocumentLoadGroup();
 +        nsRefPtr<imgLoader> loader =
 +            nsContentUtils::GetImgLoaderForDocument(doc);
@@ -2984,8 +2962,6 @@ new file mode 100644
 +            NS_WARNING("Failed to load icon");
 +            return;
 +        }
-+
-+        mImageRect.SetEmpty();
 +    }
 +
 +    mURI = uri;
@@ -3061,7 +3037,7 @@ new file mode 100644
 +}
 +
 +static const nsDependentString
-+Ellipsis()
++GetEllipsis()
 +{
 +    static PRUnichar sBuf[4] = { 0, 0, 0, 0 };
 +    if (!sBuf[0]) {
@@ -3089,7 +3065,7 @@ new file mode 100644
 +    static int sEllipsisWidth = -1;
 +
 +    if (sEllipsisWidth == -1) {
-+        sEllipsisWidth = CalculateTextWidth(Ellipsis());
++        sEllipsisWidth = CalculateTextWidth(GetEllipsis());
 +    }
 +
 +    return sEllipsisWidth;
@@ -3240,7 +3216,7 @@ new file mode 100644
 +                    }
 +                }
 +
-+                truncated.Append(Ellipsis());
++                truncated.Append(GetEllipsis());
 +        }
 +
 +        text = truncated;
@@ -3427,7 +3403,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,173 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3530,7 +3506,7 @@ new file mode 100644
 +        NS_DECL_IMGINOTIFICATIONOBSERVER
 +
 +        IconLoader(nsMenuObject *aOwner) : mOwner(aOwner),
-+                                           mIconLoaded(false) { };
++                                           mFlags(0) { };
 +
 +        void ScheduleIconLoad();
 +        void LoadIcon();
@@ -3539,10 +3515,35 @@ new file mode 100644
 +    private:
 +        ~IconLoader() { };
 +
++        enum  {
++            eState_IconLoaded = (1 << 0),
++            eState_IsFromImageAttr = (1 << 1)
++        };
++
++        bool IconLoaded() const {
++            return mFlags & eState_IconLoaded ? true : false;
++        }
++        void SetIconLoaded() {
++            mFlags |= eState_IconLoaded;
++        }
++        void ClearIconLoaded() {
++            mFlags &= ~eState_IconLoaded;
++        }
++
++        bool IsFromImageAttr() const {
++            return mFlags & eState_IsFromImageAttr;
++        }
++        void SetIsFromImageAttr() {
++            mFlags |= eState_IsFromImageAttr;
++        }
++        void ClearIsFromImageAttr() {
++            mFlags &= ~eState_IsFromImageAttr;
++        }
++
 +        nsMenuObject *mOwner;
 +        nsRefPtr<imgRequestProxy> mImageRequest;
 +        nsCOMPtr<nsIURI> mURI;
-+        bool mIconLoaded;
++        uint8_t mFlags;
 +        nsIntRect mImageRect;
 +    };
 +
@@ -4919,7 +4920,7 @@ diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
  
      // utility method, -1 if no change should be made, otherwise returns a
      // value that can be passed to gdk_window_set_decorations
-@@ -448,16 +452,18 @@ private:
+@@ -446,16 +450,18 @@ private:
       * The instance is created when the top level widget is created.  And when
       * the widget is destroyed, it's released.  All child windows refer its
       * ancestor widget's instance.  So, one set of IM contexts is created for

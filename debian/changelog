@@ -17,6 +17,7 @@ firefox-trunk (23.0~a1~hg20130404r127580-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/extra/xpcshell/package-tests/test_langpack_chrome.js
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
+    - update debian/patches/unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
