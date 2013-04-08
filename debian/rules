@@ -64,7 +64,7 @@ PLUGIN_CONFLICTS := gcu-plugin (<= 0.12.10-1ubuntu1)
 endif
 endif
 
-WRITE_SUBSTVARS = $(shell echo "$(2)=$(3)" | sed -n 's/[ \t\n]\+/ /g p' >> debian/$(1).substvars)
+WRITE_SUBSTVARS = $(shell echo "$(2)=$(3)" | sed 's/[ \t\n]\+/ /g' >> debian/$(1).substvars)
 
 ifeq (firefox, $(MOZ_PKG_NAME))
 ifeq (,$(filter precise, $(DISTRIB_CODENAME)))
