@@ -17,6 +17,8 @@ firefox-trunk (23.0~a1~hg20130404r127580-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/extra/xpcshell/package-tests/test_langpack_chrome.js
   * Fix failure to populate Replaces on 12.10 and later (LP: #1165408)
     - update debian/rules
+  * Refresh paths for a11y tests after landing of bmo: #854868
+    - update debian/testing/extra/mochitest/mochitest-chrome.json
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch
