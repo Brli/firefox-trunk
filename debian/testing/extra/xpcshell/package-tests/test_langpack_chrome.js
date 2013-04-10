@@ -47,7 +47,7 @@ function run_test()
     "fi": "fi-FI",
     "gl": "gl-ES",
     "he": "he-IL",
-    "hi-IN": "en-US",
+    "hi-IN": "hi",
     "hu": "hu-HU",
     "is": "is-IS",
     "kn": "kn-IN",
