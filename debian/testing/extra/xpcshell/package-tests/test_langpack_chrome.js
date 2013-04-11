@@ -59,6 +59,7 @@ function run_test()
     "pa-IN": "pa",
     "pl": "pl-PL",
     "si": "si-LK",
+    "sw": "en-US",
     "te": "te-IN",
     "tr": "tr-TR"
   };
