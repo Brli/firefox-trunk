@@ -19,6 +19,10 @@ firefox-trunk (23.0~a1~hg20130404r127580-0ubuntu1) UNRELEASED; urgency=low
     - update debian/rules
   * Refresh paths for a11y tests after landing of bmo: #854868
     - update debian/testing/extra/mochitest/mochitest-chrome.json
+  * Disable some unsupported tests that test search healthreporting, as these
+    don't work on Ubuntu where the searchplugins are not in the application
+    directory
+    - update debian/testing/extra/mochitest/mochitest-chrome.json
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch

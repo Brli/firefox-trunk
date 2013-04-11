@@ -3,6 +3,9 @@
  "excludetests": {
   "a11y/accessible/tests/mochitest/events/test_focus_general.*": "HANGS, https://launchpad.net/bugs/1158821",
   "a11y/accessible/tests/mochitest/events/test_textattrchange.html": "HANGS, https://launchpad.net/bugs/1158836",
+  "browser/browser/base/content/test/browser_aboutHome.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
+  "browser/browser/base/content/test/browser_contextSearchTabPosition.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
+  "browser/browser/base/content/test/browser_urlbar_search_healthreport.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
   "browser/browser/components/search/test/browser_google.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
   "browser/browser/devtools/debugger/test/browser_dbg_createChrome.js": "HANGS, https://launchpad.net/bugs/1159078",
   "browser/dom/tests/browser/browser_geolocation_privatebrowsing_perwindowpb.js": "https://launchpad.net/bugs/1167106",
