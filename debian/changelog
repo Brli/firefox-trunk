@@ -26,6 +26,7 @@ firefox-trunk (23.0~a1~hg20130411r128458-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch
+    - update debian/patches/dont-override-general-useragent-locale.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
