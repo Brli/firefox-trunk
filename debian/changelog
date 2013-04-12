@@ -13,7 +13,7 @@ firefox-trunk (23.0~a1~hg20130411r128458-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control.in
   * Disable unsupported W3C webgl tests
     - update debian/testing/extra/mochitest/mochitest.json
-  * Fix test_langpack_chrome.js for Hindi, Mongolian and Swedish
+  * Fix test_langpack_chrome.js for Hindi, Mongolian, Swedish and Tamil
     - update debian/testing/extra/xpcshell/package-tests/test_langpack_chrome.js
   * Fix failure to populate Replaces on 12.10 and later (LP: #1165408)
     - update debian/rules
