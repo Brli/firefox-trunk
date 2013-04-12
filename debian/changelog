@@ -26,6 +26,10 @@ firefox-trunk (23.0~a1~hg20130411r128458-0ubuntu1) UNRELEASED; urgency=low
   * Make firefox-globalmenu a real transitional package
     - update debian/control.in
     - update debian/build/mozbuild.mk
+  * Just test the selected locale on all channels in test_langpack_chrome.js,
+    rather than testing we get a correctly translated string. This is just
+    way too fragile
+    - update debian/testing/extra/xpcshell/package-tests/test_langpack_chrome.js
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch
