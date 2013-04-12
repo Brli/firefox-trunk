@@ -47,7 +47,9 @@ Depends: lsb-release,
 	${shlibs:Depends}
 Recommends: xul-ext-ubufox,
 	${support:Recommends},
-	libcanberra0
+	libcanberra0,
+	libdbusmenu-glib4,
+	libdbusmenu-gtk4
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser,
@@ -144,23 +146,6 @@ Description: Safe and easy web browser from Mozilla - Breakpad symbols
  Breakpad. Eventually this package should go away and the symbol upload be
  implemented in soyuz (or other builders that build this package)
 
-Package: firefox-trunk-globalmenu
-Architecture: any
-Depends: ${shlibs:Depends},
-	${misc:Depends},
-	libdbusmenu-glib4,
-	libdbusmenu-gtk4,
-	firefox-trunk
-Provides: ${app:Provides}
-Conflicts: ${app:Conflicts}
-Description: Safe and easy web browser from Mozilla - Unity menubar integration
- Firefox delivers safe, easy web browsing. A familiar user interface,
- enhanced security features including protection from online identity theft,
- and integrated search let you get the most out of the web.
- .
- This package depends on the libraries which allow Firefox to take
- advantage of the Unity menubar
-
 Package: firefox-trunk-testsuite
 Architecture: any
 Depends: ${shlibs:Depends},
@@ -205,6 +190,15 @@ Description: Safe and easy web browser from Mozilla - testsuite
  and integrated search let you get the most out of the web.
  .
  This package contains the Firefox testsuite
+
+# Transitional packages below here
+
+Package: firefox-trunk-globalmenu
+Architecture: any
+Depends: ${misc:Depends},
+Description: Safe and easy web browser from Mozilla (transitional package)
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
 
 # Language packs below here
 

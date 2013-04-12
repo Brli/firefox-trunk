@@ -175,7 +175,6 @@ else
 LANGPACK_DIR := $(DEB_HOST_GNU_SYSTEM)-$(DEB_HOST_GNU_CPU)/xpi
 endif
 
-MOZ_PKG_SUPPORT_RECOMMENDS ?= $(MOZ_PKG_NAME)-globalmenu
 MOZ_PKG_SUPPORT_SUGGESTS ?= $(MOZ_PKG_NAME)-gnome-support
 
 # Defines used for the Mozilla text preprocessor

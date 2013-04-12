@@ -23,6 +23,9 @@ firefox-trunk (23.0~a1~hg20130411r128458-0ubuntu1) UNRELEASED; urgency=low
     don't work on Ubuntu where the searchplugins are not in the application
     directory
     - update debian/testing/extra/mochitest/mochitest-chrome.json
+  * Make firefox-globalmenu a real transitional package
+    - update debian/control.in
+    - update debian/build/mozbuild.mk
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch
