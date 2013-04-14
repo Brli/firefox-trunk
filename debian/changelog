@@ -1,6 +1,6 @@
-firefox-trunk (23.0~a1~hg20130411r128458-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (23.0~a1~hg20130413r128668-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v23.0 A1 HG20130411R128458
+  * New upstream snapshot v23.0 A1 HG20130413R128668
 
   * Manually stage the testsuite in debian/tmp and dh_install it in to the
     package from there rather than from objdir/dist, as dh_install is called
@@ -34,6 +34,7 @@ firefox-trunk (23.0~a1~hg20130411r128458-0ubuntu1) UNRELEASED; urgency=low
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch
     - update debian/patches/dont-override-general-useragent-locale.patch
+    - update debian/patches/no_neon_on_arm.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
