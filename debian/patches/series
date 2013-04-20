@@ -20,7 +20,6 @@ test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
 test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
 test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
 test-overrides/disable-failing-python-tests.patch
-test-fixes/crashtest-no-network-access.patch
 test-fixes/xpcshell-xunit-output-no-bell.patch
 test-fixes/xpcshell-search-fix-json-cache-test.patch
 test-integration/xpcshell-dont-return-nonzero-on-test-failure.patch

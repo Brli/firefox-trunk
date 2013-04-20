@@ -34,6 +34,8 @@ firefox-trunk (23.0~a1~hg20130419r129355-0ubuntu1) UNRELEASED; urgency=low
     - update debian/patches/unity-menubar.patch
     - update debian/patches/dont-override-general-useragent-locale.patch
     - update debian/patches/no_neon_on_arm.patch
+  * Drop crashtest-no-network-access.patch as the test seems to have been
+    removed from the tree
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
