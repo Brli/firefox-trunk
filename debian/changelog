@@ -1,6 +1,6 @@
-firefox-trunk (23.0~a1~hg20130417r128978-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (23.0~a1~hg20130419r129355-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v23.0 A1 HG20130417R128978
+  * New upstream snapshot v23.0 A1 HG20130419R129355
 
   * Manually stage the testsuite in debian/tmp and dh_install it in to the
     package from there rather than from objdir/dist, as dh_install is called
@@ -30,7 +30,6 @@ firefox-trunk (23.0~a1~hg20130417r128978-0ubuntu1) UNRELEASED; urgency=low
     rather than testing we get a correctly translated string. This is just
     way too fragile
     - update debian/testing/extra/xpcshell/package-tests/test_langpack_chrome.js
-  * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch
     - update debian/patches/dont-override-general-useragent-locale.patch
