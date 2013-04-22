@@ -38,6 +38,8 @@ firefox-trunk (23.0~a1~hg20130419r129355-0ubuntu1) UNRELEASED; urgency=low
     removed from the tree
   * Wait for DECODE_COMPLETE rather than LOAD_COMPLETE when loading favicons
     - update debian/patches/unity-menubar.patch
+  * Fix various memory issues with the menubar implementation
+    - update debian/patches/unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
