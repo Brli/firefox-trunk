@@ -390,7 +390,7 @@ diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,727 @@
+@@ -0,0 +1,730 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -423,6 +423,7 @@ new file mode 100644
 +#include <glib-object.h>
 +
 +using namespace mozilla;
++using mozilla::AutoPushJSContext;
 +
 +static bool
 +IsRecycledItemCompatible(DbusmenuMenuitem *aRecycled,
@@ -579,12 +580,20 @@ new file mode 100644
 +    nsCOMPtr<nsIAtom> atom =
 +        do_GetAtom(NS_LITERAL_CSTRING("_moz-menupopupstate"));
 +    nsCOMPtr<nsIRunnable> event;
-+    if (state.IsEmpty()) {
-+        event = new nsUnsetAttrRunnable(mPopupContent, atom);
++    if (nsContentUtils::IsSafeToRunScript()) {
++        if (state.IsEmpty()) {
++            mPopupContent->UnsetAttr(kNameSpaceID_None, atom, true);
++        } else {
++            mPopupContent->SetAttr(kNameSpaceID_None, atom, state, true);
++        }
 +    } else {
-+        event = new nsSetAttrRunnable(mPopupContent, atom, state);
++        if (state.IsEmpty()) {
++            event = new nsUnsetAttrRunnable(mPopupContent, atom);
++        } else {
++            event = new nsSetAttrRunnable(mPopupContent, atom, state);
++        }
++        nsContentUtils::AddScriptRunner(event);
 +    }
-+    nsContentUtils::AddScriptRunner(event);
 +}
 +
 +/* static */ gboolean
@@ -769,17 +778,11 @@ new file mode 100644
 +    nsCOMPtr<nsIContent> oldPopupContent;
 +    oldPopupContent.swap(mPopupContent);
 +
-+    int32_t dummy;
-+    nsCOMPtr<nsIAtom> tag = mContent->OwnerDoc()->BindingManager()->ResolveTag(mContent, &dummy);
-+    if (tag == nsGkAtoms::menupopup) {
-+        mPopupContent = mContent;
-+        return;
-+    }
-+
 +    for (uint32_t i = 0; i < mContent->GetChildCount(); ++i) {
 +        nsIContent *child = mContent->GetChildAt(i);
 +
-+        tag = child->OwnerDoc()->BindingManager()->ResolveTag(child, &dummy);
++        int32_t dummy;
++        nsCOMPtr<nsIAtom> tag = child->OwnerDoc()->BindingManager()->ResolveTag(child, &dummy);
 +        if (tag == nsGkAtoms::menupopup) {
 +            mPopupContent = child;
 +            break;
@@ -806,7 +809,7 @@ new file mode 100644
 +        nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
 +        JSObject *global = sgo->GetGlobalJSObject();
 +        if (scriptContext && global) {
-+            JSContext *cx = scriptContext->GetNativeContext();
++            AutoPushJSContext cx(scriptContext->GetNativeContext());
 +            if (cx) {
 +                nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
 +                xpconnect->WrapNative(cx, global, mPopupContent,
@@ -3714,7 +3717,7 @@ new file mode 100644
 +    nsNativeMenuDocListenerFlushRunnable() { };
 +};
 +
-+class DispatchContext MOZ_FINAL {
++class MOZ_STACK_CLASS DispatchContext {
 +public:
 +    DispatchContext(nsNativeMenuDocListener *aOwner,
 +                    nsIContent *aTarget) : mOwner(aOwner),
@@ -4159,7 +4162,7 @@ new file mode 100644
 + * The idea is that we prevent our view of the menus from mutating
 + * whilst dispatching events in to Gecko
 + */
-+class nsNativeMenuAutoSuspendMutations
++class MOZ_STACK_CLASS nsNativeMenuAutoSuspendMutations
 +{
 +public:
 +    nsNativeMenuAutoSuspendMutations() {
