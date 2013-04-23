@@ -1,6 +1,6 @@
-firefox-trunk (23.0~a1~hg20130419r129355-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (23.0~a1~hg20130423r129495-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v23.0 A1 HG20130419R129355
+  * New upstream snapshot v23.0 A1 HG20130423R129495
 
   * Manually stage the testsuite in debian/tmp and dh_install it in to the
     package from there rather than from objdir/dist, as dh_install is called
