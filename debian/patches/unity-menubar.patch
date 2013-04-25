@@ -46,34 +46,10 @@ diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
  %endif
  
  /* Hide menu elements intended for keyboard access support */
-@@ -305,16 +309,23 @@ toolbarbutton.bookmark-item {
- }
- 
- %ifdef MENUBAR_CAN_AUTOHIDE
- #toolbar-menubar:not([autohide="true"]) ~ #nav-bar > #bookmarks-menu-button-container,
- #toolbar-menubar:not([autohide="true"]) ~ toolbar > #personal-bookmarks > #bookmarks-menu-button,
- #toolbar-menubar:not([autohide="true"]) > #personal-bookmarks > #bookmarks-menu-button {
-   display: none;
- }
-+
-+%ifdef MOZ_WIDGET_GTK
-+window[shellshowingmenubar="true"] #nav-bar > #bookmarks-menu-button-container,
-+window[shellshowingmenubar="true"] #personal-bookmarks > #bookmarks-menu-button {
-+  display: none;
-+}
-+%endif
- %endif
- 
- #editBMPanel_tagsSelector {
-   /* override default listbox width from xul.css */
-   width: auto;
- }
- 
- menupopup[emptyplacesresult="true"] > .hide-if-empty-places-result {
 diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -4450,16 +4450,20 @@ function onViewToolbarsPopupShowing(aEve
+@@ -4457,16 +4457,20 @@ function onViewToolbarsPopupShowing(aEve
    }
  
    var firstMenuItem = aInsertPoint || popup.firstChild;
