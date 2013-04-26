@@ -2,7 +2,7 @@
 
 MOZ_PKG_BASENAME	:= firefox
 
-include $(CURDIR)/debian/build/mozvars.mk
+include $(CURDIR)/debian/build/config.mk
 
 MOZ_APP			:= browser
 MOZ_VENDOR		:= Mozilla
@@ -46,7 +46,7 @@ MOZ_PKGCONFIG_FILES = \
 	debian/pkgconfig/mozilla-plugin.pc \
 	$(NULL)
 
-include $(CURDIR)/debian/build/mozbuild.mk
+include $(CURDIR)/debian/build/rules.mk
 
 MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_LIBDIR)/testing/run_mochitest \
 						$(MOZ_LIBDIR)/testing/run_reftest \
