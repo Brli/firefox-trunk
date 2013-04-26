@@ -377,13 +377,18 @@ install-searchplugins-%:
 	@$(if $(wildcard debian/searchplugins),$(call CUSTOMIZE_SEARCHPLUGINS,$(LANGUAGES),$(PKGNAME)))
 	@echo ""
 
+binary-fixup/$(MOZ_PKG_NAME)-testsuite::
+	find debian/$(MOZ_PKG_NAME)-testsuite -type f -perm -5 -name *.zip -print0 2>/dev/null | xargs -0r chmod 644
+
+common-binary-fixup-arch::
+	$(foreach pkg,$(MOZ_PKG_NAMES),$(foreach file,$(MOZ_EXECUTABLES_$(pkg)),chmod a+x debian/$(pkg)/$(file);))
+
 binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR):$$LD_LIBRARY_PATH \
 	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/$(lib);)
 
 common-binary-predeb-arch::
-	$(foreach pkg,$(MOZ_PKG_NAMES),$(foreach file,$(MOZ_EXECUTABLES_$(pkg)),chmod a+x debian/$(pkg)/$(file);))
 	# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
 	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
 	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
