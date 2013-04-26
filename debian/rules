@@ -99,10 +99,6 @@ make-langpack-preinsts::
 	done < $(CURDIR)/debian/config/locales.shipped
 
 pre-build:: make-langpack-preinsts
-	@cp $(DEB_SRCDIR)/toolkit/content/widgets/dialog.xml $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
-	@cp $(DEB_SRCDIR)/toolkit/content/widgets/preferences.xml $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
-	@cp $(DEB_SRCDIR)/browser/base/content/browser.xul $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
-
 ifneq ($(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_BASENAME))
 	@echo "Setting MOZ_APP_UA_NAME to $(MOZ_DEFAULT_APP_BASENAME)"
 	@cp $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh.bak; \
@@ -124,8 +120,5 @@ clean::
 	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh)
 	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js)
 	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/webapprt/application.ini.in)
-	rm -f $(DEB_SRCDIR)/toolkit/content/widgets/dialog-kde.xml
-	rm -f $(DEB_SRCDIR)/toolkit/content/widgets/preferences-kde.xml
-	rm -f $(DEB_SRCDIR)/browser/base/content/browser-kde.xul
 
 .PHONY: make-langpack-preinsts
