@@ -297,7 +297,7 @@ binary-post-install/$(MOZ_PKG_NAME)-dev::
 	rm -f debian/$(MOZ_PKG_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_PKG_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 
-binary-post-install/%::
+$(patsubst %,binary-post-install/%,$(DEB_ALL_PACKAGES)) :: binary-post-install/%:
 	find debian/$* -name .mkdir.done -delete
 
 install-langpack-xpis-%:
@@ -377,8 +377,8 @@ install-searchplugins-%:
 	@$(if $(wildcard debian/searchplugins),$(call CUSTOMIZE_SEARCHPLUGINS,$(LANGUAGES),$(PKGNAME)))
 	@echo ""
 
-binary-fixup/$(MOZ_PKG_NAME)-testsuite::
-	find debian/$(MOZ_PKG_NAME)-testsuite -type f -perm -5 -name *.zip -print0 2>/dev/null | xargs -0r chmod 644
+$(patsubst %,binary-fixup/%,$(DEB_ALL_PACKAGES)) :: binary-fixup/%:
+	find debian/$(cdbs_curpkg) -type f -perm -5 \( -name '*.zip' -or -name '*.xml' \) -print0 2>/dev/null | xargs -0r chmod 644
 
 common-binary-fixup-arch::
 	$(foreach pkg,$(MOZ_PKG_NAMES),$(foreach file,$(MOZ_EXECUTABLES_$(pkg)),chmod a+x debian/$(pkg)/$(file);))
