@@ -53,6 +53,8 @@ firefox-trunk (23.0~a1~hg20130426r129904-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control.in
   * Make the testsuite priority extra, section misc
     - update debian/control.in
+  * The testsuite shouldn't depend on essential package libc-bin
+    - update debian/control.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
