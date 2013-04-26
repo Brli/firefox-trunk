@@ -92,6 +92,29 @@ diff --git a/browser/components/places/content/places.xul b/browser/components/p
              <menuitem id="newbookmark"
                        command="placesCmd_new:bookmark"
                        label="&cmd.new_bookmark.label;"
+diff --git a/modules/libpref/src/init/all.js b/modules/libpref/src/init/all.js
+--- a/modules/libpref/src/init/all.js
++++ b/modules/libpref/src/init/all.js
+@@ -89,16 +89,19 @@ pref("dom.workers.maxPerDomain", 20);
+ // Whether window.performance is enabled
+ pref("dom.enable_performance", true);
+ 
+ // Fastback caching - if this pref is negative, then we calculate the number
+ // of content viewers to cache based on the amount of available memory.
+ pref("browser.sessionhistory.max_total_viewers", -1);
+ 
+ pref("ui.use_native_colors", true);
++#ifdef MOZ_WIDGET_GTK
++pref("ui.use_unity_menubar", true);
++#endif
+ pref("ui.click_hold_context_menus", false);
+ pref("browser.display.use_document_fonts",  1);  // 0 = never, 1 = quick, 2 = always
+ pref("browser.display.use_document_colors", true);
+ pref("browser.display.use_system_colors",   false);
+ pref("browser.display.foreground_color",    "#000000");
+ pref("browser.display.background_color",    "#FFFFFF");
+ pref("browser.display.force_inline_alttext", false); // true = force ALT text for missing images to be layed out inline
+ // 0 = no external leading, 
 diff --git a/toolkit/content/widgets/popup.xml b/toolkit/content/widgets/popup.xml
 --- a/toolkit/content/widgets/popup.xml
 +++ b/toolkit/content/widgets/popup.xml
@@ -368,7 +391,7 @@ diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,686 @@
+@@ -0,0 +1,685 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -776,8 +799,7 @@ new file mode 100644
 +{
 +    SetNeedsRebuildFlag();
 +
-+    if (mParent->Type() == nsMenuObject::eType_MenuBar &&
-+        MenuBar()->State() != nsMenuBar::eState_Registered) {
++    if (mParent == MenuBar() && !MenuBar()->IsRegistered()) {
 +        SetIgnoreFirstAboutToShowFlag();
 +    }
 +
@@ -1059,7 +1081,7 @@ diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.h
-@@ -0,0 +1,151 @@
+@@ -0,0 +1,152 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1073,6 +1095,7 @@ new file mode 100644
 +#include "nsCOMPtr.h"
 +#include "nsIContent.h"
 +#include "nsThreadUtils.h"
++#include "mozilla/Attributes.h"
 +
 +#include "nsMenuObject.h"
 +#include "nsDbusmenu.h"
@@ -1215,7 +1238,7 @@ diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.cpp
-@@ -0,0 +1,564 @@
+@@ -0,0 +1,558 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1544,7 +1567,7 @@ new file mode 100644
 +    nsMenuObjectContainer(),
 +    mTopLevel(nullptr),
 +    mServer(nullptr),
-+    mState(eState_Deactivated)
++    mFlags(0)
 +{
 +    MOZ_COUNT_CTOR(nsMenuBar);
 +}
@@ -1680,10 +1703,11 @@ new file mode 100644
 +nsresult
 +nsMenuBar::Activate()
 +{
-+    if (mState != eState_Deactivated) {
++    if (IsActive()) {
 +        return NS_OK;
 +    }
-+    mState = eState_Activated;
++
++    SetIsActiveFlag();
 +
 +    mDocument->AddEventListener(NS_LITERAL_STRING("focus"),
 +                                mEventListener,
@@ -1723,22 +1747,15 @@ new file mode 100644
 +}
 +
 +void
-+nsMenuBar::SetRegistered()
-+{
-+    NS_ASSERTION(mState == eState_Activated, "Inconsistent state");
-+
-+    mState = eState_Registered;
-+}
-+
-+void
 +nsMenuBar::Deactivate()
 +{
-+    if (mState == eState_Deactivated) {
++    if (!IsActive()) {
 +        return;
 +    }
-+    mState = eState_Deactivated;
 +
-+    mCancellable.Cancel();
++    ClearIsActiveFlag();
++
++    mRegisterRequestCanceller.Cancel();
 +
 +    SetShellShowingMenuBar(false);
 +    while (mMenuObjects.Length() > 0) {
@@ -1784,7 +1801,7 @@ diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.h
-@@ -0,0 +1,138 @@
+@@ -0,0 +1,158 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1800,6 +1817,7 @@ new file mode 100644
 +#include "nsString.h"
 +#include "nsINativeMenuService.h"
 +#include "nsIDOMEventListener.h"
++#include "mozilla/Attributes.h"
 +
 +#include "nsNativeMenuUtils.h"
 +#include "nsMenuObject.h"
@@ -1822,18 +1840,6 @@ new file mode 100644
 +class nsMenuBar MOZ_FINAL : public nsMenuObjectContainer
 +{
 +public:
-+    enum EState {
-+        // No menus are created, all document listeners and event
-+        // handlers are disconnected and the XUL menubar is displayed.
-+        eState_Deactivated,
-+
-+        // Menus are created, all document listeners and event handlers
-+        // are connected and the XUL menubar is hidden.
-+        eState_Activated,
-+
-+        eState_Registered
-+    };
-+
 +    ~nsMenuBar();
 +
 +    static already_AddRefed<nsMenuBar> Create(nsIWidget *aParent,
@@ -1847,13 +1853,33 @@ new file mode 100644
 +    // Get the object path for this menubar
 +    nsAdoptingCString ObjectPath() const;
 +
-+    // Get a GCancellable that can be used for cancellable operations, to
-+    // automatically cancel them if the last reference to this menubar is
-+    // released.
-+    nsAutoGCancellable& Cancellable() { return mCancellable; }
++    // Initializes and returns a cancellable request object, used
++    // by the menuservice when registering this menubar
++    nsNativeMenuGIORequest& BeginRegisterRequest() {
++        mRegisterRequestCanceller.Start();
++        mFlags &= ~eFlag_Registered;
++        return mRegisterRequestCanceller;
++    }
 +
-+    // Get the menubar state
-+    EState State() const { return mState; }
++    // Finishes the current request to register the menubar
++    void EndRegisterRequest(bool aSuccess) {
++        NS_ASSERTION(RegisterRequestInProgress(), "No request in progress");
++        mRegisterRequestCanceller.Finish();
++        if (aSuccess) {
++            mFlags |= eFlag_Registered;
++        } else {
++            mFlags &= ~eFlag_Registered;
++        }
++    }
++
++    bool RegisterRequestInProgress() const {
++        return mRegisterRequestCanceller.InProgress();
++    }
++
++    // Is the menubar registered?
++    bool IsRegistered() const {
++        return mFlags & eFlag_Registered;
++    }
 +
 +    // Get the top-level GtkWindow handle
 +    GtkWidget* TopLevelWindow() { return mTopLevel; }
@@ -1861,10 +1887,6 @@ new file mode 100644
 +    // Called from the menuservice when the menubar is about to be registered.
 +    // Causes the native menubar to be created, and the XUL menubar to be hidden
 +    nsresult Activate();
-+
-+    // Called from the menu service when the menubar is successfully
-+    // registered with the desktop shell.
-+    void SetRegistered();
 +
 +    // Called from the menuservice when the menubar is no longer registered
 +    // with the desktop shell. Will cause the XUL menubar to be shown again
@@ -1876,6 +1898,11 @@ new file mode 100644
 +    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild);
 +
 +private:
++    enum {
++        eFlag_Active = 1 << 0,
++        eFlag_Registered = 1 << 1
++    };
++
 +    enum ModifierFlags {
 +        eModifierShift = (1 << 0),
 +        eModifierCtrl = (1 << 1),
@@ -1894,7 +1921,7 @@ new file mode 100644
 +    private:
 +        nsMenuBar *mOwner;
 +    };
-+ 
++
 +    nsMenuBar();
 +    nsresult Init(nsIWidget *aParent, nsIContent *aMenuBarNode);
 +    nsresult RemoveMenuObjectAt(uint32_t aIndex);
@@ -1911,15 +1938,25 @@ new file mode 100644
 +    nsresult KeyDown(nsIDOMEvent *aEvent);
 +    nsresult KeyUp(nsIDOMEvent *aEvent);
 +
++    bool IsActive() const {
++        return mFlags & eFlag_Active;
++    }
++    void SetIsActiveFlag() {
++        mFlags |= eFlag_Active;
++    }
++    void ClearIsActiveFlag() {
++        mFlags &= ~eFlag_Active;
++    }
++
 +    GtkWidget *mTopLevel;
 +    DbusmenuServer *mServer;
 +    nsCOMPtr<nsIDOMEventTarget> mDocument;
-+    nsAutoGCancellable mCancellable;
++    nsNativeMenuGIORequest mRegisterRequestCanceller;
 +    nsRefPtr<DocumentEventListener> mEventListener;
 +
 +    uint32_t mAccessKey;
 +    ModifierFlags mAccessKeyMask;
-+    EState mState;
++    uint8_t mFlags;
 +};
 +
 +#endif /* __nsMenuBar_h__ */
@@ -1927,7 +1964,7 @@ diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.cpp
-@@ -0,0 +1,535 @@
+@@ -0,0 +1,545 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1999,44 +2036,18 @@ new file mode 100644
 +    return 0;
 +}
 +
-+class nsMenuItemUncheckSiblingsEvent MOZ_FINAL : public nsRunnable {
++class nsMenuItemUncheckSiblingsRunnable MOZ_FINAL : public nsRunnable {
 +public:
 +    NS_IMETHODIMP Run() {
-+        if (!mContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::type,
-+                                   nsGkAtoms::radio, eCaseMatters)) {
-+            // If we're not a radio button, we don't care
-+            return NS_OK;
-+        }
-+
-+        nsAutoString name;
-+        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::name, name);
-+
-+        nsIContent *parent = mContent->GetParent();
-+        if (!parent) {
-+            return NS_OK;
-+        }
-+
-+        for (uint32_t i = 0; i < parent->GetChildCount(); ++i) {
-+            nsIContent *sibling = parent->GetChildAt(i);
-+
-+            nsAutoString otherName;
-+            sibling->GetAttr(kNameSpaceID_None, nsGkAtoms::name, otherName);
-+
-+            if (sibling != mContent && otherName == name && 
-+                sibling->AttrValueIs(kNameSpaceID_None, nsGkAtoms::type,
-+                                     nsGkAtoms::radio, eCaseMatters)) {
-+                sibling->UnsetAttr(kNameSpaceID_None, nsGkAtoms::checked, true);
-+            }
-+        }
-+
++        mMenuItem->UncheckSiblings();
 +        return NS_OK;
 +    }
 +
-+    nsMenuItemUncheckSiblingsEvent(nsIContent *aContent) :
-+        mContent(aContent) { };
++    nsMenuItemUncheckSiblingsRunnable(nsMenuItem *aMenuItem) :
++        mMenuItem(aMenuItem) { };
 +
 +private:
-+    nsCOMPtr<nsIContent> mContent;
++    nsRefPtr<nsMenuItem> mMenuItem;
 +};
 +
 +class nsMenuItemRefreshRunnable MOZ_FINAL : public nsRunnable {
@@ -2371,6 +2382,38 @@ new file mode 100644
 +    SyncIconFromContent();
 +}
 +
++void
++nsMenuItem::UncheckSiblings()
++{
++    if (!mContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::type,
++                               nsGkAtoms::radio, eCaseMatters)) {
++        // If we're not a radio button, we don't care
++        return;
++    }
++
++    nsAutoString name;
++    mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::name, name);
++
++    nsIContent *parent = mContent->GetParent();
++    if (!parent) {
++        return;
++    }
++
++    uint32_t count = parent->GetChildCount();
++    for (uint32_t i = 0; i < count; ++i) {
++        nsIContent *sibling = parent->GetChildAt(i);
++
++        nsAutoString otherName;
++        sibling->GetAttr(kNameSpaceID_None, nsGkAtoms::name, otherName);
++
++        if (sibling != mContent && otherName == name && 
++            sibling->AttrValueIs(kNameSpaceID_None, nsGkAtoms::type,
++                                 nsGkAtoms::radio, eCaseMatters)) {
++            sibling->UnsetAttr(kNameSpaceID_None, nsGkAtoms::checked, true);
++        }
++    }
++}
++
 +bool
 +nsMenuItem::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData)
 +{
@@ -2428,8 +2471,12 @@ new file mode 100644
 +    if (aContent == mContent && aAttribute == nsGkAtoms::checked &&
 +        aContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::checked,
 +                              nsGkAtoms::_true, eCaseMatters)) {
-+        nsContentUtils::AddScriptRunner(
-+            new nsMenuItemUncheckSiblingsEvent(mContent));
++        if (nsContentUtils::IsSafeToRunScript()) {
++            UncheckSiblings();
++        } else {
++            nsContentUtils::AddScriptRunner(
++                new nsMenuItemUncheckSiblingsRunnable(this));
++        }
 +    }
 +
 +    if (aContent == mContent) {
@@ -2467,7 +2514,7 @@ diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.h
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,122 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2480,6 +2527,7 @@ new file mode 100644
 +
 +#include "nsIContent.h"
 +#include "nsCOMPtr.h"
++#include "mozilla/Attributes.h"
 +
 +#include "nsMenuObject.h"
 +#include "nsDbusmenu.h"
@@ -2490,8 +2538,6 @@ new file mode 100644
 +#define NSMENUITEM_NUMBER_OF_FLAGS     1U
 +
 +class nsIAtom;
-+class nsMenuItemRefreshRunnable;
-+class nsMenuItemCommandContentAttrChangeEvent;
 +
 +/*
 + * This class represents 3 main classes of menuitems: labels, checkboxes and
@@ -2512,6 +2558,7 @@ new file mode 100644
 +private:
 +    friend class nsMenuItemRefreshRunnable;
 +    friend class nsMenuItemCommandNodeAttributeChangedRunnable;
++    friend class nsMenuItemUncheckSiblingsRunnable;
 +
 +    enum {
 +        eMenuItemFlag_ToggleState = (1 << 0)
@@ -2568,6 +2615,7 @@ new file mode 100644
 +    void InitializeNativeData();
 +    void Refresh(nsMenuObject::ERefreshType aType);
 +    void RefreshUnblocked(nsMenuObject::ERefreshType aType);
++    void UncheckSiblings();
 +    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData);
 +
 +    nsMenuObject::PropertyFlags SupportedProperties() const {
@@ -2593,7 +2641,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,701 @@
+@@ -0,0 +1,699 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2708,15 +2756,13 @@ new file mode 100644
 +        return NS_ERROR_FAILURE;
 +    }
 +
-+    int32_t width, height;
-+    if (mImageRect.width > 0 || mImageRect.height > 0) {
++    if (!mImageRect.IsEmpty()) {
 +        img = ImageOps::Clip(img, mImageRect);
-+        width = mImageRect.width;
-+        height = mImageRect.height;
-+    } else {
-+        img->GetWidth(&width);
-+        img->GetHeight(&height);
 +    }
++
++    int32_t width, height;
++    img->GetWidth(&width);
++    img->GetHeight(&height);
 +
 +    if (width > 100 || height > 100) {
 +        // The icon data needs to go across DBus. Make sure the icon
@@ -3299,7 +3345,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,186 @@
+@@ -0,0 +1,187 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3318,6 +3364,7 @@ new file mode 100644
 +#include "nsCOMPtr.h"
 +#include "nsTArray.h"
 +#include "nsIURI.h"
++#include "mozilla/Attributes.h"
 +
 +#include "nsNativeMenuDocListener.h"
 +#include "nsDbusmenu.h"
@@ -3560,7 +3607,7 @@ diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuSeparator.h
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,48 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3570,6 +3617,8 @@ new file mode 100644
 +
 +#ifndef __nsMenuSeparator_h__
 +#define __nsMenuSeparator_h__
++
++#include "mozilla/Attributes.h"
 +
 +#include "nsMenuObject.h"
 +
@@ -4017,7 +4066,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.h b/widget/gtk2/nsNativeMenuDoc
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.h
-@@ -0,0 +1,124 @@
+@@ -0,0 +1,125 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4035,6 +4084,7 @@ new file mode 100644
 +#include "nsAutoPtr.h"
 +#include "nsIContent.h"
 +#include "nsIAtom.h"
++#include "mozilla/Attributes.h"
 +
 +class nsIDocument;
 +class nsMenuObject;
@@ -4146,7 +4196,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuServi
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.cpp
-@@ -0,0 +1,487 @@
+@@ -0,0 +1,504 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4167,6 +4217,7 @@ new file mode 100644
 +#include "nsIObserverService.h"
 +#include "nsCRT.h"
 +#include "prlink.h"
++#include "mozilla/Preferences.h"
 +
 +#include "nsNativeMenuDocListener.h"
 +#include "nsMenuBar.h"
@@ -4289,16 +4340,18 @@ new file mode 100644
 +void
 +nsNativeMenuService::SetOnline(bool aOnline)
 +{
-+    if (aOnline != mOnline) {
-+        mOnline = aOnline;
-+        if (aOnline) {
-+            for (uint32_t i = 0; i < mMenuBars.Length(); ++i) {
-+                RegisterNativeMenuBar(mMenuBars[i]);
-+            }
-+        } else {
-+            for (uint32_t i = 0; i < mMenuBars.Length(); ++i) {
-+                mMenuBars[i]->Deactivate();
-+            }
++    if (!Preferences::GetBool("ui.use_unity_menubar", true)) {
++        aOnline = false;
++    }
++
++    mOnline = aOnline;
++    if (aOnline) {
++        for (uint32_t i = 0; i < mMenuBars.Length(); ++i) {
++            RegisterNativeMenuBar(mMenuBars[i]);
++        }
++    } else {
++        for (uint32_t i = 0; i < mMenuBars.Length(); ++i) {
++            mMenuBars[i]->Deactivate();
 +        }
 +    }
 +}
@@ -4310,18 +4363,17 @@ new file mode 100644
 +        return;
 +    }
 +
-+    if (aMenuBar->State() == nsMenuBar::eState_Deactivated) {
-+        // This will effectively create the native menubar for
-+        // exporting over the session bus, and hide the XUL menubar
-+        if (NS_FAILED(aMenuBar->Activate())) {
-+            return;
-+        }
++    // This will effectively create the native menubar for
++    // exporting over the session bus, and hide the XUL menubar
++    if (NS_FAILED(aMenuBar->Activate())) {
++        return;
 +    }
 +
-+    if (!mDbusProxy || !gtk_widget_get_mapped(aMenuBar->TopLevelWindow())) {
++    if (!mDbusProxy ||
++        !gtk_widget_get_mapped(aMenuBar->TopLevelWindow()) ||
++        aMenuBar->RegisterRequestInProgress()) {
 +        // Don't go further if we don't have a proxy for the shell menu
-+        // service or the window isn't mapped. We'll come back here
-+        // again once that happens
++        // service, the window isn't mapped or there is a request in progress.
 +        return;
 +    }
 +
@@ -4332,12 +4384,10 @@ new file mode 100644
 +        return;
 +    }
 +
-+    nsAutoGCancellable& cancellable = aMenuBar->Cancellable();
-+    cancellable.Init(); // Will cancel any pending requests
-+
 +    g_dbus_proxy_call(mDbusProxy, "RegisterWindow",
 +                      g_variant_new("(uo)", xid, path.get()),
-+                      G_DBUS_CALL_FLAGS_NONE, -1, cancellable,
++                      G_DBUS_CALL_FLAGS_NONE, -1,
++                      aMenuBar->BeginRegisterRequest(),
 +                      register_native_menubar_cb, aMenuBar);
 +}
 +
@@ -4433,7 +4483,7 @@ new file mode 100644
 +nsNativeMenuService::OnProxyCreated(GDBusProxy *aProxy)
 +{
 +    mDbusProxy = aProxy;
-+    mCancellable.Finish();
++    mCreateProxyRequest.Finish();
 +
 +    if (!mDbusProxy) {
 +        SetOnline(false);
@@ -4443,13 +4493,7 @@ new file mode 100644
 +    g_signal_connect(mDbusProxy, "notify::g-name-owner",
 +                     G_CALLBACK(name_owner_changed_cb), nullptr);
 +
-+    char *owner = g_dbus_proxy_get_name_owner(mDbusProxy);
-+    if (owner) {
-+        // Ensure that SetOnline completes registration of menubars
-+        mOnline = false;
-+    }
-+    SetOnline(owner ? true : false);
-+    g_free(owner);
++    OnNameOwnerChanged();
 +}
 +
 +void
@@ -4462,13 +4506,29 @@ new file mode 100644
 +        return;
 +    }
 +
-+    if (aSuccess) {
-+        aMenuBar->SetRegistered();
-+    } else {
-+        // This will free up resources, disconnect listeners and unhide the
-+        // XUL menubar
++    aMenuBar->EndRegisterRequest(aSuccess);
++    if (!aSuccess) {
 +        aMenuBar->Deactivate();
 +    }
++}
++
++/* static */ int
++nsNativeMenuService::PrefChangedCallback(const char *aPref,
++                                         void *aClosure)
++{
++    nsNativeMenuService::GetSingleton()->PrefChanged();
++    return 0;
++}
++
++void
++nsNativeMenuService::PrefChanged()
++{
++    if (!mDbusProxy) {
++        SetOnline(false);
++        return;
++    }
++
++    OnNameOwnerChanged();
 +}
 +
 +nsNativeMenuService::~nsNativeMenuService()
@@ -4479,6 +4539,9 @@ new file mode 100644
 +    while (mMenuBars.Length() > 0) {
 +        NotifyNativeMenuBarDestroyed(mMenuBars[0]);
 +    }
++
++    Preferences::UnregisterCallback(PrefChangedCallback,
++                                    "ui.use_unity_menubar");
 +
 +    if (mDbusProxy) {
 +        g_signal_handlers_disconnect_by_func(mDbusProxy,
@@ -4511,7 +4574,10 @@ new file mode 100644
 +        return rv;
 +    }
 +
-+    mCancellable.Init();
++    Preferences::RegisterCallback(PrefChangedCallback,
++                                  "ui.use_unity_menubar");
++
++    mCreateProxyRequest.Start();
 +
 +    g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION,
 +                             static_cast<GDBusProxyFlags>(
@@ -4522,7 +4588,8 @@ new file mode 100644
 +                             "com.canonical.AppMenu.Registrar",
 +                             "/com/canonical/AppMenu/Registrar",
 +                             "com.canonical.AppMenu.Registrar",
-+                             mCancellable, proxy_created_cb, nullptr);
++                             mCreateProxyRequest, proxy_created_cb,
++                             nullptr);
 +
 +    /* We don't technically know that the shell will draw the menubar until
 +     * we know whether anybody owns the name of the menubar service on the
@@ -4533,7 +4600,7 @@ new file mode 100644
 +     */
 +    const char *desktop = getenv("XDG_CURRENT_DESKTOP");
 +    if (nsCRT::strcmp(desktop, "Unity") == 0) {
-+        mOnline = true;
++        SetOnline(true);
 +    }
 +
 +    nsCOMPtr<nsIObserverService> os = services::GetObserverService();
@@ -4638,7 +4705,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.h b/widget/gtk2/nsNativeMenuService
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.h
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,90 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4653,6 +4720,7 @@ new file mode 100644
 +#include "nsIObserver.h"
 +#include "nsINativeMenuService.h"
 +#include "nsCOMPtr.h"
++#include "mozilla/Attributes.h"
 +
 +#include "nsNativeMenuUtils.h"
 +
@@ -4715,8 +4783,10 @@ new file mode 100644
 +    void OnProxyCreated(GDBusProxy *aProxy);
 +    void OnNativeMenuBarRegistered(nsMenuBar *aMenuBar,
 +                                   bool aSuccess);
++    static int PrefChangedCallback(const char *aPref, void *aClosure);
++    void PrefChanged();
 +
-+    nsAutoGCancellable mCancellable;
++    nsNativeMenuGIORequest mCreateProxyRequest;
 +    GDBusProxy *mDbusProxy;
 +    bool mOnline;
 +    nsTArray<nsMenuBar *> mMenuBars;
@@ -4730,7 +4800,7 @@ diff --git a/widget/gtk2/nsNativeMenuUtils.h b/widget/gtk2/nsNativeMenuUtils.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuUtils.h
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,70 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4744,19 +4814,16 @@ new file mode 100644
 +#include <glib-object.h>
 +#include <gio/gio.h>
 +
-+class nsAutoGCancellable
++class nsNativeMenuGIORequest
 +{
 +public:
-+    nsAutoGCancellable() : mCancellable(nullptr) { };
++    nsNativeMenuGIORequest() : mCancellable(nullptr) { };
 +
-+    ~nsAutoGCancellable() {
-+        if (mCancellable) {
-+            g_cancellable_cancel(mCancellable);
-+            g_object_unref(mCancellable);
-+        }
++    ~nsNativeMenuGIORequest() {
++        Cancel();
 +    }
 +
-+    void Init() {
++    void Start() {
 +        Cancel();
 +        mCancellable = g_cancellable_new();
 +    }
@@ -4774,6 +4841,14 @@ new file mode 100644
 +            g_object_unref(mCancellable);
 +            mCancellable = nullptr;
 +        }
++    }
++
++    bool InProgress() const {
++        if (!mCancellable) {
++            return false;
++        }
++
++        return !g_cancellable_is_cancelled(mCancellable);
 +    }
 +
 +    operator GCancellable*() const {
