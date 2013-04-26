@@ -1,21 +1,5 @@
 #!/usr/bin/make -f
 
-# Various build defaults
-# 1 = Enable crashreporter (if supported)
-MOZ_ENABLE_BREAKPAD	?= 0
-# 1 = Disable official branding and crash reporter (the crash reporter builds but is not enabled in application.ini)
-MOZ_BUILD_UNOFFICIAL	?= 1
-# 1 = Build without jemalloc suitable for valgrind debugging
-MOZ_VALGRIND		?= 0
-# 1 = Profile guided build
-MOZ_BUILD_PGO		?= 0
-# 1 = Build and run the testsuite
-MOZ_WANT_UNIT_TESTS	?= 0
-# 1 = Turn on debugging bits and disable optimizations
-MOZ_DEBUG		?= 0
-# 1 = Disable optimizations
-MOZ_NO_OPTIMIZE		?= 0
-
 # We need this to execute before the debian/control target gets called
 clean::
 	cp debian/control debian/control.old
@@ -34,16 +18,6 @@ endif
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/obj-$(DEB_HOST_GNU_TYPE)
 MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
-
-# The package name
-MOZ_PKG_NAME		:= $(shell dpkg-parsechangelog | sed -n 's/^Source: *\(.*\)$$/\1/ p')
-# The binary name to use (derived from the package name by default)
-MOZ_APP_NAME		?= $(MOZ_PKG_NAME)
-
-# Define other variables used throughout the build
-MOZ_DEFAULT_APP_NAME	?= $(MOZ_PKG_BASENAME)
-MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
-MOZ_DEFAULT_APP_BASENAME ?= $(shell echo $(MOZ_DEFAULT_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
 
 ifeq (,$(MOZ_APP))
 $(error "Need to set MOZ_APP")
@@ -78,7 +52,7 @@ MOZ_LIBDIR		:= usr/lib/$(MOZ_APP_NAME)
 MOZ_INCDIR		:= usr/include/$(MOZ_APP_NAME)
 MOZ_IDLDIR		:= usr/share/idl/$(MOZ_APP_NAME)
 MOZ_SDKDIR		:= usr/lib/$(MOZ_APP_NAME)-devel
-MOZ_ADDONDIR		:= usr/lib/$(MOZ_APP_NAME)-addons
+MOZ_ADDONDIR	:= usr/lib/$(MOZ_APP_NAME)-addons
 
 MOZ_APP_SUBDIR	?=
 
@@ -106,27 +80,7 @@ ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 MOZ_WANT_UNIT_TESTS = 0
 endif
 
-ifeq (1,$(MOZ_VALGRIND))
-MOZ_BUILD_UNOFFICIAL = 1
-endif
-
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-MOZ_BUILD_PGO = 0
-MOZ_NO_OPTIMIZE	= 1
-endif
-
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-MOZ_NO_OPTIMIZE = 1
-MOZ_DEBUG = 1
-MOZ_BUILD_UNOFFICIAL = 1
-endif
-
 include $(CURDIR)/debian/build/testsuite.mk
-
-ifneq ($(MOZ_APP_NAME)$(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_NAME)$(MOZ_DEFAULT_APP_BASENAME))
-# If we change MOZ_APP_NAME or MOZ_APP_BASENAME, don't use official branding
-MOZ_BUILD_UNOFFICIAL = 1
-endif
 
 # enable the crash reporter only on i386, amd64 and armel
 ifeq (,$(filter i386 amd64 armhf,$(DEB_HOST_ARCH)))
@@ -140,7 +94,7 @@ endif
 
 # Ensure the crash reporter gets disabled for derivatives
 ifneq (Ubuntu, $(DISTRIB))
-MOZ_ENABLE_BREAKPAD = 0
+MOZ_BUILD_OFFICIAL = 0
 endif
 
 MOZ_DISPLAY_NAME = $(shell cat $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/locales/en-US/brand.properties \
@@ -161,10 +115,7 @@ export DEB_BUILD_HARDENING=1
 ifeq (Ubuntu, $(DISTRIB))
 export MOZ_UA_VENDOR=Ubuntu
 endif
-ifneq (1,$(MOZ_BUILD_UNOFFICIAL))
-export BUILD_OFFICIAL=1
-endif
-ifeq (1,$(MOZ_ENABLE_BREAKPAD))
+ifeq (1,$(MOZ_BUILD_OFFICIAL))
 # Needed to enable crashreported in application.ini
 export MOZILLA_OFFICIAL=1
 endif
@@ -265,9 +216,7 @@ $(appname_subst_files): $(foreach file,$(appname_subst_files),$(subst $(MOZ_APP_
 
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
-ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 	$(MAKE) -C $(MOZ_OBJDIR) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
-endif
 	@touch $@
 
 make-testsuite: debian/stamp-maketestsuite

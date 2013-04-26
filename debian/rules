@@ -1,8 +1,9 @@
 #!/usr/bin/make -f
 
+MOZ_PKG_BASENAME	:= firefox
+
 include $(CURDIR)/debian/build/mozvars.mk
 
-MOZ_PKG_BASENAME	:= firefox
 MOZ_APP			:= browser
 MOZ_VENDOR		:= Mozilla
 MOZ_MOZDIR		:=
@@ -13,7 +14,7 @@ MOZ_BRANDING		:= $(CHANNEL)
 ifneq (,$(filter release beta, $(MOZ_BRANDING)))
 MOZ_BRANDING		:= official
 endif
-ifeq (1,$(MOZ_BUILD_UNOFFICIAL))
+ifeq (1,$(MOZ_FORCE_UNOFFICIAL_BRANDING))
 ifneq (,$(filter official aurora, $(MOZ_BRANDING)))
 MOZ_BRANDING		:= unofficial
 endif
