@@ -49,6 +49,10 @@ firefox-trunk (23.0~a1~hg20130426r129904-0ubuntu1) UNRELEASED; urgency=low
   * Rename mozbuild.mk => rules.mk and mozvars.mk => config.mk
   * Shut up lintian
     - update debian/copyright
+  * Make the transitional globalmenu package priority extra, section oldlibs
+    - update debian/control.in
+  * Make the testsuite priority extra, section misc
+    - update debian/control.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 

@@ -148,6 +148,8 @@ Description: Safe and easy web browser from Mozilla - Breakpad symbols
 
 Package: @MOZ_PKG_NAME@-testsuite
 Architecture: any
+Section: misc
+Priority: extra
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	@MOZ_PKG_NAME@ (= ${binary:Version}),
@@ -194,7 +196,9 @@ Description: Safe and easy web browser from Mozilla - testsuite
 
 Package: @MOZ_PKG_NAME@-globalmenu
 Architecture: any
-Depends: ${misc:Depends},
+Section: oldlibs
+Priority: extra
+Depends: ${misc:Depends}
 Description: Safe and easy web browser from Mozilla (transitional package)
  This is a transitional package to ensure that upgrades work correctly.
  It can be safely removed
