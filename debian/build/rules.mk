@@ -126,7 +126,7 @@ else
 LANGPACK_DIR := $(DEB_HOST_GNU_SYSTEM)-$(DEB_HOST_GNU_CPU)/xpi
 endif
 
-MOZ_PKG_SUPPORT_SUGGESTS ?= $(MOZ_PKG_NAME)-gnome-support
+MOZ_PKG_SUPPORT_SUGGESTS ?=
 
 # Defines used for the Mozilla text preprocessor
 MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
@@ -286,9 +286,7 @@ binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
 	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/native-origins.d/$(MOZ_PKG_NAME)
 
-GNOME_SUPPORT_FILES = libmozgnome.so
 binary-post-install/$(MOZ_PKG_NAME):: install-searchplugins-,$(MOZ_PKG_NAME)
-	$(foreach file,$(GNOME_SUPPORT_FILES),rm -fv debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/$(file);) true
 
 MOZ_LANGPACK_TARGETS := $(shell sed -n 's/[^\:]*\:\?\(.*\)/\1/ p' < debian/config/locales.shipped | uniq)
 $(patsubst %,binary-post-install/$(MOZ_PKG_NAME)-locale-%,$(MOZ_LANGPACK_TARGETS)):: binary-post-install/$(MOZ_PKG_NAME)-locale-%: install-langpack-xpis-% install-searchplugins-%
@@ -387,11 +385,6 @@ binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
 	        LD_LIBRARY_PATH=debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR):$$LD_LIBRARY_PATH \
 	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/$(lib);)
-
-common-binary-predeb-arch::
-	# we want the gnome dependencies not to be in the main package at shlibdeps runtime, hence we dont
-	# install them at binary-install/* stage, but copy them over _after_ the shlibdeps had been generated
-	$(foreach file,$(GNOME_SUPPORT_FILES),mv debian/$(MOZ_PKG_NAME)-gnome-support/$(MOZ_LIBDIR)/components/$(file) debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/components/;) true
 
 mozconfig: debian/config/mozconfig
 	cp $< $@

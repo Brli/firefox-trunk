@@ -64,6 +64,13 @@ firefox-trunk (23.0~a1~hg20130426r129904-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/rules.mk
   * Silence an embedded-library warning and some image-file-in-usr-lib warnings
     - update debian/firefox.lintian-overrides.in
+  * Drop firefox-gnome-support. It was only depending on libraries that are
+    already guaranteed to exist when firefox is installed (mostly, glib).
+    Firefox has no need to depend on libnotify for the time being either, but
+    if it does again, that dependency should just be on the main package
+    - update debian/control.in
+    - update debian/build/rules.mk
+    - remove debian/firefox-gnome-support.install.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
