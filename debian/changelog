@@ -73,6 +73,7 @@ firefox-trunk (23.0~a1~hg20130426r129904-0ubuntu1) UNRELEASED; urgency=low
     - remove debian/firefox-gnome-support.install.in
   * Only blacklist Firefox in Apport on official builds
     - update debian/apport/blacklist.in
+    - update debian/build/rules.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
