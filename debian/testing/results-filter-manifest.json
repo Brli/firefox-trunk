@@ -1,7 +1,7 @@
 [
   { "testsuite": "mochitest.chrome", "classname": "editor.composer.test", "name": "test_bug678842.html", "note": "https://launchpad.net/bugs/1158866" },
   { "testsuite": "mochitest.chrome", "classname": "editor.libeditor.html.tests", "name": "test_bug636465.xul", "note": "https://launchpad.net/bugs/1158870" },
-  { "testsuite": "mochitest.chrome", "classname": "layout.base.test.chrome", "name": "test_printpreview.xul", "note": "https://launchpad.net/bugs/1162991" },
+  { "testsuite": "mochitest.chrome", "classname": "layout.base.tests.chrome", "name": "test_printpreview.xul", "note": "https://launchpad.net/bugs/1162991" },
   { "testsuite": "mochitest.chrome", "classname": "layout.inspector.tests.chrome", "name": "test_bug467669.xul", "note": "https://launchpad.net/bugs/1158875" },
   { "testsuite": "mochitest.chrome", "classname": "toolkit.content.tests.chrome", "name": "test_arrowpanel.xul", "note": "https://launchpad.net/bugs/1158881" },
   { "testsuite": "mochitest.chrome", "classname": "toolkit.content.tests.chrome", "name": "test_richlist_direction.xul", "note": "https://launchpad.net/bugs/1158882" },
