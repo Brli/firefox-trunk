@@ -180,7 +180,7 @@ diff --git a/toolkit/content/xul.css b/toolkit/content/xul.css
 diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
 --- a/widget/gtk2/Makefile.in
 +++ b/widget/gtk2/Makefile.in
-@@ -39,16 +39,24 @@ CPPSRCS = \
+@@ -39,16 +39,25 @@ CPPSRCS = \
    nsFilePicker.cpp \
    nsSound.cpp \
    nsNativeKeyBindings.cpp \
@@ -189,6 +189,7 @@ diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
    nsImageToPixbuf.cpp \
    nsGtkIMModule.cpp \
    WidgetTraceEvent.cpp \
++  nsNativeMenuAtoms.cpp \
 +  nsNativeMenuService.cpp \
 +  nsNativeMenuDocListener.cpp \
 +  nsDbusmenu.cpp \
@@ -205,7 +206,7 @@ diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
  
  ifdef NS_PRINTING
  CPPSRCS		+= \
-@@ -93,14 +101,15 @@ endif
+@@ -93,14 +102,15 @@ endif
  endif
  
  DEFINES		+= -DCAIRO_GFX -DMOZ_APP_NAME='"$(MOZ_APP_NAME)"'
@@ -391,7 +392,7 @@ diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,685 @@
+@@ -0,0 +1,692 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -419,6 +420,7 @@ new file mode 100644
 +#include "nsNativeMenuDocListener.h"
 +#include "nsNativeMenuUtils.h"
 +#include "nsMenuBar.h"
++#include "nsNativeMenuAtoms.h"
 +
 +#include <glib-object.h>
 +
@@ -451,20 +453,26 @@ new file mode 100644
 +            break;
 +    }
 +
-+    nsCOMPtr<nsIAtom> atom =
-+        do_GetAtom(NS_LITERAL_CSTRING("_moz-menupopupstate"));
 +    nsCOMPtr<nsIRunnable> event;
 +    if (nsContentUtils::IsSafeToRunScript()) {
 +        if (state.IsEmpty()) {
-+            mPopupContent->UnsetAttr(kNameSpaceID_None, atom, true);
++            mPopupContent->UnsetAttr(kNameSpaceID_None,
++                                     nsNativeMenuAtoms::_moz_menupopupstate,
++                                     true);
 +        } else {
-+            mPopupContent->SetAttr(kNameSpaceID_None, atom, state, true);
++            mPopupContent->SetAttr(kNameSpaceID_None,
++                                   nsNativeMenuAtoms::_moz_menupopupstate,
++                                   state, true);
 +        }
 +    } else {
 +        if (state.IsEmpty()) {
-+            event = new nsUnsetAttrRunnable(mPopupContent, atom);
++            event = new nsUnsetAttrRunnable(
++                mPopupContent, nsNativeMenuAtoms::_moz_menupopupstate);
 +        } else {
-+            event = new nsSetAttrRunnable(mPopupContent, atom, state);
++            event =
++                new nsSetAttrRunnable(mPopupContent,
++                                      nsNativeMenuAtoms::_moz_menupopupstate,
++                                      state);
 +        }
 +        nsContentUtils::AddScriptRunner(event);
 +    }
@@ -1081,7 +1089,7 @@ diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.h
-@@ -0,0 +1,152 @@
+@@ -0,0 +1,151 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1094,7 +1102,6 @@ new file mode 100644
 +
 +#include "nsCOMPtr.h"
 +#include "nsIContent.h"
-+#include "nsThreadUtils.h"
 +#include "mozilla/Attributes.h"
 +
 +#include "nsMenuObject.h"
@@ -1238,7 +1245,7 @@ diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.cpp
-@@ -0,0 +1,558 @@
+@@ -0,0 +1,554 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1259,6 +1266,7 @@ new file mode 100644
 +
 +#include "nsNativeMenuService.h"
 +#include "nsMenu.h"
++#include "nsNativeMenuAtoms.h"
 +
 +#include <glib.h>
 +#include <glib-object.h>
@@ -1392,20 +1400,16 @@ new file mode 100644
 +void
 +nsMenuBar::SetShellShowingMenuBar(bool aShowing)
 +{
-+    nsCOMPtr<nsIAtom> atom =
-+        do_GetAtom(NS_LITERAL_CSTRING("shellshowingmenubar"));
-+    mContent->OwnerDoc()->GetRootElement()->SetAttr(kNameSpaceID_None, atom,
-+                                                    aShowing ?
-+                                                    NS_LITERAL_STRING("true") :
-+                                                    NS_LITERAL_STRING("false"),
-+                                                    true);
++    mContent->OwnerDoc()->GetRootElement()->SetAttr(
++        kNameSpaceID_None, nsNativeMenuAtoms::shellshowingmenubar,
++        aShowing ? NS_LITERAL_STRING("true") : NS_LITERAL_STRING("false"),
++        true);
 +}
 +
 +void
 +nsMenuBar::Focus()
 +{
-+    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
-+    mContent->SetAttr(kNameSpaceID_None, atom,
++    mContent->SetAttr(kNameSpaceID_None, nsNativeMenuAtoms::openedwithkey,
 +                      NS_LITERAL_STRING("false"), true);
 +}
 +
@@ -1509,8 +1513,8 @@ new file mode 100644
 +
 +    NS_ASSERTION(found->Type() == nsMenuObject::eType_Menu, "Expecting a menu here");
 +
-+    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
-+    mContent->SetAttr(kNameSpaceID_None, atom, NS_LITERAL_STRING("true"), true);
++    mContent->SetAttr(kNameSpaceID_None, nsNativeMenuAtoms::openedwithkey,
++                      NS_LITERAL_STRING("true"), true);
 +    (static_cast<nsMenu *>(found))->OpenMenuDelayed();
 +    aEvent->StopPropagation();
 +    aEvent->PreventDefault();
@@ -1726,9 +1730,8 @@ new file mode 100644
 +                                false);
 +
 +    // Clear this. Not sure if we really need to though
-+    nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("openedwithkey"));
-+    mContent->SetAttr(kNameSpaceID_None, atom, NS_LITERAL_STRING("false"),
-+                      true);
++    mContent->SetAttr(kNameSpaceID_None, nsNativeMenuAtoms::openedwithkey,
++                      NS_LITERAL_STRING("false"), true);
 +
 +    mListener->Start();
 +
@@ -1801,7 +1804,7 @@ diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.h
-@@ -0,0 +1,158 @@
+@@ -0,0 +1,157 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1815,7 +1818,6 @@ new file mode 100644
 +#include "nsCOMPtr.h"
 +#include "nsIDOMEventTarget.h"
 +#include "nsString.h"
-+#include "nsINativeMenuService.h"
 +#include "nsIDOMEventListener.h"
 +#include "mozilla/Attributes.h"
 +
@@ -1964,7 +1966,7 @@ diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.cpp
-@@ -0,0 +1,545 @@
+@@ -0,0 +1,546 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2504,7 +2506,8 @@ new file mode 100644
 +            CommandNodeAttributeChanged(aAttribute);
 +        } else {
 +            nsContentUtils::AddScriptRunner(
-+                new nsMenuItemCommandNodeAttributeChangedRunnable(this, aAttribute));
++                new nsMenuItemCommandNodeAttributeChangedRunnable(this,
++                                                                  aAttribute));
 +        }
 +    } else if (aContent == mKeyContent) {
 +        SyncAccelFromContent();
@@ -2641,7 +2644,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,699 @@
+@@ -0,0 +1,694 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2685,6 +2688,7 @@ new file mode 100644
 +#include "nsMenuSeparator.h"
 +#include "nsNativeMenuDocListener.h"
 +#include "nsMenuBar.h"
++#include "nsNativeMenuAtoms.h"
 +
 +#include <glib-object.h>
 +#include <gdk/gdk.h>
@@ -2718,7 +2722,6 @@ new file mode 100644
 +} gImagesInMenus = eImagesInMenus_Unknown;
 +
 +PangoLayout* gPangoLayout = nullptr;
-+nsIAtom* gMenuitemWithFaviconAtom = nullptr;
 +
 +NS_IMPL_ISUPPORTS1(nsMenuObject::IconLoader, imgINotificationObserver)
 +
@@ -3027,18 +3030,13 @@ new file mode 100644
 +        return true;
 +    }
 +
-+    if (!gMenuitemWithFaviconAtom) {
-+        gMenuitemWithFaviconAtom =
-+            NS_NewAtom(NS_LITERAL_CSTRING("menuitem-with-favicon"));
-+    }
-+
 +    const nsAttrValue *classes = mContent->GetClasses();
 +    if (!classes) {
 +        return false;
 +    }
 +
 +    for (uint32_t i = 0; i < classes->GetAtomCount(); ++i) {
-+        if (classes->AtomAt(i) == gMenuitemWithFaviconAtom) {
++        if (classes->AtomAt(i) == nsNativeMenuAtoms::menuitem_with_favicon) {
 +            return true;
 +        }
 +    }
@@ -3656,11 +3654,101 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenuSeparator_h__ */
+diff --git a/widget/gtk2/nsNativeMenuAtomList.h b/widget/gtk2/nsNativeMenuAtomList.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuAtomList.h
+@@ -0,0 +1,11 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++WIDGET_ATOM2(menuitem_with_favicon, "menuitem-with-favicon")
++WIDGET_ATOM2(_moz_menupopupstate, "_moz-menupopupstate")
++WIDGET_ATOM(openedwithkey)
++WIDGET_ATOM(shellshowingmenubar)
+diff --git a/widget/gtk2/nsNativeMenuAtoms.cpp b/widget/gtk2/nsNativeMenuAtoms.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuAtoms.cpp
+@@ -0,0 +1,39 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsIAtom.h"
++#include "nsStaticAtom.h"
++
++#include "nsNativeMenuAtoms.h"
++
++using namespace mozilla;
++
++#define WIDGET_ATOM(_name) nsIAtom* nsNativeMenuAtoms::_name;
++#define WIDGET_ATOM2(_name, _value) nsIAtom* nsNativeMenuAtoms::_name;
++#include "nsNativeMenuAtomList.h"
++#undef WIDGET_ATOM
++#undef WIDGET_ATOM2
++
++#define WIDGET_ATOM(name_) NS_STATIC_ATOM_BUFFER(name_##_buffer, #name_)
++#define WIDGET_ATOM2(name_, value_) NS_STATIC_ATOM_BUFFER(name_##_buffer, value_)
++#include "nsNativeMenuAtomList.h"
++#undef WIDGET_ATOM
++#undef WIDGET_ATOM2
++
++static const nsStaticAtom gAtoms[] = {
++#define WIDGET_ATOM(name_) NS_STATIC_ATOM(name_##_buffer, &nsNativeMenuAtoms::name_),
++#define WIDGET_ATOM2(name_, value_) NS_STATIC_ATOM(name_##_buffer, &nsNativeMenuAtoms::name_),
++#include "nsNativeMenuAtomList.h"
++#undef WIDGET_ATOM
++#undef WIDGET_ATOM2
++};
++
++/* static */ void
++nsNativeMenuAtoms::Init()
++{
++    NS_RegisterStaticAtoms(gAtoms);
++}
+diff --git a/widget/gtk2/nsNativeMenuAtoms.h b/widget/gtk2/nsNativeMenuAtoms.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuAtoms.h
+@@ -0,0 +1,25 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsNativeMenuAtoms_h__
++#define __nsNativeMenuAtoms_h__
++
++class nsIAtom;
++
++class nsNativeMenuAtoms
++{
++public:
++    static void Init();
++
++#define WIDGET_ATOM(_name) static nsIAtom* _name;
++#define WIDGET_ATOM2(_name, _value) static nsIAtom* _name;
++#include "nsNativeMenuAtomList.h"
++#undef WIDGET_ATOM
++#undef WIDGET_ATOM2
++};
++
++#endif /* __nsNativeMenuAtoms_h__ */
 diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuDocListener.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,401 @@
+@@ -0,0 +1,400 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3789,10 +3877,9 @@ new file mode 100644
 +{
 +    nsIContent *batchTarget = nullptr;
 +    bool inUpdateBatch = false;
-+    uint32_t count = mPendingMutations.Length();
 +
-+    for (uint32_t i = 0; i < count; ++i) {
-+        MutationRecord *m = mPendingMutations[i];
++    while (mPendingMutations.Length() > 0) {
++        MutationRecord *m = mPendingMutations[0];
 +
 +        if (m->mTarget != batchTarget) {
 +            if (inUpdateBatch) {
@@ -3802,8 +3889,8 @@ new file mode 100644
 +
 +            batchTarget = m->mTarget;
 +
-+            if (i < (count - 1) &&
-+                mPendingMutations[i + 1]->mTarget == batchTarget) {
++            if (mPendingMutations.Length() > 1 &&
++                mPendingMutations[1]->mTarget == batchTarget) {
 +                DoBeginUpdateBatch(batchTarget);
 +                inUpdateBatch = true;
 +            }
@@ -3822,13 +3909,13 @@ new file mode 100644
 +            default:
 +                NS_NOTREACHED("Invalid type");
 +        }
++
++        mPendingMutations.RemoveElementAt(0);
 +    }
 +
 +    if (inUpdateBatch) {
 +        DoEndUpdateBatch(batchTarget);
 +    }
-+
-+    mPendingMutations.Clear();
 +}
 +
 +/* static */ void
@@ -3841,7 +3928,7 @@ new file mode 100644
 +    }
 +
 +    if (gPendingListeners->IndexOf(aListener) ==
-+        listener_array_type::array_type::NoIndex) {
++        listener_array_type::NoIndex) {
 +        gPendingListeners->AppendElement(aListener);
 +    }
 +}
@@ -3861,9 +3948,9 @@ new file mode 100644
 +{
 +    if (sInhibitDepth == 1 && gPendingListeners) {
 +        {
-+            listener_array_type::ForwardIterator iter(*gPendingListeners);
-+            while (iter.HasMore()) {
-+                iter.GetNext()->FlushPendingMutations();
++            while (gPendingListeners->Length() > 0) {
++                (*gPendingListeners)[0]->FlushPendingMutations();
++                gPendingListeners->RemoveElementAt(0);
 +            }
 +        }
 +
@@ -4101,7 +4188,7 @@ new file mode 100644
 +class nsNativeMenuDocListener MOZ_FINAL : nsStubMutationObserver
 +{
 +public:
-+    typedef nsTObserverArray<nsNativeMenuDocListener *> listener_array_type;
++    typedef nsTArray<nsNativeMenuDocListener *> listener_array_type;
 +    typedef nsTObserverArray<nsMenuObject *> observer_array_type;
 +
 +    NS_DECL_ISUPPORTS
@@ -4196,7 +4283,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuServi
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.cpp
-@@ -0,0 +1,504 @@
+@@ -0,0 +1,503 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4222,6 +4309,7 @@ new file mode 100644
 +#include "nsNativeMenuDocListener.h"
 +#include "nsMenuBar.h"
 +#include "nsDbusmenu.h"
++#include "nsNativeMenuAtoms.h"
 +
 +#include <stdlib.h>
 +#include <glib-object.h>
@@ -4234,7 +4322,6 @@ new file mode 100644
 +
 +extern PangoLayout* gPangoLayout;
 +extern nsNativeMenuDocListener::listener_array_type* gPendingListeners;
-+extern nsIAtom* gMenuitemWithFaviconAtom;
 +
 +static const nsTArray<nsMenuBar *>::index_type NoIndex = nsTArray<nsMenuBar *>::NoIndex;
 +
@@ -4558,7 +4645,6 @@ new file mode 100644
 +        g_object_unref(gPangoLayout);
 +        gPangoLayout = nullptr;
 +    }
-+    NS_IF_RELEASE(gMenuitemWithFaviconAtom);
 +}
 +
 +nsresult
@@ -4874,7 +4960,7 @@ new file mode 100644
 diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
 --- a/widget/gtk2/nsWidgetFactory.cpp
 +++ b/widget/gtk2/nsWidgetFactory.cpp
-@@ -37,16 +37,18 @@
+@@ -37,16 +37,19 @@
  #include "nsImageToPixbuf.h"
  #include "nsPrintDialogGTK.h"
  
@@ -4884,6 +4970,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
  #endif
  
 +#include "nsNativeMenuService.h"
++#include "nsNativeMenuAtoms.h"
 +
  #ifdef NATIVE_THEME_SUPPORT
  #include "nsNativeThemeGTK.h"
@@ -4893,7 +4980,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
  #include "nsComponentManagerUtils.h"
  #include "nsAutoPtr.h"
  #include <gtk/gtk.h>
-@@ -113,16 +115,19 @@ nsNativeThemeGTKConstructor(nsISupports 
+@@ -113,16 +116,19 @@ nsNativeThemeGTKConstructor(nsISupports 
  namespace mozilla {
  namespace widget {
  // This constructor should really be shared with all platforms.
@@ -4913,7 +5000,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
  NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintDialogServiceGTK, Init)
  #endif
  
-@@ -223,16 +228,17 @@ NS_DEFINE_NAMED_CID(NS_PRINTSESSION_CID)
+@@ -223,16 +229,17 @@ NS_DEFINE_NAMED_CID(NS_PRINTSESSION_CID)
  NS_DEFINE_NAMED_CID(NS_DEVICE_CONTEXT_SPEC_CID);
  NS_DEFINE_NAMED_CID(NS_PRINTDIALOGSERVICE_CID);
  #endif 
@@ -4931,7 +5018,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
      { &kNS_APPSHELL_CID, false, NULL, nsAppShellConstructor },
      { &kNS_FILEPICKER_CID, false, NULL, nsFilePickerConstructor },
      { &kNS_SOUND_CID, false, NULL, nsSoundConstructor },
-@@ -258,16 +264,17 @@ static const mozilla::Module::CIDEntry k
+@@ -258,16 +265,17 @@ static const mozilla::Module::CIDEntry k
      { &kNS_DEVICE_CONTEXT_SPEC_CID, false, NULL, nsDeviceContextSpecGTKConstructor },
      { &kNS_PRINTDIALOGSERVICE_CID, false, NULL, nsPrintDialogServiceGTKConstructor },
  #endif 
@@ -4949,7 +5036,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
      { "@mozilla.org/widgets/child_window/gtk;1", &kNS_CHILD_CID },
      { "@mozilla.org/widget/appshell/gtk;1", &kNS_APPSHELL_CID },
      { "@mozilla.org/filepicker;1", &kNS_FILEPICKER_CID },
-@@ -294,16 +301,17 @@ static const mozilla::Module::ContractID
+@@ -294,33 +302,43 @@ static const mozilla::Module::ContractID
      { "@mozilla.org/gfx/devicecontextspec;1", &kNS_DEVICE_CONTEXT_SPEC_CID },
      { NS_PRINTDIALOGSERVICE_CONTRACTID, &kNS_PRINTDIALOGSERVICE_CID },
  #endif 
@@ -4967,6 +5054,33 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
  {
    nsLookAndFeel::Shutdown();
    nsFilePicker::Shutdown();
+   nsSound::Shutdown();
+   nsWindow::ReleaseGlobals();
+   nsGTKToolkit::Shutdown();
+   nsAppShellShutdown();
+ }
+ 
++static nsresult
++nsWidgetGtk2ModuleCtor()
++{
++  nsAppShellInit();
++  nsNativeMenuAtoms::Init();
++
++  return NS_OK;
++}
++
+ static const mozilla::Module kWidgetModule = {
+     mozilla::Module::kVersion,
+     kWidgetCIDs,
+     kWidgetContracts,
+     NULL,
+     NULL,
+-    nsAppShellInit,
++    nsWidgetGtk2ModuleCtor,
+     nsWidgetGtk2ModuleDtor
+ };
+ 
+ NSMODULE_DEFN(nsWidgetGtk2Module) = &kWidgetModule;
 diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
 --- a/widget/gtk2/nsWindow.cpp
 +++ b/widget/gtk2/nsWindow.cpp
