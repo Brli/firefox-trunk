@@ -76,6 +76,8 @@ firefox-trunk (23.0~a1~hg20130503r130725-0ubuntu1) UNRELEASED; urgency=low
     - update debian/build/rules.mk
   * Merge in latest desktop file translations
     - update debian/firefox.desktop.in
+  * Refresh patches
+    - update d/p/test-overrides/disable-failing-python-tests.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
