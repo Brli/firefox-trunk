@@ -2644,7 +2644,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,694 @@
+@@ -0,0 +1,699 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2761,6 +2761,11 @@ new file mode 100644
 +
 +    if (!mImageRect.IsEmpty()) {
 +        img = ImageOps::Clip(img, mImageRect);
++    }
++
++    if (!img) {
++        mOwner->ClearIcon();
++        return NS_OK;
 +    }
 +
 +    int32_t width, height;
