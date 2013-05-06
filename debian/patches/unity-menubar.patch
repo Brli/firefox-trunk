@@ -25,7 +25,7 @@ diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/bro
 diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
 --- a/browser/base/content/browser.css
 +++ b/browser/base/content/browser.css
-@@ -199,16 +199,20 @@ splitmenu {
+@@ -203,16 +203,20 @@ splitmenu {
    -moz-binding: url("chrome://browser/content/urlbarBindings.xml#menuitem-iconic-tooltip");
  }
  
@@ -49,7 +49,7 @@ diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
 diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -4457,16 +4457,20 @@ function onViewToolbarsPopupShowing(aEve
+@@ -4454,16 +4454,20 @@ function onViewToolbarsPopupShowing(aEve
    }
  
    var firstMenuItem = aInsertPoint || popup.firstChild;
@@ -95,9 +95,9 @@ diff --git a/browser/components/places/content/places.xul b/browser/components/p
 diff --git a/modules/libpref/src/init/all.js b/modules/libpref/src/init/all.js
 --- a/modules/libpref/src/init/all.js
 +++ b/modules/libpref/src/init/all.js
-@@ -89,16 +89,19 @@ pref("dom.workers.maxPerDomain", 20);
- // Whether window.performance is enabled
- pref("dom.enable_performance", true);
+@@ -86,16 +86,19 @@ pref("dom.workers.enabled", true);
+ // The number of workers per domain allowed to run concurrently.
+ pref("dom.workers.maxPerDomain", 20);
  
  // Fastback caching - if this pref is negative, then we calculate the number
  // of content viewers to cache based on the amount of available memory.
@@ -5084,7 +5084,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
 diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
 --- a/widget/gtk2/nsWindow.cpp
 +++ b/widget/gtk2/nsWindow.cpp
-@@ -4726,16 +4726,21 @@ nsWindow::HideWindowChrome(bool aShouldH
+@@ -4717,16 +4717,21 @@ nsWindow::HideWindowChrome(bool aShouldH
      XSync(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()) , False);
  #else
      gdk_flush ();

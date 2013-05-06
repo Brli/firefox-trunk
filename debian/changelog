@@ -78,6 +78,7 @@ firefox-trunk (23.0~a1~hg20130506r130900-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.desktop.in
   * Refresh patches
     - update d/p/test-overrides/disable-failing-python-tests.patch
+    - update debian/patches/unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
