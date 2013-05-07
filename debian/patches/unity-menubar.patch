@@ -2644,7 +2644,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,699 @@
+@@ -0,0 +1,692 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2763,14 +2763,14 @@ new file mode 100644
 +        img = ImageOps::Clip(img, mImageRect);
 +    }
 +
-+    if (!img) {
-+        mOwner->ClearIcon();
-+        return NS_OK;
-+    }
-+
 +    int32_t width, height;
 +    img->GetWidth(&width);
 +    img->GetHeight(&height);
++
++    if (width <= 0 || height <= 0) {
++        mOwner->ClearIcon();
++        return NS_OK;
++    }
 +
 +    if (width > 100 || height > 100) {
 +        // The icon data needs to go across DBus. Make sure the icon
@@ -2808,10 +2808,7 @@ new file mode 100644
 +        return;
 +    }
 +
-+    nsIDocument *doc = mOwner->ContentNode()->GetCurrentDoc();
-+    if (!doc) {
-+        return;
-+    }
++    nsIDocument *doc = mOwner->ContentNode()->OwnerDoc();
 +
 +    nsCOMPtr<nsIURI> uri;
 +    nsIntRect imageRect;
@@ -2827,10 +2824,11 @@ new file mode 100644
 +            return;
 +        }
 +
++        nsPresContext *pc = shell->GetPresContext();
 +        nsRefPtr<nsStyleContext> sc =
 +            nsComputedDOMStyle::GetStyleContextForElementNoFlush(
 +                mOwner->ContentNode()->AsElement(), nullptr, shell);
-+        if (!sc) {
++        if (!pc || !sc) {
 +            return;
 +        }
 +
@@ -2838,12 +2836,6 @@ new file mode 100644
 +        imageRequest = list->GetListStyleImage();
 +        if (imageRequest) {
 +            imageRequest->GetURI(getter_AddRefs(uri));
-+
-+            nsPresContext *pc = shell->GetPresContext();
-+            if (!pc) {
-+                return;
-+            }
-+
 +            imageRect = list->mImageRegion.ToNearestPixels(
 +                            pc->AppUnitsPerDevPixel());
 +        }
@@ -2874,6 +2866,8 @@ new file mode 100644
 +
 +    mIconLoaded = false;
 +
++    mURI = uri;
++
 +    if (imageRequest) {
 +        mImageRect = imageRect;
 +        imageRequest->Clone(this, getter_AddRefs(mImageRequest));
@@ -2890,15 +2884,14 @@ new file mode 100644
 +        loader->LoadImage(uri, nullptr, nullptr, nullptr, loadGroup, this,
 +                          nullptr, nsIRequest::LOAD_NORMAL, nullptr,
 +                          nullptr, getter_AddRefs(mImageRequest));
++    }
++
++    if (!mIconLoaded) {
 +        if (!mImageRequest) {
 +            NS_WARNING("Failed to load icon");
 +            return;
 +        }
-+    }
 +
-+    mURI = uri;
-+
-+    if (mImageRequest) {
 +        mImageRequest->RequestDecode();
 +    }
 +}
