@@ -392,7 +392,7 @@ diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,692 @@
+@@ -0,0 +1,731 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -427,6 +427,37 @@ new file mode 100644
 +using namespace mozilla;
 +using mozilla::AutoPushJSContext;
 +
++class nsSetAttrRunnableNoNotify : public nsRunnable {
++public:
++    nsSetAttrRunnableNoNotify(nsIContent *aContent, nsIAtom *aAttribute,
++                              nsAString& aValue) :
++                              mContent(aContent), mAttribute(aAttribute),
++                              mValue(aValue) { };
++
++    NS_IMETHODIMP Run() {
++        return mContent->SetAttr(kNameSpaceID_None, mAttribute, mValue, false);
++    }
++
++private:
++    nsCOMPtr<nsIContent> mContent;
++    nsCOMPtr<nsIAtom> mAttribute;
++    nsAutoString mValue;
++};
++
++class nsUnsetAttrRunnableNoNotify : public nsRunnable {
++public:
++    nsUnsetAttrRunnableNoNotify(nsIContent *aContent, nsIAtom *aAttribute) :
++                                mContent(aContent), mAttribute(aAttribute) { };
++
++    NS_IMETHODIMP Run() {
++        return mContent->UnsetAttr(kNameSpaceID_None, mAttribute, false);
++    }
++
++private:
++    nsCOMPtr<nsIContent> mContent;
++    nsCOMPtr<nsIAtom> mAttribute;
++};
++
 +void
 +nsMenu::SetPopupState(EPopupState aState)
 +{
@@ -453,28 +484,27 @@ new file mode 100644
 +            break;
 +    }
 +
-+    nsCOMPtr<nsIRunnable> event;
 +    if (nsContentUtils::IsSafeToRunScript()) {
 +        if (state.IsEmpty()) {
 +            mPopupContent->UnsetAttr(kNameSpaceID_None,
 +                                     nsNativeMenuAtoms::_moz_menupopupstate,
-+                                     true);
++                                     false);
 +        } else {
 +            mPopupContent->SetAttr(kNameSpaceID_None,
 +                                   nsNativeMenuAtoms::_moz_menupopupstate,
-+                                   state, true);
++                                   state, false);
 +        }
 +    } else {
++        nsCOMPtr<nsIRunnable> r;
 +        if (state.IsEmpty()) {
-+            event = new nsUnsetAttrRunnable(
-+                mPopupContent, nsNativeMenuAtoms::_moz_menupopupstate);
++            r = new nsUnsetAttrRunnableNoNotify(
++                        mPopupContent, nsNativeMenuAtoms::_moz_menupopupstate);
 +        } else {
-+            event =
-+                new nsSetAttrRunnable(mPopupContent,
-+                                      nsNativeMenuAtoms::_moz_menupopupstate,
-+                                      state);
++            r = new nsSetAttrRunnableNoNotify(
++                        mPopupContent, nsNativeMenuAtoms::_moz_menupopupstate,
++                        state);
 +        }
-+        nsContentUtils::AddScriptRunner(event);
++        nsContentUtils::AddScriptRunner(r);
 +    }
 +}
 +
@@ -551,7 +581,6 @@ new file mode 100644
 +        return;
 +    }
 +
-+    nsNativeMenuAutoSuspendMutations as;
 +
 +    if (NeedsRebuild()) {
 +        if (NS_FAILED(Build())) {
@@ -561,41 +590,30 @@ new file mode 100644
 +        }
 +    }
 +
-+    SetPopupState(ePopupState_Showing);
-+    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWING);
++    nsCOMPtr<nsIContent> popupContent(mPopupContent);
++    {
++        nsNativeMenuAutoUpdateBatch batch;
++
++        SetPopupState(ePopupState_Showing);
++        DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWING);
++
++        EPopupState openState = aOrigin == eAboutToOpenOrigin_FromOpenedEvent ?
++            ePopupState_OpenFromOpenedEvent : ePopupState_OpenFromAboutToShow;
++        SetPopupState(openState);
++        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::open,
++                          NS_LITERAL_STRING("true"), true);
++    }
 +
 +    uint32_t count = mMenuObjects.Length();
 +    for (uint32_t i = 0; i < count; ++i) {
-+        mMenuObjects[i]->ContainerIsOpening();
++        mMenuObjects[i]->Update();
 +    }
 +
-+    EPopupState openState = aOrigin == eAboutToOpenOrigin_FromOpenedEvent ?
-+        ePopupState_OpenFromOpenedEvent : ePopupState_OpenFromAboutToShow;
-+    SetPopupState(openState);
-+    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::open,
-+                      NS_LITERAL_STRING("true"), true);
-+    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWN);
-+}
-+
-+void
-+nsMenu::OnClose()
-+{
-+    if (PopupState() != ePopupState_Showing &&
-+        PopupState() != ePopupState_OpenFromAboutToShow &&
-+        PopupState() != ePopupState_OpenFromOpenedEvent) {
-+        return;
++    // I guess that the popup could have changed
++    if (popupContent == mPopupContent) {
++        nsNativeMenuAutoUpdateBatch batch;
++        DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWN);
 +    }
-+
-+    nsNativeMenuAutoSuspendMutations as;
-+
-+    SetPopupState(ePopupState_Hiding);
-+
-+    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDING);
-+    SetPopupState(ePopupState_Closed);
-+
-+    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDDEN);
-+
-+    mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::open, true);
 +}
 +
 +nsresult
@@ -646,18 +664,9 @@ new file mode 100644
 +                     G_CALLBACK(menu_about_to_show_cb), this);
 +    g_signal_connect(G_OBJECT(mNativeData), "event",
 +                     G_CALLBACK(menu_event_cb), this);
-+}
 +
-+void
-+nsMenu::Refresh(nsMenuObject::ERefreshType aType)
-+{
-+    if (aType == nsMenuObject::eRefreshType_Full) {
-+        SyncLabelFromContent();
-+        SyncSensitivityFromContent();
-+    }
-+
-+    SyncVisibilityFromContent();
-+    SyncIconFromContent();
++    SyncLabelFromContent();
++    SyncSensitivityFromContent();
 +}
 +
 +void
@@ -682,7 +691,7 @@ new file mode 100644
 +    }
 +
 +    if (oldPopupContent && oldPopupContent != mContent) {
-+        mListener->UnregisterForContentChanges(oldPopupContent, this);
++        mListener->UnregisterForContentChanges(oldPopupContent);
 +    }
 +
 +    if (!mPopupContent) {
@@ -829,7 +838,7 @@ new file mode 100644
 +    }
 +
 +    if (mListener && mPopupContent && mContent != mPopupContent) {
-+        mListener->UnregisterForContentChanges(mPopupContent, this);
++        mListener->UnregisterForContentChanges(mPopupContent);
 +    }
 +
 +    if (mNativeData) {
@@ -895,6 +904,36 @@ new file mode 100644
 +
 +    NS_ADDREF(this);
 +    timer.forget();
++}
++
++void
++nsMenu::OnClose()
++{
++    if (PopupState() != ePopupState_Showing &&
++        PopupState() != ePopupState_OpenFromAboutToShow &&
++        PopupState() != ePopupState_OpenFromOpenedEvent) {
++        return;
++    }
++
++    // We do this here as an alternative to holding a strong
++    // reference to ourselves (and also mPopupContent)
++    nsNativeMenuAutoUpdateBatch batch;
++
++    SetPopupState(ePopupState_Hiding);
++
++    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDING);
++    SetPopupState(ePopupState_Closed);
++
++    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDDEN);
++
++    mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::open, true);
++}
++
++void
++nsMenu::Update()
++{
++    SyncVisibilityFromContent();
++    SyncIconFromContent();
 +}
 +
 +void
@@ -1089,7 +1128,7 @@ diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.h
-@@ -0,0 +1,151 @@
+@@ -0,0 +1,152 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1128,6 +1167,9 @@ new file mode 100644
 +    // Tell the desktop shell to display this menu
 +    void OpenMenuDelayed();
 +
++    void OnClose();
++
++    void Update();
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
 +    void OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
 +                           nsIContent *aPrevSibling);
@@ -1215,10 +1257,8 @@ new file mode 100644
 +                              guint timestamp,
 +                              gpointer user_data);
 +    void AboutToOpen(EAboutToOpenOrigin aOrigin);
-+    void OnClose();
 +    nsresult Build();
 +    void InitializeNativeData();
-+    void Refresh(nsMenuObject::ERefreshType aType);
 +    void InitializePopup();
 +    nsresult RemoveMenuObjectAt(uint32_t aIndex);
 +    nsresult RemoveMenuObject(nsIContent *aChild);
@@ -1245,7 +1285,7 @@ diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.cpp
-@@ -0,0 +1,554 @@
+@@ -0,0 +1,551 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1735,13 +1775,10 @@ new file mode 100644
 +
 +    mListener->Start();
 +
-+    {
-+        nsNativeMenuAutoSuspendMutations as;
-+        nsresult rv = Build();
-+        if (NS_FAILED(rv)) {
-+            Deactivate();
-+            return rv;
-+        }
++    nsresult rv = Build();
++    if (NS_FAILED(rv)) {
++        Deactivate();
++        return rv;
 +    }
 +
 +    SetShellShowingMenuBar(true);
@@ -1966,7 +2003,7 @@ diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.cpp
-@@ -0,0 +1,546 @@
+@@ -0,0 +1,464 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1997,6 +2034,7 @@ new file mode 100644
 +#include "nsNativeMenuDocListener.h"
 +#include "nsNativeMenuUtils.h"
 +#include "nsMenuBar.h"
++#include "nsMenu.h"
 +
 +#include <gdk/gdk.h>
 +#include <gdk/gdkkeysyms.h>
@@ -2052,42 +2090,6 @@ new file mode 100644
 +    nsRefPtr<nsMenuItem> mMenuItem;
 +};
 +
-+class nsMenuItemRefreshRunnable MOZ_FINAL : public nsRunnable {
-+public:
-+    NS_IMETHODIMP Run() {
-+        mMenuItem->RefreshUnblocked(mType);
-+        return NS_OK;
-+    }
-+
-+    nsMenuItemRefreshRunnable(nsMenuItem *aMenuItem,
-+                              nsMenuObject::ERefreshType aType) :
-+        mMenuItem(aMenuItem),
-+        mType(aType) { };
-+
-+private:
-+    nsRefPtr<nsMenuItem> mMenuItem;
-+    nsMenuObject::ERefreshType mType;
-+};
-+
-+class nsMenuItemCommandNodeAttributeChangedRunnable MOZ_FINAL :
-+    public nsRunnable
-+{
-+public:
-+    NS_IMETHODIMP Run() {
-+        mMenuItem->CommandNodeAttributeChanged(mAttribute);
-+        return NS_OK;
-+    }
-+
-+    nsMenuItemCommandNodeAttributeChangedRunnable(nsMenuItem *aMenuItem,
-+                                                  nsIAtom *aAttribute) :
-+        mMenuItem(aMenuItem),
-+        mAttribute(aAttribute) { };
-+
-+private:
-+    nsRefPtr<nsMenuItem> mMenuItem;
-+    nsCOMPtr<nsIAtom> mAttribute;
-+};
-+
 +/* static */ void
 +nsMenuItem::item_activated_cb(DbusmenuMenuitem *menuitem,
 +                              guint timestamp,
@@ -2104,7 +2106,8 @@ new file mode 100644
 +        gtk_widget_get_window(MenuBar()->TopLevelWindow()),
 +        aTimestamp);
 +
-+    nsNativeMenuAutoSuspendMutations as;
++    // We do this as an alternative to holding a strong reference to ourself
++    nsNativeMenuAutoUpdateBatch batch;
 +
 +    // This first bit seems backwards, but it's not really. If autocheck is
 +    // not set or autocheck==true, then the checkbox state is usually updated
@@ -2128,62 +2131,37 @@ new file mode 100644
 +    nsIDocument *doc = mContent->OwnerDoc();
 +    nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mContent);
 +    nsCOMPtr<nsIDOMDocument> domDoc = do_QueryInterface(doc);
-+    if (!domDoc || !target) {
-+        return;
-+    }
++    if (domDoc && target) {
++        nsCOMPtr<nsIDOMEvent> event;
++        domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
++                            getter_AddRefs(event));
++        nsCOMPtr<nsIDOMXULCommandEvent> command = do_QueryInterface(event);
++        if (command) {
++            command->InitCommandEvent(NS_LITERAL_STRING("command"),
++                                      true, true, doc->GetWindow(), 0,
++                                      false, false, false, false, nullptr);
 +
-+    nsCOMPtr<nsIDOMEvent> event;
-+    domDoc->CreateEvent(NS_LITERAL_STRING("xulcommandevent"),
-+                        getter_AddRefs(event));
-+    nsCOMPtr<nsIDOMXULCommandEvent> command = do_QueryInterface(event);
-+    if (!command) {
-+        return;
-+    }
-+
-+    command->InitCommandEvent(NS_LITERAL_STRING("command"),
-+                              true, true, doc->GetWindow(), 0,
-+                              false, false, false, false, nullptr);
-+
-+    event->SetTrusted(true);
-+    bool dummy;
-+    target->DispatchEvent(event, &dummy);
-+}
-+
-+void
-+nsMenuItem::SyncStateFromCommand()
-+{
-+    nsAutoString checked;
-+    if (mCommandContent && mCommandContent->GetAttr(kNameSpaceID_None,
-+                                                    nsGkAtoms::checked,
-+                                                    checked)) {
-+        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::checked, checked,
-+                          true);
-+    }
-+}
-+
-+void
-+nsMenuItem::SyncLabelFromCommand()
-+{
-+    nsAutoString label;
-+    if (mCommandContent && mCommandContent->GetAttr(kNameSpaceID_None,
-+                                                    nsGkAtoms::label,
-+                                                    label)) {
-+        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::label, label,
-+                          true);
-+    }
-+}
-+
-+void
-+nsMenuItem::SyncSensitivityFromCommand()
-+{
-+    if (mCommandContent) {
-+        if (mCommandContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::disabled,
-+                                         nsGkAtoms::_true, eCaseMatters)) {
-+            mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
-+                              NS_LITERAL_STRING("true"), true);
-+        } else {
-+            mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::disabled, true);
++            event->SetTrusted(true);
++            bool dummy;
++            target->DispatchEvent(event, &dummy);
 +        }
++    }
++
++    // This kinda sucks, but Unity doesn't send a closed event
++    // after activating a menuitem
++    nsMenuObject *ancestor = Parent();
++    while (ancestor && ancestor->Type() == eType_Menu) {
++        static_cast<nsMenu *>(ancestor)->OnClose();
++        ancestor = ancestor->Parent();
++    }
++}
++
++void
++nsMenuItem::SyncAttrFromNodeIfExists(nsIContent *aContent, nsIAtom *aAttribute)
++{
++    nsAutoString value;
++    if (aContent->GetAttr(kNameSpaceID_None, aAttribute, value)) {
++        mContent->SetAttr(kNameSpaceID_None, aAttribute, value, true);
 +    }
 +}
 +
@@ -2238,6 +2216,27 @@ new file mode 100644
 +void
 +nsMenuItem::SyncAccelFromContent()
 +{
++    nsIDocument *doc = mContent->GetCurrentDoc();
++    if (doc) {
++        nsCOMPtr<nsIContent> oldKeyContent;
++        oldKeyContent.swap(mKeyContent);
++
++        nsAutoString key;
++        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::key, key);
++        if (!key.IsEmpty()) {
++            mKeyContent = doc->GetElementById(key);
++        }
++
++        if (mKeyContent != oldKeyContent) {
++            if (oldKeyContent) {
++                mListener->UnregisterForContentChanges(oldKeyContent);
++            }
++            if (mKeyContent) {
++                mListener->RegisterForContentChanges(mKeyContent, this);
++            }
++        }
++    }
++
 +    if (!mKeyContent) {
 +        dbusmenu_menuitem_property_remove(mNativeData,
 +                                          DBUSMENU_MENUITEM_PROP_SHORTCUT);
@@ -2306,82 +2305,16 @@ new file mode 100644
 +}
 +
 +void
-+nsMenuItem::CommandNodeAttributeChanged(nsIAtom *aAttribute)
-+{
-+    if (aAttribute == nsGkAtoms::label) {
-+        SyncLabelFromCommand();
-+    } else if (aAttribute == nsGkAtoms::disabled) {
-+        SyncSensitivityFromCommand();
-+    } else if (aAttribute == nsGkAtoms::checked) {
-+        SyncStateFromCommand();
-+    }
-+}
-+
-+void
 +nsMenuItem::InitializeNativeData()
 +{
 +    g_signal_connect(G_OBJECT(mNativeData),
 +                     DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
 +                     G_CALLBACK(item_activated_cb), this);
-+}
 +
-+void
-+nsMenuItem::Refresh(nsMenuObject::ERefreshType aType)
-+{
-+    if (aType == eRefreshType_Full) {
-+        if (mCommandContent) {
-+            mListener->UnregisterForContentChanges(mCommandContent, this);
-+            mCommandContent = nullptr;
-+        }
-+        if (mKeyContent) {
-+            mListener->UnregisterForContentChanges(mKeyContent, this);
-+            mKeyContent = nullptr;
-+        }
-+
-+        nsIDocument *doc = mContent->GetCurrentDoc();
-+        nsAutoString command;
-+        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::command, command);
-+        if (!command.IsEmpty()) {
-+            mCommandContent = doc->GetElementById(command);
-+            if (mCommandContent) {
-+                mListener->RegisterForContentChanges(mCommandContent, this);
-+            }
-+        }
-+
-+        nsAutoString key;
-+        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::key, key);
-+        if (!key.IsEmpty()) {
-+            mKeyContent = doc->GetElementById(key);
-+            if (mKeyContent) {
-+                mListener->RegisterForContentChanges(mKeyContent, this);
-+            }
-+        }
-+    }
-+
-+    if (nsContentUtils::IsSafeToRunScript()) {
-+        RefreshUnblocked(aType);
-+    } else {
-+        nsContentUtils::AddScriptRunner(new nsMenuItemRefreshRunnable(this,
-+                                                                      aType));
-+    }
-+}
-+
-+void
-+nsMenuItem::RefreshUnblocked(nsMenuObject::ERefreshType aType)
-+{
-+    SyncStateFromCommand();
-+    SyncLabelFromCommand();
-+    SyncSensitivityFromCommand();
-+
-+    if (aType == eRefreshType_Full) {
-+        SyncTypeAndStateFromContent();
-+        SyncAccelFromContent();
-+        SyncLabelFromContent();
-+        SyncSensitivityFromContent();
-+    }
-+
-+    SyncVisibilityFromContent();
-+    SyncIconFromContent();
++    SyncTypeAndStateFromContent();
++    SyncAccelFromContent();
++    SyncLabelFromContent();
++    SyncSensitivityFromContent();
 +}
 +
 +void
@@ -2433,13 +2366,8 @@ new file mode 100644
 +
 +nsMenuItem::~nsMenuItem()
 +{
-+    if (mListener) {
-+        if (mCommandContent) {
-+            mListener->UnregisterForContentChanges(mCommandContent, this);
-+        }
-+        if (mKeyContent) {
-+            mListener->UnregisterForContentChanges(mKeyContent, this);
-+        }
++    if (mListener && mKeyContent) {
++        mListener->UnregisterForContentChanges(mKeyContent);
 +    }
 +
 +    if (mNativeData) {
@@ -2464,10 +2392,43 @@ new file mode 100644
 +}
 +
 +void
++nsMenuItem::Update()
++{
++    nsIDocument *doc = mContent->GetCurrentDoc();
++    if (doc) {
++        nsAutoString command;
++        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::command, command);
++        if (!command.IsEmpty()) {
++            nsCOMPtr<nsIContent> commandContent =
++                doc->GetElementById(command);
++            if (commandContent) {
++                if (commandContent->AttrValueIs(kNameSpaceID_None,
++                                                nsGkAtoms::disabled,
++                                                nsGkAtoms::_true,
++                                                eCaseMatters)) {
++                    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
++                                      NS_LITERAL_STRING("true"), true);
++                } else {
++                    mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
++                                        true);
++                }
++
++                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::checked);
++                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::accesskey);
++                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::label);
++                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::hidden);
++            }
++        }
++    }
++
++    SyncVisibilityFromContent();
++    SyncIconFromContent();
++}
++
++void
 +nsMenuItem::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
 +{
-+    NS_ASSERTION(aContent == mContent || aContent == mCommandContent ||
-+                 aContent == mKeyContent,
++    NS_ASSERTION(aContent == mContent || aContent == mKeyContent,
 +                 "Received an event that wasn't meant for us!");
 +
 +    if (aContent == mContent && aAttribute == nsGkAtoms::checked &&
@@ -2482,9 +2443,8 @@ new file mode 100644
 +    }
 +
 +    if (aContent == mContent) {
-+        if (aAttribute == nsGkAtoms::command ||
-+            aAttribute == nsGkAtoms::key) {
-+            Refresh(eRefreshType_Full);
++        if (aAttribute == nsGkAtoms::key) {
++            SyncAccelFromContent();
 +        } else if (aAttribute == nsGkAtoms::label ||
 +                   aAttribute == nsGkAtoms::accesskey ||
 +                   aAttribute == nsGkAtoms::crop) {
@@ -2501,15 +2461,10 @@ new file mode 100644
 +                   aAttribute == nsGkAtoms::collapsed) {
 +            SyncVisibilityFromContent();
 +        }
-+    } else if (aContent == mCommandContent) {
-+        if (nsContentUtils::IsSafeToRunScript()) {
-+            CommandNodeAttributeChanged(aAttribute);
-+        } else {
-+            nsContentUtils::AddScriptRunner(
-+                new nsMenuItemCommandNodeAttributeChangedRunnable(this,
-+                                                                  aAttribute));
-+        }
-+    } else if (aContent == mKeyContent) {
++    } else if (aContent == mKeyContent &&
++               (aAttribute == nsGkAtoms::key ||
++                aAttribute == nsGkAtoms::keycode ||
++                aAttribute == nsGkAtoms::modifiers)) {
 +        SyncAccelFromContent();
 +    }
 +}
@@ -2517,7 +2472,7 @@ diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.h
-@@ -0,0 +1,122 @@
+@@ -0,0 +1,114 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2556,11 +2511,10 @@ new file mode 100644
 +    static already_AddRefed<nsMenuObject> Create(nsMenuObject *aParent,
 +                                                 nsIContent *aContent);
 +
++    void Update();
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
 +
 +private:
-+    friend class nsMenuItemRefreshRunnable;
-+    friend class nsMenuItemCommandNodeAttributeChangedRunnable;
 +    friend class nsMenuItemUncheckSiblingsRunnable;
 +
 +    enum {
@@ -2579,11 +2533,11 @@ new file mode 100644
 +        return EMenuItemType(
 +            (mFlags &
 +             (((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U)
-+              << NSMENUITEM_NUMBER_OF_TYPE_BITS)) >> NSMENUITEM_NUMBER_OF_TYPE_BITS);
++              << NSMENUITEM_NUMBER_OF_FLAGS)) >> NSMENUITEM_NUMBER_OF_FLAGS);
 +    }
 +    void SetMenuItemType(EMenuItemType aType) {
-+        mFlags &= ~(((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U) << NSMENUITEM_NUMBER_OF_TYPE_BITS);
-+        mFlags |= (aType << NSMENUITEM_NUMBER_OF_TYPE_BITS);
++        mFlags &= ~(((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U) << NSMENUITEM_NUMBER_OF_FLAGS);
++        mFlags |= (aType << NSMENUITEM_NUMBER_OF_FLAGS);
 +    }
 +    bool IsCheckboxOrRadioItem() const {
 +        return MenuItemType() == eMenuItemType_Radio ||
@@ -2606,18 +2560,12 @@ new file mode 100644
 +                                  gpointer user_data);
 +    void Activate(uint32_t aTimestamp);
 +
-+    void SyncStateFromCommand();
-+    void SyncLabelFromCommand();
-+    void SyncSensitivityFromCommand();
++    void SyncAttrFromNodeIfExists(nsIContent *aContent, nsIAtom *aAtom);
 +    void SyncStateFromContent();
 +    void SyncTypeAndStateFromContent();
 +    void SyncAccelFromContent();
 +
-+    void CommandNodeAttributeChanged(nsIAtom *aAttribute);
-+
 +    void InitializeNativeData();
-+    void Refresh(nsMenuObject::ERefreshType aType);
-+    void RefreshUnblocked(nsMenuObject::ERefreshType aType);
 +    void UncheckSiblings();
 +    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData);
 +
@@ -2634,7 +2582,6 @@ new file mode 100644
 +    }
 +
 +    nsCOMPtr<nsIContent> mKeyContent;
-+    nsCOMPtr<nsIContent> mCommandContent;
 +
 +    uint8_t mFlags; // The upper bits of this are used to encode the menuitem type
 +};
@@ -2644,7 +2591,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,692 @@
+@@ -0,0 +1,684 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3225,7 +3172,7 @@ new file mode 100644
 +    }
 +
 +    if (mListener) {
-+        mListener->UnregisterForContentChanges(mContent, this);
++        mListener->UnregisterForContentChanges(mContent);
 +    }
 +
 +    if (mNativeData) {
@@ -3253,7 +3200,6 @@ new file mode 100644
 +
 +    mNativeData = dbusmenu_menuitem_new();
 +    InitializeNativeData();
-+    Refresh(eRefreshType_Full);
 +
 +    mListener->RegisterForContentChanges(mContent, this);
 +}
@@ -3272,17 +3218,10 @@ new file mode 100644
 +
 +    RemoveUnsupportedProperties();
 +    InitializeNativeData();
-+    Refresh(eRefreshType_Full);
 +
 +    mListener->RegisterForContentChanges(mContent, this);
 +
 +    return NS_OK;
-+}
-+
-+void
-+nsMenuObject::ContainerIsOpening()
-+{
-+    Refresh(eRefreshType_ContainerOpening);
 +}
 +
 +uint32_t
@@ -3341,7 +3280,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,187 @@
+@@ -0,0 +1,182 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3393,11 +3332,6 @@ new file mode 100644
 +        eType_MenuSeparator
 +    };
 +
-+    enum ERefreshType {
-+        eRefreshType_Full,
-+        eRefreshType_ContainerOpening
-+    };
-+
 +    enum PropertyFlags {
 +        ePropLabel = (1 << 0),
 +        ePropEnabled = (1 << 1),
@@ -3436,8 +3370,9 @@ new file mode 100644
 +    // Adopt the specified native menu item node (called by containers)
 +    nsresult AdoptNativeData(DbusmenuMenuitem *aNativeData);
 +
-+    // Signal that the containing menu is going to be displayed on screen
-+    void ContainerIsOpening();
++    // Tell the item to refresh various attributes on its native object. Called
++    // by the container when it is about to be displayed
++    virtual void Update() { };
 +
 +    virtual void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute) {
 +        NS_ERROR("Unhandled AttributeChanged() notification");
@@ -3495,7 +3430,6 @@ new file mode 100644
 +    };
 +
 +    virtual void InitializeNativeData() { };
-+    virtual void Refresh(ERefreshType aType) { };
 +    virtual PropertyFlags SupportedProperties() const {
 +        return PropertyFlags(0);
 +    }
@@ -3556,12 +3490,6 @@ new file mode 100644
 +                                   "separator");
 +}
 +
-+void
-+nsMenuSeparator::Refresh(nsMenuObject::ERefreshType aType)
-+{
-+    SyncVisibilityFromContent();
-+}
-+
 +bool
 +nsMenuSeparator::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData)
 +{
@@ -3590,6 +3518,12 @@ new file mode 100644
 +    }
 +
 +    return sep.forget();
++}
++
++void
++nsMenuSeparator::Update()
++{
++    SyncVisibilityFromContent();
 +}
 +
 +void
@@ -3634,13 +3568,13 @@ new file mode 100644
 +    static already_AddRefed<nsMenuObject> Create(nsMenuObject *aParent,
 +                                                 nsIContent *aContent);
 +
++    void Update();
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
 +
 +private:
 +    nsMenuSeparator();
 +
 +    void InitializeNativeData();
-+    void Refresh(nsMenuObject::ERefreshType aType);
 +    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData);
 +
 +    nsMenuObject::PropertyFlags SupportedProperties() const {
@@ -3746,7 +3680,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuD
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,400 @@
+@@ -0,0 +1,367 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3759,43 +3693,43 @@ new file mode 100644
 +#include "nsIDocument.h"
 +#include "mozilla/dom/Element.h"
 +#include "nsINode.h"
++#include "mozilla/DebugOnly.h"
 +
 +#include "nsMenuObject.h"
 +
-+uint32_t nsNativeMenuDocListener::sInhibitDepth = 0;
++using namespace mozilla;
++
++uint32_t nsNativeMenuDocListener::sUpdateDepth = 0;
 +
 +nsNativeMenuDocListener::listener_array_type *gPendingListeners;
 +
-+class MOZ_STACK_CLASS DispatchContext {
++class MOZ_STACK_CLASS DispatchHelper {
 +public:
-+    DispatchContext(nsNativeMenuDocListener *aOwner,
-+                    nsIContent *aTarget) :
-+        mOwner(aOwner), mObservers(nullptr) {
-+        NS_ASSERTION(!mOwner->mCurrentTarget,
-+                     "Nested dispatch! This should never happen");
-+        mOwner->mCurrentTarget = aTarget;
-+        mOwner->mContentToObserverTable.Get(aTarget, &mObservers);
-+    };
-+
-+    ~DispatchContext() {
-+        if (mObservers && mObservers->Length() == 0) {
-+            mOwner->mContentToObserverTable.Remove(mOwner->mCurrentTarget);
++    DispatchHelper(nsNativeMenuDocListener *aListener,
++                   nsIContent *aContent
++                   MOZ_GUARD_OBJECT_NOTIFIER_PARAM) :
++                   mTarget(nullptr) {
++        MOZ_GUARD_OBJECT_NOTIFIER_INIT;
++        if (aContent == aListener->mLastTarget) {
++            mTarget = aListener->mLastDispatchTarget;
++        } else {
++            mTarget = aListener->mContentToObserverTable.Get(aContent);
++            if (mTarget) {
++                aListener->mLastTarget = aContent;
++                aListener->mLastDispatchTarget = mTarget;
++            }
 +        }
++    }
 +
-+        mOwner->mCurrentTarget = nullptr;
-+    };
++    ~DispatchHelper() { };
 +
-+    bool HasObservers() const {
-+        return mObservers ? true : false;
-+    };
++    nsMenuObject* Target() const { return mTarget; }
 +
-+    nsNativeMenuDocListener::observer_array_type& Observers() const {
-+        return *mObservers;
-+    };
++    bool HasTarget() const { return !!mTarget; }
 +
 +private:
-+    nsNativeMenuDocListener *mOwner;
-+    nsNativeMenuDocListener::observer_array_type *mObservers;
++    nsMenuObject *mTarget;
++    MOZ_DECL_USE_GUARD_OBJECT_NOTIFIER
 +};
 +
 +NS_IMPL_ISUPPORTS1(nsNativeMenuDocListener, nsIMutationObserver)
@@ -3804,13 +3738,9 @@ new file mode 100644
 +nsNativeMenuDocListener::DoAttributeChanged(nsIContent *aContent,
 +                                            nsIAtom *aAttribute)
 +{
-+    DispatchContext ctx(this, aContent);
-+
-+    if (ctx.HasObservers()) {
-+        observer_array_type::ForwardIterator iter(ctx.Observers());
-+        while (iter.HasMore()) {
-+            iter.GetNext()->OnAttributeChanged(aContent, aAttribute);
-+        }
++    DispatchHelper h(this, aContent);
++    if (h.HasTarget()) {
++        h.Target()->OnAttributeChanged(aContent, aAttribute);
 +    }
 +}
 +
@@ -3819,13 +3749,9 @@ new file mode 100644
 +                                           nsIContent *aChild,
 +                                           nsIContent *aPrevSibling)
 +{
-+    DispatchContext ctx(this, aContainer);
-+
-+    if (ctx.HasObservers()) {
-+        observer_array_type::ForwardIterator iter(ctx.Observers());
-+        while (iter.HasMore()) {
-+            iter.GetNext()->OnContentInserted(aContainer, aChild, aPrevSibling);
-+        }
++    DispatchHelper h(this, aContainer);
++    if (h.HasTarget()) {
++        h.Target()->OnContentInserted(aContainer, aChild, aPrevSibling);
 +    }
 +}
 +
@@ -3833,41 +3759,28 @@ new file mode 100644
 +nsNativeMenuDocListener::DoContentRemoved(nsIContent *aContainer,
 +                                          nsIContent *aChild)
 +{
-+    DispatchContext ctx(this, aContainer);
-+
-+    if (ctx.HasObservers()) {
-+        observer_array_type::ForwardIterator iter(ctx.Observers());
-+        while (iter.HasMore()) {
-+            iter.GetNext()->OnContentRemoved(aContainer, aChild);
-+        }
++    DispatchHelper h(this, aContainer);
++    if (h.HasTarget()) {
++        h.Target()->OnContentRemoved(aContainer, aChild);
 +    }
 +}
 +
 +void
 +nsNativeMenuDocListener::DoBeginUpdateBatch(nsIContent *aTarget)
 +{
-+    DispatchContext ctx(this, aTarget);
-+
-+    if (ctx.HasObservers()) {
-+        observer_array_type::ForwardIterator iter(ctx.Observers());
-+        while (iter.HasMore()) {
-+            iter.GetNext()->BeginUpdateBatch(aTarget);
-+        }
++    DispatchHelper h(this, aTarget);
++    if (h.HasTarget()) {
++        h.Target()->BeginUpdateBatch(aTarget);
 +    }
 +}
 +
 +void
 +nsNativeMenuDocListener::DoEndUpdateBatch(nsIContent *aTarget)
 +{
-+    DispatchContext ctx(this, aTarget);
-+
-+    if (ctx.HasObservers()) {
-+        observer_array_type::ForwardIterator iter(ctx.Observers());
-+        while (iter.HasMore()) {
-+            iter.GetNext()->EndUpdateBatch();
-+        }
++    DispatchHelper h(this, aTarget);
++    if (h.HasTarget()) {
++        h.Target()->EndUpdateBatch();
 +    }
-+
 +}
 +
 +void
@@ -3919,7 +3832,7 @@ new file mode 100644
 +/* static */ void
 +nsNativeMenuDocListener::ScheduleListener(nsNativeMenuDocListener *aListener)
 +{
-+    NS_ASSERTION(sInhibitDepth > 0, "Shouldn't be doing this now");
++    NS_ASSERTION(sUpdateDepth > 0, "Shouldn't be doing this now");
 +
 +    if (!gPendingListeners) {
 +        gPendingListeners = new listener_array_type;
@@ -3942,9 +3855,9 @@ new file mode 100644
 +}
 +
 +/* static */ void
-+nsNativeMenuDocListener::RemoveMutationBlocker()
++nsNativeMenuDocListener::EndUpdates()
 +{
-+    if (sInhibitDepth == 1 && gPendingListeners) {
++    if (sUpdateDepth == 1 && gPendingListeners) {
 +        {
 +            while (gPendingListeners->Length() > 0) {
 +                (*gPendingListeners)[0]->FlushPendingMutations();
@@ -3956,13 +3869,14 @@ new file mode 100644
 +        gPendingListeners = nullptr;
 +    }
 + 
-+    NS_ASSERTION(sInhibitDepth > 0, "Negative inhibit depth!");
-+    sInhibitDepth--;
++    NS_ASSERTION(sUpdateDepth > 0, "Negative update depth!");
++    sUpdateDepth--;
 +}
 +
 +nsNativeMenuDocListener::nsNativeMenuDocListener() :
 +    mDocument(nullptr),
-+    mCurrentTarget(nullptr)
++    mLastTarget(nullptr),
++    mLastDispatchTarget(nullptr)
 +{
 +    MOZ_COUNT_CTOR(nsNativeMenuDocListener);
 +    mContentToObserverTable.Init();
@@ -3993,7 +3907,7 @@ new file mode 100644
 +                                          nsIAtom *aAttribute,
 +                                          int32_t aModType)
 +{
-+    if (sInhibitDepth == 0) {
++    if (sUpdateDepth == 0) {
 +        DoAttributeChanged(aElement, aAttribute);
 +        return;
 +    }
@@ -4025,7 +3939,7 @@ new file mode 100644
 +{
 +    nsIContent *prevSibling = nsMenuObjectContainer::GetPreviousSupportedSibling(aChild);
 +
-+    if (sInhibitDepth == 0) {
++    if (sUpdateDepth == 0) {
 +        DoContentInserted(aContainer, aChild, prevSibling);
 +        return;
 +    }
@@ -4046,7 +3960,7 @@ new file mode 100644
 +                                        int32_t aIndexInContainer,
 +                                        nsIContent *aPreviousSibling)
 +{
-+    if (sInhibitDepth == 0) {
++    if (sUpdateDepth == 0) {
 +        DoContentRemoved(aContainer, aChild);
 +        return;
 +    }
@@ -4080,44 +3994,31 @@ new file mode 100644
 +nsNativeMenuDocListener::RegisterForContentChanges(nsIContent *aContent,
 +                                                   nsMenuObject *aMenuObject)
 +{
-+    NS_ASSERTION(aContent && aMenuObject, "Invalid parameters");
++    NS_ASSERTION(aContent, "Need content parameter");
++    NS_ASSERTION(aMenuObject, "Need menu object parameter");
 +    if (!aContent || !aMenuObject) {
 +        return;
 +    }
 +
-+    nsTObserverArray<nsMenuObject *> *observers;
-+    if (!mContentToObserverTable.Get(aContent, &observers)) {
-+        observers = new nsTObserverArray<nsMenuObject *>;
-+        mContentToObserverTable.Put(aContent, observers);
-+    }
++    DebugOnly<nsMenuObject *> old;
++    NS_ASSERTION(!mContentToObserverTable.Get(aContent, &old) || old == aMenuObject,
++                 "Multiple observers for the same content node are not supported");
 +
-+    observers->AppendElement(aMenuObject);
++    mContentToObserverTable.Put(aContent, aMenuObject);
 +}
 +
 +void
-+nsNativeMenuDocListener::UnregisterForContentChanges(nsIContent *aContent,
-+                                                     nsMenuObject *aMenuObject)
++nsNativeMenuDocListener::UnregisterForContentChanges(nsIContent *aContent)
 +{
-+    NS_ASSERTION(aContent && aMenuObject, "Invalid parameters");
-+    if (!aContent || !aMenuObject) {
++    NS_ASSERTION(aContent, "Need content parameter");
++    if (!aContent) {
 +        return;
 +    }
 +
-+    nsTObserverArray<nsMenuObject *> *observers;
-+    if (!mContentToObserverTable.Get(aContent, &observers)) {
-+        return;
-+    }
-+
-+    observers->RemoveElement(aMenuObject);
-+
-+    /* We can't remove the observer array here if we are currently
-+     * dispatching events for this content node, as it will
-+     * crash inside the iterators destructor. DispatchContext
-+     * takes care of removing this for us once we have returned from
-+     * this dispatch
-+     */
-+    if (observers->Length() == 0 && aContent != mCurrentTarget) {
-+        mContentToObserverTable.Remove(aContent);
++    mContentToObserverTable.Remove(aContent);
++    if (aContent == mLastTarget) {
++        mLastTarget = nullptr;
++        mLastDispatchTarget = nullptr;
 +    }
 +}
 +
@@ -4151,7 +4052,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.h b/widget/gtk2/nsNativeMenuDoc
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.h
-@@ -0,0 +1,125 @@
+@@ -0,0 +1,130 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4163,20 +4064,19 @@ new file mode 100644
 +#define __nsNativeMenuDocListener_h__
 +
 +#include "nsStubMutationObserver.h"
-+#include "nsTObserverArray.h"
 +#include "nsClassHashtable.h"
 +#include "nsTArray.h"
 +#include "nsAutoPtr.h"
 +#include "nsIContent.h"
 +#include "nsIAtom.h"
 +#include "mozilla/Attributes.h"
++#include "mozilla/GuardObjects.h"
 +
 +class nsIDocument;
 +class nsMenuObject;
 +
 +class nsNativeMenuAutoSuspendMutations;
 +class nsNativeMenuDocListenerFlushRunnable;
-+class DispatchContext;
 +
 +/*
 + * This class keeps a mapping of content nodes to native menu objects,
@@ -4187,7 +4087,6 @@ new file mode 100644
 +{
 +public:
 +    typedef nsTArray<nsNativeMenuDocListener *> listener_array_type;
-+    typedef nsTObserverArray<nsMenuObject *> observer_array_type;
 +
 +    NS_DECL_ISUPPORTS
 +    NS_DECL_NSIMUTATIONOBSERVER_ATTRIBUTECHANGED
@@ -4206,8 +4105,7 @@ new file mode 100644
 +
 +    // Unregister the menu object from receiving mutation events for the
 +    // specified content node.
-+    void UnregisterForContentChanges(nsIContent *aContent,
-+                                     nsMenuObject *aMenuObject);
++    void UnregisterForContentChanges(nsIContent *aContent);
 +
 +    // Start listening to the document and forwarding DOM mutations to
 +    // registered menu objects.
@@ -4218,8 +4116,8 @@ new file mode 100644
 +    void Stop();
 +
 +private:
-+    friend class nsNativeMenuAutoSuspendMutations;
-+    friend class DispatchContext;
++    friend class nsNativeMenuAutoUpdateBatch;
++    friend class DispatchHelper;
 +
 +    struct MutationRecord {
 +        enum RecordType {
@@ -4248,32 +4146,40 @@ new file mode 100644
 +    void FlushPendingMutations();
 +    static void ScheduleListener(nsNativeMenuDocListener *aListener);
 +    static void RemoveListener(nsNativeMenuDocListener *aListener);
-+    static void AddMutationBlocker() { ++sInhibitDepth; }
-+    static void RemoveMutationBlocker();
++    static void BeginUpdates() { ++sUpdateDepth; }
++    static void EndUpdates();
 +
 +    nsCOMPtr<nsIContent> mRootNode;
 +    nsIDocument *mDocument;
++    nsIContent *mLastTarget;
++    nsMenuObject *mLastDispatchTarget;
 +    nsTArray<nsAutoPtr<MutationRecord> > mPendingMutations;
-+    nsIContent *mCurrentTarget;
-+    nsClassHashtable<nsPtrHashKey<nsIContent>, observer_array_type> mContentToObserverTable;
++    nsDataHashtable<nsPtrHashKey<nsIContent>, nsMenuObject*> mContentToObserverTable;
 +
-+    static uint32_t sInhibitDepth;
++    static uint32_t sUpdateDepth;
 +};
 +
-+/* This class is intended to be used inside GObject signal handlers.
-+ * The idea is that we prevent our view of the menus from mutating
-+ * whilst dispatching events in to Gecko.
++/*
++ * This class is intended to be used inside GObject signal handlers.
++ * It allows us to queue updates until we have finished delivering
++ * events to Gecko, and then we can batch updates to our view of the
++ * menu. This allows us to do menu updates without altering the structure
++ * seen by the OS.
 + */
-+class MOZ_STACK_CLASS nsNativeMenuAutoSuspendMutations
++class MOZ_STACK_CLASS nsNativeMenuAutoUpdateBatch
 +{
 +public:
-+    nsNativeMenuAutoSuspendMutations() {
-+        nsNativeMenuDocListener::AddMutationBlocker();
++    nsNativeMenuAutoUpdateBatch(MOZ_GUARD_OBJECT_NOTIFIER_ONLY_PARAM) {
++        MOZ_GUARD_OBJECT_NOTIFIER_INIT;
++        nsNativeMenuDocListener::BeginUpdates();
 +    }
 +
-+    ~nsNativeMenuAutoSuspendMutations() {
-+        nsNativeMenuDocListener::RemoveMutationBlocker();
++    ~nsNativeMenuAutoUpdateBatch() {
++        nsNativeMenuDocListener::EndUpdates();
 +    }
++
++private:
++    MOZ_DECL_USE_GUARD_OBJECT_NOTIFIER
 +};
 +
 +#endif /* __nsNativeMenuDocListener_h__ */
