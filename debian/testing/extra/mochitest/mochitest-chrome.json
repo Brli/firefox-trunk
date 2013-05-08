@@ -7,7 +7,6 @@
   "browser/browser/base/content/test/browser_contextSearchTabPosition.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
   "browser/browser/base/content/test/browser_urlbar_search_healthreport.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
   "browser/browser/components/search/test/browser_google.js": "UNSUPPORTED UBUNTU-SEARCHPLUGINS",
-  "browser/browser/devtools/debugger/test/browser_dbg_createChrome.js": "HANGS, https://launchpad.net/bugs/1159078",
   "browser/browser/devtools/framework/test/browser_toolbox_options.js": "FAILS, https://launchpad.net/bugs/1172026",
   "browser/dom/tests/browser/browser_geolocation_privatebrowsing_perwindowpb.js": "https://launchpad.net/bugs/1167106",
   "browser/toolkit/mozapps/extensions/test/browser/browser_bug557956.js": "UNSUPPORTED UBUNTU-EXTENSIONS",
