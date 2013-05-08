@@ -82,6 +82,9 @@ firefox-trunk (23.0~a1~hg20130506r130900-0ubuntu1) UNRELEASED; urgency=low
   * Disable intl.locale.matchOS in test_bug848297.js
     - add d/p/test-fixes/xpcshell-chrome-fix-test_bug848297-with-locale-matchOS.patch
     - update debian/patches/series
+  * Write xpcshell test duration to the JUnit results when the test fails
+    - add d/p/test-integration/xpcshell-write-time-for-failed-test.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
