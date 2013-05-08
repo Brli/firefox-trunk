@@ -88,6 +88,8 @@ firefox-trunk (23.0~a1~hg20130506r130900-0ubuntu1) UNRELEASED; urgency=low
   * Fix plugin crash tests to not fail on unofficial builds
     - add d/p/test-fixes/mochitest-fix-plugin-crash-test-for-unofficial-builds.patch
     - update debian/patches/series
+  * Update test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
+    to just not include the test on !MOZ_CRASHREPORTER builds
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
