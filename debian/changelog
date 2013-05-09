@@ -85,9 +85,6 @@ firefox-trunk (23.0~a1~hg20130508r131030-0ubuntu1) UNRELEASED; urgency=low
   * Write xpcshell test duration to the JUnit results when the test fails
     - add d/p/test-integration/xpcshell-write-time-for-failed-test.patch
     - update debian/patches/series
-  * Fix plugin crash tests to not fail on unofficial builds
-    - add d/p/test-fixes/mochitest-fix-plugin-crash-test-for-unofficial-builds.patch
-    - update debian/patches/series
   * Update test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
     to just not include the test on !MOZ_CRASHREPORTER builds
 
