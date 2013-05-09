@@ -1,0 +1,20 @@
+Index: firefox-trunk-23.0~a1~hg20130508r131238/netwerk/test/httpserver/httpd.js
+===================================================================
+--- firefox-trunk-23.0~a1~hg20130508r131238.orig/netwerk/test/httpserver/httpd.js	2013-05-09 03:16:06.000000000 +0100
++++ firefox-trunk-23.0~a1~hg20130508r131238/netwerk/test/httpserver/httpd.js	2013-05-09 22:53:56.887308703 +0100
+@@ -49,7 +49,7 @@
+ const PR_UINT32_MAX = Math.pow(2, 32) - 1;
+ 
+ /** True if debugging output is enabled, false otherwise. */
+-var DEBUG = false; // non-const *only* so tweakable in server tests
++var DEBUG = true; // non-const *only* so tweakable in server tests
+ 
+ /** True if debugging output should be timestamped. */
+ var DEBUG_TIMESTAMP = false; // non-const so tweakable in server tests
+@@ -5292,5 +5292,5 @@
+   while (thread.hasPendingEvents())
+     thread.processNextEvent(true);
+ 
+-  DEBUG = false;
++  //DEBUG = false;
+ }

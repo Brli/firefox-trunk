@@ -25,3 +25,4 @@ test-fixes/xpcshell-search-fix-json-cache-test.patch
 test-integration/xpcshell-dont-return-nonzero-on-test-failure.patch
 test-fixes/xpcshell-chrome-fix-test_bug848297-with-locale-matchOS.patch
 test-integration/xpcshell-write-time-for-failed-test.patch
+test-integration/httpd_js-debug.patch
