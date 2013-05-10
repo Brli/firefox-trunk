@@ -57,6 +57,7 @@ $(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_tests/xpcshell/xpcshell-build.ini:
 
 run-xpcshell-tests-build: $(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_tests/xpcshell/xpcshell-build.ini
 	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) -u $(CURDIR)/$(MOZ_MOZDIR)/config/pythonpath.py \
+	  -I$(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/build \
 	  -I$(CURDIR)/$(MOZ_MOZDIR)/build \
 	  -I$(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_tests/mozbase/mozinfo \
 	  $(CURDIR)/$(MOZ_MOZDIR)/testing/xpcshell/runxpcshelltests.py \
