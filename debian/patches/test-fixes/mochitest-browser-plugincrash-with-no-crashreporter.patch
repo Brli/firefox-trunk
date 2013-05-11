@@ -3,11 +3,11 @@ Description: Skip browser_pluginCrashCommentAndURL.js when the crash reporter
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-23.0~a1~hg20130508r131030/browser/base/content/test/Makefile.in
+Index: firefox-trunk-23.0~a1~hg20130511r131518/browser/base/content/test/Makefile.in
 ===================================================================
---- firefox-trunk-23.0~a1~hg20130508r131030.orig/browser/base/content/test/Makefile.in	2013-05-08 23:33:17.310871815 +0100
-+++ firefox-trunk-23.0~a1~hg20130508r131030/browser/base/content/test/Makefile.in	2013-05-08 23:34:06.014872068 +0100
-@@ -322,14 +322,19 @@
+--- firefox-trunk-23.0~a1~hg20130511r131518.orig/browser/base/content/test/Makefile.in	2013-05-11 03:06:44.000000000 +0100
++++ firefox-trunk-23.0~a1~hg20130511r131518/browser/base/content/test/Makefile.in	2013-05-11 23:34:28.174256706 +0100
+@@ -321,14 +321,19 @@
                   browser_pageInfo_plugins.js \
                   browser_pageInfo.js \
                   feed_tab.html \
@@ -26,6 +26,6 @@ Index: firefox-trunk-23.0~a1~hg20130508r131030/browser/base/content/test/Makefil
 +				$(NULL)
 +endif
 +
- # Disable test on Windows due to frequent failures (bug 841341)
+ # Disable tests on Windows due to frequent failures (bugs 825739, 841341)
  ifneq (windows,$(MOZ_WIDGET_TOOLKIT))
  _BROWSER_FILES += \
