@@ -94,6 +94,14 @@ firefox-trunk (23.0~a1~hg20130512r131644-0ubuntu1) UNRELEASED; urgency=low
     using the python virtualenv provided by the upstream build system
     - update debian/build/testsuite.mk
     - update debian/build/rules.mk
+  * browser/distribution has moved back up a level
+    - update debian/build/rules.mk
+    - update debian/firefox-locale.preinst.in
+    - update debian/firefox.dirs.in
+    - update debian/firefox.install.in
+    - update debian/firefox.links.in
+    - update debian/firefox.postinst.in
+    - update debian/firefox.preinst.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 
