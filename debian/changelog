@@ -90,8 +90,10 @@ firefox-trunk (23.0~a1~hg20130511r131518-0ubuntu1) UNRELEASED; urgency=low
   * Temporarily turn on debug in httpd.js
     - add d/p/test-integration/httpd_js-debug.patch
     - update debian/patches/series
-  * Fix build-time xpcshell tests after landing of bmo: 597064
+  * Fix build-time xpcshell tests after landing of bmo: 597064, by
+    using the python virtualenv provided by the upstream build system
     - update debian/build/testsuite.mk
+    - update debian/build/rules.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 03 Apr 2013 17:19:15 +0100
 

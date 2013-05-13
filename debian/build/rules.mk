@@ -68,8 +68,8 @@ MOZ_DEFAULT_PROFILEDIR	:= .$(PROFILE_BASE)$(shell echo $(MOZ_DEFAULT_APP_BASENAM
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
-MOZ_PYTHON		:= $(shell which python)
-VIRTENV_PYTHON		:= $(CURDIR)/debian/_virtualenv/bin/python
+VIRTENV_PATH	:= $(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_virtualenv
+MOZ_PYTHON		:= $(VIRTENV_PATH)/bin/python
 DISTRIB 		:= $(shell lsb_release -i -s)
 
 CFLAGS			:= -g
@@ -208,14 +208,14 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
 
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 $(appname_subst_files): $(foreach file,$(appname_subst_files),$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 %.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
 %.pc: %.pc.in debian/stamp-makefile-build
-	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
+	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
 
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
@@ -225,7 +225,7 @@ debian/stamp-makebuildsymbols: debian/stamp-makefile-build
 make-testsuite: debian/stamp-maketestsuite
 debian/stamp-maketestsuite: debian/stamp-makefile-build
 ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
-	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
+	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
 endif
 	$(MAKE) -C $(MOZ_OBJDIR) package-tests
 ifneq (,$(wildcard debian/testing/extra))
@@ -244,7 +244,10 @@ debian/stamp-installtestsuite: debian/stamp-maketestsuite
 	install $(MOZ_DISTDIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).en-US.linux-*.tests.zip debian/tmp/$(MOZ_LIBDIR)/testing
 	@touch $@
 
-make-langpack-xpis: $(foreach target,$(shell sed -n 's/\#.*//;/^$$/d;s/\([^\:]*\)\:\?.*/\1/ p' < $(CURDIR)/debian/config/locales.shipped),debian/stamp-make-langpack-xpi-$(target))
+$(VIRTENV_PATH)/bin/compare-locales:
+	cd $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales; $(MOZ_PYTHON) $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales/setup.py install
+
+make-langpack-xpis: $(VIRTENV_PATH)/bin/compare-locales $(foreach target,$(shell sed -n 's/\#.*//;/^$$/d;s/\([^\:]*\)\:\?.*/\1/ p' < $(CURDIR)/debian/config/locales.shipped),debian/stamp-make-langpack-xpi-$(target))
 debian/stamp-make-langpack-xpi-%:
 	@echo ""
 	@echo ""
@@ -254,7 +257,7 @@ debian/stamp-make-langpack-xpi-%:
 	rm -rf $(CURDIR)/debian/l10n-mergedirs/$*
 	mkdir -p $(CURDIR)/debian/l10n-mergedirs/$*
 
-	@export PATH=$(CURDIR)/debian/_virtualenv/bin/:$$PATH ; \
+	@export PATH=$(VIRTENV_PATH)/bin/:$$PATH ; \
 	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
 		$(MAKE) merge-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1 ; \
 		$(MAKE) langpack-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
@@ -307,7 +310,7 @@ install-langpack-xpis-%:
 	dh_installdirs -p$(MOZ_PKG_NAME)-locale-$* $(MOZ_ADDONDIR)/extensions
 	@for lang in $(shell grep $*$$ debian/config/locales.shipped | sed -n 's/\([^\:]*\)\:\?.*/\1/ p' | tr '\n' ' '); \
 	do \
-		id=`PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$$lang.langpack.xpi 2>/dev/null`; \
+		id=`PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$$lang.langpack.xpi 2>/dev/null`; \
 		echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$$lang.langpack.xpi to $$id.xpi in to $(MOZ_PKG_NAME)-locale-$*"; \
 		install -m 0644 $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$$lang.langpack.xpi \
 			$(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$*/$(MOZ_ADDONDIR)/extensions/$$id.xpi; \
@@ -392,14 +395,6 @@ binary-predeb/$(MOZ_PKG_NAME)::
 mozconfig: debian/config/mozconfig
 	cp $< $@
 
-create-virtualenv: $(VIRTENV_PYTHON)
-$(VIRTENV_PYTHON):
-	mkdir -p debian/_virtualenv
-	$(MOZ_PYTHON) $(CURDIR)/$(MOZ_MOZDIR)/python/virtualenv/virtualenv.py --system-site-packages $(CURDIR)/debian/_virtualenv
-	cd $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales; $(VIRTENV_PYTHON) $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales/setup.py install
-
-post-patches:: create-virtualenv
-
 pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) mozconfig
 ifeq (,$(MOZ_BRANDING_OPTION))
 	$(error "Need to set MOZ_BRANDING_OPTION")
@@ -466,7 +461,7 @@ ifdef MOZ_MOZDIR
 get-orig-source: ARGS += -m $(MOZ_MOZDIR)
 endif
 get-orig-source:
-	PYTHONDONTWRITEBYTECODE=1 $(MOZ_PYTHON) $(CURDIR)/debian/build/create-tarball.py $(ARGS)
+	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/create-tarball.py $(ARGS)
 
 echo-%:
 	@echo "$($*)"
@@ -502,8 +497,7 @@ clean:: debian/tests/control
 	rm -rf $(MOZ_OBJDIR)
 	rm -f debian/searchplugin*.list
 	rm -f mozconfig
-	rm -rf debian/_virtualenv
 	rm -f debian/testing/extra.test.zip
 	rm -rf debian/testing/extra-stage
 
-.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales get-orig-source create-virtualenv
+.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales get-orig-source
