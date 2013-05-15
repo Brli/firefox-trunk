@@ -34,18 +34,21 @@ endif
 
 MOZ_PKG_NAMES = $(shell sed -n 's/Package\: \(.*\)/\1/ p' < debian/control)
 
-DEB_MAKE_MAKEFILE	:= client.mk
+DEB_MAKE_MAKEFILE		:= client.mk
 # Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
-DEB_MAKE_EXTRA_ARGS	:=
+DEB_MAKE_EXTRA_ARGS		:=
 # These normally come from autotools.mk, which we no longer include (because we
 # don't want to run configure)
 DEB_MAKE_INSTALL_TARGET	:= install DESTDIR=$(CURDIR)/debian/tmp
 DEB_MAKE_CLEAN_TARGET	:= cleansrcdir
-DEB_DH_STRIP_ARGS	:= --dbg-package=$(MOZ_PKG_NAME)-dbg
+# Don't save debug symbols in firefox-dbg (rely on pkg-create-dbgsym to create
+# ddeb packages for us). This is needed as long as there is a firefox-dbg
+# transitional package
+DEB_DBG_PACKAGES		:= $(NULL)
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
 # scour breaks the testsuite
-DEB_DH_SCOUR_ARGS := -N$(MOZ_PKG_NAME)-testsuite
+DEB_DH_SCOUR_ARGS		:= -N$(MOZ_PKG_NAME)-testsuite
 
 MOZ_VERSION		:= $(shell cat $(DEB_SRCDIR)/$(MOZ_APP)/config/version.txt)
 MOZ_LIBDIR		:= usr/lib/$(MOZ_APP_NAME)
