@@ -57,4 +57,5 @@ MOZ_FORCE_UNOFFICIAL_BRANDING = 1
 endif
 
 MOZ_LOCALE_PKGS	= $(strip $(shell dh_listpackages | grep $(MOZ_PKG_NAME)-locale-))
-MOZ_ALL_PKGS 	:= $(DEB_ARCH_PACKAGES) $(DEB_INDEP_PACKAGES)
+
+MOZ_LOCALES	:= $(shell sed -n 's/\#.*//;/^$$/d;s/\([^\:]*\)\:\?.*/\1/ p' < $(CURDIR)/debian/config/locales.shipped)

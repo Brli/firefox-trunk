@@ -82,22 +82,13 @@ install/firefox::
 endif
 endif
 
-$(patsubst %,binary-post-install/$(MOZ_PKG_NAME)-locale-%,$(MOZ_LANGPACK_TARGETS)):: binary-post-install/$(MOZ_PKG_NAME)-locale-%: install-webapprt-langpack-links-%
+$(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)) :: binary-post-install/%:
+	$(foreach xpi,$($(notdir $(wildcard debian/$*/$(MOZ_ADDONDIR)/extensions/*.xpi))), \
+		dh_link -p$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
 
-install-webapprt-langpack-links-%: XPIS = $(notdir $(wildcard debian/$(MOZ_PKG_NAME)-locale-$*/$(MOZ_ADDONDIR)/extensions/*.xpi))
-install-webapprt-langpack-links-%:
-	$(foreach xpi,$(XPIS),dh_link -p$(MOZ_PKG_NAME)-locale-$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
-
-make-langpack-preinsts::
-	@while read line ; \
-	do \
-		line=`echo $$line | sed 's/#.*//' | sed '/^$$/d'` ; \
-		if [ ! -z "$$line" ] ; \
-		then \
-		pkgname=`echo $$line | sed 's/\([^:]*\):*\([^:]*\)/\2/'` ; \
-			cp $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale.preinst $(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$${pkgname}.preinst ; \
-		fi \
-	done < $(CURDIR)/debian/config/locales.shipped
+make-langpack-preinsts:: $(foreach langpack,$(MOZ_LOCALE_PKGS),debian/$(langpack).preinst)
+$(patsubst %,debian/%.preinst,$(MOZ_LOCALE_PKGS)) :: debian/%.preinst : debian/$(MOZ_PKG_NAME)-locale.preinst
+	cp $< $@
 
 pre-build:: make-langpack-preinsts
 ifneq ($(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_BASENAME))

@@ -179,10 +179,10 @@ pkgname_subst_files = \
 	$(MOZ_PKGNAME_SUBST_FILES) \
 	$(NULL)
 
-$(foreach pkg,$(MOZ_ALL_PKGS), \
-	$(foreach dhfile, install dirs links manpages postinst preinst postrm prerm lintian-overrides, $(eval pkgname_subst_files += \
-	$(shell if [ -f $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),debian/$(pkg).$(dhfile).in) ]; then \
-		echo debian/$(pkg).$(dhfile); fi))))
+$(foreach pkg,$(DEB_ALL_PACKAGES), \
+	$(foreach e,install dirs links manpages postinst preinst postrm prerm lintian-overrides,\
+		$(if $(wildcard debian/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(pkg)).$(e).in),\
+			$(eval pkgname_subst_files += debian/$(pkg).$(e)))))
 
 appname_subst_files = \
 	debian/$(MOZ_APP_NAME).desktop \
@@ -241,7 +241,7 @@ endif
 	@touch $@
 
 install-testsuite: debian/stamp-installtestsuite
-debian/stamp-installtestsuite: debian/stamp-maketestsuite
+debian/stamp-installtestsuite: debian/stamp-maketestsuite debian/stamp-makefile-install
 	install $(MOZ_DISTDIR)/bin/xpcshell debian/tmp/$(MOZ_LIBDIR)
 	install -d debian/tmp/$(MOZ_LIBDIR)/testing
 	install $(MOZ_DISTDIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).en-US.linux-*.tests.zip debian/tmp/$(MOZ_LIBDIR)/testing
@@ -250,7 +250,7 @@ debian/stamp-installtestsuite: debian/stamp-maketestsuite
 $(VIRTENV_PATH)/bin/compare-locales:
 	cd $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales; $(MOZ_PYTHON) $(CURDIR)/$(MOZ_MOZDIR)/python/compare-locales/setup.py install
 
-make-langpack-xpis: $(VIRTENV_PATH)/bin/compare-locales $(foreach target,$(shell sed -n 's/\#.*//;/^$$/d;s/\([^\:]*\)\:\?.*/\1/ p' < $(CURDIR)/debian/config/locales.shipped),debian/stamp-make-langpack-xpi-$(target))
+make-langpack-xpis: $(VIRTENV_PATH)/bin/compare-locales $(foreach locale,$(MOZ_LOCALES),debian/stamp-make-langpack-xpi-$(locale))
 debian/stamp-make-langpack-xpi-%:
 	@echo ""
 	@echo ""
@@ -260,7 +260,7 @@ debian/stamp-make-langpack-xpi-%:
 	rm -rf $(CURDIR)/debian/l10n-mergedirs/$*
 	mkdir -p $(CURDIR)/debian/l10n-mergedirs/$*
 
-	@export PATH=$(VIRTENV_PATH)/bin/:$$PATH ; \
+	export PATH=$(VIRTENV_PATH)/bin/:$$PATH ; \
 	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
 		$(MAKE) merge-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1 ; \
 		$(MAKE) langpack-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
@@ -270,14 +270,14 @@ common-build-arch:: make-langpack-xpis $(pkgconfig_files) make-testsuite run-tes
 
 install/$(MOZ_PKG_NAME)::
 	@echo "Adding suggests / recommends on support packages"
-	@echo "$(MOZ_PKG_SUPPORT_SUGGESTS)" | perl -0 -ne 's/[ \t\n]+/ /g; /\w/ and print "support:Suggests=$$_\n"' >> debian/$(MOZ_PKG_NAME).substvars
-	@echo "$(MOZ_PKG_SUPPORT_RECOMMENDS)" | perl -0 -ne 's/[ \t\n]+/ /g; /\w/ and print "support:Recommends=$$_\n"' >> debian/$(MOZ_PKG_NAME).substvars
+	echo "$(MOZ_PKG_SUPPORT_SUGGESTS)" | perl -0 -ne 's/[ \t\n]+/ /g; /\w/ and print "support:Suggests=$$_\n"' >> debian/$(MOZ_PKG_NAME).substvars
+	echo "$(MOZ_PKG_SUPPORT_RECOMMENDS)" | perl -0 -ne 's/[ \t\n]+/ /g; /\w/ and print "support:Recommends=$$_\n"' >> debian/$(MOZ_PKG_NAME).substvars
 
 ifneq ($(MOZ_PKG_NAME),$(MOZ_APP_NAME))
 install/%::
 	@echo "Adding conflicts / provides for renamed package"
-	@echo "app:Conflicts=$(subst $(subst $(MOZ_APP_NAME),,$(MOZ_PKG_NAME)),,$*)" >> debian/$*.substvars
-	@echo "app:Provides=$(subst $(subst $(MOZ_APP_NAME),,$(MOZ_PKG_NAME)),,$*)" >> debian/$*.substvars
+	echo "app:Conflicts=$(subst $(subst $(MOZ_APP_NAME),,$(MOZ_PKG_NAME)),,$*)" >> debian/$*.substvars
+	echo "app:Provides=$(subst $(subst $(MOZ_APP_NAME),,$(MOZ_PKG_NAME)),,$*)" >> debian/$*.substvars
 endif
 
 common-install-arch common-install-indep::
@@ -295,100 +295,71 @@ binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
 	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/native-origins.d/$(MOZ_PKG_NAME)
 
-binary-post-install/$(MOZ_PKG_NAME):: install-searchplugins-,$(MOZ_PKG_NAME)
+binary-post-install/$(MOZ_PKG_NAME):: install-searchplugins-$(MOZ_PKG_NAME)
 
-MOZ_LANGPACK_TARGETS := $(shell sed -n 's/[^\:]*\:\?\(.*\)/\1/ p' < debian/config/locales.shipped | uniq)
-$(patsubst %,binary-post-install/$(MOZ_PKG_NAME)-locale-%,$(MOZ_LANGPACK_TARGETS)):: binary-post-install/$(MOZ_PKG_NAME)-locale-%: install-langpack-xpis-% install-searchplugins-%
+$(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)):: binary-post-install/%: install-langpack-xpis-% install-searchplugins-%
 
 binary-post-install/$(MOZ_PKG_NAME)-dev::
 	rm -f debian/$(MOZ_PKG_NAME)-dev/$(MOZ_INCDIR)/nspr/md/_linux.cfg
 	dh_link -p$(MOZ_PKG_NAME)-dev $(MOZ_INCDIR)/nspr/prcpucfg.h $(MOZ_INCDIR)/nspr/md/_linux.cfg
 
 $(patsubst %,binary-post-install/%,$(DEB_ALL_PACKAGES)) :: binary-post-install/%:
-	find debian/$* -name .mkdir.done -delete
+	find debian/$(cdbs_curpkg) -name .mkdir.done -delete
+
+define locales_for_langpack
+$(strip $(if $(filter $(MOZ_PKG_NAME),$(1)),\
+	en-US,\
+	$(shell grep $(subst $(MOZ_PKG_NAME)-locale-,,$(1))$$ debian/config/locales.shipped | sed -n 's/\([^\:]*\)\:\?.*/\1/ p')))
+endef
 
 install-langpack-xpis-%:
 	@echo ""
-	@echo "Installing language pack xpis for $(MOZ_PKG_NAME)-locale-$*"
-	dh_installdirs -p$(MOZ_PKG_NAME)-locale-$* $(MOZ_ADDONDIR)/extensions
-	@for lang in $(shell grep $*$$ debian/config/locales.shipped | sed -n 's/\([^\:]*\)\:\?.*/\1/ p' | tr '\n' ' '); \
-	do \
-		id=`PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$$lang.langpack.xpi 2>/dev/null`; \
-		echo "Installing $(MOZ_APP_NAME)-$(MOZ_VERSION).$$lang.langpack.xpi to $$id.xpi in to $(MOZ_PKG_NAME)-locale-$*"; \
-		install -m 0644 $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$$lang.langpack.xpi \
-			$(CURDIR)/debian/$(MOZ_PKG_NAME)-locale-$*/$(MOZ_ADDONDIR)/extensions/$$id.xpi; \
-	done
+	@echo "Installing language pack xpis for $*"
+	dh_installdirs -p$* $(MOZ_ADDONDIR)/extensions
+	$(foreach lang,$(call locales_for_langpack,$*), \
+		id=`PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(lang).langpack.xpi 2>/dev/null`; \
+		install -m 0644 $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(lang).langpack.xpi \
+			$(CURDIR)/debian/$*/$(MOZ_ADDONDIR)/extensions/$$id.xpi;)
 
-CUSTOMIZE_SEARCHPLUGINS = \
-	echo ""; \
-	echo "Applying search customizations for $(2)"; \
-	for lang in $(1); do \
-		echo "Applying customizations to $$lang"; \
-		list=debian/searchplugins/$$lang/list.txt; \
-		if [ ! -f $$list ]; then \
-			list=debian/searchplugins/list.txt; \
-		fi; \
-		overrides=`sed -n '/^\[Overrides\]/,/^\[/{/^\[/d;/^$$/d; p}' < $$list`; \
-		additions=`sed -n '/^\[Additions\]/,/^\[/{/^\[/d;/^$$/d; p}' < $$list`; \
-		for o in $$overrides; do \
-			f=`ls -1 debian/searchplugins/$$lang/$$o.xml 2>/dev/null | head -n1`; \
-			if [ -z $$f ]; then \
-				f=`ls -1 debian/searchplugins/en-US/$$o.xml 2>/dev/null | head -n1`; \
-			fi; \
-			if [ -z $$f ]; then \
-				echo "Cannot find source plugin for $$o"; \
-				exit 1; \
-			fi; \
-			if [ ! -f debian/$(2)/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$$lang/`basename $$f` ]; then \
-				echo "No plugin `basename $$f` to override"; \
-				exit 1; \
-			fi; \
-			echo "Overriding `basename $$f`"; \
-			dh_install -p$(2) $$f $(MOZ_LIBDIR)/distribution/searchplugins/locale/$$lang; \
-		done; \
-		for a in $$additions; do \
-			f=`ls -1 debian/searchplugins/$$lang/$$a.xml 2>/dev/null | head -n1`; \
-			if [ -z $$f ]; then \
-				f=`ls -1 debian/searchplugins/en-US/$$a.xml 2>/dev/null | head -n1`; \
-			fi; \
-			if [ -z $$f ]; then \
-				echo "Cannot find source plugin for $$a"; \
-				exit 1; \
-			fi; \
-			if [ -f debian/$(2)/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$$lang/`basename $$f` ]; then \
-				echo "Plugin `basename $$f` already exists"; \
-				exit 1; \
-			fi; \
-			echo "Adding `basename $$f`"; \
-			dh_install -p$(2) $$f $(MOZ_LIBDIR)/distribution/searchplugins/locale/$$lang; \
-		done; \
-	done
+$(patsubst %,install-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-searchplugins-% :
+	@echo ""
+	@echo "Installing searchplugins for $*"
+$(patsubst %,install-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-searchplugins-% : do-install-searchplugins-% do-customize-searchplugins-%
+$(patsubst %,install-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-searchplugins-% :
+	@echo ""
 
-install-searchplugins-%: P1 = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\1/')
-install-searchplugins-%: P2 = $(shell echo $* | sed 's/\([^,]*\),\?\([^,]*\)/\2/')
-install-searchplugins-%: LANGUAGES = $(if $(P1),$(shell grep $(P1)$$ debian/config/locales.shipped | sed -n 's/\([^\:]*\)\:\?.*/\1/ p' | tr '\n' ' '),en-US)
-install-searchplugins-%: PKGNAME = $(if $(P2),$(P2),$(MOZ_PKG_NAME)-locale-$(P1))
-install-searchplugins-%:
-	@echo ""
-	@echo "Installing searchplugins for $(PKGNAME)"
-	@for lang in $(LANGUAGES); do \
-		echo "Installing searchplugins for $$lang"; \
-		rm -rf debian/$(PKGNAME)/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$$lang; \
-		src=$(MOZ_DISTDIR)/xpi-stage/locale-$$lang/$(MOZ_APP_SUBDIR)/searchplugins; \
-		if [ ! -d $$src ]; then \
-			src=debian/tmp/$(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/searchplugins; \
-		fi; \
-		dh_installdirs -p$(PKGNAME) $(MOZ_LIBDIR)/distribution/searchplugins/locale/$$lang; \
-		dh_install -p$(PKGNAME) $$src/*.xml $(MOZ_LIBDIR)/distribution/searchplugins/locale/$$lang; \
-	done
-	@$(if $(wildcard debian/searchplugins),$(call CUSTOMIZE_SEARCHPLUGINS,$(LANGUAGES),$(PKGNAME)))
-	@echo ""
+define search_mod_list
+$(shell sed -n '/^\[$(1)\]/,/^\[/{/^\[/d;/^$$/d; p}' < $(firstword $(wildcard debian/searchplugins/$(2)/list.txt) debian/searchplugins/list.txt))
+endef
+
+define searchplugin_source_path
+$(firstword $(wildcard debian/searchplugins/$(2)/$(1).xml) $(wildcard debian/searchplugins/en-US/$(1).xml))
+endef
+
+do-customize-searchplugins-%:
+	$(foreach lang,$(call locales_for_langpack,$*),$(if $(wildcard debian/searchplugins), \
+		$(foreach o,$(call search_mod_list,Overrides,$(lang)), \
+			$(if $(call searchplugin_source_path,$(o),$(lang)),,$(error No plugin to override for $(o))) \
+			$(if $(wildcard debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang)/$(notdir $(call searchplugin_source_path,$(o),$(lang)))),, \
+				$(error No plugin $(notdir $(call searchplugin_source_path,$(o),$(lang))) to override)) \
+			dh_install -p$* $(call searchplugin_source_path,$(o),$(lang)) $(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang);) \
+		$(foreach a,$(call search_mod_list,Additions,$(lang)), \
+			$(if $(wildcard debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang)/$(notdir $(call searchplugin_source_path,$(a),$(lang)))), \
+				$(error Plugin $(notdir $(call searchplugin_source_path,$(a),$(lang))) already exists)) \
+			dh_install -p$* $(call searchplugin_source_path,$(a),$(lang)) $(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang);)))
+
+do-install-searchplugins-%:
+	$(info $@)
+	$(foreach lang,$(call locales_for_langpack,$*), \
+		rm -rf debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang); \
+		dh_installdirs -p$* $(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang); \
+		dh_install -p$* $(firstword $(wildcard $(MOZ_DISTDIR)/xpi-stage/locale-$(lang)/$(MOZ_APP_SUBDIR)/searchplugins) \
+			debian/tmp/$(MOZ_LIBDIR)/$(MOZ_APP_SUBDIR)/searchplugins)/*.xml \
+			$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang);)
 
 $(patsubst %,binary-fixup/%,$(DEB_ALL_PACKAGES)) :: binary-fixup/%:
 	find debian/$(cdbs_curpkg) -type f -perm -5 \( -name '*.zip' -or -name '*.xml' \) -print0 2>/dev/null | xargs -0r chmod 644
-
-common-binary-fixup-arch::
-	$(foreach pkg,$(MOZ_ALL_PKGS),$(foreach file,$(MOZ_EXECUTABLES_$(pkg)),chmod a+x debian/$(pkg)/$(file);))
+	$(foreach f,$(call cdbs_expand_curvar,MOZ_EXECUTABLES),chmod a+x debian/$(cdbs_curpkg)/$(f);)
 
 binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
