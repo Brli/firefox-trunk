@@ -1,3 +1,11 @@
+firefox-trunk (23.0~a1~hg20130512r131644-0ubuntu2) UNRELEASED; urgency=low
+
+  * Fix LP: #1180227 - Update the Apparmor profile to allow rw access to
+    ~/.cache/mozilla/firefox, and allow locking of sqlite db's there too
+    - update debian/usr.bin.firefox.apparmor.12.04
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
+
 firefox-trunk (23.0~a1~hg20130512r131644-0ubuntu1) saucy; urgency=low
 
   * New upstream snapshot v23.0 A1 HG20130512R131644
