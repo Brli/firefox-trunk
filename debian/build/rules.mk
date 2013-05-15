@@ -32,8 +32,6 @@ ifeq (,$(MOZ_PKG_BASENAME))
 $(error "Need to set MOZ_PKG_BASENAME")
 endif
 
-MOZ_PKG_NAMES = $(shell sed -n 's/Package\: \(.*\)/\1/ p' < debian/control)
-
 DEB_MAKE_MAKEFILE		:= client.mk
 # Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
 DEB_MAKE_EXTRA_ARGS		:=
@@ -181,7 +179,7 @@ pkgname_subst_files = \
 	$(MOZ_PKGNAME_SUBST_FILES) \
 	$(NULL)
 
-$(foreach pkg,$(MOZ_PKG_NAMES), \
+$(foreach pkg,$(MOZ_ALL_PKGS), \
 	$(foreach dhfile, install dirs links manpages postinst preinst postrm prerm lintian-overrides, $(eval pkgname_subst_files += \
 	$(shell if [ -f $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),debian/$(pkg).$(dhfile).in) ]; then \
 		echo debian/$(pkg).$(dhfile); fi))))
@@ -390,7 +388,7 @@ $(patsubst %,binary-fixup/%,$(DEB_ALL_PACKAGES)) :: binary-fixup/%:
 	find debian/$(cdbs_curpkg) -type f -perm -5 \( -name '*.zip' -or -name '*.xml' \) -print0 2>/dev/null | xargs -0r chmod 644
 
 common-binary-fixup-arch::
-	$(foreach pkg,$(MOZ_PKG_NAMES),$(foreach file,$(MOZ_EXECUTABLES_$(pkg)),chmod a+x debian/$(pkg)/$(file);))
+	$(foreach pkg,$(MOZ_ALL_PKGS),$(foreach file,$(MOZ_EXECUTABLES_$(pkg)),chmod a+x debian/$(pkg)/$(file);))
 
 binary-predeb/$(MOZ_PKG_NAME)::
 	$(foreach lib,libsoftokn3.so libfreebl3.so libnssdbm3.so, \
