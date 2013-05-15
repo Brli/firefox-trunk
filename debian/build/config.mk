@@ -62,3 +62,5 @@ ifneq ($(MOZ_APP_NAME)$(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_NAME)$(MOZ_DEFAULT_A
 # If we change MOZ_APP_NAME or MOZ_APP_BASENAME, don't use official branding
 MOZ_FORCE_UNOFFICIAL_BRANDING = 1
 endif
+
+MOZ_LOCALE_PKGS := $(strip $(shell dh_listpackages | grep $(MOZ_PKG_NAME)-locale-))

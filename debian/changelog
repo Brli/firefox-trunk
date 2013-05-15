@@ -9,6 +9,11 @@ firefox-trunk (23.0~a1~hg20130512r131644-0ubuntu2) UNRELEASED; urgency=low
     upgrades work). Rely on ddebs support now
     - update debian/control.in
     - update debian/build/rules.mk
+  * Make the debian/control autogeneration a bit cleaner
+    - update debian/build/config.mk
+    - update debian/build/dump-langpack-control-entries.pl
+    - update debian/build/rules.mk
+    - update debian/control.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 

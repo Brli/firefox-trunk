@@ -205,10 +205,12 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	@echo "*****************************"
 	@echo ""
 
-	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' \
-	    -e 's/@MOZ_LOCALE_PKGS@/$(shell perl debian/build/dump-langpack-control-entries.pl -l | sed 's/\(\,\?\)\([^\,]*\)\(\,\?\)/\1$(MOZ_PKG_NAME)\-locale\-\2 (= $${binary:Version})\3 /g')/g' < debian/control.in > debian/control
-	perl debian/build/dump-langpack-control-entries.pl > debian/control.tmp
-	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp >> debian/control && rm -f debian/control.tmp
+	cp debian/control.in debian/control.tmp
+	perl debian/build/dump-langpack-control-entries.pl >> debian/control.tmp
+	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/control.tmp > debian/control
+	rm -f debian/control.tmp
+
+	sed -i -e 's/@MOZ_LOCALE_PKGS@/$(foreach p,$(MOZ_LOCALE_PKGS),$(p) \(= $${binary:Version}\),)/' debian/control
 
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
 	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@

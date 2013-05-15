@@ -114,7 +114,7 @@ Priority: extra
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	@MOZ_PKG_NAME@ (= ${binary:Version}),
-	@MOZ_LOCALE_PKGS@,
+	@MOZ_LOCALE_PKGS@
 	python,
 	dbus-x11,
 	xvfb,
