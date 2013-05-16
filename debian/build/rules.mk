@@ -349,7 +349,6 @@ do-customize-searchplugins-%:
 			dh_install -p$* $(call searchplugin_source_path,$(a),$(lang)) $(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang);)))
 
 do-install-searchplugins-%:
-	$(info $@)
 	$(foreach lang,$(call locales_for_langpack,$*), \
 		rm -rf debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang); \
 		dh_installdirs -p$* $(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang); \
