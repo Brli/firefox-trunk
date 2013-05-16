@@ -102,11 +102,6 @@ ifneq ($(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_BASENAME))
 	$(call moz_monkey_patch_file,$(DEB_SRCDIR)/webapprt/application.ini.in, \
 		sed -ri 's/@MOZ_APP_BASENAME@/$(MOZ_DEFAULT_APP_BASENAME)/g')
 endif
-ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
-	@echo "Replacing instances of \"%APP%\" with \"firefox\" in firefox-branding.js"
-	$(call moz_monkey_patch_file,$(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js, \
-		sed -ri 's/%APP%/firefox/g')
-endif
 
 clean::
 	rm -f debian/$(MOZ_PKG_NAME)-locale-*.preinst
