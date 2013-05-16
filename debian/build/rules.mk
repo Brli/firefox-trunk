@@ -1,7 +1,8 @@
 #!/usr/bin/make -f
 
 # We need this to execute before the debian/control target gets called
-clean::
+# and before patches are unapplied
+clean:: restore-upstream-files
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 	cp debian/control debian/control.old
 	touch debian/control.in
@@ -469,7 +470,7 @@ clean:: debian/tests/control refresh-supported-locales
 	$(call cmp_auto_generated_file,debian/tests/control)
 endif
 
-clean:: restore-upstream-files
+clean::
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
