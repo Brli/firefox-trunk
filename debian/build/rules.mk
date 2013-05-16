@@ -327,7 +327,7 @@ install-langpack-xpis-%:
 $(patsubst %,install-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-searchplugins-% :
 	@echo ""
 	@echo "Installing searchplugins for $*"
-$(patsubst %,install-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-searchplugins-% : do-install-searchplugins-% do-customize-searchplugins-%
+$(patsubst %,install-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-searchplugins-% : install-searchplugins-IMPL-% customize-searchplugins-IMPL-%
 $(patsubst %,install-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-searchplugins-% :
 	@echo ""
 
@@ -339,7 +339,7 @@ define searchplugin_source_path
 $(firstword $(wildcard debian/searchplugins/$(2)/$(1).xml) $(wildcard debian/searchplugins/en-US/$(1).xml))
 endef
 
-do-customize-searchplugins-%:
+customize-searchplugins-IMPL-%:
 	$(foreach lang,$(call locales_for_langpack,$*),$(if $(wildcard debian/searchplugins), \
 		$(foreach o,$(call search_mod_list,Overrides,$(lang)), \
 			$(if $(call searchplugin_source_path,$(o),$(lang)),,$(error No plugin to override for $(o))) \
@@ -351,7 +351,7 @@ do-customize-searchplugins-%:
 				$(error Plugin $(notdir $(call searchplugin_source_path,$(a),$(lang))) already exists)) \
 			dh_install -p$* $(call searchplugin_source_path,$(a),$(lang)) $(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang);)))
 
-do-install-searchplugins-%:
+install-searchplugins-IMPL-%:
 	$(foreach lang,$(call locales_for_langpack,$*), \
 		rm -rf debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang); \
 		dh_installdirs -p$* $(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang); \
@@ -392,6 +392,29 @@ pre-build::
 	cp debian/config/locales.shipped debian/config/locales.shipped.old
 pre-build:: debian/config/locales.shipped $(pkgname_subst_files) $(appname_subst_files) mozconfig
 	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
+pre-build:: debian/stamp-monkey-patch-upstream-files
+
+debian/stamp-monkey-patch-upstream-files::
+	@touch debian/monkey-patch-files
+	@echo "#!/bin/sh" >> debian/monkey-patch-files.sh
+	make -f debian/rules monkey-patch-upstream-files
+	@while read line; do \
+		cp $$line $$line.moz-orig; \
+	done < debian/monkey-patch-files
+	sh debian/monkey-patch-files.sh
+	@rm debian/monkey-patch-files.sh
+	@touch $@
+
+monkey-patch-upstream-files::
+
+restore-upstream-files::
+	@$(if $(wildcard debian/monkey-patch-files), \
+		while read line; do \
+			if [ -f $$line.moz-orig ]; then \
+				mv $$line.moz-orig $$line; \
+			fi \
+		done < debian/monkey-patch-files; \
+		rm debian/monkey-patch-files)
 
 EXTRACT_TARBALL = $(firstword $(shell TMPDIR=`mktemp -d`; tar -jxf $(1) -C $$TMPDIR > /dev/null 2>&1; echo $$TMPDIR/`ls $$TMPDIR/ | head -n1`))
 
@@ -414,12 +437,10 @@ refresh-supported-locales::
 refresh-supported-locales:: debian/control
 	$(if $(EXTRACTED),rm -rf $(dir $(EXTRACTED)))
 
-define moz_modify_file
-$(if $(wildcard $(1).moz-orig),,cp $(1) $(1).moz-orig; $(2) $(1))
-endef
-
-define moz_restore_file
-$(if $(wildcard $(1).moz-orig),mv $(1).moz-orig $(1))
+define moz_monkey_patch_file
+$(if $(wildcard debian/stamp-monkey-patch-upstream-files),$(error Too late to use moz_monkey_patch_file), \
+	echo "$(1)" >> debian/monkey-patch-files; \
+	echo "$(2) $(1)" >> debian/monkey-patch-files.sh)
 endef
 
 get-orig-source: ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -a $(MOZ_APP)
@@ -448,7 +469,7 @@ clean:: debian/tests/control refresh-supported-locales
 	$(call cmp_auto_generated_file,debian/tests/control)
 endif
 
-clean::
+clean:: restore-upstream-files
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
@@ -457,4 +478,4 @@ clean::
 	rm -f debian/testing/extra.test.zip
 	rm -rf debian/testing/extra-stage
 
-.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales get-orig-source
+.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales get-orig-source monkey-patch-upstream-files
