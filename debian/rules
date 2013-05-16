@@ -93,24 +93,24 @@ $(patsubst %,debian/%.preinst,$(MOZ_LOCALE_PKGS)) :: debian/%.preinst : debian/$
 pre-build:: make-langpack-preinsts
 ifneq ($(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_BASENAME))
 	@echo "Setting MOZ_APP_UA_NAME to $(MOZ_DEFAULT_APP_BASENAME)"
-	@cp $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh.bak; \
-		echo "MOZ_APP_UA_NAME=$(MOZ_DEFAULT_APP_BASENAME)" >> $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh
+	$(call moz_modify_file,$(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh, \
+		echo "MOZ_APP_UA_NAME=$(MOZ_DEFAULT_APP_BASENAME)" >>)
 
 	@echo "Setting UAName to $(MOZ_DEFAULT_APP_BASENAME)"
-	@cp $(DEB_SRCDIR)/webapprt/application.ini.in $(DEB_SRCDIR)/webapprt/application.ini.in.bak; \
-		sed -ri 's/@MOZ_APP_BASENAME@/$(MOZ_DEFAULT_APP_BASENAME)/g' $(DEB_SRCDIR)/webapprt/application.ini.in
+	$(call moz_modify_file,$(DEB_SRCDIR)/webapprt/application.ini.in, \
+		sed -ri 's/@MOZ_APP_BASENAME@/$(MOZ_DEFAULT_APP_BASENAME)/g')
 endif
 ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
 	@echo "Replacing instances of \"%APP%\" with \"firefox\" in firefox-branding.js"
-	@cp $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js.bak; \
-		sed -ri 's/%APP%/firefox/g' $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js
+	$(call moz_modify_file,$(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js, \
+		sed -ri 's/%APP%/firefox/g')
 endif
 
 clean::
 	rm -f debian/$(MOZ_PKG_NAME)-locale-*.preinst
 	rm -f debian/usr.bin.firefox.in
-	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh)
-	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js)
-	$(call RESTORE_BACKUP, $(DEB_SRCDIR)/webapprt/application.ini.in)
+	$(call moz_restore_file,$(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh)
+	$(call moz_restore_file,$(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/pref/firefox-branding.js)
+	$(call moz_restore_file,$(DEB_SRCDIR)/webapprt/application.ini.in)
 
 .PHONY: make-langpack-preinsts

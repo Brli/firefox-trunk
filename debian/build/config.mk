@@ -5,7 +5,7 @@ DISTRIB_VERSION_MINOR 	:= $(shell lsb_release -s -r | cut -d '.' -f 2)
 DISTRIB_CODENAME	:= $(shell lsb_release -s -c)
 
 include $(CURDIR)/debian/config/branch.mk
-include /usr/share/cdbs/1/rules/buildvars.mk
+-include /usr/share/cdbs/1/rules/buildvars.mk
 
 # Various build defaults
 # 1 = Build crashreporter (if supported)

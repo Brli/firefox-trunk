@@ -2,14 +2,11 @@
 
 # We need this to execute before the debian/control target gets called
 clean::
-	cp debian/control debian/control.old
-	cp debian/tests/control debian/tests/control.old
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
+	cp debian/control debian/control.old
 	touch debian/control.in
-	touch debian/tests/control.in
 else
 	touch debian/control
-	touch debian/tests/control
 endif
 
 -include /usr/share/cdbs/1/rules/debhelper.mk
@@ -30,6 +27,12 @@ $(error "Need to set MOZ_PKG_NAME")
 endif
 ifeq (,$(MOZ_PKG_BASENAME))
 $(error "Need to set MOZ_PKG_BASENAME")
+endif
+ifeq (,$(MOZ_BRANDING_OPTION))
+$(error "Need to set MOZ_BRANDING_OPTION")
+endif
+ifeq (,$(MOZ_BRANDING_DIR))
+$(error "Need to set MOZ_BRANDING_DIR")
 endif
 
 DEB_MAKE_MAKEFILE		:= client.mk
@@ -368,13 +371,27 @@ binary-predeb/$(MOZ_PKG_NAME)::
 mozconfig: debian/config/mozconfig
 	cp $< $@
 
-pre-build:: auto-refresh-supported-locales $(pkgname_subst_files) $(appname_subst_files) mozconfig
-ifeq (,$(MOZ_BRANDING_OPTION))
-	$(error "Need to set MOZ_BRANDING_OPTION")
-endif
-ifeq (,$(MOZ_BRANDING_DIR))
-	$(error "Need to set MOZ_BRANDING_DIR")
-endif
+define cmp_auto_generated_file
+@if ! cmp -s $(1) $(1).old; then \
+	echo ""; \
+	diff -Nurp $(1).old $(1); \
+	echo ""; \
+	echo "****************************************************************************"; \
+	echo "* An automatically generated file is out of date and needs to be refreshed *"; \
+	echo "****************************************************************************"; \
+	echo ""; \
+	echo "$(1) is out of date. Please run \"debian/rules $(firstword $(2) $(1))\" in VCS"; \
+	echo ""; \
+	rm -f $(1).old; \
+	exit 1; \
+fi
+rm -f $(1).old
+endef
+
+pre-build::
+	cp debian/config/locales.shipped debian/config/locales.shipped.old
+pre-build:: debian/config/locales.shipped $(pkgname_subst_files) $(appname_subst_files) mozconfig
+	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
 
 EXTRACT_TARBALL = $(firstword $(shell TMPDIR=`mktemp -d`; tar -jxf $(1) -C $$TMPDIR > /dev/null 2>&1; echo $$TMPDIR/`ls $$TMPDIR/ | head -n1`))
 
@@ -390,38 +407,20 @@ refresh-supported-locales::
 	@echo "****************************************"
 	@echo ""
 
+	$(if $(SHIPPED_LOCALES),,$(error We aren't in the full source directory. Please use "TARBALL=<path_to_orig.tar.bzr>"))
+
 	perl debian/build/refresh-supported-locales.pl -s $(SHIPPED_LOCALES) $(LPOM_OPT)
 
 refresh-supported-locales:: debian/control
 	$(if $(EXTRACTED),rm -rf $(dir $(EXTRACTED)))
 
-auto-refresh-supported-locales::
-	cp debian/config/locales.shipped debian/config/locales.shipped.old
+define moz_modify_file
+$(if $(wildcard $(1).moz-orig),,cp $(1) $(1).moz-orig; $(2) $(1))
+endef
 
-auto-refresh-supported-locales:: refresh-supported-locales
-auto-refresh-supported-locales::
-	@if ! cmp -s debian/config/locales.shipped debian/config/locales.shipped.old ; \
-	then \
-		echo "" ; \
-		echo "****************************************************************************" ; \
-		echo "* List of shipped locales is out of date. Please refresh and try again     *" ; \
-		echo "* To refresh, run \"debian/rules refresh-supported-locales\" in the source   *" ; \
-		echo "* directory. If you are in bzr, you will need to pass the location of the  *" ; \
-		echo "* upstream tarball, using \"TARBALL=/path/to/tarball\". If extra information *" ; \
-		echo "* is required for new locales, you will also need to pass the location of  *" ; \
-		echo "* langpack-o-matic, using \"LANGPACK_O_MATIC=/path/to/langpack-o-matic\"     *" ; \
-		echo "****************************************************************************" ; \
-		echo "" ; \
-		mv debian/config/locales.shipped.old debian/config/locales.shipped ; \
-		exit 1 ; \
-	fi
-	rm -f debian/config/locales.shipped.old
-
-ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
-clean:: auto-refresh-supported-locales
-endif
-
-RESTORE_BACKUP = $(shell if [ -f $(1).bak ] ; then rm -f $(1); mv $(1).bak $(1); fi)
+define moz_restore_file
+$(if $(wildcard $(1).moz-orig),mv $(1).moz-orig $(1))
+endef
 
 get-orig-source: ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -a $(MOZ_APP)
 ifdef DEBIAN_TAG
@@ -439,38 +438,23 @@ get-orig-source:
 echo-%:
 	@echo "$($*)"
 
-clean:: debian/tests/control
-	@if ! cmp -s debian/control debian/control.old ; \
-	then \
-		echo "" ; \
-		echo "*************************************************************************" ; \
-		echo "* debian/control file is out of date. Please refresh and try again      *" ; \
-		echo "* To refresh, run \"debian/rules debian/control\" in the source directory *" ; \
-		echo "*************************************************************************" ; \
-		echo "" ; \
-		rm -f debian/control.old ; \
-		exit 1 ; \
-	fi
-	rm -f debian/control.old
-	@if ! cmp -s debian/tests/control debian/tests/control.old ; \
-	then \
-		echo "" ; \
-		echo "*******************************************************************************" ; \
-		echo "* debian/tests/control file is out of date. Please refresh and try again      *" ; \
-		echo "* To refresh, run \"debian/rules debian/tests/control\" in the source directory *" ; \
-		echo "*******************************************************************************" ; \
-		echo "" ; \
-		rm -f debian/control.old ; \
-		exit 1 ; \
-	fi
-	rm -f debian/tests/control.old
+ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
+clean::
+	cp debian/tests/control debian/tests/control.old
+	cp debian/config/locales.shipped debian/config/locales.shipped.old
+clean:: debian/tests/control refresh-supported-locales
+	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
+	$(call cmp_auto_generated_file,debian/control)
+	$(call cmp_auto_generated_file,debian/tests/control)
+endif
+
+clean::
 	rm -f $(pkgname_subst_files) $(appname_subst_files)
 	rm -f debian/stamp-*
 	rm -rf debian/l10n-mergedirs
 	rm -rf $(MOZ_OBJDIR)
-	rm -f debian/searchplugin*.list
 	rm -f mozconfig
 	rm -f debian/testing/extra.test.zip
 	rm -rf debian/testing/extra-stage
 
-.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales auto-refresh-supported-locales get-orig-source
+.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales get-orig-source
