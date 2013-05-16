@@ -395,7 +395,7 @@ pre-build:: debian/config/locales.shipped $(pkgname_subst_files) $(appname_subst
 	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
 pre-build:: debian/stamp-monkey-patch-upstream-files
 
-debian/stamp-monkey-patch-upstream-files::
+debian/stamp-monkey-patch-upstream-files:
 	@touch debian/monkey-patch-files
 	@echo "#!/bin/sh" >> debian/monkey-patch-files.sh
 	make -f debian/rules monkey-patch-upstream-files
