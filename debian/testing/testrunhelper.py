@@ -74,9 +74,13 @@ class TestRunHelper(OptionParser):
       if arg == '--harness-root-dir':
         try:
           self.root = args.next()
-          break
         except StopIteration:
-          pass
+          break
+      elif arg == '--xre-path':
+        try:
+          self._xredir = args.next()
+        except StopIteration:
+          break
 
     self._orig_root = self.root
     self._pass_args = pass_args
@@ -99,9 +103,6 @@ class TestRunHelper(OptionParser):
 
       assert os.path.exists(os.path.join(self._tmpdir, runner))
       self.root = self._tmpdir
-
-      #if os.path.exists(os.path.join(self._orig_root, 'bin', 'libxul.so')):
-      #  os.symlink(os.path.join(self._orig_root, 'bin'), os.path.join(self.root, 'gre'))
 
     runner = os.path.join(self.root, runner)
     sys.path.insert(0, os.path.dirname(runner))
@@ -233,7 +234,6 @@ class TestRunHelper(OptionParser):
         pre_run_cb(options, args)
 
       argv.extend(args)
-
       os.chdir(self.root)
       return self._runner_global['main']()
 
