@@ -33,6 +33,7 @@
   { "testsuite": "reftest", "classname": "layout.reftests.list-item", "name": "numbering-1.html", "pass-ok": true, "condition": "reftest_fuzzy(7,1)" },
   { "testsuite": "reftest", "classname": "layout.reftests.selection", "name": "splitText-normalize.html", "pass-ok": true, "condition": "reftest_fuzzy(1,2)" },
   { "testsuite": "reftest", "classname": "layout.reftests.svg", "name": "text-scale-02.svg", "condition": "reftest_fuzzy(64,400)" },
+  { "testsuite": "reftest", "classname": "layout.reftests.svg.smil.transform", "name": "additive-1.svg", "note": "https://launchpad.net/bugs/1181348" },
   { "testsuite": "reftest", "classname": "layout.reftests.table-anonymous-boxes", "name": "394402-1a.html", "condition": "reftest_fuzzy(1,2)" },
   { "testsuite": "reftest", "classname": "layout.reftests.text", "name": "wordbreak-4a.html", "note": "https://launchpad.net/bugs/1158928" },
   { "testsuite": "reftest", "classname": "layout.reftests.text", "name": "475092-pos.html", "condition": "reftest_fuzzy(70,490)" },
