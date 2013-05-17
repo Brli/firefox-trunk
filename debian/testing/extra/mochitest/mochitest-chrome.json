@@ -21,6 +21,7 @@
   "browser/toolkit/mozapps/extensions/test/browser-window/browser_bug572561.js": "UNSUPPORTED UBUNTU-EXTENSIONS",
   "browser/toolkit/mozapps/extensions/test/browser-window/browser_bug577990.js": "UNSUPPORTED UBUNTU-EXTENSIONS",
   "browser/toolkit/mozapps/extensions/test/browser-window/browser_details.js": "UNSUPPORTED UBUNTU-EXTENSIONS",
-  "chrome/content/canvas/test/chrome/test_webgl_debug_renderer_info.html": "UNSUPPORTED"
+  "chrome/content/canvas/test/chrome/test_webgl_debug_renderer_info.html": "UNSUPPORTED",
+  "chrome/dom/tests/mochitest/chrome/test_geolocation.xul": "CRASHES, https://launchpad.net/bugs/TBD"
  }
 }
