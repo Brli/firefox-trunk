@@ -100,8 +100,8 @@ class TestRunHelper(OptionParser):
       assert os.path.exists(os.path.join(self._tmpdir, runner))
       self.root = self._tmpdir
 
-      if os.path.exists(os.path.join(self._orig_root, 'bin', 'libxul.so')):
-        os.symlink(os.path.join(self._orig_root, 'bin'), os.path.join(self.root, 'gre'))
+      #if os.path.exists(os.path.join(self._orig_root, 'bin', 'libxul.so')):
+      #  os.symlink(os.path.join(self._orig_root, 'bin'), os.path.join(self.root, 'gre'))
 
     runner = os.path.join(self.root, runner)
     sys.path.insert(0, os.path.dirname(runner))
@@ -141,10 +141,14 @@ class TestRunHelper(OptionParser):
     if self._xredir != None:
       return self._xredir
 
-    for r in [os.path.join(self.root, 'gre'), os.path.join(self.root, os.pardir, 'bin')]:
-      if os.path.exists(os.path.join(r, 'libxul.so')):
-        self._xredir = r
-        break
+    # The harness root was objdir/dist (which should contain the testsuite zip file)
+    # Note, our install layout mimics this
+    if self.root != self._orig_root and os.path.exists(os.path.join(self._orig_root, 'bin', 'libxul.so')):
+      self._xredir = os.path.join(self._orig_root, 'bin')
+
+    # The harness root is testsuite staging directory (objdir/dist/test-package-stage)
+    if self._xredir == None and os.path.exists(os.path.join(self.root, os.pardir, 'bin', 'libxul.so')):
+      self._xredir = os.path.join(self.root, os.pardir, 'bin')
 
     return self._xredir
 

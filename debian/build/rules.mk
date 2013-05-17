@@ -247,6 +247,9 @@ endif
 install-testsuite: debian/stamp-installtestsuite
 debian/stamp-installtestsuite: debian/stamp-maketestsuite debian/stamp-makefile-install
 	install $(MOZ_DISTDIR)/bin/xpcshell debian/tmp/$(MOZ_LIBDIR)
+	install $(MOZ_DISTDIR)/bin/components/httpd.js debian/tmp/$(MOZ_LIBDIR)/components
+	install $(MOZ_DISTDIR)/bin/components/httpd.manifest debian/tmp/$(MOZ_LIBDIR)/components
+	install $(MOZ_DISTDIR)/bin/components/test_necko.xpt debian/tmp/$(MOZ_LIBDIR)/components
 	install -d debian/tmp/$(MOZ_LIBDIR)/testing
 	install $(MOZ_DISTDIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).en-US.linux-*.tests.zip debian/tmp/$(MOZ_LIBDIR)/testing
 	@touch $@
