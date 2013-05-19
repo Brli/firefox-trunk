@@ -1,8 +1,11 @@
-Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser-menubar.inc
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/browser/base/content/browser-menubar.inc	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser-menubar.inc	2013-05-13 10:08:04.118042154 +0100
-@@ -5,7 +5,11 @@
+diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/browser-menubar.inc
+--- a/browser/base/content/browser-menubar.inc
++++ b/browser/base/content/browser-menubar.inc
+@@ -1,16 +1,20 @@
+ # -*- Mode: Java; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ # This Source Code Form is subject to the terms of the Mozilla Public
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
         <menubar id="main-menubar"
                  onpopupshowing="if (event.target.parentNode.parentNode == this &amp;&amp;
@@ -14,11 +17,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser-menu
                                    this.setAttribute('openedwithkey',
                                                      event.target.parentNode.openedWithKey);"
                  style="border:0px;padding:0px;margin:0px;-moz-appearance:none">
-Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser.css
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/browser/base/content/browser.css	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser.css	2013-05-13 10:08:04.118042154 +0100
-@@ -208,6 +208,10 @@
+             <menu id="file-menu" label="&fileMenu.label;"
+                   accesskey="&fileMenu.accesskey;">
+               <menupopup id="menu_FilePopup">
+                 <menuitem id="menu_newNavigatorTab"
+                           label="&tabCmd.label;"
+diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
+--- a/browser/base/content/browser.css
++++ b/browser/base/content/browser.css
+@@ -203,16 +203,20 @@ splitmenu {
+   -moz-binding: url("chrome://browser/content/urlbarBindings.xml#menuitem-iconic-tooltip");
+ }
+ 
+ %ifdef MENUBAR_CAN_AUTOHIDE
+ %ifndef CAN_DRAW_IN_TITLEBAR
  #appmenu-toolbar-button > .toolbarbutton-text {
    display: -moz-box;
  }
@@ -29,11 +41,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser.css
  %endif
  
  #appmenu_offlineModeRecovery:not([checked=true]) {
-Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser.js
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/browser/base/content/browser.js	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser.js	2013-05-13 10:08:04.118042154 +0100
-@@ -4471,6 +4471,10 @@
+   display: none;
+ }
+ %endif
+ 
+ /* Hide menu elements intended for keyboard access support */
+diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
+--- a/browser/base/content/browser.js
++++ b/browser/base/content/browser.js
+@@ -4465,16 +4465,20 @@ function onViewToolbarsPopupShowing(aEve
+   }
+ 
+   var firstMenuItem = aInsertPoint || popup.firstChild;
+ 
+   let toolbarNodes = Array.slice(gNavToolbox.childNodes);
    toolbarNodes.push(document.getElementById("addon-bar"));
  
    for (let toolbar of toolbarNodes) {
@@ -44,11 +65,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/base/content/browser.js
      let toolbarName = toolbar.getAttribute("toolbarname");
      if (toolbarName) {
        let menuItem = document.createElement("menuitem");
-Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/components/places/content/places.xul
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/browser/components/places/content/places.xul	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/browser/components/places/content/places.xul	2013-05-13 10:08:04.122042154 +0100
-@@ -157,7 +157,7 @@
+       let hidingAttribute = toolbar.getAttribute("type") == "menubar" ?
+                             "autohide" : "collapsed";
+       menuItem.setAttribute("id", "toggle_" + toolbar.id);
+       menuItem.setAttribute("toolbarId", toolbar.id);
+       menuItem.setAttribute("type", "checkbox");
+diff --git a/browser/components/places/content/places.xul b/browser/components/places/content/places.xul
+--- a/browser/components/places/content/places.xul
++++ b/browser/components/places/content/places.xul
+@@ -152,17 +152,17 @@
+                      command="OrganizerCommand:Forward"
+                      tooltiptext="&forwardButton.tooltip;"
+                      disabled="true"/>
+ 
+ #ifdef XP_MACOSX
          <toolbarbutton type="menu" class="tabbable"
                onpopupshowing="document.getElementById('placeContent').focus()"
  #else
@@ -57,11 +87,43 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/browser/components/places/content
          <menu accesskey="&organize.accesskey;" class="menu-iconic"
  #endif
                id="organizeButton" label="&organize.label;"
-Index: firefox-trunk-23.0~a1~hg20130512r131644/toolkit/content/widgets/popup.xml
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/toolkit/content/widgets/popup.xml	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/toolkit/content/widgets/popup.xml	2013-05-13 10:08:04.122042154 +0100
-@@ -25,8 +25,14 @@
+               tooltiptext="&organize.tooltip;">
+           <menupopup id="organizeButtonPopup">
+             <menuitem id="newbookmark"
+                       command="placesCmd_new:bookmark"
+                       label="&cmd.new_bookmark.label;"
+diff --git a/modules/libpref/src/init/all.js b/modules/libpref/src/init/all.js
+--- a/modules/libpref/src/init/all.js
++++ b/modules/libpref/src/init/all.js
+@@ -89,16 +89,19 @@ pref("dom.workers.maxPerDomain", 20);
+ // Whether nonzero values can be returned from performance.timing.*
+ pref("dom.enable_performance", true);
+ 
+ // Fastback caching - if this pref is negative, then we calculate the number
+ // of content viewers to cache based on the amount of available memory.
+ pref("browser.sessionhistory.max_total_viewers", -1);
+ 
+ pref("ui.use_native_colors", true);
++#ifdef MOZ_WIDGET_GTK
++pref("ui.use_unity_menubar", true);
++#endif
+ pref("ui.click_hold_context_menus", false);
+ pref("browser.display.use_document_fonts",  1);  // 0 = never, 1 = quick, 2 = always
+ pref("browser.display.use_document_colors", true);
+ pref("browser.display.use_system_colors",   false);
+ pref("browser.display.foreground_color",    "#000000");
+ pref("browser.display.background_color",    "#FFFFFF");
+ pref("browser.display.force_inline_alttext", false); // true = force ALT text for missing images to be layed out inline
+ // 0 = no external leading, 
+diff --git a/toolkit/content/widgets/popup.xml b/toolkit/content/widgets/popup.xml
+--- a/toolkit/content/widgets/popup.xml
++++ b/toolkit/content/widgets/popup.xml
+@@ -20,18 +20,24 @@
+       <property name="position" onget="return this.getAttribute('position');"
+                                 onset="this.setAttribute('position', val); return val;"/>
+       <property name="popupBoxObject">
+         <getter>
+           return this.boxObject.QueryInterface(Components.interfaces.nsIPopupBoxObject);
          </getter>
        </property>
  
@@ -78,11 +140,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/toolkit/content/widgets/popup.xml
  
        <property name="triggerNode" readonly="true"
                  onget="return this.popupBoxObject.triggerNode"/>
-Index: firefox-trunk-23.0~a1~hg20130512r131644/toolkit/content/xul.css
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/toolkit/content/xul.css	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/toolkit/content/xul.css	2013-05-13 10:08:04.122042154 +0100
-@@ -289,6 +289,18 @@
+ 
+       <property name="anchorNode" readonly="true"
+                 onget="return this.popupBoxObject.anchorNode"/>
+ 
+       <method name="openPopup">
+diff --git a/toolkit/content/xul.css b/toolkit/content/xul.css
+--- a/toolkit/content/xul.css
++++ b/toolkit/content/xul.css
+@@ -284,16 +284,28 @@ toolbar[type="menubar"][autohide="true"]
+ toolbar[type="menubar"][autohide="true"][inactive="true"]:not([customizing="true"]) {
+   min-height: 0 !important;
+   height: 0 !important;
+   -moz-appearance: none !important;
+   border-style: none !important;
  }
  %endif
  
@@ -101,11 +172,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/toolkit/content/xul.css
  toolbarseparator {
    -moz-binding: url("chrome://global/content/bindings/toolbar.xml#toolbardecoration");
  }
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/Makefile.in
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/widget/gtk2/Makefile.in	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/Makefile.in	2013-05-13 10:08:04.122042154 +0100
-@@ -44,6 +44,15 @@
+ 
+ toolbarspacer {
+   -moz-binding: url("chrome://global/content/bindings/toolbar.xml#toolbardecoration");
+ }
+ 
+diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
+--- a/widget/gtk2/Makefile.in
++++ b/widget/gtk2/Makefile.in
+@@ -39,16 +39,25 @@ CPPSRCS = \
+   nsFilePicker.cpp \
+   nsSound.cpp \
+   nsNativeKeyBindings.cpp \
+   nsScreenGtk.cpp \
+   nsScreenManagerGtk.cpp \
    nsImageToPixbuf.cpp \
    nsGtkIMModule.cpp \
    WidgetTraceEvent.cpp \
@@ -121,7 +201,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/Makefile.in
    $(NULL)
  
  ifdef MOZ_X11
-@@ -98,6 +107,7 @@
+ CPPSRCS         += nsIdleServiceGTK.cpp
+ endif
+ 
+ ifdef NS_PRINTING
+ CPPSRCS		+= \
+@@ -93,14 +102,15 @@ endif
+ endif
+ 
+ DEFINES		+= -DCAIRO_GFX -DMOZ_APP_NAME='"$(MOZ_APP_NAME)"'
+ 
+ INCLUDES	+= \
  		-I$(srcdir)/../xpwidgets \
  		-I$(srcdir)/../shared \
  		-I$(topsrcdir)/layout/generic \
@@ -129,10 +219,13 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/Makefile.in
  		-I$(topsrcdir)/layout/xul/base/src \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
  		$(NULL)
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsDbusmenu.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsDbusmenu.cpp	2013-05-13 10:08:04.122042154 +0100
+ ifdef MOZ_X11
+ INCLUDES   	+= -I$(srcdir)/../shared/x11
+ endif
+diff --git a/widget/gtk2/nsDbusmenu.cpp b/widget/gtk2/nsDbusmenu.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsDbusmenu.cpp
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -193,10 +286,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsDbusmenu.cpp
 +
 +    return NS_OK;
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsDbusmenu.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsDbusmenu.h	2013-05-13 10:08:04.122042154 +0100
+diff --git a/widget/gtk2/nsDbusmenu.h b/widget/gtk2/nsDbusmenu.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsDbusmenu.h
 @@ -0,0 +1,99 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -297,11 +390,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsDbusmenu.h
 +#define dbusmenu_menuitem_property_set_shortcut nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set_shortcut
 +
 +#endif /* __nsDbusmenu_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp	2013-05-13 10:08:04.122042154 +0100
-@@ -0,0 +1,797 @@
+diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenu.cpp
+@@ -0,0 +1,821 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -309,14 +402,12 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
++#define _IMPL_NS_LAYOUT
++
 +#include "nsMenu.h"
 +#include "nsString.h"
 +#include "nsGUIEvent.h"
 +#include "nsBindingManager.h"
-+#include "nsIScriptGlobalObject.h"
-+#include "nsIScriptContext.h"
-+#include "jsapi.h"
-+#include "mozilla/Services.h"
 +#include "nsIAtom.h"
 +#include "nsIDocument.h"
 +#include "nsGkAtoms.h"
@@ -324,17 +415,22 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +#include "nsComponentManagerUtils.h"
 +#include "nsIRunnable.h"
 +#include "nsContentUtils.h"
-+#include "nsLayoutUtils.h"
++#include "nsAutoPtr.h"
++#include "nsIPresShell.h"
++#include "nsStyleSet.h"
++#include "nsStyleContext.h"
++#include "nsStyleStruct.h"
++#include "nsXBLService.h"
++#include "nsXBLBinding.h"
++#include "nsCSSValue.h"
 +
 +#include "nsNativeMenuDocListener.h"
 +#include "nsNativeMenuUtils.h"
-+#include "nsMenuBar.h"
 +#include "nsNativeMenuAtoms.h"
 +
 +#include <glib-object.h>
 +
 +using namespace mozilla;
-+using mozilla::AutoPushJSContext;
 +
 +class nsSetAttrRunnableNoNotify : public nsRunnable {
 +public:
@@ -366,6 +462,44 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +    nsCOMPtr<nsIContent> mContent;
 +    nsCOMPtr<nsIAtom> mAttribute;
 +};
++
++static void
++AttachXBLBindings(nsIContent *aContent)
++{
++    nsIDocument *doc = aContent->OwnerDoc();
++    nsIPresShell *shell = doc->GetShell();
++    if (!shell) {
++        return;
++    }
++
++    nsRefPtr<nsStyleContext> sc =
++        shell->StyleSet()->ResolveStyleFor(aContent->AsElement(),
++                                           nullptr);
++    if (!sc) {
++        return;
++    }
++
++    const nsStyleDisplay* display = sc->StyleDisplay();
++    if (!display->mBinding) {
++        return;
++    }
++
++    nsXBLService* xbl = nsXBLService::GetInstance();
++    if (!xbl) {
++        return;
++    }
++
++    nsRefPtr<nsXBLBinding> binding;
++    bool dummy;
++    nsresult rv = xbl->LoadBindings(aContent, display->mBinding->GetURI(),
++                                    display->mBinding->mOriginPrincipal,
++                                    getter_AddRefs(binding), &dummy);
++    if ((NS_FAILED(rv) && rv != NS_ERROR_XBL_BLOCKED) || !binding) {
++        return;
++    }
++
++    doc->BindingManager()->AddToAttachedQueue(binding);
++}
 +
 +void
 +nsMenu::SetPopupState(EPopupState aState)
@@ -455,7 +589,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +    NS_ASSERTION(!IsInUpdateBatch(),
 +                 "Shouldn't be modifying the native menu structure now");
 +
-+    GList *children = dbusmenu_menuitem_get_children(mNativeData);
++    GList *children = dbusmenu_menuitem_get_children(GetNativeData());
 +    if (!children) {
 +        NS_ASSERTION(!HasPlaceholderItem(), "Huh?");
 +
@@ -467,7 +601,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        dbusmenu_menuitem_property_set_bool(
 +            ph, DBUSMENU_MENUITEM_PROP_VISIBLE, false);
 +
-+        if (!dbusmenu_menuitem_child_append(mNativeData, ph)) {
++        if (!dbusmenu_menuitem_child_append(GetNativeData(), ph)) {
 +            NS_WARNING("Failed to create placeholder item");
 +            g_object_unref(ph);
 +            return;
@@ -475,7 +609,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +
 +        g_object_unref(ph);
 +
-+        SetHasPlaceholderItemFlag();
++        SetHasPlaceholderItem(true);
 +    }
 +}
 +
@@ -486,19 +620,19 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +                 "Shouldn't be modifying the native menu structure now");
 +
 +    if (HasPlaceholderItem()) {
-+        GList *children = dbusmenu_menuitem_get_children(mNativeData);
++        GList *children = dbusmenu_menuitem_get_children(GetNativeData());
 +
 +        NS_ASSERTION(g_list_length(children) == 1,
 +                     "Unexpected number of children in native menu (should be 1!)");
 +
-+        ClearHasPlaceholderItemFlag();
++        SetHasPlaceholderItem(false);
 +
 +        if (!children) {
 +            return true;
 +        }
 +
 +        if (!dbusmenu_menuitem_child_delete(
-+                mNativeData, static_cast<DbusmenuMenuitem *>(children->data))) {
++                GetNativeData(), static_cast<DbusmenuMenuitem *>(children->data))) {
 +            NS_ERROR("Failed to remove placeholder item");
 +            return false;
 +        }
@@ -526,7 +660,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +    }
 +
 +    if (NeedsBuild() && NS_FAILED(Build())) {
-+        SetNeedsBuildFlag();
++        SetNeedsBuild(true);
 +        return;
 +    }
 +
@@ -543,7 +677,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +
 +    uint32_t count = mMenuObjects.Length();
 +    for (uint32_t i = 0; i < count; ++i) {
-+        mMenuObjects[i]->Update();
++        mMenuObjects[i]->ContainerIsOpening();
 +    }
 +
 +    // I guess that the popup could have changed
@@ -565,10 +699,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        NS_ASSERTION(!IsInUpdateBatch(), "How did we end up here?");
 +
 +        // Make sure there are no orphaned children. We skip this if
-+        // we have a placeholder item. In this case, we only add a placeholder
-+        // when there are no other children, and assert when removing it that
-+        // there are no other children.
-+        GList *children = dbusmenu_menuitem_take_children(mNativeData);
++        // we have a placeholder item, as this is handled elsewhere. In this
++        // case, we only add a placeholder when there are no other children,
++        // and assert when removing it that there are no other children.
++        GList *children = dbusmenu_menuitem_take_children(GetNativeData());
 +        g_list_foreach(children, (GFunc)g_object_unref, nullptr);
 +        g_list_free(children);
 +    }
@@ -579,14 +713,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        return NS_OK;
 +    }
 +
-+    ClearNeedsBuildFlag();
++    SetNeedsBuild(false);
 +
 +    uint32_t count = mPopupContent->GetChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
 +        nsIContent *childContent = mPopupContent->GetChildAt(i);
 +
 +        nsresult rv;
-+        nsRefPtr<nsMenuObject> child = CreateChild(childContent, &rv);
++        nsMenuObject *child = CreateChild(childContent, &rv);
 +
 +        if (child) {
 +            rv = AppendMenuObject(child);
@@ -604,16 +738,25 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +void
 +nsMenu::InitializeNativeData()
 +{
-+    g_signal_connect(G_OBJECT(mNativeData), "about-to-show",
++    g_signal_connect(G_OBJECT(GetNativeData()), "about-to-show",
 +                     G_CALLBACK(menu_about_to_show_cb), this);
-+    g_signal_connect(G_OBJECT(mNativeData), "event",
++    g_signal_connect(G_OBJECT(GetNativeData()), "event",
 +                     G_CALLBACK(menu_event_cb), this);
 +
-+    SyncLabelFromContent();
-+    SyncSensitivityFromContent();
++    UpdateLabel();
++    UpdateSensitivity();
 +
-+    SetNeedsBuildFlag();
++    SetNeedsBuild(true);
 +    MaybeAddPlaceholderItem();
++
++    AttachXBLBindings(mContent);
++}
++
++void
++nsMenu::Update(nsStyleContext *aStyleContext)
++{
++    UpdateVisibility(aStyleContext);
++    UpdateIcon(aStyleContext);
 +}
 +
 +void
@@ -637,7 +780,9 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        return;
 +    }
 +
-+    if (oldPopupContent && oldPopupContent != mContent) {
++    // The popup has changed
++
++    if (oldPopupContent) {
 +        mListener->UnregisterForContentChanges(oldPopupContent);
 +    }
 +
@@ -647,25 +792,9 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        return;
 +    }
 +
-+    nsCOMPtr<nsIXPConnect> xpconnect = services::GetXPConnect();
-+    nsIScriptGlobalObject *sgo = mPopupContent->OwnerDoc()->GetScriptGlobalObject();
-+    if (sgo) {
-+        nsCOMPtr<nsIScriptContext> scriptContext = sgo->GetContext();
-+        JSObject *global = sgo->GetGlobalJSObject();
-+        if (scriptContext && global) {
-+            AutoPushJSContext cx(scriptContext->GetNativeContext());
-+            if (cx) {
-+                nsCOMPtr<nsIXPConnectJSObjectHolder> wrapper;
-+                xpconnect->WrapNative(cx, global, mPopupContent,
-+                                      NS_GET_IID(nsISupports),
-+                                      getter_AddRefs(wrapper));
-+            }
-+        }
-+    }
++    AttachXBLBindings(mPopupContent);
 +
-+    if (mPopupContent != mContent) {
-+        mListener->RegisterForContentChanges(mPopupContent, this);
-+    }
++    mListener->RegisterForContentChanges(mPopupContent, this);
 +}
 +
 +nsresult
@@ -678,12 +807,12 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +    if (!IsInUpdateBatch()) {
 +        NS_ASSERTION(!HasPlaceholderItem(), "Shouldn't have a placeholder menuitem");
 +        if (!dbusmenu_menuitem_child_delete(
-+                mNativeData, mMenuObjects[aIndex]->GetNativeData())) {
++                GetNativeData(), mMenuObjects[aIndex]->GetNativeData())) {
 +            return NS_ERROR_FAILURE;
 +        }
 +    }
 +
-+    SetStructureMutatedFlag();
++    SetDidStructureMutate(true);
 +
 +    mMenuObjects.RemoveElementAt(aIndex);
 +
@@ -721,14 +850,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        }
 +
 +        aChild->CreateNativeData();
-+        if (!dbusmenu_menuitem_child_add_position(mNativeData,
++        if (!dbusmenu_menuitem_child_add_position(GetNativeData(),
 +                                                  aChild->GetNativeData(),
 +                                                  index)) {
 +            return NS_ERROR_FAILURE;
 +        }
 +    }
 +
-+    SetStructureMutatedFlag();
++    SetDidStructureMutate(true);
 +
 +    return mMenuObjects.InsertElementAt(index, aChild) ?
 +        NS_OK : NS_ERROR_FAILURE;
@@ -743,13 +872,13 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        }
 +
 +        aChild->CreateNativeData();
-+        if (!dbusmenu_menuitem_child_append(mNativeData,
++        if (!dbusmenu_menuitem_child_append(GetNativeData(),
 +                                            aChild->GetNativeData())) {
 +            return NS_ERROR_FAILURE;
 +        }
 +    }
 +
-+    SetStructureMutatedFlag();
++    SetDidStructureMutate(true);
 +
 +    return mMenuObjects.AppendElement(aChild) ? NS_OK : NS_ERROR_FAILURE;
 +}
@@ -757,7 +886,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +bool
 +nsMenu::CanOpen() const
 +{
-+    bool isVisible = dbusmenu_menuitem_property_get_bool(mNativeData,
++    bool isVisible = dbusmenu_menuitem_property_get_bool(GetNativeData(),
 +                                                         DBUSMENU_MENUITEM_PROP_VISIBLE);
 +    bool isDisabled = mContent->AttrValueIs(kNameSpaceID_None,
 +                                            nsGkAtoms::disabled,
@@ -790,15 +919,15 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +
 +    EnsureNoPlaceholderItem();
 +
-+    if (mListener && mPopupContent && mContent != mPopupContent) {
++    if (mListener && mPopupContent) {
 +        mListener->UnregisterForContentChanges(mPopupContent);
 +    }
 +
-+    if (mNativeData) {
-+        g_signal_handlers_disconnect_by_func(mNativeData,
++    if (GetNativeData()) {
++        g_signal_handlers_disconnect_by_func(GetNativeData(),
 +                                             nsNativeMenuUtils::FuncToVoidPtr(menu_about_to_show_cb),
 +                                             this);
-+        g_signal_handlers_disconnect_by_func(mNativeData,
++        g_signal_handlers_disconnect_by_func(GetNativeData(),
 +                                             nsNativeMenuUtils::FuncToVoidPtr(menu_event_cb),
 +                                             this);
 +    }
@@ -806,11 +935,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +    MOZ_COUNT_DTOR(nsMenu);
 +}
 +
-+/* static */ already_AddRefed<nsMenuObject>
++/* static */ nsMenuObject*
 +nsMenu::Create(nsMenuObjectContainer *aParent,
 +               nsIContent *aContent)
 +{
-+    nsRefPtr<nsMenu> menu = new nsMenu();
++    nsAutoPtr<nsMenu> menu(new nsMenu());
 +    if (NS_FAILED(menu->Init(aParent, aContent))) {
 +        return nullptr;
 +    }
@@ -821,11 +950,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +static void
 +DoOpen(nsITimer *aTimer, void *aClosure)
 +{
-+    nsMenu *menu = static_cast<nsMenu *>(aClosure);
-+    dbusmenu_menuitem_show_to_user(menu->GetNativeData(), 0);
++    DbusmenuMenuitem *menu = static_cast<DbusmenuMenuitem *>(aClosure);
++    dbusmenu_menuitem_show_to_user(menu, 0);
 +
 +    NS_RELEASE(aTimer);
-+    NS_RELEASE(menu);
++    g_object_unref(menu);
 +}
 +
 +void
@@ -850,12 +979,12 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +        return;
 +    }
 +
-+    if (NS_FAILED(timer->InitWithFuncCallback(DoOpen, this, 100,
-+                                              nsITimer::TYPE_ONE_SHOT))) {
++    if (NS_FAILED(timer->InitWithFuncCallback(DoOpen,
++                                              g_object_ref(GetNativeData()),
++                                              100, nsITimer::TYPE_ONE_SHOT))) {
 +        return;
 +    }
 +
-+    NS_ADDREF(this);
 +    timer.forget();
 +}
 +
@@ -881,13 +1010,6 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +}
 +
 +void
-+nsMenu::Update()
-+{
-+    SyncVisibilityFromContent();
-+    SyncIconFromContent();
-+}
-+
-+void
 +nsMenu::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
 +{
 +    NS_ASSERTION(aContent == mContent || aContent == mPopupContent,
@@ -899,16 +1021,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +
 +    if (aContent == mContent) {
 +        if (aAttribute == nsGkAtoms::disabled) {
-+            SyncSensitivityFromContent();
++            UpdateSensitivity();
 +        } else if (aAttribute == nsGkAtoms::label || 
 +                   aAttribute == nsGkAtoms::accesskey ||
 +                   aAttribute == nsGkAtoms::crop) {
-+            SyncLabelFromContent();
-+        } else if (aAttribute == nsGkAtoms::image) {
-+            SyncIconFromContent();
-+        } else if (aAttribute == nsGkAtoms::hidden ||
-+                   aAttribute == nsGkAtoms::collapsed) {
-+            SyncVisibilityFromContent();
++            UpdateLabel();
 +        }
 +    }
 +}
@@ -926,7 +1043,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +
 +    nsresult rv;
 +    if (aContainer == mPopupContent) {
-+        nsRefPtr<nsMenuObject> child = CreateChild(aChild, &rv);
++        nsMenuObject *child = CreateChild(aChild, &rv);
 +
 +        if (child) {
 +            rv = InsertMenuObjectAfter(child, aPrevSibling);
@@ -937,7 +1054,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +
 +    if (NS_FAILED(rv)) {
 +        NS_ERROR("OnContentInserted() failed");
-+        SetNeedsBuildFlag();
++        SetNeedsBuild(true);
 +    }
 +}
 +
@@ -960,7 +1077,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +
 +    if (NS_FAILED(rv)) {
 +        NS_ERROR("OnContentRemoved() failed");
-+        SetNeedsBuildFlag();
++        SetNeedsBuild(true);
 +    }
 +}
 +
@@ -986,8 +1103,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +    if (aContent == mPopupContent) {
 +        NS_ASSERTION(!IsInUpdateBatch(), "Already in an update batch!");
 +
-+        SetIsInUpdateBatchFlag();
-+        ClearStructureMutatedFlag();
++        SetIsInUpdateBatch(true);
++        SetDidStructureMutate(false);
 +    }
 +}
 +
@@ -996,7 +1113,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +{
 +    NS_ASSERTION(IsInUpdateBatch(), "Not in an update batch");
 +
-+    ClearIsInUpdateBatchFlag();
++    SetIsInUpdateBatch(false);
 +
 +    /* Optimize for the case where we only had attribute changes */
 +    if (!DidStructureMutate()) {
@@ -1004,11 +1121,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +    }
 +
 +    if (!EnsureNoPlaceholderItem()) {
-+        SetNeedsBuildFlag();
++        SetNeedsBuild(true);
 +        return;
 +    }
 +
-+    GList *nextNativeChild = dbusmenu_menuitem_get_children(mNativeData);
++    GList *nextNativeChild = dbusmenu_menuitem_get_children(GetNativeData());
 +    DbusmenuMenuitem *nextOwnedNativeChild = nullptr;
 +
 +    uint32_t count = mMenuObjects.Length();
@@ -1037,9 +1154,9 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +                    static_cast<DbusmenuMenuitem *>(nextNativeChild->data);
 +                nextNativeChild = nextNativeChild->next;
 +
-+                if (!dbusmenu_menuitem_child_delete(mNativeData, data)) {
++                if (!dbusmenu_menuitem_child_delete(GetNativeData(), data)) {
 +                    NS_ERROR("Failed to remove orphaned native item from menu");
-+                    SetNeedsBuildFlag();
++                    SetNeedsBuild(true);
 +                    return;
 +                }
 +            }
@@ -1073,11 +1190,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +            // At this point, we modify the native menu structure.
 +            if (!child->GetNativeData()) {
 +                child->CreateNativeData();
-+                if (!dbusmenu_menuitem_child_add_position(mNativeData,
++                if (!dbusmenu_menuitem_child_add_position(GetNativeData(),
 +                                                          child->GetNativeData(),
 +                                                          i)) {
 +                    NS_ERROR("Failed to add new native item");
-+                    SetNeedsBuildFlag();
++                    SetNeedsBuild(true);
 +                    return;
 +                }
 +            }
@@ -1090,20 +1207,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.cpp
 +            static_cast<DbusmenuMenuitem *>(nextNativeChild->data);
 +        nextNativeChild = nextNativeChild->next;
 +
-+        if (!dbusmenu_menuitem_child_delete(mNativeData, data)) {
++        if (!dbusmenu_menuitem_child_delete(GetNativeData(), data)) {
 +            NS_ERROR("Failed to remove orphaned native item from menu");
-+            SetNeedsBuildFlag();
++            SetNeedsBuild(true);
 +            return;
 +        }
 +    }
 +
 +    MaybeAddPlaceholderItem();
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h	2013-05-13 10:08:04.122042154 +0100
-@@ -0,0 +1,157 @@
+diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenu.h
+@@ -0,0 +1,162 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1124,6 +1241,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h
 +#include <glib.h>
 +
 +class nsIAtom;
++class nsStyleContext;
 +
 +#define NSMENU_NUMBER_OF_POPUPSTATE_BITS 2U
 +#define NSMENU_NUMBER_OF_FLAGS           4U
@@ -1134,8 +1252,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h
 +public:
 +    ~nsMenu();
 +
-+    static already_AddRefed<nsMenuObject> Create(nsMenuObjectContainer *aParent,
-+                                                 nsIContent *aContent);
++    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
++                                nsIContent *aContent);
 +
 +    nsMenuObject::EType Type() const { return nsMenuObject::eType_Menu; }
 +
@@ -1150,7 +1268,6 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h
 +    // menuitems can do the shells work. Sigh....
 +    void OnClose();
 +
-+    void Update();
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
 +    void OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
 +                           nsIContent *aPrevSibling);
@@ -1178,41 +1295,45 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h
 +    bool NeedsBuild() const {
 +        return mFlags & eFlag_NeedsBuild ? true : false;
 +    }
-+    void SetNeedsBuildFlag() {
-+        mFlags |= eFlag_NeedsBuild;
-+    }
-+    void ClearNeedsBuildFlag() {
-+        mFlags &= ~eFlag_NeedsBuild;
++    void SetNeedsBuild(bool aValue) {
++        if (aValue) {
++            mFlags |= eFlag_NeedsBuild;
++        } else {
++            mFlags &= ~eFlag_NeedsBuild;
++        }
 +    }
 +
 +    bool HasPlaceholderItem() const {
 +        return mFlags & eFlag_HasPlaceholderItem ? true : false;
 +    }
-+    void SetHasPlaceholderItemFlag() {
-+        mFlags |= eFlag_HasPlaceholderItem;
-+    }
-+    void ClearHasPlaceholderItemFlag() {
-+        mFlags &= ~eFlag_HasPlaceholderItem;
++    void SetHasPlaceholderItem(bool aValue) {
++        if (aValue) {
++            mFlags |= eFlag_HasPlaceholderItem;
++        } else {
++            mFlags &= ~eFlag_HasPlaceholderItem;
++        }
 +    }
 +
 +    bool IsInUpdateBatch() const {
 +        return mFlags & eFlag_InUpdateBatch ? true : false;
 +    }
-+    void SetIsInUpdateBatchFlag() {
-+        mFlags |= eFlag_InUpdateBatch;
-+    }
-+    void ClearIsInUpdateBatchFlag() {
-+        mFlags &= ~eFlag_InUpdateBatch;
++    void SetIsInUpdateBatch(bool aValue) {
++        if (aValue) {
++            mFlags |= eFlag_InUpdateBatch;
++        } else {
++            mFlags &= ~eFlag_InUpdateBatch;
++        }
 +    }
 +
 +    bool DidStructureMutate() const {
 +        return mFlags & eFlag_StructureMutated;
 +    }
-+    void SetStructureMutatedFlag() {
-+        mFlags |= eFlag_StructureMutated;
-+    }
-+    void ClearStructureMutatedFlag() {
-+        mFlags &= ~eFlag_StructureMutated;
++    void SetDidStructureMutate(bool aValue) {
++        if (aValue) {
++            mFlags |= eFlag_StructureMutated;
++        } else {
++            mFlags &= ~eFlag_StructureMutated;
++        }
 +    }
 +
 +    EPopupState PopupState() const {
@@ -1239,6 +1360,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h
 +    void AboutToOpen();
 +    nsresult Build();
 +    void InitializeNativeData();
++    void Update(nsStyleContext *aStyleContext);
 +    void InitializePopup();
 +    nsresult RemoveMenuObjectAt(uint32_t aIndex);
 +    nsresult RemoveMenuObject(nsIContent *aChild);
@@ -1261,10 +1383,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenu.h
 +};
 +
 +#endif /* __nsMenu_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp	2013-05-13 10:08:04.122042154 +0100
+diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuBar.cpp
 @@ -0,0 +1,560 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -1283,6 +1405,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +#include "nsIDOMEvent.h"
 +#include "nsUnicharUtils.h"
 +#include "mozilla/DebugOnly.h"
++#include "nsAutoPtr.h"
 +
 +#include "nsNativeMenuService.h"
 +#include "nsMenu.h"
@@ -1330,7 +1453,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +    }
 +
 +    if (!dbusmenu_menuitem_child_delete(
-+            mNativeData, mMenuObjects[aIndex]->GetNativeData())) {
++            GetNativeData(), mMenuObjects[aIndex]->GetNativeData())) {
 +        return NS_ERROR_FAILURE;
 +    }
 +
@@ -1362,7 +1485,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +    ++index;
 +
 +    aChild->CreateNativeData();
-+    if (!dbusmenu_menuitem_child_add_position(mNativeData,
++    if (!dbusmenu_menuitem_child_add_position(GetNativeData(),
 +                                              aChild->GetNativeData(),
 +                                              index)) {
 +        return NS_ERROR_FAILURE;
@@ -1376,7 +1499,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +nsMenuBar::AppendMenuObject(nsMenuObject *aChild)
 +{
 +    aChild->CreateNativeData();
-+    if (!dbusmenu_menuitem_child_append(mNativeData,
++    if (!dbusmenu_menuitem_child_append(GetNativeData(),
 +                                        aChild->GetNativeData())) {
 +        return NS_ERROR_FAILURE;
 +    }
@@ -1392,7 +1515,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +        nsIContent *childContent = mContent->GetChildAt(i);
 +
 +        nsresult rv;
-+        nsRefPtr<nsMenuObject> child = CreateChild(childContent, &rv);
++        nsMenuObject *child = CreateChild(childContent, &rv);
 +
 +        if (child) {
 +            rv = AppendMenuObject(child);
@@ -1536,15 +1659,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +        }
 +    }
 +
-+    if (!found) {
++    if (!found || found->Type() != nsMenuObject::eType_Menu) {
 +        return NS_OK;
 +    }
 +
-+    NS_ASSERTION(found->Type() == nsMenuObject::eType_Menu, "Expecting a menu here");
-+
 +    mContent->SetAttr(kNameSpaceID_None, nsNativeMenuAtoms::openedwithkey,
 +                      NS_LITERAL_STRING("true"), true);
-+    (static_cast<nsMenu *>(found))->OpenMenuDelayed();
++    static_cast<nsMenu *>(found)->OpenMenuDelayed();
++
 +    aEvent->StopPropagation();
 +    aEvent->PreventDefault();
 +
@@ -1600,7 +1722,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +    nsMenuObjectContainer(),
 +    mTopLevel(nullptr),
 +    mServer(nullptr),
-+    mFlags(0)
++    mIsActive(false)
 +{
 +    MOZ_COUNT_CTOR(nsMenuBar);
 +}
@@ -1650,11 +1772,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +    }
 +
 +    CreateNativeData();
-+    if (!mNativeData) {
++    if (!GetNativeData()) {
 +        return NS_ERROR_FAILURE;
 +    }
 +
-+    dbusmenu_server_set_root(mServer, mNativeData);
++    dbusmenu_server_set_root(mServer, GetNativeData());
 +
 +    mEventListener = new DocumentEventListener(this);
 +
@@ -1706,10 +1828,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +    MOZ_COUNT_DTOR(nsMenuBar);
 +}
 +
-+/* static */ already_AddRefed<nsMenuBar>
++/* static */ nsMenuBar*
 +nsMenuBar::Create(nsIWidget *aParent, nsIContent *aMenuBarNode)
 +{
-+    nsRefPtr<nsMenuBar> menubar = new nsMenuBar();
++    nsAutoPtr<nsMenuBar> menubar(new nsMenuBar());
 +    if (NS_FAILED(menubar->Init(aParent, aMenuBarNode))) {
 +        return nullptr;
 +    }
@@ -1736,11 +1858,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +nsresult
 +nsMenuBar::Activate()
 +{
-+    if (IsActive()) {
++    if (mIsActive) {
 +        return NS_OK;
 +    }
 +
-+    SetIsActiveFlag();
++    mIsActive = true;
 +
 +    mDocument->AddEventListener(NS_LITERAL_STRING("focus"),
 +                                mEventListener,
@@ -1778,11 +1900,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +void
 +nsMenuBar::Deactivate()
 +{
-+    if (!IsActive()) {
++    if (!mIsActive) {
 +        return;
 +    }
 +
-+    ClearIsActiveFlag();
++    mIsActive = false;
 +
 +    mRegisterRequestCanceller.Cancel();
 +
@@ -1808,7 +1930,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +                 "Received an event that wasn't meant for us");
 +
 +    nsresult rv;
-+    nsRefPtr<nsMenuObject> child = CreateChild(aChild, &rv);
++    nsMenuObject *child = CreateChild(aChild, &rv);
 +
 +    if (child) {
 +        rv = InsertMenuObjectAfter(child, aPrevSibling);
@@ -1826,11 +1948,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.cpp
 +    DebugOnly<nsresult> rv = RemoveMenuObject(aChild);
 +    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove item from menubar");
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.h	2013-05-13 10:08:04.126042154 +0100
-@@ -0,0 +1,147 @@
+diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuBar.h
+@@ -0,0 +1,133 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1870,8 +1992,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.h
 +public:
 +    ~nsMenuBar();
 +
-+    static already_AddRefed<nsMenuBar> Create(nsIWidget *aParent,
-+                                              nsIContent *aMenuBarNode);
++    static nsMenuBar* Create(nsIWidget *aParent,
++                             nsIContent *aMenuBarNode);
 +
 +    nsMenuObject::EType Type() const { return nsMenuObject::eType_MenuBar; }
 +
@@ -1917,10 +2039,6 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.h
 +    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild);
 +
 +private:
-+    enum {
-+        eFlag_Active = 1 << 0
-+    };
-+
 +    enum ModifierFlags {
 +        eModifierShift = (1 << 0),
 +        eModifierCtrl = (1 << 1),
@@ -1956,16 +2074,6 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.h
 +    nsresult KeyDown(nsIDOMEvent *aEvent);
 +    nsresult KeyUp(nsIDOMEvent *aEvent);
 +
-+    bool IsActive() const {
-+        return mFlags & eFlag_Active;
-+    }
-+    void SetIsActiveFlag() {
-+        mFlags |= eFlag_Active;
-+    }
-+    void ClearIsActiveFlag() {
-+        mFlags &= ~eFlag_Active;
-+    }
-+
 +    GtkWidget *mTopLevel;
 +    DbusmenuServer *mServer;
 +    nsCOMPtr<nsIDOMEventTarget> mDocument;
@@ -1974,15 +2082,15 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuBar.h
 +
 +    uint32_t mAccessKey;
 +    ModifierFlags mAccessKeyMask;
-+    uint8_t mFlags;
++    bool mIsActive;
 +};
 +
 +#endif /* __nsMenuBar_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp	2013-05-13 10:08:04.126042154 +0100
-@@ -0,0 +1,464 @@
+diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuItem.cpp
+@@ -0,0 +1,477 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2009,6 +2117,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +#include "nsContentUtils.h"
 +#include "nsThreadUtils.h"
 +#include "nsCRT.h"
++#include "nsAutoPtr.h"
 +
 +#include "nsNativeMenuDocListener.h"
 +#include "nsNativeMenuUtils.h"
@@ -2066,7 +2175,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +        mMenuItem(aMenuItem) { };
 +
 +private:
-+    nsRefPtr<nsMenuItem> mMenuItem;
++    nsMenuItem *mMenuItem;
 +};
 +
 +/* static */ void
@@ -2136,7 +2245,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +}
 +
 +void
-+nsMenuItem::SyncAttrFromNodeIfExists(nsIContent *aContent, nsIAtom *aAttribute)
++nsMenuItem::CopyAttrFromNodeIfExists(nsIContent *aContent, nsIAtom *aAttribute)
 +{
 +    nsAutoString value;
 +    if (aContent->GetAttr(kNameSpaceID_None, aAttribute, value)) {
@@ -2145,7 +2254,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +}
 +
 +void
-+nsMenuItem::SyncStateFromContent()
++nsMenuItem::UpdateState()
 +{
 +    if (!IsCheckboxOrRadioItem()) {
 +        return;
@@ -2153,7 +2262,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +
 +    SetCheckState(mContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::checked,
 +                                        nsGkAtoms::_true, eCaseMatters));
-+    dbusmenu_menuitem_property_set_int(mNativeData,
++    dbusmenu_menuitem_property_set_int(GetNativeData(),
 +                                       DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
 +                                       IsChecked() ?
 +                                         DBUSMENU_MENUITEM_TOGGLE_STATE_CHECKED : 
@@ -2161,7 +2270,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +}
 +
 +void
-+nsMenuItem::SyncTypeAndStateFromContent()
++nsMenuItem::UpdateTypeAndState()
 +{
 +    static nsIContent::AttrValuesArray attrs[] =
 +        { &nsGkAtoms::checkbox, &nsGkAtoms::radio, nullptr };
@@ -2171,29 +2280,29 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +
 +    if (type >= 0 && type < 2) {
 +        if (type == 0) {
-+            dbusmenu_menuitem_property_set(mNativeData,
++            dbusmenu_menuitem_property_set(GetNativeData(),
 +                                           DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
 +                                           DBUSMENU_MENUITEM_TOGGLE_CHECK);
 +            SetMenuItemType(eMenuItemType_CheckBox);
 +        } else if (type == 1) {
-+            dbusmenu_menuitem_property_set(mNativeData,
++            dbusmenu_menuitem_property_set(GetNativeData(),
 +                                           DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
 +                                           DBUSMENU_MENUITEM_TOGGLE_RADIO);
 +            SetMenuItemType(eMenuItemType_Radio);
 +        }
 +
-+        SyncStateFromContent();
++        UpdateState();
 +    } else {
-+        dbusmenu_menuitem_property_remove(mNativeData,
++        dbusmenu_menuitem_property_remove(GetNativeData(),
 +                                          DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE);
-+        dbusmenu_menuitem_property_remove(mNativeData,
++        dbusmenu_menuitem_property_remove(GetNativeData(),
 +                                          DBUSMENU_MENUITEM_PROP_TOGGLE_STATE);
 +        SetMenuItemType(eMenuItemType_Normal);
 +    }
 +}
 +
 +void
-+nsMenuItem::SyncAccelFromContent()
++nsMenuItem::UpdateAccel()
 +{
 +    nsIDocument *doc = mContent->GetCurrentDoc();
 +    if (doc) {
@@ -2217,7 +2326,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +    }
 +
 +    if (!mKeyContent) {
-+        dbusmenu_menuitem_property_remove(mNativeData,
++        dbusmenu_menuitem_property_remove(GetNativeData(),
 +                                          DBUSMENU_MENUITEM_PROP_SHORTCUT);
 +        return;
 +    }
@@ -2275,10 +2384,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +    }
 +
 +    if (key != GDK_VoidSymbol) {
-+        dbusmenu_menuitem_property_set_shortcut(mNativeData, key,
++        dbusmenu_menuitem_property_set_shortcut(GetNativeData(), key,
 +                                                static_cast<GdkModifierType>(modifier));
 +    } else {
-+        dbusmenu_menuitem_property_remove(mNativeData,
++        dbusmenu_menuitem_property_remove(GetNativeData(),
 +                                          DBUSMENU_MENUITEM_PROP_SHORTCUT);
 +    }
 +}
@@ -2286,14 +2395,52 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +void
 +nsMenuItem::InitializeNativeData()
 +{
-+    g_signal_connect(G_OBJECT(mNativeData),
++    g_signal_connect(G_OBJECT(GetNativeData()),
 +                     DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
 +                     G_CALLBACK(item_activated_cb), this);
 +
-+    SyncTypeAndStateFromContent();
-+    SyncAccelFromContent();
-+    SyncLabelFromContent();
-+    SyncSensitivityFromContent();
++    UpdateTypeAndState();
++    UpdateAccel();
++    UpdateLabel();
++    UpdateSensitivity();
++}
++
++void
++nsMenuItem::UpdateContentAttributes()
++{
++    nsIDocument *doc = mContent->GetCurrentDoc();
++    if (doc) {
++        nsAutoString command;
++        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::command, command);
++        if (!command.IsEmpty()) {
++            nsCOMPtr<nsIContent> commandContent =
++                doc->GetElementById(command);
++            if (commandContent) {
++                if (commandContent->AttrValueIs(kNameSpaceID_None,
++                                                nsGkAtoms::disabled,
++                                                nsGkAtoms::_true,
++                                                eCaseMatters)) {
++                    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
++                                      NS_LITERAL_STRING("true"), true);
++                } else {
++                    mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
++                                        true);
++                }
++
++                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::checked);
++                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::accesskey);
++                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::label);
++                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::hidden);
++            }
++        }
++    }
++}
++
++void
++nsMenuItem::Update(nsStyleContext *aStyleContext)
++{
++    UpdateVisibility(aStyleContext);
++    UpdateIcon(aStyleContext);
 +}
 +
 +void
@@ -2329,11 +2476,24 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +}
 +
 +bool
-+nsMenuItem::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData)
++nsMenuItem::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
 +{
 +    return nsCRT::strcmp(dbusmenu_menuitem_property_get(aNativeData,
 +                                                        DBUSMENU_MENUITEM_PROP_TYPE),
 +                         "separator") != 0;
++}
++
++nsMenuBar*
++nsMenuItem::MenuBar()
++{
++    nsMenuObject *tmp = this;
++    while (tmp->Parent()) {
++        tmp = tmp->Parent();
++    }
++
++    MOZ_ASSERT(tmp->Type() == eType_MenuBar, "The top-level should be a menubar");
++
++    return static_cast<nsMenuBar *>(tmp);
 +}
 +
 +nsMenuItem::nsMenuItem() :
@@ -2349,8 +2509,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +        mListener->UnregisterForContentChanges(mKeyContent);
 +    }
 +
-+    if (mNativeData) {
-+        g_signal_handlers_disconnect_by_func(mNativeData,
++    if (GetNativeData()) {
++        g_signal_handlers_disconnect_by_func(GetNativeData(),
 +                                             nsNativeMenuUtils::FuncToVoidPtr(item_activated_cb),
 +                                             this);
 +    }
@@ -2358,50 +2518,16 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +    MOZ_COUNT_DTOR(nsMenuItem);
 +}
 +
-+/* static */ already_AddRefed<nsMenuObject>
++/* static */ nsMenuObject*
 +nsMenuItem::Create(nsMenuObjectContainer *aParent,
 +                   nsIContent *aContent)
 +{
-+    nsRefPtr<nsMenuItem> menuitem = new nsMenuItem();
++    nsAutoPtr<nsMenuItem> menuitem(new nsMenuItem());
 +    if (NS_FAILED(menuitem->Init(aParent, aContent))) {
 +        return nullptr;
 +    }
 +
 +    return menuitem.forget();
-+}
-+
-+void
-+nsMenuItem::Update()
-+{
-+    nsIDocument *doc = mContent->GetCurrentDoc();
-+    if (doc) {
-+        nsAutoString command;
-+        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::command, command);
-+        if (!command.IsEmpty()) {
-+            nsCOMPtr<nsIContent> commandContent =
-+                doc->GetElementById(command);
-+            if (commandContent) {
-+                if (commandContent->AttrValueIs(kNameSpaceID_None,
-+                                                nsGkAtoms::disabled,
-+                                                nsGkAtoms::_true,
-+                                                eCaseMatters)) {
-+                    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
-+                                      NS_LITERAL_STRING("true"), true);
-+                } else {
-+                    mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
-+                                        true);
-+                }
-+
-+                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::checked);
-+                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::accesskey);
-+                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::label);
-+                SyncAttrFromNodeIfExists(commandContent, nsGkAtoms::hidden);
-+            }
-+        }
-+    }
-+
-+    SyncVisibilityFromContent();
-+    SyncIconFromContent();
 +}
 +
 +void
@@ -2423,35 +2549,30 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.cpp
 +
 +    if (aContent == mContent) {
 +        if (aAttribute == nsGkAtoms::key) {
-+            SyncAccelFromContent();
++            UpdateAccel();
 +        } else if (aAttribute == nsGkAtoms::label ||
 +                   aAttribute == nsGkAtoms::accesskey ||
 +                   aAttribute == nsGkAtoms::crop) {
-+            SyncLabelFromContent();
++            UpdateLabel();
 +        } else if (aAttribute == nsGkAtoms::disabled) {
-+            SyncSensitivityFromContent();
++            UpdateSensitivity();
 +        } else if (aAttribute == nsGkAtoms::type) {
-+            SyncTypeAndStateFromContent();
++            UpdateTypeAndState();
 +        } else if (aAttribute == nsGkAtoms::checked) {
-+            SyncStateFromContent();
-+        } else if (aAttribute == nsGkAtoms::image) {
-+            SyncIconFromContent();
-+        } else if (aAttribute == nsGkAtoms::hidden ||
-+                   aAttribute == nsGkAtoms::collapsed) {
-+            SyncVisibilityFromContent();
++            UpdateState();
 +        }
 +    } else if (aContent == mKeyContent &&
 +               (aAttribute == nsGkAtoms::key ||
 +                aAttribute == nsGkAtoms::keycode ||
 +                aAttribute == nsGkAtoms::modifiers)) {
-+        SyncAccelFromContent();
++        UpdateAccel();
 +    }
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.h	2013-05-13 10:08:04.126042154 +0100
-@@ -0,0 +1,114 @@
+diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuItem.h
+@@ -0,0 +1,118 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2475,6 +2596,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.h
 +#define NSMENUITEM_NUMBER_OF_FLAGS     1U
 +
 +class nsIAtom;
++class nsStyleContext;
++class nsMenuBar;
 +
 +/*
 + * This class represents 3 main classes of menuitems: labels, checkboxes and
@@ -2487,10 +2610,9 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.h
 +
 +    nsMenuObject::EType Type() const { return nsMenuObject::eType_MenuItem; }
 +
-+    static already_AddRefed<nsMenuObject> Create(nsMenuObjectContainer *aParent,
-+                                                 nsIContent *aContent);
++    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
++                                nsIContent *aContent);
 +
-+    void Update();
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
 +
 +private:
@@ -2539,14 +2661,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.h
 +                                  gpointer user_data);
 +    void Activate(uint32_t aTimestamp);
 +
-+    void SyncAttrFromNodeIfExists(nsIContent *aContent, nsIAtom *aAtom);
-+    void SyncStateFromContent();
-+    void SyncTypeAndStateFromContent();
-+    void SyncAccelFromContent();
++    void CopyAttrFromNodeIfExists(nsIContent *aContent, nsIAtom *aAtom);
++    void UpdateState();
++    void UpdateTypeAndState();
++    void UpdateAccel();
 +
 +    void InitializeNativeData();
++    void UpdateContentAttributes();
++    void Update(nsStyleContext *aStyleContext);
 +    void UncheckSiblings();
-+    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData);
++    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
++    nsMenuBar* MenuBar();
 +
 +    nsMenuObject::PropertyFlags SupportedProperties() const {
 +        return nsMenuObject::PropertyFlags(
@@ -2566,11 +2691,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuItem.h
 +};
 +
 +#endif /* __nsMenuItem_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp	2013-05-13 10:08:04.126042154 +0100
-@@ -0,0 +1,690 @@
+diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuObject.cpp
+@@ -0,0 +1,712 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2590,8 +2715,6 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +#include "mozilla/LookAndFeel.h"
 +#include "nsIAtom.h"
 +#include "nsString.h"
-+#include "nsIRunnable.h"
-+#include "nsThreadUtils.h"
 +#include "nsAttrValue.h"
 +#include "mozilla/dom/Element.h"
 +#include "nsILoadGroup.h"
@@ -2599,6 +2722,9 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +#include "imgLoader.h"
 +#include "imgRequestProxy.h"
 +#include "imgIRequest.h"
++#include "imgINotificationObserver.h"
++#include "nsRect.h"
++#include "nsIURI.h"
 +#include "nsPresContext.h"
 +#include "imgIContainer.h"
 +#include "nsImageToPixbuf.h"
@@ -2607,13 +2733,13 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +#include "nsNetUtil.h"
 +#include "mozilla/Preferences.h"
 +#include "ImageOps.h"
++#include "nsThreadUtils.h"
 +
 +#include "nsNativeMenuUtils.h"
 +#include "nsMenu.h"
 +#include "nsMenuItem.h"
 +#include "nsMenuSeparator.h"
 +#include "nsNativeMenuDocListener.h"
-+#include "nsMenuBar.h"
 +#include "nsNativeMenuAtoms.h"
 +
 +#include <glib-object.h>
@@ -2639,7 +2765,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +  NULL
 +};
 +
-+const nsMenuObjectContainer::storage_type::index_type nsMenuObjectContainer::NoIndex = nsMenuObjectContainer::storage_type::NoIndex;
++const nsMenuObjectContainer::ChildTArray::index_type nsMenuObjectContainer::NoIndex = nsMenuObjectContainer::ChildTArray::NoIndex;
 +
 +static enum {
 +    eImagesInMenus_Unknown,
@@ -2649,11 +2775,46 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +
 +PangoLayout* gPangoLayout = nullptr;
 +
-+NS_IMPL_ISUPPORTS1(nsMenuObject::IconLoader, imgINotificationObserver)
++class nsMenuObjectContainerOpeningRunnable : public nsRunnable {
++public:
++    NS_IMETHODIMP Run() {
++        mMenuObject->ContainerIsOpening();
++        return NS_OK;
++    }
++
++    nsMenuObjectContainerOpeningRunnable(nsMenuObject *aMenuObject) :
++        mMenuObject(aMenuObject) { };
++
++private:
++    nsMenuObject *mMenuObject;
++};
++
++class nsMenuObjectIconLoader MOZ_FINAL : public imgINotificationObserver {
++public:
++    NS_DECL_ISUPPORTS
++    NS_DECL_IMGINOTIFICATIONOBSERVER
++
++    nsMenuObjectIconLoader(nsMenuObject *aOwner) : mOwner(aOwner),
++                                                   mIconLoaded(false) { };
++
++    void LoadIcon(nsStyleContext *aStyleContext);
++    void Destroy();
++
++private:
++    ~nsMenuObjectIconLoader() { };
++
++    nsMenuObject *mOwner;
++    nsRefPtr<imgRequestProxy> mImageRequest;
++    nsCOMPtr<nsIURI> mURI;
++    nsIntRect mImageRect;
++    bool mIconLoaded;
++};
++
++NS_IMPL_ISUPPORTS1(nsMenuObjectIconLoader, imgINotificationObserver)
 +
 +NS_IMETHODIMP
-+nsMenuObject::IconLoader::Notify(imgIRequest *aProxy,
-+                                 int32_t aType, const nsIntRect *aRect)
++nsMenuObjectIconLoader::Notify(imgIRequest *aProxy,
++                               int32_t aType, const nsIntRect *aRect)
 +{
 +    if (!mOwner) {
 +        return NS_OK;
@@ -2719,21 +2880,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +}
 +
 +void
-+nsMenuObject::IconLoader::ScheduleIconLoad()
++nsMenuObjectIconLoader::LoadIcon(nsStyleContext *aStyleContext)
 +{
-+    nsCOMPtr<nsIRunnable> event =
-+        NS_NewRunnableMethod(this, &nsMenuObject::IconLoader::LoadIcon);
-+    NS_DispatchToCurrentThread(event);
-+}
-+
-+void
-+nsMenuObject::IconLoader::LoadIcon()
-+{
-+    if (!mOwner) {
-+        // Our menuitem has gone away
-+        return;
-+    }
-+
 +    nsIDocument *doc = mOwner->ContentNode()->OwnerDoc();
 +
 +    nsCOMPtr<nsIURI> uri;
@@ -2751,14 +2899,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +        }
 +
 +        nsPresContext *pc = shell->GetPresContext();
-+        nsRefPtr<nsStyleContext> sc =
-+            nsComputedDOMStyle::GetStyleContextForElementNoFlush(
-+                mOwner->ContentNode()->AsElement(), nullptr, shell);
-+        if (!pc || !sc) {
++        if (!pc || !aStyleContext) {
 +            return;
 +        }
 +
-+        const nsStyleList *list = sc->StyleList();
++        const nsStyleList *list = aStyleContext->StyleList();
 +        imageRequest = list->GetListStyleImage();
 +        if (imageRequest) {
 +            imageRequest->GetURI(getter_AddRefs(uri));
@@ -2823,7 +2968,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +}
 +
 +void
-+nsMenuObject::IconLoader::Destroy()
++nsMenuObjectIconLoader::Destroy()
 +{
 +    if (mImageRequest) {
 +        mImageRequest->CancelAndForgetObserver(NS_BINDING_ABORTED);
@@ -2833,8 +2978,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +    mOwner = nullptr;
 +}
 +
-+typedef already_AddRefed<nsMenuObject> (*nsMenuObjectConstructor)(nsMenuObjectContainer*,
-+                                                                  nsIContent*);
++typedef nsMenuObject* (*nsMenuObjectConstructor)(nsMenuObjectContainer*,
++                                                 nsIContent*);
 +struct nsMenuObjectConstructorMapEntry {
 +  nsIAtom **tag;
 +  nsMenuObjectConstructor constructor;
@@ -2976,7 +3121,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +}
 +
 +void
-+nsMenuObject::SyncLabelFromContent()
++nsMenuObject::UpdateLabel()
 +{
 +    // Gecko stores the label and access key in separate attributes
 +    // so we need to convert label="Foo_Bar"/accesskey="F" in to
@@ -3073,23 +3218,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +}
 +
 +void
-+nsMenuObject::SyncVisibilityFromContent()
++nsMenuObject::UpdateVisibility(nsStyleContext *aStyleContext)
 +{
-+    nsIPresShell *shell = mContent->OwnerDoc()->GetShell();
-+    if (!shell) {
-+        return;
-+    }
-+
-+    nsRefPtr<nsStyleContext> sc =
-+        nsComputedDOMStyle::GetStyleContextForElementNoFlush(
-+            mContent->AsElement(), nullptr, shell);
-+    if (!sc) {
-+        return;
-+    }
-+
 +    bool vis = true;
-+    if (sc->StyleDisplay()->mDisplay == NS_STYLE_DISPLAY_NONE ||
-+        sc->StyleVisibility()->mVisible == NS_STYLE_VISIBILITY_COLLAPSE) {
++
++    if (aStyleContext &&
++        (aStyleContext->StyleDisplay()->mDisplay == NS_STYLE_DISPLAY_NONE ||
++         aStyleContext->StyleVisibility()->mVisible ==
++            NS_STYLE_VISIBILITY_COLLAPSE)) {
 +        vis = false;
 +    }
 +
@@ -3099,7 +3235,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +}
 +
 +void
-+nsMenuObject::SyncSensitivityFromContent()
++nsMenuObject::UpdateSensitivity()
 +{
 +    bool disabled = mContent->AttrValueIs(kNameSpaceID_None,
 +                                          nsGkAtoms::disabled,
@@ -3112,14 +3248,15 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +}
 +
 +void
-+nsMenuObject::SyncIconFromContent()
++nsMenuObject::UpdateIcon(nsStyleContext *aStyleContext)
 +{
 +    if (ShouldShowIcon()) {
 +        if (!mIconLoader) {
-+            mIconLoader = new IconLoader(this);
++            mIconLoader = new nsMenuObjectIconLoader(this);
++            mIconLoader->AddRef();
 +        }
 +
-+        mIconLoader->ScheduleIconLoad();
++        mIconLoader->LoadIcon(aStyleContext);
 +    } else {
 +        if (mIconLoader) {
 +            mIconLoader->Destroy();
@@ -3148,6 +3285,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +{
 +    if (mIconLoader) {
 +        mIconLoader->Destroy();
++        mIconLoader->Release();
 +    }
 +
 +    if (mListener) {
@@ -3160,27 +3298,15 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +    }
 +}
 +
-+nsMenuBar*
-+nsMenuObject::MenuBar()
-+{
-+    nsMenuObject *tmp = static_cast<nsMenuObject *>(this);
-+    while (tmp->Parent()) {
-+        tmp = tmp->Parent();
-+    }
-+
-+    NS_ASSERTION(tmp->Type() == eType_MenuBar, "The top-level should be a menubar");
-+    return static_cast<nsMenuBar *>(tmp);
-+}
-+
 +void
 +nsMenuObject::CreateNativeData()
 +{
-+    NS_ASSERTION(mNativeData == nullptr, "This node already has a DbusmenuMenuitem");
++    NS_ASSERTION(mNativeData == nullptr, "This node already has a DbusmenuMenuitem. The old one will be leaked");
 +
 +    mNativeData = dbusmenu_menuitem_new();
 +    InitializeNativeData();
 +    if (mParent && mParent->IsBeingDisplayed()) {
-+        Update();
++        ContainerIsOpening();
 +    }
 +
 +    mListener->RegisterForContentChanges(mContent, this);
@@ -3189,7 +3315,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +nsresult
 +nsMenuObject::AdoptNativeData(DbusmenuMenuitem *aNativeData)
 +{
-+    NS_ASSERTION(mNativeData == nullptr, "This node already has a DbusmenuMenuitem");
++    NS_ASSERTION(mNativeData == nullptr, "This node already has a DbusmenuMenuitem. The old one will be leaked");
 +
 +    if (!IsCompatibleWithNativeData(aNativeData)) {
 +        return NS_ERROR_FAILURE;
@@ -3201,7 +3327,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +    RemoveUnsupportedProperties();
 +    InitializeNativeData();
 +    if (mParent && mParent->IsBeingDisplayed()) {
-+        Update();
++        ContainerIsOpening();
 +    }
 +
 +    mListener->RegisterForContentChanges(mContent, this);
@@ -3209,7 +3335,28 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +    return NS_OK;
 +}
 +
-+already_AddRefed<nsMenuObject>
++void
++nsMenuObject::ContainerIsOpening()
++{
++    if (!nsContentUtils::IsSafeToRunScript()) {
++        nsContentUtils::AddScriptRunner(
++            new nsMenuObjectContainerOpeningRunnable(this));
++        return;
++    }
++
++    UpdateContentAttributes();
++
++    nsIPresShell *shell = mContent->OwnerDoc()->GetShell();
++    if (shell) {
++        nsRefPtr<nsStyleContext> sc =
++            nsComputedDOMStyle::GetStyleContextForElementNoFlush(
++                mContent->AsElement(), nullptr, shell);
++
++        Update(sc);
++    }
++}
++
++nsMenuObject*
 +nsMenuObjectContainer::CreateChild(nsIContent *aContent, nsresult *aRv)
 +{
 +    nsMenuObjectConstructor ctor = GetMenuObjectConstructor(aContent);
@@ -3222,7 +3369,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +        return nullptr;
 +    }
 +
-+    nsRefPtr<nsMenuObject> res = ctor(this, aContent);
++    nsMenuObject *res = ctor(this, aContent);
 +    if (!res) {
 +        if (aRv) {
 +            *aRv = NS_ERROR_FAILURE;
@@ -3233,7 +3380,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +    if (aRv) {
 +        *aRv = NS_OK;
 +    }
-+    return res.forget();
++    return res;
 +}
 +
 +uint32_t
@@ -3261,11 +3408,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.cpp
 +
 +    return aContent;
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h	2013-05-13 10:08:04.126042154 +0100
-@@ -0,0 +1,180 @@
+diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuObject.h
+@@ -0,0 +1,160 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3277,39 +3424,32 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h
 +#define __nsMenuObject_h__
 +
 +#include "nsIContent.h"
-+#include "imgINotificationObserver.h"
 +#include "nsAutoPtr.h"
-+#include "imgRequestProxy.h"
-+#include "nsRect.h"
 +#include "nsCOMPtr.h"
 +#include "nsTArray.h"
-+#include "nsIURI.h"
 +#include "mozilla/Attributes.h"
 +
 +#include "nsNativeMenuDocListener.h"
 +#include "nsDbusmenu.h"
 +
 +class nsIAtom;
-+class nsMenuBar;
++class nsStyleContext;
 +class nsMenuObjectContainer;
++class nsMenuObjectIconLoader;
 +
 +/*
 + * This is the base class for all menu nodes. Each instance represents
 + * a single node in the menu hierarchy. It wraps the corresponding DOM node and
 + * native menu node, keeps them in sync and transfers events between the two.
-+ * It is reference counted only for the purpose of guaranteeing it stays alive
-+ * during asynchronous operations. Each node is owned by its parent (the top
-+ * level menubar is owned by the window) and keeps a weak reference to its
-+ * parent. Nodes must not outlive their parents, so it is not safe to hold a
-+ * strong reference to this externally. If you hold a strong reference internally
-+ * during an asynchronous operation, consider that the parent might disappear
-+ * before this.
++ * It is not reference counted - each node is owned by its parent (the top
++ * level menubar is owned by the window) and keeps a weak pointer to its
++ * parent (which is guaranteed to always be valid because a node will never
++ * outlive its parent). It is not safe to keep a reference to nsMenuObject
++ * externally.
 + */
 +class nsMenuObject : public nsNativeMenuChangeObserver
 +{
 +public:
-+    NS_INLINE_DECL_REFCOUNTING(nsMenuObject)
-+
 +    enum EType {
 +        eType_MenuBar,
 +        eType_Menu,
@@ -3331,8 +3471,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h
 +
 +    virtual ~nsMenuObject();
 +
-+    // Get the native menu item node. Will return null if not created yet
-+    DbusmenuMenuitem* GetNativeData() { return mNativeData; }
++    // Get the native menu item node
++    DbusmenuMenuitem* GetNativeData() const { return mNativeData; }
 +
 +    // Get the parent menu object
 +    nsMenuObjectContainer* Parent() const { return mParent; }
@@ -3343,11 +3483,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h
 +    // Get the type of this node. Must be provided by subclasses
 +    virtual EType Type() const = 0;
 +
-+    // Get the top-level menubar that this object belongs to
-+    nsMenuBar* MenuBar();
-+
 +    // Get the document listener
-+    nsNativeMenuDocListener* DocListener() { return mListener; }
++    nsNativeMenuDocListener* DocListener() const { return mListener; }
 +
 +    // Create the native menu item node (called by containers)
 +    void CreateNativeData();
@@ -3355,51 +3492,29 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h
 +    // Adopt the specified native menu item node (called by containers)
 +    nsresult AdoptNativeData(DbusmenuMenuitem *aNativeData);
 +
-+    // Update properties that should be refreshed when the container opens
-+    virtual void Update() { };
++    // Called by the container to tell us that it's opening
++    void ContainerIsOpening();
 +
 +protected:
 +    nsMenuObject() :
++        mParent(nullptr),
 +        mNativeData(nullptr),
-+        mParent(nullptr) { };
++        mIconLoader(nullptr) { };
 +    nsresult Init(nsMenuObjectContainer *aParent, nsIContent *aContent);
 +
-+    void SyncLabelFromContent();
-+    void SyncVisibilityFromContent();
-+    void SyncSensitivityFromContent();
-+    void SyncIconFromContent();
++    void UpdateLabel();
++    void UpdateVisibility(nsStyleContext *aStyleContext);
++    void UpdateSensitivity();
++    void UpdateIcon(nsStyleContext *aStyleContext);
 +   
-+    DbusmenuMenuitem *mNativeData;
 +    nsCOMPtr<nsIContent> mContent;
 +    nsRefPtr<nsNativeMenuDocListener> mListener;
 +    nsMenuObjectContainer *mParent;
 +
 +private:
-+    friend class IconLoader;
++    friend class nsMenuObjectIconLoader;
 +
-+    class IconLoader MOZ_FINAL : public imgINotificationObserver {
-+    public:
-+        NS_DECL_ISUPPORTS
-+        NS_DECL_IMGINOTIFICATIONOBSERVER
-+
-+        IconLoader(nsMenuObject *aOwner) : mOwner(aOwner),
-+                                           mIconLoaded(false) { };
-+
-+        void ScheduleIconLoad();
-+        void LoadIcon();
-+        void Destroy();
-+
-+    private:
-+        ~IconLoader() { };
-+
-+        nsMenuObject *mOwner;
-+        nsRefPtr<imgRequestProxy> mImageRequest;
-+        nsCOMPtr<nsIURI> mURI;
-+        nsIntRect mImageRect;
-+        uint8_t mIconLoaded;
-+    };
-+
-+    // Set up initial properties on the native data.
++    // Set up initial properties on the native data, connect to signals etc.
 +    // This should be implemented by subclasses
 +    virtual void InitializeNativeData() { };
 +
@@ -3411,20 +3526,32 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h
 +
 +    // Determine whether this menu object could use the specified
 +    // native item. Returns true by default but can be overridden by subclasses
-+    virtual bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) { return true; }
++    virtual bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const { return true; }
++
++    // Update attributes on this objects content node when the container opens.
++    // This is called before style resolution, and should be implemented by
++    // subclasses who want to modify attributes that might affect style.
++    // This will not be called when there are script blockers
++    virtual void UpdateContentAttributes() { };
++
++    // Update properties that should be refreshed when the container opens.
++    // This should be implemented by subclasses that have properties which
++    // need refreshing
++    virtual void Update(nsStyleContext *aStyleContext) { };
 +
 +    void RemoveUnsupportedProperties();
 +    bool ShouldShowIcon() const;
 +    void ClearIcon();
 +
-+    nsRefPtr<IconLoader> mIconLoader;
++    DbusmenuMenuitem *mNativeData;
++    nsMenuObjectIconLoader *mIconLoader;
 +};
 +
 +// Base class for containers (menus and menubars)
 +class nsMenuObjectContainer : public nsMenuObject
 +{
 +public:
-+    typedef nsTArray<nsRefPtr<nsMenuObject> > storage_type;
++    typedef nsTArray<nsAutoPtr<nsMenuObject> > ChildTArray;
 +
 +    // Determine if this container is being displayed on screen. Must be
 +    // implemented by subclasses
@@ -3434,23 +3561,23 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuObject.h
 +    // menu system
 +    static nsIContent* GetPreviousSupportedSibling(nsIContent *aContent);
 +
-+    static const storage_type::index_type NoIndex;
++    static const ChildTArray::index_type NoIndex;
 +
 +protected:
 +    nsMenuObjectContainer() : nsMenuObject() { };
 +
-+    already_AddRefed<nsMenuObject> CreateChild(nsIContent *aContent, nsresult *aRv);
++    nsMenuObject* CreateChild(nsIContent *aContent, nsresult *aRv);
 +    uint32_t IndexOf(nsIContent *aChild);
 +
-+    storage_type mMenuObjects;
++    ChildTArray mMenuObjects;
 +};
 +
 +#endif /* __nsMenuObject_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.cpp	2013-05-13 10:08:04.126042154 +0100
-@@ -0,0 +1,65 @@
+diff --git a/widget/gtk2/nsMenuSeparator.cpp b/widget/gtk2/nsMenuSeparator.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuSeparator.cpp
+@@ -0,0 +1,64 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3462,19 +3589,26 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.cpp
 +#include "nsIContent.h"
 +#include "nsIAtom.h"
 +#include "nsCRT.h"
++#include "nsAutoPtr.h"
 +
 +#include "nsDbusmenu.h"
 +
 +void
 +nsMenuSeparator::InitializeNativeData()
 +{
-+    dbusmenu_menuitem_property_set(mNativeData,
++    dbusmenu_menuitem_property_set(GetNativeData(),
 +                                   DBUSMENU_MENUITEM_PROP_TYPE,
 +                                   "separator");
 +}
 +
++void
++nsMenuSeparator::Update(nsStyleContext *aContext)
++{
++    UpdateVisibility(aContext);
++}
++
 +bool
-+nsMenuSeparator::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData)
++nsMenuSeparator::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
 +{
 +    return nsCRT::strcmp(dbusmenu_menuitem_property_get(aNativeData,
 +                                                        DBUSMENU_MENUITEM_PROP_TYPE),
@@ -3491,11 +3625,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.cpp
 +    MOZ_COUNT_DTOR(nsMenuSeparator);
 +}
 +
-+/* static */ already_AddRefed<nsMenuObject>
++/* static */ nsMenuObject*
 +nsMenuSeparator::Create(nsMenuObjectContainer *aParent,
 +                        nsIContent *aContent)
 +{
-+    nsRefPtr<nsMenuSeparator> sep = new nsMenuSeparator();
++    nsAutoPtr<nsMenuSeparator> sep(new nsMenuSeparator());
 +    if (NS_FAILED(sep->Init(aParent, aContent))) {
 +        return nullptr;
 +    }
@@ -3504,22 +3638,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.cpp
 +}
 +
 +void
-+nsMenuSeparator::Update()
-+{
-+    SyncVisibilityFromContent();
-+}
-+
-+void
 +nsMenuSeparator::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
 +{
 +    NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");
-+
-+    SyncVisibilityFromContent();
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.h	2013-05-13 10:08:04.126042154 +0100
+diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuSeparator.h
 @@ -0,0 +1,48 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3548,17 +3674,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.h
 +        return nsMenuObject::eType_MenuSeparator;
 +    }
 +
-+    static already_AddRefed<nsMenuObject> Create(nsMenuObjectContainer *aParent,
-+                                                 nsIContent *aContent);
++    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
++                                nsIContent *aContent);
 +
-+    void Update();
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
 +
 +private:
 +    nsMenuSeparator();
 +
 +    void InitializeNativeData();
-+    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData);
++    void Update(nsStyleContext *aStyleContext);
++    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
 +
 +    nsMenuObject::PropertyFlags SupportedProperties() const {
 +        return nsMenuObject::PropertyFlags(
@@ -3569,10 +3695,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsMenuSeparator.h
 +};
 +
 +#endif /* __nsMenuSeparator_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtomList.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtomList.h	2013-05-13 10:08:04.126042154 +0100
+diff --git a/widget/gtk2/nsNativeMenuAtomList.h b/widget/gtk2/nsNativeMenuAtomList.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuAtomList.h
 @@ -0,0 +1,11 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3585,10 +3711,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtomList.
 +WIDGET_ATOM2(_moz_menupopupstate, "_moz-menupopupstate")
 +WIDGET_ATOM(openedwithkey)
 +WIDGET_ATOM(shellshowingmenubar)
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtoms.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtoms.cpp	2013-05-13 10:08:04.126042154 +0100
+diff --git a/widget/gtk2/nsNativeMenuAtoms.cpp b/widget/gtk2/nsNativeMenuAtoms.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuAtoms.cpp
 @@ -0,0 +1,39 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3629,10 +3755,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtoms.cpp
 +{
 +    NS_RegisterStaticAtoms(gAtoms);
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtoms.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtoms.h	2013-05-13 10:08:04.126042154 +0100
+diff --git a/widget/gtk2/nsNativeMenuAtoms.h b/widget/gtk2/nsNativeMenuAtoms.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuAtoms.h
 @@ -0,0 +1,25 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3659,11 +3785,11 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuAtoms.h
 +};
 +
 +#endif /* __nsNativeMenuAtoms_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListener.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListener.cpp	2013-05-13 10:08:04.126042154 +0100
-@@ -0,0 +1,371 @@
+diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuDocListener.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuDocListener.cpp
+@@ -0,0 +1,379 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3677,6 +3803,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +#include "mozilla/dom/Element.h"
 +#include "nsINode.h"
 +#include "mozilla/DebugOnly.h"
++#include "mozilla/Assertions.h"
 +
 +#include "nsMenuObject.h"
 +
@@ -3684,7 +3811,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +
 +uint32_t nsNativeMenuDocListener::sUpdateDepth = 0;
 +
-+nsNativeMenuDocListener::listener_array_type *gPendingListeners;
++nsNativeMenuDocListenerTArray *gPendingListeners;
 +
 +/*
 + * Small helper which caches a single listener, so that consecutive
@@ -3773,6 +3900,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +void
 +nsNativeMenuDocListener::FlushPendingMutations()
 +{
++    // We assert this because we need to avoid the following scenario:
++    // 1. We deliver a mutation to object A
++    // 2. Object A creates a script runner, with a pointer back to itself
++    // 3. We deliver a mutation to the parent of A, which deletes A
++    // 4. We run a script runner with a dangling pointer
++    MOZ_ASSERT(nsContentUtils::IsSafeToRunScript(),
++               "We cannot safely flush when there are script blockers!");
++
 +    nsIContent *batchTarget = nullptr;
 +    bool inUpdateBatch = false;
 +
@@ -3822,17 +3957,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +    NS_ASSERTION(sUpdateDepth > 0, "Shouldn't be doing this now");
 +
 +    if (!gPendingListeners) {
-+        gPendingListeners = new listener_array_type;
++        gPendingListeners = new nsNativeMenuDocListenerTArray;
 +    }
 +
 +    if (gPendingListeners->IndexOf(aListener) ==
-+        listener_array_type::NoIndex) {
++        nsNativeMenuDocListenerTArray::NoIndex) {
 +        gPendingListeners->AppendElement(aListener);
 +    }
 +}
 +
 +/* static */ void
-+nsNativeMenuDocListener::UnscheduleFlush(nsNativeMenuDocListener *aListener)
++nsNativeMenuDocListener::CancelFlush(nsNativeMenuDocListener *aListener)
 +{
 +    if (!gPendingListeners) {
 +        return;
@@ -3871,9 +4006,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +
 +nsNativeMenuDocListener::~nsNativeMenuDocListener()
 +{
-+    NS_ASSERTION(mContentToObserverTable.Count() == 0,
-+                 "Some nodes forgot to unregister listeners");
-+    UnscheduleFlush(this);
++    MOZ_ASSERT(mContentToObserverTable.Count() == 0,
++               "Some nodes forgot to unregister listeners. This is bad! (and we're lucky we made it this far)");
 +    MOZ_COUNT_DTOR(nsNativeMenuDocListener);
 +}
 +
@@ -4032,14 +4166,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +        mDocument = nullptr;
 +    }
 +
-+    UnscheduleFlush(this);
++    CancelFlush(this);
 +    mPendingMutations.Clear();
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListener.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListener.h	2013-05-13 10:08:04.130042154 +0100
-@@ -0,0 +1,146 @@
+diff --git a/widget/gtk2/nsNativeMenuDocListener.h b/widget/gtk2/nsNativeMenuDocListener.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuDocListener.h
+@@ -0,0 +1,143 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4062,9 +4196,6 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +class nsIDocument;
 +class nsNativeMenuChangeObserver;
 +
-+class nsNativeMenuAutoSuspendMutations;
-+class nsNativeMenuDocListenerFlushRunnable;
-+
 +/*
 + * This class keeps a mapping of content nodes to observers and forwards DOM
 + * mutations to these. There is exactly one of these for every menubar.
@@ -4072,8 +4203,6 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +class nsNativeMenuDocListener MOZ_FINAL : nsStubMutationObserver
 +{
 +public:
-+    typedef nsTArray<nsNativeMenuDocListener *> listener_array_type;
-+
 +    NS_DECL_ISUPPORTS
 +    NS_DECL_NSIMUTATIONOBSERVER_ATTRIBUTECHANGED
 +    NS_DECL_NSIMUTATIONOBSERVER_CONTENTAPPENDED
@@ -4130,7 +4259,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +    void DoEndUpdateBatch(nsIContent *aTarget);
 +    void FlushPendingMutations();
 +    static void ScheduleFlush(nsNativeMenuDocListener *aListener);
-+    static void UnscheduleFlush(nsNativeMenuDocListener *aListener);
++    static void CancelFlush(nsNativeMenuDocListener *aListener);
 +    static void BeginUpdates() { ++sUpdateDepth; }
 +    static void EndUpdates();
 +
@@ -4143,6 +4272,8 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +
 +    static uint32_t sUpdateDepth;
 +};
++
++typedef nsTArray<nsRefPtr<nsNativeMenuDocListener> > nsNativeMenuDocListenerTArray;
 +
 +class nsNativeMenuChangeObserver
 +{
@@ -4186,10 +4317,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuDocListen
 +};
 +
 +#endif /* __nsNativeMenuDocListener_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.cpp
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.cpp	2013-05-13 10:08:04.130042154 +0100
+diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuService.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuService.cpp
 @@ -0,0 +1,503 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4228,7 +4359,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.c
 +bool nsNativeMenuService::sShutdown = false;
 +
 +extern PangoLayout* gPangoLayout;
-+extern nsNativeMenuDocListener::listener_array_type* gPendingListeners;
++extern nsNativeMenuDocListenerTArray* gPendingListeners;
 +
 +static const nsTArray<nsMenuBar *>::index_type NoIndex = nsTArray<nsMenuBar *>::NoIndex;
 +
@@ -4673,7 +4804,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.c
 +    NS_ENSURE_ARG(aParent);
 +    NS_ENSURE_ARG(aMenuBarNode);
 +
-+    nsRefPtr<nsMenuBar> menubar = nsMenuBar::Create(aParent, aMenuBarNode);
++    nsAutoPtr<nsMenuBar> menubar(nsMenuBar::Create(aParent, aMenuBarNode));
 +    if (!menubar) {
 +        NS_WARNING("Failed to create menubar");
 +        return NS_ERROR_FAILURE;
@@ -4690,14 +4821,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.c
 +    mMenuBars.AppendElement(menubar);
 +    RegisterNativeMenuBar(menubar);
 +
-+    static_cast<nsWindow *>(aParent)->SetMenuBar(menubar);
++    static_cast<nsWindow *>(aParent)->SetMenuBar(menubar.forget());
 +
 +    return NS_OK;
 +}
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.h	2013-05-13 10:08:04.130042154 +0100
+diff --git a/widget/gtk2/nsNativeMenuService.h b/widget/gtk2/nsNativeMenuService.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuService.h
 @@ -0,0 +1,90 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4789,10 +4920,10 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuService.h
 +};
 +
 +#endif /* __nsNativeMenuService_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuUtils.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuUtils.h	2013-05-13 10:08:04.130042154 +0100
+diff --git a/widget/gtk2/nsNativeMenuUtils.h b/widget/gtk2/nsNativeMenuUtils.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsNativeMenuUtils.h
 @@ -0,0 +1,70 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4864,11 +4995,15 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsNativeMenuUtils.h
 +};
 +
 +#endif /* __nsNativeMenuUtils_h__ */
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/widget/gtk2/nsWidgetFactory.cpp	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp	2013-05-13 10:08:04.130042154 +0100
-@@ -42,6 +42,9 @@
+diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
+--- a/widget/gtk2/nsWidgetFactory.cpp
++++ b/widget/gtk2/nsWidgetFactory.cpp
+@@ -37,16 +37,19 @@
+ #include "nsImageToPixbuf.h"
+ #include "nsPrintDialogGTK.h"
+ 
+ #if defined(MOZ_X11)
+ #include "nsIdleServiceGTK.h"
  #include "GfxInfoX11.h"
  #endif
  
@@ -4878,7 +5013,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp
  #ifdef NATIVE_THEME_SUPPORT
  #include "nsNativeThemeGTK.h"
  #endif
-@@ -118,6 +121,9 @@
+ 
+ #include "nsIComponentRegistrar.h"
+ #include "nsComponentManagerUtils.h"
+ #include "nsAutoPtr.h"
+ #include <gtk/gtk.h>
+@@ -113,16 +116,19 @@ nsNativeThemeGTKConstructor(nsISupports 
+ namespace mozilla {
+ namespace widget {
+ // This constructor should really be shared with all platforms.
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(GfxInfo, Init)
+ }
  }
  #endif
  
@@ -4888,7 +5033,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp
  #ifdef NS_PRINTING
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsDeviceContextSpecGTK)
  NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintOptionsGTK, Init)
-@@ -228,6 +234,7 @@
+ NS_GENERIC_FACTORY_CONSTRUCTOR(nsPrinterEnumeratorGTK)
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintSession, Init)
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintDialogServiceGTK, Init)
+ #endif
+ 
+@@ -223,16 +229,17 @@ NS_DEFINE_NAMED_CID(NS_PRINTSESSION_CID)
+ NS_DEFINE_NAMED_CID(NS_DEVICE_CONTEXT_SPEC_CID);
+ NS_DEFINE_NAMED_CID(NS_PRINTDIALOGSERVICE_CID);
+ #endif 
+ NS_DEFINE_NAMED_CID(NS_IMAGE_TO_PIXBUF_CID);
+ #if defined(MOZ_X11)
  NS_DEFINE_NAMED_CID(NS_IDLE_SERVICE_CID);
  NS_DEFINE_NAMED_CID(NS_GFXINFO_CID);
  #endif
@@ -4896,7 +5051,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp
  
  
  static const mozilla::Module::CIDEntry kWidgetCIDs[] = {
-@@ -263,6 +270,7 @@
+     { &kNS_WINDOW_CID, false, NULL, nsWindowConstructor },
+     { &kNS_CHILD_CID, false, NULL, nsChildWindowConstructor },
+     { &kNS_APPSHELL_CID, false, NULL, nsAppShellConstructor },
+     { &kNS_FILEPICKER_CID, false, NULL, nsFilePickerConstructor },
+     { &kNS_SOUND_CID, false, NULL, nsSoundConstructor },
+@@ -258,16 +265,17 @@ static const mozilla::Module::CIDEntry k
+     { &kNS_DEVICE_CONTEXT_SPEC_CID, false, NULL, nsDeviceContextSpecGTKConstructor },
+     { &kNS_PRINTDIALOGSERVICE_CID, false, NULL, nsPrintDialogServiceGTKConstructor },
+ #endif 
+     { &kNS_IMAGE_TO_PIXBUF_CID, false, NULL, nsImageToPixbufConstructor },
+ #if defined(MOZ_X11)
      { &kNS_IDLE_SERVICE_CID, false, NULL, nsIdleServiceGTKConstructor },
      { &kNS_GFXINFO_CID, false, NULL, mozilla::widget::GfxInfoConstructor },
  #endif
@@ -4904,7 +5069,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp
      { NULL }
  };
  
-@@ -299,6 +307,7 @@
+ static const mozilla::Module::ContractIDEntry kWidgetContracts[] = {
+     { "@mozilla.org/widget/window/gtk;1", &kNS_WINDOW_CID },
+     { "@mozilla.org/widgets/child_window/gtk;1", &kNS_CHILD_CID },
+     { "@mozilla.org/widget/appshell/gtk;1", &kNS_APPSHELL_CID },
+     { "@mozilla.org/filepicker;1", &kNS_FILEPICKER_CID },
+@@ -294,33 +302,43 @@ static const mozilla::Module::ContractID
+     { "@mozilla.org/gfx/devicecontextspec;1", &kNS_DEVICE_CONTEXT_SPEC_CID },
+     { NS_PRINTDIALOGSERVICE_CONTRACTID, &kNS_PRINTDIALOGSERVICE_CID },
+ #endif 
+     { "@mozilla.org/widget/image-to-gdk-pixbuf;1", &kNS_IMAGE_TO_PIXBUF_CID },
+ #if defined(MOZ_X11)
      { "@mozilla.org/widget/idleservice;1", &kNS_IDLE_SERVICE_CID },
      { "@mozilla.org/gfx/info;1", &kNS_GFXINFO_CID },
  #endif
@@ -4912,7 +5087,14 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp
      { NULL }
  };
  
-@@ -313,13 +322,22 @@
+ static void
+ nsWidgetGtk2ModuleDtor()
+ {
+   nsLookAndFeel::Shutdown();
+   nsFilePicker::Shutdown();
+   nsSound::Shutdown();
+   nsWindow::ReleaseGlobals();
+   nsGTKToolkit::Shutdown();
    nsAppShellShutdown();
  }
  
@@ -4936,11 +5118,16 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWidgetFactory.cpp
      nsWidgetGtk2ModuleDtor
  };
  
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWindow.cpp
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/widget/gtk2/nsWindow.cpp	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWindow.cpp	2013-05-13 10:08:04.130042154 +0100
-@@ -4731,6 +4731,11 @@
+ NSMODULE_DEFN(nsWidgetGtk2Module) = &kWidgetModule;
+diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
+--- a/widget/gtk2/nsWindow.cpp
++++ b/widget/gtk2/nsWindow.cpp
+@@ -4726,16 +4726,21 @@ nsWindow::HideWindowChrome(bool aShouldH
+     XSync(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()) , False);
+ #else
+     gdk_flush ();
+ #endif /* MOZ_X11 */
+ 
      return NS_OK;
  }
  
@@ -4952,11 +5139,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWindow.cpp
  bool
  nsWindow::CheckForRollup(gdouble aMouseX, gdouble aMouseY,
                           bool aIsWheel, bool aAlwaysRollup)
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWindow.h
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/widget/gtk2/nsWindow.h	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWindow.h	2013-05-13 10:08:04.130042154 +0100
-@@ -36,6 +36,8 @@
+ {
+     nsIRollupListener* rollupListener = GetActiveRollupListener();
+     nsCOMPtr<nsIWidget> rollupWidget;
+     if (rollupListener) {
+         rollupWidget = rollupListener->GetRollupWidget();
+diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
+--- a/widget/gtk2/nsWindow.h
++++ b/widget/gtk2/nsWindow.h
+@@ -31,16 +31,18 @@
+ #endif /* MOZ_X11 */
+ 
+ #ifdef ACCESSIBILITY
+ #include "mozilla/a11y/Accessible.h"
+ #endif
  
  #include "nsGtkIMModule.h"
  
@@ -4965,7 +5161,17 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWindow.h
  #ifdef MOZ_LOGGING
  
  // make sure that logging is enabled before including prlog.h
-@@ -152,6 +154,8 @@
+ #define FORCE_PR_LOG
+ 
+ #include "prlog.h"
+ #include "nsTArray.h"
+ 
+@@ -147,16 +149,18 @@ public:
+                                            bool aDoCapture);
+     NS_IMETHOD         GetAttention(int32_t aCycleCount);
+ 
+     virtual bool       HasPendingInputEvent();
+ 
      NS_IMETHOD         MakeFullScreen(bool aFullScreen);
      NS_IMETHOD         HideWindowChrome(bool aShouldHide);
  
@@ -4974,20 +5180,39 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/gtk2/nsWindow.h
      /**
       * GetLastUserInputTime returns a timestamp for the most recent user input
       * event.  This is intended for pointer grab requests (including drags).
-@@ -451,6 +455,8 @@
+      */
+     static guint32     GetLastUserInputTime();
+ 
+     // utility method, -1 if no change should be made, otherwise returns a
+     // value that can be passed to gdk_window_set_decorations
+@@ -446,16 +450,18 @@ private:
+      * The instance is created when the top level widget is created.  And when
+      * the widget is destroyed, it's released.  All child windows refer its
+      * ancestor widget's instance.  So, one set of IM contexts is created for
+      * all windows in a hierarchy.  If the children are released after the top
+      * level window is released, the children still have a valid pointer,
       * however, IME doesn't work at that time.
       */
      nsRefPtr<nsGtkIMModule> mIMModule;
 +
-+    nsRefPtr<nsMenuBar> mMenuBar;
++    nsAutoPtr<nsMenuBar> mMenuBar;
  };
  
  class nsChildWindow : public nsWindow {
-Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/moz.build
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/widget/moz.build	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/widget/moz.build	2013-05-13 10:08:04.130042154 +0100
-@@ -37,8 +37,7 @@
+ public:
+     nsChildWindow();
+     ~nsChildWindow();
+ };
+ 
+diff --git a/widget/moz.build b/widget/moz.build
+--- a/widget/moz.build
++++ b/widget/moz.build
+@@ -32,25 +32,27 @@ if toolkit == 'windows':
+ elif toolkit == 'cocoa':
+     XPIDL_SOURCES += [
+         'nsIMacDockSupport.idl',
+         'nsIMacWebAppUtils.idl',
+         'nsIStandaloneNativeMenu.idl',
          'nsITaskbarProgress.idl',
      ]
      EXPORTS += [
@@ -4997,7 +5222,7 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/moz.build
      ]
  elif toolkit == 'os2':
      XPIDL_SOURCES += [
-@@ -46,6 +45,9 @@
+         'nsIRwsService.idl',
      ]
      EXPORTS += ['nsIDragSessionOS2.h']
  
@@ -5007,11 +5232,20 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/widget/moz.build
  TEST_TOOL_DIRS += ['tests']
  
  # Don't build the DSO under the 'build' directory as windows does.
-Index: firefox-trunk-23.0~a1~hg20130512r131644/xpfe/appshell/src/nsWebShellWindow.cpp
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/xpfe/appshell/src/nsWebShellWindow.cpp	2013-05-13 10:08:04.134042154 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/xpfe/appshell/src/nsWebShellWindow.cpp	2013-05-13 10:08:04.130042154 +0100
-@@ -57,6 +57,7 @@
+ #
+ # The DSOs get built in the toolkit dir itself.  Do this so that
+ # multiple implementations of widget can be built on the same
+ # source tree.
+ #
+diff --git a/xpfe/appshell/src/nsWebShellWindow.cpp b/xpfe/appshell/src/nsWebShellWindow.cpp
+--- a/xpfe/appshell/src/nsWebShellWindow.cpp
++++ b/xpfe/appshell/src/nsWebShellWindow.cpp
+@@ -52,30 +52,31 @@
+ #include "nsIDocumentLoaderFactory.h"
+ #include "nsIObserverService.h"
+ #include "prprf.h"
+ 
+ #include "nsIScreenManager.h"
  #include "nsIScreen.h"
  
  #include "nsIContent.h" // for menus
@@ -5019,7 +5253,13 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/xpfe/appshell/src/nsWebShellWindo
  #include "nsIScriptSecurityManager.h"
  
  // For calculating size
-@@ -70,7 +71,7 @@
+ #include "nsIPresShell.h"
+ #include "nsPresContext.h"
+ 
+ #include "nsIBaseWindow.h"
+ #include "nsIDocShellTreeItem.h"
+ #include "nsIDocShellTreeNode.h"
+ 
  #include "nsIMarkupDocumentViewer.h"
  #include "mozilla/Attributes.h"
  
@@ -5028,32 +5268,33 @@ Index: firefox-trunk-23.0~a1~hg20130512r131644/xpfe/appshell/src/nsWebShellWindo
  #include "nsINativeMenuService.h"
  #define USE_NATIVE_MENUS
  #endif
-@@ -433,8 +434,13 @@
+ 
+ using namespace mozilla;
+ using namespace mozilla::dom;
+ 
+ /* Define Class IDs */
+@@ -428,18 +429,23 @@ static void LoadNativeMenus(nsIDOMDocume
+                                   getter_AddRefs(menubarElements));
+ 
+   nsCOMPtr<nsIDOMNode> menubarNode;
+   if (menubarElements)
+     menubarElements->Item(0, getter_AddRefs(menubarNode));
    if (!menubarNode)
      return;
  
--  nsCOMPtr<nsINativeMenuService> nms = do_GetService("@mozilla.org/widget/nativemenuservice;1");
-   nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
++  nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
 +#ifdef MOZ_WIDGET_GTK
 +  nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("_moz-menubarkeeplocal"));
 +  if (menubarContent->AttrValueIs(kNameSpaceID_None, atom, nsGkAtoms::_true, eCaseMatters))
 +    return;
 +#endif
-+  nsCOMPtr<nsINativeMenuService> nms = do_GetService("@mozilla.org/widget/nativemenuservice;1");
+   nsCOMPtr<nsINativeMenuService> nms = do_GetService("@mozilla.org/widget/nativemenuservice;1");
+-  nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
    if (nms && menubarContent)
      nms->CreateNativeMenuBar(aParentWindow, menubarContent);
  }
-Index: firefox-trunk-23.0~a1~hg20130512r131644/modules/libpref/src/init/all.js
-===================================================================
---- firefox-trunk-23.0~a1~hg20130512r131644.orig/modules/libpref/src/init/all.js	2013-05-13 10:06:01.000000000 +0100
-+++ firefox-trunk-23.0~a1~hg20130512r131644/modules/libpref/src/init/all.js	2013-05-13 10:08:53.394042410 +0100
-@@ -94,6 +94,9 @@
- pref("browser.sessionhistory.max_total_viewers", -1);
+ #endif
  
- pref("ui.use_native_colors", true);
-+#ifdef MOZ_WIDGET_GTK
-+pref("ui.use_unity_menubar", true);
-+#endif
- pref("ui.click_hold_context_menus", false);
- pref("browser.display.use_document_fonts",  1);  // 0 = never, 1 = quick, 2 = always
- pref("browser.display.use_document_colors", true);
+ namespace mozilla {
+ 
+ class WebShellWindowTimerCallback MOZ_FINAL : public nsITimerCallback

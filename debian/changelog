@@ -31,6 +31,12 @@ firefox-trunk (24.0~a1~hg20130517r132174-0ubuntu1) UNRELEASED; urgency=low
     - update debian/firefox.install.in
     - update debian/testing/run_xpcshell_tests
     - update debian/testing/testrunhelper.py
+  * Make sure bindings are always attached for menu popups, even if they
+    already have a wrapper when the menu opens
+    - update debian/patches/unity-menubar.patch
+  * Make sure bindings are attached for menu's too, so that menu.open
+    always works (finally fixes livemarks when running in Unity)
+    - update debian/patches/unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
