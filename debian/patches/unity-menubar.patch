@@ -2884,7 +2884,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,707 @@
+@@ -0,0 +1,691 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2946,12 +2946,6 @@ new file mode 100644
 +};
 +
 +const nsMenuObjectContainer::ChildTArray::index_type nsMenuObjectContainer::NoIndex = nsMenuObjectContainer::ChildTArray::NoIndex;
-+
-+static enum {
-+    eImagesInMenus_Unknown,
-+    eImagesInMenus_Hide,
-+    eImagesInMenus_Show
-+} gImagesInMenus = eImagesInMenus_Unknown;
 +
 +PangoLayout* gPangoLayout = nullptr;
 +
@@ -3163,17 +3157,6 @@ new file mode 100644
 +
 +typedef nsMenuObject* (*nsMenuObjectConstructor)(nsMenuObjectContainer*,
 +                                                 nsIContent*);
-+struct nsMenuObjectConstructorMapEntry {
-+  nsIAtom **tag;
-+  nsMenuObjectConstructor constructor;
-+};
-+
-+static const nsMenuObjectConstructorMapEntry kConstructorMap[] = {
-+  { &nsGkAtoms::menuitem,      nsMenuItem::Create      },
-+  { &nsGkAtoms::menu,          nsMenu::Create          },
-+  { &nsGkAtoms::menuseparator, nsMenuSeparator::Create }
-+};
-+
 +static nsMenuObjectConstructor
 +GetMenuObjectConstructor(nsIContent *aContent)
 +{
@@ -3181,10 +3164,13 @@ new file mode 100644
 +        return nullptr;
 +    }
 +
-+    for (uint32_t i = 0; i < ArrayLength(kConstructorMap); ++i) {
-+        if (aContent->Tag() == *kConstructorMap[i].tag) {
-+            return kConstructorMap[i].constructor;
-+        }
++    nsIAtom *tag = aContent->Tag();
++    if (tag == nsGkAtoms::menuitem) {
++        return nsMenuItem::Create;
++    } else if (tag == nsGkAtoms::menu) {
++        return nsMenu::Create;
++    } else if (tag == nsGkAtoms::menuseparator) {
++        return nsMenuSeparator::Create;
 +    }
 +
 +    return nullptr;
@@ -3249,36 +3235,25 @@ new file mode 100644
 +    return sEllipsisWidth;
 +}
 +
-+
-+void
-+nsMenuObject::RemoveUnsupportedProperties()
-+{
-+    PropertyFlags supported = SupportedProperties();
-+    PropertyFlags mask = static_cast<PropertyFlags>(1);
-+
-+    for (uint32_t i = 0; gPropertyStrings[i]; ++i) {
-+        if (!(mask & supported)) {
-+            dbusmenu_menuitem_property_remove(mNativeData, gPropertyStrings[i]);
-+        }
-+        mask = PropertyFlags(mask << 1);
-+    }
-+}
-+
 +bool
 +nsMenuObject::ShouldShowIcon() const
 +{
++    static bool known = false;
++    static bool showImagesInMenus = false;
++
 +    // Ideally we want to know the visibility of the anonymous XUL image in
 +    // our menuitem, but this isn't created because we don't have a frame.
 +    // The following works by default (because xul.css hides images in menuitems
 +    // that don't have the "menuitem-with-favicon" class, when eIntID_ImagesInMenus
 +    // is false). It's possible a third party theme could override this, but,
 +    // oh well...
-+    if (gImagesInMenus == eImagesInMenus_Unknown) {
-+        gImagesInMenus = LookAndFeel::GetInt(LookAndFeel::eIntID_ImagesInMenus) ?
-+            eImagesInMenus_Show : eImagesInMenus_Hide;
++    if (!known) {
++        showImagesInMenus =
++            LookAndFeel::GetInt(LookAndFeel::eIntID_ImagesInMenus);
++        known = true;
 +    }
 +
-+    if (gImagesInMenus == eImagesInMenus_Show) {
++    if (showImagesInMenus) {
 +        return true;
 +    }
 +
@@ -3508,7 +3483,16 @@ new file mode 100644
 +    mNativeData = aNativeData;
 +    g_object_ref(mNativeData);
 +
-+    RemoveUnsupportedProperties();
++    PropertyFlags supported = SupportedProperties();
++    PropertyFlags mask = static_cast<PropertyFlags>(1);
++
++    for (uint32_t i = 0; gPropertyStrings[i]; ++i) {
++        if (!(mask & supported)) {
++            dbusmenu_menuitem_property_remove(mNativeData, gPropertyStrings[i]);
++        }
++        mask = PropertyFlags(mask << 1);
++    }
++
 +    InitializeNativeData();
 +    if (mParent && mParent->IsBeingDisplayed()) {
 +        ContainerIsOpening();
@@ -3596,7 +3580,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,169 @@
+@@ -0,0 +1,168 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3732,7 +3716,6 @@ new file mode 100644
 +    // need refreshing
 +    virtual void Update(nsStyleContext *aStyleContext) { };
 +
-+    void RemoveUnsupportedProperties();
 +    bool ShouldShowIcon() const;
 +    void ClearIcon();
 +
