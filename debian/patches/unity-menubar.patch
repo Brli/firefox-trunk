@@ -3965,7 +3965,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuD
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,381 @@
+@@ -0,0 +1,378 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4164,9 +4164,6 @@ new file mode 100644
 +                gPendingListeners->RemoveElementAt(0);
 +            }
 +        }
-+
-+        delete gPendingListeners;
-+        gPendingListeners = nullptr;
 +    }
 + 
 +    NS_ASSERTION(sUpdateDepth > 0, "Negative update depth!");
