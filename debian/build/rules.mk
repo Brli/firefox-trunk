@@ -364,7 +364,7 @@ install-searchplugins-IMPL-%:
 			$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang);)
 
 $(patsubst %,binary-fixup/%,$(DEB_ALL_PACKAGES)) :: binary-fixup/%:
-	find debian/$(cdbs_curpkg) -type f -perm -5 \( -name '*.zip' -or -name '*.xml' \) -print0 2>/dev/null | xargs -0r chmod 644
+	find debian/$(cdbs_curpkg) -type f -perm -5 \( -name '*.zip' -or -name '*.xml' -or -name '*.js' -or -name '*.manifest' -or -name '*.xpt' \) -print0 2>/dev/null | xargs -0r chmod 644
 	$(foreach f,$(call cdbs_expand_curvar,MOZ_EXECUTABLES),chmod a+x debian/$(cdbs_curpkg)/$(f);)
 
 binary-predeb/$(MOZ_PKG_NAME)::

@@ -37,6 +37,8 @@ firefox-trunk (24.0~a1~hg20130520r132364-0ubuntu1) UNRELEASED; urgency=low
   * Make sure bindings are attached for menu's too, so that menu.open
     always works (finally fixes livemarks when running in Unity)
     - update debian/patches/unity-menubar.patch
+  * Remove the executable bit from more file types
+    - update debian/build/rules.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
