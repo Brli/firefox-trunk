@@ -390,11 +390,174 @@ new file mode 100644
 +#define dbusmenu_menuitem_property_set_shortcut nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set_shortcut
 +
 +#endif /* __nsDbusmenu_h__ */
+diff --git a/widget/gtk2/nsDragService.cpp b/widget/gtk2/nsDragService.cpp
+--- a/widget/gtk2/nsDragService.cpp
++++ b/widget/gtk2/nsDragService.cpp
+@@ -3,16 +3,17 @@
+ /* This Source Code Form is subject to the terms of the Mozilla Public
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+ #include "nsDragService.h"
+ #include "nsIObserverService.h"
+ #include "nsWidgetsCID.h"
+ #include "nsWindow.h"
++#include "nsGtkUtils.h"
+ #include "nsIServiceManager.h"
+ #include "nsXPCOM.h"
+ #include "nsISupportsPrimitives.h"
+ #include "nsIIOService.h"
+ #include "nsIFileURL.h"
+ #include "nsNetUtil.h"
+ #include "prlog.h"
+ #include "nsTArray.h"
+@@ -41,27 +42,16 @@
+ // directly) so that this code can be compiled against versions of GTK+ that
+ // do not have GtkDragResult.
+ // GtkDragResult is available from GTK+ version 2.12.
+ enum {
+   MOZ_GTK_DRAG_RESULT_SUCCESS,
+   MOZ_GTK_DRAG_RESULT_NO_TARGET
+ };
+ 
+-// Some gobject functions expect functions for gpointer arguments.
+-// gpointer is void* but C++ doesn't like casting functions to void*.
+-template<class T> static inline gpointer
+-FuncToGpointer(T aFunction)
+-{
+-    return reinterpret_cast<gpointer>
+-        (reinterpret_cast<uintptr_t>
+-         // This cast just provides a warning if T is not a function.
+-         (reinterpret_cast<void (*)()>(aFunction)));
+-}
+-
+ static PRLogModuleInfo *sDragLm = NULL;
+ 
+ // data used for synthetic periodic motion events sent to the source widget
+ // grabbing real events for the drag.
+ static guint sMotionEventTimerID;
+ static GdkEvent *sMotionEvent;
+ static GtkWidget *sGrabWidget;
+ 
+@@ -462,17 +452,17 @@ nsDragService::StartDragSession()
+ NS_IMETHODIMP
+ nsDragService::EndDragSession(bool aDoneDrag)
+ {
+     PR_LOG(sDragLm, PR_LOG_DEBUG, ("nsDragService::EndDragSession %d",
+                                    aDoneDrag));
+ 
+     if (sGrabWidget) {
+         g_signal_handlers_disconnect_by_func(sGrabWidget,
+-             FuncToGpointer(OnSourceGrabEventAfter), this);
++             nsGtkUtils::FuncToGpointer(OnSourceGrabEventAfter), this);
+         g_object_unref(sGrabWidget);
+         sGrabWidget = NULL;
+ 
+         if (sMotionEventTimerID) {
+             g_source_remove(sMotionEventTimerID);
+             sMotionEventTimerID = 0;
+         }
+         if (sMotionEvent) {
+diff --git a/widget/gtk2/nsFilePicker.cpp b/widget/gtk2/nsFilePicker.cpp
+--- a/widget/gtk2/nsFilePicker.cpp
++++ b/widget/gtk2/nsFilePicker.cpp
+@@ -14,40 +14,30 @@
+ #include "nsIStringBundle.h"
+ 
+ #include "nsArrayEnumerator.h"
+ #include "nsMemory.h"
+ #include "nsEnumeratorUtils.h"
+ #include "nsNetUtil.h"
+ #include "nsReadableUtils.h"
+ #include "mozcontainer.h"
++#include "nsGtkUtils.h"
+ 
+ #include "nsFilePicker.h"
+ 
+ #if (MOZ_PLATFORM_MAEMO == 5)
+ #include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
+ #endif
+ 
+ using namespace mozilla;
+ 
+ #define MAX_PREVIEW_SIZE 180
+ 
+ nsIFile *nsFilePicker::mPrevDisplayDirectory = nullptr;
+ 
+-// Some GObject functions expect functions for gpointer arguments.
+-// gpointer is void* but C++ doesn't like casting functions to void*.
+-template<class T> static inline gpointer
+-FuncToGpointer(T aFunction)
+-{
+-    return reinterpret_cast<gpointer>
+-        (reinterpret_cast<uintptr_t>
+-         // This cast just provides a warning if T is not a function.
+-         (reinterpret_cast<void (*)()>(aFunction)));
+-}
+-
+ void
+ nsFilePicker::Shutdown()
+ {
+   NS_IF_RELEASE(mPrevDisplayDirectory);
+ }
+ 
+ static GtkFileChooserAction
+ GetGtkFileChooserAction(int16_t aMode)
+@@ -543,17 +533,17 @@ nsFilePicker::Done(GtkWidget* file_choos
+     default:
+     NS_WARNING("Unexpected response");
+     result = nsIFilePicker::returnCancel;
+     break;
+   }
+ 
+   // A "response" signal won't be sent again but "destroy" will be.
+   g_signal_handlers_disconnect_by_func(file_chooser,
+-                                       FuncToGpointer(OnDestroy), this);
++                                       nsGtkUtils::FuncToGpointer(OnDestroy), this);
+ 
+   // When response_id is GTK_RESPONSE_DELETE_EVENT or when called from
+   // OnDestroy, the widget would be destroyed anyway but it is fine if
+   // gtk_widget_destroy is called more than once.  gtk_widget_destroy has
+   // requests that any remaining references be released, but the reference
+   // count will not be decremented again if GtkWindow's reference has already
+   // been released.
+   gtk_widget_destroy(file_chooser);
+diff --git a/widget/gtk2/nsGtkUtils.h b/widget/gtk2/nsGtkUtils.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsGtkUtils.h
+@@ -0,0 +1,26 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsGtkUtils_h__
++#define __nsGtkUtils_h__
++
++#include <glib.h>
++
++class nsGtkUtils
++{
++public:
++    // Some gobject functions expect functions for gpointer arguments.
++    // gpointer is void* but C++ doesn't like casting functions to void*.
++    template <class T> static inline gpointer FuncToGpointer(T a)
++    {
++        return reinterpret_cast<gpointer>(
++            reinterpret_cast<uintptr_t>(
++                reinterpret_cast<void (*)()>(a)));
++    }
++};
++
++#endif // __nsGtkUtils_h__
 diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,821 @@
+@@ -0,0 +1,824 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -423,23 +586,24 @@ new file mode 100644
 +#include "nsXBLService.h"
 +#include "nsXBLBinding.h"
 +#include "nsCSSValue.h"
++#include "nsGtkUtils.h"
 +
 +#include "nsNativeMenuDocListener.h"
-+#include "nsNativeMenuUtils.h"
 +#include "nsNativeMenuAtoms.h"
 +
 +#include <glib-object.h>
 +
 +using namespace mozilla;
 +
-+class nsSetAttrRunnableNoNotify : public nsRunnable {
++class nsSetAttrRunnableNoNotify : public nsRunnable
++{
 +public:
 +    nsSetAttrRunnableNoNotify(nsIContent *aContent, nsIAtom *aAttribute,
 +                              nsAString& aValue) :
-+                              mContent(aContent), mAttribute(aAttribute),
-+                              mValue(aValue) { };
++        mContent(aContent), mAttribute(aAttribute), mValue(aValue) { };
 +
-+    NS_IMETHODIMP Run() {
++    NS_IMETHODIMP Run()
++    {
 +        return mContent->SetAttr(kNameSpaceID_None, mAttribute, mValue, false);
 +    }
 +
@@ -449,12 +613,14 @@ new file mode 100644
 +    nsAutoString mValue;
 +};
 +
-+class nsUnsetAttrRunnableNoNotify : public nsRunnable {
++class nsUnsetAttrRunnableNoNotify : public nsRunnable
++{
 +public:
 +    nsUnsetAttrRunnableNoNotify(nsIContent *aContent, nsIAtom *aAttribute) :
-+                                mContent(aContent), mAttribute(aAttribute) { };
++        mContent(aContent), mAttribute(aAttribute) { };
 +
-+    NS_IMETHODIMP Run() {
++    NS_IMETHODIMP Run()
++    {
 +        return mContent->UnsetAttr(kNameSpaceID_None, mAttribute, false);
 +    }
 +
@@ -925,10 +1091,10 @@ new file mode 100644
 +
 +    if (GetNativeData()) {
 +        g_signal_handlers_disconnect_by_func(GetNativeData(),
-+                                             nsNativeMenuUtils::FuncToVoidPtr(menu_about_to_show_cb),
++                                             nsGtkUtils::FuncToGpointer(menu_about_to_show_cb),
 +                                             this);
 +        g_signal_handlers_disconnect_by_func(GetNativeData(),
-+                                             nsNativeMenuUtils::FuncToVoidPtr(menu_event_cb),
++                                             nsGtkUtils::FuncToGpointer(menu_event_cb),
 +                                             this);
 +    }
 +
@@ -995,8 +1161,8 @@ new file mode 100644
 +        return;
 +    }
 +
-+    // We do this here as an alternative to holding a strong
-+    // reference to ourselves (and also mPopupContent)
++    // We do this to avoid mutating our view of the menu until
++    // after we have finished
 +    nsNativeMenuAutoUpdateBatch batch;
 +
 +    SetPopupState(ePopupState_Hiding);
@@ -1220,7 +1386,7 @@ diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.h
-@@ -0,0 +1,162 @@
+@@ -0,0 +1,173 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1257,7 +1423,8 @@ new file mode 100644
 +
 +    nsMenuObject::EType Type() const { return nsMenuObject::eType_Menu; }
 +
-+    bool IsBeingDisplayed() const {
++    bool IsBeingDisplayed() const
++    {
 +        return PopupState() == ePopupState_Open;
 +    }
 +
@@ -1292,10 +1459,12 @@ new file mode 100644
 +
 +    nsMenu();
 +
-+    bool NeedsBuild() const {
++    bool NeedsBuild() const
++    {
 +        return mFlags & eFlag_NeedsBuild ? true : false;
 +    }
-+    void SetNeedsBuild(bool aValue) {
++    void SetNeedsBuild(bool aValue)
++    {
 +        if (aValue) {
 +            mFlags |= eFlag_NeedsBuild;
 +        } else {
@@ -1303,10 +1472,12 @@ new file mode 100644
 +        }
 +    }
 +
-+    bool HasPlaceholderItem() const {
++    bool HasPlaceholderItem() const
++    {
 +        return mFlags & eFlag_HasPlaceholderItem ? true : false;
 +    }
-+    void SetHasPlaceholderItem(bool aValue) {
++    void SetHasPlaceholderItem(bool aValue)
++    {
 +        if (aValue) {
 +            mFlags |= eFlag_HasPlaceholderItem;
 +        } else {
@@ -1314,10 +1485,12 @@ new file mode 100644
 +        }
 +    }
 +
-+    bool IsInUpdateBatch() const {
++    bool IsInUpdateBatch() const
++    {
 +        return mFlags & eFlag_InUpdateBatch ? true : false;
 +    }
-+    void SetIsInUpdateBatch(bool aValue) {
++    void SetIsInUpdateBatch(bool aValue)
++    {
 +        if (aValue) {
 +            mFlags |= eFlag_InUpdateBatch;
 +        } else {
@@ -1325,10 +1498,12 @@ new file mode 100644
 +        }
 +    }
 +
-+    bool DidStructureMutate() const {
++    bool DidStructureMutate() const
++    {
 +        return mFlags & eFlag_StructureMutated;
 +    }
-+    void SetDidStructureMutate(bool aValue) {
++    void SetDidStructureMutate(bool aValue)
++    {
 +        if (aValue) {
 +            mFlags |= eFlag_StructureMutated;
 +        } else {
@@ -1336,8 +1511,9 @@ new file mode 100644
 +        }
 +    }
 +
-+    EPopupState PopupState() const {
-+        return EPopupState(
++    EPopupState PopupState() const
++    {
++        return static_cast<EPopupState>(
 +            (mFlags &
 +             (((1U << NSMENU_NUMBER_OF_POPUPSTATE_BITS) - 1U)
 +              << NSMENU_NUMBER_OF_FLAGS)) >> NSMENU_NUMBER_OF_FLAGS);
@@ -1368,8 +1544,9 @@ new file mode 100644
 +    nsresult AppendMenuObject(nsMenuObject *aChild);
 +    bool CanOpen() const;
 +
-+    nsMenuObject::PropertyFlags SupportedProperties() const {
-+        return nsMenuObject::PropertyFlags(
++    nsMenuObject::PropertyFlags SupportedProperties() const
++    {
++        return static_cast<nsMenuObject::PropertyFlags>(
 +            nsMenuObject::ePropLabel |
 +            nsMenuObject::ePropEnabled |
 +            nsMenuObject::ePropVisible |
@@ -1387,7 +1564,7 @@ diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.cpp
-@@ -0,0 +1,560 @@
+@@ -0,0 +1,559 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1399,7 +1576,6 @@ new file mode 100644
 +#include "nsIWidget.h"
 +#include "nsIDOMKeyEvent.h"
 +#include "mozilla/Preferences.h"
-+#include "nsIAtom.h"
 +#include "mozilla/dom/Element.h"
 +#include "nsTArray.h"
 +#include "nsIDOMEvent.h"
@@ -1952,7 +2128,7 @@ diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.h
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,138 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1979,6 +2155,7 @@ new file mode 100644
 +class nsIContent;
 +class nsIDOMEvent;
 +class nsIDOMKeyEvent;
++class nsIAtom;
 +
 +/*
 + * The menubar class. There is one of these per window (and the window
@@ -2007,18 +2184,21 @@ new file mode 100644
 +
 +    // Initializes and returns a cancellable request object, used
 +    // by the menuservice when registering this menubar
-+    nsNativeMenuGIORequest& BeginRegisterRequest() {
++    nsNativeMenuGIORequest& BeginRegisterRequest()
++    {
 +        mRegisterRequestCanceller.Start();
 +        return mRegisterRequestCanceller;
 +    }
 +
 +    // Finishes the current request to register the menubar
-+    void EndRegisterRequest() {
++    void EndRegisterRequest()
++    {
 +        NS_ASSERTION(RegisterRequestInProgress(), "No request in progress");
 +        mRegisterRequestCanceller.Finish();
 +    }
 +
-+    bool RegisterRequestInProgress() const {
++    bool RegisterRequestInProgress() const
++    {
 +        return mRegisterRequestCanceller.InProgress();
 +    }
 +
@@ -2046,7 +2226,8 @@ new file mode 100644
 +        eModifierMeta = (1 << 3)
 +    };
 +
-+    class DocumentEventListener MOZ_FINAL : public nsIDOMEventListener {
++    class DocumentEventListener MOZ_FINAL : public nsIDOMEventListener
++    {
 +    public:
 +        NS_DECL_ISUPPORTS
 +        NS_DECL_NSIDOMEVENTLISTENER
@@ -2090,7 +2271,7 @@ diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.cpp
-@@ -0,0 +1,477 @@
+@@ -0,0 +1,479 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2102,7 +2283,6 @@ new file mode 100644
 +#include "nsIDocument.h"
 +#include "mozilla/dom/Element.h"
 +#include "nsString.h"
-+#include "nsIAtom.h"
 +#include "nsGkAtoms.h"
 +#include "mozilla/Preferences.h"
 +#include "nsIDOMKeyEvent.h"
@@ -2118,9 +2298,9 @@ new file mode 100644
 +#include "nsThreadUtils.h"
 +#include "nsCRT.h"
 +#include "nsAutoPtr.h"
++#include "nsGtkUtils.h"
 +
 +#include "nsNativeMenuDocListener.h"
-+#include "nsNativeMenuUtils.h"
 +#include "nsMenuBar.h"
 +#include "nsMenu.h"
 +
@@ -2164,9 +2344,11 @@ new file mode 100644
 +    return 0;
 +}
 +
-+class nsMenuItemUncheckSiblingsRunnable MOZ_FINAL : public nsRunnable {
++class nsMenuItemUncheckSiblingsRunnable MOZ_FINAL : public nsRunnable
++{
 +public:
-+    NS_IMETHODIMP Run() {
++    NS_IMETHODIMP Run()
++    {
 +        mMenuItem->UncheckSiblings();
 +        return NS_OK;
 +    }
@@ -2194,7 +2376,8 @@ new file mode 100644
 +        gtk_widget_get_window(MenuBar()->TopLevelWindow()),
 +        aTimestamp);
 +
-+    // We do this as an alternative to holding a strong reference to ourself
++    // We do this to avoid mutating our view of the menu until
++    // after we have finished
 +    nsNativeMenuAutoUpdateBatch batch;
 +
 +    // This first bit seems backwards, but it's not really. If autocheck is
@@ -2511,7 +2694,7 @@ new file mode 100644
 +
 +    if (GetNativeData()) {
 +        g_signal_handlers_disconnect_by_func(GetNativeData(),
-+                                             nsNativeMenuUtils::FuncToVoidPtr(item_activated_cb),
++                                             nsGtkUtils::FuncToGpointer(item_activated_cb),
 +                                             this);
 +    }
 +
@@ -2572,7 +2755,7 @@ diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.h
-@@ -0,0 +1,118 @@
+@@ -0,0 +1,124 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2630,25 +2813,30 @@ new file mode 100644
 +
 +    nsMenuItem();
 +
-+    EMenuItemType MenuItemType() const {
-+        return EMenuItemType(
++    EMenuItemType MenuItemType() const
++    {
++        return static_cast<EMenuItemType>(
 +            (mFlags &
 +             (((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U)
 +              << NSMENUITEM_NUMBER_OF_FLAGS)) >> NSMENUITEM_NUMBER_OF_FLAGS);
 +    }
-+    void SetMenuItemType(EMenuItemType aType) {
++    void SetMenuItemType(EMenuItemType aType)
++    {
 +        mFlags &= ~(((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U) << NSMENUITEM_NUMBER_OF_FLAGS);
 +        mFlags |= (aType << NSMENUITEM_NUMBER_OF_FLAGS);
 +    }
-+    bool IsCheckboxOrRadioItem() const {
++    bool IsCheckboxOrRadioItem() const
++    {
 +        return MenuItemType() == eMenuItemType_Radio ||
 +               MenuItemType() == eMenuItemType_CheckBox;
 +    }
 +
-+    bool IsChecked() const {
++    bool IsChecked() const
++    {
 +        return mFlags & eMenuItemFlag_ToggleState ? true : false;
 +    }
-+    void SetCheckState(bool aState) {
++    void SetCheckState(bool aState)
++    {
 +        if (aState) {
 +            mFlags |= eMenuItemFlag_ToggleState;
 +        } else {
@@ -2673,8 +2861,9 @@ new file mode 100644
 +    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
 +    nsMenuBar* MenuBar();
 +
-+    nsMenuObject::PropertyFlags SupportedProperties() const {
-+        return nsMenuObject::PropertyFlags(
++    nsMenuObject::PropertyFlags SupportedProperties() const
++    {
++        return static_cast<nsMenuObject::PropertyFlags>(
 +            nsMenuObject::ePropLabel |
 +            nsMenuObject::ePropEnabled |
 +            nsMenuObject::ePropVisible |
@@ -2695,7 +2884,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,712 @@
+@@ -0,0 +1,706 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2713,7 +2902,6 @@ new file mode 100644
 +#include "nsStyleConsts.h"
 +#include "nsGkAtoms.h"
 +#include "mozilla/LookAndFeel.h"
-+#include "nsIAtom.h"
 +#include "nsString.h"
 +#include "nsAttrValue.h"
 +#include "mozilla/dom/Element.h"
@@ -2721,7 +2909,6 @@ new file mode 100644
 +#include "nsContentUtils.h"
 +#include "imgLoader.h"
 +#include "imgRequestProxy.h"
-+#include "imgIRequest.h"
 +#include "imgINotificationObserver.h"
 +#include "nsRect.h"
 +#include "nsIURI.h"
@@ -2751,18 +2938,11 @@ new file mode 100644
 +
 +#define MAX_WIDTH 350000
 +
-+// Must be kept in sync with nsMenuObjectPropertyFlags
-+const char *property_strings[] = {
-+  DBUSMENU_MENUITEM_PROP_LABEL,
-+  DBUSMENU_MENUITEM_PROP_ENABLED,
-+  DBUSMENU_MENUITEM_PROP_VISIBLE,
-+  DBUSMENU_MENUITEM_PROP_ICON_DATA,
-+  DBUSMENU_MENUITEM_PROP_TYPE,
-+  DBUSMENU_MENUITEM_PROP_SHORTCUT,
-+  DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE,
-+  DBUSMENU_MENUITEM_PROP_TOGGLE_STATE,
-+  DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY,
-+  NULL
++const char *gPropertyStrings[] = {
++#define DBUSMENU_PROPERTY(e, s, b) s,
++    DBUSMENU_PROPERTIES
++#undef DBUSMENU_PROPERTY
++    nullptr
 +};
 +
 +const nsMenuObjectContainer::ChildTArray::index_type nsMenuObjectContainer::NoIndex = nsMenuObjectContainer::ChildTArray::NoIndex;
@@ -2775,9 +2955,11 @@ new file mode 100644
 +
 +PangoLayout* gPangoLayout = nullptr;
 +
-+class nsMenuObjectContainerOpeningRunnable : public nsRunnable {
++class nsMenuObjectContainerOpeningRunnable : public nsRunnable
++{
 +public:
-+    NS_IMETHODIMP Run() {
++    NS_IMETHODIMP Run()
++    {
 +        mMenuObject->ContainerIsOpening();
 +        return NS_OK;
 +    }
@@ -2789,7 +2971,8 @@ new file mode 100644
 +    nsMenuObject *mMenuObject;
 +};
 +
-+class nsMenuObjectIconLoader MOZ_FINAL : public imgINotificationObserver {
++class nsMenuObjectIconLoader MOZ_FINAL : public imgINotificationObserver
++{
 +public:
 +    NS_DECL_ISUPPORTS
 +    NS_DECL_IMGINOTIFICATIONOBSERVER
@@ -3071,11 +3254,11 @@ new file mode 100644
 +nsMenuObject::RemoveUnsupportedProperties()
 +{
 +    PropertyFlags supported = SupportedProperties();
-+    PropertyFlags mask = PropertyFlags(1);
++    PropertyFlags mask = static_cast<PropertyFlags>(1);
 +
-+    for (uint32_t i = 0; property_strings[i]; ++i) {
++    for (uint32_t i = 0; gPropertyStrings[i]; ++i) {
 +        if (!(mask & supported)) {
-+            dbusmenu_menuitem_property_remove(mNativeData, property_strings[i]);
++            dbusmenu_menuitem_property_remove(mNativeData, gPropertyStrings[i]);
 +        }
 +        mask = PropertyFlags(mask << 1);
 +    }
@@ -3412,7 +3595,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,169 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3437,6 +3620,17 @@ new file mode 100644
 +class nsMenuObjectContainer;
 +class nsMenuObjectIconLoader;
 +
++#define DBUSMENU_PROPERTIES \
++    DBUSMENU_PROPERTY(Label, DBUSMENU_MENUITEM_PROP_LABEL, 0) \
++    DBUSMENU_PROPERTY(Enabled, DBUSMENU_MENUITEM_PROP_ENABLED, 1) \
++    DBUSMENU_PROPERTY(Visible, DBUSMENU_MENUITEM_PROP_VISIBLE, 2) \
++    DBUSMENU_PROPERTY(IconData, DBUSMENU_MENUITEM_PROP_ICON_DATA, 3) \
++    DBUSMENU_PROPERTY(Type, DBUSMENU_MENUITEM_PROP_TYPE, 4) \
++    DBUSMENU_PROPERTY(Shortcut, DBUSMENU_MENUITEM_PROP_SHORTCUT, 5) \
++    DBUSMENU_PROPERTY(ToggleType, DBUSMENU_MENUITEM_PROP_TOGGLE_TYPE, 6) \
++    DBUSMENU_PROPERTY(ToggleState, DBUSMENU_MENUITEM_PROP_TOGGLE_STATE, 7) \
++    DBUSMENU_PROPERTY(ChildDisplay, DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY, 8)
++
 +/*
 + * This is the base class for all menu nodes. Each instance represents
 + * a single node in the menu hierarchy. It wraps the corresponding DOM node and
@@ -3458,15 +3652,9 @@ new file mode 100644
 +    };
 +
 +    enum PropertyFlags {
-+        ePropLabel = (1 << 0),
-+        ePropEnabled = (1 << 1),
-+        ePropVisible = (1 << 2),
-+        ePropIconData = (1 << 3),
-+        ePropType = (1 << 4),
-+        ePropShortcut = (1 << 5),
-+        ePropToggleType = (1 << 6),
-+        ePropToggleState = (1 << 7),
-+        ePropChildDisplay = (1 << 8)
++#define DBUSMENU_PROPERTY(e, s, b) eProp##e = (1 << b),
++        DBUSMENU_PROPERTIES
++#undef DBUSMENU_PROPERTY
 +    };
 +
 +    virtual ~nsMenuObject();
@@ -3521,12 +3709,16 @@ new file mode 100644
 +    // Return the properties that this menu object type supports
 +    // This should be implemented by subclasses
 +    virtual PropertyFlags SupportedProperties() const {
-+        return PropertyFlags(0);
++        return static_cast<PropertyFlags>(0);
 +    }
 +
 +    // Determine whether this menu object could use the specified
 +    // native item. Returns true by default but can be overridden by subclasses
-+    virtual bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const { return true; }
++    virtual bool
++    IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
++    {
++        return true;
++    }
 +
 +    // Update attributes on this objects content node when the container opens.
 +    // This is called before style resolution, and should be implemented by
@@ -3577,7 +3769,7 @@ diff --git a/widget/gtk2/nsMenuSeparator.cpp b/widget/gtk2/nsMenuSeparator.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuSeparator.cpp
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,62 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3586,8 +3778,6 @@ new file mode 100644
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
 +#include "nsMenuSeparator.h"
-+#include "nsIContent.h"
-+#include "nsIAtom.h"
 +#include "nsCRT.h"
 +#include "nsAutoPtr.h"
 +
@@ -3646,7 +3836,7 @@ diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuSeparator.h
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,50 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3670,7 +3860,8 @@ new file mode 100644
 +public:
 +    ~nsMenuSeparator();
 +
-+    nsMenuObject::EType Type() const {
++    nsMenuObject::EType Type() const
++    {
 +        return nsMenuObject::eType_MenuSeparator;
 +    }
 +
@@ -3686,8 +3877,9 @@ new file mode 100644
 +    void Update(nsStyleContext *aStyleContext);
 +    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
 +
-+    nsMenuObject::PropertyFlags SupportedProperties() const {
-+        return nsMenuObject::PropertyFlags(
++    nsMenuObject::PropertyFlags SupportedProperties() const
++    {
++        return static_cast<nsMenuObject::PropertyFlags>(
 +            nsMenuObject::ePropVisible |
 +            nsMenuObject::ePropType
 +        );
@@ -3789,7 +3981,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuD
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,379 @@
+@@ -0,0 +1,381 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3801,7 +3993,7 @@ new file mode 100644
 +
 +#include "nsIDocument.h"
 +#include "mozilla/dom/Element.h"
-+#include "nsINode.h"
++#include "nsContentUtils.h"
 +#include "mozilla/DebugOnly.h"
 +#include "mozilla/Assertions.h"
 +
@@ -3817,12 +4009,14 @@ new file mode 100644
 + * Small helper which caches a single listener, so that consecutive
 + * events which go to the same node avoid multiple hash table lookups
 + */
-+class MOZ_STACK_CLASS DispatchHelper {
++class MOZ_STACK_CLASS DispatchHelper
++{
 +public:
 +    DispatchHelper(nsNativeMenuDocListener *aListener,
 +                   nsIContent *aContent
 +                   MOZ_GUARD_OBJECT_NOTIFIER_PARAM) :
-+                   mObserver(nullptr) {
++                   mObserver(nullptr)
++    {
 +        MOZ_GUARD_OBJECT_NOTIFIER_INIT;
 +        if (aContent == aListener->mLastSource) {
 +            mObserver = aListener->mLastTarget;
@@ -4173,7 +4367,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.h b/widget/gtk2/nsNativeMenuDoc
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.h
-@@ -0,0 +1,143 @@
+@@ -0,0 +1,152 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4278,18 +4472,25 @@ new file mode 100644
 +class nsNativeMenuChangeObserver
 +{
 +public:
-+    virtual void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute) {
++    virtual void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
++    {
 +        NS_ERROR("Unhandled AttributeChanged() notification");
 +    }
++
 +    virtual void OnContentInserted(nsIContent *aContainer,
 +                                   nsIContent *aChild,
-+                                   nsIContent *aPrevSibling) {
++                                   nsIContent *aPrevSibling)
++    {
 +        NS_ERROR("Unhandled ContentInserted() notification");
 +    }
-+    virtual void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild) {
++
++    virtual void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild)
++    {
 +        NS_ERROR("Unhandled ContentRemoved() notification");
 +    }
++
 +    virtual void BeginUpdateBatch(nsIContent *aContent) { };
++
 +    virtual void EndUpdateBatch() { };
 +};
 +
@@ -4303,12 +4504,14 @@ new file mode 100644
 +class MOZ_STACK_CLASS nsNativeMenuAutoUpdateBatch
 +{
 +public:
-+    nsNativeMenuAutoUpdateBatch(MOZ_GUARD_OBJECT_NOTIFIER_ONLY_PARAM) {
++    nsNativeMenuAutoUpdateBatch(MOZ_GUARD_OBJECT_NOTIFIER_ONLY_PARAM)
++    {
 +        MOZ_GUARD_OBJECT_NOTIFIER_INIT;
 +        nsNativeMenuDocListener::BeginUpdates();
 +    }
 +
-+    ~nsNativeMenuAutoUpdateBatch() {
++    ~nsNativeMenuAutoUpdateBatch()
++    {
 +        nsNativeMenuDocListener::EndUpdates();
 +    }
 +
@@ -4321,7 +4524,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuServi
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.cpp
-@@ -0,0 +1,503 @@
+@@ -0,0 +1,504 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4343,6 +4546,7 @@ new file mode 100644
 +#include "nsCRT.h"
 +#include "prlink.h"
 +#include "mozilla/Preferences.h"
++#include "nsGtkUtils.h"
 +
 +#include "nsNativeMenuDocListener.h"
 +#include "nsMenuBar.h"
@@ -4670,7 +4874,7 @@ new file mode 100644
 +
 +    if (mDbusProxy) {
 +        g_signal_handlers_disconnect_by_func(mDbusProxy,
-+                                             nsNativeMenuUtils::FuncToVoidPtr(name_owner_changed_cb),
++                                             nsGtkUtils::FuncToGpointer(name_owner_changed_cb),
 +                                             NULL);
 +        g_object_unref(mDbusProxy);
 +    }
@@ -4791,7 +4995,7 @@ new file mode 100644
 +nsNativeMenuService::NotifyNativeMenuBarDestroyed(nsMenuBar *aMenuBar)
 +{
 +    g_signal_handlers_disconnect_by_func(aMenuBar->TopLevelWindow(),
-+                                         nsNativeMenuUtils::FuncToVoidPtr(map_event_cb),
++                                         nsGtkUtils::FuncToGpointer(map_event_cb),
 +                                         aMenuBar);
 +
 +    mMenuBars.RemoveElement(aMenuBar);
@@ -4924,7 +5128,7 @@ diff --git a/widget/gtk2/nsNativeMenuUtils.h b/widget/gtk2/nsNativeMenuUtils.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuUtils.h
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4981,17 +5185,6 @@ new file mode 100644
 +
 +private:
 +    GCancellable *mCancellable;
-+};
-+
-+class nsNativeMenuUtils
-+{
-+public:
-+    template <class T>
-+    static inline void*
-+    FuncToVoidPtr(T a)
-+    {
-+        return reinterpret_cast<void *>(reinterpret_cast<unsigned long>(reinterpret_cast<void (*)()>(a)));
-+    }
 +};
 +
 +#endif /* __nsNativeMenuUtils_h__ */
@@ -5122,7 +5315,72 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
 diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
 --- a/widget/gtk2/nsWindow.cpp
 +++ b/widget/gtk2/nsWindow.cpp
-@@ -4726,16 +4726,21 @@ nsWindow::HideWindowChrome(bool aShouldH
+@@ -19,16 +19,17 @@
+ #include "nsIDOMNode.h"
+ 
+ #include "nsWidgetsCID.h"
+ #include "nsDragService.h"
+ #include "nsIWidgetListener.h"
+ 
+ #include "nsGtkKeyUtils.h"
+ #include "nsGtkCursors.h"
++#include "nsGtkUtils.h"
+ 
+ #include <gtk/gtk.h>
+ #if (MOZ_WIDGET_GTK == 3)
+ #include <gtk/gtkx.h>
+ #endif
+ #ifdef MOZ_X11
+ #include <gdk/gdkx.h>
+ #include <X11/Xatom.h>
+@@ -278,27 +279,16 @@ typedef struct _GdkDisplay GdkDisplay;
+ static GdkCursor *gCursorCache[eCursorCount];
+ 
+ static GtkWidget *gInvisibleContainer = NULL;
+ 
+ // Sometimes this actually also includes the state of the modifier keys, but
+ // only the button state bits are used.
+ static guint gButtonState;
+ 
+-// Some gobject functions expect functions for gpointer arguments.
+-// gpointer is void* but C++ doesn't like casting functions to void*.
+-template<class T> static inline gpointer
+-FuncToGpointer(T aFunction)
+-{
+-    return reinterpret_cast<gpointer>
+-        (reinterpret_cast<uintptr_t>
+-         // This cast just provides a warning if T is not a function.
+-         (reinterpret_cast<void (*)()>(aFunction)));
+-}
+-
+ // nsAutoRef<pixman_region32> uses nsSimpleRef<> to know how to automatically
+ // destroy regions.
+ template <>
+ class nsSimpleRef<pixman_region32> : public pixman_region32 {
+ protected:
+     typedef pixman_region32 RawRef;
+ 
+     nsSimpleRef() { data = nullptr; }
+@@ -631,17 +621,17 @@ nsWindow::Destroy(void)
+     // The reason we call it here is because on gtk platforms we need 
+     // to destroy the compositor before we destroy the gdk window (which
+     // destroys the the gl context attached to it).
+     DestroyCompositor();
+ 
+     ClearCachedResources();
+ 
+     g_signal_handlers_disconnect_by_func(gtk_settings_get_default(),
+-                                         FuncToGpointer(theme_changed_cb),
++                                         nsGtkUtils::FuncToGpointer(theme_changed_cb),
+                                          this);
+ 
+     nsIRollupListener* rollupListener = nsBaseWidget::GetActiveRollupListener();
+     if (rollupListener) {
+         nsCOMPtr<nsIWidget> rollupWidget = rollupListener->GetRollupWidget();
+         if (static_cast<nsIWidget *>(this) == rollupWidget) {
+             rollupListener->Rollup(0, nullptr);
+         }
+@@ -4726,16 +4716,21 @@ nsWindow::HideWindowChrome(bool aShouldH
      XSync(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()) , False);
  #else
      gdk_flush ();
@@ -5144,6 +5402,25 @@ diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
      nsCOMPtr<nsIWidget> rollupWidget;
      if (rollupListener) {
          rollupWidget = rollupListener->GetRollupWidget();
+@@ -5522,17 +5517,17 @@ hierarchy_changed_cb (GtkWidget *widget,
+     GtkWidget *toplevel = gtk_widget_get_toplevel(widget);
+     GdkWindowState old_window_state = GDK_WINDOW_STATE_WITHDRAWN;
+     GdkEventWindowState event;
+ 
+     event.new_window_state = GDK_WINDOW_STATE_WITHDRAWN;
+ 
+     if (GTK_IS_WINDOW(previous_toplevel)) {
+         g_signal_handlers_disconnect_by_func(previous_toplevel,
+-                                             FuncToGpointer(window_state_event_cb),
++                                             nsGtkUtils::FuncToGpointer(window_state_event_cb),
+                                              widget);
+         GdkWindow *win = gtk_widget_get_window(previous_toplevel);
+         if (win) {
+             old_window_state = gdk_window_get_state(win);
+         }
+     }
+ 
+     if (GTK_IS_WINDOW(toplevel)) {
 diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
 --- a/widget/gtk2/nsWindow.h
 +++ b/widget/gtk2/nsWindow.h
