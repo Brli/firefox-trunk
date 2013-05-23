@@ -557,7 +557,7 @@ diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,818 @@
+@@ -0,0 +1,845 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -567,31 +567,33 @@ new file mode 100644
 +
 +#define _IMPL_NS_LAYOUT
 +
-+#include "nsMenu.h"
-+#include "nsString.h"
-+#include "nsGUIEvent.h"
-+#include "nsBindingManager.h"
-+#include "nsIAtom.h"
-+#include "nsIDocument.h"
-+#include "nsGkAtoms.h"
-+#include "nsITimer.h"
-+#include "nsComponentManagerUtils.h"
-+#include "nsIRunnable.h"
-+#include "nsContentUtils.h"
 +#include "nsAutoPtr.h"
-+#include "nsIPresShell.h"
-+#include "nsStyleSet.h"
-+#include "nsStyleContext.h"
-+#include "nsStyleStruct.h"
-+#include "nsXBLService.h"
-+#include "nsXBLBinding.h"
++#include "nsBindingManager.h"
++#include "nsComponentManagerUtils.h"
++#include "nsContentUtils.h"
 +#include "nsCSSValue.h"
++#include "nsGkAtoms.h"
 +#include "nsGtkUtils.h"
++#include "nsGUIEvent.h"
++#include "nsIAtom.h"
++#include "nsIContent.h"
++#include "nsIDocument.h"
++#include "nsIPresShell.h"
++#include "nsIRunnable.h"
++#include "nsITimer.h"
++#include "nsString.h"
++#include "nsStyleContext.h"
++#include "nsStyleSet.h"
++#include "nsStyleStruct.h"
++#include "nsXBLBinding.h"
++#include "nsXBLService.h"
 +
-+#include "nsNativeMenuDocListener.h"
 +#include "nsNativeMenuAtoms.h"
++#include "nsNativeMenuDocListener.h"
 +
 +#include <glib-object.h>
++
++#include "nsMenu.h"
 +
 +using namespace mozilla;
 +
@@ -826,6 +828,8 @@ new file mode 100644
 +                          NS_LITERAL_STRING("true"), true);
 +    }
 +
++    nsNativeMenuAutoUpdateBatch batch;
++
 +    uint32_t count = mMenuObjects.Length();
 +    for (uint32_t i = 0; i < count; ++i) {
 +        mMenuObjects[i]->ContainerIsOpening();
@@ -833,7 +837,6 @@ new file mode 100644
 +
 +    // I guess that the popup could have changed
 +    if (popupContent == mPopupContent) {
-+        nsNativeMenuAutoUpdateBatch batch;
 +        SetPopupState(ePopupState_Open);
 +        DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWN);
 +    }
@@ -1052,6 +1055,18 @@ new file mode 100644
 +    return (isVisible && !isDisabled);
 +}
 +
++nsMenuObject::PropertyFlags
++nsMenu::SupportedProperties() const
++{
++    return static_cast<nsMenuObject::PropertyFlags>(
++        nsMenuObject::ePropLabel |
++        nsMenuObject::ePropEnabled |
++        nsMenuObject::ePropVisible |
++        nsMenuObject::ePropIconData |
++        nsMenuObject::ePropChildDisplay
++    );
++}
++
 +nsMenu::nsMenu() :
 +    nsMenuObjectContainer(),
 +    mFlags(0)
@@ -1108,6 +1123,18 @@ new file mode 100644
 +
 +    NS_RELEASE(aTimer);
 +    g_object_unref(menu);
++}
++
++nsMenuObject::EType
++nsMenu::Type() const
++{
++    return nsMenuObject::eType_Menu;
++}
++
++bool
++nsMenu::IsBeingDisplayed() const
++{
++    return PopupState() == ePopupState_Open;
 +}
 +
 +void
@@ -1380,7 +1407,7 @@ diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.h
-@@ -0,0 +1,171 @@
+@@ -0,0 +1,158 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1391,16 +1418,16 @@ new file mode 100644
 +#ifndef __nsMenu_h__
 +#define __nsMenu_h__
 +
-+#include "nsCOMPtr.h"
-+#include "nsIContent.h"
 +#include "mozilla/Attributes.h"
++#include "nsCOMPtr.h"
 +
-+#include "nsMenuObject.h"
 +#include "nsDbusmenu.h"
++#include "nsMenuObject.h"
 +
 +#include <glib.h>
 +
 +class nsIAtom;
++class nsIContent;
 +class nsStyleContext;
 +
 +#define NSMENU_NUMBER_OF_POPUPSTATE_BITS 2U
@@ -1415,12 +1442,9 @@ new file mode 100644
 +    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
 +                                nsIContent *aContent);
 +
-+    nsMenuObject::EType Type() const { return nsMenuObject::eType_Menu; }
++    nsMenuObject::EType Type() const;
 +
-+    bool IsBeingDisplayed() const
-+    {
-+        return PopupState() == ePopupState_Open;
-+    }
++    bool IsBeingDisplayed() const;
 +
 +    // Tell the desktop shell to display this menu
 +    void OpenMenuDelayed();
@@ -1535,17 +1559,7 @@ new file mode 100644
 +    nsresult InsertMenuObjectAfter(nsMenuObject *aChild, nsIContent *aPrevSibling);
 +    nsresult AppendMenuObject(nsMenuObject *aChild);
 +    bool CanOpen() const;
-+
-+    nsMenuObject::PropertyFlags SupportedProperties() const
-+    {
-+        return static_cast<nsMenuObject::PropertyFlags>(
-+            nsMenuObject::ePropLabel |
-+            nsMenuObject::ePropEnabled |
-+            nsMenuObject::ePropVisible |
-+            nsMenuObject::ePropIconData |
-+            nsMenuObject::ePropChildDisplay
-+        );
-+    }
++    nsMenuObject::PropertyFlags SupportedProperties() const;
 +
 +    nsCOMPtr<nsIContent> mPopupContent;
 +    uint8_t mFlags; // The upper bits of this are used to encode the popup state
@@ -1556,7 +1570,7 @@ diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.cpp
-@@ -0,0 +1,559 @@
+@@ -0,0 +1,607 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1564,32 +1578,48 @@ new file mode 100644
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "nsMenuBar.h"
-+#include "nsIWidget.h"
-+#include "nsIDOMKeyEvent.h"
-+#include "mozilla/Preferences.h"
-+#include "mozilla/dom/Element.h"
-+#include "nsTArray.h"
-+#include "nsIDOMEvent.h"
-+#include "nsUnicharUtils.h"
 +#include "mozilla/DebugOnly.h"
++#include "mozilla/dom/Element.h"
++#include "mozilla/Preferences.h"
 +#include "nsAutoPtr.h"
++#include "nsIDOMEvent.h"
++#include "nsIDOMEventListener.h"
++#include "nsIDOMEventTarget.h"
++#include "nsIDOMKeyEvent.h"
++#include "nsIWidget.h"
++#include "nsTArray.h"
++#include "nsUnicharUtils.h"
 +
-+#include "nsNativeMenuService.h"
 +#include "nsMenu.h"
 +#include "nsNativeMenuAtoms.h"
++#include "nsNativeMenuService.h"
 +
-+#include <glib.h>
-+#include <glib-object.h>
 +#include <gdk/gdk.h>
 +#include <gdk/gdkx.h>
++#include <glib.h>
++#include <glib-object.h>
++
++#include "nsMenuBar.h"
 +
 +using namespace mozilla;
 +
-+NS_IMPL_ISUPPORTS1(nsMenuBar::DocumentEventListener, nsIDOMEventListener)
++class nsMenuBarDocEventListener MOZ_FINAL : public nsIDOMEventListener
++{
++public:
++    NS_DECL_ISUPPORTS
++    NS_DECL_NSIDOMEVENTLISTENER
++
++    nsMenuBarDocEventListener(nsMenuBar *aOwner) : mOwner(aOwner) { };
++    ~nsMenuBarDocEventListener() { };
++
++private:
++    nsMenuBar *mOwner;
++};
++
++NS_IMPL_ISUPPORTS1(nsMenuBarDocEventListener, nsIDOMEventListener)
 +
 +NS_IMETHODIMP
-+nsMenuBar::DocumentEventListener::HandleEvent(nsIDOMEvent *aEvent)
++nsMenuBarDocEventListener::HandleEvent(nsIDOMEvent *aEvent)
 +{
 +    nsAutoString type;
 +    nsresult rv = aEvent->GetType(type);
@@ -1759,27 +1789,27 @@ new file mode 100644
 +nsMenuBar::ModifierFlags
 +nsMenuBar::GetModifiersFromEvent(nsIDOMKeyEvent *aEvent)
 +{
-+    ModifierFlags modifiers = ModifierFlags(0);
++    ModifierFlags modifiers = static_cast<ModifierFlags>(0);
 +    bool modifier;
 +
 +    aEvent->GetAltKey(&modifier);
 +    if (modifier) {
-+        modifiers = ModifierFlags(modifiers | eModifierAlt);
++        modifiers = static_cast<ModifierFlags>(modifiers | eModifierAlt);
 +    }
 +
 +    aEvent->GetShiftKey(&modifier);
 +    if (modifier) {
-+        modifiers = ModifierFlags(modifiers | eModifierShift);
++        modifiers = static_cast<ModifierFlags>(modifiers | eModifierShift);
 +    }
 +
 +    aEvent->GetCtrlKey(&modifier);
 +    if (modifier) {
-+        modifiers = ModifierFlags(modifiers | eModifierCtrl);
++        modifiers = static_cast<ModifierFlags>(modifiers | eModifierCtrl);
 +    }
 +
 +    aEvent->GetMetaKey(&modifier);
 +    if (modifier) {
-+        modifiers = ModifierFlags(modifiers | eModifierMeta);
++        modifiers = static_cast<ModifierFlags>(modifiers | eModifierMeta);
 +    }
 +
 +    return modifiers;
@@ -1946,7 +1976,7 @@ new file mode 100644
 +
 +    dbusmenu_server_set_root(mServer, GetNativeData());
 +
-+    mEventListener = new DocumentEventListener(this);
++    mEventListener = new nsMenuBarDocEventListener(this);
 +
 +    mDocument = do_QueryInterface(mContent->OwnerDoc());
 +
@@ -2007,6 +2037,18 @@ new file mode 100644
 +    return menubar.forget();
 +}
 +
++nsMenuObject::EType
++nsMenuBar::Type() const
++{
++    return nsMenuObject::eType_MenuBar;
++}
++
++bool
++nsMenuBar::IsBeingDisplayed() const
++{
++    return true;
++}
++
 +uint32_t
 +nsMenuBar::WindowId() const
 +{
@@ -2021,6 +2063,26 @@ new file mode 100644
 +    nsAdoptingCString result(tmp);
 +
 +    return result;
++}
++
++nsNativeMenuGIORequest&
++nsMenuBar::BeginRegisterRequest()
++{
++    mRegisterRequestCanceller.Start();
++    return mRegisterRequestCanceller;
++}
++
++void
++nsMenuBar::EndRegisterRequest()
++{
++    NS_ASSERTION(RegisterRequestInProgress(), "No request in progress");
++    mRegisterRequestCanceller.Finish();
++}
++
++bool
++nsMenuBar::RegisterRequestInProgress() const
++{
++    return mRegisterRequestCanceller.InProgress();
 +}
 +
 +nsresult
@@ -2120,7 +2182,7 @@ diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.h
-@@ -0,0 +1,138 @@
+@@ -0,0 +1,115 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2131,23 +2193,22 @@ new file mode 100644
 +#ifndef __nsMenuBar_h__
 +#define __nsMenuBar_h__
 +
-+#include "nsCOMPtr.h"
-+#include "nsIDOMEventTarget.h"
-+#include "nsString.h"
-+#include "nsIDOMEventListener.h"
 +#include "mozilla/Attributes.h"
++#include "nsCOMPtr.h"
++#include "nsString.h"
 +
-+#include "nsNativeMenuUtils.h"
-+#include "nsMenuObject.h"
 +#include "nsDbusmenu.h"
++#include "nsMenuObject.h"
++#include "nsNativeMenuUtils.h"
 +
 +#include <gtk/gtk.h>
 +
-+class nsIWidget;
++class nsIAtom;
 +class nsIContent;
 +class nsIDOMEvent;
 +class nsIDOMKeyEvent;
-+class nsIAtom;
++class nsIWidget;
++class nsMenuBarDocEventListener;
 +
 +/*
 + * The menubar class. There is one of these per window (and the window
@@ -2164,9 +2225,9 @@ new file mode 100644
 +    static nsMenuBar* Create(nsIWidget *aParent,
 +                             nsIContent *aMenuBarNode);
 +
-+    nsMenuObject::EType Type() const { return nsMenuObject::eType_MenuBar; }
++    nsMenuObject::EType Type() const;
 +
-+    bool IsBeingDisplayed() const { return true; }
++    bool IsBeingDisplayed() const;
 +
 +    // Get the native window ID for this menubar
 +    uint32_t WindowId() const;
@@ -2176,23 +2237,12 @@ new file mode 100644
 +
 +    // Initializes and returns a cancellable request object, used
 +    // by the menuservice when registering this menubar
-+    nsNativeMenuGIORequest& BeginRegisterRequest()
-+    {
-+        mRegisterRequestCanceller.Start();
-+        return mRegisterRequestCanceller;
-+    }
++    nsNativeMenuGIORequest& BeginRegisterRequest();
 +
 +    // Finishes the current request to register the menubar
-+    void EndRegisterRequest()
-+    {
-+        NS_ASSERTION(RegisterRequestInProgress(), "No request in progress");
-+        mRegisterRequestCanceller.Finish();
-+    }
++    void EndRegisterRequest();
 +
-+    bool RegisterRequestInProgress() const
-+    {
-+        return mRegisterRequestCanceller.InProgress();
-+    }
++    bool RegisterRequestInProgress() const;
 +
 +    // Get the top-level GtkWindow handle
 +    GtkWidget* TopLevelWindow() { return mTopLevel; }
@@ -2211,24 +2261,13 @@ new file mode 100644
 +    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild);
 +
 +private:
++    friend class nsMenuBarDocEventListener;
++
 +    enum ModifierFlags {
 +        eModifierShift = (1 << 0),
 +        eModifierCtrl = (1 << 1),
 +        eModifierAlt = (1 << 2),
 +        eModifierMeta = (1 << 3)
-+    };
-+
-+    class DocumentEventListener MOZ_FINAL : public nsIDOMEventListener
-+    {
-+    public:
-+        NS_DECL_ISUPPORTS
-+        NS_DECL_NSIDOMEVENTLISTENER
-+
-+        DocumentEventListener(nsMenuBar *aOwner) : mOwner(aOwner) { };
-+        ~DocumentEventListener() { };
-+
-+    private:
-+        nsMenuBar *mOwner;
 +    };
 +
 +    nsMenuBar();
@@ -2251,7 +2290,7 @@ new file mode 100644
 +    DbusmenuServer *mServer;
 +    nsCOMPtr<nsIDOMEventTarget> mDocument;
 +    nsNativeMenuGIORequest mRegisterRequestCanceller;
-+    nsRefPtr<DocumentEventListener> mEventListener;
++    nsRefPtr<nsMenuBarDocEventListener> mEventListener;
 +
 +    uint32_t mAccessKey;
 +    ModifierFlags mAccessKeyMask;
@@ -2263,7 +2302,7 @@ diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.cpp
-@@ -0,0 +1,479 @@
+@@ -0,0 +1,510 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2271,35 +2310,37 @@ new file mode 100644
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "nsMenuItem.h"
-+#include "nsIDocument.h"
 +#include "mozilla/dom/Element.h"
-+#include "nsString.h"
-+#include "nsGkAtoms.h"
 +#include "mozilla/Preferences.h"
-+#include "nsIDOMKeyEvent.h"
-+#include "nsReadableUtils.h"
 +#include "mozilla/Util.h"
-+#include "nsGtkKeyUtils.h"
-+#include "nsIDOMEventTarget.h"
-+#include "nsIDOMDocument.h"
-+#include "nsIDOMXULCommandEvent.h"
-+#include "nsIDOMEvent.h"
-+#include "nsIRunnable.h"
-+#include "nsContentUtils.h"
-+#include "nsThreadUtils.h"
-+#include "nsCRT.h"
 +#include "nsAutoPtr.h"
++#include "nsContentUtils.h"
++#include "nsCRT.h"
++#include "nsGkAtoms.h"
++#include "nsGtkKeyUtils.h"
 +#include "nsGtkUtils.h"
++#include "nsIContent.h"
++#include "nsIDocument.h"
++#include "nsIDOMDocument.h"
++#include "nsIDOMEvent.h"
++#include "nsIDOMEventTarget.h"
++#include "nsIDOMKeyEvent.h"
++#include "nsIDOMXULCommandEvent.h"
++#include "nsIRunnable.h"
++#include "nsReadableUtils.h"
++#include "nsString.h"
++#include "nsThreadUtils.h"
 +
-+#include "nsNativeMenuDocListener.h"
-+#include "nsMenuBar.h"
 +#include "nsMenu.h"
++#include "nsMenuBar.h"
++#include "nsNativeMenuDocListener.h"
 +
 +#include <gdk/gdk.h>
 +#include <gdk/gdkkeysyms.h>
 +#include <gdk/gdkx.h>
 +#include <gtk/gtk.h>
++
++#include "nsMenuItem.h"
 +
 +using namespace mozilla;
 +using namespace mozilla::widget;
@@ -2351,6 +2392,13 @@ new file mode 100644
 +private:
 +    nsMenuItem *mMenuItem;
 +};
++
++bool
++nsMenuItem::IsCheckboxOrRadioItem() const
++{
++    return MenuItemType() == eMenuItemType_Radio ||
++           MenuItemType() == eMenuItemType_CheckBox;
++}
 +
 +/* static */ void
 +nsMenuItem::item_activated_cb(DbusmenuMenuitem *menuitem,
@@ -2584,31 +2632,33 @@ new file mode 100644
 +nsMenuItem::UpdateContentAttributes()
 +{
 +    nsIDocument *doc = mContent->GetCurrentDoc();
-+    if (doc) {
-+        nsAutoString command;
-+        mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::command, command);
-+        if (!command.IsEmpty()) {
-+            nsCOMPtr<nsIContent> commandContent =
-+                doc->GetElementById(command);
-+            if (commandContent) {
-+                if (commandContent->AttrValueIs(kNameSpaceID_None,
-+                                                nsGkAtoms::disabled,
-+                                                nsGkAtoms::_true,
-+                                                eCaseMatters)) {
-+                    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
-+                                      NS_LITERAL_STRING("true"), true);
-+                } else {
-+                    mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
-+                                        true);
-+                }
-+
-+                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::checked);
-+                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::accesskey);
-+                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::label);
-+                CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::hidden);
-+            }
-+        }
++    if (!doc) {
++        return;
 +    }
++
++    nsAutoString command;
++    mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::command, command);
++    if (command.IsEmpty()) {
++        return;
++    }
++
++    nsCOMPtr<nsIContent> commandContent = doc->GetElementById(command);
++    if (!commandContent) {
++        return;
++    }
++
++    if (commandContent->AttrValueIs(kNameSpaceID_None, nsGkAtoms::disabled,
++                                    nsGkAtoms::_true, eCaseMatters)) {
++        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::disabled,
++                          NS_LITERAL_STRING("true"), true);
++    } else {
++        mContent->UnsetAttr(kNameSpaceID_None, nsGkAtoms::disabled, true);
++    }
++
++    CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::checked);
++    CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::accesskey);
++    CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::label);
++    CopyAttrFromNodeIfExists(commandContent, nsGkAtoms::hidden);
 +}
 +
 +void
@@ -2671,6 +2721,20 @@ new file mode 100644
 +    return static_cast<nsMenuBar *>(tmp);
 +}
 +
++nsMenuObject::PropertyFlags
++nsMenuItem::SupportedProperties() const
++{
++    return static_cast<nsMenuObject::PropertyFlags>(
++        nsMenuObject::ePropLabel |
++        nsMenuObject::ePropEnabled |
++        nsMenuObject::ePropVisible |
++        nsMenuObject::ePropIconData |
++        nsMenuObject::ePropShortcut |
++        nsMenuObject::ePropToggleType |
++        nsMenuObject::ePropToggleState
++    );
++}
++
 +nsMenuItem::nsMenuItem() :
 +    nsMenuObject(),
 +    mFlags(0)
@@ -2691,6 +2755,12 @@ new file mode 100644
 +    }
 +
 +    MOZ_COUNT_DTOR(nsMenuItem);
++}
++
++nsMenuObject::EType
++nsMenuItem::Type() const
++{
++    return nsMenuObject::eType_MenuItem;
 +}
 +
 +/* static */ nsMenuObject*
@@ -2747,7 +2817,7 @@ diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.h
-@@ -0,0 +1,124 @@
+@@ -0,0 +1,107 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2758,12 +2828,11 @@ new file mode 100644
 +#ifndef __nsMenuItem_h__
 +#define __nsMenuItem_h__
 +
-+#include "nsIContent.h"
-+#include "nsCOMPtr.h"
 +#include "mozilla/Attributes.h"
++#include "nsCOMPtr.h"
 +
-+#include "nsMenuObject.h"
 +#include "nsDbusmenu.h"
++#include "nsMenuObject.h"
 +
 +#include <glib.h>
 +
@@ -2771,6 +2840,7 @@ new file mode 100644
 +#define NSMENUITEM_NUMBER_OF_FLAGS     1U
 +
 +class nsIAtom;
++class nsIContent;
 +class nsStyleContext;
 +class nsMenuBar;
 +
@@ -2783,7 +2853,7 @@ new file mode 100644
 +public:
 +    ~nsMenuItem();
 +
-+    nsMenuObject::EType Type() const { return nsMenuObject::eType_MenuItem; }
++    nsMenuObject::EType Type() const;
 +
 +    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
 +                                nsIContent *aContent);
@@ -2817,11 +2887,7 @@ new file mode 100644
 +        mFlags &= ~(((1U << NSMENUITEM_NUMBER_OF_TYPE_BITS) - 1U) << NSMENUITEM_NUMBER_OF_FLAGS);
 +        mFlags |= (aType << NSMENUITEM_NUMBER_OF_FLAGS);
 +    }
-+    bool IsCheckboxOrRadioItem() const
-+    {
-+        return MenuItemType() == eMenuItemType_Radio ||
-+               MenuItemType() == eMenuItemType_CheckBox;
-+    }
++    bool IsCheckboxOrRadioItem() const;
 +
 +    bool IsChecked() const
 +    {
@@ -2852,22 +2918,9 @@ new file mode 100644
 +    void UncheckSiblings();
 +    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
 +    nsMenuBar* MenuBar();
-+
-+    nsMenuObject::PropertyFlags SupportedProperties() const
-+    {
-+        return static_cast<nsMenuObject::PropertyFlags>(
-+            nsMenuObject::ePropLabel |
-+            nsMenuObject::ePropEnabled |
-+            nsMenuObject::ePropVisible |
-+            nsMenuObject::ePropIconData |
-+            nsMenuObject::ePropShortcut |
-+            nsMenuObject::ePropToggleType |
-+            nsMenuObject::ePropToggleState
-+        );
-+    }
++    nsMenuObject::PropertyFlags SupportedProperties() const;
 +
 +    nsCOMPtr<nsIContent> mKeyContent;
-+
 +    uint8_t mFlags; // The upper bits of this are used to encode the menuitem type
 +};
 +
@@ -2876,7 +2929,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,691 @@
+@@ -0,0 +1,728 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2884,46 +2937,48 @@ new file mode 100644
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "nsMenuObject.h"
-+#include "nsUnicharUtils.h"
-+#include "nsIDocument.h"
-+#include "nsIPresShell.h"
-+#include "nsComputedDOMStyle.h"
-+#include "nsStyleContext.h"
-+#include "nsStyleStruct.h"
-+#include "nsStyleConsts.h"
-+#include "nsGkAtoms.h"
-+#include "mozilla/LookAndFeel.h"
-+#include "nsString.h"
-+#include "nsAttrValue.h"
-+#include "mozilla/dom/Element.h"
-+#include "nsILoadGroup.h"
-+#include "nsContentUtils.h"
++#include "ImageOps.h"
++#include "imgIContainer.h"
++#include "imgINotificationObserver.h"
 +#include "imgLoader.h"
 +#include "imgRequestProxy.h"
-+#include "imgINotificationObserver.h"
-+#include "nsRect.h"
-+#include "nsIURI.h"
-+#include "nsPresContext.h"
-+#include "imgIContainer.h"
-+#include "nsImageToPixbuf.h"
-+#include "mozilla/Util.h"
-+#include "nsServiceManagerUtils.h"
-+#include "nsNetUtil.h"
++#include "mozilla/dom/Element.h"
++#include "mozilla/LookAndFeel.h"
 +#include "mozilla/Preferences.h"
-+#include "ImageOps.h"
++#include "mozilla/Util.h"
++#include "nsAttrValue.h"
++#include "nsComputedDOMStyle.h"
++#include "nsContentUtils.h"
++#include "nsGkAtoms.h"
++#include "nsIContent.h"
++#include "nsIDocument.h"
++#include "nsILoadGroup.h"
++#include "nsImageToPixbuf.h"
++#include "nsIPresShell.h"
++#include "nsIURI.h"
++#include "nsNetUtil.h"
++#include "nsPresContext.h"
++#include "nsRect.h"
++#include "nsServiceManagerUtils.h"
++#include "nsString.h"
++#include "nsStyleConsts.h"
++#include "nsStyleContext.h"
++#include "nsStyleStruct.h"
 +#include "nsThreadUtils.h"
++#include "nsUnicharUtils.h"
 +
-+#include "nsNativeMenuUtils.h"
 +#include "nsMenu.h"
 +#include "nsMenuItem.h"
 +#include "nsMenuSeparator.h"
-+#include "nsNativeMenuDocListener.h"
 +#include "nsNativeMenuAtoms.h"
++#include "nsNativeMenuDocListener.h"
++#include "nsNativeMenuUtils.h"
 +
-+#include <glib-object.h>
 +#include <gdk/gdk.h>
++#include <glib-object.h>
 +#include <pango/pango.h>
++
++#include "nsMenuObject.h"
 +
 +using namespace mozilla;
 +using mozilla::image::ImageOps;
@@ -3227,6 +3282,33 @@ new file mode 100644
 +    return sEllipsisWidth;
 +}
 +
++void
++nsMenuObject::InitializeNativeData()
++{
++}
++
++nsMenuObject::PropertyFlags
++nsMenuObject::SupportedProperties() const
++{
++    return static_cast<nsMenuObject::PropertyFlags>(0);
++}
++
++bool
++nsMenuObject::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
++{
++    return true;
++}
++
++void
++nsMenuObject::UpdateContentAttributes()
++{
++}
++
++void
++nsMenuObject::Update(nsStyleContext *aStyleContext)
++{
++}
++
 +bool
 +nsMenuObject::ShouldShowIcon() const
 +{
@@ -3289,8 +3371,8 @@ new file mode 100644
 +
 +    const nsAutoString::char_type *iter = label.BeginReading();
 +    const nsAutoString::char_type *end = label.EndReading();
-+    int length = label.Length();
-+    int pos = 0;
++    uint32_t length = label.Length();
++    uint32_t pos = 0;
 +    bool foundAccessKey = false;
 +
 +    while (iter != end) {
@@ -3316,7 +3398,12 @@ new file mode 100644
 +        pos += 2;
 +    }
 +
-+    nsString& text = label;
++    if (CalculateTextWidth(label) <= MAX_WIDTH) {
++        dbusmenu_menuitem_property_set(mNativeData,
++                                       DBUSMENU_MENUITEM_PROP_LABEL,
++                                       NS_ConvertUTF16toUTF8(label).get());
++        return;
++    }
 +
 +    // This *COMPLETELY SUCKS*
 +    // This should be done at the point where the menu is drawn (hello Unity),
@@ -3325,46 +3412,42 @@ new file mode 100644
 +    // This leaves us with no other option but to ellipsize here, with no proper
 +    // knowledge of Unity's render path, font size etc. This is better than nothing
 +    // BAH! @*&!$
-+    if (CalculateTextWidth(label) > MAX_WIDTH) {
-+        nsAutoString truncated;
-+        int target = MAX_WIDTH - GetEllipsisWidth();
-+        uint32_t length = label.Length();
++    nsAutoString truncated;
++    int target = MAX_WIDTH - GetEllipsisWidth();
++    length = label.Length();
 +
-+        static nsIContent::AttrValuesArray strings[] = {
-+            &nsGkAtoms::left, &nsGkAtoms::start,
-+            &nsGkAtoms::center, &nsGkAtoms::right,
-+            &nsGkAtoms::end, nullptr
-+        };
++    static nsIContent::AttrValuesArray strings[] = {
++        &nsGkAtoms::left, &nsGkAtoms::start,
++        &nsGkAtoms::center, &nsGkAtoms::right,
++        &nsGkAtoms::end, nullptr
++    };
 +
-+        int32_t type = mContent->FindAttrValueIn(kNameSpaceID_None,
-+                                                 nsGkAtoms::crop,
-+                                                 strings, eCaseMatters);
++    int32_t type = mContent->FindAttrValueIn(kNameSpaceID_None,
++                                             nsGkAtoms::crop,
++                                             strings, eCaseMatters);
 +
-+        switch (type) {
-+            case 0:
-+            case 1:
-+                // FIXME: Implement left cropping (do we really care?)
-+            case 2:
-+                // FIXME: Implement center cropping (do we really care?)
-+            case 3:
-+            case 4:
-+            default:
-+                for (uint32_t i = 0; i < length; i++) {
-+                    truncated.Append(label.CharAt(i));
-+                    if (CalculateTextWidth(truncated) > target) {
-+                        break;
-+                    }
++    switch (type) {
++        case 0:
++        case 1:
++            // FIXME: Implement left cropping (do we really care?)
++        case 2:
++            // FIXME: Implement center cropping (do we really care?)
++        case 3:
++        case 4:
++        default:
++            for (uint32_t i = 0; i < length; i++) {
++                truncated.Append(label.CharAt(i));
++                if (CalculateTextWidth(truncated) > target) {
++                    break;
 +                }
++            }
 +
-+                truncated.Append(GetEllipsis());
-+        }
-+
-+        text = truncated;
++            truncated.Append(GetEllipsis());
 +    }
 +
 +    dbusmenu_menuitem_property_set(mNativeData,
 +                                   DBUSMENU_MENUITEM_PROP_LABEL,
-+                                   NS_ConvertUTF16toUTF8(text).get());
++                                   NS_ConvertUTF16toUTF8(truncated).get());
 +}
 +
 +void
@@ -3403,14 +3486,12 @@ new file mode 100644
 +    if (ShouldShowIcon()) {
 +        if (!mIconLoader) {
 +            mIconLoader = new nsMenuObjectIconLoader(this);
-+            mIconLoader->AddRef();
 +        }
 +
 +        mIconLoader->LoadIcon(aStyleContext);
 +    } else {
 +        if (mIconLoader) {
 +            mIconLoader->Destroy();
-+            mIconLoader->Release();
 +            mIconLoader = nullptr;
 +        }
 +
@@ -3432,11 +3513,15 @@ new file mode 100644
 +    return NS_OK;    
 +}
 +
++nsMenuObject::nsMenuObject() :
++    mParent(nullptr), mNativeData(nullptr)
++{
++}
++
 +nsMenuObject::~nsMenuObject()
 +{
 +    if (mIconLoader) {
 +        mIconLoader->Destroy();
-+        mIconLoader->Release();
 +    }
 +
 +    if (mListener) {
@@ -3559,6 +3644,11 @@ new file mode 100644
 +    return NoIndex;
 +}
 +
++nsMenuObjectContainer::nsMenuObjectContainer() :
++    nsMenuObject()
++{
++}
++
 +/* static */ nsIContent*
 +nsMenuObjectContainer::GetPreviousSupportedSibling(nsIContent *aContent)
 +{
@@ -3572,7 +3662,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,168 @@
+@@ -0,0 +1,160 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3583,16 +3673,16 @@ new file mode 100644
 +#ifndef __nsMenuObject_h__
 +#define __nsMenuObject_h__
 +
-+#include "nsIContent.h"
++#include "mozilla/Attributes.h"
 +#include "nsAutoPtr.h"
 +#include "nsCOMPtr.h"
 +#include "nsTArray.h"
-+#include "mozilla/Attributes.h"
 +
-+#include "nsNativeMenuDocListener.h"
 +#include "nsDbusmenu.h"
++#include "nsNativeMenuDocListener.h"
 +
 +class nsIAtom;
++class nsIContent;
 +class nsStyleContext;
 +class nsMenuObjectContainer;
 +class nsMenuObjectIconLoader;
@@ -3661,10 +3751,7 @@ new file mode 100644
 +    void ContainerIsOpening();
 +
 +protected:
-+    nsMenuObject() :
-+        mParent(nullptr),
-+        mNativeData(nullptr),
-+        mIconLoader(nullptr) { };
++    nsMenuObject();
 +    nsresult Init(nsMenuObjectContainer *aParent, nsIContent *aContent);
 +
 +    void UpdateLabel();
@@ -3681,38 +3768,33 @@ new file mode 100644
 +
 +    // Set up initial properties on the native data, connect to signals etc.
 +    // This should be implemented by subclasses
-+    virtual void InitializeNativeData() { };
++    virtual void InitializeNativeData();
 +
 +    // Return the properties that this menu object type supports
 +    // This should be implemented by subclasses
-+    virtual PropertyFlags SupportedProperties() const {
-+        return static_cast<PropertyFlags>(0);
-+    }
++    virtual PropertyFlags SupportedProperties() const;
 +
 +    // Determine whether this menu object could use the specified
 +    // native item. Returns true by default but can be overridden by subclasses
 +    virtual bool
-+    IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
-+    {
-+        return true;
-+    }
++    IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
 +
 +    // Update attributes on this objects content node when the container opens.
 +    // This is called before style resolution, and should be implemented by
 +    // subclasses who want to modify attributes that might affect style.
 +    // This will not be called when there are script blockers
-+    virtual void UpdateContentAttributes() { };
++    virtual void UpdateContentAttributes();
 +
 +    // Update properties that should be refreshed when the container opens.
 +    // This should be implemented by subclasses that have properties which
 +    // need refreshing
-+    virtual void Update(nsStyleContext *aStyleContext) { };
++    virtual void Update(nsStyleContext *aStyleContext);
 +
 +    bool ShouldShowIcon() const;
 +    void ClearIcon();
 +
 +    DbusmenuMenuitem *mNativeData;
-+    nsMenuObjectIconLoader *mIconLoader;
++    nsRefPtr<nsMenuObjectIconLoader> mIconLoader;
 +};
 +
 +// Base class for containers (menus and menubars)
@@ -3732,7 +3814,7 @@ new file mode 100644
 +    static const ChildTArray::index_type NoIndex;
 +
 +protected:
-+    nsMenuObjectContainer() : nsMenuObject() { };
++    nsMenuObjectContainer();
 +
 +    nsMenuObject* CreateChild(nsIContent *aContent, nsresult *aRv);
 +    uint32_t IndexOf(nsIContent *aChild);
@@ -3745,7 +3827,7 @@ diff --git a/widget/gtk2/nsMenuSeparator.cpp b/widget/gtk2/nsMenuSeparator.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuSeparator.cpp
-@@ -0,0 +1,62 @@
+@@ -0,0 +1,78 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3753,11 +3835,12 @@ new file mode 100644
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "nsMenuSeparator.h"
-+#include "nsCRT.h"
 +#include "nsAutoPtr.h"
++#include "nsCRT.h"
 +
 +#include "nsDbusmenu.h"
++
++#include "nsMenuSeparator.h"
 +
 +void
 +nsMenuSeparator::InitializeNativeData()
@@ -3781,6 +3864,15 @@ new file mode 100644
 +                         "separator") == 0;
 +}
 +
++nsMenuObject::PropertyFlags
++nsMenuSeparator::SupportedProperties() const
++{
++    return static_cast<nsMenuObject::PropertyFlags>(
++        nsMenuObject::ePropVisible |
++        nsMenuObject::ePropType
++    );
++}
++
 +nsMenuSeparator::nsMenuSeparator()
 +{
 +    MOZ_COUNT_CTOR(nsMenuSeparator);
@@ -3789,6 +3881,12 @@ new file mode 100644
 +nsMenuSeparator::~nsMenuSeparator()
 +{
 +    MOZ_COUNT_DTOR(nsMenuSeparator);
++}
++
++nsMenuObject::EType
++nsMenuSeparator::Type() const
++{
++    return nsMenuObject::eType_MenuSeparator;
 +}
 +
 +/* static */ nsMenuObject*
@@ -3812,7 +3910,7 @@ diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuSeparator.h
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,40 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3836,10 +3934,7 @@ new file mode 100644
 +public:
 +    ~nsMenuSeparator();
 +
-+    nsMenuObject::EType Type() const
-+    {
-+        return nsMenuObject::eType_MenuSeparator;
-+    }
++    nsMenuObject::EType Type() const;
 +
 +    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
 +                                nsIContent *aContent);
@@ -3852,14 +3947,7 @@ new file mode 100644
 +    void InitializeNativeData();
 +    void Update(nsStyleContext *aStyleContext);
 +    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
-+
-+    nsMenuObject::PropertyFlags SupportedProperties() const
-+    {
-+        return static_cast<nsMenuObject::PropertyFlags>(
-+            nsMenuObject::ePropVisible |
-+            nsMenuObject::ePropType
-+        );
-+    };
++    nsMenuObject::PropertyFlags SupportedProperties() const;
 +};
 +
 +#endif /* __nsMenuSeparator_h__ */
@@ -3957,7 +4045,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuD
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,378 @@
+@@ -0,0 +1,380 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3965,15 +4053,17 @@ new file mode 100644
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "nsNativeMenuDocListener.h"
-+
-+#include "nsIDocument.h"
++#include "mozilla/Assertions.h"
++#include "mozilla/DebugOnly.h"
 +#include "mozilla/dom/Element.h"
 +#include "nsContentUtils.h"
-+#include "mozilla/DebugOnly.h"
-+#include "mozilla/Assertions.h"
++#include "nsIAtom.h"
++#include "nsIContent.h"
++#include "nsIDocument.h"
 +
 +#include "nsMenuObject.h"
++
++#include "nsNativeMenuDocListener.h"
 +
 +using namespace mozilla;
 +
@@ -4351,15 +4441,15 @@ new file mode 100644
 +#ifndef __nsNativeMenuDocListener_h__
 +#define __nsNativeMenuDocListener_h__
 +
-+#include "nsStubMutationObserver.h"
-+#include "nsClassHashtable.h"
-+#include "nsTArray.h"
-+#include "nsAutoPtr.h"
-+#include "nsIContent.h"
-+#include "nsIAtom.h"
 +#include "mozilla/Attributes.h"
 +#include "mozilla/GuardObjects.h"
++#include "nsAutoPtr.h"
++#include "nsDataHashtable.h"
++#include "nsStubMutationObserver.h"
++#include "nsTArray.h"
 +
++class nsIAtom;
++class nsIContent;
 +class nsIDocument;
 +class nsNativeMenuChangeObserver;
 +
@@ -4497,7 +4587,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuServi
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.cpp
-@@ -0,0 +1,504 @@
+@@ -0,0 +1,509 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4505,30 +4595,30 @@ new file mode 100644
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "nsNativeMenuService.h"
-+
-+#include "nsIWidget.h"
-+#include "nsIContent.h"
-+#include "nsServiceManagerUtils.h"
++#include "mozilla/Preferences.h"
++#include "mozilla/Services.h"
 +#include "nsAutoPtr.h"
 +#include "nsCOMPtr.h"
-+#include "nsWindow.h"
-+#include "mozilla/Services.h"
-+#include "nsXPCOM.h"
-+#include "nsIObserverService.h"
 +#include "nsCRT.h"
-+#include "prlink.h"
-+#include "mozilla/Preferences.h"
 +#include "nsGtkUtils.h"
++#include "nsIContent.h"
++#include "nsIObserverService.h"
++#include "nsIWidget.h"
++#include "nsServiceManagerUtils.h"
++#include "nsWindow.h"
++#include "nsXPCOM.h"
++#include "prlink.h"
 +
-+#include "nsNativeMenuDocListener.h"
-+#include "nsMenuBar.h"
 +#include "nsDbusmenu.h"
++#include "nsMenuBar.h"
 +#include "nsNativeMenuAtoms.h"
++#include "nsNativeMenuDocListener.h"
 +
-+#include <stdlib.h>
 +#include <glib-object.h>
 +#include <pango/pango.h>
++#include <stdlib.h>
++
++#include "nsNativeMenuService.h"
 +
 +using namespace mozilla;
 +
@@ -4833,6 +4923,11 @@ new file mode 100644
 +    OnNameOwnerChanged();
 +}
 +
++nsNativeMenuService::nsNativeMenuService() :
++    mDbusProxy(nullptr), mOnline(false)
++{
++}
++
 +nsNativeMenuService::~nsNativeMenuService()
 +{
 +    SetOnline(false);
@@ -5006,7 +5101,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.h b/widget/gtk2/nsNativeMenuService
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.h
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,88 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -5017,16 +5112,16 @@ new file mode 100644
 +#ifndef __nsNativeMenuService_h__
 +#define __nsNativeMenuService_h__
 +
-+#include "nsTArray.h"
-+#include "nsIObserver.h"
-+#include "nsINativeMenuService.h"
-+#include "nsCOMPtr.h"
 +#include "mozilla/Attributes.h"
++#include "nsCOMPtr.h"
++#include "nsINativeMenuService.h"
++#include "nsIObserver.h"
++#include "nsTArray.h"
 +
 +#include "nsNativeMenuUtils.h"
 +
-+#include <gio/gio.h>
 +#include <gdk/gdk.h>
++#include <gio/gio.h>
 +#include <gtk/gtk.h>
 +
 +class nsMenuBar;
@@ -5061,9 +5156,7 @@ new file mode 100644
 +    void NotifyNativeMenuBarDestroyed(nsMenuBar *aMenuBar);
 +
 +private:
-+    nsNativeMenuService() :
-+        mDbusProxy(nullptr),
-+        mOnline(false) { };
++    nsNativeMenuService();
 +    ~nsNativeMenuService();
 +
 +    static void EnsureInitialized();
