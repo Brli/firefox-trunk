@@ -557,7 +557,7 @@ diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,845 @@
+@@ -0,0 +1,860 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -817,18 +817,20 @@ new file mode 100644
 +        return;
 +    }
 +
++    nsNativeMenuAutoUpdateBatch batch(this);
 +    nsCOMPtr<nsIContent> popupContent(mPopupContent);
-+    {
-+        nsNativeMenuAutoUpdateBatch batch;
 +
-+        SetPopupState(ePopupState_Showing);
-+        DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWING);
++    SetPopupState(ePopupState_Showing);
++    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWING);
 +
-+        mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::open,
-+                          NS_LITERAL_STRING("true"), true);
++    mContent->SetAttr(kNameSpaceID_None, nsGkAtoms::open,
++                      NS_LITERAL_STRING("true"), true);
++
++    // Get an updated view of the menu and then check we weren't deleted
++    batch.Flush();
++    if (batch.NodeWasDestroyed()) {
++        return;
 +    }
-+
-+    nsNativeMenuAutoUpdateBatch batch;
 +
 +    uint32_t count = mMenuObjects.Length();
 +    for (uint32_t i = 0; i < count; ++i) {
@@ -1214,6 +1216,19 @@ new file mode 100644
 +                   aAttribute == nsGkAtoms::crop) {
 +            UpdateLabel();
 +        }
++    }
++
++    if (!mParent->IsBeingDisplayed() || aContent != mContent) {
++        return;
++    }
++
++    if (aAttribute == nsGkAtoms::hidden ||
++        aAttribute == nsGkAtoms::collapsed) {
++        nsRefPtr<nsStyleContext> sc = GetStyleContext();
++        UpdateVisibility(sc);
++    } else if (aAttribute == nsGkAtoms::image) {
++        nsRefPtr<nsStyleContext> sc = GetStyleContext();
++        UpdateIcon(sc);
 +    }
 +}
 +
@@ -2302,7 +2317,7 @@ diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.cpp
-@@ -0,0 +1,510 @@
+@@ -0,0 +1,524 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2329,6 +2344,7 @@ new file mode 100644
 +#include "nsIRunnable.h"
 +#include "nsReadableUtils.h"
 +#include "nsString.h"
++#include "nsStyleContext.h"
 +#include "nsThreadUtils.h"
 +
 +#include "nsMenu.h"
@@ -2812,6 +2828,19 @@ new file mode 100644
 +                aAttribute == nsGkAtoms::modifiers)) {
 +        UpdateAccel();
 +    }
++
++    if (!mParent->IsBeingDisplayed() || aContent != mContent) {
++        return;
++    }
++
++    if (aAttribute == nsGkAtoms::hidden ||
++        aAttribute == nsGkAtoms::collapsed) {
++        nsRefPtr<nsStyleContext> sc = GetStyleContext();
++        UpdateVisibility(sc);
++    } else if (aAttribute == nsGkAtoms::image) {
++        nsRefPtr<nsStyleContext> sc = GetStyleContext();
++        UpdateIcon(sc);
++    }
 +}
 diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
 new file mode 100644
@@ -2929,7 +2958,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,728 @@
+@@ -0,0 +1,739 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3499,6 +3528,21 @@ new file mode 100644
 +    }
 +}
 +
++already_AddRefed<nsStyleContext>
++nsMenuObject::GetStyleContext()
++{
++    nsIPresShell *shell = mContent->OwnerDoc()->GetShell();
++    if (!shell) {
++        return nullptr;
++    }
++
++    nsRefPtr<nsStyleContext> sc =
++        nsComputedDOMStyle::GetStyleContextForElementNoFlush(
++            mContent->AsElement(), nullptr, shell);
++
++    return sc.forget();
++}
++
 +nsresult
 +nsMenuObject::Init(nsMenuObjectContainer *aParent, nsIContent *aContent)
 +{
@@ -3520,6 +3564,8 @@ new file mode 100644
 +
 +nsMenuObject::~nsMenuObject()
 +{
++    nsNativeMenuAutoUpdateBatch::NotifyNodeDestroyed(this);
++
 +    if (mIconLoader) {
 +        mIconLoader->Destroy();
 +    }
@@ -3567,7 +3613,7 @@ new file mode 100644
 +        if (!(mask & supported)) {
 +            dbusmenu_menuitem_property_remove(mNativeData, gPropertyStrings[i]);
 +        }
-+        mask = PropertyFlags(mask << 1);
++        mask = static_cast<PropertyFlags>(mask << 1);
 +    }
 +
 +    InitializeNativeData();
@@ -3591,14 +3637,8 @@ new file mode 100644
 +
 +    UpdateContentAttributes();
 +
-+    nsIPresShell *shell = mContent->OwnerDoc()->GetShell();
-+    if (shell) {
-+        nsRefPtr<nsStyleContext> sc =
-+            nsComputedDOMStyle::GetStyleContextForElementNoFlush(
-+                mContent->AsElement(), nullptr, shell);
-+
-+        Update(sc);
-+    }
++    nsRefPtr<nsStyleContext> sc = GetStyleContext();
++    Update(sc);
 +}
 +
 +nsMenuObject*
@@ -3662,7 +3702,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,162 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3758,6 +3798,8 @@ new file mode 100644
 +    void UpdateVisibility(nsStyleContext *aStyleContext);
 +    void UpdateSensitivity();
 +    void UpdateIcon(nsStyleContext *aStyleContext);
++
++    already_AddRefed<nsStyleContext> GetStyleContext();
 +   
 +    nsCOMPtr<nsIContent> mContent;
 +    nsRefPtr<nsNativeMenuDocListener> mListener;
@@ -3827,7 +3869,7 @@ diff --git a/widget/gtk2/nsMenuSeparator.cpp b/widget/gtk2/nsMenuSeparator.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuSeparator.cpp
-@@ -0,0 +1,78 @@
+@@ -0,0 +1,90 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3837,6 +3879,8 @@ new file mode 100644
 +
 +#include "nsAutoPtr.h"
 +#include "nsCRT.h"
++#include "nsGkAtoms.h"
++#include "nsStyleContext.h"
 +
 +#include "nsDbusmenu.h"
 +
@@ -3905,6 +3949,16 @@ new file mode 100644
 +nsMenuSeparator::OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute)
 +{
 +    NS_ASSERTION(aContent == mContent, "Received an event that wasn't meant for us!");
++
++    if (!mParent->IsBeingDisplayed()) {
++        return;
++    }
++
++    if (aAttribute == nsGkAtoms::hidden ||
++        aAttribute == nsGkAtoms::collapsed) {
++        nsRefPtr<nsStyleContext> sc = GetStyleContext();
++        UpdateVisibility(sc);
++    }
 +}
 diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
 new file mode 100644
@@ -4045,7 +4099,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuD
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,380 @@
+@@ -0,0 +1,400 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4068,8 +4122,22 @@ new file mode 100644
 +using namespace mozilla;
 +
 +uint32_t nsNativeMenuDocListener::sUpdateDepth = 0;
++nsNativeMenuAutoUpdateBatch* nsNativeMenuAutoUpdateBatch::sHead;
 +
 +nsNativeMenuDocListenerTArray *gPendingListeners;
++
++/* static */ void
++nsNativeMenuAutoUpdateBatch::NotifyNodeDestroyed(nsNativeMenuChangeObserver *aNode)
++{
++    nsNativeMenuAutoUpdateBatch *tmp = sHead;
++    while (tmp) {
++        if (tmp->mOwnerNode == aNode) {
++            tmp->mNodeDestroyed = true;
++        }
++
++        tmp = tmp->mNext;
++    }
++}
 +
 +/*
 + * Small helper which caches a single listener, so that consecutive
@@ -4239,17 +4307,23 @@ new file mode 100644
 +/* static */ void
 +nsNativeMenuDocListener::EndUpdates()
 +{
-+    if (sUpdateDepth == 1 && gPendingListeners) {
-+        {
-+            while (gPendingListeners->Length() > 0) {
-+                (*gPendingListeners)[0]->FlushPendingMutations();
-+                gPendingListeners->RemoveElementAt(0);
-+            }
-+        }
++    if (sUpdateDepth == 1) {
++        FlushAllListeners();
 +    }
 + 
 +    NS_ASSERTION(sUpdateDepth > 0, "Negative update depth!");
 +    sUpdateDepth--;
++}
++
++/* static */ void
++nsNativeMenuDocListener::FlushAllListeners()
++{
++    if (gPendingListeners) {
++        while (gPendingListeners->Length() > 0) {
++            (*gPendingListeners)[0]->FlushPendingMutations();
++            gPendingListeners->RemoveElementAt(0);
++        }
++    }
 +}
 +
 +nsNativeMenuDocListener::nsNativeMenuDocListener() :
@@ -4430,7 +4504,7 @@ diff --git a/widget/gtk2/nsNativeMenuDocListener.h b/widget/gtk2/nsNativeMenuDoc
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuDocListener.h
-@@ -0,0 +1,152 @@
+@@ -0,0 +1,176 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4519,6 +4593,7 @@ new file mode 100644
 +    static void CancelFlush(nsNativeMenuDocListener *aListener);
 +    static void BeginUpdates() { ++sUpdateDepth; }
 +    static void EndUpdates();
++    static void FlushAllListeners();
 +
 +    nsCOMPtr<nsIContent> mRootNode;
 +    nsIDocument *mDocument;
@@ -4567,19 +4642,42 @@ new file mode 100644
 +class MOZ_STACK_CLASS nsNativeMenuAutoUpdateBatch
 +{
 +public:
-+    nsNativeMenuAutoUpdateBatch(MOZ_GUARD_OBJECT_NOTIFIER_ONLY_PARAM)
++    nsNativeMenuAutoUpdateBatch(nsNativeMenuChangeObserver *aOwnerNode = nullptr
++                                MOZ_GUARD_OBJECT_NOTIFIER_PARAM) :
++        mNext(nullptr), mOwnerNode(aOwnerNode), mNodeDestroyed(false)
 +    {
 +        MOZ_GUARD_OBJECT_NOTIFIER_INIT;
++
 +        nsNativeMenuDocListener::BeginUpdates();
++
++        mNext = sHead;
++        sHead = this;
 +    }
 +
 +    ~nsNativeMenuAutoUpdateBatch()
 +    {
++        sHead = mNext;
++
 +        nsNativeMenuDocListener::EndUpdates();
 +    }
 +
++    bool NodeWasDestroyed() { return mNodeDestroyed; }
++
++    void Flush()
++    {
++        nsNativeMenuDocListener::FlushAllListeners();
++    }
++
++    static void NotifyNodeDestroyed(nsNativeMenuChangeObserver *aContent);
++
 +private:
 +    MOZ_DECL_USE_GUARD_OBJECT_NOTIFIER
++
++    static nsNativeMenuAutoUpdateBatch *sHead;
++    nsNativeMenuAutoUpdateBatch *mNext;
++
++    nsNativeMenuChangeObserver *mOwnerNode;
++    bool mNodeDestroyed;
 +};
 +
 +#endif /* __nsNativeMenuDocListener_h__ */
