@@ -180,7 +180,7 @@ diff --git a/toolkit/content/xul.css b/toolkit/content/xul.css
 diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
 --- a/widget/gtk2/Makefile.in
 +++ b/widget/gtk2/Makefile.in
-@@ -39,16 +39,25 @@ CPPSRCS = \
+@@ -39,16 +39,26 @@ CPPSRCS = \
    nsFilePicker.cpp \
    nsSound.cpp \
    nsNativeKeyBindings.cpp \
@@ -195,6 +195,7 @@ diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
 +  nsDbusmenu.cpp \
 +  nsMenu.cpp \
 +  nsMenuBar.cpp \
++  nsMenuContainer.cpp \
 +  nsMenuItem.cpp \
 +  nsMenuObject.cpp \
 +  nsMenuSeparator.cpp \
@@ -206,7 +207,7 @@ diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
  
  ifdef NS_PRINTING
  CPPSRCS		+= \
-@@ -93,14 +102,15 @@ endif
+@@ -93,14 +103,15 @@ endif
  endif
  
  DEFINES		+= -DCAIRO_GFX -DMOZ_APP_NAME='"$(MOZ_APP_NAME)"'
@@ -557,7 +558,7 @@ diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.cpp
-@@ -0,0 +1,871 @@
+@@ -0,0 +1,836 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -817,7 +818,7 @@ new file mode 100644
 +        return;
 +    }
 +
-+    nsMenuObjectWeakReference<nsMenu> weak(this);
++    nsWeakMenuObject<nsMenu> self(this);
 +    nsCOMPtr<nsIContent> origPopupContent(mPopupContent);
 +    {
 +        nsNativeMenuAutoUpdateBatch batch;
@@ -829,7 +830,7 @@ new file mode 100644
 +                               NS_LITERAL_STRING("true"), true);
 +    }
 +
-+    if (!weak) {
++    if (!self) {
 +        // We were deleted!
 +        return;
 +    }
@@ -841,9 +842,9 @@ new file mode 100644
 +
 +    nsNativeMenuAutoUpdateBatch batch;
 +
-+    uint32_t count = Children().Length();
++    uint32_t count = ChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
-+        Children()[i]->ContainerIsOpening();
++        ChildAt(i)->ContainerIsOpening();
 +    }
 +
 +    SetPopupState(ePopupState_Open);
@@ -853,8 +854,8 @@ new file mode 100644
 +nsresult
 +nsMenu::Build()
 +{
-+    while (Children().Length() > 0) {
-+        RemoveMenuObjectAt(0);
++    while (ChildCount() > 0) {
++        RemoveChildAt(0);
 +    }
 +
 +    if (NeedsBuild() && !HasPlaceholderItem()) {
@@ -885,7 +886,7 @@ new file mode 100644
 +        nsMenuObject *child = CreateChild(childContent, &rv);
 +
 +        if (child) {
-+            rv = AppendMenuObject(child);
++            rv = AppendChild(child);
 +        }
 +
 +        if (NS_FAILED(rv)) {
@@ -965,89 +966,56 @@ new file mode 100644
 +}
 +
 +nsresult
-+nsMenu::RemoveMenuObjectAt(uint32_t aIndex)
++nsMenu::RemoveChildAt(uint32_t aIndex)
 +{
-+    if (aIndex >= Children().Length()) {
-+        return NS_ERROR_INVALID_ARG;
-+    }
-+
-+    if (!IsInUpdateBatch()) {
-+        NS_ASSERTION(!HasPlaceholderItem(), "Shouldn't have a placeholder menuitem");
-+        if (!dbusmenu_menuitem_child_delete(
-+                GetNativeData(), Children()[aIndex]->GetNativeData())) {
-+            return NS_ERROR_FAILURE;
-+        }
-+    }
++    NS_ASSERTION(IsInUpdateBatch() || !HasPlaceholderItem(),
++                 "Shouldn't have a placeholder menuitem");
 +
 +    SetDidStructureMutate(true);
 +
-+    Children().RemoveElementAt(aIndex);
++    nsresult rv = nsMenuContainer::RemoveChildAt(aIndex, !IsInUpdateBatch());
 +
 +    if (!IsInUpdateBatch()) {
 +        MaybeAddPlaceholderItem();
 +    }
 +
-+    return NS_OK;
++    return rv;
 +}
 +
 +nsresult
-+nsMenu::RemoveMenuObject(nsIContent *aChild)
++nsMenu::RemoveChild(nsIContent *aChild)
 +{
 +    uint32_t index = IndexOf(aChild);
 +    if (index == NoIndex) {
 +        return NS_ERROR_INVALID_ARG;
 +    }
 +
-+    return RemoveMenuObjectAt(index);
++    return RemoveChildAt(index);
 +}
 +
 +nsresult
-+nsMenu::InsertMenuObjectAfter(nsMenuObject *aChild, nsIContent *aPrevSibling)
++nsMenu::InsertChildAfter(nsMenuObject *aChild, nsIContent *aPrevSibling)
 +{
-+    uint32_t index = IndexOf(aPrevSibling);
-+    if (index == NoIndex && aPrevSibling) {
-+        return NS_ERROR_INVALID_ARG;
-+    }
-+
-+    ++index;
-+
-+    if (!IsInUpdateBatch()) {
-+        if (!EnsureNoPlaceholderItem()) {
-+            return NS_ERROR_FAILURE;
-+        }
-+
-+        aChild->CreateNativeData();
-+        if (!dbusmenu_menuitem_child_add_position(GetNativeData(),
-+                                                  aChild->GetNativeData(),
-+                                                  index)) {
-+            return NS_ERROR_FAILURE;
-+        }
++    if (!IsInUpdateBatch() && !EnsureNoPlaceholderItem()) {
++        return NS_ERROR_FAILURE;
 +    }
 +
 +    SetDidStructureMutate(true);
 +
-+    return Children().InsertElementAt(index, aChild) ?
-+        NS_OK : NS_ERROR_FAILURE;
++    return nsMenuContainer::InsertChildAfter(aChild, aPrevSibling,
++                                             !IsInUpdateBatch());
 +}
 +
 +nsresult
-+nsMenu::AppendMenuObject(nsMenuObject *aChild)
++nsMenu::AppendChild(nsMenuObject *aChild)
 +{
-+    if (!IsInUpdateBatch()) {
-+        if (!EnsureNoPlaceholderItem()) {
-+            return NS_ERROR_FAILURE;
-+        }
-+
-+        aChild->CreateNativeData();
-+        if (!dbusmenu_menuitem_child_append(GetNativeData(),
-+                                            aChild->GetNativeData())) {
-+            return NS_ERROR_FAILURE;
-+        }
++    if (!IsInUpdateBatch() && !EnsureNoPlaceholderItem()) {
++        return NS_ERROR_FAILURE;
 +    }
 +
 +    SetDidStructureMutate(true);
 +
-+    return Children().AppendElement(aChild) ? NS_OK : NS_ERROR_FAILURE;
++    return nsMenuContainer::AppendChild(aChild, !IsInUpdateBatch());
 +}
 +
 +bool
@@ -1076,7 +1044,7 @@ new file mode 100644
 +}
 +
 +nsMenu::nsMenu() :
-+    nsMenuObjectContainer()
++    nsMenuContainer()
 +{
 +    MOZ_COUNT_CTOR(nsMenu);
 +}
@@ -1091,8 +1059,8 @@ new file mode 100644
 +    // we have to manually ensure children are removed from our native menu
 +    // item, just in case our parent is in an update batch and is going to
 +    // reuse our native menu item for something else
-+    while (Children().Length() > 0) {
-+        RemoveMenuObjectAt(0);
++    while (ChildCount() > 0) {
++        RemoveChildAt(0);
 +    }
 +
 +    EnsureNoPlaceholderItem();
@@ -1111,8 +1079,7 @@ new file mode 100644
 +}
 +
 +/* static */ nsMenuObject*
-+nsMenu::Create(nsMenuObjectContainer *aParent,
-+               nsIContent *aContent)
++nsMenu::Create(nsMenuContainer *aParent, nsIContent *aContent)
 +{
 +    nsAutoPtr<nsMenu> menu(new nsMenu());
 +    if (NS_FAILED(menu->Init(aParent, aContent))) {
@@ -1125,11 +1092,11 @@ new file mode 100644
 +static void
 +DoOpen(nsITimer *aTimer, void *aClosure)
 +{
-+    nsAutoPtr<nsMenuObjectWeakReference<nsMenu> > weakMenu(
-+        static_cast<nsMenuObjectWeakReference<nsMenu> *>(aClosure));
++    nsAutoWeakMenuObject<nsMenu> weakMenu(
++        static_cast<nsWeakMenuObject<nsMenu> *>(aClosure));
 +
-+    if (*weakMenu) {
-+        dbusmenu_menuitem_show_to_user((*weakMenu)->GetNativeData(), 0);
++    if (weakMenu) {
++        dbusmenu_menuitem_show_to_user(weakMenu->GetNativeData(), 0);
 +    }
 +
 +    NS_RELEASE(aTimer);
@@ -1167,10 +1134,9 @@ new file mode 100644
 +        return;
 +    }
 +
-+    nsAutoPtr<nsMenuObjectWeakReference<nsMenu> > weakMenu(
-+        new nsMenuObjectWeakReference<nsMenu>(this));
++    nsAutoWeakMenuObject<nsMenu> weakMenu(this);
 +
-+    if (NS_FAILED(timer->InitWithFuncCallback(DoOpen, weakMenu,
++    if (NS_FAILED(timer->InitWithFuncCallback(DoOpen, weakMenu.getWeakPtr(),
 +                                              100, nsITimer::TYPE_ONE_SHOT))) {
 +        return;
 +    }
@@ -1196,10 +1162,10 @@ new file mode 100644
 +    // Sigh, make sure all of our descendants are closed, as we don't
 +    // always get closed events for submenus when scrubbing quickly through
 +    // the menu
-+    uint32_t count = Children().Length();
++    uint32_t count = ChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
-+        if (Children()[i]->Type() == nsMenuObject::eType_Menu) {
-+            static_cast<nsMenu *>(Children()[i].get())->OnClose();
++        if (ChildAt(i)->Type() == nsMenuObject::eType_Menu) {
++            static_cast<nsMenu *>(ChildAt(i))->OnClose();
 +        }
 +    }
 +
@@ -1259,7 +1225,7 @@ new file mode 100644
 +        nsMenuObject *child = CreateChild(aChild, &rv);
 +
 +        if (child) {
-+            rv = InsertMenuObjectAfter(child, aPrevSibling);
++            rv = InsertChildAfter(child, aPrevSibling);
 +        }
 +    } else {
 +        rv = Build();
@@ -1283,7 +1249,7 @@ new file mode 100644
 +
 +    nsresult rv;
 +    if (aContainer == mPopupContent) {
-+        rv = RemoveMenuObject(aChild);
++        rv = RemoveChild(aChild);
 +    } else {
 +        rv = Build();
 +    }
@@ -1341,20 +1307,20 @@ new file mode 100644
 +    GList *nextNativeChild = dbusmenu_menuitem_get_children(GetNativeData());
 +    DbusmenuMenuitem *nextOwnedNativeChild = nullptr;
 +
-+    uint32_t count = Children().Length();
++    uint32_t count = ChildCount();
 +
 +    // Find the first native menu item that is `owned` by a corresponding
 +    // Gecko menuitem
 +    for (uint32_t i = 0; i < count; ++i) {
-+        if (Children()[i]->GetNativeData()) {
-+            nextOwnedNativeChild = Children()[i]->GetNativeData();
++        if (ChildAt(i)->GetNativeData()) {
++            nextOwnedNativeChild = ChildAt(i)->GetNativeData();
 +            break;
 +        }
 +    }
 +
 +    // Now iterate over all Gecko menuitems
 +    for (uint32_t i = 0; i < count; ++i) {
-+        nsMenuObject *child = Children()[i];
++        nsMenuObject *child = ChildAt(i);
 +
 +        if (child->GetNativeData()) {
 +            // This child already has a corresponding native menuitem.
@@ -1381,8 +1347,8 @@ new file mode 100644
 +            // Now find the next native menu item that is `owned`
 +            nextOwnedNativeChild = nullptr;
 +            for (uint32_t j = i + 1; j < count; ++j) {
-+                if (Children()[j]->GetNativeData()) {
-+                    nextOwnedNativeChild = Children()[j]->GetNativeData();
++                if (ChildAt(j)->GetNativeData()) {
++                    nextOwnedNativeChild = ChildAt(j)->GetNativeData();
 +                    break;
 +                }
 +            }
@@ -1433,7 +1399,7 @@ diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenu.h
-@@ -0,0 +1,157 @@
+@@ -0,0 +1,158 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1448,6 +1414,7 @@ new file mode 100644
 +#include "nsCOMPtr.h"
 +
 +#include "nsDbusmenu.h"
++#include "nsMenuContainer.h"
 +#include "nsMenuObject.h"
 +
 +#include <glib.h>
@@ -1460,12 +1427,12 @@ new file mode 100644
 +#define NSMENU_NUMBER_OF_FLAGS           4U
 +
 +// This class represents a menu
-+class nsMenu MOZ_FINAL : public nsMenuObjectContainer
++class nsMenu MOZ_FINAL : public nsMenuContainer
 +{
 +public:
 +    ~nsMenu();
 +
-+    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
++    static nsMenuObject* Create(nsMenuContainer *aParent,
 +                                nsIContent *aContent);
 +
 +    nsMenuObject::EType Type() const;
@@ -1580,10 +1547,10 @@ new file mode 100644
 +    void InitializeNativeData();
 +    void Update(nsStyleContext *aStyleContext);
 +    void InitializePopup();
-+    nsresult RemoveMenuObjectAt(uint32_t aIndex);
-+    nsresult RemoveMenuObject(nsIContent *aChild);
-+    nsresult InsertMenuObjectAfter(nsMenuObject *aChild, nsIContent *aPrevSibling);
-+    nsresult AppendMenuObject(nsMenuObject *aChild);
++    nsresult RemoveChildAt(uint32_t aIndex);
++    nsresult RemoveChild(nsIContent *aChild);
++    nsresult InsertChildAfter(nsMenuObject *aChild, nsIContent *aPrevSibling);
++    nsresult AppendChild(nsMenuObject *aChild);
 +    bool CanOpen() const;
 +    nsMenuObject::PropertyFlags SupportedProperties() const;
 +
@@ -1595,7 +1562,7 @@ diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.cpp
-@@ -0,0 +1,608 @@
+@@ -0,0 +1,546 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -1669,68 +1636,6 @@ new file mode 100644
 +}
 +
 +nsresult
-+nsMenuBar::RemoveMenuObjectAt(uint32_t aIndex)
-+{
-+    if (aIndex >= Children().Length()) {
-+        return NS_ERROR_INVALID_ARG;
-+    }
-+
-+    if (!dbusmenu_menuitem_child_delete(
-+            GetNativeData(), Children()[aIndex]->GetNativeData())) {
-+        return NS_ERROR_FAILURE;
-+    }
-+
-+    Children().RemoveElementAt(aIndex);
-+
-+    return NS_OK;
-+}
-+
-+nsresult
-+nsMenuBar::RemoveMenuObject(nsIContent *aChild)
-+{
-+    uint32_t index = IndexOf(aChild);
-+    if (index == NoIndex) {
-+        return NS_ERROR_INVALID_ARG;
-+    }
-+
-+    return RemoveMenuObjectAt(index);
-+}
-+
-+nsresult
-+nsMenuBar::InsertMenuObjectAfter(nsMenuObject *aChild,
-+                                 nsIContent *aPrevSibling)
-+{
-+    uint32_t index = IndexOf(aPrevSibling);
-+    if (index == NoIndex && aPrevSibling) {
-+        return NS_ERROR_INVALID_ARG;
-+    }
-+
-+    ++index;
-+
-+    aChild->CreateNativeData();
-+    if (!dbusmenu_menuitem_child_add_position(GetNativeData(),
-+                                              aChild->GetNativeData(),
-+                                              index)) {
-+        return NS_ERROR_FAILURE;
-+    }
-+
-+    return Children().InsertElementAt(index, aChild) ?
-+        NS_OK : NS_ERROR_FAILURE;
-+}
-+
-+nsresult
-+nsMenuBar::AppendMenuObject(nsMenuObject *aChild)
-+{
-+    aChild->CreateNativeData();
-+    if (!dbusmenu_menuitem_child_append(GetNativeData(),
-+                                        aChild->GetNativeData())) {
-+        return NS_ERROR_FAILURE;
-+    }
-+
-+    return Children().AppendElement(aChild) ? NS_OK : NS_ERROR_FAILURE;
-+}
-+
-+nsresult
 +nsMenuBar::Build()
 +{
 +    uint32_t count = ContentNode()->GetChildCount();
@@ -1741,7 +1646,7 @@ new file mode 100644
 +        nsMenuObject *child = CreateChild(childContent, &rv);
 +
 +        if (child) {
-+            rv = AppendMenuObject(child);
++            rv = AppendChild(child);
 +        }
 +
 +        if (NS_FAILED(rv)) {
@@ -1869,15 +1774,15 @@ new file mode 100644
 +    PRUnichar chu = ToUpperCase(ch);
 +
 +    nsMenuObject *found = nullptr;
-+    uint32_t count = Children().Length();
++    uint32_t count = ChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
 +        nsAutoString accesskey;
-+        Children()[i]->ContentNode()->GetAttr(kNameSpaceID_None,
-+                                              nsGkAtoms::accesskey,
-+                                              accesskey);
++        ChildAt(i)->ContentNode()->GetAttr(kNameSpaceID_None,
++                                           nsGkAtoms::accesskey,
++                                           accesskey);
 +        const nsAutoString::char_type *key = accesskey.BeginReading();
 +        if (*key == chu || *key == chl) {
-+            found = Children()[i];
++            found = ChildAt(i);
 +            break;
 +        }
 +    }
@@ -1942,7 +1847,7 @@ new file mode 100644
 +}
 +
 +nsMenuBar::nsMenuBar() :
-+    nsMenuObjectContainer(),
++    nsMenuContainer(),
 +    mTopLevel(nullptr),
 +    mServer(nullptr),
 +    mIsActive(false)
@@ -2165,8 +2070,8 @@ new file mode 100644
 +    mRegisterRequestCanceller.Cancel();
 +
 +    SetShellShowingMenuBar(false);
-+    while (Children().Length() > 0) {
-+        RemoveMenuObjectAt(0);
++    while (ChildCount() > 0) {
++        RemoveChildAt(0);
 +    }
 +    DocListener()->Stop();
 +    DisconnectDocumentEventListeners();
@@ -2189,7 +2094,7 @@ new file mode 100644
 +    nsMenuObject *child = CreateChild(aChild, &rv);
 +
 +    if (child) {
-+        rv = InsertMenuObjectAfter(child, aPrevSibling);
++        rv = InsertChildAfter(child, aPrevSibling);
 +    }
 +
 +    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to insert item in to menubar");
@@ -2201,14 +2106,14 @@ new file mode 100644
 +    NS_ASSERTION(aContainer == ContentNode(),
 +                 "Received an event that wasn't meant for us");
 +
-+    DebugOnly<nsresult> rv = RemoveMenuObject(aChild);
++    DebugOnly<nsresult> rv = RemoveChild(aChild);
 +    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove item from menubar");
 +}
 diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuBar.h
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,112 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2224,6 +2129,7 @@ new file mode 100644
 +#include "nsString.h"
 +
 +#include "nsDbusmenu.h"
++#include "nsMenuContainer.h"
 +#include "nsMenuObject.h"
 +#include "nsNativeMenuUtils.h"
 +
@@ -2243,7 +2149,7 @@ new file mode 100644
 + * to a particular window. A menubar and its hierarchy also own a
 + * nsNativeMenuDocListener.
 + */
-+class nsMenuBar MOZ_FINAL : public nsMenuObjectContainer
++class nsMenuBar MOZ_FINAL : public nsMenuContainer
 +{
 +public:
 +    ~nsMenuBar();
@@ -2298,10 +2204,6 @@ new file mode 100644
 +
 +    nsMenuBar();
 +    nsresult Init(nsIWidget *aParent, nsIContent *aMenuBarNode);
-+    nsresult RemoveMenuObjectAt(uint32_t aIndex);
-+    nsresult RemoveMenuObject(nsIContent *aChild);
-+    nsresult InsertMenuObjectAfter(nsMenuObject *aChild, nsIContent *aPrevSibling);
-+    nsresult AppendMenuObject(nsMenuObject *aChild);
 +    nsresult Build();
 +    void DisconnectDocumentEventListeners();
 +    void SetShellShowingMenuBar(bool aShowing);
@@ -2324,6 +2226,250 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenuBar_h__ */
+diff --git a/widget/gtk2/nsMenuContainer.cpp b/widget/gtk2/nsMenuContainer.cpp
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuContainer.cpp
+@@ -0,0 +1,173 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsGkAtoms.h"
++#include "nsIAtom.h"
++#include "nsIContent.h"
++
++#include "nsDbusmenu.h"
++#include "nsMenu.h"
++#include "nsMenuItem.h"
++#include "nsMenuSeparator.h"
++
++#include "nsMenuContainer.h"
++
++const nsMenuContainer::ChildTArray::index_type nsMenuContainer::NoIndex = nsMenuContainer::ChildTArray::NoIndex;
++
++typedef nsMenuObject* (*nsMenuObjectConstructor)(nsMenuContainer*,
++                                                 nsIContent*);
++static nsMenuObjectConstructor
++GetMenuObjectConstructor(nsIContent *aContent)
++{
++    if (!aContent->IsXUL()) {
++        return nullptr;
++    }
++
++    nsIAtom *tag = aContent->Tag();
++    if (tag == nsGkAtoms::menuitem) {
++        return nsMenuItem::Create;
++    } else if (tag == nsGkAtoms::menu) {
++        return nsMenu::Create;
++    } else if (tag == nsGkAtoms::menuseparator) {
++        return nsMenuSeparator::Create;
++    }
++
++    return nullptr;
++}
++
++static bool
++ContentIsSupported(nsIContent *aContent)
++{
++    return GetMenuObjectConstructor(aContent) ? true : false;
++}
++
++nsMenuObject*
++nsMenuContainer::CreateChild(nsIContent *aContent, nsresult *aRv)
++{
++    nsMenuObjectConstructor ctor = GetMenuObjectConstructor(aContent);
++    if (!ctor) {
++        // There are plenty of node types we might stumble across that
++        // aren't supported. This isn't an error though
++        if (aRv) {
++            *aRv = NS_OK;
++        }
++        return nullptr;
++    }
++
++    nsMenuObject *res = ctor(this, aContent);
++    if (!res) {
++        if (aRv) {
++            *aRv = NS_ERROR_FAILURE;
++        }
++        return nullptr;
++    }
++
++    if (aRv) {
++        *aRv = NS_OK;
++    }
++    return res;
++}
++
++uint32_t
++nsMenuContainer::IndexOf(nsIContent *aChild) const
++{
++    if (!aChild) {
++        return NoIndex;
++    }
++
++    uint32_t count = ChildCount();
++    for (uint32_t i = 0; i < count; ++i) {
++        if (ChildAt(i)->ContentNode() == aChild) {
++            return i;
++        }
++    }
++
++    return NoIndex;
++}
++
++nsresult
++nsMenuContainer::RemoveChildAt(uint32_t aIndex, bool aUpdateNative)
++{
++    if (aIndex >= ChildCount()) {
++        return NS_ERROR_INVALID_ARG;
++    }
++
++    if (aUpdateNative) {
++        if (!dbusmenu_menuitem_child_delete(GetNativeData(),
++                                            ChildAt(aIndex)->GetNativeData())) {
++            return NS_ERROR_FAILURE;
++        }
++    }
++
++    mChildren.RemoveElementAt(aIndex);
++
++    return NS_OK;
++}
++
++nsresult
++nsMenuContainer::RemoveChild(nsIContent *aChild, bool aUpdateNative)
++{
++    uint32_t index = IndexOf(aChild);
++    if (index == NoIndex) {
++        return NS_ERROR_INVALID_ARG;
++    }
++
++    return RemoveChildAt(index, aUpdateNative);
++}
++
++nsresult
++nsMenuContainer::InsertChildAfter(nsMenuObject *aChild,
++                                  nsIContent *aPrevSibling,
++                                  bool aUpdateNative)
++{
++    uint32_t index = IndexOf(aPrevSibling);
++    if (index == NoIndex && aPrevSibling) {
++        return NS_ERROR_INVALID_ARG;
++    }
++
++    ++index;
++
++    if (aUpdateNative) {
++        aChild->CreateNativeData();
++        if (!dbusmenu_menuitem_child_add_position(GetNativeData(),
++                                                  aChild->GetNativeData(),
++                                                  index)) {
++            return NS_ERROR_FAILURE;
++        }
++    }
++
++    return mChildren.InsertElementAt(index, aChild) ? NS_OK : NS_ERROR_FAILURE;
++}
++
++nsresult
++nsMenuContainer::AppendChild(nsMenuObject *aChild, bool aUpdateNative)
++{
++    if (aUpdateNative) {
++        aChild->CreateNativeData();
++        if (!dbusmenu_menuitem_child_append(GetNativeData(),
++                                            aChild->GetNativeData())) {
++            return NS_ERROR_FAILURE;
++        }
++    }
++
++    return mChildren.AppendElement(aChild) ? NS_OK : NS_ERROR_FAILURE;
++}
++
++nsMenuContainer::nsMenuContainer() :
++    nsMenuObject()
++{
++}
++
++/* static */ nsIContent*
++nsMenuContainer::GetPreviousSupportedSibling(nsIContent *aContent)
++{
++    do {
++        aContent = aContent->GetPreviousSibling();
++    } while (aContent && !ContentIsSupported(aContent));
++
++    return aContent;
++}
+diff --git a/widget/gtk2/nsMenuContainer.h b/widget/gtk2/nsMenuContainer.h
+new file mode 100644
+--- /dev/null
++++ b/widget/gtk2/nsMenuContainer.h
+@@ -0,0 +1,61 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:expandtab:shiftwidth=4:tabstop=4:
++ */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#ifndef __nsMenuContainer_h__
++#define __nsMenuContainer_h__
++
++#include "nsAutoPtr.h"
++#include "nsTArray.h"
++
++#include "nsMenuObject.h"
++
++class nsIContent;
++
++// Base class for containers (menus and menubars)
++class nsMenuContainer : public nsMenuObject
++{
++public:
++    typedef nsTArray<nsAutoPtr<nsMenuObject> > ChildTArray;
++
++    // Determine if this container is being displayed on screen. Must be
++    // implemented by subclasses
++    virtual bool IsBeingDisplayed() const = 0;
++
++    // Return the first previous sibling that is of a type supported by the
++    // menu system
++    static nsIContent* GetPreviousSupportedSibling(nsIContent *aContent);
++
++    static const ChildTArray::index_type NoIndex;
++
++protected:
++    nsMenuContainer();
++
++    // Create a new child element for the specified content node
++    nsMenuObject* CreateChild(nsIContent *aContent, nsresult *aRv);
++
++    // Return the index of the child for the specified content node
++    uint32_t IndexOf(nsIContent *aChild) const;
++
++    uint32_t ChildCount() const { return mChildren.Length(); }
++    nsMenuObject* ChildAt(uint32_t aIndex) const { return mChildren[aIndex]; }
++
++    nsresult RemoveChildAt(uint32_t aIndex, bool aUpdateNative = true);
++
++    // Remove the child that owns the specified content node
++    nsresult RemoveChild(nsIContent *aChild, bool aUpdateNative = true);
++
++    // Insert a new child after the child that owns the specified content node
++    nsresult InsertChildAfter(nsMenuObject *aChild, nsIContent *aPrevSibling,
++                              bool aUpdateNative = true);
++
++    nsresult AppendChild(nsMenuObject *aChild, bool aUpdateNative = true);
++
++private:
++    ChildTArray mChildren;
++};
++
++#endif /* __nsMenuContainer_h__ */
 diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
 new file mode 100644
 --- /dev/null
@@ -2360,6 +2506,7 @@ new file mode 100644
 +
 +#include "nsMenu.h"
 +#include "nsMenuBar.h"
++#include "nsMenuContainer.h"
 +#include "nsNativeMenuDocListener.h"
 +
 +#include <gdk/gdk.h>
@@ -2419,7 +2566,7 @@ new file mode 100644
 +        mMenuItem(aMenuItem) { };
 +
 +private:
-+    nsMenuObjectWeakReference<nsMenuItem> mMenuItem;
++    nsWeakMenuObject<nsMenuItem> mMenuItem;
 +};
 +
 +bool
@@ -2785,8 +2932,7 @@ new file mode 100644
 +}
 +
 +/* static */ nsMenuObject*
-+nsMenuItem::Create(nsMenuObjectContainer *aParent,
-+                   nsIContent *aContent)
++nsMenuItem::Create(nsMenuContainer *aParent, nsIContent *aContent)
 +{
 +    nsAutoPtr<nsMenuItem> menuitem(new nsMenuItem());
 +    if (NS_FAILED(menuitem->Init(aParent, aContent))) {
@@ -2851,7 +2997,7 @@ diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuItem.h
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,107 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -2877,6 +3023,7 @@ new file mode 100644
 +class nsIContent;
 +class nsStyleContext;
 +class nsMenuBar;
++class nsMenuContainer;
 +
 +/*
 + * This class represents 3 main classes of menuitems: labels, checkboxes and
@@ -2889,7 +3036,7 @@ new file mode 100644
 +
 +    nsMenuObject::EType Type() const;
 +
-+    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
++    static nsMenuObject* Create(nsMenuContainer *aParent,
 +                                nsIContent *aContent);
 +
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
@@ -2962,7 +3109,7 @@ diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.cpp
-@@ -0,0 +1,793 @@
+@@ -0,0 +1,704 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3000,9 +3147,7 @@ new file mode 100644
 +#include "nsThreadUtils.h"
 +#include "nsUnicharUtils.h"
 +
-+#include "nsMenu.h"
-+#include "nsMenuItem.h"
-+#include "nsMenuSeparator.h"
++#include "nsMenuContainer.h"
 +#include "nsNativeMenuAtoms.h"
 +#include "nsNativeMenuDocListener.h"
 +#include "nsNativeMenuUtils.h"
@@ -3025,9 +3170,7 @@ new file mode 100644
 +    nullptr
 +};
 +
-+const nsMenuObjectContainer::ChildTArray::index_type nsMenuObjectContainer::NoIndex = nsMenuObjectContainer::ChildTArray::NoIndex;
-+
-+nsMenuObjectWeakReferenceBase* nsMenuObjectWeakReferenceBase::sHead;
++nsWeakMenuObjectBase* nsWeakMenuObjectBase::sHead;
 +PangoLayout* gPangoLayout = nullptr;
 +
 +class nsMenuObjectContainerOpeningRunnable : public nsRunnable
@@ -3045,7 +3188,7 @@ new file mode 100644
 +        mMenuObject(aMenuObject) { };
 +
 +private:
-+    nsMenuObjectWeakReference<nsMenuObject> mMenuObject;
++    nsWeakMenuObject<nsMenuObject> mMenuObject;
 +};
 +
 +class nsMenuObjectIconLoader MOZ_FINAL : public imgINotificationObserver
@@ -3236,33 +3379,6 @@ new file mode 100644
 +    }
 +
 +    mOwner = nullptr;
-+}
-+
-+typedef nsMenuObject* (*nsMenuObjectConstructor)(nsMenuObjectContainer*,
-+                                                 nsIContent*);
-+static nsMenuObjectConstructor
-+GetMenuObjectConstructor(nsIContent *aContent)
-+{
-+    if (!aContent->IsXUL()) {
-+        return nullptr;
-+    }
-+
-+    nsIAtom *tag = aContent->Tag();
-+    if (tag == nsGkAtoms::menuitem) {
-+        return nsMenuItem::Create;
-+    } else if (tag == nsGkAtoms::menu) {
-+        return nsMenu::Create;
-+    } else if (tag == nsGkAtoms::menuseparator) {
-+        return nsMenuSeparator::Create;
-+    }
-+
-+    return nullptr;
-+}
-+
-+static bool
-+ContentIsSupported(nsIContent *aContent)
-+{
-+    return GetMenuObjectConstructor(aContent) ? true : false;
 +}
 +
 +static int
@@ -3551,7 +3667,7 @@ new file mode 100644
 +}
 +
 +nsresult
-+nsMenuObject::Init(nsMenuObjectContainer *aParent, nsIContent *aContent)
++nsMenuObject::Init(nsMenuContainer *aParent, nsIContent *aContent)
 +{
 +    NS_ENSURE_ARG(aParent);
 +    NS_ENSURE_ARG(aContent);
@@ -3584,7 +3700,7 @@ new file mode 100644
 +
 +nsMenuObject::~nsMenuObject()
 +{
-+    nsMenuObjectWeakReferenceBase::NotifyDestroyed(this);
++    nsWeakMenuObjectBase::NotifyDestroyed(this);
 +
 +    if (mIconLoader) {
 +        mIconLoader->Destroy();
@@ -3661,80 +3777,22 @@ new file mode 100644
 +    Update(sc);
 +}
 +
-+nsMenuObject*
-+nsMenuObjectContainer::CreateChild(nsIContent *aContent, nsresult *aRv)
-+{
-+    nsMenuObjectConstructor ctor = GetMenuObjectConstructor(aContent);
-+    if (!ctor) {
-+        // There are plenty of node types we might stumble across that
-+        // aren't supported. This isn't an error though
-+        if (aRv) {
-+            *aRv = NS_OK;
-+        }
-+        return nullptr;
-+    }
-+
-+    nsMenuObject *res = ctor(this, aContent);
-+    if (!res) {
-+        if (aRv) {
-+            *aRv = NS_ERROR_FAILURE;
-+        }
-+        return nullptr;
-+    }
-+
-+    if (aRv) {
-+        *aRv = NS_OK;
-+    }
-+    return res;
-+}
-+
-+uint32_t
-+nsMenuObjectContainer::IndexOf(nsIContent *aChild)
-+{
-+    if (!aChild) {
-+        return NoIndex;
-+    }
-+
-+    for (uint32_t i = 0; i < mChildren.Length(); ++i) {
-+        if (mChildren[i]->ContentNode() == aChild) {
-+            return i;
-+        }
-+    }
-+
-+    return NoIndex;
-+}
-+
-+nsMenuObjectContainer::nsMenuObjectContainer() :
-+    nsMenuObject()
-+{
-+}
-+
-+/* static */ nsIContent*
-+nsMenuObjectContainer::GetPreviousSupportedSibling(nsIContent *aContent)
-+{
-+    do {
-+        aContent = aContent->GetPreviousSibling();
-+    } while (aContent && !ContentIsSupported(aContent));
-+
-+    return aContent;
-+}
-+
 +/* static */ void
-+nsMenuObjectWeakReferenceBase::AddWeakReference(nsMenuObjectWeakReferenceBase *aWeak)
++nsWeakMenuObjectBase::AddWeakReference(nsWeakMenuObjectBase *aWeak)
 +{
 +    aWeak->SetPrevious(sHead);
 +    sHead = aWeak;
 +}
 +
 +/* static */ void
-+nsMenuObjectWeakReferenceBase::RemoveWeakReference(nsMenuObjectWeakReferenceBase *aWeak)
++nsWeakMenuObjectBase::RemoveWeakReference(nsWeakMenuObjectBase *aWeak)
 +{
 +    if (aWeak == sHead) {
 +        sHead = aWeak->GetPrevious();
 +        return;
 +    }
 +
-+    nsMenuObjectWeakReferenceBase *weak = sHead;
++    nsWeakMenuObjectBase *weak = sHead;
 +    while (weak && weak->GetPrevious() != aWeak) {
 +        weak = weak->GetPrevious();
 +    }
@@ -3745,11 +3803,11 @@ new file mode 100644
 +}
 +
 +/* static */ void
-+nsMenuObjectWeakReferenceBase::NotifyDestroyed(nsMenuObject *aMenuObject)
++nsWeakMenuObjectBase::NotifyDestroyed(nsMenuObject *aMenuObject)
 +{
-+    nsMenuObjectWeakReferenceBase *weak = sHead;
++    nsWeakMenuObjectBase *weak = sHead;
 +    while (weak) {
-+        if (weak->GetMenuObject() == aMenuObject) {
++        if (weak->getBase() == aMenuObject) {
 +            weak->Clear();
 +        }
 +
@@ -3760,7 +3818,7 @@ diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuObject.h
-@@ -0,0 +1,242 @@
+@@ -0,0 +1,239 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3772,9 +3830,7 @@ new file mode 100644
 +#define __nsMenuObject_h__
 +
 +#include "mozilla/Attributes.h"
-+#include "nsAutoPtr.h"
 +#include "nsCOMPtr.h"
-+#include "nsTArray.h"
 +
 +#include "nsDbusmenu.h"
 +#include "nsNativeMenuDocListener.h"
@@ -3782,7 +3838,7 @@ new file mode 100644
 +class nsIAtom;
 +class nsIContent;
 +class nsStyleContext;
-+class nsMenuObjectContainer;
++class nsMenuContainer;
 +class nsMenuObjectIconLoader;
 +
 +#define DBUSMENU_PROPERTIES \
@@ -3828,7 +3884,7 @@ new file mode 100644
 +    DbusmenuMenuitem* GetNativeData() const { return mNativeData; }
 +
 +    // Get the parent menu object
-+    nsMenuObjectContainer* Parent() const { return mParent; }
++    nsMenuContainer* Parent() const { return mParent; }
 +
 +    // Get the content node
 +    nsIContent* ContentNode() const { return mContent; }
@@ -3850,7 +3906,7 @@ new file mode 100644
 +
 +protected:
 +    nsMenuObject();
-+    nsresult Init(nsMenuObjectContainer *aParent, nsIContent *aContent);
++    nsresult Init(nsMenuContainer *aParent, nsIContent *aContent);
 +    nsresult Init(nsNativeMenuDocListener *aListener, nsIContent *aContent);
 +
 +    void UpdateLabel();
@@ -3906,53 +3962,27 @@ new file mode 100644
 +
 +    nsCOMPtr<nsIContent> mContent;
 +    nsRefPtr<nsNativeMenuDocListener> mListener;
-+    nsMenuObjectContainer *mParent;
++    nsMenuContainer *mParent;
 +    DbusmenuMenuitem *mNativeData;
 +    nsRefPtr<nsMenuObjectIconLoader> mIconLoader;
 +    uint8_t mFlags;
 +};
 +
-+// Base class for containers (menus and menubars)
-+class nsMenuObjectContainer : public nsMenuObject
++
++class nsWeakMenuObjectBase
 +{
 +public:
-+    typedef nsTArray<nsAutoPtr<nsMenuObject> > ChildTArray;
-+
-+    // Determine if this container is being displayed on screen. Must be
-+    // implemented by subclasses
-+    virtual bool IsBeingDisplayed() const = 0;
-+
-+    // Return the first previous sibling that is of a type supported by the
-+    // menu system
-+    static nsIContent* GetPreviousSupportedSibling(nsIContent *aContent);
-+
-+    static const ChildTArray::index_type NoIndex;
-+
-+protected:
-+    nsMenuObjectContainer();
-+
-+    nsMenuObject* CreateChild(nsIContent *aContent, nsresult *aRv);
-+    uint32_t IndexOf(nsIContent *aChild);
-+    ChildTArray& Children() { return mChildren; }
-+
-+private:
-+    ChildTArray mChildren;
-+};
-+
-+class nsMenuObjectWeakReferenceBase
-+{
-+public:
-+    ~nsMenuObjectWeakReferenceBase()
++    ~nsWeakMenuObjectBase()
 +    {
 +        RemoveWeakReference(this);
 +    }
 +
-+    nsMenuObject* GetMenuObject() { return mMenuObject; }
++    nsMenuObject* getBase() const { return mMenuObject; }
 +
 +    static void NotifyDestroyed(nsMenuObject *aMenuObject);
 +
 +protected:
-+    nsMenuObjectWeakReferenceBase() : mMenuObject(nullptr) { };
++    nsWeakMenuObjectBase() : mMenuObject(nullptr) { };
 +
 +    void SetMenuObject(nsMenuObject *aMenuObject)
 +    {
@@ -3962,44 +3992,69 @@ new file mode 100644
 +    }
 +
 +private:
-+    nsMenuObjectWeakReferenceBase* GetPrevious() { return mPrev; }
-+    void SetPrevious(nsMenuObjectWeakReferenceBase *aPrev)
++    nsWeakMenuObjectBase* GetPrevious() const { return mPrev; }
++    void SetPrevious(nsWeakMenuObjectBase *aPrev)
 +    {
 +        mPrev = aPrev;
 +    }
 +    void Clear() { mMenuObject = nullptr; }
 +
-+    static void AddWeakReference(nsMenuObjectWeakReferenceBase *aWeak);
-+    static void RemoveWeakReference(nsMenuObjectWeakReferenceBase *aWeak);
++    static void AddWeakReference(nsWeakMenuObjectBase *aWeak);
++    static void RemoveWeakReference(nsWeakMenuObjectBase *aWeak);
 +
-+    nsMenuObjectWeakReferenceBase *mPrev;
-+    static nsMenuObjectWeakReferenceBase *sHead;
++    nsWeakMenuObjectBase *mPrev;
++    static nsWeakMenuObjectBase *sHead;
 +
 +    nsMenuObject *mMenuObject;
 +};
 +
++// Keep a weak pointer to a menuobject. If you would need to access a
++// pointer to a heap allocated instance of this class (eg, in a callback),
++// thsn use nsAutoWeakMenuObject instead
 +template<class T>
-+class nsMenuObjectWeakReference : public nsMenuObjectWeakReferenceBase
++class nsWeakMenuObject : public nsWeakMenuObjectBase
 +{
 +public:
-+    nsMenuObjectWeakReference() :
-+        nsMenuObjectWeakReferenceBase() { };
++    nsWeakMenuObject() :
++        nsWeakMenuObjectBase() { };
 +
-+    nsMenuObjectWeakReference(T *aMenuObject) :
-+        nsMenuObjectWeakReferenceBase()
++    nsWeakMenuObject(T *aMenuObject) :
++        nsWeakMenuObjectBase()
 +    {
 +        SetMenuObject(aMenuObject);
 +    }
 +
-+    nsMenuObjectWeakReference<T>& operator=(T *aMenuObject)
-+    {
-+        SetMenuObject(aMenuObject);
-+        return *this;
-+    }
++    T* get() const { return static_cast<T *>(getBase()); }
 +
-+    T* operator->() { return static_cast<T *>(GetMenuObject()); }
++    T* operator->() const { return get(); }
 +
-+    operator T*() { return static_cast<T *>(GetMenuObject()); }
++    operator T*() const { return get(); }
++};
++
++template<class T>
++class nsAutoWeakMenuObject
++{
++public:
++    nsAutoWeakMenuObject() { };
++
++    nsAutoWeakMenuObject(T *aMenuObject) :
++        mPtr(new nsWeakMenuObject<T>(aMenuObject)) { };
++
++    nsAutoWeakMenuObject(nsWeakMenuObject<T> *aWeak) :
++        mPtr(aWeak) { };
++
++    T* get() const { return static_cast<T *>(*mPtr); }
++
++    T* operator->() const { return get(); }
++
++    operator T*() const { return get(); }
++
++    nsWeakMenuObject<T>* getWeakPtr() const { return mPtr; }
++
++    nsWeakMenuObject<T>* forget() { return mPtr.forget(); }
++
++private:
++    nsAutoPtr<nsWeakMenuObject<T> > mPtr;
 +};
 +
 +#endif /* __nsMenuObject_h__ */
@@ -4022,6 +4077,7 @@ new file mode 100644
 +
 +#include "nsDbusmenu.h"
 +
++#include "nsMenuContainer.h"
 +#include "nsMenuSeparator.h"
 +
 +void
@@ -4072,8 +4128,7 @@ new file mode 100644
 +}
 +
 +/* static */ nsMenuObject*
-+nsMenuSeparator::Create(nsMenuObjectContainer *aParent,
-+                        nsIContent *aContent)
++nsMenuSeparator::Create(nsMenuContainer *aParent, nsIContent *aContent)
 +{
 +    nsAutoPtr<nsMenuSeparator> sep(new nsMenuSeparator());
 +    if (NS_FAILED(sep->Init(aParent, aContent))) {
@@ -4102,7 +4157,7 @@ diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsMenuSeparator.h
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,41 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4119,6 +4174,7 @@ new file mode 100644
 +
 +class nsIContent;
 +class nsIAtom;
++class nsMenuContainer;
 +
 +// Menu separator class
 +class nsMenuSeparator MOZ_FINAL : public nsMenuObject
@@ -4128,7 +4184,7 @@ new file mode 100644
 +
 +    nsMenuObject::EType Type() const;
 +
-+    static nsMenuObject* Create(nsMenuObjectContainer *aParent,
++    static nsMenuObject* Create(nsMenuContainer *aParent,
 +                                nsIContent *aContent);
 +
 +    void OnAttributeChanged(nsIContent *aContent, nsIAtom *aAttribute);
@@ -4253,7 +4309,7 @@ new file mode 100644
 +#include "nsIContent.h"
 +#include "nsIDocument.h"
 +
-+#include "nsMenuObject.h"
++#include "nsMenuContainer.h"
 +
 +#include "nsNativeMenuDocListener.h"
 +
@@ -4497,7 +4553,7 @@ new file mode 100644
 +                                         nsIContent *aChild,
 +                                         int32_t aIndexInContainer)
 +{
-+    nsIContent *prevSibling = nsMenuObjectContainer::GetPreviousSupportedSibling(aChild);
++    nsIContent *prevSibling = nsMenuContainer::GetPreviousSupportedSibling(aChild);
 +
 +    if (sUpdateDepth == 0) {
 +        DoContentInserted(aContainer, aChild, prevSibling);
@@ -4769,7 +4825,7 @@ diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuServi
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk2/nsNativeMenuService.cpp
-@@ -0,0 +1,509 @@
+@@ -0,0 +1,508 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4960,14 +5016,13 @@ new file mode 100644
 +
 +    // We keep a weak ref because we can't assume that GDBus cancellation
 +    // is reliable (see https://launchpad.net/bugs/953562)
-+    nsMenuObjectWeakReference<nsMenuBar> *weakMenuBar =
-+        new nsMenuObjectWeakReference<nsMenuBar>(aMenuBar);
++    nsAutoWeakMenuObject<nsMenuBar> weakMenuBar(aMenuBar);
 +
 +    g_dbus_proxy_call(mDbusProxy, "RegisterWindow",
 +                      g_variant_new("(uo)", xid, path.get()),
 +                      G_DBUS_CALL_FLAGS_NONE, -1,
 +                      aMenuBar->BeginRegisterRequest(),
-+                      register_native_menubar_cb, weakMenuBar);
++                      register_native_menubar_cb, weakMenuBar.forget());
 +}
 +
 +/* static */ void
@@ -5011,8 +5066,8 @@ new file mode 100644
 +                                                GAsyncResult *res,
 +                                                gpointer user_data)
 +{
-+    nsAutoPtr<nsMenuObjectWeakReference<nsMenuBar> > weakMenuBar(
-+        static_cast<nsMenuObjectWeakReference<nsMenuBar> *>(user_data));
++    nsAutoWeakMenuObject<nsMenuBar> weakMenuBar(
++        static_cast<nsWeakMenuObject<nsMenuBar> *>(user_data));
 +
 +    GError *error = nullptr;
 +    GVariant *results = g_dbus_proxy_call_finish(G_DBUS_PROXY(source_object),
@@ -5032,11 +5087,11 @@ new file mode 100644
 +        g_error_free(error);
 +    }
 +
-+    if (sShutdown || !(*weakMenuBar)) {
++    if (sShutdown || !weakMenuBar) {
 +        return;
 +    }
 +
-+    nsNativeMenuService::GetSingleton()->OnNativeMenuBarRegistered(*weakMenuBar,
++    nsNativeMenuService::GetSingleton()->OnNativeMenuBarRegistered(weakMenuBar,
 +                                                                   success);
 +}
 +
