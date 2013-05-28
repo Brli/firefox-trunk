@@ -1,6 +1,6 @@
-firefox-trunk (24.0~a1~hg20130523r132743-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (24.0~a1~hg20130528r133069-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v24.0 A1 HG20130523R132743
+  * New upstream snapshot v24.0 A1 HG20130528R133069
 
   * Fix LP: #1180227 - Update the Apparmor profile to allow rw access to
     ~/.cache/mozilla/firefox, and allow locking of sqlite db's there too
