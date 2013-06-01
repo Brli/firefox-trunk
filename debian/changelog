@@ -43,6 +43,8 @@ firefox-trunk (24.0~a1~hg20130531r133602-0ubuntu1) UNRELEASED; urgency=low
     actually genuinely cares whether Firefox works there or not, so don't
     let it block migration from proposed
     - update debian/build/testsuite.mk
+  * Refresh patches
+    - update debian/patches/ubuntu-bookmarks.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
