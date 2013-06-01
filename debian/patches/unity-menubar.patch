@@ -3753,7 +3753,7 @@ new file mode 100644
 +}
 +
 +nsMenuObject::nsMenuObject() :
-+    mListener(nullptr), mParent(nullptr), mNativeData(nullptr), mFlags(0)
++    mParent(nullptr), mNativeData(nullptr), mFlags(0)
 +{
 +}
 +
