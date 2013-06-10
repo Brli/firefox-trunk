@@ -53,8 +53,7 @@ Recommends: xul-ext-ubufox,
 Provides: www-browser,
 	iceweasel,
 	gnome-www-browser,
-	${app:Provides},
-	${transitional:Provides}
+	${app:Provides}
 Suggests: ttf-lyx,
 	${support:Suggests}
 Breaks: ${transitional:Breaks}
@@ -76,13 +75,10 @@ Depends: ${shlibs:Depends},
 	${misc:Depends},
 	firefox-trunk (= ${binary:Version})
 Provides: ${app:Provides}
-	${transitional:Provides}
-Replaces: ${transitional:Replaces}
 Conflicts: xulrunner-2.0-dev,
 	xulrunner-1.9.2-dev,
 	xulrunner-1.9-dev,
-	${app:Conflicts},
-	${transitional:Conflicts}
+	${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - development files
  Firefox delivers safe, easy web browsing. A familiar user interface,
  enhanced security features including protection from online identity theft,
