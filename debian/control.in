@@ -158,7 +158,8 @@ Package: @MOZ_PKG_NAME@-globalmenu
 Architecture: any
 Section: oldlibs
 Priority: extra
-Depends: ${misc:Depends}
+Depends: @MOZ_PKG_NAME@,
+	${misc:Depends}
 Description: Safe and easy web browser from Mozilla (transitional package)
  This is a transitional package to ensure that upgrades work correctly.
  It can be safely removed

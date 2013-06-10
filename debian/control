@@ -158,7 +158,8 @@ Package: firefox-trunk-globalmenu
 Architecture: any
 Section: oldlibs
 Priority: extra
-Depends: ${misc:Depends}
+Depends: firefox-trunk,
+	${misc:Depends}
 Description: Safe and easy web browser from Mozilla (transitional package)
  This is a transitional package to ensure that upgrades work correctly.
  It can be safely removed
