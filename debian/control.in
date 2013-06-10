@@ -169,8 +169,7 @@ Package: @MOZ_PKG_NAME@-dbg
 Architecture: any
 Section: oldlibs
 Priority: extra
-Depends: ${misc:Depends}, 
-	@MOZ_PKG_NAME@
+Depends: ${misc:Depends} 
 Description: Safe and easy web browser from Mozilla (transitional package)
  This is a transitional package to ensure that upgrades work correctly.
  It can be safely removed
