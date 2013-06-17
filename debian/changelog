@@ -45,6 +45,7 @@ firefox-trunk (24.0~a1~hg20130616r135206-0ubuntu1~umd1) UNRELEASED; urgency=low
     - update debian/build/testsuite.mk
   * Refresh patches
     - update debian/patches/ubuntu-bookmarks.patch
+    - update d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
