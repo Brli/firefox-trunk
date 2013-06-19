@@ -1,9 +1,6 @@
-Description: Allow specifying a test manifest for chrome mochitests
- By default, the upstream mochitest harness only allows specifying a JSON
- manifest for plain mochitests. This patch extends that to all mochitests so
- that we can skip problematic chrome tests
-Author: Chris Coulson <chris.coulson@canonical.com>
-Forwarded: no
+# HG changeset patch
+# Parent d2a7cfa34154439232ac1d6230b3945b32fe4d5e
+# User Chris Coulson <chris.coulson@canonical.com>
 
 diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-harness.xul
 --- a/testing/mochitest/browser-harness.xul
@@ -21,14 +18,14 @@ diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-h
 +  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/TestRunner.js"/>
 +  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/setup.js"/>
    <script type="application/javascript" src="chrome://mochikit/content/chrome-harness.js"/>
+   <script type="application/javascript" src="chrome://mochikit/content/chunkifyTests.js"/>
    <style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
      #results {
        margin: 5px;
        background-color: window;
        -moz-user-select: text;
      }
- 
-@@ -181,20 +184,21 @@
+@@ -171,26 +174,27 @@
  
        // load server.js in so we can share template functions
        var scriptLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"].
@@ -40,10 +37,17 @@ diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-h
 -      var fileNames = [];
        var fileNameRegexp = /browser_.+\.js$/;
 -      srvScope.arrayOfTestFiles(links, fileNames, fileNameRegexp);
--      return fileNames.map(function (f) new browserTest(f));
 +      srvScope.arrayOfTestFiles(links, gTestList, fileNameRegexp);
 +      gTestBase = "chrome://mochitests/content";
 +      gTestList = filterTests(gConfig.testManifest, gConfig.runOnly);
+ 
+       if (gConfig.totalChunks && gConfig.thisChunk) {
+-        fileNames = chunkifyTests(fileNames, gConfig.totalChunks,
++        gTestList = chunkifyTests(gTestList, gConfig.totalChunks,
+                                   gConfig.thisChunk, gConfig.chunkByDir);
+       }
+ 
+-      return fileNames.map(function (f) new browserTest(f));
 +      return gTestList.map(function (f) new browserTest(f));
      }
  
@@ -53,10 +57,10 @@ diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-h
  
      function runTests() {
        var windowMediator = Cc['@mozilla.org/appshell/window-mediator;1'].
-diff --git a/testing/mochitest/harness-overlay.xul b/testing/mochitest/harness-overlay.xul
---- a/testing/mochitest/harness-overlay.xul
-+++ b/testing/mochitest/harness-overlay.xul
-@@ -47,16 +47,17 @@ function loadTests()
+diff --git a/testing/mochitest/harness.xul b/testing/mochitest/harness.xul
+--- a/testing/mochitest/harness.xul
++++ b/testing/mochitest/harness.xul
+@@ -45,16 +45,17 @@ function loadTests()
    // generate our test list
    srvScope.makeTags();
    var tableContent = srvScope.linksToTableRows(links, 0);
@@ -65,7 +69,7 @@ diff --git a/testing/mochitest/harness-overlay.xul b/testing/mochitest/harness-o
      document.getElementById("test-table").innerHTML += tableContent;
    }
    gTestList = eval(srvScope.jsonArrayOfTestFiles(links));
-+  gTestBase = "chrome://mochitests/content";
++  gTestBase = "chrome://mochitests/content/";
    populate();
  
    hookup();
@@ -77,12 +81,12 @@ diff --git a/testing/mochitest/harness-overlay.xul b/testing/mochitest/harness-o
 diff --git a/testing/mochitest/server.js b/testing/mochitest/server.js
 --- a/testing/mochitest/server.js
 +++ b/testing/mochitest/server.js
-@@ -596,17 +596,17 @@ function testListing(metadata, response)
-                  src: "/tests/SimpleTest/LogController.js"}),
-         SCRIPT({type: "text/javascript",
+@@ -604,17 +604,17 @@ function testListing(metadata, response)
                   src: "/tests/SimpleTest/TestRunner.js"}),
          SCRIPT({type: "text/javascript",
                   src: "/tests/SimpleTest/MozillaLogger.js"}),
+         SCRIPT({type: "text/javascript",
+                  src: "/chunkifyTests.js"}),
          SCRIPT({type: "text/javascript",
                   src: "/tests/SimpleTest/setup.js"}),
          SCRIPT({type: "text/javascript"},
@@ -99,7 +103,7 @@ diff --git a/testing/mochitest/server.js b/testing/mochitest/server.js
 diff --git a/testing/mochitest/tests/SimpleTest/setup.js b/testing/mochitest/tests/SimpleTest/setup.js
 --- a/testing/mochitest/tests/SimpleTest/setup.js
 +++ b/testing/mochitest/tests/SimpleTest/setup.js
-@@ -243,20 +243,20 @@ function filterTests(filterFile, runOnly
+@@ -195,20 +195,20 @@ function filterTests(filterFile, runOnly
    // filteredTests.
    if (Object.keys(runtests).length) {
      for (var i = 0; i < gTestList.length; i++) {
@@ -111,8 +115,8 @@ diff --git a/testing/mochitest/tests/SimpleTest/setup.js b/testing/mochitest/tes
 -        file = file.replace(/^tests\//, '')
 +        file = file.replace(RegExp("^" + gTestBase + "/"), '')
  
-         // Match directory or filename, gTestList has tests/<path>
--        if (tmp_path.match("^tests/" + file) != null) {
+         // Match directory or filename, gTestList has <testroot>/<path>
+-        if (tmp_path.match(testRoot + "/" + file) != null) {
 +        if (tmp_path.match("^" + gTestBase + "/" + file) != null) {
            filteredTests.push(test_path);
            break;
@@ -122,7 +126,7 @@ diff --git a/testing/mochitest/tests/SimpleTest/setup.js b/testing/mochitest/tes
    }
    else {
      filteredTests = gTestList.slice(0);
-@@ -268,20 +268,20 @@ function filterTests(filterFile, runOnly
+@@ -220,20 +220,20 @@ function filterTests(filterFile, runOnly
      var refilteredTests = [];
      for (var i = 0; i < filteredTests.length; i++) {
        var found = false;
@@ -134,8 +138,8 @@ diff --git a/testing/mochitest/tests/SimpleTest/setup.js b/testing/mochitest/tes
 -        file = file.replace(/^tests\//, '')
 +        file = file.replace(RegExp("^" + gTestBase + "/"), '')
  
-         // Match directory or filename, gTestList has tests/<path>
--        if (tmp_path.match("^tests/" + file) != null) {
+         // Match directory or filename, gTestList has <testroot>/<path>
+-        if (tmp_path.match(testRoot + "/" + file) != null) {
 +        if (tmp_path.match("^" + gTestBase + "/" + file) != null) {
            found = true;
            break;
