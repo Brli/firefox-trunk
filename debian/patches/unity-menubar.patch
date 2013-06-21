@@ -1,11 +1,8 @@
-diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/browser-menubar.inc
---- a/browser/base/content/browser-menubar.inc
-+++ b/browser/base/content/browser-menubar.inc
-@@ -1,16 +1,20 @@
- # -*- Mode: Java; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- # This Source Code Form is subject to the terms of the Mozilla Public
- # License, v. 2.0. If a copy of the MPL was not distributed with this
- # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+Index: firefox-trunk-24.0~a1~hg20130621r135870/browser/base/content/browser-menubar.inc
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/browser/base/content/browser-menubar.inc	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/browser/base/content/browser-menubar.inc	2013-06-21 07:57:45.168309683 +0100
+@@ -5,7 +5,11 @@
  
         <menubar id="main-menubar"
                  onpopupshowing="if (event.target.parentNode.parentNode == this &amp;&amp;
@@ -17,20 +14,11 @@ diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/bro
                                    this.setAttribute('openedwithkey',
                                                      event.target.parentNode.openedWithKey);"
                  style="border:0px;padding:0px;margin:0px;-moz-appearance:none">
-             <menu id="file-menu" label="&fileMenu.label;"
-                   accesskey="&fileMenu.accesskey;">
-               <menupopup id="menu_FilePopup">
-                 <menuitem id="menu_newNavigatorTab"
-                           label="&tabCmd.label;"
-diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
---- a/browser/base/content/browser.css
-+++ b/browser/base/content/browser.css
-@@ -203,16 +203,20 @@ splitmenu {
-   -moz-binding: url("chrome://browser/content/urlbarBindings.xml#menuitem-iconic-tooltip");
- }
- 
- %ifdef MENUBAR_CAN_AUTOHIDE
- %ifndef CAN_DRAW_IN_TITLEBAR
+Index: firefox-trunk-24.0~a1~hg20130621r135870/browser/base/content/browser.css
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/browser/base/content/browser.css	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/browser/base/content/browser.css	2013-06-21 07:57:45.168309683 +0100
+@@ -208,6 +208,10 @@
  #appmenu-toolbar-button > .toolbarbutton-text {
    display: -moz-box;
  }
@@ -41,20 +29,11 @@ diff --git a/browser/base/content/browser.css b/browser/base/content/browser.css
  %endif
  
  #appmenu_offlineModeRecovery:not([checked=true]) {
-   display: none;
- }
- %endif
- 
- /* Hide menu elements intended for keyboard access support */
-diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
---- a/browser/base/content/browser.js
-+++ b/browser/base/content/browser.js
-@@ -4483,16 +4483,20 @@ function onViewToolbarsPopupShowing(aEve
-   }
- 
-   var firstMenuItem = aInsertPoint || popup.firstChild;
- 
-   let toolbarNodes = Array.slice(gNavToolbox.childNodes);
+Index: firefox-trunk-24.0~a1~hg20130621r135870/browser/base/content/browser.js
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/browser/base/content/browser.js	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/browser/base/content/browser.js	2013-06-21 07:57:45.172309683 +0100
+@@ -4503,6 +4503,10 @@
    toolbarNodes.push(document.getElementById("addon-bar"));
  
    for (let toolbar of toolbarNodes) {
@@ -65,20 +44,11 @@ diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
      let toolbarName = toolbar.getAttribute("toolbarname");
      if (toolbarName) {
        let menuItem = document.createElement("menuitem");
-       let hidingAttribute = toolbar.getAttribute("type") == "menubar" ?
-                             "autohide" : "collapsed";
-       menuItem.setAttribute("id", "toggle_" + toolbar.id);
-       menuItem.setAttribute("toolbarId", toolbar.id);
-       menuItem.setAttribute("type", "checkbox");
-diff --git a/browser/components/places/content/places.xul b/browser/components/places/content/places.xul
---- a/browser/components/places/content/places.xul
-+++ b/browser/components/places/content/places.xul
-@@ -152,17 +152,17 @@
-                      command="OrganizerCommand:Forward"
-                      tooltiptext="&forwardButton.tooltip;"
-                      disabled="true"/>
- 
- #ifdef XP_MACOSX
+Index: firefox-trunk-24.0~a1~hg20130621r135870/browser/components/places/content/places.xul
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/browser/components/places/content/places.xul	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/browser/components/places/content/places.xul	2013-06-21 07:57:45.172309683 +0100
+@@ -157,7 +157,7 @@
          <toolbarbutton type="menu" class="tabbable"
                onpopupshowing="document.getElementById('placeContent').focus()"
  #else
@@ -87,43 +57,11 @@ diff --git a/browser/components/places/content/places.xul b/browser/components/p
          <menu accesskey="&organize.accesskey;" class="menu-iconic"
  #endif
                id="organizeButton" label="&organize.label;"
-               tooltiptext="&organize.tooltip;">
-           <menupopup id="organizeButtonPopup">
-             <menuitem id="newbookmark"
-                       command="placesCmd_new:bookmark"
-                       label="&cmd.new_bookmark.label;"
-diff --git a/modules/libpref/src/init/all.js b/modules/libpref/src/init/all.js
---- a/modules/libpref/src/init/all.js
-+++ b/modules/libpref/src/init/all.js
-@@ -89,16 +89,19 @@ pref("dom.workers.maxPerDomain", 20);
- // Whether nonzero values can be returned from performance.timing.*
- pref("dom.enable_performance", true);
- 
- // Fastback caching - if this pref is negative, then we calculate the number
- // of content viewers to cache based on the amount of available memory.
- pref("browser.sessionhistory.max_total_viewers", -1);
- 
- pref("ui.use_native_colors", true);
-+#ifdef MOZ_WIDGET_GTK
-+pref("ui.use_unity_menubar", true);
-+#endif
- pref("ui.click_hold_context_menus", false);
- pref("browser.display.use_document_fonts",  1);  // 0 = never, 1 = quick, 2 = always
- pref("browser.display.use_document_colors", true);
- pref("browser.display.use_system_colors",   false);
- pref("browser.display.foreground_color",    "#000000");
- pref("browser.display.background_color",    "#FFFFFF");
- pref("browser.display.force_inline_alttext", false); // true = force ALT text for missing images to be layed out inline
- // 0 = no external leading, 
-diff --git a/toolkit/content/widgets/popup.xml b/toolkit/content/widgets/popup.xml
---- a/toolkit/content/widgets/popup.xml
-+++ b/toolkit/content/widgets/popup.xml
-@@ -20,18 +20,24 @@
-       <property name="position" onget="return this.getAttribute('position');"
-                                 onset="this.setAttribute('position', val); return val;"/>
-       <property name="popupBoxObject">
-         <getter>
-           return this.boxObject.QueryInterface(Components.interfaces.nsIPopupBoxObject);
+Index: firefox-trunk-24.0~a1~hg20130621r135870/toolkit/content/widgets/popup.xml
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/toolkit/content/widgets/popup.xml	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/toolkit/content/widgets/popup.xml	2013-06-21 07:57:45.172309683 +0100
+@@ -25,8 +25,14 @@
          </getter>
        </property>
  
@@ -140,20 +78,11 @@ diff --git a/toolkit/content/widgets/popup.xml b/toolkit/content/widgets/popup.x
  
        <property name="triggerNode" readonly="true"
                  onget="return this.popupBoxObject.triggerNode"/>
- 
-       <property name="anchorNode" readonly="true"
-                 onget="return this.popupBoxObject.anchorNode"/>
- 
-       <method name="openPopup">
-diff --git a/toolkit/content/xul.css b/toolkit/content/xul.css
---- a/toolkit/content/xul.css
-+++ b/toolkit/content/xul.css
-@@ -284,16 +284,28 @@ toolbar[type="menubar"][autohide="true"]
- toolbar[type="menubar"][autohide="true"][inactive="true"]:not([customizing="true"]) {
-   min-height: 0 !important;
-   height: 0 !important;
-   -moz-appearance: none !important;
-   border-style: none !important;
+Index: firefox-trunk-24.0~a1~hg20130621r135870/toolkit/content/xul.css
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/toolkit/content/xul.css	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/toolkit/content/xul.css	2013-06-21 07:57:45.172309683 +0100
+@@ -289,6 +289,18 @@
  }
  %endif
  
@@ -172,20 +101,11 @@ diff --git a/toolkit/content/xul.css b/toolkit/content/xul.css
  toolbarseparator {
    -moz-binding: url("chrome://global/content/bindings/toolbar.xml#toolbardecoration");
  }
- 
- toolbarspacer {
-   -moz-binding: url("chrome://global/content/bindings/toolbar.xml#toolbardecoration");
- }
- 
-diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
---- a/widget/gtk2/Makefile.in
-+++ b/widget/gtk2/Makefile.in
-@@ -51,14 +51,15 @@ endif
- endif
- 
- DEFINES		+= -DCAIRO_GFX -DMOZ_APP_NAME='"$(MOZ_APP_NAME)"'
- 
- INCLUDES	+= \
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/Makefile.in
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/gtk2/Makefile.in	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/Makefile.in	2013-06-21 07:57:45.172309683 +0100
+@@ -69,6 +69,7 @@
  		-I$(srcdir)/../xpwidgets \
  		-I$(srcdir)/../shared \
  		-I$(topsrcdir)/layout/generic \
@@ -193,18 +113,11 @@ diff --git a/widget/gtk2/Makefile.in b/widget/gtk2/Makefile.in
  		-I$(topsrcdir)/layout/xul/base/src \
  		-I$(topsrcdir)/other-licenses/atk-1.0 \
  		$(NULL)
- ifdef MOZ_X11
- INCLUDES   	+= -I$(srcdir)/../shared/x11
- endif
-diff --git a/widget/gtk2/moz.build b/widget/gtk2/moz.build
---- a/widget/gtk2/moz.build
-+++ b/widget/gtk2/moz.build
-@@ -11,22 +11,32 @@ EXPORTS += [
-     'nsGTKToolkit.h',
-     'nsIImageToPixbuf.h',
- ]
- 
- CPP_SOURCES += [
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/moz.build
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/gtk2/moz.build	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/moz.build	2013-06-21 07:57:45.172309683 +0100
+@@ -16,12 +16,22 @@
      'WidgetTraceEvent.cpp',
      'nsAppShell.cpp',
      'nsBidiKeyboard.cpp',
@@ -227,15 +140,10 @@ diff --git a/widget/gtk2/moz.build b/widget/gtk2/moz.build
      'nsNativeThemeGTK.cpp',
      'nsScreenGtk.cpp',
      'nsScreenManagerGtk.cpp',
-     'nsSound.cpp',
-     'nsToolkit.cpp',
-     'nsWidgetFactory.cpp',
-     'nsWindow.cpp',
- ]
-diff --git a/widget/gtk2/nsDbusmenu.cpp b/widget/gtk2/nsDbusmenu.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsDbusmenu.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsDbusmenu.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsDbusmenu.cpp	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -296,10 +204,10 @@ new file mode 100644
 +
 +    return NS_OK;
 +}
-diff --git a/widget/gtk2/nsDbusmenu.h b/widget/gtk2/nsDbusmenu.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsDbusmenu.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsDbusmenu.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsDbusmenu.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,99 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -400,15 +308,11 @@ new file mode 100644
 +#define dbusmenu_menuitem_property_set_shortcut nsDbusmenuFunctions::s_dbusmenu_menuitem_property_set_shortcut
 +
 +#endif /* __nsDbusmenu_h__ */
-diff --git a/widget/gtk2/nsDragService.cpp b/widget/gtk2/nsDragService.cpp
---- a/widget/gtk2/nsDragService.cpp
-+++ b/widget/gtk2/nsDragService.cpp
-@@ -3,16 +3,17 @@
- /* This Source Code Form is subject to the terms of the Mozilla Public
-  * License, v. 2.0. If a copy of the MPL was not distributed with this
-  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- 
- #include "nsDragService.h"
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsDragService.cpp
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/gtk2/nsDragService.cpp	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsDragService.cpp	2013-06-21 07:57:45.172309683 +0100
+@@ -8,6 +8,7 @@
  #include "nsIObserverService.h"
  #include "nsWidgetsCID.h"
  #include "nsWindow.h"
@@ -416,17 +320,7 @@ diff --git a/widget/gtk2/nsDragService.cpp b/widget/gtk2/nsDragService.cpp
  #include "nsIServiceManager.h"
  #include "nsXPCOM.h"
  #include "nsISupportsPrimitives.h"
- #include "nsIIOService.h"
- #include "nsIFileURL.h"
- #include "nsNetUtil.h"
- #include "prlog.h"
- #include "nsTArray.h"
-@@ -41,27 +42,16 @@
- // directly) so that this code can be compiled against versions of GTK+ that
- // do not have GtkDragResult.
- // GtkDragResult is available from GTK+ version 2.12.
- enum {
-   MOZ_GTK_DRAG_RESULT_SUCCESS,
+@@ -46,17 +47,6 @@
    MOZ_GTK_DRAG_RESULT_NO_TARGET
  };
  
@@ -444,17 +338,7 @@ diff --git a/widget/gtk2/nsDragService.cpp b/widget/gtk2/nsDragService.cpp
  static PRLogModuleInfo *sDragLm = NULL;
  
  // data used for synthetic periodic motion events sent to the source widget
- // grabbing real events for the drag.
- static guint sMotionEventTimerID;
- static GdkEvent *sMotionEvent;
- static GtkWidget *sGrabWidget;
- 
-@@ -462,17 +452,17 @@ nsDragService::StartDragSession()
- NS_IMETHODIMP
- nsDragService::EndDragSession(bool aDoneDrag)
- {
-     PR_LOG(sDragLm, PR_LOG_DEBUG, ("nsDragService::EndDragSession %d",
-                                    aDoneDrag));
+@@ -467,7 +457,7 @@
  
      if (sGrabWidget) {
          g_signal_handlers_disconnect_by_func(sGrabWidget,
@@ -463,20 +347,11 @@ diff --git a/widget/gtk2/nsDragService.cpp b/widget/gtk2/nsDragService.cpp
          g_object_unref(sGrabWidget);
          sGrabWidget = NULL;
  
-         if (sMotionEventTimerID) {
-             g_source_remove(sMotionEventTimerID);
-             sMotionEventTimerID = 0;
-         }
-         if (sMotionEvent) {
-diff --git a/widget/gtk2/nsFilePicker.cpp b/widget/gtk2/nsFilePicker.cpp
---- a/widget/gtk2/nsFilePicker.cpp
-+++ b/widget/gtk2/nsFilePicker.cpp
-@@ -14,40 +14,30 @@
- #include "nsIStringBundle.h"
- 
- #include "nsArrayEnumerator.h"
- #include "nsMemory.h"
- #include "nsEnumeratorUtils.h"
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsFilePicker.cpp
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/gtk2/nsFilePicker.cpp	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsFilePicker.cpp	2013-06-21 07:57:45.172309683 +0100
+@@ -19,6 +19,7 @@
  #include "nsNetUtil.h"
  #include "nsReadableUtils.h"
  #include "mozcontainer.h"
@@ -484,13 +359,7 @@ diff --git a/widget/gtk2/nsFilePicker.cpp b/widget/gtk2/nsFilePicker.cpp
  
  #include "nsFilePicker.h"
  
- #if (MOZ_PLATFORM_MAEMO == 5)
- #include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
- #endif
- 
- using namespace mozilla;
- 
- #define MAX_PREVIEW_SIZE 180
+@@ -32,17 +33,6 @@
  
  nsIFile *nsFilePicker::mPrevDisplayDirectory = nullptr;
  
@@ -508,17 +377,7 @@ diff --git a/widget/gtk2/nsFilePicker.cpp b/widget/gtk2/nsFilePicker.cpp
  void
  nsFilePicker::Shutdown()
  {
-   NS_IF_RELEASE(mPrevDisplayDirectory);
- }
- 
- static GtkFileChooserAction
- GetGtkFileChooserAction(int16_t aMode)
-@@ -543,17 +533,17 @@ nsFilePicker::Done(GtkWidget* file_choos
-     default:
-     NS_WARNING("Unexpected response");
-     result = nsIFilePicker::returnCancel;
-     break;
-   }
+@@ -554,7 +544,7 @@
  
    // A "response" signal won't be sent again but "destroy" will be.
    g_signal_handlers_disconnect_by_func(file_chooser,
@@ -527,15 +386,10 @@ diff --git a/widget/gtk2/nsFilePicker.cpp b/widget/gtk2/nsFilePicker.cpp
  
    // When response_id is GTK_RESPONSE_DELETE_EVENT or when called from
    // OnDestroy, the widget would be destroyed anyway but it is fine if
-   // gtk_widget_destroy is called more than once.  gtk_widget_destroy has
-   // requests that any remaining references be released, but the reference
-   // count will not be decremented again if GtkWindow's reference has already
-   // been released.
-   gtk_widget_destroy(file_chooser);
-diff --git a/widget/gtk2/nsGtkUtils.h b/widget/gtk2/nsGtkUtils.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsGtkUtils.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsGtkUtils.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsGtkUtils.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,26 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -563,10 +417,10 @@ new file mode 100644
 +};
 +
 +#endif // __nsGtkUtils_h__
-diff --git a/widget/gtk2/nsMenu.cpp b/widget/gtk2/nsMenu.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenu.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenu.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenu.cpp	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,866 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -1434,10 +1288,10 @@ new file mode 100644
 +
 +    MaybeAddPlaceholderItem();
 +}
-diff --git a/widget/gtk2/nsMenu.h b/widget/gtk2/nsMenu.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenu.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenu.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenu.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,166 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -1605,10 +1459,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenu_h__ */
-diff --git a/widget/gtk2/nsMenuBar.cpp b/widget/gtk2/nsMenuBar.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuBar.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuBar.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuBar.cpp	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,543 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -2153,10 +2007,10 @@ new file mode 100644
 +    DebugOnly<nsresult> rv = RemoveChild(aChild);
 +    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove item from menubar");
 +}
-diff --git a/widget/gtk2/nsMenuBar.h b/widget/gtk2/nsMenuBar.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuBar.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuBar.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuBar.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,112 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -2270,10 +2124,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenuBar_h__ */
-diff --git a/widget/gtk2/nsMenuContainer.cpp b/widget/gtk2/nsMenuContainer.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuContainer.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuContainer.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuContainer.cpp	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,179 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -2454,10 +2308,10 @@ new file mode 100644
 +
 +    return aContent;
 +}
-diff --git a/widget/gtk2/nsMenuContainer.h b/widget/gtk2/nsMenuContainer.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuContainer.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuContainer.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuContainer.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,66 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -2525,10 +2379,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenuContainer_h__ */
-diff --git a/widget/gtk2/nsMenuItem.cpp b/widget/gtk2/nsMenuItem.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuItem.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuItem.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuItem.cpp	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,522 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3052,10 +2906,10 @@ new file mode 100644
 +        UpdateIcon(sc);
 +    }
 +}
-diff --git a/widget/gtk2/nsMenuItem.h b/widget/gtk2/nsMenuItem.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuItem.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuItem.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuItem.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,107 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3164,10 +3018,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenuItem_h__ */
-diff --git a/widget/gtk2/nsMenuObject.cpp b/widget/gtk2/nsMenuObject.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuObject.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuObject.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuObject.cpp	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,704 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3873,10 +3727,10 @@ new file mode 100644
 +        weak = weak->GetPrevious();
 +    }
 +}
-diff --git a/widget/gtk2/nsMenuObject.h b/widget/gtk2/nsMenuObject.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuObject.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuObject.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuObject.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,242 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4120,10 +3974,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenuObject_h__ */
-diff --git a/widget/gtk2/nsMenuSeparator.cpp b/widget/gtk2/nsMenuSeparator.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuSeparator.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuSeparator.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuSeparator.cpp	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,90 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4215,10 +4069,10 @@ new file mode 100644
 +        UpdateVisibility(sc);
 +    }
 +}
-diff --git a/widget/gtk2/nsMenuSeparator.h b/widget/gtk2/nsMenuSeparator.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsMenuSeparator.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuSeparator.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsMenuSeparator.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,41 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4261,10 +4115,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsMenuSeparator_h__ */
-diff --git a/widget/gtk2/nsNativeMenuAtomList.h b/widget/gtk2/nsNativeMenuAtomList.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuAtomList.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuAtomList.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuAtomList.h	2013-06-21 07:57:45.172309683 +0100
 @@ -0,0 +1,11 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4277,10 +4131,10 @@ new file mode 100644
 +WIDGET_ATOM2(_moz_menupopupstate, "_moz-menupopupstate")
 +WIDGET_ATOM(openedwithkey)
 +WIDGET_ATOM(shellshowingmenubar)
-diff --git a/widget/gtk2/nsNativeMenuAtoms.cpp b/widget/gtk2/nsNativeMenuAtoms.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuAtoms.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuAtoms.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuAtoms.cpp	2013-06-21 07:57:45.176309684 +0100
 @@ -0,0 +1,39 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4321,10 +4175,10 @@ new file mode 100644
 +{
 +    NS_RegisterStaticAtoms(gAtoms);
 +}
-diff --git a/widget/gtk2/nsNativeMenuAtoms.h b/widget/gtk2/nsNativeMenuAtoms.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuAtoms.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuAtoms.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuAtoms.h	2013-06-21 07:57:45.176309684 +0100
 @@ -0,0 +1,25 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4351,10 +4205,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsNativeMenuAtoms_h__ */
-diff --git a/widget/gtk2/nsNativeMenuDocListener.cpp b/widget/gtk2/nsNativeMenuDocListener.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuDocListener.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuDocListener.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuDocListener.cpp	2013-06-21 07:57:45.176309684 +0100
 @@ -0,0 +1,370 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4726,10 +4580,10 @@ new file mode 100644
 +    CancelFlush(this);
 +    mPendingMutations.Clear();
 +}
-diff --git a/widget/gtk2/nsNativeMenuDocListener.h b/widget/gtk2/nsNativeMenuDocListener.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuDocListener.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuDocListener.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuDocListener.h	2013-06-21 07:57:45.176309684 +0100
 @@ -0,0 +1,152 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4883,10 +4737,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsNativeMenuDocListener_h__ */
-diff --git a/widget/gtk2/nsNativeMenuService.cpp b/widget/gtk2/nsNativeMenuService.cpp
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuService.cpp
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuService.cpp
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuService.cpp	2013-06-21 07:57:45.176309684 +0100
 @@ -0,0 +1,507 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -5395,10 +5249,10 @@ new file mode 100644
 +
 +    return NS_OK;
 +}
-diff --git a/widget/gtk2/nsNativeMenuService.h b/widget/gtk2/nsNativeMenuService.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuService.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuService.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuService.h	2013-06-21 07:57:45.176309684 +0100
 @@ -0,0 +1,88 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -5488,10 +5342,10 @@ new file mode 100644
 +};
 +
 +#endif /* __nsNativeMenuService_h__ */
-diff --git a/widget/gtk2/nsNativeMenuUtils.h b/widget/gtk2/nsNativeMenuUtils.h
-new file mode 100644
---- /dev/null
-+++ b/widget/gtk2/nsNativeMenuUtils.h
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuUtils.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsNativeMenuUtils.h	2013-06-21 07:57:45.176309684 +0100
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -5552,15 +5406,11 @@ new file mode 100644
 +};
 +
 +#endif /* __nsNativeMenuUtils_h__ */
-diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
---- a/widget/gtk2/nsWidgetFactory.cpp
-+++ b/widget/gtk2/nsWidgetFactory.cpp
-@@ -37,16 +37,19 @@
- #include "nsImageToPixbuf.h"
- #include "nsPrintDialogGTK.h"
- 
- #if defined(MOZ_X11)
- #include "nsIdleServiceGTK.h"
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsWidgetFactory.cpp
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/gtk2/nsWidgetFactory.cpp	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsWidgetFactory.cpp	2013-06-21 07:57:45.176309684 +0100
+@@ -42,6 +42,9 @@
  #include "GfxInfoX11.h"
  #endif
  
@@ -5570,17 +5420,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
  #ifdef NATIVE_THEME_SUPPORT
  #include "nsNativeThemeGTK.h"
  #endif
- 
- #include "nsIComponentRegistrar.h"
- #include "nsComponentManagerUtils.h"
- #include "nsAutoPtr.h"
- #include <gtk/gtk.h>
-@@ -113,16 +116,19 @@ nsNativeThemeGTKConstructor(nsISupports 
- namespace mozilla {
- namespace widget {
- // This constructor should really be shared with all platforms.
- NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(GfxInfo, Init)
- }
+@@ -118,6 +121,9 @@
  }
  #endif
  
@@ -5590,17 +5430,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
  #ifdef NS_PRINTING
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsDeviceContextSpecGTK)
  NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintOptionsGTK, Init)
- NS_GENERIC_FACTORY_CONSTRUCTOR(nsPrinterEnumeratorGTK)
- NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintSession, Init)
- NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintDialogServiceGTK, Init)
- #endif
- 
-@@ -223,16 +229,17 @@ NS_DEFINE_NAMED_CID(NS_PRINTSESSION_CID)
- NS_DEFINE_NAMED_CID(NS_DEVICE_CONTEXT_SPEC_CID);
- NS_DEFINE_NAMED_CID(NS_PRINTDIALOGSERVICE_CID);
- #endif 
- NS_DEFINE_NAMED_CID(NS_IMAGE_TO_PIXBUF_CID);
- #if defined(MOZ_X11)
+@@ -228,6 +234,7 @@
  NS_DEFINE_NAMED_CID(NS_IDLE_SERVICE_CID);
  NS_DEFINE_NAMED_CID(NS_GFXINFO_CID);
  #endif
@@ -5608,17 +5438,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
  
  
  static const mozilla::Module::CIDEntry kWidgetCIDs[] = {
-     { &kNS_WINDOW_CID, false, NULL, nsWindowConstructor },
-     { &kNS_CHILD_CID, false, NULL, nsChildWindowConstructor },
-     { &kNS_APPSHELL_CID, false, NULL, nsAppShellConstructor },
-     { &kNS_FILEPICKER_CID, false, NULL, nsFilePickerConstructor },
-     { &kNS_SOUND_CID, false, NULL, nsSoundConstructor },
-@@ -258,16 +265,17 @@ static const mozilla::Module::CIDEntry k
-     { &kNS_DEVICE_CONTEXT_SPEC_CID, false, NULL, nsDeviceContextSpecGTKConstructor },
-     { &kNS_PRINTDIALOGSERVICE_CID, false, NULL, nsPrintDialogServiceGTKConstructor },
- #endif 
-     { &kNS_IMAGE_TO_PIXBUF_CID, false, NULL, nsImageToPixbufConstructor },
- #if defined(MOZ_X11)
+@@ -263,6 +270,7 @@
      { &kNS_IDLE_SERVICE_CID, false, NULL, nsIdleServiceGTKConstructor },
      { &kNS_GFXINFO_CID, false, NULL, mozilla::widget::GfxInfoConstructor },
  #endif
@@ -5626,17 +5446,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
      { NULL }
  };
  
- static const mozilla::Module::ContractIDEntry kWidgetContracts[] = {
-     { "@mozilla.org/widget/window/gtk;1", &kNS_WINDOW_CID },
-     { "@mozilla.org/widgets/child_window/gtk;1", &kNS_CHILD_CID },
-     { "@mozilla.org/widget/appshell/gtk;1", &kNS_APPSHELL_CID },
-     { "@mozilla.org/filepicker;1", &kNS_FILEPICKER_CID },
-@@ -294,33 +302,43 @@ static const mozilla::Module::ContractID
-     { "@mozilla.org/gfx/devicecontextspec;1", &kNS_DEVICE_CONTEXT_SPEC_CID },
-     { NS_PRINTDIALOGSERVICE_CONTRACTID, &kNS_PRINTDIALOGSERVICE_CID },
- #endif 
-     { "@mozilla.org/widget/image-to-gdk-pixbuf;1", &kNS_IMAGE_TO_PIXBUF_CID },
- #if defined(MOZ_X11)
+@@ -299,6 +307,7 @@
      { "@mozilla.org/widget/idleservice;1", &kNS_IDLE_SERVICE_CID },
      { "@mozilla.org/gfx/info;1", &kNS_GFXINFO_CID },
  #endif
@@ -5644,14 +5454,7 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
      { NULL }
  };
  
- static void
- nsWidgetGtk2ModuleDtor()
- {
-   nsLookAndFeel::Shutdown();
-   nsFilePicker::Shutdown();
-   nsSound::Shutdown();
-   nsWindow::ReleaseGlobals();
-   nsGTKToolkit::Shutdown();
+@@ -313,13 +322,22 @@
    nsAppShellShutdown();
  }
  
@@ -5675,16 +5478,11 @@ diff --git a/widget/gtk2/nsWidgetFactory.cpp b/widget/gtk2/nsWidgetFactory.cpp
      nsWidgetGtk2ModuleDtor
  };
  
- NSMODULE_DEFN(nsWidgetGtk2Module) = &kWidgetModule;
-diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
---- a/widget/gtk2/nsWindow.cpp
-+++ b/widget/gtk2/nsWindow.cpp
-@@ -19,16 +19,17 @@
- #include "nsIDOMNode.h"
- 
- #include "nsWidgetsCID.h"
- #include "nsDragService.h"
- #include "nsIWidgetListener.h"
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsWindow.cpp
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/gtk2/nsWindow.cpp	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsWindow.cpp	2013-06-21 07:57:45.176309684 +0100
+@@ -24,6 +24,7 @@
  
  #include "nsGtkKeyUtils.h"
  #include "nsGtkCursors.h"
@@ -5692,17 +5490,7 @@ diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
  
  #include <gtk/gtk.h>
  #if (MOZ_WIDGET_GTK == 3)
- #include <gtk/gtkx.h>
- #endif
- #ifdef MOZ_X11
- #include <gdk/gdkx.h>
- #include <X11/Xatom.h>
-@@ -278,27 +279,16 @@ typedef struct _GdkDisplay GdkDisplay;
- static GdkCursor *gCursorCache[eCursorCount];
- 
- static GtkWidget *gInvisibleContainer = NULL;
- 
- // Sometimes this actually also includes the state of the modifier keys, but
+@@ -283,17 +284,6 @@
  // only the button state bits are used.
  static guint gButtonState;
  
@@ -5720,17 +5508,7 @@ diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
  // nsAutoRef<pixman_region32> uses nsSimpleRef<> to know how to automatically
  // destroy regions.
  template <>
- class nsSimpleRef<pixman_region32> : public pixman_region32 {
- protected:
-     typedef pixman_region32 RawRef;
- 
-     nsSimpleRef() { data = nullptr; }
-@@ -631,17 +621,17 @@ nsWindow::Destroy(void)
-     // The reason we call it here is because on gtk platforms we need 
-     // to destroy the compositor before we destroy the gdk window (which
-     // destroys the the gl context attached to it).
-     DestroyCompositor();
- 
+@@ -636,7 +626,7 @@
      ClearCachedResources();
  
      g_signal_handlers_disconnect_by_func(gtk_settings_get_default(),
@@ -5739,17 +5517,7 @@ diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
                                           this);
  
      nsIRollupListener* rollupListener = nsBaseWidget::GetActiveRollupListener();
-     if (rollupListener) {
-         nsCOMPtr<nsIWidget> rollupWidget = rollupListener->GetRollupWidget();
-         if (static_cast<nsIWidget *>(this) == rollupWidget) {
-             rollupListener->Rollup(0, nullptr);
-         }
-@@ -4726,16 +4716,21 @@ nsWindow::HideWindowChrome(bool aShouldH
-     XSync(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()) , False);
- #else
-     gdk_flush ();
- #endif /* MOZ_X11 */
- 
+@@ -4733,6 +4723,11 @@
      return NS_OK;
  }
  
@@ -5761,17 +5529,7 @@ diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
  bool
  nsWindow::CheckForRollup(gdouble aMouseX, gdouble aMouseY,
                           bool aIsWheel, bool aAlwaysRollup)
- {
-     nsIRollupListener* rollupListener = GetActiveRollupListener();
-     nsCOMPtr<nsIWidget> rollupWidget;
-     if (rollupListener) {
-         rollupWidget = rollupListener->GetRollupWidget();
-@@ -5522,17 +5517,17 @@ hierarchy_changed_cb (GtkWidget *widget,
-     GtkWidget *toplevel = gtk_widget_get_toplevel(widget);
-     GdkWindowState old_window_state = GDK_WINDOW_STATE_WITHDRAWN;
-     GdkEventWindowState event;
- 
-     event.new_window_state = GDK_WINDOW_STATE_WITHDRAWN;
+@@ -5529,7 +5524,7 @@
  
      if (GTK_IS_WINDOW(previous_toplevel)) {
          g_signal_handlers_disconnect_by_func(previous_toplevel,
@@ -5780,20 +5538,11 @@ diff --git a/widget/gtk2/nsWindow.cpp b/widget/gtk2/nsWindow.cpp
                                               widget);
          GdkWindow *win = gtk_widget_get_window(previous_toplevel);
          if (win) {
-             old_window_state = gdk_window_get_state(win);
-         }
-     }
- 
-     if (GTK_IS_WINDOW(toplevel)) {
-diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
---- a/widget/gtk2/nsWindow.h
-+++ b/widget/gtk2/nsWindow.h
-@@ -31,16 +31,18 @@
- #endif /* MOZ_X11 */
- 
- #ifdef ACCESSIBILITY
- #include "mozilla/a11y/Accessible.h"
- #endif
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsWindow.h
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/gtk2/nsWindow.h	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/gtk2/nsWindow.h	2013-06-21 07:57:45.176309684 +0100
+@@ -36,6 +36,8 @@
  
  #include "nsGtkIMModule.h"
  
@@ -5802,17 +5551,7 @@ diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
  #ifdef MOZ_LOGGING
  
  // make sure that logging is enabled before including prlog.h
- #define FORCE_PR_LOG
- 
- #include "prlog.h"
- #include "nsTArray.h"
- 
-@@ -147,16 +149,18 @@ public:
-                                            bool aDoCapture);
-     NS_IMETHOD         GetAttention(int32_t aCycleCount);
- 
-     virtual bool       HasPendingInputEvent();
- 
+@@ -152,6 +154,8 @@
      NS_IMETHOD         MakeFullScreen(bool aFullScreen);
      NS_IMETHOD         HideWindowChrome(bool aShouldHide);
  
@@ -5821,17 +5560,7 @@ diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
      /**
       * GetLastUserInputTime returns a timestamp for the most recent user input
       * event.  This is intended for pointer grab requests (including drags).
-      */
-     static guint32     GetLastUserInputTime();
- 
-     // utility method, -1 if no change should be made, otherwise returns a
-     // value that can be passed to gdk_window_set_decorations
-@@ -446,16 +450,18 @@ private:
-      * The instance is created when the top level widget is created.  And when
-      * the widget is destroyed, it's released.  All child windows refer its
-      * ancestor widget's instance.  So, one set of IM contexts is created for
-      * all windows in a hierarchy.  If the children are released after the top
-      * level window is released, the children still have a valid pointer,
+@@ -451,6 +455,8 @@
       * however, IME doesn't work at that time.
       */
      nsRefPtr<nsGtkIMModule> mIMModule;
@@ -5840,20 +5569,11 @@ diff --git a/widget/gtk2/nsWindow.h b/widget/gtk2/nsWindow.h
  };
  
  class nsChildWindow : public nsWindow {
- public:
-     nsChildWindow();
-     ~nsChildWindow();
- };
- 
-diff --git a/widget/moz.build b/widget/moz.build
---- a/widget/moz.build
-+++ b/widget/moz.build
-@@ -32,25 +32,27 @@ if toolkit == 'windows':
- elif toolkit == 'cocoa':
-     XPIDL_SOURCES += [
-         'nsIMacDockSupport.idl',
-         'nsIMacWebAppUtils.idl',
-         'nsIStandaloneNativeMenu.idl',
+Index: firefox-trunk-24.0~a1~hg20130621r135870/widget/moz.build
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/widget/moz.build	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/widget/moz.build	2013-06-21 07:57:45.176309684 +0100
+@@ -37,8 +37,7 @@
          'nsITaskbarProgress.idl',
      ]
      EXPORTS += [
@@ -5863,7 +5583,7 @@ diff --git a/widget/moz.build b/widget/moz.build
      ]
  elif toolkit == 'os2':
      XPIDL_SOURCES += [
-         'nsIRwsService.idl',
+@@ -46,6 +45,9 @@
      ]
      EXPORTS += ['nsIDragSessionOS2.h']
  
@@ -5873,20 +5593,11 @@ diff --git a/widget/moz.build b/widget/moz.build
  TEST_TOOL_DIRS += ['tests']
  
  # Don't build the DSO under the 'build' directory as windows does.
- #
- # The DSOs get built in the toolkit dir itself.  Do this so that
- # multiple implementations of widget can be built on the same
- # source tree.
- #
-diff --git a/xpfe/appshell/src/nsWebShellWindow.cpp b/xpfe/appshell/src/nsWebShellWindow.cpp
---- a/xpfe/appshell/src/nsWebShellWindow.cpp
-+++ b/xpfe/appshell/src/nsWebShellWindow.cpp
-@@ -52,30 +52,31 @@
- #include "nsIDocumentLoaderFactory.h"
- #include "nsIObserverService.h"
- #include "prprf.h"
- 
- #include "nsIScreenManager.h"
+Index: firefox-trunk-24.0~a1~hg20130621r135870/xpfe/appshell/src/nsWebShellWindow.cpp
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/xpfe/appshell/src/nsWebShellWindow.cpp	2013-06-21 07:57:45.180309684 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/xpfe/appshell/src/nsWebShellWindow.cpp	2013-06-21 07:57:45.176309684 +0100
+@@ -57,6 +57,7 @@
  #include "nsIScreen.h"
  
  #include "nsIContent.h" // for menus
@@ -5894,13 +5605,7 @@ diff --git a/xpfe/appshell/src/nsWebShellWindow.cpp b/xpfe/appshell/src/nsWebShe
  #include "nsIScriptSecurityManager.h"
  
  // For calculating size
- #include "nsIPresShell.h"
- #include "nsPresContext.h"
- 
- #include "nsIBaseWindow.h"
- #include "nsIDocShellTreeItem.h"
- #include "nsIDocShellTreeNode.h"
- 
+@@ -70,7 +71,7 @@
  #include "nsIMarkupDocumentViewer.h"
  #include "mozilla/Attributes.h"
  
@@ -5909,33 +5614,32 @@ diff --git a/xpfe/appshell/src/nsWebShellWindow.cpp b/xpfe/appshell/src/nsWebShe
  #include "nsINativeMenuService.h"
  #define USE_NATIVE_MENUS
  #endif
- 
- using namespace mozilla;
- using namespace mozilla::dom;
- 
- /* Define Class IDs */
-@@ -432,18 +433,23 @@ static void LoadNativeMenus(nsIDOMDocume
-                                   getter_AddRefs(menubarElements));
- 
-   nsCOMPtr<nsIDOMNode> menubarNode;
-   if (menubarElements)
-     menubarElements->Item(0, getter_AddRefs(menubarNode));
+@@ -437,8 +438,13 @@
    if (!menubarNode)
      return;
  
-+  nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
+-  nsCOMPtr<nsINativeMenuService> nms = do_GetService("@mozilla.org/widget/nativemenuservice;1");
+   nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
 +#ifdef MOZ_WIDGET_GTK
 +  nsCOMPtr<nsIAtom> atom = do_GetAtom(NS_LITERAL_CSTRING("_moz-menubarkeeplocal"));
 +  if (menubarContent->AttrValueIs(kNameSpaceID_None, atom, nsGkAtoms::_true, eCaseMatters))
 +    return;
 +#endif
-   nsCOMPtr<nsINativeMenuService> nms = do_GetService("@mozilla.org/widget/nativemenuservice;1");
--  nsCOMPtr<nsIContent> menubarContent(do_QueryInterface(menubarNode));
++  nsCOMPtr<nsINativeMenuService> nms = do_GetService("@mozilla.org/widget/nativemenuservice;1");
    if (nms && menubarContent)
      nms->CreateNativeMenuBar(aParentWindow, menubarContent);
  }
- #endif
+Index: firefox-trunk-24.0~a1~hg20130621r135870/modules/libpref/src/init/all.js
+===================================================================
+--- firefox-trunk-24.0~a1~hg20130621r135870.orig/modules/libpref/src/init/all.js	2013-06-21 07:55:23.000000000 +0100
++++ firefox-trunk-24.0~a1~hg20130621r135870/modules/libpref/src/init/all.js	2013-06-21 07:59:01.460310909 +0100
+@@ -103,6 +103,9 @@
+ pref("browser.sessionhistory.max_total_viewers", -1);
  
- namespace mozilla {
- 
- class WebShellWindowTimerCallback MOZ_FINAL : public nsITimerCallback
+ pref("ui.use_native_colors", true);
++#ifdef MOZ_WIDGET_GTK
++pref("ui.use_unity_menubar", true);
++#endif
+ pref("ui.click_hold_context_menus", false);
+ pref("browser.display.use_document_fonts",  1);  // 0 = never, 1 = quick, 2 = always
+ pref("browser.display.use_document_colors", true);
