@@ -46,7 +46,7 @@ DEB_MAKE_CLEAN_TARGET	:= cleansrcdir
 # Don't save debug symbols in firefox-dbg (rely on pkg-create-dbgsym to create
 # ddeb packages for us). This is needed as long as there is a firefox-dbg
 # transitional package
-DEB_DBG_PACKAGES		:= $(NULL)
+DEB_DH_STRIP_ARGS		:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
 # scour breaks the testsuite

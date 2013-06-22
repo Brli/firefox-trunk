@@ -7,10 +7,6 @@ firefox-trunk (24.0~a1~hg20130622r136144-0ubuntu1~umd1) UNRELEASED; urgency=low
     - update debian/usr.bin.firefox.apparmor.12.04
   * Testpilot has been removed from Firefox
     - update debian/firefox.install.in
-  * Kill the -dbg package (make it a transitional package for now so that
-    upgrades work). Rely on ddebs support now
-    - update debian/control.in
-    - update debian/build/rules.mk
   * Make the debian/control autogeneration a bit cleaner
     - update debian/build/config.mk
     - update debian/build/dump-langpack-control-entries.pl
