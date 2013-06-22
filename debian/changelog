@@ -51,6 +51,16 @@ firefox-trunk (24.0~a1~hg20130621r135870-0ubuntu1~umd1) UNRELEASED; urgency=low
   * Fix format-security error in test binary
     - add debian/patches/fix-format-security-errors.patch
     - update debian/patches/series
+  * The upstream mochitest harness now supports a manifest file for all tests
+    except for browser-chrome, but we need a separate manifest for each now
+    - update d/p/test-integration/mochitest-allow-test-manifest-for-chrome.patch
+    - rename d/p/test-integration/mochitest-allow-test-manifest-for-chrome.patch =>
+        d/p/test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
+    - update debian/patches/series
+    - add debian/testing/extra/mochitest/mochitest-a11y.json
+    - add debian/testing/extra/mochitest/mochitest-browser-chrome.json
+    - update debian/testing/extra/mochitest/mochitest-chrome.json
+    - update debian/testing/run_mochitest.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 

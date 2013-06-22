@@ -9,7 +9,7 @@ no_neon_on_arm.patch
 unity-menubar.patch
 fix-format-security-errors.patch
 test-integration/automation-output-junit-xml.patch
-test-integration/mochitest-allow-test-manifest-for-chrome.patch
+test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
 test-integration/xpcshell-output-valid-junit-xml.patch
 test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
 test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
