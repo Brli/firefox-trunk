@@ -55,6 +55,9 @@ firefox-trunk (24.0~a1~hg20130622r136144-0ubuntu1~umd1) UNRELEASED; urgency=low
     - add debian/testing/extra/mochitest/mochitest-browser-chrome.json
     - update debian/testing/extra/mochitest/mochitest-chrome.json
     - update debian/testing/run_mochitest.in
+  * Build with --disable-gstreamer for now, as this adds a hard dependency on
+    the *old* gstreamer stack. Reenable this once Firefox has been dropped
+    from the default install
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 

@@ -70,3 +70,4 @@ ac_add_options --enable-profiling
 ac_add_options --disable-webrtc
 %%endif
 %%endif
+ac_add_options --disable-gstreamer
