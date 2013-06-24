@@ -1,4 +1,5 @@
 [
+  { "testsuite": "mochitest.chrome", "classname": "editor.composer.test", "name": "test_async_UpdateCurrentDictionary.html", "note": "https://launchpad.net/bugs/1194236" },
   { "testsuite": "mochitest.chrome", "classname": "editor.composer.test", "name": "test_bug678842.html", "note": "https://launchpad.net/bugs/1158866" },
   { "testsuite": "mochitest.chrome", "classname": "editor.libeditor.html.tests", "name": "test_bug636465.xul", "note": "https://launchpad.net/bugs/1158870" },
   { "testsuite": "mochitest.chrome", "classname": "layout.base.tests.chrome", "name": "test_printpreview.xul", "note": "https://launchpad.net/bugs/1162991" },
