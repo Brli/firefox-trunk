@@ -61,6 +61,8 @@ firefox-trunk (24.0~a1~hg20130623r136205-0ubuntu1~umd1) UNRELEASED; urgency=low
   * Support running unit tests from an unpacked testsuite tarball anywhere on the
     filesystem
     - update debian/testing/testrunhelper.py
+  * Get rid of d/p/test-integration/httpd_js-debug.patch, as this was only ever
+    meant to be temporary
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
