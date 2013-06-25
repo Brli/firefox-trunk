@@ -11,6 +11,7 @@
   { "testsuite": "mochitest.plain", "classname": "content.media.webaudio.test", "name": "test_maxChannelCount.html", "note": "https://launchpad.net/bugs/1194436" },
   { "testsuite": "mochitest.plain", "classname": "dom.plugins.test.mochitest", "name": "test_crashing.html", "note": "https://launchpad.net/bugs/1158781" },
   { "testsuite": "mochitest.plain", "classname": "dom.plugins.test.mochitest", "name": "test_hanging.html", "note": "https://launchpad.net/bugs/1158781" },
+  { "testsuite": "mochitest.plain", "classname": "layout.base.tests", "name": "test_reftests_with_caret.html", "note": "https://launchpad.net/bugs/1194440" },
   { "testsuite": "reftest", "classname": "editor.reftests", "name": "spellcheck-hyphen-valid.html", "note": "https://launchpad.net/bugs/1159073" },
   { "testsuite": "reftest", "classname": "layout.reftests.bidi", "name": "with-first-letter-1a.html", "condition": "reftest_fuzzy(9,3)" },
   { "testsuite": "reftest", "classname": "layout.reftests.bidi", "name": "with-first-letter-1b.html", "condition": "reftest_fuzzy(9,3)" },
