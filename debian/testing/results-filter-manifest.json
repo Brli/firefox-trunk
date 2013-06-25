@@ -8,6 +8,7 @@
   { "testsuite": "mochitest.chrome", "classname": "toolkit.content.tests.chrome", "name": "test_richlist_direction.xul", "note": "https://launchpad.net/bugs/1158882" },
   { "testsuite": "mochitest.chrome", "classname": "widget.tests", "name": "test_wheeltransaction.xul", "note": "https://launchpad.net/bugs/1158887" },
   { "testsuite": "mochitest.plain", "classname": "content.media.test", "name": "test_a4_tone.html", "note": "https://launchpad.net/bugs/1159075" },
+  { "testsuite": "mochitest.plain", "classname": "content.media.webaudio.test", "name": "test_maxChannelCount.html", "note": "https://launchpad.net/bugs/1194436" },
   { "testsuite": "mochitest.plain", "classname": "dom.plugins.test.mochitest", "name": "test_crashing.html", "note": "https://launchpad.net/bugs/1158781" },
   { "testsuite": "mochitest.plain", "classname": "dom.plugins.test.mochitest", "name": "test_hanging.html", "note": "https://launchpad.net/bugs/1158781" },
   { "testsuite": "reftest", "classname": "editor.reftests", "name": "spellcheck-hyphen-valid.html", "note": "https://launchpad.net/bugs/1159073" },
