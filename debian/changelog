@@ -69,6 +69,11 @@ firefox-trunk (24.0~a1~hg20130623r136205-0ubuntu1~umd1) UNRELEASED; urgency=low
   * Temporary debug patch
     - add d/p/test-integration/test-sameoriginpolicy-debug.patch
     - update debian/patches/series
+  * Fix failing test_addEngine_callback.js search xpcshell test
+    - rename d/p/test-fixes/xpcshell-search-fix-json-cache-test.patch =>
+        d/p/test-fixes/xpcshell-search-fix-tests-when-plugins-are-not-in-appdir.patch
+    - update d/p/test-fixes/xpcshell-search-fix-tests-when-plugins-are-not-in-appdir.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
