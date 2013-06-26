@@ -74,8 +74,11 @@ firefox-trunk (24.0~a1~hg20130623r136205-0ubuntu1~umd1) UNRELEASED; urgency=low
         d/p/test-fixes/xpcshell-search-fix-tests-when-plugins-are-not-in-appdir.patch
     - update d/p/test-fixes/xpcshell-search-fix-tests-when-plugins-are-not-in-appdir.patch
     - update debian/patches/series
+  * Fix broken Bulgarian language pack
+    - add debian/patches/fix-broken-langpack-install-manifests.patch
+    - update debian/patches/series
 
- -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
+ Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
 firefox-trunk (23.0~a1~hg20130512r131644-0ubuntu1) saucy; urgency=low
 
