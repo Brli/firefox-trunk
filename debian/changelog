@@ -66,6 +66,9 @@ firefox-trunk (24.0~a1~hg20130623r136205-0ubuntu1~umd1) UNRELEASED; urgency=low
   * Include toolkit/components/mediasniffer/test/unit/data/ff-inst.exe in the
     tarball, as it's required for a mimetype sniffing test that we run
     - update debian/config/tarball.conf
+  * Temporary debug patch
+    - add d/p/test-integration/test-sameoriginpolicy-debug.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 15 May 2013 12:22:10 +0100
 
