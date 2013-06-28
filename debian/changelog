@@ -9,6 +9,18 @@ firefox-trunk (25.0~a1~hg20130627r136673-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/filter_results
     - update debian/testing/results-filter-manifest.json
     - update debian/tests/post-process
+  * Run mochitest-plain in 5 chunks, similar to upstream. This should fix
+    some test failures we see that seem to be caused by some tests not
+    cleaning up properly
+    - update debian/testing/run_mochitest.in
+    - update debian/tests/control
+    - move debian/tests/mochitest => debian/tests/mochitest-1
+    - add debian/tests/mochitest-2
+    - add debian/tests/mochitest-3
+    - add debian/tests/mochitest-4
+    - add debian/tests/mochitest-5
+  * Drop d/p/test-integration/test-sameoriginpolicy-debug.patch now that
+    we run mochitest-plain in chunks
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 26 Jun 2013 11:40:24 +0100
 
