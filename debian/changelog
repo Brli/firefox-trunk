@@ -1,6 +1,6 @@
-firefox-trunk (25.0~a1~hg20130626r136421-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (25.0~a1~hg20130627r136673-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v25.0 A1 HG20130626R136421
+  * New upstream snapshot v25.0 A1 HG20130627R136673
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 26 Jun 2013 11:40:24 +0100
 
