@@ -21,7 +21,7 @@ class SandboxGlobal(ReadOnlyDict):
 
   def __init__(self, d = {}):
     ReadOnlyDict.__init__(self, {
-        '__builtins__': builtins,
+        '__builtins__': self.builtins,
         'reftest_fuzzy_pass': self.reftest_fuzzy_pass})
 
     self._vars = d
@@ -44,7 +44,7 @@ class Sandbox(object):
   def __init__(self, type, message):
     self._global = SandboxGlobal({'type': type, 'message': message})
 
-  def eval(str):
+  def eval(self, str):
     return eval(str, self._global, {})
 
 class FilterOptions(OptionParser):
