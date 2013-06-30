@@ -246,6 +246,7 @@ endif
 
 install-testsuite: debian/stamp-installtestsuite
 debian/stamp-installtestsuite: debian/stamp-maketestsuite debian/stamp-makefile-install
+	install $(MOZ_DISTDIR)/bin/OCSPStaplingServer debian/tmp/$(MOZ_LIBDIR)
 	install $(MOZ_DISTDIR)/bin/xpcshell debian/tmp/$(MOZ_LIBDIR)
 	install $(MOZ_DISTDIR)/bin/components/httpd.js debian/tmp/$(MOZ_LIBDIR)/components
 	install $(MOZ_DISTDIR)/bin/components/httpd.manifest debian/tmp/$(MOZ_LIBDIR)/components

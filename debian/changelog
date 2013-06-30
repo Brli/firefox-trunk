@@ -23,6 +23,7 @@ firefox-trunk (25.0~a1~hg20130627r136673-0ubuntu1) UNRELEASED; urgency=low
     we run mochitest-plain in chunks
   * Add OCSPStaplingServer binary to testsuite
     - update debian/firefox-testsuite.install.in
+    - update debian/build/rules.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 26 Jun 2013 11:40:24 +0100
 
