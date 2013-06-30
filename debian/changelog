@@ -11,7 +11,7 @@ firefox-trunk (25.0~a1~hg20130627r136673-0ubuntu1) UNRELEASED; urgency=low
     - update debian/tests/post-process
   * Run mochitest-plain in 5 chunks, similar to upstream. This should fix
     some test failures we see that seem to be caused by some tests not
-    cleaning up properly (seems to fix LP: #1158781)
+    cleaning up properly (seems to fix LP: #1158781 and LP: #1194448)
     - update debian/testing/run_mochitest.in
     - update debian/tests/control
     - move debian/tests/mochitest => debian/tests/mochitest-1
