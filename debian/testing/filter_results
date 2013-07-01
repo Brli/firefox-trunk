@@ -89,20 +89,14 @@ def main():
         i[f] = re.compile(i[f])
       else:
         i[f] = re.compile('.*')
-    if 'random' in i and i['random'] == True:
-      if ('min_expected_count' in i or 'max_expected_count' in i or
-          'expected_count' in i):
-        print >> sys.stderr, "Cannot specify an expected count with 'random'"
-        sys.exit(1)
-    else:
-      if 'random' not in i:
-        i['random'] = False
-      if 'expected_count' in i:
-        i['max_expected_count'] = i['min_expected_count'] = i['expected_count']
-      if 'min_expected_count' not in i:
-        i['min_expected_count'] = 1
-      if 'max_expected_count' not in i:
-        i['max_expected_count'] = sys.maxint
+    if 'random' not in i:
+      i['random'] = False
+    if 'expected_count' in i:
+      i['max_expected_count'] = i['min_expected_count'] = i['expected_count']
+    if 'min_expected_count' not in i or i['random'] == True:
+      i['min_expected_count'] = 0
+    if 'max_expected_count' not in i:
+      i['max_expected_count'] = sys.maxint
     i['count'] = 0
 
   for file in glob(os.path.join(options.input, '*.xml')):
@@ -211,9 +205,8 @@ def main():
   testsuite.appendChild(testcase)
 
   for c in config:
-    if (c['random'] == False and
-        (c['count'] > c['max_expected_count'] or
-         c['count'] < c['min_expected_count'])):
+    if (c['count'] > c['max_expected_count'] or
+        c['count'] < c['min_expected_count']):
       failure = result_doc.createElement('failure')
       failure.setAttribute('type', 'TEST-UNEXPECTED-FAIL')
       failure.setAttribute('message',
@@ -230,10 +223,12 @@ def main():
           "'type': %s\n"
           "'message': %s\n"
           "'condition': %s\n"
+          "'random': %s\n"
           "'min_expected_count': %s\n"
           "'max_expected_count': %s" %
           (c['id'].pattern, c['type'].pattern, c['message'].pattern,
            c['condition'] if 'condition' in c else 'None',
+           str(c['random']),
            str(c['min_expected_count']),
            str(c['max_expected_count'])))
       failure.appendChild(cdata)
