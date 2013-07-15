@@ -1,6 +1,6 @@
-firefox-trunk (25.0~a1~hg20130708r137589-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (25.0~a1~hg20130715r138455-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v25.0 A1 HG20130708R137589
+  * New upstream snapshot v25.0 A1 HG20130715R138455
 
   * Refresh patches
     - update d/p/test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
