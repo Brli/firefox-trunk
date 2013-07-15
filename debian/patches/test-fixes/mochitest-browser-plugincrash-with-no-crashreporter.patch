@@ -3,21 +3,28 @@ Description: Skip browser_pluginCrashCommentAndURL.js when the crash reporter
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-25.0~a1~hg20130708r137589/browser/base/content/test/Makefile.in
+Index: firefox-trunk-25.0~a1~hg20130715r138455/browser/base/content/test/Makefile.in
 ===================================================================
---- firefox-trunk-25.0~a1~hg20130708r137589.orig/browser/base/content/test/Makefile.in	2013-07-08 22:01:18.243745289 +0100
-+++ firefox-trunk-25.0~a1~hg20130708r137589/browser/base/content/test/Makefile.in	2013-07-08 22:01:18.235745289 +0100
-@@ -318,8 +318,6 @@
-                  browser_pageInfo_plugins.js \
+--- firefox-trunk-25.0~a1~hg20130715r138455.orig/browser/base/content/test/Makefile.in	2013-07-15 14:40:10.846109649 +0100
++++ firefox-trunk-25.0~a1~hg20130715r138455/browser/base/content/test/Makefile.in	2013-07-15 14:41:02.454109847 +0100
+@@ -219,7 +219,6 @@
                   browser_pageInfo.js \
-                  feed_tab.html \
+                  browser_pinnedTabs.js \
+                  browser_plainTextLinks.js \
 -                 browser_pluginCrashCommentAndURL.js \
+                  browser_pluginnotification.js \
+                  browser_pluginplaypreview.js \
+                  browser_pluginplaypreview2.js \
+@@ -317,7 +316,6 @@
+                  plugin_test3.html \
+                  plugin_two_types.html \
+                  plugin_unknown.html \
 -                 pluginCrashCommentAndURL.html \
-                  browser_private_no_prompt.js \
-                  browser_blob-channelname.js \
-                  browser_aboutHealthReport.js \
-@@ -330,6 +328,13 @@
-                  browser_addKeywordSearch.js \
+                  POSTSearchEngine.xml \
+                  print_postdata.sjs \
+                  redirect_bug623155.sjs \
+@@ -331,6 +329,13 @@
+                  zoom_test.html \
                   $(NULL)
  
 +ifdef MOZ_CRASHREPORTER
