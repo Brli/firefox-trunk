@@ -11,7 +11,6 @@ test-integration/automation-output-junit-xml.patch
 test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
 fix-broken-langpack-install-manifests.patch
 test-integration/xpcshell-output-valid-junit-xml.patch
-test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
 test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
 test-fixes/mochitest-content-reset-permissions-when-done.patch
 test-fixes/mochitest-tests-jar-fix.patch

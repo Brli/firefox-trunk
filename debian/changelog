@@ -7,6 +7,7 @@ firefox-trunk (25.0~a1~hg20130718r138844-0ubuntu1) UNRELEASED; urgency=low
     - update d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
   * Drop patches
     - remove d/p/test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
+    - remove d/p/test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
     - update debian/patches/series
   * Refactor the test results post-process script a bit so that it can use
     regular expressions in the configuration
