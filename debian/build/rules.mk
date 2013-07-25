@@ -51,6 +51,8 @@ DEB_DH_STRIP_ARGS		:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
 # scour breaks the testsuite
 DEB_DH_SCOUR_ARGS		:= -N$(MOZ_PKG_NAME)-testsuite
+# Stop the buildd from timing out during long links
+MAKE					:= python $(CURDIR)/debian/build/keepalive-wrapper.py 1440 $(MAKE)
 
 MOZ_VERSION		:= $(shell cat $(DEB_SRCDIR)/$(MOZ_APP)/config/version.txt)
 MOZ_LIBDIR		:= usr/lib/$(MOZ_APP_NAME)

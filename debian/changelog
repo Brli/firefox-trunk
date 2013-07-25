@@ -34,6 +34,10 @@ firefox-trunk (25.0~a1~hg20130724r139815-0ubuntu1) UNRELEASED; urgency=low
   * Don't let make check failures fail the build for now, as there are some
     jit test failures
     - update debian/build/testsuite.mk
+  * Try to stop the buildd's from terminating the build during long links
+    (use a hack based on the one for the Chromium package)
+    - add debian/build/keepalive-wrapper.py
+    - update debian/build/rules.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 26 Jun 2013 11:40:24 +0100
 
