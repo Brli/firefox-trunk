@@ -2,11 +2,11 @@ Description: Add "Ubuntu" to the platform part of the UA string
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
-Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandler.cpp
+Index: firefox-trunk-25.0~a1~hg20130724r139815/netwerk/protocol/http/nsHttpHandler.cpp
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124652.orig/netwerk/protocol/http/nsHttpHandler.cpp	2013-03-14 13:01:57.212357357 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandler.cpp	2013-03-14 13:01:57.204357356 +0000
-@@ -164,6 +164,9 @@
+--- firefox-trunk-25.0~a1~hg20130724r139815.orig/netwerk/protocol/http/nsHttpHandler.cpp	2013-07-25 11:45:24.233183758 +0100
++++ firefox-trunk-25.0~a1~hg20130724r139815/netwerk/protocol/http/nsHttpHandler.cpp	2013-07-25 11:45:24.229183758 +0100
+@@ -176,6 +176,9 @@
      , mLegacyAppName("Mozilla")
      , mLegacyAppVersion("5.0")
      , mProduct("Gecko")
@@ -16,7 +16,7 @@ Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandl
      , mUserAgentIsDirty(true)
      , mUseCache(true)
      , mPromptTempRedirect(true)
-@@ -307,6 +310,9 @@
+@@ -325,6 +328,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
      LOG(("> product-sub = %s\n", mProductSub.get()));
@@ -26,7 +26,7 @@ Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandl
      LOG(("> app-name = %s\n", mAppName.get()));
      LOG(("> app-version = %s\n", mAppVersion.get()));
      LOG(("> compat-firefox = %s\n", mCompatFirefox.get()));
-@@ -559,7 +565,10 @@
+@@ -594,7 +600,10 @@
                             mAppVersion.Length() +
                             mCompatFirefox.Length() +
                             mCompatDevice.Length() +
@@ -38,7 +38,7 @@ Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandl
  
      // Application portion
      mUserAgent.Assign(mLegacyAppName);
-@@ -575,6 +584,10 @@
+@@ -610,6 +619,10 @@
        mUserAgent.AppendLiteral("; ");
      }
  #endif
@@ -49,11 +49,11 @@ Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandl
      if (!mCompatDevice.IsEmpty()) {
          mUserAgent += mCompatDevice;
          mUserAgent.AppendLiteral("; ");
-Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandler.h
+Index: firefox-trunk-25.0~a1~hg20130724r139815/netwerk/protocol/http/nsHttpHandler.h
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124652.orig/netwerk/protocol/http/nsHttpHandler.h	2013-03-14 13:01:57.212357357 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandler.h	2013-03-14 13:01:57.204357356 +0000
-@@ -349,6 +349,7 @@
+--- firefox-trunk-25.0~a1~hg20130724r139815.orig/netwerk/protocol/http/nsHttpHandler.h	2013-07-25 11:45:24.233183758 +0100
++++ firefox-trunk-25.0~a1~hg20130724r139815/netwerk/protocol/http/nsHttpHandler.h	2013-07-25 11:45:24.229183758 +0100
+@@ -374,6 +374,7 @@
      // useragent components
      nsCString      mLegacyAppName;
      nsCString      mLegacyAppVersion;
@@ -61,13 +61,13 @@ Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/nsHttpHandl
      nsCString      mPlatform;
      nsCString      mOscpu;
      nsCString      mMisc;
-Index: firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/Makefile.in
+Index: firefox-trunk-25.0~a1~hg20130724r139815/netwerk/protocol/http/Makefile.in
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130313r124652.orig/netwerk/protocol/http/Makefile.in	2013-03-14 02:16:57.000000000 +0000
-+++ firefox-trunk-22.0~a1~hg20130313r124652/netwerk/protocol/http/Makefile.in	2013-03-14 13:03:34.472361352 +0000
-@@ -88,3 +88,6 @@
- 
- DEFINES += -DIMPL_NS_NET
+--- firefox-trunk-25.0~a1~hg20130724r139815.orig/netwerk/protocol/http/Makefile.in	2013-07-25 11:44:01.000000000 +0100
++++ firefox-trunk-25.0~a1~hg20130724r139815/netwerk/protocol/http/Makefile.in	2013-07-25 11:49:42.441185100 +0100
+@@ -26,3 +26,6 @@
+ include $(topsrcdir)/config/rules.mk
+ include $(topsrcdir)/ipc/chromium/chromium-config.mk
  
 +ifdef MOZ_UA_VENDOR
 +DEFINES += -DMOZ_UA_VENDOR=\""$(MOZ_UA_VENDOR)"\"

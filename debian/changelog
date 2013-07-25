@@ -6,6 +6,7 @@ firefox-trunk (25.0~a1~hg20130724r139815-0ubuntu1) UNRELEASED; urgency=low
     - update d/p/test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
     - update d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
     - update d/p/test-integration/xpcshell-write-time-for-failed-test.patch
+    - update debian/patches/ubuntu-ua-string-changes.patch
   * Drop patches
     - remove d/p/test-fixes/xpcshell-docshell-no-writes-to-appdir.patch
     - remove d/p/test-fixes/xpcshell-contentprefs-no-writes-to-appdir.patch
