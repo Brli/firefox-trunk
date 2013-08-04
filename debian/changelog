@@ -38,6 +38,7 @@ firefox-trunk (25.0~a1~hg20130724r139815-0ubuntu1) UNRELEASED; urgency=low
     (use a hack based on the one for the Chromium package)
     - add debian/build/keepalive-wrapper.py
     - update debian/build/rules.mk
+  * Disable unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 26 Jun 2013 11:40:24 +0100
 
