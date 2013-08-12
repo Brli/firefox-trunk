@@ -1,3 +1,9 @@
+firefox-trunk (26.0~a1~hg20130812r142218-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream snapshot v26.0 A1 HG20130812R142218
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 12 Aug 2013 11:49:31 +0100
+
 firefox-trunk (25.0~a1~hg20130726r140000-0ubuntu1) saucy; urgency=low
 
   * New upstream snapshot v25.0 A1 HG20130726R140000
