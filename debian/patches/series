@@ -5,7 +5,7 @@ ubuntu-ua-string-changes.patch
 dont-include-hyphenation-patterns.patch
 dont-override-general-useragent-locale.patch
 webapprt-support-for-langpacks.patch
-no_neon_on_arm.patch
+#no_neon_on_arm.patch
 #unity-menubar.patch
 test-integration/automation-output-junit-xml.patch
 test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
@@ -15,7 +15,6 @@ test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
 test-fixes/mochitest-content-reset-permissions-when-done.patch
 test-fixes/mochitest-tests-jar-fix.patch
 test-fixes/mochitest-dont-ship-browser-postupdate-test.patch
-test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
 test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
 test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
 test-overrides/disable-failing-python-tests.patch

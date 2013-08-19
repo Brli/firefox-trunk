@@ -2,26 +2,26 @@ Description: Write test duration to the JUnit results when the test fails
 Author: Chris Coulson <chris.coulson@Canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-25.0~a1~hg20130718r138844/testing/xpcshell/runxpcshelltests.py
+Index: firefox-trunk-26.0~a1~hg20130819r143051/testing/xpcshell/runxpcshelltests.py
 ===================================================================
---- firefox-trunk-25.0~a1~hg20130718r138844.orig/testing/xpcshell/runxpcshelltests.py	2013-07-19 00:42:51.956824977 +0100
-+++ firefox-trunk-25.0~a1~hg20130718r138844/testing/xpcshell/runxpcshelltests.py	2013-07-19 00:42:51.952824977 +0100
-@@ -973,6 +973,8 @@
+--- firefox-trunk-26.0~a1~hg20130819r143051.orig/testing/xpcshell/runxpcshelltests.py	2013-08-19 18:48:41.467497241 +0100
++++ firefox-trunk-26.0~a1~hg20130819r143051/testing/xpcshell/runxpcshelltests.py	2013-08-19 18:49:39.491497306 +0100
+@@ -478,6 +478,8 @@
                                                  stdout, re.MULTILINE)
                                    and not re.search("^child: CHILD-TEST-COMPLETED",
                                                      stdout, re.MULTILINE)))
 +            now = time.time()
-+            xunit_result["time"] = now - startTime
++            self.xunit_result["time"] = now - startTime
  
              if result != expected:
                  failureType = "TEST-UNEXPECTED-%s" % ("FAIL" if expected else "PASS")
-@@ -989,9 +991,7 @@
+@@ -497,9 +499,7 @@
                    "text": stdout
                  }
              else:
 -                now = time.time()
                  timeTaken = (now - startTime) * 1000
--                xunit_result["time"] = now - startTime
-                 self.log.info("TEST-%s | %s | test passed (time: %.3fms)" % ("PASS" if expected else "KNOWN-FAIL", name, timeTaken))
-                 if verbose:
-                     self.print_stdout(stdout)
+-                self.xunit_result["time"] = now - startTime
+ 
+                 with LOG_MUTEX:
+                     self.log.info("TEST-%s | %s | test passed (time: %.3fms)" % ("PASS" if expected else "KNOWN-FAIL", name, timeTaken))

@@ -3,10 +3,10 @@ Description: Disable xpcshell tests that always fail in Jenkins because they
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-22.0~a1~hg20130301r123350/browser/components/places/tests/unit/xpcshell.ini
+Index: firefox-trunk-26.0~a1~hg20130819r143051/browser/components/places/tests/unit/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/browser/components/places/tests/unit/xpcshell.ini	2013-03-01 12:18:24.429812101 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/browser/components/places/tests/unit/xpcshell.ini	2013-03-01 12:18:24.421812101 +0000
+--- firefox-trunk-26.0~a1~hg20130819r143051.orig/browser/components/places/tests/unit/xpcshell.ini	2013-08-19 18:44:43.687496975 +0100
++++ firefox-trunk-26.0~a1~hg20130819r143051/browser/components/places/tests/unit/xpcshell.ini	2013-08-19 18:44:43.679496975 +0100
 @@ -8,6 +8,9 @@
  [test_browserGlue_corrupt_nobackup.js]
  [test_browserGlue_corrupt_nobackup_default.js]
@@ -17,19 +17,22 @@ Index: firefox-trunk-22.0~a1~hg20130301r123350/browser/components/places/tests/u
  [test_browserGlue_migrate.js]
  [test_browserGlue_prefs.js]
  [test_browserGlue_restore.js]
-Index: firefox-trunk-22.0~a1~hg20130301r123350/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini
+Index: firefox-trunk-26.0~a1~hg20130819r143051/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini
 ===================================================================
---- firefox-trunk-22.0~a1~hg20130301r123350.orig/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini	2013-03-01 12:18:24.429812101 +0000
-+++ firefox-trunk-22.0~a1~hg20130301r123350/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini	2013-03-01 12:18:24.425812101 +0000
-@@ -233,7 +233,9 @@
+--- firefox-trunk-26.0~a1~hg20130819r143051.orig/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini	2013-08-19 18:19:15.000000000 +0100
++++ firefox-trunk-26.0~a1~hg20130819r143051/toolkit/mozapps/extensions/test/xpcshell/xpcshell.ini	2013-08-19 18:46:01.695497062 +0100
+@@ -247,10 +247,10 @@
+ run-sequentially = Uses hardcoded ports in xpi files.
  [test_update_compatmode.js]
  [test_upgrade.js]
- # Bug 676992: test consistently hangs on Android
+-# Bug 676992: test consistently hangs on Android
 -skip-if = os == "android"
 +# This needs to write to the application directory
 +skip-if = true
+ run-sequentially = Uses global XCurProcD dir.
  [test_upgrade_strictcompat.js]
- # Bug 676992: test consistently hangs on Android
+-# Bug 676992: test consistently hangs on Android
 -skip-if = os == "android"
 +# This needs to write to the application directory
 +skip-if = true
+ run-sequentially = Uses global XCurProcD dir.

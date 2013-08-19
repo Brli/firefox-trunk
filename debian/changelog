@@ -4,6 +4,14 @@ firefox-trunk (26.0~a1~hg20130812r142218-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update d/p/test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
+    - update d/p/test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
+    - update d/p/test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
+    - update d/p/test-integration/xpcshell-dont-return-nonzero-on-test-failure.patch
+    - update d/p/test-integration/xpcshell-write-time-for-failed-test.patch
+  * Drop patches
+    - remove d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
+    - update debian/patches/series
+  * Disable no_neon_on_arm.patch for now
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 12 Aug 2013 11:49:31 +0100
 
