@@ -8,10 +8,12 @@ firefox-trunk (26.0~a1~hg20130819r143051-0ubuntu1) UNRELEASED; urgency=low
     - update d/p/test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
     - update d/p/test-integration/xpcshell-dont-return-nonzero-on-test-failure.patch
     - update d/p/test-integration/xpcshell-write-time-for-failed-test.patch
+    - update debian/patches/unity-menubar.patch
   * Drop patches
     - remove d/p/test-fixes/mochitest-browser-plugincrash-with-no-crashreporter.patch
     - update debian/patches/series
   * Disable no_neon_on_arm.patch for now
+  * Reenable unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 12 Aug 2013 11:49:31 +0100
 
