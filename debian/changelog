@@ -1,6 +1,9 @@
 firefox-trunk (26.0~a1~hg20130812r142218-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream snapshot v26.0 A1 HG20130812R142218
+  * Refresh patches
+    - update d/p/test-integration/automation-output-junit-xml.patch
+    - update d/p/test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 12 Aug 2013 11:49:31 +0100
 

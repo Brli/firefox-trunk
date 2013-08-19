@@ -5,54 +5,57 @@
 diff --git a/testing/mochitest/browser-harness.xul b/testing/mochitest/browser-harness.xul
 --- a/testing/mochitest/browser-harness.xul
 +++ b/testing/mochitest/browser-harness.xul
-@@ -8,16 +8,19 @@
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-         onload="TestStart();"
-         title="Browser chrome tests"
-         width="1024">
-   <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/MozillaLogger.js"/>
-   <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/LogController.js"/>
-   <script type="application/javascript" src="chrome://mochikit/content/chrome-harness.js"/>
-   <script type="application/javascript" src="chrome://mochikit/content/chunkifyTests.js"/>
-+  <!-- We need this to make setup.js happy. Perhaps filterTests() should also exist in chrome-harness.js? -->
-+  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/TestRunner.js"/>
-+  <script type="application/javascript" src="chrome://mochikit/content/tests/SimpleTest/setup.js"/>
-   <style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
-     #results {
-       margin: 5px;
-       background-color: window;
-       -moz-user-select: text;
-     }
- 
-     #summary {
-@@ -171,26 +174,26 @@
- 
-       // load server.js in so we can share template functions
-       var scriptLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"].
-                            getService(Ci.mozIJSSubScriptLoader);
-       var srvScope = {};
-       scriptLoader.loadSubScript('chrome://mochikit/content/server.js',
-                                  srvScope);
- 
--      var fileNames = [];
+@@ -190,17 +190,22 @@
        var fileNameRegexp = /browser_.+\.js$/;
--      srvScope.arrayOfTestFiles(links, fileNames, fileNameRegexp);
-+      srvScope.arrayOfTestFiles(links, gTestList, fileNameRegexp);
-+      gTestList = filterTests(gConfig.testManifest, gConfig.runOnly);
+       srvScope.arrayOfTestFiles(links, fileNames, fileNameRegexp);
  
        if (gConfig.totalChunks && gConfig.thisChunk) {
--        fileNames = chunkifyTests(fileNames, gConfig.totalChunks,
-+        gTestList = chunkifyTests(gTestList, gConfig.totalChunks,
+         fileNames = chunkifyTests(fileNames, gConfig.totalChunks,
                                    gConfig.thisChunk, gConfig.chunkByDir);
        }
  
--      return fileNames.map(function (f) new browserTest(f));
-+      return gTestList.map(function (f) new browserTest(f));
+-      createTester(fileNames.map(function (f) { return new browserTest(f); }));
++      function loadTestList2(manifest) {
++        fileNames = filterTests(manifest, fileNames, false, gConfig);
++        createTester(fileNames.map(function (f) { return new browserTest(f); }));
++      }
++
++      getTestManifest("http://mochi.test:8888/" + gConfig.testManifest, null, loadTestList2);
      }
  
      function setStatus(aStatusString) {
        document.getElementById("status").value = aStatusString;
      }
  
-     function runTests() {
+     function createTester(links) {
        var windowMediator = Cc['@mozilla.org/appshell/window-mediator;1'].
+diff --git a/testing/mochitest/manifestLibrary.js b/testing/mochitest/manifestLibrary.js
+--- a/testing/mochitest/manifestLibrary.js
++++ b/testing/mochitest/manifestLibrary.js
+@@ -55,23 +55,25 @@ function getTestManifest(url, params, ca
+  testList
+  parameters:
+    filter = json object of runtests | excludetests
+    testList = array of test names to run
+    runOnly = use runtests vs excludetests in case both are defined
+  returns:
+    filtered version of testList
+ */
+-function filterTests(filter, testList, runOnly) {
++function filterTests(filter, testList, runOnly, c) {
+ 
+   var filteredTests = [];
+   var removedTests = [];
+   var runtests = {};
+   var excludetests = {};
+ 
++  var config = c || config;
++
+   if (filter == null) {
+     return testList;
+   }
+ 
+   if ('runtests' in filter) {
+     runtests = filter.runtests;
+   }
+   if ('excludetests' in filter) {
