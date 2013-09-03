@@ -5,11 +5,11 @@ Description: Don't return a non-zero exit status from runxpcshelltests.py if
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-26.0~a1~hg20130819r143051/testing/xpcshell/runxpcshelltests.py
+Index: firefox-trunk-26.0~a1~hg20130902r145224/testing/xpcshell/runxpcshelltests.py
 ===================================================================
---- firefox-trunk-26.0~a1~hg20130819r143051.orig/testing/xpcshell/runxpcshelltests.py	2013-08-19 18:46:38.407497103 +0100
-+++ firefox-trunk-26.0~a1~hg20130819r143051/testing/xpcshell/runxpcshelltests.py	2013-08-19 18:48:17.771497214 +0100
-@@ -1081,12 +1081,13 @@
+--- firefox-trunk-26.0~a1~hg20130902r145224.orig/testing/xpcshell/runxpcshelltests.py	2013-09-03 11:03:29.214476586 +0100
++++ firefox-trunk-26.0~a1~hg20130902r145224/testing/xpcshell/runxpcshelltests.py	2013-09-03 11:03:29.382476587 +0100
+@@ -1208,12 +1208,13 @@
          self.pluginsPath = pluginsPath
          self.sequential = sequential
  
@@ -24,8 +24,8 @@ Index: firefox-trunk-26.0~a1~hg20130819r143051/testing/xpcshell/runxpcshelltests
          self.passCount = 0
          self.failCount = 0
          self.todoCount = 0
-@@ -1361,6 +1362,8 @@
-                              "dom.basic.foo")
+@@ -1525,6 +1526,8 @@
+                         help="path to file where failure manifest will be written.")
  
  def main():
 +    global gotSIGINT
@@ -33,9 +33,9 @@ Index: firefox-trunk-26.0~a1~hg20130819r143051/testing/xpcshell/runxpcshelltests
      parser = XPCShellOptions()
      options, args = parser.parse_args()
  
-@@ -1381,7 +1384,7 @@
-     # mach will run tests in parallel by default
-     options.sequential = True
+@@ -1541,7 +1544,7 @@
+         print >>sys.stderr, "Error: You must specify a test filename in interactive mode!"
+         sys.exit(1)
  
 -    if not xpcsh.runTests(args[0], testdirs=args[1:], **options.__dict__):
 +    if not xpcsh.runTests(args[0], testdirs=args[1:], **options.__dict__) and (xpcsh.testCount == 0 or gotSIGINT):
