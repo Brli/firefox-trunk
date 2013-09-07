@@ -1,6 +1,6 @@
-firefox-trunk (26.0~a1~hg20130902r145224-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (26.0~a1~hg20130907r146034-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v26.0 A1 HG20130902R145224
+  * New upstream snapshot v26.0 A1 HG20130907R146034
 
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
