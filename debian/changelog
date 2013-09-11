@@ -17,7 +17,7 @@ firefox-trunk (26.0~a1~hg20130907r146034-0ubuntu1) UNRELEASED; urgency=low
     - remove d/p/test-fixes/mochitest-tests-jar-fix.patch
     - update debian/patches/series
   * Disable no_neon_on_arm.patch for now
-  * Disable unity-menubar.patch
+  * Reenable unity-menubar.patch
   * Enable the gstreamer backend
     - update debian/control
     - update debian/config/mozconfig
