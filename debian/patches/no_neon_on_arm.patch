@@ -1,8 +1,8 @@
-Index: firefox-trunk-23.0~a1~hg20130413r128668/build/autoconf/arch.m4
+Index: firefox-trunk-26.0~a1~hg20130911r146458/build/autoconf/arch.m4
 ===================================================================
---- firefox-trunk-23.0~a1~hg20130413r128668.orig/build/autoconf/arch.m4	2013-04-14 01:17:16.115548804 +0100
-+++ firefox-trunk-23.0~a1~hg20130413r128668/build/autoconf/arch.m4	2013-04-14 01:17:34.415548874 +0100
-@@ -207,27 +207,27 @@
+--- firefox-trunk-26.0~a1~hg20130911r146458.orig/build/autoconf/arch.m4	2013-09-11 03:12:17.000000000 +0100
++++ firefox-trunk-26.0~a1~hg20130911r146458/build/autoconf/arch.m4	2013-09-11 12:51:34.977008568 +0100
+@@ -197,28 +197,28 @@
    ARM_ARCH=`${CC-cc} ${CFLAGS} -dM -E - < /dev/null | sed -n 's/.*__ARM_ARCH_\([[0-9]]*\).*/\1/p'`
    AC_MSG_RESULT("$ARM_ARCH")
  
@@ -21,8 +21,9 @@ Index: firefox-trunk-23.0~a1~hg20130413r128668/build/autoconf/arch.m4
 -      dnl This matches media/webrtc/trunk/webrtc/build/common.gypi.
 -      if test -n "$ARM_ARCH"; then
 -          if test "$ARM_ARCH" -lt 7; then
--              BUILD_ARM_NEON=0
+-              BUILD_ARM_NEON=
 -          else
+-              AC_DEFINE(BUILD_ARM_NEON)
 -              BUILD_ARM_NEON=1
 -          fi
 -      fi
@@ -42,8 +43,9 @@ Index: firefox-trunk-23.0~a1~hg20130413r128668/build/autoconf/arch.m4
 +  #    dnl This matches media/webrtc/trunk/webrtc/build/common.gypi.
 +  #    if test -n "$ARM_ARCH"; then
 +  #        if test "$ARM_ARCH" -lt 7; then
-+  #            BUILD_ARM_NEON=0
++  #            BUILD_ARM_NEON=
 +  #        else
++  #            AC_DEFINE(BUILD_ARM_NEON)
 +  #            BUILD_ARM_NEON=1
 +  #        fi
 +  #    fi
@@ -51,11 +53,11 @@ Index: firefox-trunk-23.0~a1~hg20130413r128668/build/autoconf/arch.m4
  
  fi # CPU_ARCH = arm
  
-Index: firefox-trunk-23.0~a1~hg20130413r128668/js/src/build/autoconf/arch.m4
+Index: firefox-trunk-26.0~a1~hg20130911r146458/js/src/build/autoconf/arch.m4
 ===================================================================
---- firefox-trunk-23.0~a1~hg20130413r128668.orig/js/src/build/autoconf/arch.m4	2013-04-13 07:33:02.000000000 +0100
-+++ firefox-trunk-23.0~a1~hg20130413r128668/js/src/build/autoconf/arch.m4	2013-04-14 01:18:23.555549063 +0100
-@@ -207,27 +207,27 @@
+--- firefox-trunk-26.0~a1~hg20130911r146458.orig/js/src/build/autoconf/arch.m4	2013-09-11 03:16:14.000000000 +0100
++++ firefox-trunk-26.0~a1~hg20130911r146458/js/src/build/autoconf/arch.m4	2013-09-11 12:51:48.913008716 +0100
+@@ -197,28 +197,28 @@
    ARM_ARCH=`${CC-cc} ${CFLAGS} -dM -E - < /dev/null | sed -n 's/.*__ARM_ARCH_\([[0-9]]*\).*/\1/p'`
    AC_MSG_RESULT("$ARM_ARCH")
  
@@ -74,8 +76,9 @@ Index: firefox-trunk-23.0~a1~hg20130413r128668/js/src/build/autoconf/arch.m4
 -      dnl This matches media/webrtc/trunk/webrtc/build/common.gypi.
 -      if test -n "$ARM_ARCH"; then
 -          if test "$ARM_ARCH" -lt 7; then
--              BUILD_ARM_NEON=0
+-              BUILD_ARM_NEON=
 -          else
+-              AC_DEFINE(BUILD_ARM_NEON)
 -              BUILD_ARM_NEON=1
 -          fi
 -      fi
@@ -95,8 +98,9 @@ Index: firefox-trunk-23.0~a1~hg20130413r128668/js/src/build/autoconf/arch.m4
 +  #    dnl This matches media/webrtc/trunk/webrtc/build/common.gypi.
 +  #    if test -n "$ARM_ARCH"; then
 +  #        if test "$ARM_ARCH" -lt 7; then
-+  #            BUILD_ARM_NEON=0
++  #            BUILD_ARM_NEON=
 +  #        else
++  #            AC_DEFINE(BUILD_ARM_NEON)
 +  #            BUILD_ARM_NEON=1
 +  #        fi
 +  #    fi
