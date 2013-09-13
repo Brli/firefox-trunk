@@ -155,7 +155,8 @@ Depends: ${shlibs:Depends},
 	ubuntu-settings,
 	light-themes,
 	unzip,
-	hunspell-en-us
+	hunspell-en-us,
+	libgl1-mesa-dri
 Provides: ${app:Provides}
 Conflicts: ${app:Conflicts}
 Description: Safe and easy web browser from Mozilla - testsuite

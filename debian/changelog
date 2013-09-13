@@ -23,7 +23,8 @@ firefox-trunk (26.0~a1~hg20130911r146458-0ubuntu1) UNRELEASED; urgency=low
     - update debian/config/mozconfig
   * Update for mochitest/runtests.py changes
     - update debian/testing/testrunhelper.py
-  * 
+  * Add libgl1-mesa-dri to firefox-testsuite depends so that gnome-session
+    starts correctly in saucy
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 12 Aug 2013 11:49:31 +0100
 
