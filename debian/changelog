@@ -25,6 +25,8 @@ firefox-trunk (26.0~a1~hg20130911r146458-0ubuntu1) UNRELEASED; urgency=low
     - update debian/testing/testrunhelper.py
   * Add libgl1-mesa-dri to firefox-testsuite depends so that gnome-session
     starts correctly in saucy
+  * Fix LP: #1223502 - firefox-testsuite should depend on fonts-liberation
+    rather than ttf-liberation
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 12 Aug 2013 11:49:31 +0100
 
