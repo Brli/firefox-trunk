@@ -1,3 +1,10 @@
+firefox-trunk (26.0~a1~hg20130916r147315-0ubuntu2) UNRELEASED; urgency=low
+
+  * Drop the python-progressbar build-conflict, as "make check" doesn't run
+    the jit-tests now
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Tue, 17 Sep 2013 16:32:25 +0100
+
 firefox-trunk (26.0~a1~hg20130916r147315-0ubuntu1) saucy; urgency=low
 
   * New upstream snapshot v26.0 A1 HG20130916R147315
