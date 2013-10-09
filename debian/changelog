@@ -1,7 +1,14 @@
 firefox-trunk (26.0~a1~hg20130916r147315-0ubuntu2) UNRELEASED; urgency=low
 
+  [ Chris Coulson <chris.coulson@canonical.com> ]
   * Drop the python-progressbar build-conflict, as "make check" doesn't run
     the jit-tests now
+
+  [ Jamie Strandboge <jamie@canonical.com> ]
+  * add debian/usr.bin.firefox.apparmor.13.10 for dbus policy
+  * debian/rules: conditionally use usr.bin.firefox.apparmor.13.10 on saucy
+    and higher, otherwise usr.bin.firefox.apparmor.12.04
+  * debian/usr.bin.firefox.apparmor.12.04: use ibus abstraction
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 17 Sep 2013 16:32:25 +0100
 
