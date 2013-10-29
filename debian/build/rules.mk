@@ -102,6 +102,7 @@ endif
 # Ensure the crash reporter gets disabled for derivatives
 ifneq (Ubuntu, $(DISTRIB))
 MOZ_BUILD_OFFICIAL = 0
+MOZ_ENABLE_BREAKPAD = 0
 endif
 
 MOZ_DISPLAY_NAME = $(shell cat $(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/locales/en-US/brand.properties \
@@ -123,7 +124,6 @@ ifeq (Ubuntu, $(DISTRIB))
 export MOZ_UA_VENDOR=Ubuntu
 endif
 ifeq (1,$(MOZ_BUILD_OFFICIAL))
-# Needed to enable crashreported in application.ini
 export MOZILLA_OFFICIAL=1
 endif
 

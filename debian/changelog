@@ -11,6 +11,11 @@ firefox-trunk (27.0~a1~hg20131021r151486-0ubuntu1) UNRELEASED; urgency=low
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update d/p/test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
     - update debian/patches/unity-menubar.patch
+  * MOZILLA_OFFICIAL no longer controls whether the crashreporter is enabled,
+    so just build with --disable-crashreporter to turn it off
+    - update debian/apport/blacklist.in
+    - update debian/build/config.mk
+    - update debian/build/rules.mk
 
   [ Jamie Strandboge <jamie@canonical.com> ]
   * add debian/usr.bin.firefox.apparmor.13.10 for dbus policy
