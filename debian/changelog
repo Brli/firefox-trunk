@@ -1,6 +1,6 @@
-firefox-trunk (27.0~a1~hg20131021r151486-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (27.0~a1~hg20131023r151789-0ubuntu1) saucy; urgency=low
 
-  * New upstream snapshot v27.0 A1 HG20131021R151486
+  * New upstream snapshot v27.0 A1 HG20131023R151789
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Drop the python-progressbar build-conflict, as "make check" doesn't run
