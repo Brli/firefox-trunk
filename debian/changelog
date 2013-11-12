@@ -4,6 +4,8 @@ firefox-trunk (28.0~a1~hg20131112r154534-0ubuntu1) UNRELEASED; urgency=low
 
   * Refresh patches
     - update d/p/test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
+  * Add pulseaudio dependency
+    - update debian/control
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 12 Nov 2013 20:34:55 +0000
 
