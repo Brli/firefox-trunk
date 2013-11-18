@@ -1,9 +1,10 @@
-firefox-trunk (28.0~a1~hg20131112r154534-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (28.0~a1~hg20131118r156007-0ubuntu1) UNRELEASED; urgency=low
 
-  * New upstream snapshot v28.0 A1 HG20131112R154534
+  * New upstream snapshot v28.0 A1 HG20131118R156007
 
   * Refresh patches
     - update d/p/test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
+    - update debian/patches/unity-menubar.patch
   * Add pulseaudio dependency
     - update debian/control
 
