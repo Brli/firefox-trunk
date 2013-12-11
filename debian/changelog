@@ -1,6 +1,6 @@
-firefox-trunk (28.0~a1~hg20131205r159037-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (28.0~a1~hg20131208r159425-0ubuntu1) saucy; urgency=low
 
-  * New upstream snapshot v28.0 A1 HG20131205R159037
+  * New upstream snapshot v28.0 A1 HG20131208R159425
 
   * Refresh patches
     - update d/p/test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
