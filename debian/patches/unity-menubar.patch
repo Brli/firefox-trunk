@@ -114,7 +114,7 @@ Index: firefox-trunk-28.0~a1~hg20131205r159037/widget/gtk/nsDbusmenu.cpp
 +
 +#include "nsDbusmenu.h"
 +#include "prlink.h"
-+#include "mozilla/Util.h"
++#include "mozilla/ArrayUtils.h"
 +
 +#define FUNC(name, type, params) \
 +nsDbusmenuFunctions::_##name##_fn nsDbusmenuFunctions::s_##name;
@@ -2243,10 +2243,10 @@ Index: firefox-trunk-28.0~a1~hg20131205r159037/widget/gtk/nsMenuItem.cpp
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
++#include "mozilla/ArrayUtils.h"
 +#include "mozilla/dom/Element.h"
 +#include "mozilla/Preferences.h"
 +#include "mozilla/TextEvents.h"
-+#include "mozilla/Util.h"
 +#include "nsAutoPtr.h"
 +#include "nsContentUtils.h"
 +#include "nsCRT.h"
@@ -3104,10 +3104,10 @@ Index: firefox-trunk-28.0~a1~hg20131205r159037/widget/gtk/nsMenuObject.cpp
 +#include "imgINotificationObserver.h"
 +#include "imgLoader.h"
 +#include "imgRequestProxy.h"
++#include "mozilla/ArrayUtils.h"
 +#include "mozilla/dom/Element.h"
 +#include "mozilla/LookAndFeel.h"
 +#include "mozilla/Preferences.h"
-+#include "mozilla/Util.h"
 +#include "nsAttrValue.h"
 +#include "nsComputedDOMStyle.h"
 +#include "nsContentUtils.h"
