@@ -1,7 +1,10 @@
-firefox-trunk (28.0~a1~hg20131208r159425-0ubuntu2) UNRELEASED; urgency=low
+firefox-trunk (29.0~a1~hg20140102r161931-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream snapshot v29.0 A1 HG20140102R161931
 
   * Refresh patches
     - update debian/patches/unity-menubar.patch
+    - update debian/patches/no_neon_on_arm.patch
   * Add Aragonese to locale blacklist, as it's been added to the upstream
     shipped-locales when the mercurial repo doesn't seem to exist
   * Fix create-tarball.py so that the blacklist works correctly
