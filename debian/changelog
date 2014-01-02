@@ -12,6 +12,7 @@ firefox-trunk (29.0~a1~hg20140102r161931-0ubuntu1) UNRELEASED; urgency=low
     - update debian/control
     - update debian/locales.shipped
     - update debian/locales.all
+    - add debian/searchplugins/xh/list.txt
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 11 Dec 2013 15:54:41 +0000
 
