@@ -871,6 +871,16 @@ Description: Vietnamese language pack for Firefox
  This package contains Vietnamese translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-xh
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-xh-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Xhosa language pack for Firefox
+ This package contains Xhosa translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-zh-hans
 Architecture: any
 Depends: ${misc:Depends}
