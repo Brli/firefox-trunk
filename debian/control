@@ -584,12 +584,13 @@ Description: Kurdish language pack for Firefox
 Package: firefox-trunk-locale-lg
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-lg-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Ganda language pack for Firefox
- This package contains Ganda translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-lt
 Architecture: any
@@ -684,12 +685,13 @@ Description: Norwegian Nynorsk; Nynorsk, Norwegian language pack for Firefox
 Package: firefox-trunk-locale-nso
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-nso-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Sotho, Northern language pack for Firefox
- This package contains Sotho, Northern translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-or
 Architecture: any
