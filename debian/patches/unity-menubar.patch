@@ -1506,9 +1506,9 @@ Index: firefox-trunk-29.0~a1~hg20140119r164234/widget/gtk/nsMenuBar.cpp
 +        return NS_OK;
 +    }
 +
-+    PRUnichar ch = PRUnichar(charCode);
-+    PRUnichar chl = ToLowerCase(ch);
-+    PRUnichar chu = ToUpperCase(ch);
++    char16_t ch = char16_t(charCode);
++    char16_t chl = ToLowerCase(ch);
++    char16_t chu = ToUpperCase(ch);
 +
 +    nsMenuObject *found = nullptr;
 +    uint32_t count = ChildCount();
@@ -3369,7 +3369,7 @@ Index: firefox-trunk-29.0~a1~hg20140119r164234/widget/gtk/nsMenuObject.cpp
 +static const nsDependentString
 +GetEllipsis()
 +{
-+    static PRUnichar sBuf[4] = { 0, 0, 0, 0 };
++    static char16_t sBuf[4] = { 0, 0, 0, 0 };
 +    if (!sBuf[0]) {
 +        nsAdoptingString ellipsis = Preferences::GetLocalizedString("intl.ellipsis");
 +        if (!ellipsis.IsEmpty()) {
@@ -3485,8 +3485,8 @@ Index: firefox-trunk-29.0~a1~hg20140119r164234/widget/gtk/nsMenuObject.cpp
 +    mContent->GetAttr(kNameSpaceID_None, nsGkAtoms::accesskey, accesskey);
 +
 +    const nsAutoString::char_type *akey = accesskey.BeginReading();
-+    PRUnichar keyLower = ToLowerCase(*akey);
-+    PRUnichar keyUpper = ToUpperCase(*akey);
++    char16_t keyLower = ToLowerCase(*akey);
++    char16_t keyUpper = ToUpperCase(*akey);
 +
 +    const nsAutoString::char_type *iter = label.BeginReading();
 +    const nsAutoString::char_type *end = label.EndReading();
@@ -3495,7 +3495,7 @@ Index: firefox-trunk-29.0~a1~hg20140119r164234/widget/gtk/nsMenuObject.cpp
 +    bool foundAccessKey = false;
 +
 +    while (iter != end) {
-+        if (*iter != PRUnichar('_')) {
++        if (*iter != char16_t('_')) {
 +            if ((*iter != keyLower && *iter != keyUpper) || foundAccessKey) {
 +                ++iter;
 +                ++pos;
@@ -5249,7 +5249,7 @@ Index: firefox-trunk-29.0~a1~hg20140119r164234/widget/gtk/nsNativeMenuService.cp
 +NS_IMETHODIMP
 +nsNativeMenuService::Observe(nsISupports *aSubject,
 +                             const char *aTopic,
-+                             const PRUnichar *aData)
++                             const char16_t *aData)
 +{
 +    if (!nsCRT::strcmp(NS_XPCOM_SHUTDOWN_OBSERVER_ID, aTopic)) {
 +        sShutdown = true;
