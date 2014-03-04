@@ -85,6 +85,7 @@
   owner @{PROC}/[0-9]*/task/[0-9]*/stat r,
   @{PROC}/[0-9]*/status r,
   @{PROC}/filesystems r,
+  /sys/devices/pci[0-9]*/**/uevent r,
   owner @{HOME}/.thumbnails/*/*.png r,
 
   /etc/mtab r,
