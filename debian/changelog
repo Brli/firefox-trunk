@@ -4,9 +4,12 @@ firefox-trunk (30.0~a1~hg20140216r169073-0ubuntu1) UNRELEASED; urgency=low
   * Refresh patches
     - update debian/patches/unity-menubar.patch
   [ Jamie Strandboge <jamie@canonical.com> ]
-  * usr.bin.firefox.apparmor.*: allow read on /sys/devices/pci[0-9]*/**/uevent
+  * usr.bin.firefox.apparmor.*:
+    - allow read of /sys/devices/pci[0-9]*/**/uevent
+    - allow read of /etc/udev/udev.conf
+    - explicityly deny /run/udev/data/**, like we do with evince
 
- -- Chris Coulson <chris.coulson@canonical.com>  Mon, 17 Feb 2014 22:37:20 +0000
+ -- Jamie Strandboge <jamie@ubuntu.com>  Wed, 05 Mar 2014 08:06:22 -0600
 
 firefox-trunk (29.0~a1~hg20140203r166570-0ubuntu1) saucy; urgency=low
 
