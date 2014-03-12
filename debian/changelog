@@ -1,9 +1,10 @@
-firefox-trunk (30.0~a1~hg20140216r169073-0ubuntu1) UNRELEASED; urgency=low
+firefox-trunk (30.0~a1~hg20140312r173085-0ubuntu1) UNRELEASED; urgency=low
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
     - update debian/patches/unity-menubar.patch
   * Override upstream duckduckgo searchplugin for gd
+  * Make geolocation work
 
   [ Jamie Strandboge <jamie@canonical.com> ]
   * usr.bin.firefox.apparmor*: updates for new firefox releases (LP: #1288260)
