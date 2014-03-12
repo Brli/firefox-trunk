@@ -3,11 +3,17 @@ firefox-trunk (30.0~a1~hg20140216r169073-0ubuntu1) UNRELEASED; urgency=low
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
     - update debian/patches/unity-menubar.patch
+
   [ Jamie Strandboge <jamie@canonical.com> ]
   * usr.bin.firefox.apparmor*: updates for new firefox releases (LP: #1288260)
     - allow read of /sys/devices/pci[0-9]*/**/uevent
     - allow read of /etc/udev/udev.conf
     - explicityly deny /run/udev/data/**, like we do with evince
+
+  [ Adam Conrad <adconrad@ubuntu.com> ]
+  * Build with --enable-release option to use "more conservative, release
+    engineering-oriented options" as recommended by upstream for distros:
+    - Fixes FTBFS on powerpc and may improve stability on other arches.
 
  -- Jamie Strandboge <jamie@ubuntu.com>  Wed, 05 Mar 2014 08:06:22 -0600
 
