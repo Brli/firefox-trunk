@@ -70,4 +70,7 @@ ac_add_options --enable-profiling
 ac_add_options --disable-webrtc
 %%endif
 %%endif
+%%if DEB_HOST_ARCH == arm64
+ac_add_options --enable-system-ffi
+%%endif
 ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/g
