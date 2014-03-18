@@ -101,7 +101,6 @@ endif
 
 # Ensure the crash reporter gets disabled for derivatives
 ifneq (Ubuntu, $(DISTRIB))
-MOZ_BUILD_OFFICIAL = 0
 MOZ_ENABLE_BREAKPAD = 0
 endif
 
@@ -122,9 +121,6 @@ export LDFLAGS
 export DEB_BUILD_HARDENING=1
 ifeq (Ubuntu, $(DISTRIB))
 export MOZ_UA_VENDOR=Ubuntu
-endif
-ifeq (1,$(MOZ_BUILD_OFFICIAL))
-export MOZILLA_OFFICIAL=1
 endif
 
 ifeq (linux-gnu, $(DEB_HOST_GNU_SYSTEM))
@@ -148,9 +144,6 @@ MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -D
 
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 MOZ_DEFINES += -DMOZ_ENABLE_BREAKPAD
-endif
-ifeq (1, $(MOZ_BUILD_OFFICIAL))
-MOZ_DEFINES += -DMOZ_BUILD_OFFICIAL
 endif
 ifeq (1, $(MOZ_VALGRIND))
 MOZ_DEFINES += -DMOZ_VALGRIND

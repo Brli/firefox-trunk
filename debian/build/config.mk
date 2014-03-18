@@ -10,8 +10,6 @@ include $(CURDIR)/debian/config/branch.mk
 # Various build defaults
 # 1 = Build crashreporter (if supported)
 MOZ_ENABLE_BREAKPAD	?= 0
-# 1 = Enable official build
-MOZ_BUILD_OFFICIAL	?= 0
 # 1 = Build without jemalloc suitable for valgrind debugging
 MOZ_VALGRIND		?= 0
 # 1 = Profile guided build
