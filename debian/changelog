@@ -1,3 +1,10 @@
+firefox-trunk (31.0~a1~hg20140327r175618-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Refresh patches
+    - update d/p/test-integration/automation-output-junit-xml.patch
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 28 Mar 2014 08:25:56 +0000
+
 firefox-trunk (30.0~a1~hg20140314r173572-0ubuntu1) trusty; urgency=low
 
   * New upstream snapshot v30.0 A1 HG20140314R173572
