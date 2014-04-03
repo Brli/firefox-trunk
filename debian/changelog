@@ -4,6 +4,7 @@ firefox-trunk (31.0~a1~hg20140401r176532-0ubuntu1) UNRELEASED; urgency=medium
     - update d/p/test-integration/automation-output-junit-xml.patch
     - update debian/patches/unity-menubar.patch
   * Build with --enable-gstreamer=1.0 on 14.04 and later
+  * Don't depend on NBS font packages (LP: #1296663)
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 28 Mar 2014 08:25:56 +0000
 
