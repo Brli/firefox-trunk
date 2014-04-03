@@ -1,4 +1,4 @@
-firefox-trunk (31.0~a1~hg20140327r175618-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (31.0~a1~hg20140401r176532-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
