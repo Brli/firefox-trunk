@@ -1,7 +1,8 @@
-firefox-trunk (31.0~a1~hg20140401r176532-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (31.0~a1~hg20140427r180452-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
+    - update d/p/test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
     - update debian/patches/unity-menubar.patch
   * Build with --enable-gstreamer=1.0 on 14.04 and later
   * Don't depend on NBS font packages (LP: #1296663)
