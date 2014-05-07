@@ -1,4 +1,6 @@
-firefox-trunk (31.0~a1~hg20140427r180452-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (31.0~a1~hg20140428r180499-0ubuntu1) trusty; urgency=medium
+
+  * New upstream snapshot v31.0 A1 HG20140428R180499
 
   * Refresh patches
     - update d/p/test-integration/automation-output-junit-xml.patch
