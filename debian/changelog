@@ -2,6 +2,10 @@ firefox-trunk (31.0~a1~hg20140428r180499-0ubuntu2) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/unity-menubar.patch
+  * Add gstreamer0.10 packages as an alternative for the gstreamer1.0 packages
+    so that the dependencies are installable on 12.04 and 12.10. We still
+    need gstreamer0.10 listed explicitly, because we build with it on 13.10
+    despite gstreamer1.0 being available
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 07 May 2014 22:26:44 +0100
 
