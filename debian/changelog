@@ -1,7 +1,9 @@
-firefox-trunk (31.0~a1~hg20140428r180499-0ubuntu2) UNRELEASED; urgency=medium
+firefox-trunk (32.0~a1~hg20140603r186425-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/unity-menubar.patch
+    - update d/p/test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
+    - update d/p/test-integration/automation-output-junit-xml.patch
   * Add gstreamer0.10 packages as an alternative for the gstreamer1.0 packages
     so that the dependencies are installable on 12.04 and 12.10. We still
     need gstreamer0.10 listed explicitly, because we build with it on 13.10
