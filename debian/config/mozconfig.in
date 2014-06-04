@@ -73,7 +73,7 @@ ac_add_options --disable-webrtc
 %%if DEB_HOST_ARCH == arm64
 ac_add_options --enable-system-ffi
 %%endif
-%%if DISTRIB_VERSION >= 1404
+%%if DISTRIB_VERSION >= 1310
 ac_add_options --enable-gstreamer=1.0
 %%endif
 ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/g
