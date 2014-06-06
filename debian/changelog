@@ -1,11 +1,16 @@
 firefox-trunk (32.0~a1~hg20140603r186425-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
     - update debian/patches/unity-menubar.patch
     - update d/p/test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
     - update d/p/test-integration/automation-output-junit-xml.patch
   * Add gstreamer0.10 packages as an alternative for the gstreamer1.0 packages
     so that the dependencies are installable on 12.04 and 12.10
+
+  [ Jamie Strandboge <jamie@canonical.com> ]
+  * debian/usr.bin.firefox.apparmor.*: allow read of /etc/xfce4/defaults.list
+    (LP: #1325048)
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 07 May 2014 22:26:44 +0100
 
