@@ -1,4 +1,6 @@
-firefox-trunk (32.0~a1~hg20140603r186425-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (32.0~a1~hg20140609r187476-0ubuntu1) trusty; urgency=medium
+
+  * New upstream snapshot v32.0 A1 HG20140609R187476
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
