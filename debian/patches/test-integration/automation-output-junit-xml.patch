@@ -3,10 +3,10 @@ Description: Add JUnit XML output support for reftest and mochitest harnesses.
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-32.0~a1~hg20140603r186425/build/automation.py.in
+Index: firefox-trunk-33.0~a1~hg20140714r193893/build/automation.py.in
 ===================================================================
---- firefox-trunk-32.0~a1~hg20140603r186425.orig/build/automation.py.in	2014-06-04 22:21:36.168178347 +0100
-+++ firefox-trunk-32.0~a1~hg20140603r186425/build/automation.py.in	2014-06-04 22:24:52.428179367 +0100
+--- firefox-trunk-33.0~a1~hg20140714r193893.orig/build/automation.py.in	2014-07-15 13:09:59.801383412 +0100
++++ firefox-trunk-33.0~a1~hg20140714r193893/build/automation.py.in	2014-07-15 13:11:37.485383654 +0100
 @@ -20,6 +20,8 @@
  import sqlite3
  from datetime import datetime, timedelta
@@ -216,7 +216,7 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/build/automation.py.in
    def fillCertificateDB(self, profileDir, certPath, utilityPath, xrePath):
      pwfilePath = os.path.join(profileDir, ".crtdbpw")
      pwfile = open(pwfilePath, "w")
-@@ -809,12 +997,62 @@
+@@ -814,12 +1002,62 @@
    def checkForCrashes(self, minidumpDir, symbolsPath):
      return mozcrash.check_for_crashes(minidumpDir, symbolsPath, test_name=self.lastTestSeen)
  
@@ -274,13 +274,13 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/build/automation.py.in
               xrePath = None, certPath = None,
               debuggerInfo = None, symbolsPath = None,
               timeout = -1, maxTime = None, onLaunch = None,
--             webapprtChrome = False, screenshotOnFail=False, testPath=None):
-+             webapprtChrome = False, screenshotOnFail=False, testPath=None,
+-             webapprtChrome = False, screenshotOnFail=False, testPath=None, bisectChunk=None):
++             webapprtChrome = False, screenshotOnFail=False, testPath=None, bisectChunk=None,
 +             xunitFile = None, xunitName = None, xunitRoot = None):
      """
      Run the app, log the duration it took to execute, return the status code.
      Kills the app if it runs for longer than |maxTime| seconds, or outputs nothing for |timeout| seconds.
-@@ -829,6 +1067,11 @@
+@@ -834,6 +1072,11 @@
      if timeout == -1:
        timeout = self.DEFAULT_TIMEOUT
  
@@ -292,7 +292,7 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/build/automation.py.in
      # copy env so we don't munge the caller's environment
      env = dict(env);
      env["NO_EM_RESTART"] = "1"
-@@ -876,9 +1119,17 @@
+@@ -881,9 +1124,17 @@
        # app is launched.
        onLaunch()
  
@@ -310,10 +310,10 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/build/automation.py.in
      # Do a final check for zombie child processes.
      zombieProcesses = self.checkForZombies(processLog, utilityPath, debuggerInfo)
  
-Index: firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/reftest.js
+Index: firefox-trunk-33.0~a1~hg20140714r193893/layout/tools/reftest/reftest.js
 ===================================================================
---- firefox-trunk-32.0~a1~hg20140603r186425.orig/layout/tools/reftest/reftest.js	2014-06-04 22:21:36.168178347 +0100
-+++ firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/reftest.js	2014-06-04 22:21:36.164178347 +0100
+--- firefox-trunk-33.0~a1~hg20140714r193893.orig/layout/tools/reftest/reftest.js	2014-07-15 13:09:59.801383412 +0100
++++ firefox-trunk-33.0~a1~hg20140714r193893/layout/tools/reftest/reftest.js	2014-07-15 13:09:59.793383412 +0100
 @@ -1214,17 +1214,17 @@
          var test = gURLs[0];
          if (test.expected == EXPECTED_DEATH) {
@@ -349,11 +349,11 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/reftest.js
                               " | " + badPref + " not known or wrong type\n");
                      ++gTestResults.UnexpectedFail;
                  }
-Index: firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/runreftest.py
+Index: firefox-trunk-33.0~a1~hg20140714r193893/layout/tools/reftest/runreftest.py
 ===================================================================
---- firefox-trunk-32.0~a1~hg20140603r186425.orig/layout/tools/reftest/runreftest.py	2014-06-04 22:21:36.168178347 +0100
-+++ firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/runreftest.py	2014-06-04 22:21:36.164178347 +0100
-@@ -312,6 +312,15 @@
+--- firefox-trunk-33.0~a1~hg20140714r193893.orig/layout/tools/reftest/runreftest.py	2014-07-15 13:09:59.801383412 +0100
++++ firefox-trunk-33.0~a1~hg20140714r193893/layout/tools/reftest/runreftest.py	2014-07-15 13:09:59.793383412 +0100
+@@ -322,6 +322,15 @@
        reftestlist = self.getManifestPath(testPath)
        if cmdlineArgs == None:
          cmdlineArgs = ['-reftest', reftestlist]
@@ -369,7 +369,7 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/runreftest.p
        profile = self.createReftestProfile(options, reftestlist)
        profileDir = profile.profile # name makes more sense
  
-@@ -327,7 +336,10 @@
+@@ -337,7 +346,10 @@
                                   symbolsPath=options.symbolsPath,
                                   # give the JS harness 30 seconds to deal
                                   # with its own timeouts
@@ -381,7 +381,7 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/runreftest.p
        processLeakLog(self.leakLogFile, options.leakThreshold)
        self.automation.log.info("\nREFTEST INFO | runreftest.py | Running tests: end.")
      finally:
-@@ -465,6 +477,11 @@
+@@ -475,6 +487,11 @@
                      help = "enables content processes")
      defaults["e10s"] = False
  
@@ -393,13 +393,13 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/layout/tools/reftest/runreftest.p
      self.set_defaults(**defaults)
  
    def verifyCommonOptions(self, options, reftest):
-Index: firefox-trunk-32.0~a1~hg20140603r186425/testing/mochitest/runtests.py
+Index: firefox-trunk-33.0~a1~hg20140714r193893/testing/mochitest/runtests.py
 ===================================================================
---- firefox-trunk-32.0~a1~hg20140603r186425.orig/testing/mochitest/runtests.py	2014-06-04 22:21:36.168178347 +0100
-+++ firefox-trunk-32.0~a1~hg20140603r186425/testing/mochitest/runtests.py	2014-06-04 22:25:45.600179643 +0100
-@@ -1322,6 +1322,28 @@
+--- firefox-trunk-33.0~a1~hg20140714r193893.orig/testing/mochitest/runtests.py	2014-07-15 13:09:59.801383412 +0100
++++ firefox-trunk-33.0~a1~hg20140714r193893/testing/mochitest/runtests.py	2014-07-15 13:12:34.009383794 +0100
+@@ -1418,6 +1418,28 @@
  
-     return status
+     return result
  
 +  def getXunitParams(self, options):
 +    if options.a11y:
@@ -426,7 +426,7 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/testing/mochitest/runtests.py
    def runTests(self, options, onLaunch=None):
      """ Prepare, configure, run tests and cleanup """
  
-@@ -1454,6 +1476,8 @@
+@@ -1552,6 +1574,8 @@
        if options.vmwareRecording:
          self.startVMwareRecording(options);
  
@@ -435,12 +435,12 @@ Index: firefox-trunk-32.0~a1~hg20140603r186425/testing/mochitest/runtests.py
        log.info("runtests.py | Running tests: start.\n")
        try:
          status = self.runApp(testURL,
-@@ -1468,7 +1492,10 @@
-                              onLaunch=onLaunch,
+@@ -1567,7 +1591,10 @@
                               webapprtChrome=options.webapprtChrome,
                               screenshotOnFail=options.screenshotOnFail,
--                             testPath=options.testPath
-+                             testPath=options.testPath,
+                              testPath=options.testPath,
+-                             bisectChunk=options.bisectChunk
++                             bisectChunk=options.bisectChunk,
 +                             xunitFile=options.xunitFile,
 +                             xunitName=xunitName,
 +                             xunitRoot=xunitRoot
