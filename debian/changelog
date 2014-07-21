@@ -1,4 +1,6 @@
-firefox-trunk (33.0~a1~hg20140721r195224-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (33.0~a1~hg20140718r194742-0ubuntu1) trusty; urgency=medium
+
+  * New upstream snapshot v33.0 A1 HG20140718R194742
 
   * Refresh patches
     - update debian/patches/unity-menubar.patch
