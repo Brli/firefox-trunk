@@ -15,7 +15,6 @@ test-fixes/xpcshell-exthandler-no-writes-to-appdir.patch
 test-fixes/mochitest-content-reset-permissions-when-done.patch
 test-integration/xpcshell-disable-addon-select-dialog-test-for-adt.patch
 test-integration/xpcshell-disable-tests-which-need-appdir-write-access.patch
-test-overrides/disable-failing-python-tests.patch
 test-fixes/xpcshell-xunit-output-no-bell.patch
 test-fixes/xpcshell-search-fix-tests-when-plugins-are-not-in-appdir.patch
 test-integration/xpcshell-dont-return-nonzero-on-test-failure.patch
