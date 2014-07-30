@@ -2,6 +2,8 @@ firefox-trunk (33.0~a1~hg20140718r194742-0ubuntu2) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/dont-override-general-useragent-locale.patch
+  * Add temporary workaround for bug 1348333 - build with
+    --enable-unified-compilation on gcc-4.8 x86 builds
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 22 Jul 2014 11:24:36 +0100
 
