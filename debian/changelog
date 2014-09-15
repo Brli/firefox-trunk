@@ -1,5 +1,6 @@
 firefox-trunk (34.0~a1~hg20140730r196658-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
     - update debian/patches/dont-override-general-useragent-locale.patch
     - update debian/patches/unity-menubar.patch
@@ -7,6 +8,10 @@ firefox-trunk (34.0~a1~hg20140730r196658-0ubuntu1) UNRELEASED; urgency=medium
     are running unit tests again
   * Add temporary workaround for bug 1348333 - build with
     --enable-unified-compilation on gcc-4.8 x86 builds
+
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
+  * update 12.04 and 13.10 AppArmor profiles for new accesses
+  * add 14.10 profile with more fine-grained DBus access
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 22 Jul 2014 11:24:36 +0100
 
