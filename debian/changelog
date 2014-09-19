@@ -1,3 +1,10 @@
+firefox-trunk (35.0~a1~hg20140919r206162-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Refresh patches
+    - update debian/patches/fix-make-package-tests-without-webrtc.patch
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 19 Sep 2014 17:18:41 +0100
+
 firefox-trunk (34.0~a1~hg20140803r197418-0ubuntu1) trusty; urgency=medium
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
