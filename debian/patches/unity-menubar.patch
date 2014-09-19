@@ -27,10 +27,10 @@ Index: firefox-trunk-34.0~a1~hg20140730r196658/browser/components/places/content
          <menu accesskey="&organize.accesskey;" class="menu-iconic"
  #endif
                id="organizeButton" label="&organize.label;"
-Index: firefox-trunk-34.0~a1~hg20140730r196658/modules/libpref/src/init/all.js
+Index: firefox-trunk-34.0~a1~hg20140730r196658/modules/libpref/init/all.js
 ===================================================================
---- firefox-trunk-34.0~a1~hg20140730r196658.orig/modules/libpref/src/init/all.js	2014-07-30 09:26:28.113823203 +0100
-+++ firefox-trunk-34.0~a1~hg20140730r196658/modules/libpref/src/init/all.js	2014-07-30 09:26:28.097823203 +0100
+--- firefox-trunk-34.0~a1~hg20140730r196658.orig/modules/libpref/init/all.js	2014-07-30 09:26:28.113823203 +0100
++++ firefox-trunk-34.0~a1~hg20140730r196658/modules/libpref/init/all.js	2014-07-30 09:26:28.097823203 +0100
 @@ -167,6 +167,9 @@
  pref("browser.sessionhistory.max_total_viewers", -1);
  
@@ -5579,10 +5579,10 @@ Index: firefox-trunk-34.0~a1~hg20140730r196658/widget/gtk/nsWindow.h
  };
  
  class nsChildWindow : public nsWindow {
-Index: firefox-trunk-34.0~a1~hg20140730r196658/xpfe/appshell/src/nsWebShellWindow.cpp
+Index: firefox-trunk-34.0~a1~hg20140730r196658/xpfe/appshell/nsWebShellWindow.cpp
 ===================================================================
---- firefox-trunk-34.0~a1~hg20140730r196658.orig/xpfe/appshell/src/nsWebShellWindow.cpp	2014-07-30 09:26:28.113823203 +0100
-+++ firefox-trunk-34.0~a1~hg20140730r196658/xpfe/appshell/src/nsWebShellWindow.cpp	2014-07-30 09:26:28.105823203 +0100
+--- firefox-trunk-34.0~a1~hg20140730r196658.orig/xpfe/appshell/nsWebShellWindow.cpp	2014-07-30 09:26:28.113823203 +0100
++++ firefox-trunk-34.0~a1~hg20140730r196658/xpfe/appshell/nsWebShellWindow.cpp	2014-07-30 09:26:28.105823203 +0100
 @@ -58,6 +58,7 @@
  #include "nsIScreen.h"
  

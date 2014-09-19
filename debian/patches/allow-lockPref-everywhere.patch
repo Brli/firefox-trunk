@@ -10,10 +10,10 @@ Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
  modules/libpref/src/prefread.h   |    4 +++-
  4 files changed, 17 insertions(+), 6 deletions(-)
 
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefread.cpp
+Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.cpp
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/src/prefread.cpp	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefread.cpp	2013-10-29 16:48:30.278670289 +0000
+--- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefread.cpp	2013-10-29 16:48:30.278670289 +0000
++++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.cpp	2013-10-29 16:48:30.278670289 +0000
 @@ -43,6 +43,7 @@
  #define BITS_PER_HEX_DIGIT      4
  
@@ -60,10 +60,10 @@ Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefread.cpp
                  ps->quotechar = c;
                  ps->nextstate = PREF_PARSE_UNTIL_COMMA; /* return here when done */
                  state = PREF_PARSE_QUOTED_STRING;
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefread.h
+Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.h
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/src/prefread.h	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefread.h	2013-10-29 16:48:30.278670289 +0000
+--- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefread.h	2013-10-29 16:48:30.278670289 +0000
++++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.h	2013-10-29 16:48:30.278670289 +0000
 @@ -31,7 +31,8 @@
                             const char *pref,
                             PrefValue   val,
@@ -82,10 +82,10 @@ Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefread.h
  } PrefParseState;
  
  /**
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefapi.h
+Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.h
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/src/prefapi.h	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefapi.h	2013-10-29 16:48:30.278670289 +0000
+--- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefapi.h	2013-10-29 16:48:30.278670289 +0000
++++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.h	2013-10-29 16:48:30.278670289 +0000
 @@ -178,7 +178,8 @@
                            const char *pref,
                            PrefValue   value,
@@ -96,10 +96,10 @@ Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefapi.h
  
  #ifdef __cplusplus
  }
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefapi.cpp
+Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.cpp
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/src/prefapi.cpp	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/src/prefapi.cpp	2013-10-29 16:48:30.278670289 +0000
+--- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefapi.cpp	2013-10-29 16:48:30.278670289 +0000
++++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.cpp	2013-10-29 16:48:30.278670289 +0000
 @@ -988,7 +988,10 @@
                           const char *pref,
                           PrefValue   value,
