@@ -1,4 +1,4 @@
-firefox-trunk (34.0~a1~hg20140829r202338-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (34.0~a1~hg20140803r197418-0ubuntu1) trusty; urgency=medium
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
