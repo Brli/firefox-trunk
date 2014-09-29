@@ -21,6 +21,7 @@
   #include <abstractions/gnome>
   #include <abstractions/ibus>
   #include <abstractions/nameservice>
+  #include <abstractions/openssl>
   #include <abstractions/p11-kit>
 
   # Addons

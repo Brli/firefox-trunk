@@ -1,7 +1,11 @@
 firefox-trunk (35.0~a1~hg20140919r206162-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
     - update debian/patches/fix-make-package-tests-without-webrtc.patch
+
+  [ Jamie Strandboge <jamie@ubuntu.com> ]
+  * update apparmor profiles to include the openssl abstraction
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 19 Sep 2014 17:18:41 +0100
 
