@@ -15,7 +15,7 @@ endif
 -include /usr/share/cdbs/1/class/makefile.mk
 
 MOZ_OBJDIR		:= $(DEB_BUILDDIR)/obj-$(DEB_HOST_GNU_TYPE)
-MOZ_DISTDIR		:= $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/dist
+MOZ_DISTDIR		:= $(MOZ_OBJDIR)/dist
 
 ifeq (,$(MOZ_APP))
 $(error "Need to set MOZ_APP")
@@ -75,7 +75,7 @@ MOZ_DEFAULT_PROFILEDIR	:= .$(PROFILE_BASE)$(shell echo $(MOZ_DEFAULT_APP_BASENAM
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
-VIRTENV_PATH	:= $(CURDIR)/$(MOZ_OBJDIR)/$(MOZ_MOZDIR)/_virtualenv
+VIRTENV_PATH	:= $(CURDIR)/$(MOZ_OBJDIR)/_virtualenv
 MOZ_PYTHON		:= $(VIRTENV_PATH)/bin/python
 DISTRIB 		:= $(shell lsb_release -i -s)
 
@@ -227,7 +227,7 @@ debian/stamp-makebuildsymbols: debian/stamp-makefile-build
 make-testsuite: debian/stamp-maketestsuite
 debian/stamp-maketestsuite: debian/stamp-makefile-build
 ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
-	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/$(MOZ_MOZDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
+    PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
 endif
 	$(MAKE) -C $(MOZ_OBJDIR) package-tests
 ifneq (,$(wildcard debian/testing/extra))
