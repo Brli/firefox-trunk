@@ -227,7 +227,7 @@ debian/stamp-makebuildsymbols: debian/stamp-makefile-build
 make-testsuite: debian/stamp-maketestsuite
 debian/stamp-maketestsuite: debian/stamp-makefile-build
 ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
-    PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
+	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
 endif
 	$(MAKE) -C $(MOZ_OBJDIR) package-tests
 ifneq (,$(wildcard debian/testing/extra))
