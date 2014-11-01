@@ -1,3 +1,14 @@
+firefox-trunk (36.0~a1~hg20141031r213433-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Refresh patches
+    - update debian/patches/unity-menubar.patch
+    - update debian/patches/ubuntu-ua-string-changes.patch
+  * Disable all of the testsuite related patches and don't install anything
+    in to the testsuite package for now. The patches have all bit-rotted,
+    we're not running any tests and nobody is driving that anymore
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 31 Oct 2014 23:40:45 +0000
+
 firefox-trunk (35.0~a1~hg20141004r208732-0ubuntu1) utopic; urgency=medium
 
   [ Chris Coulson <chris.coulson@canonical.com> ]

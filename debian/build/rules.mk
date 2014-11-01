@@ -269,7 +269,8 @@ debian/stamp-make-langpack-xpi-%:
 		$(MAKE) langpack-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
 	@touch $@
 
-common-build-arch:: make-langpack-xpis $(pkgconfig_files) make-testsuite run-tests
+#common-build-arch:: make-langpack-xpis $(pkgconfig_files) make-testsuite run-tests
+common-build-arch:: make-langpack-xpis $(pkgconfig_files)
 
 install/$(MOZ_PKG_NAME)::
 	@echo "Adding suggests / recommends on support packages"
@@ -290,7 +291,7 @@ common-install-arch common-install-indep::
 			mv debian/tmp/$(dir)-$(MOZ_VERSION) debian/tmp/$(dir); \
 		fi; )
 
-common-install-arch:: install-testsuite
+#common-install-arch:: install-testsuite
 
 common-binary-arch:: make-buildsymbols
 

@@ -48,7 +48,7 @@ MOZ_PKGCONFIG_FILES = \
 
 include $(CURDIR)/debian/build/rules.mk
 
-MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_LIBDIR)/testing/run_mochitest \
+#MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_LIBDIR)/testing/run_mochitest \
 						$(MOZ_LIBDIR)/testing/run_reftest \
 						$(MOZ_LIBDIR)/testing/run_xpcshell_tests \
 						$(MOZ_LIBDIR)/xpcshell \

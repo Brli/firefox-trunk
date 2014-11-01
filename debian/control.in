@@ -41,7 +41,7 @@ Build-Depends: cdbs,
 	python (>= 2.7),
 	libffi-dev (>= 3.0.9) [arm64]
 Standards-Version: 3.9.1
-XS-Testsuite: autopkgtest
+#XS-Testsuite: autopkgtest
 
 Package: @MOZ_PKG_NAME@
 Architecture: any
