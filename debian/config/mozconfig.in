@@ -77,9 +77,3 @@ ac_add_options --enable-system-ffi
 ac_add_options --enable-gstreamer=1.0
 %%endif
 ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/g
-%%if DISTRIB_VERSION >= 1310
-%%if DEB_HOST_ARCH == i386
-# Work around for https://launchpad.net/bugs/1348333
-ac_add_options --enable-unified-compilation
-%%endif
-%%endif
