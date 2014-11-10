@@ -1,4 +1,4 @@
-firefox-trunk (36.0~a1~hg20141031r213433-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (36.0~a1~hg20141110r214851-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/unity-menubar.patch
@@ -6,6 +6,7 @@ firefox-trunk (36.0~a1~hg20141031r213433-0ubuntu1) UNRELEASED; urgency=medium
   * Disable all of the testsuite related patches and don't install anything
     in to the testsuite package for now. The patches have all bit-rotted,
     we're not running any tests and nobody is driving that anymore
+  * Drop fix-broken-langpack-install-manifests.patch - fixed upstream
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 31 Oct 2014 23:40:45 +0000
 
