@@ -98,17 +98,6 @@ $(patsubst %,debian/%.preinst,$(MOZ_LOCALE_PKGS)) :: debian/%.preinst : debian/$
 
 pre-build:: make-langpack-preinsts
 
-monkey-patch-upstream-files::
-ifneq ($(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_BASENAME))
-	@echo "Setting MOZ_APP_UA_NAME to $(MOZ_DEFAULT_APP_BASENAME)"
-	$(call moz_monkey_patch_file,$(DEB_SRCDIR)/$(MOZ_BRANDING_DIR)/configure.sh, \
-		echo "MOZ_APP_UA_NAME=$(MOZ_DEFAULT_APP_BASENAME)" >>)
-
-	@echo "Setting UAName to $(MOZ_DEFAULT_APP_BASENAME)"
-	$(call moz_monkey_patch_file,$(DEB_SRCDIR)/webapprt/application.ini.in, \
-		sed -ri 's/@MOZ_APP_BASENAME@/$(MOZ_DEFAULT_APP_BASENAME)/g')
-endif
-
 clean::
 	rm -f debian/$(MOZ_PKG_NAME)-locale-*.preinst
 	rm -f debian/usr.bin.firefox.in

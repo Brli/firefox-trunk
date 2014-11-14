@@ -28,8 +28,6 @@ MOZ_APP_NAME		?= $(MOZ_PKG_NAME)
 
 # Define other variables used throughout the build
 MOZ_DEFAULT_APP_NAME	?= $(MOZ_PKG_BASENAME)
-MOZ_APP_BASENAME	?= $(shell echo $(MOZ_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
-MOZ_DEFAULT_APP_BASENAME ?= $(shell echo $(MOZ_DEFAULT_APP_NAME) | sed -n 's/\-.\|\<./\U&/g p')
 
 MOZ_FORCE_UNOFFICIAL_BRANDING = 0
 
@@ -49,8 +47,8 @@ MOZ_DEBUG = 1
 MOZ_FORCE_UNOFFICIAL_BRANDING = 1
 endif
 
-ifneq ($(MOZ_APP_NAME)$(MOZ_APP_BASENAME),$(MOZ_DEFAULT_APP_NAME)$(MOZ_DEFAULT_APP_BASENAME))
-# If we change MOZ_APP_NAME or MOZ_APP_BASENAME, don't use official branding
+ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
+# If we change MOZ_APP_NAME, don't use official branding
 MOZ_FORCE_UNOFFICIAL_BRANDING = 1
 endif
 

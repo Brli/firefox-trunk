@@ -2,7 +2,7 @@
 
 # We need this to execute before the debian/control target gets called
 # and before patches are unapplied
-clean:: restore-upstream-files
+clean::
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 	cp debian/control debian/control.old
 	touch debian/control.in
@@ -63,15 +63,14 @@ MOZ_ADDONDIR	:= usr/lib/$(MOZ_APP_NAME)-addons
 
 MOZ_APP_SUBDIR	?=
 
-# The profile directory is determined from the Vendor and Name fields of
-# the application.ini
-ifeq (,$(MOZ_VENDOR))
-PROFILE_BASE =
-else
+# If we change MOZ_APP_NAME, we want to set the profile directory
+# to match
+ifneq (,$(MOZ_VENDOR))
 PROFILE_BASE = $(shell echo $(MOZ_VENDOR) | tr A-Z a-z)/
 endif
-MOZ_PROFILEDIR		:= .$(PROFILE_BASE)$(shell echo $(MOZ_APP_BASENAME) | tr A-Z a-z)
-MOZ_DEFAULT_PROFILEDIR	:= .$(PROFILE_BASE)$(shell echo $(MOZ_DEFAULT_APP_BASENAME) | tr A-Z a-z)
+ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
+MOZ_APP_PROFILE	:= .$(PROFILE_BASE)$(MOZ_APP_NAME)
+endif
 
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
@@ -132,16 +131,17 @@ endif
 MOZ_PKG_SUPPORT_SUGGESTS ?=
 
 # Defines used for the Mozilla text preprocessor
-MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" -DMOZ_APP_BASENAME="$(MOZ_APP_BASENAME)" \
+MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" \
 		-DMOZ_INCDIR="$(MOZ_INCDIR)" -DMOZ_IDLDIR="$(MOZ_IDLDIR)" -DMOZ_VERSION="$(MOZ_VERSION)" -DDEB_HOST_ARCH="$(DEB_HOST_ARCH)" \
 		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_PKG_NAME="$(MOZ_PKG_NAME)" \
 		-DMOZ_BRANDING_OPTION="$(MOZ_BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)" \
 		-DMOZ_ADDONDIR="$(MOZ_ADDONDIR)" -DMOZ_SDKDIR="$(MOZ_SDKDIR)" -DMOZ_DISTDIR="$(MOZ_DISTDIR)" -DMOZ_UPDATE_CHANNEL="$(CHANNEL)" \
-		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PROFILEDIR="$(MOZ_PROFILEDIR)" \
-		-DMOZ_PKG_BASENAME="$(MOZ_PKG_BASENAME)" -DMOZ_DEFAULT_PROFILEDIR="$(MOZ_DEFAULT_PROFILEDIR)" \
-		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DMOZ_DEFAULT_APP_BASENAME="$(MOZ_DEFAULT_APP_BASENAME)" \
-		-DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)"
+		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DMOZ_PKG_BASENAME="$(MOZ_PKG_BASENAME)" \
+		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)"
 
+ifneq (,$(MOZ_APP_PROFILE))
+MOZ_DEFINES += -DMOZ_APP_PROFILE="$(MOZ_APP_PROFILE)"
+endif
 ifeq (1, $(MOZ_ENABLE_BREAKPAD))
 MOZ_DEFINES += -DMOZ_ENABLE_BREAKPAD
 endif
@@ -393,29 +393,6 @@ pre-build::
 	cp debian/config/locales.shipped debian/config/locales.shipped.old
 pre-build:: debian/config/locales.shipped $(pkgname_subst_files) $(appname_subst_files) mozconfig
 	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
-pre-build:: debian/stamp-monkey-patch-upstream-files
-
-debian/stamp-monkey-patch-upstream-files:
-	@touch debian/monkey-patch-files
-	@echo "#!/bin/sh" >> debian/monkey-patch-files.sh
-	make -f debian/rules monkey-patch-upstream-files
-	@while read line; do \
-		cp $$line $$line.moz-orig; \
-	done < debian/monkey-patch-files
-	sh debian/monkey-patch-files.sh
-	@rm debian/monkey-patch-files.sh
-	@touch $@
-
-monkey-patch-upstream-files::
-
-restore-upstream-files::
-	@$(if $(wildcard debian/monkey-patch-files), \
-		while read line; do \
-			if [ -f $$line.moz-orig ]; then \
-				mv $$line.moz-orig $$line; \
-			fi \
-		done < debian/monkey-patch-files; \
-		rm debian/monkey-patch-files)
 
 EXTRACT_TARBALL = $(firstword $(shell TMPDIR=`mktemp -d`; tar -jxf $(1) -C $$TMPDIR > /dev/null 2>&1; echo $$TMPDIR/`ls $$TMPDIR/ | head -n1`))
 

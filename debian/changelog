@@ -1,4 +1,4 @@
-firefox-trunk (36.0~a1~hg20141110r214851-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (36.0~a1~hg20141113r215607-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/unity-menubar.patch
@@ -9,6 +9,21 @@ firefox-trunk (36.0~a1~hg20141110r214851-0ubuntu1) UNRELEASED; urgency=medium
   * Drop fix-broken-langpack-install-manifests.patch - fixed upstream
   * Don't do unified builds unconditionally on i386, as they don't crash
     anymore
+  * Don't clone the nightly profile from the default profile at startup
+    - update debian/firefox.sh.in
+  * Don't use --with-app-basename to create the co-installable nightly build
+    as it's not useful anymore, and changing the application name to
+    "Firefox-Trunk" has always been problematic for code / addons that check
+    the appname. Continue to use --with-app-name as before (which just changes
+    the install name and the remoting name), and add a patch to introduce
+    --with-app-profile, which allows us to change the profile location
+    - update debian/build/rules.mk
+    - update debian/build/config.mk
+    - update debian/config/mozconfig.in
+    - update debian/rules
+    - add debian/patches/support-coinstallable-trunk-build.patch
+    - add debian/patches/set-prgname-to-remoting-name.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 31 Oct 2014 23:40:45 +0000
 
