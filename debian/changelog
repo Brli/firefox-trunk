@@ -3,6 +3,7 @@ firefox-trunk (36.0~a1~hg20141113r215607-0ubuntu1) UNRELEASED; urgency=medium
   * Refresh patches
     - update debian/patches/unity-menubar.patch
     - update debian/patches/ubuntu-ua-string-changes.patch
+    - update debian/patches/dont-include-hyphenation-patterns.patch
   * Disable all of the testsuite related patches and don't install anything
     in to the testsuite package for now. The patches have all bit-rotted,
     we're not running any tests and nobody is driving that anymore
