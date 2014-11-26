@@ -24,6 +24,8 @@ firefox-trunk (36.0~a1~hg20141113r215607-0ubuntu1) UNRELEASED; urgency=medium
     - add debian/patches/support-coinstallable-trunk-build.patch
     - add debian/patches/set-prgname-to-remoting-name.patch
     - update debian/patches/series
+  * Remove the upstream duckduckgo search plugin from the language packs -
+    we have our own already
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 31 Oct 2014 23:40:45 +0000
 

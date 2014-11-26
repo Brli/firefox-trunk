@@ -91,6 +91,8 @@ endif
 $(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)) :: binary-post-install/%:
 	$(foreach xpi,$($(notdir $(wildcard debian/$*/$(MOZ_ADDONDIR)/extensions/*.xpi))), \
 		dh_link -p$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
+	# Remove the upstream duckduckgo plugin - we have our own
+	rm debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/*/ddg.xml || true
 
 make-langpack-preinsts:: $(foreach langpack,$(MOZ_LOCALE_PKGS),debian/$(langpack).preinst)
 $(patsubst %,debian/%.preinst,$(MOZ_LOCALE_PKGS)) :: debian/%.preinst : debian/$(MOZ_PKG_NAME)-locale.preinst
