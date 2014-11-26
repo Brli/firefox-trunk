@@ -28,6 +28,7 @@ firefox-trunk (36.0~a1~hg20141125r217359-0ubuntu1) UNRELEASED; urgency=medium
   * Remove the upstream duckduckgo search plugin from the language packs -
     we have our own already
   * Fix the webapprt locale extension symlinks
+  * Install the gmp-clearkey directory
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 31 Oct 2014 23:40:45 +0000
 

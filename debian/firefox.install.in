@@ -14,6 +14,7 @@
 @MOZ_LIBDIR@/components/components.manifest
 @MOZ_LIBDIR@/components/lib*.so
 @MOZ_LIBDIR@/defaults
+@MOZ_LIBDIR@/gmp-clearkey
 @MOZ_LIBDIR@/omni.ja
 @MOZ_LIBDIR@/*.so
 @MOZ_LIBDIR@/*.ini
