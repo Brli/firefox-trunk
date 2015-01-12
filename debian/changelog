@@ -5,6 +5,9 @@ firefox-trunk (37.0~a1~hg20150107r222415-0ubuntu1) UNRELEASED; urgency=medium
   * Add debian/patches/ubuntu-search-defaults.patch to set the default
     search engines. This is a temporary patch (these defaults will eventually
     go in to distribution.ini)
+  * Don't hardcode -mfloat-abi=softfp in libvpx
+    - add debian/patches/dont-hardcode-softfp-on-armhf.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 08 Dec 2014 19:16:12 +0000
 
