@@ -5,7 +5,6 @@ ubuntu-ua-string-changes.patch
 dont-include-hyphenation-patterns.patch
 dont-override-general-useragent-locale.patch
 webapprt-support-for-langpacks.patch
-no_neon_on_arm.patch
 unity-menubar.patch
 #test-integration/automation-output-junit-xml.patch
 #test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch

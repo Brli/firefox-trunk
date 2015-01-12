@@ -8,6 +8,17 @@ firefox-trunk (37.0~a1~hg20150107r222415-0ubuntu1) UNRELEASED; urgency=medium
   * Don't hardcode -mfloat-abi=softfp in libvpx
     - add debian/patches/dont-hardcode-softfp-on-armhf.patch
     - update debian/patches/series
+  * Drop debian/patches/no_neon_on_arm.patch. This shouldn't beneeded
+    anymore, because:
+    - since it was added, most code that uses NEON intrinsics and assembly
+      code using NEON instructions is disabled if the target is < armv7
+    - Code that uses NEON intrinsics, when compiled, is hidden behind a
+      runtime check (so doesn't run on systems that don't support those
+      instructions).
+    - Code in media/libvpx unconditionally compiles code that uses NEON
+      intrinsics anyway, even if the target is < armv7 (but the code is
+      compiled with -march=armv7-a and is hidden behind a runtime check for
+      NEON support)
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 08 Dec 2014 19:16:12 +0000
 
