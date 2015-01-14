@@ -21,4 +21,5 @@ unity-menubar.patch
 #fix-make-package-tests-without-webrtc.patch
 support-coinstallable-trunk-build.patch
 set-prgname-to-remoting-name.patch
+ubuntu-search-defaults.patch
 dont-hardcode-softfp-on-armhf.patch
