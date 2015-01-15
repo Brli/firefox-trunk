@@ -1,9 +1,10 @@
-firefox-trunk (37.0~a1~hg20150109r222808-0ubuntu2) UNRELEASED; urgency=medium
+firefox-trunk (38.0~a1~hg20150115r223854-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/ubuntu-bookmarks.patch
+  * Add Google OAuth ID so contact import for Hello works (LP: #1401402)
 
- -- Chris Coulson <chris.coulson@canonical.com>  Thu, 15 Jan 2015 14:21:51 +0000
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 15 Jan 2015 14:06:47 +0000
 
 firefox-trunk (37.0~a1~hg20150109r222808-0ubuntu1) utopic; urgency=medium
 

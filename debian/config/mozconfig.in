@@ -76,4 +76,7 @@ ac_add_options --enable-system-ffi
 %%if DISTRIB_VERSION >= 1310
 ac_add_options --enable-gstreamer=1.0
 %%endif
-ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/g
+# Included with permission from Paweł Hajdan - any issues, please contact
+# Chad Miller (chad.miller@canonical.com)
+ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/ga
+ac_add_options --with-google-oauth-api-keyfile=@TOPSRCDIR@/debian/go
