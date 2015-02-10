@@ -2,20 +2,10 @@ Description: Customize the default bookmarks for Ubuntu
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: not-needed
 
-Index: firefox-trunk-38.0~a1~hg20150115r223854/browser/components/places/tests/unit/head_bookmarks.js
+Index: firefox-trunk-38.0~a1~hg20150209r228190/browser/locales/generic/profile/bookmarks.html.in
 ===================================================================
---- firefox-trunk-38.0~a1~hg20150115r223854.orig/browser/components/places/tests/unit/head_bookmarks.js	2015-01-15 14:15:57.431968837 +0000
-+++ firefox-trunk-38.0~a1~hg20150115r223854/browser/components/places/tests/unit/head_bookmarks.js	2015-01-15 14:15:57.431968837 +0000
-@@ -69,4 +69,4 @@
- 
- // Default bookmarks constants.
- const DEFAULT_BOOKMARKS_ON_TOOLBAR = 1;
--const DEFAULT_BOOKMARKS_ON_MENU = 1;
-+const DEFAULT_BOOKMARKS_ON_MENU = 2;
-Index: firefox-trunk-38.0~a1~hg20150115r223854/browser/locales/generic/profile/bookmarks.html.in
-===================================================================
---- firefox-trunk-38.0~a1~hg20150115r223854.orig/browser/locales/generic/profile/bookmarks.html.in	2015-01-15 14:11:39.000000000 +0000
-+++ firefox-trunk-38.0~a1~hg20150115r223854/browser/locales/generic/profile/bookmarks.html.in	2015-01-15 14:20:54.163679854 +0000
+--- firefox-trunk-38.0~a1~hg20150209r228190.orig/browser/locales/generic/profile/bookmarks.html.in	2015-02-10 11:17:35.172324394 +0000
++++ firefox-trunk-38.0~a1~hg20150209r228190/browser/locales/generic/profile/bookmarks.html.in	2015-02-10 11:17:35.156324290 +0000
 @@ -17,6 +17,16 @@
      <DL><p>
          <DT><A HREF="https://www.mozilla.org/@AB_CD@/firefox/central/" ID="rdf:#$GvPhC3">@getting_started@</A>
@@ -33,3 +23,16 @@ Index: firefox-trunk-38.0~a1~hg20150115r223854/browser/locales/generic/profile/b
      <DT><H3 ID="rdf:#$ZvPhC3">@firefox_heading@</H3>
      <DL><p>
          <DT><A HREF="https://www.mozilla.org/@AB_CD@/firefox/help/" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gwMDAsTBZbkNwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAABNElEQVQ4y8WSsU0DURBE3yyWIaAJaqAAN4DPSL6AlIACKIEOyJEgRsIgOOkiInJqgAKowNg7BHdn7MOksNl+zZ//dvbDf5cAiklp22BdVtXdeTEpDYDB9m1VzU6OJuVp2NdEQCaI96fH2YHG4+mDduKYNMYINTcjcGbXzQVDEAphG0k48zUsajIbnAiMIXThpW8EICE0RAK4dvoKg9NIcTiQ589otyHOZLnwqK5nLwBFUZ4igc3iM0d1ff8CMC6mZ6Ihiaqq3gi1aUAnArD00SW1fq5OLBg0ymYmSZsR2/t4e/rGyCLW0sbp3oq+yTYqVgytQWui2FS7XYF7GFprY921T4CNQt8zr47dNzCkIX7y/jBtH+v+RGMQrc828W8pApnZbmEVQp/Ae7BlOy2ttib81/UFc+WRWEbjckIAAAAASUVORK5CYII=" ID="rdf:#$22iCK1">@firefox_help@</A>
+Index: firefox-trunk-38.0~a1~hg20150209r228190/browser/components/places/tests/unit/head_bookmarks.js
+===================================================================
+--- firefox-trunk-38.0~a1~hg20150209r228190.orig/browser/components/places/tests/unit/head_bookmarks.js	2015-02-10 11:15:39.087553466 +0000
++++ firefox-trunk-38.0~a1~hg20150209r228190/browser/components/places/tests/unit/head_bookmarks.js	2015-02-10 11:18:59.808866276 +0000
+@@ -67,7 +67,7 @@
+ 
+ // Default bookmarks constants.
+ const DEFAULT_BOOKMARKS_ON_TOOLBAR = 1;
+-const DEFAULT_BOOKMARKS_ON_MENU = 1;
++const DEFAULT_BOOKMARKS_ON_MENU = 2;
+ 
+ const SMART_BOOKMARKS_ANNO = "Places/SmartBookmark";
+ 
