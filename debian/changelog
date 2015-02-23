@@ -1,4 +1,4 @@
-firefox-trunk (38.0~a1~hg20150218r229562-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (38.0~a1~hg20150223r230246-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/ubuntu-bookmarks.patch
