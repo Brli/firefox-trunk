@@ -4,6 +4,11 @@ firefox-trunk (38.0~a1~hg20150223r230246-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/ubuntu-bookmarks.patch
     - update debian/patches/unity-menubar.patch
   * Add Google OAuth ID so contact import for Hello works (LP: #1401402)
+  * Add patch from Bugzilla to implement non-Skia fallback for unaccelerated
+    rendering of 3D transforms to fix a build failure on platforms where Skia
+    is not supported
+    - add debian/patches/add-non-skia-fallback.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 15 Jan 2015 14:06:47 +0000
 
