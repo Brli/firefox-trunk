@@ -23,4 +23,3 @@ support-coinstallable-trunk-build.patch
 set-prgname-to-remoting-name.patch
 ubuntu-search-defaults.patch
 dont-hardcode-softfp-on-armhf.patch
-add-non-skia-fallback.patch
