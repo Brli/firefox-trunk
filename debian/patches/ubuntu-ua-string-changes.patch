@@ -2,21 +2,21 @@ Description: Add "Ubuntu" to the platform part of the UA string
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
-Index: firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandler.cpp
+Index: firefox-trunk-39.0~a1~hg20150319r234403/netwerk/protocol/http/nsHttpHandler.cpp
 ===================================================================
---- firefox-trunk-36.0~a1~hg20141031r213433.orig/netwerk/protocol/http/nsHttpHandler.cpp	2014-10-31 23:44:28.578615299 +0000
-+++ firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandler.cpp	2014-10-31 23:47:41.670859152 +0000
-@@ -167,6 +167,9 @@
+--- firefox-trunk-39.0~a1~hg20150319r234403.orig/netwerk/protocol/http/nsHttpHandler.cpp	2015-03-19 22:06:15.726198019 +0000
++++ firefox-trunk-39.0~a1~hg20150319r234403/netwerk/protocol/http/nsHttpHandler.cpp	2015-03-19 22:12:18.075823254 +0000
+@@ -170,6 +170,9 @@
      , mLegacyAppName("Mozilla")
      , mLegacyAppVersion("5.0")
      , mProduct("Gecko")
 +#ifdef MOZ_UA_VENDOR
 +    , mVendor(MOZ_UA_VENDOR)
 +#endif
+     , mCompatFirefoxEnabled(false)
      , mUserAgentIsDirty(true)
      , mUseCache(true)
-     , mPromptTempRedirect(true)
-@@ -326,6 +329,9 @@
+@@ -333,6 +336,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
      LOG(("> product-sub = %s\n", mProductSub.get()));
@@ -26,7 +26,7 @@ Index: firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandl
      LOG(("> app-name = %s\n", mAppName.get()));
      LOG(("> app-version = %s\n", mAppVersion.get()));
      LOG(("> compat-firefox = %s\n", mCompatFirefox.get()));
-@@ -613,8 +619,10 @@
+@@ -620,8 +626,10 @@
                             mCompatFirefox.Length() +
                             mCompatDevice.Length() +
                             mDeviceModelId.Length() +
@@ -39,7 +39,7 @@ Index: firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandl
      // Application portion
      mUserAgent.Assign(mLegacyAppName);
      mUserAgent += '/';
-@@ -629,6 +637,10 @@
+@@ -636,6 +644,10 @@
        mUserAgent.AppendLiteral("; ");
      }
  #endif
@@ -50,11 +50,11 @@ Index: firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandl
      if (!mCompatDevice.IsEmpty()) {
          mUserAgent += mCompatDevice;
          mUserAgent.AppendLiteral("; ");
-Index: firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandler.h
+Index: firefox-trunk-39.0~a1~hg20150319r234403/netwerk/protocol/http/nsHttpHandler.h
 ===================================================================
---- firefox-trunk-36.0~a1~hg20141031r213433.orig/netwerk/protocol/http/nsHttpHandler.h	2014-10-31 23:44:28.578615299 +0000
-+++ firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandler.h	2014-10-31 23:44:28.578615299 +0000
-@@ -425,6 +425,7 @@
+--- firefox-trunk-39.0~a1~hg20150319r234403.orig/netwerk/protocol/http/nsHttpHandler.h	2015-03-19 22:06:15.726198019 +0000
++++ firefox-trunk-39.0~a1~hg20150319r234403/netwerk/protocol/http/nsHttpHandler.h	2015-03-19 22:06:15.722198001 +0000
+@@ -435,6 +435,7 @@
      // useragent components
      nsCString      mLegacyAppName;
      nsCString      mLegacyAppVersion;
@@ -62,10 +62,10 @@ Index: firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/nsHttpHandl
      nsCString      mPlatform;
      nsCString      mOscpu;
      nsCString      mMisc;
-Index: firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/Makefile.in
+Index: firefox-trunk-39.0~a1~hg20150319r234403/netwerk/protocol/http/Makefile.in
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-36.0~a1~hg20141031r213433/netwerk/protocol/http/Makefile.in	2014-10-31 23:44:28.578615299 +0000
++++ firefox-trunk-39.0~a1~hg20150319r234403/netwerk/protocol/http/Makefile.in	2015-03-19 22:06:15.722198001 +0000
 @@ -0,0 +1,9 @@
 +# This Source Code Form is subject to the terms of the Mozilla Public
 +# License, v. 2.0. If a copy of the MPL was not distributed with this

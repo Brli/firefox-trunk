@@ -1,7 +1,8 @@
-firefox-trunk (39.0~a1~hg20150318r234209-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (39.0~a1~hg20150319r234403-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/unity-menubar.patc
+    - update debian/patches/ubuntu-ua-string-changes.patch
   * Drop patches fixed upstream
     - remove debian/patches/add-non-skia-fallback.patch
     - update debian/patches/series
