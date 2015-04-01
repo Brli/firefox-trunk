@@ -3,11 +3,11 @@ Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 Bug-Ubuntu: https://launchpad.net/bugs/894166
 
-Index: firefox-trunk-21.0~a1~hg20130213r121727/browser/installer/package-manifest.in
+Index: firefox-trunk-40.0~a1~hg20150401r237023/browser/installer/package-manifest.in
 ===================================================================
---- firefox-trunk-21.0~a1~hg20130213r121727.orig/browser/installer/package-manifest.in	2013-02-14 02:06:50.000000000 +0000
-+++ firefox-trunk-21.0~a1~hg20130213r121727/browser/installer/package-manifest.in	2013-02-14 21:38:06.789965559 +0000
-@@ -39,7 +39,7 @@
+--- firefox-trunk-40.0~a1~hg20150401r237023.orig/browser/installer/package-manifest.in	2015-04-01 22:07:25.906238109 +0100
++++ firefox-trunk-40.0~a1~hg20150401r237023/browser/installer/package-manifest.in	2015-04-01 22:12:27.274873401 +0100
+@@ -51,7 +51,7 @@
  @RESPATH@/browser/defaults/profile/localstore.rdf
  @RESPATH@/browser/defaults/profile/mimeTypes.rdf
  @RESPATH@/dictionaries/*
@@ -15,4 +15,4 @@ Index: firefox-trunk-21.0~a1~hg20130213r121727/browser/installer/package-manifes
 +; @RESPATH@/hyphenation/*
  @RESPATH@/browser/@PREF_DIR@/firefox-l10n.js
  @RESPATH@/browser/searchplugins/*
- #ifdef XP_WIN32
+ #ifdef HAVE_MAKENSISU
