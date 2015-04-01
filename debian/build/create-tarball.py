@@ -216,7 +216,11 @@ class TarballCreator(OptionParser):
           do_exec(args, quiet=False)
           print '\n'
 
-        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(mozdir, 'python/compare-locales'), tag=tag)
+        l10ndir = 'l10n'
+        if not os.path.isdir(l10ndir):
+          os.makedirs(l10ndir)
+
+        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(l10ndir, 'compare-locales'), tag=tag)
 
         # XXX: In the future we may have an additional l10n source from Launchpad
         if l10nbase != None:
@@ -227,10 +231,6 @@ class TarballCreator(OptionParser):
 
           print '\n\n'
           print '*** Checking out l10n source from %s%s ***' % (l10nbase, ' using cache from %s' % cache if cache != None else '')
-
-          l10ndir = 'l10n'
-          if not os.path.isdir(l10ndir):
-            os.makedirs(l10ndir)
 
           with open(os.path.join(l10ndir, 'changesets'), 'w') as changesets:
             for l10nlist in [shipped_locales, all_locales]:

@@ -3,6 +3,11 @@ firefox-trunk (39.0~a1~hg20150321r234897-0ubuntu2) UNRELEASED; urgency=medium
   * Refresh patches
     - update debian/patches/unity-menubar.patch
     - update debian/patches/dont-include-hyphenation-patterns.patch
+  * Bundle our checkout of compare-locales in a different location, given
+    that the Mozilla repo now contains a different version of it in the
+    location we used previously
+    - update debian/build/rules.mk
+    - update debian/config/tarball.conf
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 01 Apr 2015 22:15:49 +0100
 
