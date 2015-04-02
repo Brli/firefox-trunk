@@ -1142,7 +1142,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsMenu.h
 +#define NSMENU_NUMBER_OF_FLAGS           4U
 +
 +// This class represents a menu
-+class nsMenu MOZ_FINAL : public nsMenuContainer
++class nsMenu final : public nsMenuContainer
 +{
 +public:
 +    ~nsMenu();
@@ -1319,7 +1319,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsMenuBar.cpp
 +
 +using namespace mozilla;
 +
-+class nsMenuBarDocEventListener MOZ_FINAL : public nsIDOMEventListener
++class nsMenuBarDocEventListener final : public nsIDOMEventListener
 +{
 +public:
 +    NS_DECL_ISUPPORTS
@@ -1871,7 +1871,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsMenuBar.h
 + * to a particular window. A menubar and its hierarchy also own a
 + * nsNativeMenuDocListener.
 + */
-+class nsMenuBar MOZ_FINAL : public nsMenuContainer
++class nsMenuBar final : public nsMenuContainer
 +{
 +public:
 +    ~nsMenuBar();
@@ -2495,7 +2495,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsMenuItem.cpp
 +    return 0;
 +}
 +
-+class nsMenuItemUncheckSiblingsRunnable MOZ_FINAL : public nsRunnable
++class nsMenuItemUncheckSiblingsRunnable final : public nsRunnable
 +{
 +public:
 +    NS_IMETHODIMP Run()
@@ -2978,7 +2978,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsMenuItem.h
 + * This class represents 3 main classes of menuitems: labels, checkboxes and
 + * radio buttons (with/without an icon)
 + */
-+class nsMenuItem MOZ_FINAL : public nsMenuObject
++class nsMenuItem final : public nsMenuObject
 +{
 +public:
 +    ~nsMenuItem();
@@ -3141,7 +3141,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsMenuObject.cpp
 +    nsWeakMenuObject<nsMenuObject> mMenuObject;
 +};
 +
-+class nsMenuObjectIconLoader MOZ_FINAL : public imgINotificationObserver
++class nsMenuObjectIconLoader final : public imgINotificationObserver
 +{
 +public:
 +    NS_DECL_ISUPPORTS
@@ -4132,7 +4132,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsMenuSeparator.h
 +class nsMenuContainer;
 +
 +// Menu separator class
-+class nsMenuSeparator MOZ_FINAL : public nsMenuObject
++class nsMenuSeparator final : public nsMenuObject
 +{
 +public:
 +    ~nsMenuSeparator();
@@ -4649,7 +4649,7 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsNativeMenuDocListene
 + * This class keeps a mapping of content nodes to observers and forwards DOM
 + * mutations to these. There is exactly one of these for every menubar.
 + */
-+class nsNativeMenuDocListener MOZ_FINAL : nsStubMutationObserver
++class nsNativeMenuDocListener final : nsStubMutationObserver
 +{
 +public:
 +    NS_DECL_ISUPPORTS
@@ -5324,8 +5324,8 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/widget/gtk/nsNativeMenuService.h
 + * needs to. The menubar is responsible for notifying the service when the last
 + * reference to it is dropped.
 + */
-+class nsNativeMenuService MOZ_FINAL : public nsINativeMenuService,
-+                                      public nsIObserver
++class nsNativeMenuService final : public nsINativeMenuService,
++                                  public nsIObserver
 +{
 +public:
 +    NS_DECL_ISUPPORTS
