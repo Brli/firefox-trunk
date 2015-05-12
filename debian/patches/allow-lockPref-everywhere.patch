@@ -10,105 +10,112 @@ Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
  modules/libpref/src/prefread.h   |    4 +++-
  4 files changed, 17 insertions(+), 6 deletions(-)
 
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.cpp
+Index: firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefread.cpp
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefread.cpp	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.cpp	2013-10-29 16:48:30.278670289 +0000
+--- firefox-trunk-41.0~a1~hg20150512r243484.orig/modules/libpref/prefread.cpp	2015-05-12 19:16:59.135883575 +0100
++++ firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefread.cpp	2015-05-12 19:38:53.238758722 +0100
 @@ -43,6 +43,7 @@
  #define BITS_PER_HEX_DIGIT      4
  
  static const char kUserPref[] = "user_pref";
 +static const char kLockPref[] = "lockPref";
  static const char kPref[] = "pref";
+ static const char kPrefSticky[] = "sticky_pref";
  static const char kTrue[] = "true";
- static const char kFalse[] = "false";
-@@ -129,7 +130,7 @@
-     default:
+@@ -131,7 +132,7 @@
          break;
      }
--    (*ps->reader)(ps->closure, ps->lb, value, ps->vtype, ps->fdefault);
-+    (*ps->reader)(ps->closure, ps->lb, value, ps->vtype, ps->fdefault, ps->flock);
+     (*ps->reader)(ps->closure, ps->lb, value, ps->vtype, ps->fdefault,
+-                  ps->fstickydefault);
++                  ps->fstickydefault, ps->flock);
      return true;
  }
  
-@@ -188,6 +189,7 @@
-                 ps->vb    = nullptr;
+@@ -191,6 +192,7 @@
                  ps->vtype = PREF_INVALID;
                  ps->fdefault = false;
+                 ps->fstickydefault = false;
 +                ps->flock = false;
              }
              switch (c) {
              case '/':       /* begin comment block or line? */
-@@ -198,7 +200,9 @@
-                 break;
+@@ -202,8 +204,10 @@
              case 'u':       /* indicating user_pref */
              case 'p':       /* indicating pref */
--                ps->smatch = (c == 'u' ? kUserPref : kPref);
+             case 's':       /* indicating sticky_pref */
 +            case 'l':       /* indicating lockPref */
-+                ps->smatch = (c == 'u' ? kUserPref :
-+                                         (c == 'p' ? kPref : kLockPref));
+                 ps->smatch = (c == 'u' ? kUserPref :
+-                             (c == 's' ? kPrefSticky : kPref));
++                             (c == 's' ? kPrefSticky :
++                             (c == 'l' ? kLockPref : kPref)));
                  ps->sindex = 1;
                  ps->nextstate = PREF_PARSE_UNTIL_OPEN_PAREN;
                  state = PREF_PARSE_MATCH_STRING;
-@@ -242,7 +246,8 @@
+@@ -247,8 +251,10 @@
          /* name parsing */
          case PREF_PARSE_UNTIL_NAME:
              if (c == '\"' || c == '\'') {
--                ps->fdefault = (ps->smatch == kPref);
-+                ps->fdefault = (ps->smatch != kUserPref);
+-                ps->fdefault = (ps->smatch == kPref || ps->smatch == kPrefSticky);
++                ps->fdefault = (ps->smatch == kPref || ps->smatch == kPrefSticky ||
++                                ps->smatch == kLockPref);
+                 ps->fstickydefault = (ps->smatch == kPrefSticky);
 +                ps->flock = (ps->smatch == kLockPref);
                  ps->quotechar = c;
                  ps->nextstate = PREF_PARSE_UNTIL_COMMA; /* return here when done */
                  state = PREF_PARSE_QUOTED_STRING;
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.h
+Index: firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefread.h
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefread.h	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefread.h	2013-10-29 16:48:30.278670289 +0000
-@@ -31,7 +31,8 @@
-                            const char *pref,
+--- firefox-trunk-41.0~a1~hg20150512r243484.orig/modules/libpref/prefread.h	2015-05-12 19:16:59.135883575 +0100
++++ firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefread.h	2015-05-12 19:40:11.198930380 +0100
+@@ -34,7 +34,8 @@
                             PrefValue   val,
                             PrefType    type,
--                           bool        defPref);
-+                           bool        defPref,
+                            bool        defPref,
+-                           bool        stickyPref);
++                           bool        stickyPref,
 +                           bool        lockPref);
  
  /* structure fields are private */
  typedef struct PrefParseState {
-@@ -52,6 +53,7 @@
-     char       *vb;         /* value buffer (ptr into lb)    */
+@@ -56,6 +57,7 @@
      PrefType    vtype;      /* PREF_STRING,INT,BOOL          */
      bool        fdefault;   /* true if (default) pref     */
-+    bool        flock;      /* PR_TRUE if pref to be locked  */
+     bool        fstickydefault; /* true if (sticky) pref     */
++    bool        flock;      /* true if (locked) pref         */
  } PrefParseState;
  
  /**
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.h
+Index: firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefapi.h
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefapi.h	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.h	2013-10-29 16:48:30.278670289 +0000
-@@ -178,7 +178,8 @@
-                           const char *pref,
+--- firefox-trunk-41.0~a1~hg20150512r243484.orig/modules/libpref/prefapi.h	2015-05-12 19:16:59.135883575 +0100
++++ firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefapi.h	2015-05-12 19:41:20.447082946 +0100
+@@ -186,7 +186,8 @@
                            PrefValue   value,
                            PrefType    type,
--                          bool        isDefault);
-+                          bool        isDefault,
+                           bool        isDefault,
+-                          bool        isStickyDefault);
++                          bool        isStickyDefault,
 +                          bool        isLocked);
  
  #ifdef __cplusplus
  }
-Index: firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.cpp
+Index: firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefapi.cpp
 ===================================================================
---- firefox-trunk-28.0~a1~hg20131028r152546.orig/modules/libpref/prefapi.cpp	2013-10-29 16:48:30.278670289 +0000
-+++ firefox-trunk-28.0~a1~hg20131028r152546/modules/libpref/prefapi.cpp	2013-10-29 16:48:30.278670289 +0000
-@@ -988,7 +988,10 @@
-                          const char *pref,
+--- firefox-trunk-41.0~a1~hg20150512r243484.orig/modules/libpref/prefapi.cpp	2015-05-12 19:16:59.135883575 +0100
++++ firefox-trunk-41.0~a1~hg20150512r243484/modules/libpref/prefapi.cpp	2015-05-12 19:42:15.231203705 +0100
+@@ -1006,11 +1006,14 @@
                           PrefValue   value,
                           PrefType    type,
--                         bool        isDefault)
-+                         bool        isDefault,
+                          bool        isDefault,
+-                         bool        isStickyDefault)
++                         bool        isStickyDefault,
 +                         bool        isLocked)
  {
-     pref_HashPref(pref, value, type, isDefault ? kPrefSetDefault : kPrefForceSet);
+     uint32_t flags = isDefault ? kPrefSetDefault : kPrefForceSet;
+     if (isDefault && isStickyDefault) {
+         flags |= kPrefStickyDefault;
+     }
+     pref_HashPref(pref, value, type, flags);
 +    if (isLocked)
 +       PREF_LockPref(pref, true);
  }
