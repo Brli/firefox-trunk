@@ -3,10 +3,10 @@ Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 Bug-Ubuntu: https://launchpad.net/bugs/894166
 
-Index: firefox-trunk-40.0~a1~hg20150401r237023/browser/installer/package-manifest.in
+Index: firefox-trunk-41.0~a1~hg20150520r244718/browser/installer/package-manifest.in
 ===================================================================
---- firefox-trunk-40.0~a1~hg20150401r237023.orig/browser/installer/package-manifest.in	2015-04-01 22:07:25.906238109 +0100
-+++ firefox-trunk-40.0~a1~hg20150401r237023/browser/installer/package-manifest.in	2015-04-01 22:12:27.274873401 +0100
+--- firefox-trunk-41.0~a1~hg20150520r244718.orig/browser/installer/package-manifest.in	2015-05-20 17:21:48.341912623 +0100
++++ firefox-trunk-41.0~a1~hg20150520r244718/browser/installer/package-manifest.in	2015-05-20 17:25:30.858923264 +0100
 @@ -51,7 +51,7 @@
  @RESPATH@/browser/defaults/profile/localstore.rdf
  @RESPATH@/browser/defaults/profile/mimeTypes.rdf
@@ -14,5 +14,5 @@ Index: firefox-trunk-40.0~a1~hg20150401r237023/browser/installer/package-manifes
 -@RESPATH@/hyphenation/*
 +; @RESPATH@/hyphenation/*
  @RESPATH@/browser/@PREF_DIR@/firefox-l10n.js
- @RESPATH@/browser/searchplugins/*
  #ifdef HAVE_MAKENSISU
+ @BINPATH@/uninstall/helper.exe
