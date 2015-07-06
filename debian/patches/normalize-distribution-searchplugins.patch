@@ -7,17 +7,19 @@ Forwarded: no
  toolkit/components/search/nsSearchService.js |    9 +++++++++
  1 file changed, 9 insertions(+)
 
---- a/toolkit/components/search/nsSearchService.js
-+++ b/toolkit/components/search/nsSearchService.js
-@@ -54,6 +54,7 @@ const MODE_APPEND   = 0x10;
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearchService.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/nsSearchService.js	2015-07-06 14:38:25.502892340 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearchService.js	2015-07-06 14:38:25.466892238 +0100
+@@ -50,6 +50,7 @@
  const MODE_TRUNCATE = 0x20;
  
  // Directory service keys
 +const NS_XPCOM_CURRENT_PROCESS_DIR = "XCurProcD";
  const NS_APP_SEARCH_DIR_LIST  = "SrchPluginsDL";
+ const NS_APP_DISTRIBUTION_SEARCH_DIR_LIST = "SrchPluginsDistDL";
  const NS_APP_USER_SEARCH_DIR  = "UsrSrchPlugns";
- const NS_APP_SEARCH_DIR       = "SrchPlugns";
-@@ -2776,6 +2777,13 @@ SearchService.prototype = {
+@@ -3896,6 +3897,13 @@
        if (!file.isFile() || file.fileSize == 0 || file.isHidden())
          continue;
  

@@ -1,7 +1,9 @@
-firefox-trunk (41.0~a1~hg20150520r244718-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (41.0~a1~hg20150706r251448-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
+    - update debian/patches/ubuntu-bookmarks.patch
     - update debian/patches/dont-include-hyphenation-patterns.patch
+    - update debian/patches/normalize-distribution-searchplugins.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 May 2015 17:20:18 +0100
 
