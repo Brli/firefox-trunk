@@ -1,0 +1,774 @@
+# Description: Backout http://hg.mozilla.org/mozilla-central/raw-rev/8a177d785dd5
+#  until we've fixed the packaging to work with this. This is temporary, just to
+#  unblock builds
+
+Index: firefox-trunk-41.0~a1~hg20150706r251448/browser/app/profile/firefox.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/browser/app/profile/firefox.js	2015-07-06 14:55:13.609712958 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/browser/app/profile/firefox.js	2015-07-06 14:59:04.086346113 +0100
+@@ -391,10 +391,6 @@
+ // search engines URL
+ pref("browser.search.searchEnginesURL",      "https://addons.mozilla.org/%LOCALE%/firefox/search-engines/");
+ 
+-// Tell the search service to load search plugins from the locale JAR
+-pref("browser.search.loadFromJars", true);
+-pref("browser.search.jarURIs", "chrome://browser/locale/searchplugins/");
+-
+ // pointer to the default engine name
+ pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
+ 
+Index: firefox-trunk-41.0~a1~hg20150706r251448/browser/installer/package-manifest.in
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/browser/installer/package-manifest.in	2015-07-06 14:55:13.609712958 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/browser/installer/package-manifest.in	2015-07-06 14:59:45.730460097 +0100
+@@ -53,6 +53,7 @@
+ @RESPATH@/dictionaries/*
+ ; @RESPATH@/hyphenation/*
+ @RESPATH@/browser/@PREF_DIR@/firefox-l10n.js
++@RESPATH@/browser/searchplugins/*
+ #ifdef HAVE_MAKENSISU
+ @BINPATH@/uninstall/helper.exe
+ #endif
+Index: firefox-trunk-41.0~a1~hg20150706r251448/browser/locales/Makefile.in
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/browser/locales/Makefile.in	2015-07-06 11:50:48.000000000 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/browser/locales/Makefile.in	2015-07-06 15:01:59.066824221 +0100
+@@ -5,6 +5,9 @@
+ 
+ include $(topsrcdir)/config/config.mk
+ 
++vpath %.xml @srcdir@/en-US/searchplugins
++vpath %.xml $(LOCALE_SRCDIR)/searchplugins
++
+ ifdef LOCALE_MERGEDIR
+ vpath crashreporter%.ini $(LOCALE_MERGEDIR)/browser/crashreporter
+ endif
+@@ -69,7 +72,7 @@
+ endif
+ 
+ SEARCHPLUGINS_NAMES = $(shell cat $(call MERGE_FILE,/searchplugins/list.txt)) ddg
+-SEARCHPLUGINS_PATH := .deps/generated_$(AB_CD)
++SEARCHPLUGINS_PATH := $(FINAL_TARGET)/searchplugins
+ SEARCHPLUGINS_TARGET := libs searchplugins
+ SEARCHPLUGINS := $(foreach plugin,$(addsuffix .xml,$(SEARCHPLUGINS_NAMES)),$(or $(wildcard $(call EN_US_OR_L10N_FILE,searchplugins/$(plugin))),$(info Missing searchplugin: $(plugin))))
+ # Some locale-specific search plugins may have preprocessor directives, but the
+@@ -77,11 +80,6 @@
+ SEARCHPLUGINS_FLAGS := --silence-missing-directive-warnings
+ PP_TARGETS += SEARCHPLUGINS
+ 
+-list-txt = $(SEARCHPLUGINS_PATH)/list.txt
+-GARBAGE += $(list-txt)
+-
+-libs:: searchplugins
+-
+ # Required for l10n.mk - defines a list of app sub dirs that should
+ # be included in langpack xpis.
+ DIST_SUBDIRS = $(DIST_SUBDIR)
+@@ -90,11 +88,6 @@
+ 
+ include $(topsrcdir)/toolkit/locales/l10n.mk
+ 
+-$(list-txt): $(call mkdir_deps,$(SEARCHPLUGINS_PATH)) $(if $(IS_LANGUAGE_REPACK),FORCE)
+-	$(RM) $(list-txt)
+-	$(foreach plugin,$(SEARCHPLUGINS_NAMES),printf '$(plugin)\n' >> $(list-txt);)
+-searchplugins:: $(list-txt)
+-
+ $(STAGEDIST): $(DIST)/branding
+ 
+ $(DIST)/branding:
+@@ -133,7 +126,6 @@
+ endif
+ 	@$(MAKE) -C ../../extensions/spellcheck/locales AB_CD=$* XPI_NAME=locale-$*
+ 	@$(MAKE) -C ../../intl/locales AB_CD=$* XPI_NAME=locale-$*
+-	@$(MAKE) -B searchplugins AB_CD=$* XPI_NAME=locale-$*
+ 	@$(MAKE) libs AB_CD=$* XPI_NAME=locale-$* PREF_DIR=$(PREF_DIR)
+ 	@$(MAKE) -C $(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/locales AB_CD=$* XPI_NAME=locale-$*
+ 
+@@ -166,7 +158,8 @@
+ 	  $(STAGEDIST)/webapprt/chrome/$(AB_CD).jar \
+ 	  $(STAGEDIST)/webapprt/chrome/$(AB_CD).manifest \
+ 	  $(STAGEDIST)/$(PREF_DIR)/firefox-l10n.js
+-	$(RM) -rf  $(STAGEDIST)/dictionaries \
++	$(RM) -rf  $(STAGEDIST)/searchplugins \
++	  $(STAGEDIST)/dictionaries \
+ 	  $(STAGEDIST)/hyphenation \
+ 	  $(STAGEDIST)/defaults/profile \
+ 	  $(STAGEDIST)/chrome/$(AB_CD) \
+Index: firefox-trunk-41.0~a1~hg20150706r251448/browser/locales/jar.mn
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/browser/locales/jar.mn	2015-07-06 11:50:48.000000000 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/browser/locales/jar.mn	2015-07-06 14:58:25.246239690 +0100
+@@ -150,8 +150,6 @@
+     locale/browser/syncQuota.dtd                (%chrome/browser/syncQuota.dtd)
+     locale/browser/syncQuota.properties         (%chrome/browser/syncQuota.properties)
+ #endif
+-    locale/browser/searchplugins/list.txt       (.deps/generated_@AB_CD@/list.txt)
+-    locale/browser/searchplugins/               (.deps/generated_@AB_CD@/*.xml)
+ % locale browser-region @AB_CD@ %locale/browser-region/
+     locale/browser-region/region.properties        (%chrome/browser-region/region.properties)
+ # the following files are browser-specific overrides
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearchService.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/nsSearchService.js	2015-07-06 14:43:58.115832880 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearchService.js	2015-07-06 15:06:30.015560379 +0100
+@@ -3487,16 +3487,6 @@
+         cache = this._readCacheFile(cacheFile);
+     }
+ 
+-    let chromeURIs = [], chromeFiles = [];
+-    let loadFromJARs = false;
+-    try {
+-      loadFromJARs = Services.prefs.getDefaultBranch(BROWSER_SEARCH_PREF)
+-                             .getBoolPref("loadFromJars");
+-    } catch (ex) {}
+-
+-    if (loadFromJARs)
+-      [chromeFiles, chromeURIs] = this._findJAREngines();
+-
+     let distDirs = [];
+     let locations;
+     try {
+@@ -3517,12 +3507,16 @@
+     locations = getDir(NS_APP_SEARCH_DIR_LIST, Ci.nsISimpleEnumerator);
+     while (locations.hasMoreElements()) {
+       let dir = locations.getNext().QueryInterface(Ci.nsIFile);
+-      if (loadFromJARs && dir.equals(getDir(NS_APP_SEARCH_DIR)))
+-        continue;
+       if (dir.directoryEntries.hasMoreElements())
+         otherDirs.push(dir);
+     }
+ 
++    let loadFromJARs = getBoolPref(BROWSER_SEARCH_PREF + "loadFromJars", false);
++    let chromeURIs = [];
++    let chromeFiles = [];
++    if (loadFromJARs)
++      [chromeFiles, chromeURIs] = this._findJAREngines();
++
+     let toLoad = chromeFiles.concat(distDirs, otherDirs);
+ 
+     function modifiedDir(aDir) {
+@@ -3581,19 +3575,6 @@
+         cache = yield checkForSyncCompletion(this._asyncReadCacheFile(cacheFilePath));
+       }
+ 
+-      let chromeURIs = [], chromeFiles = [];
+-      let loadFromJARs = false;
+-      try {
+-        loadFromJARs = Services.prefs.getDefaultBranch(BROWSER_SEARCH_PREF)
+-                               .getBoolPref("loadFromJars");
+-      } catch (ex) {}
+-
+-      if (loadFromJARs) {
+-        Services.obs.notifyObservers(null, SEARCH_SERVICE_TOPIC, "find-jar-engines");
+-        [chromeFiles, chromeURIs] =
+-          yield checkForSyncCompletion(this._asyncFindJAREngines());
+-      }
+-
+       // Get the non-empty distribution directories into distDirs...
+       let distDirs = [];
+       let locations;
+@@ -3626,12 +3607,6 @@
+       locations = getDir(NS_APP_SEARCH_DIR_LIST, Ci.nsISimpleEnumerator);
+       while (locations.hasMoreElements()) {
+         let dir = locations.getNext().QueryInterface(Ci.nsIFile);
+-        // ... but skip the application directory if we are loading from JAR.
+-        // Applications shipping JAR engines don't ship plain text
+-        // engine files anymore.
+-        if (loadFromJARs && dir.equals(getDir(NS_APP_SEARCH_DIR)))
+-          continue;
+-
+         let iterator = new OS.File.DirectoryIterator(dir.path,
+                                                      { winPattern: "*.xml" });
+         try {
+@@ -3645,6 +3620,15 @@
+         }
+       }
+ 
++      let loadFromJARs = getBoolPref(BROWSER_SEARCH_PREF + "loadFromJars", false);
++      let chromeURIs = [];
++      let chromeFiles = [];
++      if (loadFromJARs) {
++        Services.obs.notifyObservers(null, SEARCH_SERVICE_TOPIC, "find-jar-engines");
++        [chromeFiles, chromeURIs] =
++          yield checkForSyncCompletion(this._asyncFindJAREngines());
++      }
++
+       let toLoad = chromeFiles.concat(distDirs, otherDirs);
+       function hasModifiedDir(aList) {
+         return Task.spawn(function() {
+@@ -4021,8 +4005,7 @@
+ 
+     let rootURIPref = ""
+     try {
+-      rootURIPref = Services.prefs.getDefaultBranch(BROWSER_SEARCH_PREF)
+-                            .getCharPref("jarURIs");
++      rootURIPref = Services.prefs.getCharPref(BROWSER_SEARCH_PREF + "jarURIs");
+     } catch (ex) {}
+ 
+     if (!rootURIPref) {
+@@ -4038,25 +4021,27 @@
+     rootURIs.forEach(function (root) {
+       // Find the underlying JAR file for this chrome package (_loadEngines uses
+       // it to determine whether it needs to invalidate the cache)
+-      let jarPackaging = false;
++      let chromeFile;
+       try {
+         let chromeURI = gChromeReg.convertChromeURL(makeURI(root));
+-        if (chromeURI instanceof Ci.nsIJARURI) {
+-          let fileURI = chromeURI;
+-          while (fileURI instanceof Ci.nsIJARURI)
+-            fileURI = fileURI.JARFile;
+-          fileURI.QueryInterface(Ci.nsIFileURL);
+-          chromeFiles.push(fileURI.file);
+-          jarPackaging = true;
+-        }
++        let fileURI = chromeURI; // flat packaging
++        while (fileURI instanceof Ci.nsIJARURI)
++          fileURI = fileURI.JARFile; // JAR packaging
++        fileURI.QueryInterface(Ci.nsIFileURL);
++        chromeFile = fileURI.file;
+       } catch (ex) {
+         LOG("_findJAREngines: failed to get chromeFile for " + root + ": " + ex);
+-        return;
+       }
+ 
++      if (!chromeFile)
++        return;
++
++      chromeFiles.push(chromeFile);
++
+       // Read list.txt from the chrome package to find the engines we need to
+       // load
+       let listURL = root + "list.txt";
++      let names = [];
+       try {
+         let chan = NetUtil.ioService.newChannelFromURI2(makeURI(listURL),
+                                                         null,      // aLoadingNode
+@@ -4068,22 +4053,14 @@
+                   createInstance(Ci.nsIScriptableInputStream);
+         sis.init(chan.open());
+         let list = sis.read(sis.available());
+-        let names = list.split("\n").filter(function (n) !!n);
+-        for (let name of names) {
+-          let uri = root + name + ".xml";
+-          uris.push(uri);
+-          if (!jarPackaging) {
+-            // Flat packaging requires that _loadEngines checks the modification
+-            // time of each engine file.
+-            uri = gChromeReg.convertChromeURL(makeURI(uri));
+-            chromeFiles.push(uri.QueryInterface(Ci.nsIFileURL).file);
+-          }
+-        }
++        names = list.split("\n").filter(function (n) !!n);
+       } catch (ex) {
+         LOG("_findJAREngines: failed to retrieve list.txt from " + listURL + ": " + ex);
+ 
+         return;
+       }
++
++      names.forEach(function (n) uris.push(root + n + ".xml"));
+     });
+ 
+     return [chromeFiles, uris];
+@@ -4101,8 +4078,7 @@
+ 
+       let rootURIPref = "";
+       try {
+-        rootURIPref = Services.prefs.getDefaultBranch(BROWSER_SEARCH_PREF)
+-                              .getCharPref("jarURIs");
++        rootURIPref = Services.prefs.getCharPref(BROWSER_SEARCH_PREF + "jarURIs");
+       } catch (ex) {}
+ 
+       if (!rootURIPref) {
+@@ -4117,22 +4093,24 @@
+       for (let root of rootURIs) {
+         // Find the underlying JAR file for this chrome package (_loadEngines uses
+         // it to determine whether it needs to invalidate the cache)
+-        let jarPackaging = false;
++        let chromeFile;
+         try {
+           let chromeURI = gChromeReg.convertChromeURL(makeURI(root));
+-          if (chromeURI instanceof Ci.nsIJARURI) {
+-            let fileURI = chromeURI;
+-            while (fileURI instanceof Ci.nsIJARURI)
+-              fileURI = fileURI.JARFile;
+-            fileURI.QueryInterface(Ci.nsIFileURL);
+-            chromeFiles.push(fileURI.file);
+-            jarPackaging = true;
+-          }
++          let fileURI = chromeURI; // flat packaging
++          while (fileURI instanceof Ci.nsIJARURI)
++            fileURI = fileURI.JARFile; // JAR packaging
++          fileURI.QueryInterface(Ci.nsIFileURL);
++          chromeFile = fileURI.file;
+         } catch (ex) {
+           LOG("_asyncFindJAREngines: failed to get chromeFile for " + root + ": " + ex);
++        }
++
++        if (!chromeFile) {
+           return;
+         }
+ 
++        chromeFiles.push(chromeFile);
++
+         // Read list.txt from the chrome package to find the engines we need to
+         // load
+         let listURL = root + "list.txt";
+@@ -4153,16 +4131,7 @@
+ 
+         let names = [];
+         names = list.split("\n").filter(function (n) !!n);
+-        for (let name of names) {
+-          let uri = root + name + ".xml";
+-          uris.push(uri);
+-          if (!jarPackaging) {
+-            // Flat packaging requires that _loadEngines checks the modification
+-            // time of each engine file.
+-            uri = gChromeReg.convertChromeURL(makeURI(uri));
+-            chromeFiles.push(uri.QueryInterface(Ci.nsIFileURL).file);
+-          }
+-        }
++        names.forEach(function (n) uris.push(root + n + ".xml"));
+       }
+       throw new Task.Result([chromeFiles, uris]);
+     });
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/data/engine-app.xml
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/data/engine-app.xml	2015-07-06 11:51:01.000000000 +0100
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,9 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+-<ShortName>TestEngineApp</ShortName>
+-<Description>A test search engine installed in the application directory</Description>
+-<InputEncoding>ISO-8859-1</InputEncoding>
+-<Url type="text/html" method="GET" template="http://localhost/" resultdomain="localhost">
+-  <Param name="q" value="{searchTerms}"/>
+-</Url>
+-</SearchPlugin>
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/head_search.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/head_search.js	2015-07-06 14:55:13.613712969 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/head_search.js	2015-07-06 15:07:03.507651036 +0100
+@@ -72,31 +72,6 @@
+ }
+ 
+ /**
+- * Configure preferences to load engines from
+- * chrome://testsearchplugin/locale/searchplugins/
+- * unless the loadFromJars parameter is set to false.
+- */
+-function configureToLoadJarEngines(loadFromJars = true)
+-{
+-  let defaultBranch = Services.prefs.getDefaultBranch(null);
+-
+-  let url = "chrome://testsearchplugin/locale/searchplugins/";
+-  defaultBranch.setCharPref("browser.search.jarURIs", url);
+-
+-  defaultBranch.setBoolPref("browser.search.loadFromJars", loadFromJars);
+-
+-  // Give the pref a user set value that is the opposite of the default,
+-  // to ensure user set values are ignored.
+-  Services.prefs.setBoolPref("browser.search.loadFromJars", !loadFromJars)
+-
+-  // Ensure a test engine exists in the app dir anyway.
+-  let dir = Services.dirsvc.get(NS_APP_SEARCH_DIR, Ci.nsIFile);
+-  if (!dir.exists())
+-    dir.create(dir.DIRECTORY_TYPE, FileUtils.PERMS_DIRECTORY);
+-  do_get_file("data/engine-app.xml").copyTo(dir, "app.xml");
+-}
+-
+-/**
+  * Fake the installation of an add-on in the profile, by creating the
+  * directory and registering it with the directory service.
+  */
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_645970.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_645970.js	2015-07-06 11:51:01.000000000 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_645970.js	2015-07-06 14:58:25.250239699 +0100
+@@ -12,7 +12,10 @@
+ 
+   do_load_manifest("data/chrome.manifest");
+ 
+-  configureToLoadJarEngines();
++  let url  = "chrome://testsearchplugin/locale/searchplugins/";
++  Services.prefs.setCharPref("browser.search.jarURIs", url);
++
++  Services.prefs.setBoolPref("browser.search.loadFromJars", true);
+ 
+   // The search service needs to be started after the jarURIs pref has been
+   // set in order to initiate it correctly
+@@ -20,3 +23,4 @@
+   do_check_neq(engine, null);
+   Services.obs.notifyObservers(null, "quit-application", null);
+ }
++
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_async.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_async.js	2015-07-06 11:51:01.000000000 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_async.js	2015-07-06 14:58:25.250239699 +0100
+@@ -9,7 +9,9 @@
+ 
+   do_load_manifest("data/chrome.manifest");
+ 
+-  configureToLoadJarEngines();
++  let url  = "chrome://testsearchplugin/locale/searchplugins/";
++  Services.prefs.setCharPref("browser.search.jarURIs", url);
++  Services.prefs.setBoolPref("browser.search.loadFromJars", true);
+ 
+   do_check_false(Services.search.isInitialized);
+ 
+@@ -17,14 +19,18 @@
+     do_check_true(Components.isSuccessCode(aStatus));
+     do_check_true(Services.search.isInitialized);
+ 
+-    // test engines from dir are not loaded.
++    // test engines from dir are loaded.
+     let engines = Services.search.getEngines();
+-    do_check_eq(engines.length, 1);
++    do_check_true(engines.length > 1);
+ 
+     // test jar engine is loaded ok.
+     let engine = Services.search.getEngineByName("bug645970");
+     do_check_neq(engine, null);
+ 
++    Services.prefs.clearUserPref("browser.search.jarURIs");
++    Services.prefs.clearUserPref("browser.search.loadFromJars");
++
+     do_test_finished();
+   });
+ }
++
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_async_app.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_async_app.js	2015-07-06 11:51:01.000000000 +0100
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,30 +0,0 @@
+-/* Any copyright is dedicated to the Public Domain.
+-   http://creativecommons.org/publicdomain/zero/1.0/ */
+-
+-function run_test() {
+-  do_test_pending();
+-
+-  removeMetadata();
+-  removeCacheFile();
+-
+-  do_load_manifest("data/chrome.manifest");
+-
+-  configureToLoadJarEngines(false);
+-
+-  do_check_false(Services.search.isInitialized);
+-
+-  Services.search.init(function search_initialized(aStatus) {
+-    do_check_true(Components.isSuccessCode(aStatus));
+-    do_check_true(Services.search.isInitialized);
+-
+-    // test engine from dir is loaded.
+-    let engine = Services.search.getEngineByName("TestEngineApp");
+-    do_check_neq(engine, null);
+-
+-    // test jar engine is not loaded.
+-    engine = Services.search.getEngineByName("bug645970");
+-    do_check_eq(engine, null);
+-
+-    do_test_finished();
+-  });
+-}
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_identifiers.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_identifiers.js	2015-07-06 11:51:01.000000000 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_identifiers.js	2015-07-06 14:58:25.250239699 +0100
+@@ -14,7 +14,9 @@
+   removeCacheFile();
+   do_load_manifest("data/chrome.manifest");
+ 
+-  configureToLoadJarEngines();
++  let url  = "chrome://testsearchplugin/locale/searchplugins/";
++  Services.prefs.setCharPref("browser.search.jarURIs", url);
++  Services.prefs.setBoolPref("browser.search.loadFromJars", true);
+ 
+   updateAppInfo();
+ 
+@@ -54,3 +56,4 @@
+     run_next_test();
+   });
+ });
++
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_json_cache.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_json_cache.js	2015-07-06 11:51:01.000000000 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_json_cache.js	2015-07-06 14:58:25.250239699 +0100
+@@ -28,10 +28,6 @@
+   return _dirSvc.get(aKey, aIFace || Ci.nsIFile);
+ }
+ 
+-function makeURI(uri) {
+-  return Services.io.newURI(uri, null, null);
+-}
+-
+ let cacheTemplate, appPluginsPath, profPlugins;
+ 
+ /**
+@@ -55,59 +51,12 @@
+   let engineTemplateFile = do_get_file("data/engine.xml");
+   engineTemplateFile.copyTo(engineFile.parent, "test-search-engine.xml");
+ 
+-  // Add the application's built-in plugin locations to the cache so it won't be ignored.
+-  let filesToIgnore = []
+-  let defaultBranch = Services.prefs.getDefaultBranch(BROWSER_SEARCH_PREF);
+-
+-  let loadFromJARs = false;
+-  try {
+-    loadFromJARs = defaultBranch.getBoolPref("loadFromJars");
+-  } catch (ex) {}
+-
+-  if (!loadFromJARs) {
+-    filesToIgnore.push(getDir(NS_APP_SEARCH_DIR));
+-  } else {
+-    let rootURIPref = defaultBranch.getCharPref("jarURIs");
+-    let rootURIs = rootURIPref.split(",");
+-    for (let root of rootURIs) {
+-      let chromeReg = Cc["@mozilla.org/chrome/chrome-registry;1"].
+-                        getService(Ci.nsIChromeRegistry);
+-      let chromeURI = chromeReg.convertChromeURL(makeURI(root));
+-      if (chromeURI instanceof Ci.nsIJARURI) {
+-        // JAR packaging, we only need the parent jar file.
+-        let fileURI = chromeURI; // flat packaging
+-        while (fileURI instanceof Ci.nsIJARURI)
+-          fileURI = fileURI.JARFile;
+-        fileURI.QueryInterface(Ci.nsIFileURL);
+-        filesToIgnore.push(fileURI.file);
+-      } else {
+-        // flat packaging, we need to find each .xml file.
+-        let listURL = root + "list.txt";
+-        let chan = NetUtil.ioService.newChannelFromURI2(makeURI(listURL),
+-                                                        null, // aLoadingNode
+-                                                        Services.scriptSecurityManager.getSystemPrincipal(),
+-                                                        null, // aTriggeringPrincipal
+-                                                        Ci.nsILoadInfo.SEC_NORMAL,
+-                                                        Ci.nsIContentPolicy.TYPE_OTHER);
+-        let sis = Cc["@mozilla.org/scriptableinputstream;1"].
+-                  createInstance(Ci.nsIScriptableInputStream);
+-        sis.init(chan.open());
+-        let list = sis.read(sis.available());
+-        let names = list.split("\n").filter(n => !!n);
+-        for (let name of names) {
+-          let uri = chromeReg.convertChromeURL(makeURI(root + name + ".xml"));
+-          filesToIgnore.push(uri.QueryInterface(Ci.nsIFileURL).file);
+-        }
+-      }
+-    }
+-  }
+-
+-  for (let file of filesToIgnore) {
+-    cacheTemplate.directories[file.path] = {
+-      lastModifiedTime: file.lastModifiedTime,
+-      engines: []
+-    };
+-  }
++  // Add the app's searchplugins directory to the cache so it won't be ignored.
++  let appSearchPlugins = getDir(NS_APP_SEARCH_DIR);
++  appPluginsPath = appSearchPlugins.path;
++  cacheTemplate.directories[appPluginsPath] = {};
++  cacheTemplate.directories[appPluginsPath].lastModifiedTime = appSearchPlugins.lastModifiedTime;
++  cacheTemplate.directories[appPluginsPath].engines = [];
+ 
+   // Replace the profile placeholder with the correct path.
+   profPlugins = engineFile.parent.path;
+@@ -211,12 +160,8 @@
+         // Check that the search.json cache matches the template
+ 
+         let cacheWritten = readJSONFile(cache);
+-
+-        // Delete the empty dirs from the template since they are not written out.
+-        for (let dir of Object.keys(cacheTemplate.directories)) {
+-          if (!cacheTemplate.directories[dir].engines.length)
+-            delete cacheTemplate.directories[dir];
+-        }
++        // Delete the app search plugins directory from the template since it's not currently written out.
++        delete cacheTemplate.directories[appPluginsPath];
+ 
+         do_print("Check search.json");
+         isSubObjectOf(cacheTemplate, cacheWritten);
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_sync.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_sync.js	2015-07-06 11:51:02.000000000 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_sync.js	2015-07-06 14:58:25.250239699 +0100
+@@ -7,17 +7,23 @@
+ 
+   do_load_manifest("data/chrome.manifest");
+ 
+-  configureToLoadJarEngines();
++  let url  = "chrome://testsearchplugin/locale/searchplugins/";
++  Services.prefs.setCharPref("browser.search.jarURIs", url);
++  Services.prefs.setBoolPref("browser.search.loadFromJars", true);
+ 
+   do_check_false(Services.search.isInitialized);
+ 
+-  // test engines from dir are not loaded.
++  // test engines from dir are loaded.
+   let engines = Services.search.getEngines();
+-  do_check_eq(engines.length, 1);
++  do_check_true(engines.length > 1);
+ 
+   do_check_true(Services.search.isInitialized);
+ 
+   // test jar engine is loaded ok.
+   let engine = Services.search.getEngineByName("bug645970");
+   do_check_neq(engine, null);
++
++  Services.prefs.clearUserPref("browser.search.jarURIs");
++  Services.prefs.clearUserPref("browser.search.loadFromJars");
+ }
++
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_sync_app.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_sync_app.js	2015-07-06 11:51:02.000000000 +0100
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,23 +0,0 @@
+-/* Any copyright is dedicated to the Public Domain.
+-   http://creativecommons.org/publicdomain/zero/1.0/ */
+-
+-function run_test() {
+-  removeMetadata();
+-  removeCacheFile();
+-
+-  do_load_manifest("data/chrome.manifest");
+-
+-  configureToLoadJarEngines(false);
+-
+-  do_check_false(Services.search.isInitialized);
+-
+-  // test engine from dir is loaded.
+-  let engine = Services.search.getEngineByName("TestEngineApp");
+-  do_check_neq(engine, null);
+-
+-  do_check_true(Services.search.isInitialized);
+-
+-  // test jar engine is not loaded.
+-  engine = Services.search.getEngineByName("bug645970");
+-  do_check_eq(engine, null);
+-}
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_sync_delay_fallback.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_sync_delay_fallback.js	2015-07-06 14:55:13.593712914 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_sync_delay_fallback.js	2015-07-06 14:58:25.250239699 +0100
+@@ -9,7 +9,9 @@
+ 
+   do_load_manifest("data/chrome.manifest");
+ 
+-  configureToLoadJarEngines();
++  let url  = "chrome://testsearchplugin/locale/searchplugins/";
++  Services.prefs.setCharPref("browser.search.jarURIs", url);
++  Services.prefs.setBoolPref("browser.search.loadFromJars", true);
+ 
+   do_check_false(Services.search.isInitialized);
+   let fallback = false;
+@@ -19,14 +21,17 @@
+     do_check_true(Components.isSuccessCode(aStatus));
+     do_check_true(Services.search.isInitialized);
+ 
+-    // test engines from dir are not loaded.
++    // test engines from dir are loaded.
+     let engines = Services.search.getEngines();
+-    do_check_eq(engines.length, 1);
++    do_check_true(engines.length > 1);
+ 
+     // test jar engine is loaded ok.
+     let engine = Services.search.getEngineByName("bug645970");
+     do_check_neq(engine, null);
+ 
++    Services.prefs.clearUserPref("browser.search.jarURIs");
++    Services.prefs.clearUserPref("browser.search.loadFromJars");
++
+     do_test_finished();
+   });
+ 
+@@ -38,9 +43,9 @@
+ 
+       do_check_false(Services.search.isInitialized);
+ 
+-      // test engines from dir are not loaded.
++      // test engines from dir are loaded.
+       let engines = Services.search.getEngines();
+-      do_check_eq(engines.length, 1);
++      do_check_true(engines.length > 1);
+ 
+       // test jar engine is loaded ok.
+       let engine = Services.search.getEngineByName("bug645970");
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_sync_fallback.js
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/test_sync_fallback.js	2015-07-06 14:55:13.593712914 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/test_sync_fallback.js	2015-07-06 14:58:25.250239699 +0100
+@@ -9,7 +9,9 @@
+ 
+   do_load_manifest("data/chrome.manifest");
+ 
+-  configureToLoadJarEngines();
++  let url  = "chrome://testsearchplugin/locale/searchplugins/";
++  Services.prefs.setCharPref("browser.search.jarURIs", url);
++  Services.prefs.setBoolPref("browser.search.loadFromJars", true);
+ 
+   do_check_false(Services.search.isInitialized);
+ 
+@@ -17,22 +19,25 @@
+     do_check_true(Components.isSuccessCode(aStatus));
+     do_check_true(Services.search.isInitialized);
+ 
+-    // test engines from dir are not loaded.
++    // test engines from dir are loaded.
+     let engines = Services.search.getEngines();
+-    do_check_eq(engines.length, 1);
++    do_check_true(engines.length > 1);
+ 
+     // test jar engine is loaded ok.
+     let engine = Services.search.getEngineByName("bug645970");
+     do_check_neq(engine, null);
+ 
++    Services.prefs.clearUserPref("browser.search.jarURIs");
++    Services.prefs.clearUserPref("browser.search.loadFromJars");
++
+     do_test_finished();
+   });
+ 
+   do_check_false(Services.search.isInitialized);
+ 
+-  // test engines from dir are not loaded.
++  // test engines from dir are loaded.
+   let engines = Services.search.getEngines();
+-  do_check_eq(engines.length, 1);
++  do_check_true(engines.length > 1);
+ 
+   do_check_true(Services.search.isInitialized);
+ 
+@@ -40,3 +45,4 @@
+   let engine = Services.search.getEngineByName("bug645970");
+   do_check_neq(engine, null);
+ }
++
+Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/xpcshell.ini
+===================================================================
+--- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/tests/xpcshell/xpcshell.ini	2015-07-06 14:55:13.613712969 +0100
++++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/tests/xpcshell/xpcshell.ini	2015-07-06 15:07:42.479756437 +0100
+@@ -10,7 +10,6 @@
+   data/engine2.xml
+   data/engine-addon.xml
+   data/engine-override.xml
+-  data/engine-app.xml
+   data/engine-fr.xml
+   data/engineMaker.sjs
+   data/engine-rel-searchform.xml
+@@ -60,13 +59,11 @@
+ [test_serialize_file.js]
+ [test_searchSuggest.js]
+ [test_async.js]
+-[test_async_app.js]
+ [test_async_addon.js]
+ [test_async_addon_no_override.js]
+ [test_async_distribution.js]
+ [test_async_profile_engine.js]
+ [test_sync.js]
+-[test_sync_app.js]
+ [test_sync_addon.js]
+ [test_sync_addon_no_override.js]
+ [test_sync_distribution.js]

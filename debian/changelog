@@ -4,6 +4,9 @@ firefox-trunk (41.0~a1~hg20150706r251448-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/ubuntu-bookmarks.patch
     - update debian/patches/dont-include-hyphenation-patterns.patch
     - update debian/patches/normalize-distribution-searchplugins.patch
+  * Add backout-bmo1162569.patch to temporarily backout shipping search
+    engines in the omni.ja, until we've fixed the packaging and verified
+    our search engine overrides work
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 20 May 2015 17:20:18 +0100
 
