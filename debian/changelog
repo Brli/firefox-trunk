@@ -2,6 +2,7 @@ firefox-trunk (41.0~a1~hg20150706r251448-0ubuntu2) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/dont-override-general-useragent-locale.patch
+  * Build precise/x86 with -fno-tree-pre as a workaround for LP: #1471949
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 14 Jul 2015 08:23:40 +0100
 
