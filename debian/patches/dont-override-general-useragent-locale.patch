@@ -1,18 +1,8 @@
-Index: firefox-trunk-34.0~a1~hg20140722r195370/browser/locales/en-US/firefox-l10n.js
+Index: firefox-trunk-42.0~a1~hg20150713r252644/browser/app/profile/firefox.js
 ===================================================================
---- firefox-trunk-34.0~a1~hg20140722r195370.orig/browser/locales/en-US/firefox-l10n.js	2014-07-22 11:23:21.006553200 +0100
-+++ firefox-trunk-34.0~a1~hg20140722r195370/browser/locales/en-US/firefox-l10n.js	2014-07-22 11:23:21.002553200 +0100
-@@ -3,5 +3,3 @@
- # file, You can obtain one at http://mozilla.org/MPL/2.0/.
- 
- #filter substitution
--
--pref("general.useragent.locale", "@AB_CD@");
-Index: firefox-trunk-34.0~a1~hg20140722r195370/browser/app/profile/firefox.js
-===================================================================
---- firefox-trunk-34.0~a1~hg20140722r195370.orig/browser/app/profile/firefox.js	2014-07-22 11:18:38.414554807 +0100
-+++ firefox-trunk-34.0~a1~hg20140722r195370/browser/app/profile/firefox.js	2014-07-22 11:23:51.518553026 +0100
-@@ -263,7 +263,6 @@
+--- firefox-trunk-42.0~a1~hg20150713r252644.orig/browser/app/profile/firefox.js	2015-07-14 08:22:42.862120365 +0100
++++ firefox-trunk-42.0~a1~hg20150713r252644/browser/app/profile/firefox.js	2015-07-14 08:22:42.858120358 +0100
+@@ -257,7 +257,6 @@
  pref("keyword.enabled", true);
  pref("browser.fixup.domainwhitelist.localhost", true);
  
@@ -20,3 +10,13 @@ Index: firefox-trunk-34.0~a1~hg20140722r195370/browser/app/profile/firefox.js
  pref("general.skins.selectedSkin", "classic/1.0");
  
  pref("general.smoothScroll", true);
+Index: firefox-trunk-42.0~a1~hg20150713r252644/browser/locales/en-US/firefox-l10n.js
+===================================================================
+--- firefox-trunk-42.0~a1~hg20150713r252644.orig/browser/locales/en-US/firefox-l10n.js	2015-07-14 08:21:22.965991976 +0100
++++ firefox-trunk-42.0~a1~hg20150713r252644/browser/locales/en-US/firefox-l10n.js	2015-07-14 08:23:02.010151143 +0100
+@@ -7,5 +7,3 @@
+ # LOCALIZATION NOTE: this preference is set to true for en-US specifically,
+ # locales without this line have the setting set to false by default.
+ pref("browser.search.geoSpecificDefaults", true);
+-
+-pref("general.useragent.locale", "@AB_CD@");
