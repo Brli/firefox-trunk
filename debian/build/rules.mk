@@ -81,13 +81,6 @@ DISTRIB 		:= $(shell lsb_release -i -s)
 CFLAGS			:= -g
 CXXFLAGS		:= -g
 LDFLAGS 		:= $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
-ifeq (precise, $(DISTRIB_CODENAME))
-ifeq (i386, $(DEB_HOST_ARCH))
-# See https://launchpad.net/bugs/1471949
-CXXFLAGS		+= -fno-tree-pre
-CFLAGS			+= -fno-tree-pre
-endif
-endif
 
 ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 MOZ_WANT_UNIT_TESTS = 0
