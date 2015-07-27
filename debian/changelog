@@ -1,7 +1,8 @@
-firefox-trunk (41.0~a1~hg20150706r251448-0ubuntu2) UNRELEASED; urgency=medium
+firefox-trunk (42.0~a1~hg20150727r254803-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/dont-override-general-useragent-locale.patch
+    - update debian/patches/unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 14 Jul 2015 08:23:40 +0100
 
