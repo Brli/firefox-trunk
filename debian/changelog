@@ -3,6 +3,8 @@ firefox-trunk (42.0~a1~hg20150727r254803-0ubuntu1) UNRELEASED; urgency=medium
   * Refresh patches
     - update debian/patches/dont-override-general-useragent-locale.patch
     - update debian/patches/unity-menubar.patch
+  * Add build-depends on libgtk-3-dev
+  * Update unity-menubar.patch to work with GTK3
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 14 Jul 2015 08:23:40 +0100
 
