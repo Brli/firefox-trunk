@@ -251,7 +251,7 @@ debian/stamp-installtestsuite: debian/stamp-maketestsuite debian/stamp-makefile-
 	@touch $@
 
 $(VIRTENV_PATH)/bin/compare-locales:
-	cd $(CURDIR)/l10n/compare-locales; $(MOZ_PYTHON) $(CURDIR)/l10n/compare-locales/setup.py install
+	cd $(CURDIR)/l10n/compare-locales; $(MOZ_PYTHON) $(CURDIR)/l10n/compare-locales/setup.py install --old-and-unmanageable
 
 make-langpack-xpis: $(VIRTENV_PATH)/bin/compare-locales $(foreach locale,$(MOZ_LOCALES),debian/stamp-make-langpack-xpi-$(locale))
 debian/stamp-make-langpack-xpi-%:
