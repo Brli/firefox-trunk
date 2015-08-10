@@ -1,4 +1,4 @@
-firefox-trunk (42.0~a1~hg20150727r254803-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (42.0~a1~hg20150809r257018-0ubuntu1) vivid; urgency=medium
 
   * Refresh patches
     - update debian/patches/dont-override-general-useragent-locale.patch
