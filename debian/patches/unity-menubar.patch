@@ -1,7 +1,7 @@
 Index: firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser-menubar.inc
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/browser/base/content/browser-menubar.inc	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser-menubar.inc	2015-09-17 18:17:12.689429728 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/browser/base/content/browser-menubar.inc	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser-menubar.inc	2015-09-17 22:38:32.424566978 +0100
 @@ -5,7 +5,11 @@
  
         <menubar id="main-menubar"
@@ -16,8 +16,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser-menu
                  style="border:0px;padding:0px;margin:0px;-moz-appearance:none">
 Index: firefox-trunk-43.0~a1~hg20150916r262830/browser/components/places/content/places.xul
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/browser/components/places/content/places.xul	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/browser/components/places/content/places.xul	2015-09-17 18:17:12.689429728 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/browser/components/places/content/places.xul	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/browser/components/places/content/places.xul	2015-09-17 22:38:32.424566978 +0100
 @@ -157,7 +157,7 @@
          <toolbarbutton type="menu" class="tabbable"
                onpopupshowing="document.getElementById('placeContent').focus()"
@@ -29,8 +29,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/browser/components/places/content
                id="organizeButton" label="&organize.label;"
 Index: firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/widgets/popup.xml
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/toolkit/content/widgets/popup.xml	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/widgets/popup.xml	2015-09-17 18:17:12.689429728 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/toolkit/content/widgets/popup.xml	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/widgets/popup.xml	2015-09-17 22:38:32.424566978 +0100
 @@ -25,8 +25,14 @@
          </getter>
        </property>
@@ -50,8 +50,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/widgets/popup.xml
                  onget="return this.popupBoxObject.triggerNode"/>
 Index: firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/xul.css
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/toolkit/content/xul.css	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/xul.css	2015-09-17 18:17:12.689429728 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/toolkit/content/xul.css	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/xul.css	2015-09-17 22:38:32.428566987 +0100
 @@ -315,6 +315,18 @@
  }
  %endif
@@ -74,7 +74,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/toolkit/content/xul.css
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.cpp	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,63 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -142,7 +142,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.h	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,99 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -246,7 +246,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp	2015-09-17 23:13:38.217689117 +0100
 @@ -0,0 +1,866 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -533,7 +533,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 +        nsNativeMenuAutoUpdateBatch batch;
 +
 +        SetPopupState(ePopupState_Showing);
-+        DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWING);
++        DispatchMouseEvent(mPopupContent, eXULPopupShowing);
 +
 +        ContentNode()->SetAttr(kNameSpaceID_None, nsGkAtoms::open,
 +                               NS_LITERAL_STRING("true"), true);
@@ -557,7 +557,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 +    }
 +
 +    SetPopupState(ePopupState_Open);
-+    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_SHOWN);
++    DispatchMouseEvent(mPopupContent, eXULPopupShown);
 +}
 +
 +void
@@ -869,7 +869,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 +    nsNativeMenuAutoUpdateBatch batch;
 +
 +    SetPopupState(ePopupState_Hiding);
-+    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDING);
++    DispatchMouseEvent(mPopupContent, eXULPopupHiding);
 +
 +    // Sigh, make sure all of our descendants are closed, as we don't
 +    // always get closed events for submenus when scrubbing quickly through
@@ -882,7 +882,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 +    }
 +
 +    SetPopupState(ePopupState_Closed);
-+    DispatchMouseEvent(mPopupContent, NS_XUL_POPUP_HIDDEN);
++    DispatchMouseEvent(mPopupContent, eXULPopupHidden);
 +
 +    ContentNode()->UnsetAttr(kNameSpaceID_None, nsGkAtoms::open, true);
 +}
@@ -1117,7 +1117,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.h	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,166 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -1288,7 +1288,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.cpp	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,545 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -1838,7 +1838,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.h	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,112 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -1955,7 +1955,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuBar.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.cpp	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,174 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -2134,7 +2134,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.h	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,66 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -2205,7 +2205,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuContainer.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.cpp	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,742 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -2952,7 +2952,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.h	2015-09-17 18:17:12.689429728 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,107 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3064,7 +3064,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuItem.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.cpp	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,707 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -3776,7 +3776,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.h	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,242 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4023,7 +4023,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuObject.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.cpp	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,90 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4118,7 +4118,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.h	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,41 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4164,7 +4164,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenuSeparator.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtomList.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtomList.h	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtomList.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,11 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4180,7 +4180,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtomList.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.cpp	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,39 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4224,7 +4224,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.cpp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.h	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,25 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4254,7 +4254,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuAtoms.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListener.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListener.cpp	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListener.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,370 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4629,7 +4629,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListene
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListener.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListener.h	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListener.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,152 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -4786,7 +4786,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuDocListene
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.cpp	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,506 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -5297,7 +5297,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.cp
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.h	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,88 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -5390,7 +5390,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuService.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuUtils.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuUtils.h	2015-09-17 18:17:12.693429730 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuUtils.h	2015-09-17 22:38:32.428566987 +0100
 @@ -0,0 +1,59 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -5453,8 +5453,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsNativeMenuUtils.h
 +#endif /* __nsNativeMenuUtils_h__ */
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWidgetFactory.cpp
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/nsWidgetFactory.cpp	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWidgetFactory.cpp	2015-09-17 18:17:12.693429730 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/nsWidgetFactory.cpp	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWidgetFactory.cpp	2015-09-17 22:38:32.428566987 +0100
 @@ -49,6 +49,9 @@
  #include "GfxInfoX11.h"
  #endif
@@ -5525,8 +5525,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWidgetFactory.cpp
  
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.cpp
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/nsWindow.cpp	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.cpp	2015-09-17 18:17:12.693429730 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/nsWindow.cpp	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.cpp	2015-09-17 22:38:32.432566995 +0100
 @@ -4922,6 +4922,11 @@
      return NS_OK;
  }
@@ -5541,8 +5541,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.cpp
                           bool aIsWheel, bool aAlwaysRollup)
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.h
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/nsWindow.h	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.h	2015-09-17 18:17:12.693429730 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/nsWindow.h	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.h	2015-09-17 22:38:32.432566995 +0100
 @@ -33,6 +33,8 @@
  
  #include "IMContextWrapper.h"
@@ -5572,8 +5572,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsWindow.h
  class nsChildWindow : public nsWindow {
 Index: firefox-trunk-43.0~a1~hg20150916r262830/xpfe/appshell/nsWebShellWindow.cpp
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/xpfe/appshell/nsWebShellWindow.cpp	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/xpfe/appshell/nsWebShellWindow.cpp	2015-09-17 18:17:12.693429730 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/xpfe/appshell/nsWebShellWindow.cpp	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/xpfe/appshell/nsWebShellWindow.cpp	2015-09-17 22:38:32.432566995 +0100
 @@ -58,6 +58,7 @@
  #include "nsIScreen.h"
  
@@ -5605,8 +5605,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/xpfe/appshell/nsWebShellWindow.cp
      nms->CreateNativeMenuBar(aParentWindow, nullptr);
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/moz.build
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/moz.build	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/moz.build	2015-09-17 18:17:12.693429730 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/gtk/moz.build	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/moz.build	2015-09-17 22:38:32.432566995 +0100
 @@ -20,10 +20,18 @@
      'nsAppShell.cpp',
      'nsBidiKeyboard.cpp',
@@ -5645,8 +5645,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/moz.build
      '/widget',
 Index: firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser.js
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/browser/base/content/browser.js	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser.js	2015-09-17 18:17:12.693429730 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/browser/base/content/browser.js	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser.js	2015-09-17 22:38:32.432566995 +0100
 @@ -4975,6 +4975,8 @@
    let toolbarNodes = Array.slice(gNavToolbox.childNodes);
    toolbarNodes = toolbarNodes.concat(gNavToolbox.externalToolbars);
@@ -5658,8 +5658,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/browser/base/content/browser.js
  
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/moz.build
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/moz.build	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/moz.build	2015-09-17 18:17:12.693429730 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/widget/moz.build	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/moz.build	2015-09-17 22:38:32.432566995 +0100
 @@ -37,10 +37,12 @@
          'nsITaskbarProgress.idl',
      ]
@@ -5676,8 +5676,8 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/moz.build
  # Don't build the DSO under the 'build' directory as windows does.
 Index: firefox-trunk-43.0~a1~hg20150916r262830/modules/libpref/init/all.js
 ===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/modules/libpref/init/all.js	2015-09-17 18:17:12.697429732 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/modules/libpref/init/all.js	2015-09-17 18:17:12.697429732 +0100
+--- firefox-trunk-43.0~a1~hg20150916r262830.orig/modules/libpref/init/all.js	2015-09-17 22:38:32.436567004 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/modules/libpref/init/all.js	2015-09-17 22:38:32.432566995 +0100
 @@ -211,6 +211,9 @@
  pref("browser.sessionhistory.max_total_viewers", -1);
  
