@@ -246,7 +246,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsDbusmenu.h
 Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp	2015-09-17 23:13:38.217689117 +0100
++++ firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp	2015-09-17 23:19:48.934614587 +0100
 @@ -0,0 +1,866 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
@@ -510,7 +510,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/widget/gtk/nsMenu.cpp
 +}
 +
 +static void
-+DispatchMouseEvent(nsIContent *aTarget, uint32_t aMsg)
++DispatchMouseEvent(nsIContent *aTarget, mozilla::EventMessage aMsg)
 +{
 +    if (!aTarget) {
 +        return;
