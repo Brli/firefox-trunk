@@ -1,7 +1,12 @@
-firefox-trunk (42.0~a1~hg20150809r257018-0ubuntu2) UNRELEASED; urgency=medium
+firefox-trunk (43.0~a1~hg20150916r262830-0ubuntu1) UNRELEASED; urgency=medium
 
   * Install the gtk2 directory
     - update debian/firefox.install.in
+  * Refresh patches
+    - update debian/patches/unity-menubar.patch
+  * Remove patches fixed upstream
+    - remove debian/patches/dont-hardcode-softfp-on-armhf.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 10 Aug 2015 21:45:17 +0100
 
