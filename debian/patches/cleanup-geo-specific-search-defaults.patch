@@ -1,0 +1,48 @@
+Description: Clean up region defaults on partner builds where
+ geoSpecificDefaults is disabled, else users who inadvertently ended up
+ with these defaults will remain on them forever
+Author: Chris Coulson <chris.coulson@canonical.com>
+Bug-Ubuntu: https://launchpad.net/bugs/1485741
+Forwarded: no
+
+Index: firefox-40.0+build4/toolkit/components/search/nsSearchService.js
+===================================================================
+--- firefox-40.0+build4.orig/toolkit/components/search/nsSearchService.js	2015-08-19 09:21:03.000000000 +0100
++++ firefox-40.0+build4/toolkit/components/search/nsSearchService.js	2015-08-19 10:44:17.341830082 +0100
+@@ -483,6 +483,20 @@
+   }
+ }
+ 
++// Clear up the region default on partner builds where
++// browser.search.geoSpecificDefaults is disabled, else users who inadvertently
++// ended up with these defaults will remain on them forever. See
++// https://launchpad.net/bugs/1485741
++function maybeClearRegionDefaults() {
++  if (geoSpecificDefaultsEnabled() || !isPartnerBuild()) {
++    return;
++  }
++
++  engineMetadataService.setGlobalAttr("searchDefault", "");
++  engineMetadataService.setGlobalAttr("searchDefaultHash", "");
++  engineMetadataService.setGlobalAttr("searchDefaultExpir", Date.now());
++}
++
+ // A method to determine if we are in the United States (US) for the search
+ // service.
+ // It uses a browser.search.region pref (which typically comes from a geoip
+@@ -3488,6 +3502,7 @@
+     LOG("_syncInit start");
+     this._initStarted = true;
+     migrateRegionPrefs();
++    maybeClearRegionDefaults();
+     try {
+       this._syncLoadEngines();
+     } catch (ex) {
+@@ -3514,6 +3529,7 @@
+    */
+   _asyncInit: function SRCH_SVC__asyncInit() {
+     migrateRegionPrefs();
++    maybeClearRegionDefaults();
+     return Task.spawn(function() {
+       LOG("_asyncInit start");
+       try {

@@ -22,3 +22,5 @@ unity-menubar.patch
 support-coinstallable-trunk-build.patch
 set-prgname-to-remoting-name.patch
 ubuntu-search-defaults.patch
+disable-geo-specific-search-defaults-for-us.patch
+cleanup-geo-specific-search-defaults.patch

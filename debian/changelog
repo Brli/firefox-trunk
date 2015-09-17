@@ -17,6 +17,11 @@ firefox-trunk (43.0~a1~hg20150916r262830-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/series
     - update debian/rules
     - remove all manifest files from debian/searchplugins
+  * Disable geo-specific search defaults, and clean up profiles that have
+    been inadvertently switched to the wrong search default (LP: #1485741)
+    - add debian/patches/disable-geo-specific-search-defaults-for-us.patch
+    - add debian/patches/cleanup-geo-specific-search-defaults.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 10 Aug 2015 21:45:17 +0100
 
