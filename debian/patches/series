@@ -22,4 +22,3 @@ unity-menubar.patch
 support-coinstallable-trunk-build.patch
 set-prgname-to-remoting-name.patch
 ubuntu-search-defaults.patch
-backout-bmo1162569.patch

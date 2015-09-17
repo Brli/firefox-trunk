@@ -8,6 +8,15 @@ firefox-trunk (43.0~a1~hg20150916r262830-0ubuntu1) UNRELEASED; urgency=medium
   * Remove patches fixed upstream
     - remove debian/patches/dont-hardcode-softfp-on-armhf.patch
     - update debian/patches/series
+  * Drop backout-bmo1162569.patch and update how we install our distribution
+    searchplugins
+    - update debian/build/rules.mk
+    - add debian/config/searchplugins.conf
+    - add debian/install-distribution-searchplugins.py
+    - remove debian/patches/backout-bmo1162569.patch
+    - update debian/patches/series
+    - update debian/rules
+    - remove all manifest files from debian/searchplugins
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 10 Aug 2015 21:45:17 +0100
 

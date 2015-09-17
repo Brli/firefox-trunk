@@ -88,15 +88,24 @@ install/firefox::
 endif
 endif
 
-binary-post-install/$(MOZ_PKG_NAME)::
-	rm -f debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/distribution/searchplugins/locale/en-US/ddg.xml
+binary-post-install/$(MOZ_PKG_NAME):: install-distribution-searchplugins-$(MOZ_PKG_NAME)
 
-$(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)):: binary-post-install/%: install-webapprt-langpack-links-%
-	rm -f debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/*/ddg.xml
+$(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)):: binary-post-install/%: install-webapprt-langpack-links-% install-distribution-searchplugins-%
 
 install-webapprt-langpack-links-%: XPIS = $(notdir $(wildcard debian/$*/$(MOZ_ADDONDIR)/extensions/*.xpi))
 install-webapprt-langpack-links-%:
 	$(foreach xpi,$(XPIS),dh_link -p$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
+
+$(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-distribution-searchplugins-% :
+	@echo ""
+	@echo "Installing distribution searchplugins for $*"
+$(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-distribution-searchplugins-% : install-distribution-searchplugins-IMPL-%
+$(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-distribution-searchplugins-% :
+	@echo ""
+
+install-distribution-searchplugins-IMPL-%:
+	$(foreach lang,$(call locales_for_langpack,$*), \
+		python debian/install-distribution-searchplugins.py -c debian/config/searchplugins.conf -l $(lang) -u $(firstword $(wildcard $(MOZ_DISTDIR)/xpi-stage/locale-$(lang)/browser/chrome/$(lang)/locale/browser/searchplugins) $(MOZ_DISTDIR)/bin/browser/chrome/en-US/locale/browser/searchplugins) -d debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang) -s debian/searchplugins;)
 
 make-langpack-preinsts:: $(foreach langpack,$(MOZ_LOCALE_PKGS),debian/$(langpack).preinst)
 $(patsubst %,debian/%.preinst,$(MOZ_LOCALE_PKGS)) :: debian/%.preinst : debian/$(MOZ_PKG_NAME)-locale.preinst
