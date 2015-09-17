@@ -3,6 +3,7 @@ firefox-trunk (43.0~a1~hg20150916r262830-0ubuntu1) UNRELEASED; urgency=medium
   * Install the gtk2 directory
     - update debian/firefox.install.in
   * Refresh patches
+    - update debian/patches/ubuntu-ua-string-changes.patch
     - update debian/patches/unity-menubar.patch
   * Remove patches fixed upstream
     - remove debian/patches/dont-hardcode-softfp-on-armhf.patch
