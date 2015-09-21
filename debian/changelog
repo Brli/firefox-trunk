@@ -1,4 +1,4 @@
-firefox-trunk (43.0~a1~hg20150916r262830-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (43.0~a1~hg20150921r263466-0ubuntu1) vivid; urgency=medium
 
   * Install the gtk2 directory
     - update debian/firefox.install.in
