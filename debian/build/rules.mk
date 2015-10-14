@@ -192,8 +192,8 @@ pkgconfig_files = \
 	$(MOZ_PKGCONFIG_FILES) \
 	$(NULL)
 
-debian/tests/control: debian/tests/control.in
-	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/tests/control.in > debian/tests/control
+#debian/tests/control: debian/tests/control.in
+#	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/tests/control.in > debian/tests/control
 
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/config/locales.shipped debian/config/locales.all
 	@echo ""
@@ -402,12 +402,13 @@ echo-%:
 
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 clean::
-	cp debian/tests/control debian/tests/control.old
+#	cp debian/tests/control debian/tests/control.old
 	cp debian/config/locales.shipped debian/config/locales.shipped.old
-clean:: debian/tests/control refresh-supported-locales
+#clean:: debian/tests/control refresh-supported-locales
+clean:: refresh-supported-locales
 	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
 	$(call cmp_auto_generated_file,debian/control)
-	$(call cmp_auto_generated_file,debian/tests/control)
+#	$(call cmp_auto_generated_file,debian/tests/control)
 endif
 
 clean::

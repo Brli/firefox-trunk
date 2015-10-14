@@ -3,6 +3,9 @@ firefox-trunk (44.0~a1~hg20151014r267590-0ubuntu1) UNRELEASED; urgency=medium
   * Refresh patches
     - update debian/patches/unity-menubar.patch
     - update debian/patches/support-coinstallable-trunk-builds.patch
+  * Ensure the autopkgtests don't run
+    - remove debian/tests/control
+    - update debian/build/rules.mk
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 14 Oct 2015 13:35:01 +0100
 
