@@ -58,7 +58,7 @@ Provides: www-browser,
 	iceweasel,
 	gnome-www-browser,
 	${app:Provides}
-Suggests: ttf-lyx,
+Suggests: fonts-lyx,
 	${support:Suggests}
 Breaks: ${transitional:Breaks}
 Replaces: ${transitional:Replaces}
