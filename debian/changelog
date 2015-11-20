@@ -2,6 +2,7 @@ firefox-trunk (45.0~a1~hg20151119r273359-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches:
     * update debian/patches/normalize-distribution-searchplugins.patch
+    * update debian/patches/unity-menubar.patch
   * Drop debian/patches/cleanup-geo-specific-search-defaults.patch - this
     shouldn't be needed now
 
