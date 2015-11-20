@@ -7,11 +7,11 @@ Forwarded: no
  toolkit/components/search/nsSearchService.js |    9 +++++++++
  1 file changed, 9 insertions(+)
 
-Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearchService.js
+Index: firefox-trunk-45.0~a1~hg20151119r273359/toolkit/components/search/nsSearchService.js
 ===================================================================
---- firefox-trunk-41.0~a1~hg20150706r251448.orig/toolkit/components/search/nsSearchService.js	2015-07-06 14:38:25.502892340 +0100
-+++ firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearchService.js	2015-07-06 14:38:25.466892238 +0100
-@@ -50,6 +50,7 @@
+--- firefox-trunk-45.0~a1~hg20151119r273359.orig/toolkit/components/search/nsSearchService.js	2015-11-20 13:30:00.280078306 +0000
++++ firefox-trunk-45.0~a1~hg20151119r273359/toolkit/components/search/nsSearchService.js	2015-11-20 13:30:00.236078144 +0000
+@@ -54,6 +54,7 @@
  const MODE_TRUNCATE = 0x20;
  
  // Directory service keys
@@ -19,7 +19,7 @@ Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearc
  const NS_APP_SEARCH_DIR_LIST  = "SrchPluginsDL";
  const NS_APP_DISTRIBUTION_SEARCH_DIR_LIST = "SrchPluginsDistDL";
  const NS_APP_USER_SEARCH_DIR  = "UsrSrchPlugns";
-@@ -3896,6 +3897,13 @@
+@@ -3382,6 +3383,13 @@
        if (!file.isFile() || file.fileSize == 0 || file.isHidden())
          continue;
  
@@ -32,4 +32,4 @@ Index: firefox-trunk-41.0~a1~hg20150706r251448/toolkit/components/search/nsSearc
 +
        var fileURL = NetUtil.ioService.newFileURI(file).QueryInterface(Ci.nsIURL);
        var fileExtension = fileURL.fileExtension.toLowerCase();
-       var isWritable = isInProfile && file.isWritable();
+ 

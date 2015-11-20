@@ -1,3 +1,12 @@
+firefox-trunk (45.0~a1~hg20151119r273359-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Refresh patches:
+    * update debian/patches/normalize-distribution-searchplugins.patch
+  * Drop debian/patches/cleanup-geo-specific-search-defaults.patch - this
+    shouldn't be needed now
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Fri, 20 Nov 2015 13:11:51 +0000
+
 firefox-trunk (44.0~a1~hg20151029r270021-0ubuntu1) vivid; urgency=medium
 
   * Refresh patches
