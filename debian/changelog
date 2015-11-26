@@ -1,10 +1,13 @@
-firefox-trunk (45.0~a1~hg20151119r273359-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (45.0~a1~hg20151125r274040-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches:
     * update debian/patches/normalize-distribution-searchplugins.patch
     * update debian/patches/unity-menubar.patch
   * Drop debian/patches/cleanup-geo-specific-search-defaults.patch - this
     shouldn't be needed now
+  * Amazon has been dropped from the Turkish language pack. Update
+    debian/config/searchplugins.conf accordingly
+  * Update debian/firefox.install.in now that the theme is not unpacked
 
  -- Chris Coulson <chris.coulson@canonical.com>  Fri, 20 Nov 2015 13:11:51 +0000
 
