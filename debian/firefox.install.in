@@ -17,7 +17,6 @@
 @MOZ_LIBDIR@/omni.ja
 @MOZ_LIBDIR@/*.so
 @MOZ_LIBDIR@/*.ini
-@MOZ_LIBDIR@/chrome.manifest
 @MOZ_LIBDIR@/dependentlibs.list
 %%ifdef MOZ_ENABLE_BREAKPAD
 @MOZ_LIBDIR@/Throbber-small.gif
