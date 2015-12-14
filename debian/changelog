@@ -1,4 +1,4 @@
-firefox-trunk (45.0~a1~hg20151201r274903-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (45.0~a1~hg20151213r276278-0ubuntu1) wily; urgency=medium
 
   * Refresh patches:
     * update debian/patches/normalize-distribution-searchplugins.patch
