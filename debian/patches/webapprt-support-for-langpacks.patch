@@ -1,8 +1,14 @@
-Index: firefox-trunk-16.0~a1~hg20120702r98108/browser/locales/generic/install.rdf
+Description: Enable language packs to be loaded by the webapp runtime.
+ Hardcoding the application ID here is a bit of a hack - not sure if there's
+ a better way we could do this.
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
+Index: firefox-trunk-46.0~a1~hg20160105r278453/toolkit/locales/generic/install.rdf
 ===================================================================
---- firefox-trunk-16.0~a1~hg20120702r98108.orig/browser/locales/generic/install.rdf	2012-07-02 11:00:54.000000000 +0100
-+++ firefox-trunk-16.0~a1~hg20120702r98108/browser/locales/generic/install.rdf	2012-07-02 18:39:31.579194413 +0100
-@@ -26,5 +26,13 @@
+--- firefox-trunk-46.0~a1~hg20160105r278453.orig/toolkit/locales/generic/install.rdf	2016-01-05 12:26:35.000000000 +0000
++++ firefox-trunk-46.0~a1~hg20160105r278453/toolkit/locales/generic/install.rdf	2016-01-05 18:07:31.105178457 +0000
+@@ -28,5 +28,13 @@
          <em:maxVersion>@MOZ_APP_MAXVERSION@</em:maxVersion>
        </Description>
      </em:targetApplication>
