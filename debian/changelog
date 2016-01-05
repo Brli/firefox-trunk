@@ -2,6 +2,9 @@ firefox-trunk (46.0~a1~hg20160105r278453-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/webapprt-support-for-langpacks.patch
+  * Fix libvpx build with gcc 5.3
+    - add debian/patches/libvpx-incomplete-array-parameters.patch
+    - update debian/patches/series
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 05 Jan 2016 17:55:43 +0000
 
