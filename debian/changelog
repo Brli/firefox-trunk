@@ -1,10 +1,16 @@
-firefox-trunk (46.0~a1~hg20160105r278453-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (46.0~a1~hg20160120r280663-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/webapprt-support-for-langpacks.patch
   * Fix libvpx build with gcc 5.3
     - add debian/patches/libvpx-incomplete-array-parameters.patch
     - update debian/patches/series
+  * Stop using system hyphenation patterns for now - we only did this
+    previously to fit on a CD, and a review of the mappings is long overdue
+    - remove debian/patches/dont-include-hyphenation-patterns.patch
+    - update debian/patches/series
+    - update debian/firefox.links.in
+    - update debian/vendor-gre.js
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 05 Jan 2016 17:55:43 +0000
 
