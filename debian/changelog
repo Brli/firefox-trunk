@@ -1,4 +1,4 @@
-firefox-trunk (46.0~a1~hg20160120r280663-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (46.0~a1~hg20160108r279112-0ubuntu1) wily; urgency=medium
 
   * Refresh patches
     - update debian/patches/webapprt-support-for-langpacks.patch
