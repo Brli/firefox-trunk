@@ -5691,19 +5691,6 @@ Index: firefox-trunk-45.0~a1~hg20151125r274040/modules/libpref/init/all.js
  pref("ui.click_hold_context_menus", false);
  // Duration of timeout of incremental search in menus (ms).  0 means infinite.
  pref("ui.menu.incremental_search.timeout", 1000);
-Index: firefox-trunk-45.0~a1~hg20151125r274040/widget/gtk/nsIdleServiceGTK.cpp
-===================================================================
---- firefox-trunk-45.0~a1~hg20151125r274040.orig/widget/gtk/nsIdleServiceGTK.cpp	2015-11-26 00:46:44.677069351 +0000
-+++ firefox-trunk-45.0~a1~hg20151125r274040/widget/gtk/nsIdleServiceGTK.cpp	2015-11-26 00:46:44.609068902 +0000
-@@ -13,6 +13,8 @@
- #include "prlink.h"
- #include "mozilla/Logging.h"
- 
-+using namespace mozilla;
-+
- static PRLogModuleInfo* sIdleLog = nullptr;
- 
- typedef bool (*_XScreenSaverQueryExtension_fn)(Display* dpy, int* event_base,
 Index: firefox-trunk-45.0~a1~hg20151125r274040/widget/gtk/nsScreenGtk.cpp
 ===================================================================
 --- firefox-trunk-45.0~a1~hg20151125r274040.orig/widget/gtk/nsScreenGtk.cpp	2015-11-26 00:46:44.677069351 +0000

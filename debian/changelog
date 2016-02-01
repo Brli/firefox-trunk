@@ -1,6 +1,8 @@
-firefox-trunk (46.0~a1~hg20160108r279112-0ubuntu2) UNRELEASED; urgency=medium
+firefox-trunk (47.0~a1~hg20160201r282529-0ubuntu1) UNRELEASED; urgency=medium
 
   * Update the DuckDuckGo search plugin
+  * Refresh patches:
+    * update debian/patches/unity-menubar.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 27 Jan 2016 21:08:46 +0000
 
