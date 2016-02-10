@@ -31,40 +31,38 @@ class InvalidTagError(Exception):
   def __str__(self):
     return "Tag %s is invalid" % self.tag
 
-def do_exec(args, quiet=True, ignore_error=False, cwd=None):
-  if quiet == False:
-    print 'Running %s%s' % (' '.join([x for x in args]), '' if cwd == None else (' in %s' % cwd))
+def CheckCall(args, cwd=None, quiet=False):
+  with open(os.devnull, "w") as devnull:
+    p = subprocess.Popen(args, cwd=cwd,
+                         stdout = devnull if quiet == True else None,
+                         stderr = devnull if quiet == True else None)
+    r = p.wait()
+    if r is not 0: raise subprocess.CalledProcessError(r, args)
 
-  out = ''
-  p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
-  while p.poll() == None:
-    (r, w, e) = select.select([p.stdout], [], [], 5)
-    for f in r:
-      d = f.read()
-      out += d
-      if quiet == False:
-        print d
-
-  if p.returncode != 0 and ignore_error == False:
-    raise Exception("Command '%s' returned exit-status %d:\n%s" % (args[0], p.returncode, p.stderr.read()))
-
-  return (p.returncode, out)
+def CheckOutput(args, cwd=None):
+  p = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE)
+  r = p.wait()
+  if r is not 0: raise subprocess.CalledProcessError(r, args)
+  return p.stdout.read()
 
 def ensure_cache(repo, cache):
   dest = os.path.join(cache, os.path.basename(repo))
   if os.path.isdir(dest):
-    (ret, out) = do_exec(['hg', 'summary'], cwd=dest, quiet=True, ignore_error=True)
-    if ret == 0:
+
+    try:
+      CheckCall(['hg', 'summary'], cwd=dest, quiet=True)
       print 'Cache location %s exists, using it' % dest
-      do_exec(['hg', 'pull', repo], quiet=False, cwd=dest)
-      do_exec(['hg', 'update'], quiet=False, cwd=dest)
+      CheckCall(['hg', 'pull', repo], cwd=dest)
+      CheckCall(['hg', 'update'], cwd=dest)
       return
+    except:
+      pass
 
   if not os.path.isdir(cache):
     os.makedirs(cache)
 
   print 'Creating cache location %s' % dest
-  do_exec(['hg', 'clone', repo, dest], quiet=False)
+  CheckCall(['hg', 'clone', repo, dest])
 
 def do_checkout(source, dest, tag=None):
   dest = os.path.abspath(dest)
@@ -72,14 +70,14 @@ def do_checkout(source, dest, tag=None):
   if dest_parent != '' and not os.path.isdir(dest_parent):
     os.makedirs(dest_parent)
 
-  do_exec(['hg', 'clone', source, dest], quiet=False)
+  CheckCall(['hg', 'clone', source, dest])
 
   try:
     args = ['hg', 'update']
     if tag != None:
       args.append('-r')
       args.append(tag)
-    do_exec(args, quiet=False, cwd=dest)
+    CheckCall(args, cwd=dest)
   except:
     if tag != None:
       raise Exception("Revision %s not found in %s" % (tag, source))
@@ -198,6 +196,10 @@ class TarballCreator(OptionParser):
 
         checkout_source(repo, cache, '', tag=tag)
 
+        with open('SOURCE_CHANGESET', 'w') as fd:
+          rev = CheckOutput(['hg', 'parent', '--template={node}'])
+          fd.write(rev)
+
         need_moz = get_setting(settings, 'run-client-script', False)
         if need_moz:
           print '\n'
@@ -213,7 +215,7 @@ class TarballCreator(OptionParser):
           if tag != None:
             args.append('--comm-rev=%s' % tag)
             args.append('--mozilla-rev=%s' % tag)
-          do_exec(args, quiet=False)
+          CheckCall(args)
           print '\n'
 
         l10ndir = 'l10n'
@@ -242,8 +244,8 @@ class TarballCreator(OptionParser):
 
                   try:
                     checkout_source(os.path.join(l10nbase, locale), os.path.join(cache, 'l10n') if cache != None else None, 'l10n/' + locale, tag=tag)
-                    (ret, out) = do_exec(['hg', 'tip'], cwd='l10n/' + locale, quiet=True)
-                    for line in out.split('\n'):
+                    
+                    for line in CheckOutput(['hg', 'tip'], cwd='l10n/' + locale).split('\n'):
                       if line.startswith('changeset:'):
                         changesets.write('%s %s\n' % (locale, line.split()[1].strip()))
                         print 'Got changeset %s' % line.split()[1].strip()
@@ -311,8 +313,7 @@ class TarballCreator(OptionParser):
           version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
 
         if tag == None:
-          (ret, out) = do_exec(['hg', 'tip'], quiet=True)
-          for line in out.split('\n'):
+          for line in CheckOutput(['hg', 'tip']).split('\n'):
             if line.startswith('changeset:'):
               rev = line.split()[1].split(':')[0].strip()
               changeset = line.split()[1].split(':')[1].strip()
@@ -327,8 +328,7 @@ class TarballCreator(OptionParser):
           if need_moz:
             # Embed the moz revision in the version number too. Allows us to respin dailies for comm-central
             # even if the only changes landed in mozilla-central
-            (ret, out) = do_exec(['hg', 'tip'], cwd='mozilla', quiet=True)
-            for line in out.split('\n'):
+            for line in CheckOutput(['hg', 'tip'], cwd='mozilla').split('\n'):
               if line.startswith('changeset:'):
                 version += '.%s' % line.split()[1].split(':')[0].strip()
                 break
@@ -381,7 +381,7 @@ class TarballCreator(OptionParser):
             for include in settings['includes']:
               args.append(os.path.join(topsrcdir, include))
 
-            do_exec(args, quiet=False)
+            CheckCall(args)
 
 def main():
   creator = TarballCreator()

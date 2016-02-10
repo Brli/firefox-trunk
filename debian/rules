@@ -46,6 +46,15 @@ MOZ_PKGCONFIG_FILES = \
 	debian/pkgconfig/mozilla-plugin.pc \
 	$(NULL)
 
+ifeq (1,${MOZ_OFFICIAL_BUILD})
+export MOZILLA_OFFICIAL=1
+endif
+ifeq (1,${MOZ_ENABLE_TELEMETRY})
+export MOZ_TELEMETRY_REPORTING=1
+export MOZ_SOURCE_REPO=${MOZILLA_REPO}
+export MOZ_SOURCE_CHANGESET=$(shell cat $(DEB_SRCDIR)/SOURCE_CHANGESET)
+endif
+
 include $(CURDIR)/debian/build/rules.mk
 
 #MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_LIBDIR)/testing/run_mochitest \
