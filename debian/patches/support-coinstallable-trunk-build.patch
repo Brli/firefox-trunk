@@ -4,10 +4,10 @@ Description: Introduce --with-app-profile to change the profile location, so
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-44.0~a1~hg20151014r267590/configure.in
+Index: firefox-trunk-44.0~a1~hg20151014r267590/old-configure.in
 ===================================================================
---- firefox-trunk-44.0~a1~hg20151014r267590.orig/configure.in	2015-10-14 13:35:55.735334166 +0100
-+++ firefox-trunk-44.0~a1~hg20151014r267590/configure.in	2015-10-14 13:39:40.219878730 +0100
+--- firefox-trunk-44.0~a1~hg20151014r267590.orig/old-configure.in	2015-10-14 13:35:55.735334166 +0100
++++ firefox-trunk-44.0~a1~hg20151014r267590/old-configure.in	2015-10-14 13:39:40.219878730 +0100
 @@ -3985,6 +3985,15 @@
      MOZ_APP_BASENAME="$WITH_APP_BASENAME"
  fi

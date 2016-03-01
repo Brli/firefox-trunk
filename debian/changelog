@@ -1,8 +1,10 @@
-firefox-trunk (47.0~a1~hg20160210r283735-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (47.0~a1~hg20160226r285735-0ubuntu1) UNRELEASED; urgency=medium
 
   * Update the DuckDuckGo search plugin
   * Refresh patches:
-    * update debian/patches/unity-menubar.patch
+    - update debian/patches/unity-menubar.patch
+    - update debian/patches/support-coinstallable-trunk-build.patch
+    - update debian/patches/allow-lockPref-everywhere.patch
   * Add support for enabling Telemetry
     - update debian/build/create-tarball.py
     - update debian/config/branch.mk
