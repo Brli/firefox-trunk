@@ -10,10 +10,10 @@ Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
  modules/libpref/src/prefread.h   |    4 +++-
  4 files changed, 17 insertions(+), 6 deletions(-)
 
-Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefread.cpp
+Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160226r285735.orig/modules/libpref/prefread.cpp	2016-03-01 21:29:36.459175013 +0000
-+++ firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefread.cpp	2016-03-01 21:42:36.737948561 +0000
+--- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefread.cpp	2016-03-02 20:57:38.833107916 +0000
++++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp	2016-03-02 20:58:31.053833964 +0000
 @@ -43,6 +43,7 @@
  #define BITS_PER_HEX_DIGIT      4
  
@@ -54,13 +54,11 @@ Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefread.cpp
                  } else {
                    ps->smatch = kPref;
                  }
-@@ -252,10 +257,10 @@
+@@ -252,8 +257,10 @@
          /* name parsing */
          case PREF_PARSE_UNTIL_NAME:
              if (c == '\"' || c == '\'') {
 -                ps->fdefault = (ps->smatch == kPref || ps->smatch == kPrefSticky);
--                ps->fdefault = (ps->smatch == kPref ||
--                                ps->smatch == kPrefSticky);
 +                ps->fdefault = (ps->smatch == kPref || ps->smatch == kPrefSticky ||
 +                                ps->smatch == kLockPref);
                  ps->fstickydefault = (ps->smatch == kPrefSticky);
@@ -68,10 +66,10 @@ Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefread.cpp
                  ps->quotechar = c;
                  ps->nextstate = PREF_PARSE_UNTIL_COMMA; /* return here when done */
                  state = PREF_PARSE_QUOTED_STRING;
-Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefread.h
+Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.h
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160226r285735.orig/modules/libpref/prefread.h	2016-03-01 21:29:36.459175013 +0000
-+++ firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefread.h	2016-03-01 21:43:37.590164302 +0000
+--- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefread.h	2016-03-02 20:57:38.833107916 +0000
++++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.h	2016-03-02 20:57:38.829107857 +0000
 @@ -34,7 +34,8 @@
                             PrefValue   val,
                             PrefType    type,
@@ -90,10 +88,10 @@ Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefread.h
  } PrefParseState;
  
  /**
-Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefapi.h
+Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.h
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160226r285735.orig/modules/libpref/prefapi.h	2016-03-01 21:29:36.459175013 +0000
-+++ firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefapi.h	2016-03-01 21:44:27.166340009 +0000
+--- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefapi.h	2016-03-02 20:57:38.833107916 +0000
++++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.h	2016-03-02 20:57:38.829107857 +0000
 @@ -243,7 +243,8 @@
                            PrefValue   value,
                            PrefType    type,
@@ -104,10 +102,10 @@ Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefapi.h
  
  #ifdef __cplusplus
  }
-Index: firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefapi.cpp
+Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.cpp
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160226r285735.orig/modules/libpref/prefapi.cpp	2016-03-01 21:29:36.459175013 +0000
-+++ firefox-trunk-47.0~a1~hg20160226r285735/modules/libpref/prefapi.cpp	2016-03-01 21:45:50.502635261 +0000
+--- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefapi.cpp	2016-03-02 20:57:38.833107916 +0000
++++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.cpp	2016-03-02 20:57:38.829107857 +0000
 @@ -947,7 +947,8 @@
                           PrefValue   value,
                           PrefType    type,
