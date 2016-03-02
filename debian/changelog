@@ -9,6 +9,7 @@ firefox-trunk (47.0~a1~hg20160301r286302-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/build/create-tarball.py
     - update debian/config/branch.mk
     - update debian/rules
+  * Drop libvpx-incomplete-array-paramters.patch - this bug was fixed in gcc
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 27 Jan 2016 21:08:46 +0000
 
