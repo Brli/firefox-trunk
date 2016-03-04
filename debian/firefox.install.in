@@ -2,6 +2,7 @@
 # MOZ_ADDONDIR) and searchplugins/ (installed in distribution/searchplugins)
 @MOZ_LIBDIR@/browser/chrome
 @MOZ_LIBDIR@/browser/components
+@MOZ_LIBDIR@/browser/features
 @MOZ_LIBDIR@/browser/icons
 @MOZ_LIBDIR@/browser/blocklist.xml
 @MOZ_LIBDIR@/browser/chrome.manifest

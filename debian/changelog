@@ -10,6 +10,8 @@ firefox-trunk (47.0~a1~hg20160303r286575-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/config/branch.mk
     - update debian/rules
   * Drop libvpx-incomplete-array-paramters.patch - this bug was fixed in gcc
+  * Install the contents of browser/features
+    - update debian/firefox.install.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Wed, 27 Jan 2016 21:08:46 +0000
 
