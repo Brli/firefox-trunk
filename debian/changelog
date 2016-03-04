@@ -1,4 +1,4 @@
-firefox-trunk (47.0~a1~hg20160301r286302-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (47.0~a1~hg20160303r286575-0ubuntu1) UNRELEASED; urgency=medium
 
   * Update the DuckDuckGo search plugin
   * Refresh patches:
