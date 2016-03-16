@@ -3,6 +3,8 @@ firefox-trunk (48.0~a1~hg20160313r288515-0ubuntu1) UNRELEASED; urgency=medium
   * Refresh patches
     - update debian/patches/support-coinstallable-trunk-build.patch
   * Remove obsolete configure options from debian/config/mozconfig.in
+  * Drop gstreamer build dependencies - gstreamer support was removed
+    before Christmas
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 15 Mar 2016 23:50:00 +0000
 
