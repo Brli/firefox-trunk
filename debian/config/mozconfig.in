@@ -3,9 +3,7 @@ ac_add_options --build=@DEB_BUILD_GNU_TYPE@
 %%endif
 ac_add_options --host=@DEB_HOST_GNU_TYPE@
 ac_add_options --prefix=/usr
-ac_add_options --libexecdir=/@MOZ_LIBDIR@
 ac_add_options --with-l10n-base=@TOPSRCDIR@/@DEB_BUILDDIR@/l10n
-ac_add_options --srcdir=@TOPSRCDIR@/@DEB_BUILDDIR@
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/@MOZ_OBJDIR@
 ac_add_options --enable-release
 ac_add_options --disable-install-strip
@@ -47,7 +45,6 @@ ac_add_options @MOZ_BRANDING_OPTION@
 mk_add_options MOZ_PGO=1
 mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'
 %%endif
-ac_add_options --disable-gnomevfs
 ac_add_options --enable-gio
 ac_add_options --enable-update-channel=@MOZ_UPDATE_CHANNEL@
 %%ifdef MOZ_DEBUG
@@ -72,9 +69,6 @@ ac_add_options --disable-webrtc
 %%endif
 %%if DEB_HOST_ARCH == arm64
 ac_add_options --enable-system-ffi
-%%endif
-%%if DISTRIB_VERSION >= 1310
-ac_add_options --enable-gstreamer=1.0
 %%endif
 # Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
 # Note: these are for Ubuntu use ONLY. For your own distribution,
