@@ -99,11 +99,7 @@ endif
 
 binary-post-install/$(MOZ_PKG_NAME):: install-distribution-searchplugins-$(MOZ_PKG_NAME)
 
-$(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)):: binary-post-install/%: install-webapprt-langpack-links-% install-distribution-searchplugins-%
-
-install-webapprt-langpack-links-%: XPIS = $(notdir $(wildcard debian/$*/$(MOZ_ADDONDIR)/extensions/*.xpi))
-install-webapprt-langpack-links-%:
-	$(foreach xpi,$(XPIS),dh_link -p$* $(MOZ_ADDONDIR)/extensions/$(xpi) $(MOZ_LIBDIR)/webapprt/extensions/$(xpi);)
+$(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)):: binary-post-install/%: install-distribution-searchplugins-%
 
 $(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-distribution-searchplugins-% :
 	@echo ""

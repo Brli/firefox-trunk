@@ -2,7 +2,6 @@
 @MOZ_ADDONDIR@/extensions
 @MOZ_ADDONDIR@/searchplugins
 @MOZ_ADDONDIR@/plugins
-@MOZ_LIBDIR@/webapprt/extensions
 etc/apparmor.d/disable
 etc/apport/native-origins.d
 etc/apport/blacklist.d
