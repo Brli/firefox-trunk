@@ -1,4 +1,4 @@
-firefox-trunk (48.0~a1~hg20160313r288515-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (48.0~a1~hg20160410r292537-0ubuntu1) UNRELEASED; urgency=medium
 
   * Refresh patches
     - update debian/patches/support-coinstallable-trunk-build.patch
