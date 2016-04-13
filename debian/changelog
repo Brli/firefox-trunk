@@ -1,5 +1,6 @@
-firefox-trunk (48.0~a1~hg20160410r292537-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (48.0~a1~hg20160413r292953-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
     - update debian/patches/support-coinstallable-trunk-build.patch
   * Remove obsolete configure options from debian/config/mozconfig.in
@@ -12,6 +13,9 @@ firefox-trunk (48.0~a1~hg20160410r292537-0ubuntu1) UNRELEASED; urgency=medium
     - remove ebian/patches/webapprt-support-for-langpacks.patch
     - update debian/rules
     - remove debian/vendor-webapprt.js
+
+  [ Will Cooke <will.cooke@canonical.com> ]
+  * Remove U1 from Ubuntu bookmarks patch (LP: #1322724)
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 15 Mar 2016 23:50:00 +0000
 
