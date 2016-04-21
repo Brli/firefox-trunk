@@ -1,8 +1,9 @@
-firefox-trunk (48.0~a1~hg20160413r292953-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (48.0~a1~hg20160420r293987-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson <chris.coulson@canonical.com> ]
   * Refresh patches
     - update debian/patches/support-coinstallable-trunk-build.patch
+    - update debian/patches/unity-menubar.patch
   * Remove obsolete configure options from debian/config/mozconfig.in
   * Drop gstreamer build dependencies - gstreamer support was removed
     before Christmas
