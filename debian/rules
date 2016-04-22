@@ -20,7 +20,7 @@ MOZ_BRANDING		:= unofficial
 endif
 endif
 MOZ_BRANDING_DIR 	:= $(MOZ_APP)/branding/$(MOZ_BRANDING)
-ifeq (official,$(BRANDING))
+ifeq (official,$(MOZ_BRANDING))
 MOZ_BRANDING_OPTION	:= --enable-official-branding
 else
 MOZ_BRANDING_OPTION	:= --with-branding=$(MOZ_BRANDING_DIR)

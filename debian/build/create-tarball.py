@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import print_function
 from optparse import OptionParser
 import os
 import os.path
@@ -13,23 +14,6 @@ import xml.dom.minidom
 import json
 import tempfile
 import select
-
-class DependencyNotFound(Exception):
-  def __init__(self, depend):
-    super(DependencyNotFound, self).__init__(depend)
-    self.path = depend[0]
-    self.package = depend[1]
-
-  def __str__(self):
-    return 'Dependency not found: %s. Please install package %s' % (self.path, self.package)
-
-class InvalidTagError(Exception):
-  def __init__(self, tag):
-    super(InvalidTagError, self).__init__(tag)
-    self.tag = tag
-
-  def __str__(self):
-    return "Tag %s is invalid" % self.tag
 
 def CheckCall(args, cwd=None, quiet=False):
   with open(os.devnull, "w") as devnull:
@@ -51,7 +35,7 @@ def ensure_cache(repo, cache):
 
     try:
       CheckCall(['hg', 'summary'], cwd=dest, quiet=True)
-      print 'Cache location %s exists, using it' % dest
+      print('Cache location %s exists, using it' % dest)
       CheckCall(['hg', 'pull', repo], cwd=dest)
       CheckCall(['hg', 'update'], cwd=dest)
       return
@@ -61,10 +45,10 @@ def ensure_cache(repo, cache):
   if not os.path.isdir(cache):
     os.makedirs(cache)
 
-  print 'Creating cache location %s' % dest
+  print('Creating cache location %s' % dest)
   CheckCall(['hg', 'clone', repo, dest])
 
-def do_checkout(source, dest, tag=None):
+def do_checkout(source, dest, rev=None):
   dest = os.path.abspath(dest)
   dest_parent = os.path.dirname(dest)
   if dest_parent != '' and not os.path.isdir(dest_parent):
@@ -72,27 +56,20 @@ def do_checkout(source, dest, tag=None):
 
   CheckCall(['hg', 'clone', source, dest])
 
-  try:
-    args = ['hg', 'update']
-    if tag != None:
-      args.append('-r')
-      args.append(tag)
-    CheckCall(args, cwd=dest)
-  except:
-    if tag != None:
-      raise Exception("Revision %s not found in %s" % (tag, source))
-    raise
+  args = ['hg', 'update']
+  if rev != None:
+    args.append('-r')
+    args.append(rev)
+  CheckCall(args, cwd=dest)
 
-def checkout_source(repo, cache, dest, tag=None):
-  print '\n'
-  print '*** Checking out source from %s%s ***' % (repo, ' using cache from %s' % cache if cache != None else '')
+def checkout_source(repo, cache, dest, rev=None):
+  print('*** Checking out source from %s%s ***' % (repo, ' using cache from %s' % cache if cache != None else ''))
   local_source = None
   if cache != None:
     ensure_cache(repo, cache)
     local_source = os.path.join(cache, os.path.basename(repo))
   source = repo if local_source == None else local_source
-  do_checkout(source, dest, tag=tag)
-  print '\n'
+  do_checkout(source, dest, rev=rev)
 
 def get_setting(settings, name, default=None):
   return settings[name] if name in settings else default
@@ -100,11 +77,9 @@ def get_setting(settings, name, default=None):
 class ScopedTmpdir:
   def __enter__(self):
     self._tmpdir = tempfile.mkdtemp()
-    print 'Using temporary directory %s' % self._tmpdir
     return self._tmpdir
 
   def __exit__(self, type, value, traceback):
-    print 'Cleaning temporary directory %s' % self._tmpdir
     shutil.rmtree(self._tmpdir)
 
 class ScopedWorkingDirectory:
@@ -117,8 +92,6 @@ class ScopedWorkingDirectory:
       os.makedirs(self._wd)
 
     os.chdir(self._wd)
-
-    return self._saved_wd
 
   def __exit__(self, type, value, traceback):
     os.chdir(self._saved_wd)
@@ -141,10 +114,11 @@ class TarballCreator(OptionParser):
     self.add_option('-r', '--repo', dest='repo', help='The remote repository from which to pull the main source')
     self.add_option('-c', '--cache', dest='cache', help='A local cache of the remote repositories')
     self.add_option('-l', '--l10n-base-repo', dest='l10nbase', help='The base directory of the remote repositories to pull l10n data from')
-    self.add_option('-t', '--tag', dest='tag', help='Release tag to base the checkout on')
+    self.add_option('-v', '--version', dest='version', help='Release version to base the checkout on')
+    self.add_option('--build', dest='build', help='Release build to base the checkout on (must be used with --version)')
     self.add_option('-n', '--name', dest='name', help='The package name')
+    self.add_option('-b', '--basename', dest='basename', help='The package basename')
     self.add_option('-a', '--application', dest='application', help='The application to build')
-    self.add_option('-m', '--mozdir', dest='mozdir', help='The location of the Mozilla source', default='')
 
   def run(self):
     (options, args) = self.parse_args()
@@ -158,6 +132,9 @@ class TarballCreator(OptionParser):
     if options.application == None:
       self.error('Must specify an application')
 
+    if options.build != None and options.version == None:
+      self.error('--build must be used with --version')
+
     if options.cache != None and not os.path.isabs(options.cache):
       options.cache = os.path.join(os.getcwd(), options.cache)
 
@@ -165,110 +142,115 @@ class TarballCreator(OptionParser):
     with open('debian/config/tarball.conf', 'r') as fd:
       settings = json.load(fd)
 
-    DEPENDENCIES = [
-      [ 'hg', 'mercurial' ],
-      [ 'tar', 'tar' ]
-    ]
-
-    print 'Checking dependencies'
-    for depend in DEPENDENCIES:
-      if os.path.isabs(depend[0]) and not os.access(depend[0], os.X_OK):
-        raise DependencyNotFound(depend)
-      else:
-        found = False
-        for path in os.environ['PATH'].split(os.pathsep):
-          if os.access(os.path.join(path, depend[0]), os.X_OK):
-            found = True
-            break
-        if found == False:
-          raise DependencyNotFound(depend)
-
     repo = options.repo
     cache = options.cache
-    tag = options.tag
+    version = options.version
+    build = options.build
     application = options.application
     l10nbase = options.l10nbase
     name = options.name
-    mozdir = options.mozdir
+    basename = options.basename
+    if basename == None:
+      basename = name
+
+    main_rev = None
+    locale_revs = {}
+
+    if version != None:
+      if build == None:
+        build = 1
+      print('*** Determing revisions to use for checkouts ***')
+      main_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/linux-x86_64/en-US/%s-%s.txt'
+                       % (basename, version, build, basename, version))
+      u = urllib.urlopen(main_info_url)
+      for line in u.readlines():
+        line = line.strip()
+        if not line.startswith(repo):
+          continue
+        r = re.match('%s/rev/(.*)' % repo, line)
+        if r == None:
+          print("Badly formatted file '%s'" % main_info_url, file=sys.stderr)
+          sys.exit(1)
+        main_rev = r.group(1)
+        print('Revision to be used for main checkout: %s' % main_rev)
+        break
+
+      if not main_rev:
+        print('Failed to determine revision for main checkout', file=sys.stderr)
+        sys.exit(1)
+
+      l10n_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/l10n_changesets.txt'
+                       % (basename, version, build))
+      u = urllib.urlopen(l10n_info_url)
+      for line in u.readlines():
+        line = line.strip()
+        if line == '':
+          continue
+        l = line.split(' ')[0].strip()
+        r = line.split(' ')[1].strip()
+        print('Revision to be used for %s locale checkout: %s' % (l, r))
+        locale_revs[l] = r
 
     with ScopedTmpdir() as tmpdir:
-      with ScopedWorkingDirectory(os.path.join(tmpdir, name)) as saved_wd:
+      print('*** Using temporary directory %s ***' % tmpdir)
+      orig_cwd = os.getcwd()
+      with ScopedWorkingDirectory(os.path.join(tmpdir, name)):
 
-        checkout_source(repo, cache, '', tag=tag)
+        checkout_source(repo, cache, '', rev=main_rev)
 
         with open('SOURCE_CHANGESET', 'w') as fd:
           rev = CheckOutput(['hg', 'parent', '--template={node}'])
           fd.write(rev)
 
-        need_moz = get_setting(settings, 'run-client-script', False)
-        if need_moz:
-          print '\n'
-          print '*** Running checkout script ***'
-          moz_local = None
-          moz_repo = os.path.join(os.path.dirname(repo), os.path.basename(repo).replace('comm', 'mozilla'))
-          if cache != None:
-            ensure_cache(moz_repo, cache)
-            moz_local = os.path.join(cache, os.path.basename(moz_repo))
-          args = [sys.executable, 'client.py', 'checkout']
-          if moz_local != None:
-            args.append('--mozilla-repo=%s' % moz_local)
-          if tag != None:
-            args.append('--comm-rev=%s' % tag)
-            args.append('--mozilla-rev=%s' % tag)
-          CheckCall(args)
-          print '\n'
-
         l10ndir = 'l10n'
         if not os.path.isdir(l10ndir):
           os.makedirs(l10ndir)
 
-        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(l10ndir, 'compare-locales'), tag=tag)
+        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(l10ndir, 'compare-locales'), rev='RELEASE_AUTOMATION')
 
-        # XXX: In the future we may have an additional l10n source from Launchpad
         if l10nbase != None:
           got_locales = set()
           shipped_locales = os.path.join(application, 'locales/shipped-locales')
-          all_locales = os.path.join(application, 'locales/all-locales')
           blacklist_file = get_setting(settings, 'l10n-blacklist')
 
-          print '\n\n'
-          print '*** Checking out l10n source from %s%s ***' % (l10nbase, ' using cache from %s' % cache if cache != None else '')
-
           with open(os.path.join(l10ndir, 'changesets'), 'w') as changesets:
-            for l10nlist in [shipped_locales, all_locales]:
-              with open(l10nlist, 'r') as fd:
-                for line in fd:
-                  locale = line.split(' ')[0].strip()
-                  if locale.startswith('#') or locale in got_locales or locale == 'en-US':
-                    continue
+            with open(shipped_locales, 'r') as fd:
+              for line in fd:
+                locale = line.split(' ')[0].strip()
+                if locale.startswith('#') or locale in got_locales or locale == 'en-US':
+                  continue
 
-                  try:
-                    checkout_source(os.path.join(l10nbase, locale), os.path.join(cache, 'l10n') if cache != None else None, 'l10n/' + locale, tag=tag)
-                    
-                    for line in CheckOutput(['hg', 'tip'], cwd='l10n/' + locale).split('\n'):
-                      if line.startswith('changeset:'):
-                        changesets.write('%s %s\n' % (locale, line.split()[1].strip()))
-                        print 'Got changeset %s' % line.split()[1].strip()
-                        break
+                try:
+                  rev = None
+                  if main_rev != None:
+                    if locale not in locale_revs:
+                      print("Rev for locale '%s' is not present in l10n_changesets.txt" % locale)
+                      sys.exit(1)
+                    rev = locale_revs[locale]
+                  checkout_source(os.path.join(l10nbase, locale), os.path.join(cache, 'l10n') if cache != None else None, 'l10n/' + locale, rev=rev)
+                  
+                  for line in CheckOutput(['hg', 'tip'], cwd='l10n/' + locale).split('\n'):
+                    if line.startswith('changeset:'):
+                      changesets.write('%s %s\n' % (locale, line.split()[1].strip()))
+                      break
 
-                    got_locales.add(locale)
+                  got_locales.add(locale)
 
-                  except Exception as e:
-                    # checkout_locale will throw if the specified revision isn't found
-                    # In this case, omit it from the tarball
-                    print >> sys.stderr, 'Failed to checkout %s: %s' % (locale, e)
-                    localedir = os.path.join(l10ndir, locale)
-                    if os.path.exists(localedir):
-                      shutil.rmtree(localedir)
+                except Exception as e:
+                  # checkout_locale will throw if the specified revision isn't found
+                  # In this case, omit it from the tarball
+                  print('Failed to checkout %s: %s' % (locale, e), file=sys.stderr)
+                  localedir = os.path.join(l10ndir, locale)
+                  if os.path.exists(localedir):
+                    shutil.rmtree(localedir)
 
           # When we also use translations from Launchpad, there will be a file
           # containing the additional locales we want to ship (locales.extra??)
-          print '\n\n'
-          print '*** Checking that required locales are present ***'
+          print('*** Checking that required locales are present ***')
 
           blacklist = set()
           if blacklist_file:
-            with open(os.path.join(saved_wd, blacklist_file), 'r') as fd:
+            with open(os.path.join(orig_cwd, blacklist_file), 'r') as fd:
               for line in fd:
                 locale = re.sub(r'([^#]*)#?.*', r'\1', line).strip()
                 if locale is '':
@@ -283,14 +265,12 @@ class TarballCreator(OptionParser):
                 continue
 
               if line == 'en-US':
-                print 'Ignoring en-US'
                 continue
 
               locale = line.split(' ')[0].strip()
               platforms = line.split(' ')[1:]
 
               if locale in blacklist:
-                print 'Ignoring blacklisted locale %s' % locale
                 continue
 
               if len(platforms) > 0:
@@ -300,19 +280,17 @@ class TarballCreator(OptionParser):
                     for_linux = True
                     break
                 if not for_linux:
-                  print 'Ignoring %s (not for linux)' % locale
                   continue
 
               if not locale in got_locales:
-                raise Exception("Locale %s is missing from the source tarball" % locale)
+                print("Locale %s is missing from the source tarball" % locale)
+                sys.exit(1)
 
-              print '%s - Yes' % locale
-
-        version = None
         with open(os.path.join(options.application, 'config/version.txt'), 'r') as vf:
-          version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
+          upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
 
-        if tag == None:
+        if version == None:
+          version = upstream_version
           for line in CheckOutput(['hg', 'tip']).split('\n'):
             if line.startswith('changeset:'):
               rev = line.split()[1].split(':')[0].strip()
@@ -324,50 +302,15 @@ class TarballCreator(OptionParser):
           t = time.strptime(dom.getElementsByTagName('updated')[0].firstChild.nodeValue.strip(), '%Y-%m-%dT%H:%M:%SZ')
           version += '~hg%s%s%sr%s' % ('%02d' % t.tm_year, '%02d' % t.tm_mon, '%02d' % t.tm_mday, rev)
           u.close()
-
-          if need_moz:
-            # Embed the moz revision in the version number too. Allows us to respin dailies for comm-central
-            # even if the only changes landed in mozilla-central
-            for line in CheckOutput(['hg', 'tip'], cwd='mozilla').split('\n'):
-              if line.startswith('changeset:'):
-                version += '.%s' % line.split()[1].split(':')[0].strip()
-                break
         else:
-          parsed = False
-          version_from_upstream = version
-          version = ''
-          build = None
-          for comp in tag.split('_')[1:]:
-            if parsed == True:
-              raise InvalidTagError(tag)
+          version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', version))
+          version += '+build%s' % build
+          if not version.startswith(upstream_version):
+            print("Version '%s' does not match upstream version '%s'" % (version, upstream_version))
+            sys.exit(1)
 
-            if comp.startswith('BUILD'):
-              build = re.sub(r'BUILD', '', comp)
-              parsed = True
-            elif comp.startswith('RELEASE'):
-              parsed = True
-            else:
-              if version != '':
-                version += '.'
-              version += re.sub(r'~$', '', re.sub(r'([0-9]*)(.*)', r'\1~\2', comp))
-
-            if parsed == True and version == '':
-              raise InvalidTagError(tag)
-
-          if version == '':
-            raise InvalidTagError(tag)
-
-          if build != None:
-            version += '+build%s' % build
-
-          if not version.startswith(version_from_upstream):
-            raise InvalidTagError(tag)
-
-        print '\n\n'
-        print '*** Upstream version is %s' % version
-
-        print '\n\n'
-        print '*** Packing tarball ***'
+        print('*** Debian package version is %s' % version)
+        print('*** Packing tarball ***')
         with ScopedWorkingDirectory('..'):
           topsrcdir = '%s-%s' % (name, version)
           with ScopedRename(name, topsrcdir):
@@ -377,7 +320,7 @@ class TarballCreator(OptionParser):
               args.append('--exclude')
               args.append(os.path.join(topsrcdir , exclude['path']))
             args.append('-f')
-            args.append(os.path.join(saved_wd, '%s_%s.orig.tar.bz2' % (name, version)))
+            args.append(os.path.join(orig_cwd, '%s_%s.orig.tar.bz2' % (name, version)))
             for include in settings['includes']:
               args.append(os.path.join(topsrcdir, include))
 

@@ -14,6 +14,8 @@ firefox-trunk (48.0~a1~hg20160420r293987-0ubuntu1) UNRELEASED; urgency=medium
     - remove ebian/patches/webapprt-support-for-langpacks.patch
     - update debian/rules
     - remove debian/vendor-webapprt.js
+  * Update debian/build/create-tarball.py to create release tarballs correctly
+    after changes to the upstream release automation
 
   [ Will Cooke <will.cooke@canonical.com> ]
   * Remove U1 from Ubuntu bookmarks patch (LP: #1322724)

@@ -384,15 +384,15 @@ $(if $(wildcard debian/stamp-monkey-patch-upstream-files),$(error Too late to us
 	echo "$(2) $(1)" >> debian/monkey-patch-files.sh)
 endef
 
-get-orig-source: ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -a $(MOZ_APP)
-ifdef DEBIAN_TAG
-get-orig-source: ARGS += -t $(DEBIAN_TAG)
+get-orig-source: ARGS = -r $(MOZILLA_REPO) -l $(L10N_REPO) -n $(MOZ_PKG_NAME) -b $(MOZ_PKG_BASENAME) -a $(MOZ_APP)
+ifdef UPSTREAM_VERSION
+get-orig-source: ARGS += -v $(UPSTREAM_VERSION)
+endif
+ifdef UPSTREAM_BUILD
+get-orig-source: ARGS += --build $(UPSTREAM_BUILD)
 endif
 ifdef LOCAL_BRANCH
 get-orig-source: ARGS += -c $(LOCAL_BRANCH)
-endif
-ifdef MOZ_MOZDIR
-get-orig-source: ARGS += -m $(MOZ_MOZDIR)
 endif
 get-orig-source:
 	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/create-tarball.py $(ARGS)
