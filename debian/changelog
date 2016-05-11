@@ -1,6 +1,8 @@
-firefox-trunk (48.0~a1~hg20160424r294498-0ubuntu2) UNRELEASED; urgency=medium
+firefox-trunk (49.0~a1~hg20160511r296951-0ubuntu1) UNRELEASED; urgency=medium
 
   * Add ICU data file to the install
+  * Refresh patches:
+    - update debian/patches/allow-lockPref-everywhere.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Tue, 10 May 2016 23:13:58 +0100
 

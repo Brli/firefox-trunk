@@ -10,11 +10,11 @@ Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
  modules/libpref/src/prefread.h   |    4 +++-
  4 files changed, 17 insertions(+), 6 deletions(-)
 
-Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp
+Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.cpp
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefread.cpp	2016-03-02 20:57:38.833107916 +0000
-+++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp	2016-03-02 20:58:31.053833964 +0000
-@@ -43,6 +43,7 @@
+--- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefread.cpp
++++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.cpp
+@@ -43,6 +43,7 @@ enum {
  #define BITS_PER_HEX_DIGIT      4
  
  static const char kUserPref[] = "user_pref";
@@ -22,7 +22,7 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp
  static const char kPref[] = "pref";
  static const char kPrefSticky[] = "sticky_pref";
  static const char kTrue[] = "true";
-@@ -131,7 +132,7 @@
+@@ -146,7 +147,7 @@ pref_DoCallback(PrefParseState *ps)
          break;
      }
      (*ps->reader)(ps->closure, ps->lb, value, ps->vtype, ps->fdefault,
@@ -31,7 +31,7 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp
      return true;
  }
  
-@@ -191,6 +192,7 @@
+@@ -215,6 +216,7 @@ PREF_ParseBuf(PrefParseState *ps, const
                  ps->vtype = PrefType::Invalid;
                  ps->fdefault = false;
                  ps->fstickydefault = false;
@@ -39,7 +39,7 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp
              }
              switch (c) {
              case '/':       /* begin comment block or line? */
-@@ -201,11 +203,14 @@
+@@ -225,11 +227,14 @@ PREF_ParseBuf(PrefParseState *ps, const
                  break;
              case 'u':       /* indicating user_pref */
              case 's':       /* indicating sticky_pref */
@@ -54,7 +54,7 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp
                  } else {
                    ps->smatch = kPref;
                  }
-@@ -252,8 +257,10 @@
+@@ -277,8 +282,10 @@ PREF_ParseBuf(PrefParseState *ps, const
          /* name parsing */
          case PREF_PARSE_UNTIL_NAME:
              if (c == '\"' || c == '\'') {
@@ -66,11 +66,11 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.cpp
                  ps->quotechar = c;
                  ps->nextstate = PREF_PARSE_UNTIL_COMMA; /* return here when done */
                  state = PREF_PARSE_QUOTED_STRING;
-Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.h
+Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.h
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefread.h	2016-03-02 20:57:38.833107916 +0000
-+++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.h	2016-03-02 20:57:38.829107857 +0000
-@@ -34,7 +34,8 @@
+--- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefread.h
++++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.h
+@@ -34,7 +34,8 @@ typedef void (*PrefReader)(void       *c
                             PrefValue   val,
                             PrefType    type,
                             bool        defPref,
@@ -78,9 +78,9 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.h
 +                           bool        stickyPref,
 +                           bool        lockPref);
  
- /* structure fields are private */
- typedef struct PrefParseState {
-@@ -56,6 +57,7 @@
+ /**
+  * Report any errors or warnings we encounter during parsing.
+@@ -62,6 +63,7 @@ typedef struct PrefParseState {
      PrefType    vtype;      /* PREF_STRING,INT,BOOL          */
      bool        fdefault;   /* true if (default) pref        */
      bool        fstickydefault; /* true if (sticky) pref     */
@@ -88,11 +88,11 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefread.h
  } PrefParseState;
  
  /**
-Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.h
+Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.h
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefapi.h	2016-03-02 20:57:38.833107916 +0000
-+++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.h	2016-03-02 20:57:38.829107857 +0000
-@@ -243,7 +243,8 @@
+--- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefapi.h
++++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.h
+@@ -243,7 +243,8 @@ void PREF_ReaderCallback( void *closure,
                            PrefValue   value,
                            PrefType    type,
                            bool        isDefault,
@@ -102,11 +102,11 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.h
  
  #ifdef __cplusplus
  }
-Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.cpp
+Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.cpp
 ===================================================================
---- firefox-trunk-47.0~a1~hg20160301r286302.orig/modules/libpref/prefapi.cpp	2016-03-02 20:57:38.833107916 +0000
-+++ firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.cpp	2016-03-02 20:57:38.829107857 +0000
-@@ -947,7 +947,8 @@
+--- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefapi.cpp
++++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.cpp
+@@ -946,7 +946,8 @@ void PREF_ReaderCallback(void       *clo
                           PrefValue   value,
                           PrefType    type,
                           bool        isDefault,
@@ -116,7 +116,7 @@ Index: firefox-trunk-47.0~a1~hg20160301r286302/modules/libpref/prefapi.cpp
  
  {
      uint32_t flags = 0;
-@@ -960,4 +961,6 @@
+@@ -959,4 +960,6 @@ void PREF_ReaderCallback(void       *clo
          flags |= kPrefForceSet;
      }
      pref_HashPref(pref, value, type, flags);
