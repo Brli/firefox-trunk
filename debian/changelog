@@ -1,4 +1,4 @@
-firefox-trunk (49.0~a1~hg20160602r300071-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (49.0~a1~hg20160602r300071-0ubuntu1) xenial; urgency=medium
 
   * Add ICU data file to the install
   * Refresh patches:
