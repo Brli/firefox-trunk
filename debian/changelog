@@ -1,4 +1,11 @@
-firefox-trunk (49.0~a1~hg20160602r300071-0ubuntu1) xenial; urgency=medium
+firefox-trunk (50.0~a1~hg20160627r302685-0ubuntu2) UNRELEASED; urgency=medium
+
+  * Disable startup notification for now
+    - update debian/config/mozconfig.in
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Thu, 28 Jul 2016 21:44:38 +0100
+
+firefox-trunk (50.0~a1~hg20160627r302685-0ubuntu1) xenial; urgency=medium
 
   * Add ICU data file to the install
   * Refresh patches:
