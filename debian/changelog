@@ -1,7 +1,10 @@
-firefox-trunk (50.0~a1~hg20160627r302685-0ubuntu2) UNRELEASED; urgency=medium
+firefox-trunk (50.0~a1~hg20160801r307508-0ubuntu1) UNRELEASED; urgency=medium
 
   * Disable startup notification for now
     - update debian/config/mozconfig.in
+  * Refresh patches:
+    - update debian/patches/allow-lockPref-everywhere.patch
+    - update debian/patches/support-coinstallable-trunk-build.patch
 
  -- Chris Coulson <chris.coulson@canonical.com>  Thu, 28 Jul 2016 21:44:38 +0100
 

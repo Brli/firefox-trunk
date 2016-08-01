@@ -10,10 +10,10 @@ Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
  modules/libpref/src/prefread.h   |    4 +++-
  4 files changed, 17 insertions(+), 6 deletions(-)
 
-Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.cpp
+Index: firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefread.cpp
 ===================================================================
---- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefread.cpp
-+++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.cpp
+--- firefox-trunk-50.0~a1~hg20160801r307508.orig/modules/libpref/prefread.cpp
++++ firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefread.cpp
 @@ -43,6 +43,7 @@ enum {
  #define BITS_PER_HEX_DIGIT      4
  
@@ -66,10 +66,10 @@ Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.cpp
                  ps->quotechar = c;
                  ps->nextstate = PREF_PARSE_UNTIL_COMMA; /* return here when done */
                  state = PREF_PARSE_QUOTED_STRING;
-Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.h
+Index: firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefread.h
 ===================================================================
---- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefread.h
-+++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.h
+--- firefox-trunk-50.0~a1~hg20160801r307508.orig/modules/libpref/prefread.h
++++ firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefread.h
 @@ -34,7 +34,8 @@ typedef void (*PrefReader)(void       *c
                             PrefValue   val,
                             PrefType    type,
@@ -88,25 +88,11 @@ Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefread.h
  } PrefParseState;
  
  /**
-Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.h
+Index: firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefapi.cpp
 ===================================================================
---- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefapi.h
-+++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.h
-@@ -243,7 +243,8 @@ void PREF_ReaderCallback( void *closure,
-                           PrefValue   value,
-                           PrefType    type,
-                           bool        isDefault,
--                          bool        isStickyDefault);
-+                          bool        isStickyDefault,
-+                          bool        isLocked);
- 
- #ifdef __cplusplus
- }
-Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.cpp
-===================================================================
---- firefox-trunk-49.0~a1~hg20160511r296951.orig/modules/libpref/prefapi.cpp
-+++ firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.cpp
-@@ -946,7 +946,8 @@ void PREF_ReaderCallback(void       *clo
+--- firefox-trunk-50.0~a1~hg20160801r307508.orig/modules/libpref/prefapi.cpp
++++ firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefapi.cpp
+@@ -997,7 +997,8 @@ void PREF_ReaderCallback(void       *clo
                           PrefValue   value,
                           PrefType    type,
                           bool        isDefault,
@@ -116,10 +102,24 @@ Index: firefox-trunk-49.0~a1~hg20160511r296951/modules/libpref/prefapi.cpp
  
  {
      uint32_t flags = 0;
-@@ -959,4 +960,6 @@ void PREF_ReaderCallback(void       *clo
+@@ -1010,4 +1011,6 @@ void PREF_ReaderCallback(void       *clo
          flags |= kPrefForceSet;
      }
      pref_HashPref(pref, value, type, flags);
 +    if (isLocked)
 +       PREF_LockPref(pref, true);
  }
+Index: firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefapi.h
+===================================================================
+--- firefox-trunk-50.0~a1~hg20160801r307508.orig/modules/libpref/prefapi.h
++++ firefox-trunk-50.0~a1~hg20160801r307508/modules/libpref/prefapi.h
+@@ -243,7 +243,8 @@ void PREF_ReaderCallback( void *closure,
+                           PrefValue   value,
+                           PrefType    type,
+                           bool        isDefault,
+-                          bool        isStickyDefault);
++                          bool        isStickyDefault,
++                          bool        isLocked);
+ 
+ 
+ /*
