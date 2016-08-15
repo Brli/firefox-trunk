@@ -1,3 +1,13 @@
+firefox-trunk (51.0~a1~hg20160813r309228-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Add Kaqchikel language pack
+    - update debian/config/locales.all
+    - update debian/config/locales.shipped
+    - update debian/control
+    - update debian/config/searchplugins.conf
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 15 Aug 2016 21:45:51 +0200
+
 firefox-trunk (50.0~a1~hg20160801r307508-0ubuntu1) yakkety; urgency=medium
 
   * Disable startup notification for now
