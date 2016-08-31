@@ -11,6 +11,11 @@ firefox-trunk (51.0~a1~hg20160830r311818-0ubuntu1) UNRELEASED; urgency=medium
   * Refresh patches:
     - update debian/patches/support-coinstallable-trunk-build.patch
     - update debian/patches/unity-menubar.patch
+  * Kaqchikel is not shipped on trunk
+    - update debian/config/locales.shipped
+  * Remove unused --with-google-oauth-keyfile option
+    - update debian/config/mozconfig.in
+    - remove debian/go
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 15 Aug 2016 21:45:51 +0200
 

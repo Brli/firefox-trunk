@@ -274,12 +274,13 @@ Description: Catalan; Valencian language pack for Firefox
 Package: firefox-trunk-locale-cak
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-cak-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Kaqchikel language pack for Firefox
- This package contains Kaqchikel translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-cs
 Architecture: any
