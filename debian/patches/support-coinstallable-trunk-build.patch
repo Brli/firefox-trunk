@@ -4,11 +4,11 @@ Description: Introduce --with-app-profile to change the profile location, so
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: no
 
-Index: firefox-trunk-50.0~a1~hg20160801r307508/old-configure.in
+Index: firefox-trunk-51.0~a1~hg20160830r311818/old-configure.in
 ===================================================================
---- firefox-trunk-50.0~a1~hg20160801r307508.orig/old-configure.in
-+++ firefox-trunk-50.0~a1~hg20160801r307508/old-configure.in
-@@ -2660,6 +2660,15 @@ if test -n "$WITH_APP_BASENAME" ; then
+--- firefox-trunk-51.0~a1~hg20160830r311818.orig/old-configure.in
++++ firefox-trunk-51.0~a1~hg20160830r311818/old-configure.in
+@@ -2448,6 +2448,15 @@ if test -n "$WITH_APP_BASENAME" ; then
      MOZ_APP_BASENAME="$WITH_APP_BASENAME"
  fi
  
@@ -24,15 +24,15 @@ Index: firefox-trunk-50.0~a1~hg20160801r307508/old-configure.in
  # Special cases where we need to AC_DEFINE something. Also a holdover for apps
  # that haven't made a confvars.sh yet. Don't add new stuff here, use
  # MOZ_BUILD_APP.
-Index: firefox-trunk-50.0~a1~hg20160801r307508/build/moz.configure/old.configure
+Index: firefox-trunk-51.0~a1~hg20160830r311818/build/moz.configure/old.configure
 ===================================================================
---- firefox-trunk-50.0~a1~hg20160801r307508.orig/build/moz.configure/old.configure
-+++ firefox-trunk-50.0~a1~hg20160801r307508/build/moz.configure/old.configure
-@@ -274,6 +274,7 @@ def old_configure_options(*options):
+--- firefox-trunk-51.0~a1~hg20160830r311818.orig/build/moz.configure/old.configure
++++ firefox-trunk-51.0~a1~hg20160830r311818/build/moz.configure/old.configure
+@@ -255,6 +255,7 @@ def old_configure_options(*options):
      '--with-android-sdk',
      '--with-app-basename',
      '--with-app-name',
 +    '--with-app-profile',
      '--with-arch',
-     '--with-bing-api-keyfile',
      '--with-branding',
+     '--with-crashreporter-enable-percent',

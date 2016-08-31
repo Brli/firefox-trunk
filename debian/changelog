@@ -1,10 +1,16 @@
-firefox-trunk (51.0~a1~hg20160813r309228-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (51.0~a1~hg20160830r311818-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Add Kaqchikel language pack
     - update debian/config/locales.all
     - update debian/config/locales.shipped
     - update debian/control
     - update debian/config/searchplugins.conf
+
+  [ Chris Coulson ]
+  * Refresh patches:
+    - update debian/patches/support-coinstallable-trunk-build.patch
+    - update debian/patches/unity-menubar.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 15 Aug 2016 21:45:51 +0200
 
