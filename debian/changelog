@@ -17,6 +17,9 @@ firefox-trunk (51.0~a1~hg20160830r311818-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/config/mozconfig.in
     - remove debian/go
 
+  [Chad MILLER]
+  * Update GOOGLE API keys for Ubuntu distro.
+
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 15 Aug 2016 21:45:51 +0200
 
 firefox-trunk (50.0~a1~hg20160801r307508-0ubuntu1) yakkety; urgency=medium
