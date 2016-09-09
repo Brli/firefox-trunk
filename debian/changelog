@@ -17,6 +17,9 @@ firefox-trunk (51.0~a1~hg20160830r311818-0ubuntu1) UNRELEASED; urgency=medium
   * Remove unused --with-google-oauth-keyfile option
     - update debian/config/mozconfig.in
     - remove debian/go
+  * Ensure we generate all of the required checksum files for FIPS mode
+    to work correctly
+    - update debian/build/rukes.mk
 
   [Chad MILLER]
   * Update GOOGLE API keys for Ubuntu distro.
