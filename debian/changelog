@@ -7,6 +7,7 @@ firefox-trunk (51.0~a1~hg20160830r311818-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/control
     - update debian/config/searchplugins.conf
   * Update debian/patches/unity-menubar.patch
+  * Add build-dep on libx11-xcb-dev
 
   [ Chris Coulson ]
   * Refresh patches:
