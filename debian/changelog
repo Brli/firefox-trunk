@@ -1,3 +1,9 @@
+firefox-trunk (52.0~a1~hg20160920r314470-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Update debian/patches/unity-menubar.patch
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 21 Sep 2016 16:06:20 +0200
+
 firefox-trunk (51.0~a1~hg20160908r313244-0ubuntu1) yakkety; urgency=medium
 
   [ Rico Tzschichholz ]

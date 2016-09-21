@@ -3571,7 +3571,7 @@ Index: firefox-trunk-51.0~a1~hg20160830r311818/widget/gtk/nsMenuObject.cpp
 +    bool vis = true;
 +
 +    if (aStyleContext &&
-+        (aStyleContext->StyleDisplay()->mDisplay == StyleDisplay::None_ ||
++        (aStyleContext->StyleDisplay()->mDisplay == StyleDisplay::None ||
 +         aStyleContext->StyleVisibility()->mVisible ==
 +            NS_STYLE_VISIBILITY_COLLAPSE)) {
 +        vis = false;
