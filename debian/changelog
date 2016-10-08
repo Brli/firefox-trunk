@@ -1,6 +1,11 @@
-firefox-trunk (52.0~a1~hg20160920r314470-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (52.0~a1~hg20161006r316739-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Chris Coulson ]
   * Update debian/patches/unity-menubar.patch
+
+  [ Rico Tzschichholz ]
+  * Drop */browser/components from firefox.install.in, browsercomps was merged
+    into xul - https://hg.mozilla.org/mozilla-central/rev/4006b190b344
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 21 Sep 2016 16:06:20 +0200
 
