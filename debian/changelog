@@ -1,7 +1,10 @@
-firefox-trunk (52.0~a1~hg20161006r316739-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (52.0~a1~hg20161027r319780-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson ]
-  * Update debian/patches/unity-menubar.patch
+  * Refresh patches
+    - update debian/patches/unity-menubar.patch
+    - update debian/patches/revert-upstream-search-engine-changes.patch
+    - update debian/patches/ubuntu-bookmarks.patch
 
   [ Rico Tzschichholz ]
   * Drop */browser/components from firefox.install.in, browsercomps was merged
