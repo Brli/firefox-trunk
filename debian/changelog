@@ -5,6 +5,7 @@ firefox-trunk (52.0~a1~hg20161106r321308-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/unity-menubar.patch
     - update debian/patches/revert-upstream-search-engine-changes.patch
     - update debian/patches/ubuntu-bookmarks.patch
+  * Update debian/config/searchplugins.conf
 
   * Add warn-only-on-duplicates.patch to not fail the build on duplicates.
     This is required for the nightly builds, which we rename
