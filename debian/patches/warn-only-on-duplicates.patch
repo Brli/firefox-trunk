@@ -1,0 +1,18 @@
+Description: Don't fail the build when unexpected duplicate files are
+ detected. Required on nightly because we rename firefox to firefox-trunk
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
+Index: firefox-trunk-52.0~a1~hg20161106r321308/browser/installer/Makefile.in
+===================================================================
+--- firefox-trunk-52.0~a1~hg20161106r321308.orig/browser/installer/Makefile.in
++++ firefox-trunk-52.0~a1~hg20161106r321308/browser/installer/Makefile.in
+@@ -10,7 +10,7 @@ include $(topsrcdir)/config/rules.mk
+ MOZ_PKG_REMOVALS = $(srcdir)/removed-files.in
+ 
+ MOZ_PKG_MANIFEST = $(srcdir)/package-manifest.in
+-MOZ_PKG_DUPEFLAGS = -f $(srcdir)/allowed-dupes.mn
++MOZ_PKG_DUPEFLAGS = -f $(srcdir)/allowed-dupes.mn -w
+ 
+ # Some files have been already bundled with xulrunner
+ ifndef MOZ_MULET

@@ -1,7 +1,7 @@
-Index: firefox-trunk-52.0~a1~hg20161027r319780/browser/locales/search/list.json
+Index: firefox-trunk-52.0~a1~hg20161106r321308/browser/locales/search/list.json
 ===================================================================
---- firefox-trunk-52.0~a1~hg20161027r319780.orig/browser/locales/search/list.json
-+++ firefox-trunk-52.0~a1~hg20161027r319780/browser/locales/search/list.json
+--- firefox-trunk-52.0~a1~hg20161106r321308.orig/browser/locales/search/list.json
++++ firefox-trunk-52.0~a1~hg20161106r321308/browser/locales/search/list.json
 @@ -13,12 +13,12 @@
        },
        "US": {
@@ -21,32 +21,32 @@ Index: firefox-trunk-52.0~a1~hg20161027r319780/browser/locales/search/list.json
        },
        "KZ": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
-+          "yandex", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
+-          "yandex-kk", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
++          "yandex-kk", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
          ]
        },
        "BY": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
-+          "yandex", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
+-          "yandex-kk", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
++          "yandex-kk", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
          ]
        },
        "RU": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
-+          "yandex", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
+-          "yandex-kk", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
++          "yandex-kk", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
          ]
        },
        "TR": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
-+          "yandex", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
+-          "yandex-kk", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
++          "yandex-kk", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
          ]
        },
        "UA": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
-+          "yandex", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
+-          "yandex-kk", "google-nocodes", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
++          "yandex-kk", "google", "ddg", "flip", "kaz-kk", "twitter", "wikipedia-kk"
          ]
        }
      },
@@ -54,32 +54,32 @@ Index: firefox-trunk-52.0~a1~hg20161027r319780/browser/locales/search/list.json
        },
        "RU": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
-+          "yandex", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
+-          "yandex-ru", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
++          "yandex-ru", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
          ]
        },
        "BY": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
-+          "yandex", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
+-          "yandex-ru", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
++          "yandex-ru", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
          ]
        },
        "KZ": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
-+          "yandex", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
+-          "yandex-ru", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
++          "yandex-ru", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
          ]
        },
        "TR": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
-+          "yandex", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
+-          "yandex-ru", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
++          "yandex-ru", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
          ]
        },
        "UA": {
          "visibleDefaultEngines": [
--          "yandex", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
-+          "yandex", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
+-          "yandex-ru", "google-nocodes", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
++          "yandex-ru", "google", "ddg", "ozonru", "priceru", "wikipedia-ru", "mailru"
          ]
        }
      },
@@ -120,32 +120,32 @@ Index: firefox-trunk-52.0~a1~hg20161027r319780/browser/locales/search/list.json
        },
        "UA": {
          "visibleDefaultEngines": [
--          "google-nocodes", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
-+          "google", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
+-          "google-nocodes", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
++          "google", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
          ]
        },
        "TR": {
          "visibleDefaultEngines": [
--          "google-nocodes", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
-+          "google", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
+-          "google-nocodes", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
++          "google", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
          ]
        },
        "BY": {
          "visibleDefaultEngines": [
--          "google-nocodes", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
-+          "google", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
+-          "google-nocodes", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
++          "google", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
          ]
        },
        "KZ": {
          "visibleDefaultEngines": [
--          "google-nocodes", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
-+          "google", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
+-          "google-nocodes", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
++          "google", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
          ]
        },
        "RU": {
          "visibleDefaultEngines": [
--          "google-nocodes", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
-+          "google", "yandex", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
+-          "google-nocodes", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
++          "google", "yandex-uk", "meta-ua", "ddg", "wikipedia-uk", "metamarket"
          ]
        }
      },

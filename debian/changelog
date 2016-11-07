@@ -1,10 +1,13 @@
-firefox-trunk (52.0~a1~hg20161027r319780-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (52.0~a1~hg20161106r321308-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson ]
   * Refresh patches
     - update debian/patches/unity-menubar.patch
     - update debian/patches/revert-upstream-search-engine-changes.patch
     - update debian/patches/ubuntu-bookmarks.patch
+
+  * Add warn-only-on-duplicates.patch to not fail the build on duplicates.
+    This is required for the nightly builds, which we rename
 
   [ Rico Tzschichholz ]
   * Drop */browser/components from firefox.install.in, browsercomps was merged
