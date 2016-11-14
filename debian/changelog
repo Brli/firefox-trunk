@@ -6,7 +6,8 @@ firefox-trunk (52.0~a1~hg20161106r321308-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/revert-upstream-search-engine-changes.patch
     - update debian/patches/ubuntu-bookmarks.patch
   * Update debian/config/searchplugins.conf
-
+  * Fix an issue in debian/distribution.ini that was causing malformed URLs
+    to be sent to Mozilla services
   * Add warn-only-on-duplicates.patch to not fail the build on duplicates.
     This is required for the nightly builds, which we rename
 
