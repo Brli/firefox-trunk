@@ -1,4 +1,10 @@
-firefox-trunk (52.0~a1~hg20161106r321308-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (53.0~a1~hg20161124r324155-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 02 Jan 2017 12:33:44 +0100
+
+firefox-trunk (52.0~a1~hg20161106r321308-0ubuntu1) yakkety; urgency=medium
 
   [ Chris Coulson ]
   * Refresh patches
