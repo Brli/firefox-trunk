@@ -1,6 +1,7 @@
-firefox-trunk (53.0~a1~hg20161124r324155-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (53.0~a1~hg20170111r328927-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Chris Coulson ]
+  * Update unity-menubar.patch with the latest version submitted upstream
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 02 Jan 2017 12:33:44 +0100
 
