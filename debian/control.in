@@ -38,7 +38,7 @@ Build-Depends: cdbs,
 	dbus-x11,
 	xvfb,
 	python (>= 2.7),
-	libffi-dev (>= 3.0.9) [arm64]
+	libffi-dev (>= 3.0.9)
 Standards-Version: 3.9.1
 #XS-Testsuite: autopkgtest
 

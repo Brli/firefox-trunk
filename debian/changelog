@@ -3,6 +3,11 @@ firefox-trunk (53.0~a1~hg20170111r328927-0ubuntu1) UNRELEASED; urgency=medium
   [ Chris Coulson ]
   * Update unity-menubar.patch with the latest version submitted upstream
   * Build with --disable-rust for now
+  * Fix LP: #1659922 - Fix Apparmor denials triggered by shared memory usage
+    when e10s is enabled
+
+  [ Rico Tzschichholz ]
+  * Unconditionally build-dep on libffi-dev
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 02 Jan 2017 12:33:44 +0100
 
