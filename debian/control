@@ -38,7 +38,9 @@ Build-Depends: cdbs,
 	dbus-x11,
 	xvfb,
 	python (>= 2.7),
-	libffi-dev (>= 3.0.9)
+	libffi-dev (>= 3.0.9) [powerpc ppc64el s390x],
+	cargo (>= 0.16),
+	rustc (>= 1.15.1)
 Standards-Version: 3.9.1
 #XS-Testsuite: autopkgtest
 
@@ -87,22 +89,12 @@ Description: Safe and easy web browser from Mozilla - debug symbols
 
 Package: firefox-trunk-dev
 Architecture: any
-Section: devel
+Section: oldlibs
 Priority: extra
-Depends: ${shlibs:Depends},
-	${misc:Depends},
-	firefox-trunk (= ${binary:Version})
-Provides: ${app:Provides}
-Conflicts: xulrunner-2.0-dev,
-	xulrunner-1.9.2-dev,
-	xulrunner-1.9-dev,
-	${app:Conflicts}
+Depends: ${misc:Depends},
 Description: Safe and easy web browser from Mozilla - development files
- Firefox delivers safe, easy web browsing. A familiar user interface,
- enhanced security features including protection from online identity theft,
- and integrated search let you get the most out of the web.
- .
- This package contains the headers and SDK for building plugins with Firefox
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
 
 Package: firefox-trunk-mozsymbols
 Architecture: amd64 i386 armel

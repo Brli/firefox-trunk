@@ -42,10 +42,6 @@ MOZ_APPNAME_SUBST_FILES = \
 	debian/$(MOZ_APP_NAME).1 \
 	$(NULL)
 
-MOZ_PKGCONFIG_FILES = \
-	debian/pkgconfig/mozilla-plugin.pc \
-	$(NULL)
-
 ifeq (1,${MOZ_OFFICIAL_BUILD})
 export MOZILLA_OFFICIAL=1
 endif

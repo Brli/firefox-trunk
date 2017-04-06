@@ -314,7 +314,7 @@ class TarballCreator(OptionParser):
         with ScopedWorkingDirectory('..'):
           topsrcdir = '%s-%s' % (name, version)
           with ScopedRename(name, topsrcdir):
-            args = ['tar', '-jc', '--exclude-vcs']
+            args = ['tar', '-jc', '--exclude=.git', '--exclude=.gitattributes', '--exclude=.gitmodules', '--exclude=.hg', '--exclude=.hgignore', '--exclude=.hgtags', '--exclude=.svn']
             for exclude in settings['excludes']:
               args.append('--no-wildcards-match-slash') if exclude['wms'] == False else args.append('--wildcards-match-slash')
               args.append('--exclude')

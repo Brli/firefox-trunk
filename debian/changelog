@@ -1,4 +1,32 @@
-firefox-trunk (53.0~a1~hg20170111r328927-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (55.0~a1~hg20170323r349151-0ubuntu1) yakkety; urgency=medium
+
+  * Build with rustc and cargo
+    - update debian/control{,.in}
+    - update debian/config/mozconfig.in
+  * Don't strip .gitignore files from the tarball. If these are stripped
+    from vendored rust crates, then the build fails
+  * Stop installing the NPAPI headers and make firefox-dev a transitional
+    package
+    - update debian/build/rules.mk
+    - update debian/rules
+    - update debian/control{,.in}
+    - remove debian/firefox-dev.install.in
+    - remove debian/firefox-dev.links.in
+    - remove debian/pkgconfig/mozilla-plugin.pc.in
+  * Refresh patches
+    - update debian/patches/revert-upstream-search-engine-changes.patch
+    - update debian/patches/unity-menubar.patch
+  * Don't build with --enable-system-ffi on arm64. System ffi is only required
+    on non-tier 1 platforms, so only build depend on libffi-dev on powerpc,
+    ppc64el and s390x
+  * Fix LP: #1671273 - Build with --enable-alsa for now to re-enable the
+    unmaintained ALSA backend. Note that problems with the ALSA backend will
+    not block future updates and Ubuntu flavors that ship without Pulseaudio
+    need to participate in maintaining this code
+
+ -- Chris Coulson <chris.coulson@canonical.com>  Mon, 13 Mar 2017 18:42:26 +0000
+
+firefox-trunk (53.0~a1~hg20170115r329516-0ubuntu1) yakkety; urgency=medium
 
   [ Chris Coulson ]
   * Update unity-menubar.patch with the latest version submitted upstream

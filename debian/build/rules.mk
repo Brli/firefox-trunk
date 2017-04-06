@@ -188,10 +188,6 @@ appname_subst_files = \
 	$(MOZ_APPNAME_SUBST_FILES) \
 	$(NULL)
 
-pkgconfig_files = \
-	$(MOZ_PKGCONFIG_FILES) \
-	$(NULL)
-
 #debian/tests/control: debian/tests/control.in
 #	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/tests/control.in > debian/tests/control
 
@@ -269,8 +265,8 @@ debian/stamp-make-langpack-xpi-%:
 		$(MAKE) langpack-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
 	@touch $@
 
-#common-build-arch:: make-langpack-xpis $(pkgconfig_files) make-testsuite run-tests
-common-build-arch:: make-langpack-xpis $(pkgconfig_files)
+#common-build-arch:: make-langpack-xpis make-testsuite run-tests
+common-build-arch:: make-langpack-xpis
 
 install/$(MOZ_PKG_NAME)::
 	@echo "Adding suggests / recommends on support packages"
