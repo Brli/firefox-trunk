@@ -45,7 +45,6 @@ ac_add_options @MOZ_BRANDING_OPTION@
 mk_add_options MOZ_PGO=1
 mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'
 %%endif
-ac_add_options --enable-gio
 ac_add_options --enable-update-channel=@MOZ_UPDATE_CHANNEL@
 %%ifdef MOZ_DEBUG
 ac_add_options --enable-debug

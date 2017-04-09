@@ -1,5 +1,6 @@
-firefox-trunk (55.0~a1~hg20170323r349151-0ubuntu1) yakkety; urgency=medium
+firefox-trunk (55.0~a1~hg20170408r352009-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Chris Coulson ]
   * Build with rustc and cargo
     - update debian/control{,.in}
     - update debian/config/mozconfig.in
@@ -23,6 +24,12 @@ firefox-trunk (55.0~a1~hg20170323r349151-0ubuntu1) yakkety; urgency=medium
     unmaintained ALSA backend. Note that problems with the ALSA backend will
     not block future updates and Ubuntu flavors that ship without Pulseaudio
     need to participate in maintaining this code
+
+  [ Rico Tzschichholz ]
+  * Refresh patches
+    - update debian/patches/unity-menubar.patch
+  * Remove obsolete --enable-gio option
+    - update debian/config/mozconfig.in
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 13 Mar 2017 18:42:26 +0000
 
