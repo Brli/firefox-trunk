@@ -24,6 +24,8 @@ firefox-trunk (55.0~a1~hg20170408r352009-0ubuntu1) UNRELEASED; urgency=medium
     unmaintained ALSA backend. Note that problems with the ALSA backend will
     not block future updates and Ubuntu flavors that ship without Pulseaudio
     need to participate in maintaining this code
+  * Disable ALSA backend for Firefox 55 because it makes the build failure.
+    This will remain disabled until somebody steps up to maintain it
 
   [ Rico Tzschichholz ]
   * Refresh patches
