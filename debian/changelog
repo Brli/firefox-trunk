@@ -29,9 +29,14 @@ firefox-trunk (55.0~a1~hg20170408r352009-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Refresh patches
+    - update debian/patches/ubuntu-search-defaults.patch 
     - update debian/patches/unity-menubar.patch
   * Remove obsolete --enable-gio option
     - update debian/config/mozconfig.in
+  * Refresh shipped locales
+    - update debian/config/locales.*
+    - update debian/config/searchplugins.conf
+    - update debian/control
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 13 Mar 2017 18:42:26 +0000
 
