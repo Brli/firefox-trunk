@@ -120,7 +120,7 @@ Priority: extra
 Depends: ${shlibs:Depends},
 	${misc:Depends},
 	firefox-trunk (= ${binary:Version}),
-	firefox-trunk-locale-af (= ${binary:Version}), firefox-trunk-locale-ar (= ${binary:Version}), firefox-trunk-locale-ast (= ${binary:Version}), firefox-trunk-locale-be (= ${binary:Version}), firefox-trunk-locale-bg (= ${binary:Version}), firefox-trunk-locale-bn (= ${binary:Version}), firefox-trunk-locale-br (= ${binary:Version}), firefox-trunk-locale-bs (= ${binary:Version}), firefox-trunk-locale-ca (= ${binary:Version}), firefox-trunk-locale-cak (= ${binary:Version}), firefox-trunk-locale-cs (= ${binary:Version}), firefox-trunk-locale-cy (= ${binary:Version}), firefox-trunk-locale-da (= ${binary:Version}), firefox-trunk-locale-de (= ${binary:Version}), firefox-trunk-locale-el (= ${binary:Version}), firefox-trunk-locale-en (= ${binary:Version}), firefox-trunk-locale-eo (= ${binary:Version}), firefox-trunk-locale-es (= ${binary:Version}), firefox-trunk-locale-et (= ${binary:Version}), firefox-trunk-locale-eu (= ${binary:Version}), firefox-trunk-locale-fa (= ${binary:Version}), firefox-trunk-locale-fi (= ${binary:Version}), firefox-trunk-locale-fr (= ${binary:Version}), firefox-trunk-locale-fy (= ${binary:Version}), firefox-trunk-locale-ga (= ${binary:Version}), firefox-trunk-locale-gd (= ${binary:Version}), firefox-trunk-locale-gl (= ${binary:Version}), firefox-trunk-locale-gu (= ${binary:Version}), firefox-trunk-locale-he (= ${binary:Version}), firefox-trunk-locale-hi (= ${binary:Version}), firefox-trunk-locale-hr (= ${binary:Version}), firefox-trunk-locale-hu (= ${binary:Version}), firefox-trunk-locale-hy (= ${binary:Version}), firefox-trunk-locale-id (= ${binary:Version}), firefox-trunk-locale-is (= ${binary:Version}), firefox-trunk-locale-it (= ${binary:Version}), firefox-trunk-locale-ja (= ${binary:Version}), firefox-trunk-locale-kk (= ${binary:Version}), firefox-trunk-locale-kn (= ${binary:Version}), firefox-trunk-locale-ko (= ${binary:Version}), firefox-trunk-locale-ku (= ${binary:Version}), firefox-trunk-locale-lg (= ${binary:Version}), firefox-trunk-locale-lt (= ${binary:Version}), firefox-trunk-locale-lv (= ${binary:Version}), firefox-trunk-locale-mai (= ${binary:Version}), firefox-trunk-locale-mk (= ${binary:Version}), firefox-trunk-locale-ml (= ${binary:Version}), firefox-trunk-locale-mr (= ${binary:Version}), firefox-trunk-locale-nb (= ${binary:Version}), firefox-trunk-locale-nl (= ${binary:Version}), firefox-trunk-locale-nn (= ${binary:Version}), firefox-trunk-locale-nso (= ${binary:Version}), firefox-trunk-locale-or (= ${binary:Version}), firefox-trunk-locale-pa (= ${binary:Version}), firefox-trunk-locale-pl (= ${binary:Version}), firefox-trunk-locale-pt (= ${binary:Version}), firefox-trunk-locale-ro (= ${binary:Version}), firefox-trunk-locale-ru (= ${binary:Version}), firefox-trunk-locale-si (= ${binary:Version}), firefox-trunk-locale-sk (= ${binary:Version}), firefox-trunk-locale-sl (= ${binary:Version}), firefox-trunk-locale-sq (= ${binary:Version}), firefox-trunk-locale-sr (= ${binary:Version}), firefox-trunk-locale-sv (= ${binary:Version}), firefox-trunk-locale-ta (= ${binary:Version}), firefox-trunk-locale-te (= ${binary:Version}), firefox-trunk-locale-th (= ${binary:Version}), firefox-trunk-locale-tr (= ${binary:Version}), firefox-trunk-locale-uk (= ${binary:Version}), firefox-trunk-locale-vi (= ${binary:Version}), firefox-trunk-locale-xh (= ${binary:Version}), firefox-trunk-locale-zh-hans (= ${binary:Version}), firefox-trunk-locale-zh-hant (= ${binary:Version}), firefox-trunk-locale-zu (= ${binary:Version}),
+	firefox-trunk-locale-ach (= ${binary:Version}), firefox-trunk-locale-af (= ${binary:Version}), firefox-trunk-locale-an (= ${binary:Version}), firefox-trunk-locale-ar (= ${binary:Version}), firefox-trunk-locale-as (= ${binary:Version}), firefox-trunk-locale-ast (= ${binary:Version}), firefox-trunk-locale-az (= ${binary:Version}), firefox-trunk-locale-be (= ${binary:Version}), firefox-trunk-locale-bg (= ${binary:Version}), firefox-trunk-locale-bn (= ${binary:Version}), firefox-trunk-locale-br (= ${binary:Version}), firefox-trunk-locale-bs (= ${binary:Version}), firefox-trunk-locale-ca (= ${binary:Version}), firefox-trunk-locale-cak (= ${binary:Version}), firefox-trunk-locale-cs (= ${binary:Version}), firefox-trunk-locale-csb (= ${binary:Version}), firefox-trunk-locale-cy (= ${binary:Version}), firefox-trunk-locale-da (= ${binary:Version}), firefox-trunk-locale-de (= ${binary:Version}), firefox-trunk-locale-dsb (= ${binary:Version}), firefox-trunk-locale-el (= ${binary:Version}), firefox-trunk-locale-en (= ${binary:Version}), firefox-trunk-locale-eo (= ${binary:Version}), firefox-trunk-locale-es (= ${binary:Version}), firefox-trunk-locale-et (= ${binary:Version}), firefox-trunk-locale-eu (= ${binary:Version}), firefox-trunk-locale-fa (= ${binary:Version}), firefox-trunk-locale-fi (= ${binary:Version}), firefox-trunk-locale-fr (= ${binary:Version}), firefox-trunk-locale-fy (= ${binary:Version}), firefox-trunk-locale-ga (= ${binary:Version}), firefox-trunk-locale-gd (= ${binary:Version}), firefox-trunk-locale-gl (= ${binary:Version}), firefox-trunk-locale-gn (= ${binary:Version}), firefox-trunk-locale-gu (= ${binary:Version}), firefox-trunk-locale-he (= ${binary:Version}), firefox-trunk-locale-hi (= ${binary:Version}), firefox-trunk-locale-hr (= ${binary:Version}), firefox-trunk-locale-hsb (= ${binary:Version}), firefox-trunk-locale-hu (= ${binary:Version}), firefox-trunk-locale-hy (= ${binary:Version}), firefox-trunk-locale-id (= ${binary:Version}), firefox-trunk-locale-is (= ${binary:Version}), firefox-trunk-locale-it (= ${binary:Version}), firefox-trunk-locale-ja (= ${binary:Version}), firefox-trunk-locale-ka (= ${binary:Version}), firefox-trunk-locale-kab (= ${binary:Version}), firefox-trunk-locale-kk (= ${binary:Version}), firefox-trunk-locale-km (= ${binary:Version}), firefox-trunk-locale-kn (= ${binary:Version}), firefox-trunk-locale-ko (= ${binary:Version}), firefox-trunk-locale-ku (= ${binary:Version}), firefox-trunk-locale-lg (= ${binary:Version}), firefox-trunk-locale-lt (= ${binary:Version}), firefox-trunk-locale-lv (= ${binary:Version}), firefox-trunk-locale-mai (= ${binary:Version}), firefox-trunk-locale-mk (= ${binary:Version}), firefox-trunk-locale-ml (= ${binary:Version}), firefox-trunk-locale-mn (= ${binary:Version}), firefox-trunk-locale-mr (= ${binary:Version}), firefox-trunk-locale-ms (= ${binary:Version}), firefox-trunk-locale-my (= ${binary:Version}), firefox-trunk-locale-nb (= ${binary:Version}), firefox-trunk-locale-nl (= ${binary:Version}), firefox-trunk-locale-nn (= ${binary:Version}), firefox-trunk-locale-nso (= ${binary:Version}), firefox-trunk-locale-oc (= ${binary:Version}), firefox-trunk-locale-or (= ${binary:Version}), firefox-trunk-locale-pa (= ${binary:Version}), firefox-trunk-locale-pl (= ${binary:Version}), firefox-trunk-locale-pt (= ${binary:Version}), firefox-trunk-locale-ro (= ${binary:Version}), firefox-trunk-locale-ru (= ${binary:Version}), firefox-trunk-locale-si (= ${binary:Version}), firefox-trunk-locale-sk (= ${binary:Version}), firefox-trunk-locale-sl (= ${binary:Version}), firefox-trunk-locale-sq (= ${binary:Version}), firefox-trunk-locale-sr (= ${binary:Version}), firefox-trunk-locale-sv (= ${binary:Version}), firefox-trunk-locale-sw (= ${binary:Version}), firefox-trunk-locale-ta (= ${binary:Version}), firefox-trunk-locale-te (= ${binary:Version}), firefox-trunk-locale-th (= ${binary:Version}), firefox-trunk-locale-tr (= ${binary:Version}), firefox-trunk-locale-uk (= ${binary:Version}), firefox-trunk-locale-ur (= ${binary:Version}), firefox-trunk-locale-uz (= ${binary:Version}), firefox-trunk-locale-vi (= ${binary:Version}), firefox-trunk-locale-xh (= ${binary:Version}), firefox-trunk-locale-zh-hans (= ${binary:Version}), firefox-trunk-locale-zh-hant (= ${binary:Version}), firefox-trunk-locale-zu (= ${binary:Version}),
 	python,
 	dbus-x11,
 	xvfb,
@@ -173,6 +173,17 @@ Description: Safe and easy web browser from Mozilla (transitional package)
 
 # Language packs below here
 
+Package: firefox-trunk-locale-ach
+Architecture: any
+Depends: ${misc:Depends}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
+
 Package: firefox-trunk-locale-af
 Architecture: any
 Depends: ${misc:Depends}
@@ -181,6 +192,16 @@ Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
 Description: Afrikaans language pack for Firefox
  This package contains Afrikaans translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-an
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-an-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Aragonese language pack for Firefox
+ This package contains Aragonese translations and search plugins
  for Firefox
 
 Package: firefox-trunk-locale-ar
@@ -193,6 +214,16 @@ Description: Arabic language pack for Firefox
  This package contains Arabic translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-as
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-as-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Assamese language pack for Firefox
+ This package contains Assamese translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-ast
 Architecture: any
 Depends: ${misc:Depends}
@@ -203,15 +234,26 @@ Description: Asturian language pack for Firefox
  This package contains Asturian translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-az
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-az-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Azerbaijani language pack for Firefox
+ This package contains Azerbaijani translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-be
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-be-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Belarusian language pack for Firefox
- This package contains Belarusian translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-bg
 Architecture: any
@@ -266,13 +308,12 @@ Description: Catalan; Valencian language pack for Firefox
 Package: firefox-trunk-locale-cak
 Architecture: any
 Depends: ${misc:Depends}
+Replaces: language-pack-cak-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Transitional package for unavailable language
- This language is unavailable for the current version of Firefox
- .
- This is an empty transitional package to ensure a clean upgrade
- process. You can safely remove this package after installation.
+Description: Kaqchikel language pack for Firefox
+ This package contains Kaqchikel translations and search plugins
+ for Firefox
 
 Package: firefox-trunk-locale-cs
 Architecture: any
@@ -283,6 +324,17 @@ Provides: ${app:Provides}
 Description: Czech language pack for Firefox
  This package contains Czech translations and search plugins
  for Firefox
+
+Package: firefox-trunk-locale-csb
+Architecture: any
+Depends: ${misc:Depends}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-cy
 Architecture: any
@@ -313,6 +365,17 @@ Provides: ${app:Provides}
 Description: German language pack for Firefox
  This package contains German translations and search plugins
  for Firefox
+
+Package: firefox-trunk-locale-dsb
+Architecture: any
+Depends: ${misc:Depends}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-el
 Architecture: any
@@ -444,6 +507,16 @@ Description: Galician language pack for Firefox
  This package contains Galician translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-gn
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-gn-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Guarani language pack for Firefox
+ This package contains Guarani translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-gu
 Architecture: any
 Depends: ${misc:Depends}
@@ -482,6 +555,16 @@ Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
 Description: Croatian language pack for Firefox
  This package contains Croatian translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-hsb
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-hsb-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Sorbian, Upper language pack for Firefox
+ This package contains Sorbian, Upper translations and search plugins
  for Firefox
 
 Package: firefox-trunk-locale-hu
@@ -544,6 +627,26 @@ Description: Japanese language pack for Firefox
  This package contains Japanese translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-ka
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-ka-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Georgian language pack for Firefox
+ This package contains Georgian translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-kab
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-kab-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Kabyle language pack for Firefox
+ This package contains Kabyle translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-kk
 Architecture: any
 Depends: ${misc:Depends}
@@ -552,6 +655,16 @@ Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
 Description: Kazakh language pack for Firefox
  This package contains Kazakh translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-km
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-km-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Central Khmer language pack for Firefox
+ This package contains Central Khmer translations and search plugins
  for Firefox
 
 Package: firefox-trunk-locale-kn
@@ -577,12 +690,13 @@ Description: Korean language pack for Firefox
 Package: firefox-trunk-locale-ku
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-ku-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Kurdish language pack for Firefox
- This package contains Kurdish translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-lg
 Architecture: any
@@ -645,6 +759,17 @@ Description: Malayalam language pack for Firefox
  This package contains Malayalam translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-mn
+Architecture: any
+Depends: ${misc:Depends}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
+
 Package: firefox-trunk-locale-mr
 Architecture: any
 Depends: ${misc:Depends}
@@ -653,6 +778,26 @@ Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
 Description: Marathi language pack for Firefox
  This package contains Marathi translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-ms
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-ms-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Malay language pack for Firefox
+ This package contains Malay translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-my
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-my-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Myanmar language pack for Firefox
+ This package contains Myanmar translations and search plugins
  for Firefox
 
 Package: firefox-trunk-locale-nb
@@ -686,6 +831,17 @@ Description: Norwegian Nynorsk; Nynorsk, Norwegian language pack for Firefox
  for Firefox
 
 Package: firefox-trunk-locale-nso
+Architecture: any
+Depends: ${misc:Depends}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
+
+Package: firefox-trunk-locale-oc
 Architecture: any
 Depends: ${misc:Depends}
 Conflicts: ${app:Conflicts}
@@ -816,6 +972,17 @@ Description: Swedish language pack for Firefox
  This package contains Swedish translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-sw
+Architecture: any
+Depends: ${misc:Depends}
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
+
 Package: firefox-trunk-locale-ta
 Architecture: any
 Depends: ${misc:Depends}
@@ -866,6 +1033,26 @@ Description: Ukrainian language pack for Firefox
  This package contains Ukrainian translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-ur
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-ur-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Urdu language pack for Firefox
+ This package contains Urdu translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-uz
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-uz-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Uzbek language pack for Firefox
+ This package contains Uzbek translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-vi
 Architecture: any
 Depends: ${misc:Depends}
@@ -909,9 +1096,10 @@ Description: Traditional Chinese language pack for Firefox
 Package: firefox-trunk-locale-zu
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-zu-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Zulu language pack for Firefox
- This package contains Zulu translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
