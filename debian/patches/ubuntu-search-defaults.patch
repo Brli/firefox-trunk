@@ -34,22 +34,3 @@ Index: firefox-trunk-55.0~a1~hg20170312r346974/l10n/ru/browser/chrome/browser-re
  browser.contentHandlers.types.0.title = Яндекс.Подписки
  browser.contentHandlers.types.0.uri = http://mail.yandex.ru/lenta/add?feed_url=%s
  browser.contentHandlers.types.1.title = RSS2Email
-Index: firefox-trunk-55.0~a1~hg20170312r346974/l10n/be/browser/chrome/browser-region/region.properties
-===================================================================
---- firefox-trunk-55.0~a1~hg20170312r346974.orig/l10n/be/browser/chrome/browser-region/region.properties
-+++ firefox-trunk-55.0~a1~hg20170312r346974/l10n/be/browser/chrome/browser-region/region.properties
-@@ -8,11 +8,11 @@
- # a bug, add the "productization" keyword and CC l10n@mozilla.com.
- 
- # Default search engine
--browser.search.defaultenginename=Яндекс
-+browser.search.defaultenginename=Google
- 
- # Search engine order (order displayed in the search bar dropdown)
--browser.search.order.1=Яндекс
--browser.search.order.2=Google
-+browser.search.order.1=Google
-+browser.search.order.2=Яндекс
- 
- # This is the default set of web based feed handlers shown in the reader
- # selection UI
