@@ -15,7 +15,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandl
 +#endif
      , mCompatFirefoxEnabled(false)
      , mUserAgentIsDirty(true)
-     , mPromptTempRedirect(true)
+     , mAcceptLanguagesIsDirty(true)
 @@ -343,6 +346,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
