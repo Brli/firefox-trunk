@@ -1,4 +1,4 @@
-firefox-trunk (55.0~a1~hg20170408r352009-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (55.0~a1~hg20170426r354969-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson ]
   * Build with rustc and cargo
@@ -17,6 +17,7 @@ firefox-trunk (55.0~a1~hg20170408r352009-0ubuntu1) UNRELEASED; urgency=medium
   * Refresh patches
     - update debian/patches/revert-upstream-search-engine-changes.patch
     - update debian/patches/unity-menubar.patch
+    - update debian/patches/normalize-distribution-searchplugins.patch
   * Don't build with --enable-system-ffi on arm64. System ffi is only required
     on non-tier 1 platforms, so only build depend on libffi-dev on powerpc,
     ppc64el and s390x
