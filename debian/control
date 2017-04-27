@@ -247,13 +247,12 @@ Description: Azerbaijani language pack for Firefox
 Package: firefox-trunk-locale-be
 Architecture: any
 Depends: ${misc:Depends}
+Replaces: language-pack-be-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Transitional package for unavailable language
- This language is unavailable for the current version of Firefox
- .
- This is an empty transitional package to ensure a clean upgrade
- process. You can safely remove this package after installation.
+Description: Belarusian language pack for Firefox
+ This package contains Belarusian translations and search plugins
+ for Firefox
 
 Package: firefox-trunk-locale-bg
 Architecture: any
