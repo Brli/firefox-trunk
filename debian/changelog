@@ -29,6 +29,7 @@ firefox-trunk (55.0~a1~hg20170426r354969-0ubuntu1) UNRELEASED; urgency=medium
     This will remain disabled until somebody steps up to maintain it
 
   [ Rico Tzschichholz ]
+  * Update debian/build/create-tarball.py to create xz-tarballs
   * Refresh patches
     - update debian/patches/ubuntu-search-defaults.patch 
     - update debian/patches/ubuntu-ua-string-changes.patch 

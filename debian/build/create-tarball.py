@@ -15,9 +15,9 @@ import json
 import tempfile
 import select
 
-def CheckCall(args, cwd=None, quiet=False):
+def CheckCall(args, cwd=None, quiet=False, env=None):
   with open(os.devnull, "w") as devnull:
-    p = subprocess.Popen(args, cwd=cwd,
+    p = subprocess.Popen(args, cwd=cwd, env=env,
                          stdout = devnull if quiet == True else None,
                          stderr = devnull if quiet == True else None)
     r = p.wait()
@@ -314,17 +314,18 @@ class TarballCreator(OptionParser):
         with ScopedWorkingDirectory('..'):
           topsrcdir = '%s-%s' % (name, version)
           with ScopedRename(name, topsrcdir):
-            args = ['tar', '-jc', '--exclude=.git', '--exclude=.gitattributes', '--exclude=.gitmodules', '--exclude=.hg', '--exclude=.hgignore', '--exclude=.hgtags', '--exclude=.svn']
+            env = {'XZ_OPT': '--threads=0'}
+            args = ['tar', '-Jc', '--exclude=.git', '--exclude=.gitattributes', '--exclude=.gitmodules', '--exclude=.hg', '--exclude=.hgignore', '--exclude=.hgtags', '--exclude=.svn']
             for exclude in settings['excludes']:
               args.append('--no-wildcards-match-slash') if exclude['wms'] == False else args.append('--wildcards-match-slash')
               args.append('--exclude')
               args.append(os.path.join(topsrcdir , exclude['path']))
             args.append('-f')
-            args.append(os.path.join(orig_cwd, '%s_%s.orig.tar.bz2' % (name, version)))
+            args.append(os.path.join(orig_cwd, '%s_%s.orig.tar.xz' % (name, version)))
             for include in settings['includes']:
               args.append(os.path.join(topsrcdir, include))
 
-            CheckCall(args)
+            CheckCall(args, env=env)
 
 def main():
   creator = TarballCreator()
