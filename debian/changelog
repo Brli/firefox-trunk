@@ -1,4 +1,4 @@
-firefox-trunk (55.0~a1~hg20170426r354969-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (55.0~a1~hg20170510r357490-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson ]
   * Build with rustc and cargo
