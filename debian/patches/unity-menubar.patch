@@ -3355,7 +3355,7 @@ Index: firefox-trunk-55.0~a1~hg20170510r357490/widget/gtk/nsMenuObject.cpp
 +                          nullptr, loadGroup, this, nullptr, nullptr,
 +                          nsIRequest::LOAD_NORMAL, nullptr,
 +                          nsIContentPolicy::TYPE_IMAGE, EmptyString(),
-+                          getter_AddRefs(mImageRequest));
++                          false, getter_AddRefs(mImageRequest));
 +    }
 +}
 +
