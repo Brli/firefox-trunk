@@ -43,6 +43,8 @@ DEB_MAKE_EXTRA_ARGS		:=
 # don't want to run configure)
 DEB_MAKE_INSTALL_TARGET	:= install DESTDIR=$(CURDIR)/debian/tmp
 DEB_MAKE_CLEAN_TARGET	:= cleansrcdir
+# Prevent some files from being cleaned to avoid build failures
+DEB_CLEAN_EXCLUDE		:= Cargo.toml.orig
 # Don't save debug symbols in firefox-dbg (rely on pkg-create-dbgsym to create
 # ddeb packages for us). This is needed as long as there is a firefox-dbg
 # transitional package

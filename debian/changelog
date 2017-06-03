@@ -40,6 +40,7 @@ firefox-trunk (55.0~a1~hg20170510r357490-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/config/locales.*
     - update debian/config/searchplugins.conf
     - update debian/control
+  * Don't let debhelper clean Cargo.toml.orig files which are actually required
 
  -- Chris Coulson <chris.coulson@canonical.com>  Mon, 13 Mar 2017 18:42:26 +0000
 
