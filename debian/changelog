@@ -1,3 +1,9 @@
+firefox-trunk (56.0~a1~hg20170612r363446-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 12 Jun 2017 15:31:52 +0200
+
 firefox-trunk (55.0~a1~hg20170611r363397-0ubuntu1) zesty; urgency=medium
 
   [ Chris Coulson ]
