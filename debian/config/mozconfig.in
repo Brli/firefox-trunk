@@ -69,4 +69,3 @@ ac_add_options --enable-profiling
 # Coulson (chris.coulson@canonical.com) for more info
 ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/ga
 #ac_add_options --enable-alsa
-ac_add_options --disable-webrender
