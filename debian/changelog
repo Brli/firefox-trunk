@@ -1,6 +1,12 @@
 firefox-trunk (56.0~a1~hg20170626r366068-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on rustc >= 1.17.0 and cargo >= 1.18
+  * Add multiple ppc64/arm/s390x build fixes
+    - debian/patches/build-arm.patch
+    - debian/patches/build-ppc64-s390x-curl.patch
+    - debian/patches/build-ppc64-s390x-rust.patch
+  * Do not use compile-time page size for PowerPC
+    - debian/patches/ppc-no-static-sizes.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 12 Jun 2017 15:31:52 +0200
 
