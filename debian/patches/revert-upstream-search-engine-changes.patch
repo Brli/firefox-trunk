@@ -1,8 +1,8 @@
-Index: firefox-53.0~a2~hg20170302r359591/browser/locales/search/list.json
+Index: firefox-trunk-56.0~a1~hg20170721r370029/browser/locales/search/list.json
 ===================================================================
---- firefox-53.0~a2~hg20170302r359591.orig/browser/locales/search/list.json
-+++ firefox-53.0~a2~hg20170302r359591/browser/locales/search/list.json
-@@ -5,36 +5,6 @@
+--- firefox-trunk-56.0~a1~hg20170721r370029.orig/browser/locales/search/list.json
++++ firefox-trunk-56.0~a1~hg20170721r370029/browser/locales/search/list.json
+@@ -5,33 +5,6 @@
      ]
    },
    "regionOverrides": {
@@ -22,9 +22,6 @@ Index: firefox-53.0~a2~hg20170302r359591/browser/locales/search/list.json
 -      "google": "google-nocodes"
 -    },
 -    "TR": {
--      "google": "google-nocodes"
--    },
--    "UA": {
 -      "google": "google-nocodes"
 -    },
 -    "CN": {
