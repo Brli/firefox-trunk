@@ -1,4 +1,4 @@
-firefox-trunk (56.0~a1~hg20170723r370453-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (56.0~a1~hg20170728r371444-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on rustc >= 1.17.0 and cargo >= 1.18
   * Add multiple ppc64/arm/s390x build fixes
@@ -9,6 +9,7 @@ firefox-trunk (56.0~a1~hg20170723r370453-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/ppc-no-static-sizes.patch
   * Refresh patches
     - update debian/patches/revert-upstream-search-engine-changes.patch
+    - update debian/patches/support-coinstallable-trunk-build.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 12 Jun 2017 15:31:52 +0200
 
