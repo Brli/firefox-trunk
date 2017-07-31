@@ -39,6 +39,8 @@ Build-Depends: cdbs,
 	xvfb,
 	python (>= 2.7),
 	libffi-dev (>= 3.0.9) [powerpc ppc64el s390x],
+	clang-3.9 [amd64 arm64 ppc64el],
+	llvm-3.9-dev [amd64 arm64 ppc64el],
 	cargo (>= 0.18),
 	rustc (>= 1.17.0)
 Standards-Version: 3.9.1
