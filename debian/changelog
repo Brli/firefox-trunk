@@ -1,4 +1,4 @@
-firefox-trunk (56.0~a1~hg20170730r371913-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (56.0~a1~hg20170801r372091-0ubuntu1) artful; urgency=medium
 
   * Bump build-dep on rustc >= 1.17.0 and cargo >= 1.18
   * Add multiple ppc64/arm/s390x build fixes
@@ -12,8 +12,11 @@ firefox-trunk (56.0~a1~hg20170730r371913-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/support-coinstallable-trunk-build.patch
   * Build-dep on clang-3.9, llvm-3.9-dev on 64bit archs for stylo
     - update debian/control{,.in}
+  * Don't try to check checksums of windows-only binary files which are
+    not included in the tarball
+    - debian/patches/rust-drop-dll-checksums.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 12 Jun 2017 15:31:52 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 01 Aug 2017 07:14:39 +0200
 
 firefox-trunk (55.0~a1~hg20170611r363397-0ubuntu1) zesty; urgency=medium
 
