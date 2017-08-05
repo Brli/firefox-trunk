@@ -1,12 +1,12 @@
-firefox-trunk (57.0~a1~hg20170803r372470-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (57.0~a1~hg20170804r372977-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Bump build-dep on rustc >= 1.19.0 and cargo >= 0.20
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 03 Aug 2017 07:15:57 +0200
 
 firefox-trunk (56.0~a1~hg20170801r372091-0ubuntu1) artful; urgency=medium
 
-  * Bump build-dep on rustc >= 1.17.0 and cargo >= 1.18
+  * Bump build-dep on rustc >= 1.17.0 and cargo >= 0.18
   * Add multiple ppc64/arm/s390x build fixes
     - debian/patches/build-arm.patch
     - debian/patches/build-ppc64-s390x-curl.patch
