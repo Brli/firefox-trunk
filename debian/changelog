@@ -1,5 +1,6 @@
 firefox-trunk (57.0~a1~hg20170816r375058-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.19.0 and cargo >= 0.20
   * Don't checkout locales on buildtime
     - debian/patches/dont-checkout-locales.patch
@@ -7,6 +8,15 @@ firefox-trunk (57.0~a1~hg20170816r375058-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/rules.mk
   * Add ppc64/s390x build fixes
     - debian/patches/build-ppc64-s390x-nss.patch
+
+  [ Chris Coulson ]
+  * Refactor nsNativeMenuService ownership and shutdown behaviour - the only
+    reference to it now is held by the service manager, and the global instance
+    pointer is no longer cleared during the xpcom-shutdown notification. This
+    fixes a shutdown UAF that appeared in the current Firefox version, where
+    nsWindow and the associated nsMenuBar can be destroyed after xpcom-shutdown,
+    when it was too late to clean up properly.
+    - update debian/patches/unity-menubar.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 17 Aug 2017 12:49:43 +0200
 
