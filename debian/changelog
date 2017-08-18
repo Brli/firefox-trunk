@@ -1,8 +1,10 @@
-firefox-trunk (57.0~a1~hg20170804r372977-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (57.0~a1~hg20170816r375058-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on rustc >= 1.19.0 and cargo >= 0.20
+  * Don't checkout locales on buildtime
+    - debian/patches/dont-checkout-locales.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 03 Aug 2017 07:15:57 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 17 Aug 2017 12:49:43 +0200
 
 firefox-trunk (56.0~a1~hg20170801r372091-0ubuntu1) artful; urgency=medium
 
