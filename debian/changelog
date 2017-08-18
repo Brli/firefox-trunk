@@ -3,6 +3,8 @@ firefox-trunk (57.0~a1~hg20170816r375058-0ubuntu1) UNRELEASED; urgency=medium
   * Bump build-dep on rustc >= 1.19.0 and cargo >= 0.20
   * Don't checkout locales on buildtime
     - debian/patches/dont-checkout-locales.patch
+  * Build language packs based on web extensions
+    - debian/build/rules.mk
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 17 Aug 2017 12:49:43 +0200
 
