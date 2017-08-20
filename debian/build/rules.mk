@@ -264,7 +264,7 @@ debian/stamp-make-langpack-xpi-%:
 	export PATH=$(VIRTENV_PATH)/bin/:$$PATH ; \
 	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
 		$(MAKE) merge-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1 ; \
-		$(MAKE) langpack-webext-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
+		$(MAKE) langpack-$* LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
 	@touch $@
 
 #common-build-arch:: make-langpack-xpis make-testsuite run-tests
