@@ -9,6 +9,8 @@ firefox-trunk (57.0~a1~hg20170816r375058-0ubuntu1) UNRELEASED; urgency=medium
   * Don't restrict Destop Actions to Unity (LP: #1615549)
     and make them compliant with GNOME-Shell
     - debian/firefox.desktop.in
+  * Set REAL_LOCALE_MERGEDIR rather than LOCALE_MERGEDIR
+    - debian/build/rules.mk
 
   [ Chris Coulson ]
   * Refactor nsNativeMenuService ownership and shutdown behaviour - the only
