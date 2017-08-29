@@ -1,4 +1,4 @@
-firefox-trunk (57.0~a1~hg20170816r375058-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (57.0~a1~hg20170826r376943-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.19.0 and cargo >= 0.20
@@ -11,6 +11,8 @@ firefox-trunk (57.0~a1~hg20170816r375058-0ubuntu1) UNRELEASED; urgency=medium
     - debian/firefox.desktop.in
   * Set REAL_LOCALE_MERGEDIR rather than LOCALE_MERGEDIR
     - debian/build/rules.mk
+  * Build-dep on clang-3.9, llvm-3.9-dev on all archs for stylo
+    - update debian/control{,.in}
 
   [ Chris Coulson ]
   * Refactor nsNativeMenuService ownership and shutdown behaviour - the only
