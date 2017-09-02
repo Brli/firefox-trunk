@@ -11,7 +11,7 @@ firefox-trunk (57.0~a1~hg20170826r376943-0ubuntu1) UNRELEASED; urgency=medium
     - debian/firefox.desktop.in
   * Set REAL_LOCALE_MERGEDIR rather than LOCALE_MERGEDIR
     - debian/build/rules.mk
-  * Build-dep on clang-3.9, llvm-3.9-dev on all archs for stylo
+  * Build-dep on clang-4.0, llvm-4.0-dev on all archs for stylo
     - update debian/control{,.in}
 
   [ Chris Coulson ]
