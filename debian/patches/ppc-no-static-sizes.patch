@@ -6,9 +6,9 @@ Bug 997353 - Do not use compile-time page size for PowerPC.
 The PowerPC architecture allows various memory page sizes, making it impossible
 to predict the runtime page size.
 
-diff --git a/memory/mozjemalloc/mozjemalloc.cpp b/memory/mozjemalloc/mozjemalloc.cpp
---- a/memory/mozjemalloc/mozjemalloc.cpp
-+++ b/memory/mozjemalloc/mozjemalloc.cpp
+diff --git a/memory/build/mozjemalloc.cpp b/memory/build/mozjemalloc.cpp
+--- a/memory/build/mozjemalloc.cpp
++++ b/memory/build/mozjemalloc.cpp
 @@ -1083,17 +1083,18 @@ struct arena_s {
   * Data.
   */
