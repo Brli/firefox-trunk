@@ -13,6 +13,8 @@ firefox-trunk (57.0~a1~hg20170826r376943-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/rules.mk
   * Build-dep on clang-4.0, llvm-4.0-dev on all archs for stylo
     - update debian/control{,.in}
+  * Build language packs based on web extensions
+    - debian/build/rules.mk
 
   [ Chris Coulson ]
   * Refactor nsNativeMenuService ownership and shutdown behaviour - the only
