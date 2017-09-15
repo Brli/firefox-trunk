@@ -1,4 +1,4 @@
-firefox-trunk (57.0~a1~hg20170826r376943-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (57.0~a1~hg20170914r380870-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.19.0 and cargo >= 0.20
@@ -15,6 +15,8 @@ firefox-trunk (57.0~a1~hg20170826r376943-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/control{,.in}
   * Build language packs based on web extensions
     - debian/build/rules.mk
+  * Refresh patches
+    - update debian/patches/ppc-no-static-sizes.patch
 
   [ Chris Coulson ]
   * Refactor nsNativeMenuService ownership and shutdown behaviour - the only
@@ -44,6 +46,7 @@ firefox-trunk (56.0~a1~hg20170801r372091-0ubuntu1) artful; urgency=medium
   * Don't try to check checksums of windows-only binary files which are
     not included in the tarball
     - debian/patches/rust-drop-dll-checksums.patch
+  * Disable unity-menubar.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 01 Aug 2017 07:14:39 +0200
 
