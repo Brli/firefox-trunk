@@ -26,7 +26,7 @@ firefox-trunk (57.0~a1~hg20170914r380870-0ubuntu1) UNRELEASED; urgency=medium
     nsWindow and the associated nsMenuBar can be destroyed after xpcom-shutdown,
     when it was too late to clean up properly.
     - update debian/patches/unity-menubar.patch
-  * Update unity-menubar.patch to work with Servo
+  * Update unity-menubar.patch to work with Stylo
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 17 Aug 2017 12:49:43 +0200
 
