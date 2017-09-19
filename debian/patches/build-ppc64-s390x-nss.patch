@@ -6,7 +6,7 @@ diff -r ddc8a4489257 security/nss/build.sh
  # try to guess sensible defaults
  arch=$(python "$cwd"/coreconf/detect_host_arch.py)
 -if [ "$arch" = "x64" -o "$arch" = "aarch64" ]; then
-+if [ "$arch" = "x64" -o "$arch" = "aarch64" -o "$arch" = "ppc64le" -o "$arch" = "s390x" ]; then
++if [ "$arch" = "x64" -o "$arch" = "aarch64" -o "$arch" = "ppc64" -o "$arch" = "ppc64le" -o "$arch" = "s390x" ]; then
      build_64=1
  elif [ "$arch" = "arm" ]; then
      armhf=1
@@ -18,7 +18,7 @@ diff -r ddc8a4489257 security/nss/coreconf/config.gypi
          },
        }],
 -      [ 'target_arch=="arm64" or target_arch=="aarch64" or target_arch=="sparc64"', {
-+      [ 'target_arch=="arm64" or target_arch=="aarch64" or target_arch=="sparc64" or target_arch=="ppc64le" or target_arch=="s390x"', {
++      [ 'target_arch=="arm64" or target_arch=="aarch64" or target_arch=="sparc64" or target_arch=="ppc64" or target_arch=="ppc64le" or target_arch=="s390x"', {
          'defines': [
            'NSS_USE_64',
          ],
