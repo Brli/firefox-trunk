@@ -30,5 +30,5 @@ diff -r 932388b8c22c toolkit/locales/l10n.mk
 -	fi
 -endif
  	$(RM) -rf $(REAL_LOCALE_MERGEDIR)
- 	$(MOZILLA_DIR)/mach compare-locales --l10n-base $(L10NBASEDIR) --merge-dir $(REAL_LOCALE_MERGEDIR) $*
+ 	$(MOZILLA_DIR)/mach compare-locales --merge $(BASE_MERGE) $(srcdir)/l10n.toml $(L10NBASEDIR) $*
  

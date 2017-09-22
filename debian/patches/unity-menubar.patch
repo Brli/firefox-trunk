@@ -3354,7 +3354,7 @@ new file mode 100644
 +        }
 +
 +        loader->LoadImage(uri, nullptr, nullptr, mozilla::net::RP_Unset,
-+                          nullptr, loadGroup, this, nullptr, nullptr,
++                          nullptr, 0, loadGroup, this, nullptr, nullptr,
 +                          nsIRequest::LOAD_NORMAL, nullptr,
 +                          nsIContentPolicy::TYPE_IMAGE, EmptyString(),
 +                          false, getter_AddRefs(mImageRequest));
