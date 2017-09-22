@@ -1,4 +1,4 @@
-firefox-trunk (57.0~a1~hg20170918r381531-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (57.0~a1~hg20170920r381849-0ubuntu1) artful; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.19.0 and cargo >= 0.20
@@ -25,6 +25,8 @@ firefox-trunk (57.0~a1~hg20170918r381531-0ubuntu1) UNRELEASED; urgency=medium
     when it was too late to clean up properly.
     - update debian/patches/unity-menubar.patch
   * Update unity-menubar.patch to work with Stylo
+  * Hopefully fix LP: #1711337 by building the armhf build with
+    -fno-schedule-insns to work around a compiler bug
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 19 Sep 2017 10:46:02 +0200
 
