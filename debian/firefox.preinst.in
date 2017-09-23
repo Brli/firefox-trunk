@@ -91,18 +91,6 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
     prepare_rm_conffile "${MOZ_PKG_NAME}" "/etc/${MOZ_PKG_NAME}/profile/chrome/userContent-example.css"
 
     prepare_mv_conffile "${MOZ_PKG_NAME}" "/etc/${MOZ_PKG_NAME}/pref/firefox.js"
-
-    # Keep until 12.04 is EOL
-    # ${LIBDIR}/distribution was a symlink in 11.10
-    if [ -h ${MOZ_LIBDIR}/distribution ] ; then
-        rm -f ${MOZ_LIBDIR}/distribution
-    fi
-
-    # Keep until 12.04 is EOL
-    # This used to be a symlink
-    if [ -h ${MOZ_LIBDIR}/distribution/searchplugins ]; then
-        rm -f ${MOZ_LIBDIR}/distribution/searchplugins
-    fi
 fi
 
 #DEBHELPER#
