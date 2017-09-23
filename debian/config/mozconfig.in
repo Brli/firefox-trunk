@@ -12,11 +12,7 @@ ac_add_options --enable-application=browser
 ac_add_options --enable-startup-notification
 ac_add_options --with-distribution-id=com.ubuntu
 %%if DEB_HOST_ARCH == armel
-%%if DISTRIB_VERSION < 1210
-ac_add_options --enable-thumb2
-%%else
 ac_add_options --disable-methodjit
-%%endif
 %%endif
 %%ifdef MOZ_NO_OPTIMIZE
 ac_add_options --disable-optimize
