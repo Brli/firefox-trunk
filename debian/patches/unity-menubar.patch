@@ -16,7 +16,7 @@ diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/bro
 diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -5389,6 +5389,8 @@ function getTogglableToolbars() {
+@@ -5401,6 +5401,8 @@ function getTogglableToolbars() {
    let toolbarNodes = Array.slice(gNavToolbox.childNodes);
    toolbarNodes = toolbarNodes.concat(gNavToolbox.externalToolbars);
    toolbarNodes = toolbarNodes.filter(node => node.getAttribute("toolbarname"));
@@ -54,7 +54,7 @@ diff --git a/layout/build/moz.build b/layout/build/moz.build
 diff --git a/layout/build/nsLayoutStatics.cpp b/layout/build/nsLayoutStatics.cpp
 --- a/layout/build/nsLayoutStatics.cpp
 +++ b/layout/build/nsLayoutStatics.cpp
-@@ -125,6 +125,10 @@
+@@ -126,6 +126,10 @@
  #include "mozilla/dom/ipc/IPCBlobInputStreamStorage.h"
  #include "mozilla/dom/U2FTokenManager.h"
  
@@ -65,7 +65,7 @@ diff --git a/layout/build/nsLayoutStatics.cpp b/layout/build/nsLayoutStatics.cpp
  using namespace mozilla;
  using namespace mozilla::net;
  using namespace mozilla::dom;
-@@ -157,6 +161,9 @@ nsLayoutStatics::Initialize()
+@@ -158,6 +162,9 @@ nsLayoutStatics::Initialize()
    nsTextServicesDocument::RegisterAtoms();
    nsHTMLTags::RegisterAtoms();
    nsRDFAtoms::RegisterAtoms();
@@ -78,7 +78,7 @@ diff --git a/layout/build/nsLayoutStatics.cpp b/layout/build/nsLayoutStatics.cpp
 diff --git a/modules/libpref/init/all.js b/modules/libpref/init/all.js
 --- a/modules/libpref/init/all.js
 +++ b/modules/libpref/init/all.js
-@@ -230,6 +230,9 @@ pref("dom.script_loader.bytecode_cache.s
+@@ -242,6 +242,9 @@ pref("dom.script_loader.bytecode_cache.s
  pref("browser.sessionhistory.max_total_viewers", -1);
  
  pref("ui.use_native_colors", true);
@@ -347,7 +347,7 @@ diff --git a/widget/gtk/nsMenu.cpp b/widget/gtk/nsMenu.cpp
 new file mode 100644
 --- /dev/null
 +++ b/widget/gtk/nsMenu.cpp
-@@ -0,0 +1,856 @@
+@@ -0,0 +1,858 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -383,6 +383,7 @@ new file mode 100644
 +#include "nsITimer.h"
 +#include "nsString.h"
 +#include "nsStyleContext.h"
++#include "nsStyleContextInlines.h"
 +#include "nsStyleSet.h"
 +#include "nsStyleStruct.h"
 +#include "nsThreadUtils.h"
@@ -482,11 +483,12 @@ new file mode 100644
 +
 +    RefPtr<nsStyleContext> sc;
 +    if (shell->StyleSet()->IsGecko()) {
-+        shell->StyleSet()->AsGecko()->ResolveStyleFor(aContent->AsElement(), nullptr);
++        sc = shell->StyleSet()->AsGecko()->ResolveStyleFor(aContent->AsElement(),
++                                                           nullptr);
 +    } else {
-+        shell->StyleSet()->AsServo()->ResolveStyleFor(aContent->AsElement(),
-+                                                      nullptr,
-+                                                      LazyComputeBehavior::Allow);
++        sc = shell->StyleSet()->AsServo()->ResolveStyleFor(aContent->AsElement(),
++                                                           nullptr,
++                                                           LazyComputeBehavior::Allow);
 +    }
 +
 +    if (!sc) {
@@ -5305,7 +5307,7 @@ diff --git a/widget/gtk/nsNativeThemeGTK.cpp b/widget/gtk/nsNativeThemeGTK.cpp
 diff --git a/widget/gtk/nsWidgetFactory.cpp b/widget/gtk/nsWidgetFactory.cpp
 --- a/widget/gtk/nsWidgetFactory.cpp
 +++ b/widget/gtk/nsWidgetFactory.cpp
-@@ -49,6 +49,8 @@
+@@ -48,6 +48,8 @@
  #include "GfxInfoX11.h"
  #endif
  
@@ -5324,7 +5326,7 @@ diff --git a/widget/gtk/nsWidgetFactory.cpp b/widget/gtk/nsWidgetFactory.cpp
  #ifdef NS_PRINTING
  NS_GENERIC_FACTORY_CONSTRUCTOR(nsDeviceContextSpecGTK)
  NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsPrintOptionsGTK, Init)
-@@ -247,6 +252,7 @@ NS_DEFINE_NAMED_CID(NS_IMAGE_TO_PIXBUF_C
+@@ -225,6 +230,7 @@ NS_DEFINE_NAMED_CID(NS_IMAGE_TO_PIXBUF_C
  NS_DEFINE_NAMED_CID(NS_IDLE_SERVICE_CID);
  NS_DEFINE_NAMED_CID(NS_GFXINFO_CID);
  #endif
@@ -5332,7 +5334,7 @@ diff --git a/widget/gtk/nsWidgetFactory.cpp b/widget/gtk/nsWidgetFactory.cpp
  
  
  static const mozilla::Module::CIDEntry kWidgetCIDs[] = {
-@@ -282,6 +288,7 @@ static const mozilla::Module::CIDEntry k
+@@ -260,6 +266,7 @@ static const mozilla::Module::CIDEntry k
      { &kNS_IDLE_SERVICE_CID, false, nullptr, nsIdleServiceGTKConstructor },
      { &kNS_GFXINFO_CID, false, nullptr, mozilla::widget::GfxInfoConstructor },
  #endif
@@ -5340,7 +5342,7 @@ diff --git a/widget/gtk/nsWidgetFactory.cpp b/widget/gtk/nsWidgetFactory.cpp
      { nullptr }
  };
  
-@@ -319,6 +326,7 @@ static const mozilla::Module::ContractID
+@@ -297,6 +304,7 @@ static const mozilla::Module::ContractID
      { "@mozilla.org/widget/idleservice;1", &kNS_IDLE_SERVICE_CID },
      { "@mozilla.org/gfx/info;1", &kNS_GFXINFO_CID },
  #endif
@@ -5359,7 +5361,7 @@ diff --git a/widget/gtk/nsWindow.cpp b/widget/gtk/nsWindow.cpp
  #include "mozilla/Preferences.h"
  #include "nsIPrefService.h"
  #include "nsIGConfService.h"
-@@ -5091,6 +5092,11 @@ nsWindow::HideWindowChrome(bool aShouldH
+@@ -5092,6 +5093,11 @@ nsWindow::HideWindowChrome(bool aShouldH
  #endif /* MOZ_X11 */
  }
  
@@ -5374,7 +5376,7 @@ diff --git a/widget/gtk/nsWindow.cpp b/widget/gtk/nsWindow.cpp
 diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
 --- a/widget/gtk/nsWindow.h
 +++ b/widget/gtk/nsWindow.h
-@@ -36,6 +36,8 @@
+@@ -35,6 +35,8 @@
  
  #include "IMContextWrapper.h"
  
@@ -5383,7 +5385,7 @@ diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
  #undef LOG
  #ifdef MOZ_LOGGING
  
-@@ -159,6 +161,8 @@ public:
+@@ -157,6 +159,8 @@ public:
                                        nsIScreen* aTargetScreen = nullptr) override;
      virtual void       HideWindowChrome(bool aShouldHide) override;
  
@@ -5392,7 +5394,7 @@ diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
      /**
       * GetLastUserInputTime returns a timestamp for the most recent user input
       * event.  This is intended for pointer grab requests (including drags).
-@@ -567,6 +571,8 @@ private:
+@@ -561,6 +565,8 @@ private:
      RefPtr<mozilla::widget::IMContextWrapper> mIMContext;
  
      mozilla::UniquePtr<mozilla::CurrentX11TimeGetter> mCurrentTimeGetter;
@@ -5420,7 +5422,7 @@ diff --git a/widget/moz.build b/widget/moz.build
 diff --git a/xpfe/appshell/nsWebShellWindow.cpp b/xpfe/appshell/nsWebShellWindow.cpp
 --- a/xpfe/appshell/nsWebShellWindow.cpp
 +++ b/xpfe/appshell/nsWebShellWindow.cpp
-@@ -75,7 +75,7 @@
+@@ -74,7 +74,7 @@
  
  #include "gfxPlatform.h"
  
