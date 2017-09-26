@@ -258,12 +258,9 @@ debian/stamp-make-langpack-xpi-%:
 	@echo "* Building language pack xpi for $*"
 	@echo ""
 
-	rm -rf $(CURDIR)/debian/l10n-mergedirs/$*
-	mkdir -p $(CURDIR)/debian/l10n-mergedirs/$*
-
 	export PATH=$(VIRTENV_PATH)/bin/:$$PATH ; \
+	export REAL_LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* ; \
 	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
-		$(MAKE) merge-$* REAL_LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1 ; \
 		$(MAKE) langpack-$* REAL_LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
 	@touch $@
 
