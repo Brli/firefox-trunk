@@ -1,8 +1,13 @@
-firefox-trunk (58.0~a1~hg20170922r382399-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (58.0~a1~hg20170926r382872-0ubuntu1) UNRELEASED; urgency=medium
 
   * Update patches
     - debian/patches/dont-checkout-locales.patch
     - debian/patches/unity-menubar.patch 
+  * Update make-langpack-xpis target
+    - debian/build/rules.mk
+  * Bump debhelper compat level to 9
+  * Drop 12.04/Precise specific changes
+  * Update copyright and license files
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 22 Sep 2017 13:20:26 +0200
 
