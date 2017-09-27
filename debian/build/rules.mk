@@ -261,7 +261,7 @@ debian/stamp-make-langpack-xpi-%:
 	export PATH=$(VIRTENV_PATH)/bin/:$$PATH ; \
 	export REAL_LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* ; \
 	cd $(MOZ_OBJDIR)/$(MOZ_APP)/locales ; \
-		$(MAKE) langpack-$* REAL_LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
+		$(MAKE) langpack-$* BASE_MERGE=$(CURDIR)/debian/l10n-mergedirs REAL_LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
 	@touch $@
 
 #common-build-arch:: make-langpack-xpis make-testsuite run-tests
