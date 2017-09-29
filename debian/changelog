@@ -1,13 +1,20 @@
-firefox-trunk (58.0~a1~hg20170926r382872-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (58.0~a1~hg20170928r383414-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Update patches
     - debian/patches/dont-checkout-locales.patch
+    - debian/patches/ppc-no-static-sizes.patch
     - debian/patches/unity-menubar.patch 
   * Update make-langpack-xpis target
     - debian/build/rules.mk
   * Bump debhelper compat level to 9
   * Drop 12.04/Precise specific changes
   * Update copyright and license files
+
+  [ Chris Coulson ]
+  * Don't pass -mfloat-abi=softfp when building webrtc on armhf
+    - add debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+    - update debian/patches/series
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 22 Sep 2017 13:20:26 +0200
 

@@ -10,8 +10,8 @@ diff --git a/memory/build/mozjemalloc.cpp b/memory/build/mozjemalloc.cpp
 --- a/memory/build/mozjemalloc.cpp
 +++ b/memory/build/mozjemalloc.cpp
 @@ -1083,17 +1083,18 @@ struct arena_s {
-  * Data.
-  */
+ #define	RUN_MAX_OVRHD		0x0000003dU
+ #define	RUN_MAX_OVRHD_RELAX	0x00001800U
  
  /*
   * When MALLOC_STATIC_SIZES is defined most of the parameters
