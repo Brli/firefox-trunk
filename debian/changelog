@@ -19,6 +19,7 @@ firefox-trunk (58.0~a1~hg20170928r383414-0ubuntu1) UNRELEASED; urgency=medium
     kernel headers that don't define HWCAP_CRC32
     - add debian/patches/skia-fix-aarch64-build-on-older-linux.patch
     - update debian/patches/series
+  * Refresh and re-enable unity-menubar.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 22 Sep 2017 13:20:26 +0200
 
