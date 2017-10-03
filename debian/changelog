@@ -15,6 +15,10 @@ firefox-trunk (58.0~a1~hg20170928r383414-0ubuntu1) UNRELEASED; urgency=medium
   * Don't pass -mfloat-abi=softfp when building webrtc on armhf
     - add debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
     - update debian/patches/series
+  * Backport some skia fixes to fix a build failure on aarch64 against
+    kernel headers that don't define HWCAP_CRC32
+    - add debian/patches/skia-fix-aarch64-build-on-older-linux.patch
+    - update debian/patches/series
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 22 Sep 2017 13:20:26 +0200
 
