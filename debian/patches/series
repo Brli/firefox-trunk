@@ -30,5 +30,4 @@ revert-upstream-search-engine-changes.patch
 warn-only-on-duplicates.patch
 rust-drop-dll-checksums.patch
 webrtc-fix-compiler-flags-for-armhf.patch
-servo-bindgen-tasks-sequential.patch
 skia-fix-aarch64-build-on-older-linux.patch
