@@ -1,10 +1,13 @@
-firefox-trunk (58.0~a1~hg20170928r383414-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (58.0~a1~hg20171006r384774-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
     - debian/patches/dont-checkout-locales.patch
     - debian/patches/ppc-no-static-sizes.patch
-    - debian/patches/unity-menubar.patch 
+    - debian/patches/unity-menubar.patch
+    - debian/patches/allow-lockPref-everywhere.patch
+  * Drop upstreamed patches
+    - debian/patches/build-ppc64-s390x-nss.patch
   * Update make-langpack-xpis target
     - debian/build/rules.mk
   * Bump debhelper compat level to 9
