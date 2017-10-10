@@ -1,5 +1,4 @@
 build-ppc64-s390x-curl.patch
-build-ppc64-s390x-rust.patch
 ppc-no-static-sizes.patch
 ubuntu-bookmarks.patch
 normalize-distribution-searchplugins.patch
