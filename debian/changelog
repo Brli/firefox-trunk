@@ -1,4 +1,4 @@
-firefox-trunk (58.0~a1~hg20171006r384774-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (58.0~a1~hg20171010r385288-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
@@ -13,6 +13,9 @@ firefox-trunk (58.0~a1~hg20171006r384774-0ubuntu1) UNRELEASED; urgency=medium
   * Bump debhelper compat level to 9
   * Drop 12.04/Precise specific changes
   * Update copyright and license files
+  * Install watermark.svg from the onbording extension as symbolic icon
+    - debian/build/rules.mk 
+    - debian/firefox.dirs.in
 
   [ Chris Coulson ]
   * Don't pass -mfloat-abi=softfp when building webrtc on armhf
