@@ -1,4 +1,4 @@
-firefox-trunk (58.0~a1~hg20171010r385288-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (58.0~a1~hg20171013r386058-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
@@ -11,6 +11,8 @@ firefox-trunk (58.0~a1~hg20171010r385288-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/build-ppc64-s390x-rust.patch
   * Update make-langpack-xpis target
     - debian/build/rules.mk
+  * Build language packs based on web extensions
+    - debian/build/xpi-id.py
   * Bump debhelper compat level to 9
   * Drop 12.04/Precise specific changes
   * Update copyright and license files
