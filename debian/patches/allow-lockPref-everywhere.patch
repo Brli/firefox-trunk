@@ -3,32 +3,11 @@ Author: Alexander Sack <asac@ubuntu.com>
 Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=467738
 Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
 
-Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefapi.cpp
+Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
 ===================================================================
---- firefox-trunk-58.0~a1~hg20171010r385288.orig/modules/libpref/prefapi.cpp
-+++ firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefapi.cpp
-@@ -1086,7 +1086,8 @@
-                     PrefValue aValue,
-                     PrefType aType,
-                     bool aIsDefault,
--                    bool aIsStickyDefault)
-+                    bool aIsStickyDefault,
-+                    bool aIsLocked)
- {
-   uint32_t flags = 0;
-   if (aIsDefault) {
-@@ -1098,4 +1099,6 @@
-     flags |= kPrefForceSet;
-   }
-   pref_HashPref(aPref, aValue, aType, flags);
-+  if (aIsLocked)
-+    PREF_LockPref(aPref, true);
- }
-Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefapi.h
-===================================================================
---- firefox-trunk-58.0~a1~hg20171010r385288.orig/modules/libpref/prefapi.h
-+++ firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefapi.h
-@@ -251,7 +251,8 @@
+--- firefox-trunk-58.0~a1~hg20171012r385760.orig/modules/libpref/Preferences.cpp
++++ firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
+@@ -416,7 +416,8 @@
                      PrefValue aValue,
                      PrefType aType,
                      bool aIsDefault,
@@ -38,11 +17,44 @@ Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefapi.h
  
  // Callback for whenever we change a preference.
  typedef void (*PrefsDirtyFunc)();
-Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.cpp
-===================================================================
---- firefox-trunk-58.0~a1~hg20171010r385288.orig/modules/libpref/prefread.cpp
-+++ firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.cpp
-@@ -47,6 +47,7 @@
+@@ -1493,7 +1494,8 @@
+                     PrefValue aValue,
+                     PrefType aType,
+                     bool aIsDefault,
+-                    bool aIsStickyDefault)
++                    bool aIsStickyDefault,
++                    bool aIsLocked)
+ {
+   uint32_t flags = 0;
+   if (aIsDefault) {
+@@ -1505,6 +1507,8 @@
+     flags |= kPrefForceSet;
+   }
+   pref_HashPref(aPref, aValue, aType, flags);
++  if (aIsLocked)
++    PREF_LockPref(aPref, true);
+ }
+ 
+ //===========================================================================
+@@ -1530,7 +1534,8 @@
+                            PrefValue aValue,
+                            PrefType aType,
+                            bool aIsDefault,
+-                           bool aIsStickyDefault);
++                           bool aIsStickyDefault,
++                           bool aIsLocked);
+ 
+ // Report any errors or warnings we encounter during parsing.
+ typedef void (*PrefParseErrorReporter)(const char* aMessage,
+@@ -1558,6 +1563,7 @@
+   PrefType mVtype;       // PREF_{STRING,INT,BOOL}
+   bool mIsDefault;       // true if (default) pref
+   bool mIsStickyDefault; // true if (sticky) pref
++  bool mIsLock;          // true if (locked) pref
+ } PrefParseState;
+ 
+ // Initialize a PrefParseState instance.
+@@ -1626,6 +1632,7 @@
  #define BITS_PER_HEX_DIGIT 4
  
  static const char kUserPref[] = "user_pref";
@@ -50,7 +62,7 @@ Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.cpp
  static const char kPref[] = "pref";
  static const char kPrefSticky[] = "sticky_pref";
  static const char kTrue[] = "true";
-@@ -154,7 +155,8 @@
+@@ -1733,7 +1740,8 @@
                    value,
                    aPS->mVtype,
                    aPS->mIsDefault,
@@ -60,7 +72,7 @@ Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.cpp
    return true;
  }
  
-@@ -225,6 +227,7 @@
+@@ -1804,6 +1812,7 @@
            aPS->mVtype = PrefType::Invalid;
            aPS->mIsDefault = false;
            aPS->mIsStickyDefault = false;
@@ -68,7 +80,7 @@ Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.cpp
          }
          switch (c) {
            case '/': // begin comment block or line?
-@@ -235,11 +238,14 @@
+@@ -1814,11 +1823,14 @@
              break;
            case 'u': // indicating user_pref
            case 's': // indicating sticky_pref
@@ -83,7 +95,7 @@ Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.cpp
              } else {
                aPS->mStrMatch = kPref;
              }
-@@ -288,8 +294,9 @@
+@@ -1867,8 +1879,9 @@
        case PREF_PARSE_UNTIL_NAME:
          if (c == '\"' || c == '\'') {
            aPS->mIsDefault =
@@ -94,25 +106,3 @@ Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.cpp
            aPS->mQuoteChar = c;
            aPS->mNextState = PREF_PARSE_UNTIL_COMMA; // return here when done
            state = PREF_PARSE_QUOTED_STRING;
-Index: firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.h
-===================================================================
---- firefox-trunk-58.0~a1~hg20171010r385288.orig/modules/libpref/prefread.h
-+++ firefox-trunk-58.0~a1~hg20171010r385288/modules/libpref/prefread.h
-@@ -28,7 +28,8 @@
-                            PrefValue aValue,
-                            PrefType aType,
-                            bool aIsDefault,
--                           bool aIsStickyDefault);
-+                           bool aIsStickyDefault,
-+                           bool aIsLocked);
- 
- // Report any errors or warnings we encounter during parsing.
- typedef void (*PrefParseErrorReporter)(const char* aMessage,
-@@ -56,6 +57,7 @@
-   PrefType mVtype;       // PREF_{STRING,INT,BOOL}
-   bool mIsDefault;       // true if (default) pref
-   bool mIsStickyDefault; // true if (sticky) pref
-+  bool mIsLock;          // true if (locked) pref
- } PrefParseState;
- 
- // Initialize a PrefParseState instance.
