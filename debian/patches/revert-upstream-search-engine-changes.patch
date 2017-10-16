@@ -1,8 +1,8 @@
-Index: firefox-trunk-56.0~a1~hg20170721r370029/browser/locales/search/list.json
+Index: firefox-trunk-58.0~a1~hg20171016r386330/browser/locales/search/list.json
 ===================================================================
---- firefox-trunk-56.0~a1~hg20170721r370029.orig/browser/locales/search/list.json
-+++ firefox-trunk-56.0~a1~hg20170721r370029/browser/locales/search/list.json
-@@ -5,33 +5,6 @@
+--- firefox-trunk-58.0~a1~hg20171016r386330.orig/browser/locales/search/list.json
++++ firefox-trunk-58.0~a1~hg20171016r386330/browser/locales/search/list.json
+@@ -5,62 +5,6 @@
      ]
    },
    "regionOverrides": {
@@ -10,7 +10,9 @@ Index: firefox-trunk-56.0~a1~hg20170721r370029/browser/locales/search/list.json
 -      "google": "google-nocodes"
 -    },
 -    "CA": {
--      "google": "google-nocodes"
+-      "google": "google-nocodes",
+-      "ebay": "ebay-ca",
+-      "ebay-fr": "ebay-ca"
 -    },
 -    "KZ": {
 -      "google": "google-nocodes"
@@ -32,6 +34,33 @@ Index: firefox-trunk-56.0~a1~hg20170721r370029/browser/locales/search/list.json
 -    },
 -    "HK": {
 -      "google": "google-nocodes"
+-    },
+-    "AT": {
+-      "ebay-de": "ebay-at"
+-    },
+-    "AU": {
+-      "ebay": "ebay-au",
+-      "ebay-uk": "ebay-au"
+-    },
+-    "BE": {
+-      "ebay": "ebay-be",
+-      "ebay-nl": "ebay-be",
+-      "ebay-fr": "ebay-be"
+-    },
+-    "CH": {
+-      "ebay": "ebay-ch",
+-      "ebay-de": "ebay-ch",
+-      "ebay-fr": "ebay-ch"
+-    },
+-    "IE": {
+-      "ebay": "ebay-ie",
+-      "ebay-uk": "ebay-ie"
+-    },
+-    "NL": {
+-      "ebay": "ebay-nl"
+-    },
+-    "GB": {
+-      "ebay": "ebay-uk"
 -    }
    },
    "locales": {

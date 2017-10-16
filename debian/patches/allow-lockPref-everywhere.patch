@@ -3,21 +3,11 @@ Author: Alexander Sack <asac@ubuntu.com>
 Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=467738
 Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
 
-Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
+Index: firefox-trunk-58.0~a1~hg20171016r386330/modules/libpref/Preferences.cpp
 ===================================================================
---- firefox-trunk-58.0~a1~hg20171012r385760.orig/modules/libpref/Preferences.cpp
-+++ firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
-@@ -416,7 +416,8 @@
-                     PrefValue aValue,
-                     PrefType aType,
-                     bool aIsDefault,
--                    bool aIsStickyDefault);
-+                    bool aIsStickyDefault,
-+                    bool aIsLocked);
- 
- // Callback for whenever we change a preference.
- typedef void (*PrefsDirtyFunc)();
-@@ -1493,7 +1494,8 @@
+--- firefox-trunk-58.0~a1~hg20171016r386330.orig/modules/libpref/Preferences.cpp
++++ firefox-trunk-58.0~a1~hg20171016r386330/modules/libpref/Preferences.cpp
+@@ -1346,7 +1346,8 @@
                      PrefValue aValue,
                      PrefType aType,
                      bool aIsDefault,
@@ -27,7 +17,7 @@ Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
  {
    uint32_t flags = 0;
    if (aIsDefault) {
-@@ -1505,6 +1507,8 @@
+@@ -1358,6 +1359,8 @@
      flags |= kPrefForceSet;
    }
    pref_HashPref(aPref, aValue, aType, flags);
@@ -36,7 +26,7 @@ Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
  }
  
  //===========================================================================
-@@ -1530,7 +1534,8 @@
+@@ -1379,7 +1382,8 @@
                             PrefValue aValue,
                             PrefType aType,
                             bool aIsDefault,
@@ -46,15 +36,15 @@ Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
  
  // Report any errors or warnings we encounter during parsing.
  typedef void (*PrefParseErrorReporter)(const char* aMessage,
-@@ -1558,6 +1563,7 @@
+@@ -1407,6 +1411,7 @@
    PrefType mVtype;       // PREF_{STRING,INT,BOOL}
    bool mIsDefault;       // true if (default) pref
    bool mIsStickyDefault; // true if (sticky) pref
 +  bool mIsLock;          // true if (locked) pref
- } PrefParseState;
+ };
  
- // Initialize a PrefParseState instance.
-@@ -1626,6 +1632,7 @@
+ // Pref parser states.
+@@ -1436,6 +1441,7 @@
  #define BITS_PER_HEX_DIGIT 4
  
  static const char kUserPref[] = "user_pref";
@@ -62,7 +52,7 @@ Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
  static const char kPref[] = "pref";
  static const char kPrefSticky[] = "sticky_pref";
  static const char kTrue[] = "true";
-@@ -1733,7 +1740,8 @@
+@@ -1539,7 +1545,8 @@
                    value,
                    aPS->mVtype,
                    aPS->mIsDefault,
@@ -72,7 +62,7 @@ Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
    return true;
  }
  
-@@ -1804,6 +1812,7 @@
+@@ -1626,6 +1633,7 @@
            aPS->mVtype = PrefType::Invalid;
            aPS->mIsDefault = false;
            aPS->mIsStickyDefault = false;
@@ -80,7 +70,7 @@ Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
          }
          switch (c) {
            case '/': // begin comment block or line?
-@@ -1814,11 +1823,14 @@
+@@ -1636,11 +1644,14 @@
              break;
            case 'u': // indicating user_pref
            case 's': // indicating sticky_pref
@@ -95,7 +85,7 @@ Index: firefox-trunk-58.0~a1~hg20171012r385760/modules/libpref/Preferences.cpp
              } else {
                aPS->mStrMatch = kPref;
              }
-@@ -1867,8 +1879,9 @@
+@@ -1689,8 +1700,9 @@
        case PREF_PARSE_UNTIL_NAME:
          if (c == '\"' || c == '\'') {
            aPS->mIsDefault =

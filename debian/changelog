@@ -6,6 +6,7 @@ firefox-trunk (58.0~a1~hg20171013r386058-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/ppc-no-static-sizes.patch
     - debian/patches/unity-menubar.patch
     - debian/patches/allow-lockPref-everywhere.patch
+    - debian/patches/revert-upstream-search-engine-changes.patch
   * Drop upstreamed/obsolete patches
     - debian/patches/build-ppc64-s390x-nss.patch
     - debian/patches/build-ppc64-s390x-rust.patch
