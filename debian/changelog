@@ -8,6 +8,7 @@ firefox-trunk (58.0~a1~hg20171027r388661-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/unity-menubar.patch
     - debian/patches/allow-lockPref-everywhere.patch
     - debian/patches/revert-upstream-search-engine-changes.patch
+    - debian/patches/warn-only-on-duplicates.patch
   * Drop upstreamed/obsolete patches
     - debian/patches/build-ppc64-s390x-nss.patch
     - debian/patches/build-ppc64-s390x-rust.patch
@@ -21,6 +22,8 @@ firefox-trunk (58.0~a1~hg20171027r388661-0ubuntu1) UNRELEASED; urgency=medium
   * Install watermark.svg from the onbording extension as symbolic icon
     - debian/build/rules.mk 
     - debian/firefox.dirs.in
+  * mozbuild/shellutil.py: Don't treat '~' character as special
+    - debian/patches/dont-treat-tilde-as-special.patch
 
   [ Chris Coulson ]
   * Don't pass -mfloat-abi=softfp when building webrtc on armhf

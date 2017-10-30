@@ -1,0 +1,13 @@
+Index: firefox-48.0~b10+build1/python/mozbuild/mozbuild/shellutil.py
+===================================================================
+--- firefox-48.0~b10+build1.orig/python/mozbuild/mozbuild/shellutil.py
++++ firefox-48.0~b10+build1/python/mozbuild/mozbuild/shellutil.py
+@@ -26,7 +26,7 @@ UNQUOTED_TOKENS_RE = _tokens2re(
+   whitespace=r'[\t\r\n ]+',
+   quote=r'[\'"]',
+   comment='#',
+-  special=r'[<>&|`~(){}$;\*\?]',
++  special=r'[<>&|`(){}$;\*\?]',
+   backslashed=r'\\[^\\]',
+ )
+ 
