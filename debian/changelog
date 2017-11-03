@@ -1,4 +1,4 @@
-firefox-trunk (58.0~a1~hg20171027r388661-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (58.0~a1~hg20171101r389532-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.21.0 and cargo >= 0.22
@@ -24,6 +24,10 @@ firefox-trunk (58.0~a1~hg20171027r388661-0ubuntu1) UNRELEASED; urgency=medium
     - debian/firefox.dirs.in
   * mozbuild/shellutil.py: Don't treat '~' character as special
     - debian/patches/dont-treat-tilde-as-special.patch
+  * Add Nepali language pack
+    - update debian/config/locales.all
+    - update debian/config/locales.shipped
+    - update debian/control
 
   [ Chris Coulson ]
   * Don't pass -mfloat-abi=softfp when building webrtc on armhf
