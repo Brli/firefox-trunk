@@ -1,8 +1,8 @@
-Index: firefox-48.0~b10+build1/python/mozbuild/mozbuild/shellutil.py
+Index: firefox-58.0~b2+build1/python/mozbuild/mozbuild/shellutil.py
 ===================================================================
---- firefox-48.0~b10+build1.orig/python/mozbuild/mozbuild/shellutil.py
-+++ firefox-48.0~b10+build1/python/mozbuild/mozbuild/shellutil.py
-@@ -26,7 +26,7 @@ UNQUOTED_TOKENS_RE = _tokens2re(
+--- firefox-58.0~b2+build1.orig/python/mozbuild/mozbuild/shellutil.py
++++ firefox-58.0~b2+build1/python/mozbuild/mozbuild/shellutil.py
+@@ -26,7 +26,7 @@
    whitespace=r'[\t\r\n ]+',
    quote=r'[\'"]',
    comment='#',
@@ -11,3 +11,12 @@ Index: firefox-48.0~b10+build1/python/mozbuild/mozbuild/shellutil.py
    backslashed=r'\\[^\\]',
  )
  
+@@ -41,7 +41,7 @@
+ 
+ # This regexp contains the same characters as all those listed in
+ # UNQUOTED_TOKENS_RE. Please keep in sync.
+-SHELL_QUOTE_RE = re.compile(r'[\\\t\r\n \'\"#<>&|`~(){}$;\*\?]')
++SHELL_QUOTE_RE = re.compile(r'[\\\t\r\n \'\"#<>&|`(){}$;\*\?]')
+ 
+ 
+ class MetaCharacterException(Exception):
