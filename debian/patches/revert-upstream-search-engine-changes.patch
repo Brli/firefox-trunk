@@ -1,19 +1,19 @@
-Index: firefox-trunk-58.0~a1~hg20171016r386330/browser/locales/search/list.json
+Index: firefox-trunk-58.0~a1~hg20171112r391436/browser/locales/search/list.json
 ===================================================================
---- firefox-trunk-58.0~a1~hg20171016r386330.orig/browser/locales/search/list.json
-+++ firefox-trunk-58.0~a1~hg20171016r386330/browser/locales/search/list.json
-@@ -5,62 +5,6 @@
+--- firefox-trunk-58.0~a1~hg20171112r391436.orig/browser/locales/search/list.json
++++ firefox-trunk-58.0~a1~hg20171112r391436/browser/locales/search/list.json
+@@ -5,35 +5,10 @@
      ]
    },
    "regionOverrides": {
 -    "US": {
 -      "google": "google-nocodes"
 -    },
--    "CA": {
+     "CA": {
 -      "google": "google-nocodes",
--      "ebay": "ebay-ca",
--      "ebay-fr": "ebay-ca"
--    },
+       "ebay": "ebay-ca",
+       "ebay-fr": "ebay-ca"
+     },
 -    "KZ": {
 -      "google": "google-nocodes"
 -    },
@@ -35,33 +35,63 @@ Index: firefox-trunk-58.0~a1~hg20171016r386330/browser/locales/search/list.json
 -    "HK": {
 -      "google": "google-nocodes"
 -    },
--    "AT": {
--      "ebay-de": "ebay-at"
--    },
--    "AU": {
--      "ebay": "ebay-au",
--      "ebay-uk": "ebay-au"
--    },
--    "BE": {
--      "ebay": "ebay-be",
--      "ebay-nl": "ebay-be",
--      "ebay-fr": "ebay-be"
--    },
--    "CH": {
--      "ebay": "ebay-ch",
--      "ebay-de": "ebay-ch",
--      "ebay-fr": "ebay-ch"
--    },
--    "IE": {
--      "ebay": "ebay-ie",
--      "ebay-uk": "ebay-ie"
--    },
--    "NL": {
--      "ebay": "ebay-nl"
--    },
--    "GB": {
--      "ebay": "ebay-uk"
--    }
-   },
-   "locales": {
-     "en-US": {
+     "AT": {
+       "ebay-de": "ebay-at"
+     },
+@@ -71,7 +71,7 @@
+       },
+       "experimental-hidden": {
+         "visibleDefaultEngines": [
+-          "amazon-ca", "amazon-au", "google-2018", "yahoo-en-CA", "yandex-en"
++          "yahoo-en-CA", "yandex-en"
+         ]
+       }
+     },
+@@ -274,11 +274,6 @@
+         "visibleDefaultEngines": [
+           "google", "yahoo-mx", "bing", "ddg", "mercadolibre-mx", "wikipedia-es"
+         ]
+-      },
+-      "experimental-hidden": {
+-        "visibleDefaultEngines": [
+-          "amazon-mx"
+-        ]
+       }
+     },
+     "et": {
+@@ -328,11 +323,6 @@
+         "visibleDefaultEngines": [
+           "google", "yahoo-fy-NL", "bing", "bolcom-fy-NL", "ddg", "ebay-nl", "marktplaats-fy-NL", "wikipedia-fy-NL"
+         ]
+-      },
+-      "experimental-hidden": {
+-        "visibleDefaultEngines": [
+-          "amazon-nl"
+-        ]
+       }
+     },
+     "ga-IE": {
+@@ -592,11 +582,6 @@
+         "visibleDefaultEngines": [
+           "google", "bing", "bolcom-nl", "ddg", "ebay-nl", "marktplaats-nl", "wikipedia-nl"
+         ]
+-      },
+-      "experimental-hidden": {
+-        "visibleDefaultEngines": [
+-          "amazon-nl"
+-        ]
+       }
+     },
+     "nn-NO": {
+@@ -639,11 +624,6 @@
+         "visibleDefaultEngines": [
+           "google", "yahoo-br", "bing", "buscape", "ddg", "mercadolivre", "twitter", "wikipedia-pt"
+         ]
+-      },
+-      "experimental-hidden": {
+-        "visibleDefaultEngines": [
+-          "amazon-br"
+-        ]
+       }
+     },
+     "pt-PT": {
