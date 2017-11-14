@@ -30,6 +30,8 @@ firefox-trunk (58.0~a1~hg20171112r391436-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/control
   * Adapt to upstream and use ./mach
     - debian/build/rules.mk
+  * Install EmojiOneMozilla.ttf (LP: #1644021)
+    - debian/firefox.install.in
 
   [ Chris Coulson ]
   * Don't pass -mfloat-abi=softfp when building webrtc on armhf
