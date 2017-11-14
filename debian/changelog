@@ -1,4 +1,4 @@
-firefox-trunk (58.0~a1~hg20171112r391436-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (58.0~a1~hg20171112r391436-0ubuntu1) bionic; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.21.0 and cargo >= 0.22
@@ -32,6 +32,7 @@ firefox-trunk (58.0~a1~hg20171112r391436-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/rules.mk
   * Install EmojiOneMozilla.ttf (LP: #1644021)
     - debian/firefox.install.in
+  * Disable unity-menubar.patch which fails to build
 
   [ Chris Coulson ]
   * Don't pass -mfloat-abi=softfp when building webrtc on armhf
@@ -48,7 +49,7 @@ firefox-trunk (58.0~a1~hg20171112r391436-0ubuntu1) UNRELEASED; urgency=medium
   [ Jamie Strandboge ]
   * Update AppArmor profile
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 22 Sep 2017 13:20:26 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 14 Nov 2017 09:09:22 +0100
 
 firefox-trunk (57.0~a1~hg20170920r381849-0ubuntu1) artful; urgency=medium
 
