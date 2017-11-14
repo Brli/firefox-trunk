@@ -36,13 +36,12 @@ ifeq (,$(MOZ_BRANDING_DIR))
 $(error "Need to set MOZ_BRANDING_DIR")
 endif
 
-DEB_MAKE_MAKEFILE		:= client.mk
+DEB_BUILD_DIR			:= $(MOZ_OBJDIR)
 # Without this, CDBS passes CFLAGS and CXXFLAGS options to client.mk, which breaks the build
 DEB_MAKE_EXTRA_ARGS		:=
 # These normally come from autotools.mk, which we no longer include (because we
 # don't want to run configure)
-DEB_MAKE_INSTALL_TARGET	:= install DESTDIR=$(CURDIR)/debian/tmp
-DEB_MAKE_CLEAN_TARGET	:= cleansrcdir
+DEB_MAKE_INSTALL_TARGET	:=
 # Prevent some files from being cleaned to avoid build failures
 DEB_CLEAN_EXCLUDE		:= Cargo.toml.orig
 # Don't save debug symbols in firefox-dbg (rely on pkg-create-dbgsym to create
@@ -264,6 +263,14 @@ debian/stamp-make-langpack-xpi-%:
 		$(MAKE) langpack-$* BASE_MERGE=$(CURDIR)/debian/l10n-mergedirs REAL_LOCALE_MERGEDIR=$(CURDIR)/debian/l10n-mergedirs/$* || exit 1;
 	@touch $@
 
+common-configure-arch common-configure-indep:: common-configure-impl
+common-configure-impl:: debian/stamp-mach-configure
+debian/stamp-mach-configure:
+	$(CURDIR)/mach configure && $(CURDIR)/mach build-backend
+	touch $@
+clean::
+	rm -f debian/stamp-mach-configure
+
 #common-build-arch:: make-langpack-xpis make-testsuite run-tests
 common-build-arch:: make-langpack-xpis
 
@@ -279,12 +286,18 @@ install/%::
 	echo "app:Provides=$(subst $(subst $(MOZ_APP_NAME),,$(MOZ_PKG_NAME)),,$*)" >> debian/$*.substvars
 endif
 
-common-install-arch common-install-indep::
+common-install-arch common-install-indep:: common-install-impl
+common-install-impl:: debian/stamp-mach-install
+debian/stamp-mach-install:
+	DESTDIR=$(CURDIR)/debian/tmp $(CURDIR)/mach install
 	$(foreach dir,$(MOZ_LIBDIR) $(MOZ_INCDIR) $(MOZ_IDLDIR) $(MOZ_SDKDIR), \
 		if [ -d debian/tmp/$(dir)-$(MOZ_VERSION) ]; \
 		then \
 			mv debian/tmp/$(dir)-$(MOZ_VERSION) debian/tmp/$(dir); \
 		fi; )
+	touch $@
+clean::
+	rm -f debian/stamp-mach-install
 
 #common-install-arch:: install-testsuite
 
