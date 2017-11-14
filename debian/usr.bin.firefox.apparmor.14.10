@@ -38,6 +38,7 @@
   # for networking
   network inet stream,
   network inet6 stream,
+  @{PROC}/[0-9]*/net/arp r,
   @{PROC}/[0-9]*/net/if_inet6 r,
   @{PROC}/[0-9]*/net/ipv6_route r,
   @{PROC}/[0-9]*/net/dev r,
@@ -60,6 +61,8 @@
   owner @{HOME}/.local/share/applications/defaults.list r,
   owner @{HOME}/.local/share/applications/mimeapps.list r,
   owner @{HOME}/.local/share/applications/mimeinfo.cache r,
+  /var/lib/snapd/desktop/applications/mimeinfo.cache r,
+  /var/lib/snapd/desktop/applications/*.desktop r,
   owner /tmp/** m,
   owner /var/tmp/** m,
   owner /{,var/}run/shm/shmfd-* rw,
@@ -120,6 +123,9 @@
   /sys/devices/pci[0-9]*/**/uevent r,
   /sys/devices/platform/**/uevent r,
   /sys/devices/pci*/**/{busnum,idVendor,idProduct} r,
+  /sys/devices/pci*/**/{,subsystem_}device r,
+  /sys/devices/pci*/**/{,subsystem_}vendor r,
+  /sys/devices/system/node/node[0-9]*/meminfo r,
   owner @{HOME}/.cache/thumbnails/** rw,
 
   /etc/mtab r,
@@ -174,11 +180,65 @@
   dbus (send)
        bus=session
        path=/org/gnome/GConf/Server
-       member=GetDefaultDatabase,
+       member=GetDefaultDatabase
+       peer=(label=unconfined),
   dbus (send)
        bus=session
        path=/org/gnome/GConf/Database/*
-       member={AddMatch,AddNotify,AllEntries,LookupExtended,RemoveNotify},
+       member={AddMatch,AddNotify,AllEntries,LookupExtended,RemoveNotify}
+       peer=(label=unconfined),
+  dbus (send)
+       bus=session
+       path=/org/gtk/vfs/mounttracker
+       interface=org.gtk.vfs.MountTracker
+       member=ListMountableInfo
+       peer=(label=unconfined),
+
+  # gnome-session
+  dbus (send)
+       bus=session
+       path=/org/gnome/SessionManager
+       interface=org.gnome.SessionManager
+       member={Inhibit,Uninhibit}
+       peer=(label=unconfined),
+
+  # unity screen API
+  dbus (send)
+       bus=system
+       interface="org.freedesktop.DBus.Introspectable"
+       path="/com/canonical/Unity/Screen"
+       member="Introspect"
+       peer=(label=unconfined),
+  dbus (send)
+       bus=system
+       interface="com.canonical.Unity.Screen"
+       path="/com/canonical/Unity/Screen"
+       member={keepDisplayOn,removeDisplayOnRequest}
+       peer=(label=unconfined),
+
+  # freedesktop.org ScreenSaver
+  dbus (send)
+       bus=session
+       path=/{,org/freedesktop/,org.gnome/}Screen{s,S}aver
+       interface=org.freedesktop.ScreenSaver
+       member={Inhibit,UnInhibit,SimulateUserActivity}
+       peer=(label=unconfined),
+
+  # gnome, kde and cinnamon screensaver
+  dbus (send)
+       bus=session
+       path=/{,ScreenSaver}
+       interface=org.{gnome.ScreenSaver,kde.screensaver,cinnamon.ScreenSaver}
+       member=SimulateUserActivity
+       peer=(label=unconfined),
+
+  # UPower
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/UPower
+       interface=org.freedesktop.UPower
+       member=EnumerateDevices
+       peer=(label=unconfined),
 
   #
   # Extensions
@@ -210,11 +270,12 @@
     /usr/include/python2.[4567]/pyconfig.h r,
     /etc/lsb-release r,
     /etc/debian_version r,
+    /usr/share/distro-info/*.csv r,
     /var/lib/dpkg/** r,
 
-    /usr/local/lib/python3.[0-4]/dist-packages/ r,
+    /usr/local/lib/python3.[0-6]/dist-packages/ r,
     /usr/bin/ r,
-    /usr/bin/python3.[0-4] r,
+    /usr/bin/python3.[0-6] mr,
 
     # file_inherit
     deny /tmp/gtalkplugin.log w,

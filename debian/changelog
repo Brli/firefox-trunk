@@ -45,6 +45,9 @@ firefox-trunk (58.0~a1~hg20171112r391436-0ubuntu1) UNRELEASED; urgency=medium
   * Update revert-upstream-search-engine-changes.patch to ensure we keep the
     region overrides for non-Google plugins
 
+  [ Jamie Strandboge ]
+  * Update AppArmor profile
+
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 22 Sep 2017 13:20:26 +0200
 
 firefox-trunk (57.0~a1~hg20170920r381849-0ubuntu1) artful; urgency=medium
