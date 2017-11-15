@@ -1,6 +1,8 @@
 firefox-trunk (59.0~a1~hg20171114r391597-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Follow change of icons location
+    - debian/firefox.install.in
+    - debian/firefox.links.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 14 Nov 2017 09:12:42 +0100
 
