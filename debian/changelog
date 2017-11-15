@@ -1,8 +1,40 @@
 firefox-trunk (59.0~a1~hg20171114r391597-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Follow change of icons location
     - debian/firefox.install.in
     - debian/firefox.links.in
+
+  [ Chris Coulson ]
+  * Update disable-geo-specific-search-defaults-for-us.patch to pick up some
+    more locales
+  * Update searchplugins.conf to ignore recently added experimental and hidden
+    Amazon and Google search plugins
+  * Add Urdu localized Amazon search plugin
+    - add debian/searchplugins/ur/amazon-in.xml
+    - update debian/config/searchplugins.conf
+  * Don't set distribution.searchplugins.defaultLocale, as this breaks our
+    custom searchplugins for non en-US locales
+    - update debian/vendor-gre.js
+  * Drop region-specific custom Google searchplugins, as these aren't needed
+    anymore
+    - remove debian/searchplugins/en-GB/google.xml
+    - remove debian/searchplugins/en-ZA/google.xml
+    - remove debian/searchplugins/ku/google.xml
+    - update debian/config/searchplugins.conf
+  * Refresh Google search plugin
+    - update debian/searchplugins/en-US/google.xml
+  * Refresh Baidu search plugin
+    - update debian/searchplugins/zh-CN/baidu.xml
+  * Refresh Amazon search plugins
+    - update debian/searchplugins/de/amazondotcom-de.xml
+    - update debian/searchplugins/en-GB/amazon-en-GB.xml
+    - update debian/searchplugins/en-US/amazondotcom.xml
+    - update debian/searchplugins/fr/amazon-france.xml
+    - update debian/searchplugins/it/amazon-it.xml
+    - update debian/searchplugins/ja/amazon-jp.xml
+    - update debian/searchplugins/zh-CN/amazondotcn.xml
+    - remove unused debian/searchplugins/sq/amazon-en-GB.xml
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 14 Nov 2017 09:12:42 +0100
 
