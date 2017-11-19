@@ -11,8 +11,8 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
                      PrefValue aValue,
                      PrefType aType,
                      bool aIsDefault,
--                    bool aIsStickyDefault)
-+                    bool aIsStickyDefault,
+-                    bool aIsSticky)
++                    bool aIsSticky,
 +                    bool aIsLocked)
  {
    uint32_t flags = 0;
@@ -30,8 +30,8 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
                             PrefValue aValue,
                             PrefType aType,
                             bool aIsDefault,
--                           bool aIsStickyDefault);
-+                           bool aIsStickyDefault,
+-                           bool aIsSticky);
++                           bool aIsSticky,
 +                           bool aIsLocked);
  
  // Report any errors or warnings we encounter during parsing.
@@ -39,7 +39,7 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
 @@ -1246,6 +1250,7 @@
    PrefType mVtype;       // PREF_{STRING,INT,BOOL}
    bool mIsDefault;       // true if (default) pref
-   bool mIsStickyDefault; // true if (sticky) pref
+   bool mIsSticky;        // true if (sticky) pref
 +  bool mIsLock;          // true if (locked) pref
  };
  
@@ -50,12 +50,12 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
  static const char kUserPref[] = "user_pref";
 +static const char kLockPref[] = "lockPref";
  static const char kPref[] = "pref";
- static const char kPrefSticky[] = "sticky_pref";
+ static const char kStickyPref[] = "sticky_pref";
  static const char kTrue[] = "true";
 @@ -1422,6 +1428,7 @@
            aPS->mVtype = PrefType::Invalid;
            aPS->mIsDefault = false;
-           aPS->mIsStickyDefault = false;
+           aPS->mIsSticky = false;
 +          aPS->mIsLock = false;
          }
          switch (c) {
@@ -69,7 +69,7 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
              if (c == 'u') {
                aPS->mStrMatch = kUserPref;
              } else if (c == 's') {
-               aPS->mStrMatch = kPrefSticky;
+               aPS->mStrMatch = kStickyPref;
 +            } else if (c == 'l') {
 +              aPS->mStrMatch = kLockPref;
              } else {
@@ -79,9 +79,9 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
        case PREF_PARSE_UNTIL_NAME:
          if (c == '\"' || c == '\'') {
            aPS->mIsDefault =
--            (aPS->mStrMatch == kPref || aPS->mStrMatch == kPrefSticky);
-+            (aPS->mStrMatch == kPref || aPS->mStrMatch == kPrefSticky || aPS->mStrMatch == kLockPref);
-           aPS->mIsStickyDefault = (aPS->mStrMatch == kPrefSticky);
+-            (aPS->mStrMatch == kPref || aPS->mStrMatch == kStickyPref);
++            (aPS->mStrMatch == kPref || aPS->mStrMatch == kStickyPref || aPS->mStrMatch == kLockPref);
+           aPS->mIsSticky = (aPS->mStrMatch == kStickyPref);
 +          aPS->mIsLock = (aPS->mStrMatch == kLockPref);
            aPS->mQuoteChar = c;
            aPS->mNextState = PREF_PARSE_UNTIL_COMMA; // return here when done
@@ -90,8 +90,8 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
                         value,
                         aPS->mVtype,
                         aPS->mIsDefault,
--                       aPS->mIsStickyDefault);
-+                       aPS->mIsStickyDefault,
+-                       aPS->mIsSticky);
++                       aPS->mIsSticky,
 +                       aPS->mIsLock);
  
            state = PREF_PARSE_INIT;

@@ -6,6 +6,9 @@ firefox-trunk (59.0~a1~hg20171116r392158-0ubuntu1) UNRELEASED; urgency=medium
     - debian/firefox.links.in
   * Drop upstreamed/obsolete patches
     - debian/patches/build-ppc64-s390x-curl.patch 
+  * Update patches
+    - debian/patches/allow-lockPref-everywhere.patch
+    - debian/patches/normalize-distribution-searchplugins.patch
 
   [ Chris Coulson ]
   * Update disable-geo-specific-search-defaults-for-us.patch to pick up some
