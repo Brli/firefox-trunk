@@ -2,11 +2,9 @@ Description: Add "Ubuntu" to the platform part of the UA string
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
-Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandler.cpp
-===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/netwerk/protocol/http/nsHttpHandler.cpp	2015-09-17 19:42:31.429286277 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandler.cpp	2015-09-17 19:43:17.257423792 +0100
-@@ -172,6 +172,9 @@
+--- a/netwerk/protocol/http/nsHttpHandler.cpp
++++ b/netwerk/protocol/http/nsHttpHandler.cpp
+@@ -213,6 +213,9 @@
      , mLegacyAppName("Mozilla")
      , mLegacyAppVersion("5.0")
      , mProduct("Gecko")
@@ -16,7 +14,7 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandl
      , mCompatFirefoxEnabled(false)
      , mUserAgentIsDirty(true)
      , mAcceptLanguagesIsDirty(true)
-@@ -343,6 +346,9 @@
+@@ -502,6 +505,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
      LOG(("> product-sub = %s\n", mProductSub.get()));
@@ -26,20 +24,20 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandl
      LOG(("> app-name = %s\n", mAppName.get()));
      LOG(("> app-version = %s\n", mAppVersion.get()));
      LOG(("> compat-firefox = %s\n", mCompatFirefox.get()));
-@@ -639,8 +645,10 @@
+@@ -872,8 +878,10 @@
                             mCompatFirefox.Length() +
                             mCompatDevice.Length() +
                             mDeviceModelId.Length() +
 -                           13);
 -
 +#ifdef MOZ_UA_VENDOR
-+                           mVendor.Length() + 
++                           mVendor.Length() +
 +#endif
 +                           15);
      // Application portion
      mUserAgent.Assign(mLegacyAppName);
      mUserAgent += '/';
-@@ -655,6 +663,10 @@
+@@ -888,6 +896,10 @@
        mUserAgent.AppendLiteral("; ");
      }
  #endif
@@ -50,11 +48,9 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandl
      if (!mCompatDevice.IsEmpty()) {
          mUserAgent += mCompatDevice;
          mUserAgent.AppendLiteral("; ");
-Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandler.h
-===================================================================
---- firefox-trunk-43.0~a1~hg20150916r262830.orig/netwerk/protocol/http/nsHttpHandler.h	2015-09-17 19:42:31.429286277 +0100
-+++ firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandler.h	2015-09-17 19:42:31.369286096 +0100
-@@ -441,6 +441,7 @@
+--- a/netwerk/protocol/http/nsHttpHandler.h
++++ b/netwerk/protocol/http/nsHttpHandler.h
+@@ -506,6 +506,7 @@
      // useragent components
      nsCString      mLegacyAppName;
      nsCString      mLegacyAppVersion;
@@ -62,17 +58,49 @@ Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/nsHttpHandl
      nsCString      mPlatform;
      nsCString      mOscpu;
      nsCString      mMisc;
-Index: firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/Makefile.in
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ firefox-trunk-43.0~a1~hg20150916r262830/netwerk/protocol/http/Makefile.in	2015-09-17 19:42:31.369286096 +0100
-@@ -0,0 +1,9 @@
-+# This Source Code Form is subject to the terms of the Mozilla Public
-+# License, v. 2.0. If a copy of the MPL was not distributed with this
-+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+--- a/old-configure.in
++++ b/old-configure.in
+@@ -2185,6 +2185,16 @@
+     MOZ_APP_BASENAME="$WITH_APP_BASENAME"
+ fi
+ 
++# Allow someone to add a vendor component to the default user agent string
++MOZ_ARG_WITH_STRING(ua-vendor,
++[--with-ua-vendor=VENDOR sets MOZ_UA_VENDOR to VENDOR],
++WITH_UA_VENDOR=$withval,
++)
 +
-+include $(topsrcdir)/config/rules.mk
++if test -n "$WITH_UA_VENDOR" ; then
++    MOZ_UA_VENDOR="$WITH_UA_VENDOR"
++fi
 +
-+ifdef MOZ_UA_VENDOR
-+DEFINES += -DMOZ_UA_VENDOR=\""$(MOZ_UA_VENDOR)"\"
-+endif
+ # Special cases where we need to AC_DEFINE something. Also a holdover for apps
+ # that haven't made a confvars.sh yet. Don't add new stuff here, use
+ # MOZ_BUILD_APP.
+@@ -4744,6 +4754,7 @@
+ AC_SUBST(MOZ_APP_DISPLAYNAME)
+ AC_SUBST(MOZ_APP_BASENAME)
+ AC_SUBST(MOZ_APP_VENDOR)
++AC_SUBST(MOZ_UA_VENDOR)
+ AC_SUBST(MOZ_APP_PROFILE)
+ AC_SUBST(MOZ_APP_ID)
+ AC_SUBST(MOZ_APP_ANDROID_VERSION_CODE)
+--- a/build/moz.configure/old.configure
++++ b/build/moz.configure/old.configure
+@@ -278,6 +278,7 @@
+     '--with-system-zlib',
+     '--with-thumb',
+     '--with-thumb-interwork',
++    '--with-ua-vendor',
+     '--with-unify-dist',
+     '--with-user-appdir',
+     '--x-includes',
+--- a/netwerk/protocol/http/moz.build
++++ b/netwerk/protocol/http/moz.build
+@@ -138,3 +138,6 @@
+         DEFINES.update(
+             HAS_CONNECTX=True,
+         )
++
++if CONFIG['MOZ_UA_VENDOR']:
++    DEFINES['MOZ_UA_VENDOR'] = '"%s"' % CONFIG['MOZ_UA_VENDOR']

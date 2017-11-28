@@ -40,6 +40,13 @@ firefox-trunk (59.0~a1~hg20171116r392158-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/searchplugins/ja/amazon-jp.xml
     - update debian/searchplugins/zh-CN/amazondotcn.xml
     - remove unused debian/searchplugins/sq/amazon-en-GB.xml
+  * Fix LP: #1733970 - Search suggestions are broken after refreshing the
+    Google searchplugin
+  * Fix a missing token in the user agent string
+    - update debian/patches/ubuntu-ua-string-changes.patch
+    - update debian/patches/support-coinstallable-trunk-build.patch
+    - update debian/build/rules.mk
+    - update debian/config/mozconfig.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 14 Nov 2017 09:12:42 +0100
 
