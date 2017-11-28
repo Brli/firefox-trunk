@@ -1,15 +1,137 @@
-Description: Allow use of lockPref in all preference files
-Author: Alexander Sack <asac@ubuntu.com>
-Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=467738
-Forwarded: https://bugzilla.mozilla.org/attachment.cgi?id=351145
+Description: Allow .js preference files to set locked prefs
+Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=440908
 
-Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
-===================================================================
---- firefox-trunk-58.0~a1~hg20171110r391326.orig/modules/libpref/Preferences.cpp
-+++ firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
-@@ -1185,7 +1185,8 @@
-                     PrefValue aValue,
+diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
+--- a/modules/libpref/Preferences.cpp
++++ b/modules/libpref/Preferences.cpp
+@@ -230,20 +230,23 @@ StrEscape(const char* aOriginal, nsCStri
+   aResult.Append('"');
+ }
+ 
+ enum
+ {
+   kPrefSetDefault = 1,
+   kPrefForceSet = 2,
+   kPrefSticky = 4,
++  kPrefLocked = 8,
+ };
+ 
+ static ArenaAllocator<8192, 1> gPrefNameArena;
+ 
++static bool gIsAnyPrefLocked = false;
++
+ class PrefHashEntry : public PLDHashEntryHdr
+ {
+ public:
+   PrefHashEntry(const char* aName, PrefType aType)
+   {
+     mName = ArenaStrdup(aName, gPrefNameArena);
+     SetType(aType);
+     // We don't set the other fields because PLDHashTable always zeroes new
+@@ -497,16 +500,20 @@ public:
+           ReplaceValue(PrefValueKind::Default, aType, aValue);
+           if (aFlags & kPrefSticky) {
+             mIsSticky = true;
+           }
+           if (!mHasUserValue) {
+             *aValueChanged = true;
+           }
+         }
++        if (aFlags & kPrefLocked) {
++          SetIsLocked(true);
++          gIsAnyPrefLocked = true;
++        }
+         // What if we change the default to be the same as the user value?
+         // Should we clear the user value?
+       }
+     } else {
+       // If we have a default value, types must match when setting the user
+       // value.
+       if (mHasDefaultValue && !IsType(aType)) {
+         return NS_ERROR_UNEXPECTED;
+@@ -608,18 +615,16 @@ struct CallbackNode
+ 
+ static PLDHashTable* gHashTable;
+ 
+ // The callback list contains all the priority callbacks followed by the
+ // non-priority callbacks. gLastPriorityNode records where the first part ends.
+ static CallbackNode* gFirstCallback = nullptr;
+ static CallbackNode* gLastPriorityNode = nullptr;
+ 
+-static bool gIsAnyPrefLocked = false;
+-
+ // These are only used during the call to NotifyCallbacks().
+ static bool gCallbacksInProgress = false;
+ static bool gShouldCleanupDeadNodes = false;
+ 
+ static PLDHashTableOps pref_HashTableOps = {
+   PLDHashTable::HashStringKey,
+   PrefHashEntry::MatchEntry,
+   PLDHashTable::MoveEntryStub,
+@@ -881,17 +886,18 @@ public:
+   bool Parse(const char* aBuf, int aBufLen);
+ 
+   bool GrowBuf();
+ 
+   void HandleValue(const char* aPrefName,
+                    PrefType aType,
+                    PrefValue aValue,
+                    bool aIsDefault,
+-                   bool aIsSticky);
++                   bool aIsSticky,
++                   bool aIsLocked);
+ 
+   void ReportProblem(const char* aMessage, int aLine, bool aError);
+ 
+ private:
+   // Pref parser states.
+   enum class State
+   {
+     eInit,
+@@ -915,16 +921,17 @@ private:
+ 
+   static const int kUTF16EscapeNumDigits = 4;
+   static const int kHexEscapeNumDigits = 2;
+   static const int KBitsPerHexDigit = 4;
+ 
+   static constexpr const char* kUserPref = "user_pref";
+   static constexpr const char* kPref = "pref";
+   static constexpr const char* kStickyPref = "sticky_pref";
++  static constexpr const char* kLockedPref = "locked_pref";
+   static constexpr const char* kTrue = "true";
+   static constexpr const char* kFalse = "false";
+ 
+   State mState;           // current parse state
+   State mNextState;       // sometimes used...
+   const char* mStrMatch;  // string to match
+   int mStrIndex;          // next char of smatch to check;
+                           // also, counter in \u parsing
+@@ -934,16 +941,17 @@ private:
+   char mQuoteChar;        // char delimiter for quotations
+   char* mLb;              // line buffer (only allocation)
+   char* mLbCur;           // line buffer cursor
+   char* mLbEnd;           // line buffer end
+   char* mVb;              // value buffer (ptr into mLb)
+   Maybe<PrefType> mVtype; // pref value type
+   bool mIsDefault;        // true if (default) pref
+   bool mIsSticky;         // true if (sticky) pref
++  bool mIsLocked;         // true if (locked) pref
+ };
+ 
+ // This function will increase the size of the buffer owned by the given pref
+ // parse state. We currently use a simple doubling algorithm, but the only hard
+ // requirement is that it increase the buffer by at least the size of the
+ // mEscTmp buffer used for escape processing (currently 6 bytes).
+ //
+ // The buffer is used to store partial pref lines. It is freed when the parse
+@@ -980,24 +988,28 @@ Parser::GrowBuf()
+   return true;
+ }
+ 
+ void
+ Parser::HandleValue(const char* aPrefName,
                      PrefType aType,
+                     PrefValue aValue,
                      bool aIsDefault,
 -                    bool aIsSticky)
 +                    bool aIsSticky,
@@ -17,82 +139,176 @@ Index: firefox-trunk-58.0~a1~hg20171110r391326/modules/libpref/Preferences.cpp
  {
    uint32_t flags = 0;
    if (aIsDefault) {
-@@ -1197,6 +1198,8 @@
+     flags |= kPrefSetDefault;
+     if (aIsSticky) {
+       flags |= kPrefSticky;
+     }
++    if (aIsLocked) {
++      flags |= kPrefLocked;
++    }
+   } else {
      flags |= kPrefForceSet;
    }
-   pref_SetPref(aPref, aValue, aType, flags);
-+  if (aIsLocked)
-+    PREF_LockPref(aPref, true);
+   pref_SetPref(aPrefName, aValue, aType, flags);
  }
  
- //===========================================================================
-@@ -1218,7 +1221,8 @@
-                            PrefValue aValue,
-                            PrefType aType,
-                            bool aIsDefault,
--                           bool aIsSticky);
-+                           bool aIsSticky,
-+                           bool aIsLocked);
- 
- // Report any errors or warnings we encounter during parsing.
- typedef void (*PrefParseErrorReporter)(const char* aMessage,
-@@ -1246,6 +1250,7 @@
-   PrefType mVtype;       // PREF_{STRING,INT,BOOL}
-   bool mIsDefault;       // true if (default) pref
-   bool mIsSticky;        // true if (sticky) pref
-+  bool mIsLock;          // true if (locked) pref
- };
- 
- // Pref parser states.
-@@ -1275,6 +1280,7 @@
- #define BITS_PER_HEX_DIGIT 4
- 
- static const char kUserPref[] = "user_pref";
-+static const char kLockPref[] = "lockPref";
- static const char kPref[] = "pref";
- static const char kStickyPref[] = "sticky_pref";
- static const char kTrue[] = "true";
-@@ -1422,6 +1428,7 @@
-           aPS->mVtype = PrefType::Invalid;
-           aPS->mIsDefault = false;
-           aPS->mIsSticky = false;
-+          aPS->mIsLock = false;
+ // Report an error or a warning. If not specified, just dump to stderr.
+ void
+@@ -1060,31 +1072,35 @@ Parser::Parse(const char* aBuf, int aBuf
+       // initial state
+       case State::eInit:
+         if (mLbCur != mLb) { // reset state
+           mLbCur = mLb;
+           mVb = nullptr;
+           mVtype = Nothing();
+           mIsDefault = false;
+           mIsSticky = false;
++          mIsLocked = false;
          }
          switch (c) {
            case '/': // begin comment block or line?
-@@ -1432,11 +1439,14 @@
+             state = State::eCommentMaybeStart;
+             break;
+           case '#': // accept shell style comments
+             state = State::eUntilEOL;
              break;
            case 'u': // indicating user_pref
            case 's': // indicating sticky_pref
-+          case 'l': // indicating lockPref
            case 'p': // indicating pref
++          case 'l': // indicating locked_pref
              if (c == 'u') {
-               aPS->mStrMatch = kUserPref;
+               mStrMatch = kUserPref;
              } else if (c == 's') {
-               aPS->mStrMatch = kStickyPref;
+               mStrMatch = kStickyPref;
 +            } else if (c == 'l') {
-+              aPS->mStrMatch = kLockPref;
++              mStrMatch = kLockedPref;
              } else {
-               aPS->mStrMatch = kPref;
+               mStrMatch = kPref;
              }
-@@ -1485,8 +1495,9 @@
-       case PREF_PARSE_UNTIL_NAME:
-         if (c == '\"' || c == '\'') {
-           aPS->mIsDefault =
--            (aPS->mStrMatch == kPref || aPS->mStrMatch == kStickyPref);
-+            (aPS->mStrMatch == kPref || aPS->mStrMatch == kStickyPref || aPS->mStrMatch == kLockPref);
-           aPS->mIsSticky = (aPS->mStrMatch == kStickyPref);
-+          aPS->mIsLock = (aPS->mStrMatch == kLockPref);
-           aPS->mQuoteChar = c;
-           aPS->mNextState = PREF_PARSE_UNTIL_COMMA; // return here when done
-           state = PREF_PARSE_QUOTED_STRING;
-@@ -1815,7 +1826,8 @@
-                        value,
-                        aPS->mVtype,
-                        aPS->mIsDefault,
--                       aPS->mIsSticky);
-+                       aPS->mIsSticky,
-+                       aPS->mIsLock);
+             mStrIndex = 1;
+             mNextState = State::eUntilOpenParen;
+             state = State::eMatchString;
+             break;
+             // else skip char
+@@ -1122,18 +1138,20 @@ Parser::Parse(const char* aBuf, int aBuf
+         } else {
+           *mLbCur++ = c;
+         }
+         break;
  
-           state = PREF_PARSE_INIT;
+       // name parsing
+       case State::eUntilName:
+         if (c == '\"' || c == '\'') {
+-          mIsDefault = (mStrMatch == kPref || mStrMatch == kStickyPref);
++          mIsDefault = (mStrMatch == kPref || mStrMatch == kStickyPref ||
++                        mStrMatch == kLockedPref);
+           mIsSticky = (mStrMatch == kStickyPref);
++          mIsLocked = (mStrMatch == kLockedPref);
+           mQuoteChar = c;
+           mNextState = State::eUntilComma; // return here when done
+           state = State::eQuotedString;
+         } else if (c == '/') { // allow embedded comment
+           mNextState = state;  // return here when done with comment
+           state = State::eCommentMaybeStart;
+         } else if (!isspace(c)) {
+           ReportProblem("need space, comment or quote", lineNum, true);
+@@ -1440,17 +1458,17 @@ Parser::Parse(const char* aBuf, int aBuf
+               value.mBoolVal = (mVb == kTrue);
+               break;
+ 
+             default:
+               MOZ_CRASH();
+           }
+ 
+           // We've extracted a complete name/value pair.
+-          HandleValue(mLb, *mVtype, value, mIsDefault, mIsSticky);
++          HandleValue(mLb, *mVtype, value, mIsDefault, mIsSticky, mIsLocked);
+ 
+           state = State::eInit;
          } else if (c == '/') {
+           mNextState = state; // return here when done with comment
+           state = State::eCommentMaybeStart;
+         } else if (!isspace(c)) {
+           ReportProblem("need space, comment or semicolon", lineNum, true);
+           NS_WARNING("malformed pref file");
+diff --git a/modules/libpref/test/unit/data/testPrefLocked.js b/modules/libpref/test/unit/data/testPrefLocked.js
+new file mode 100644
+--- /dev/null
++++ b/modules/libpref/test/unit/data/testPrefLocked.js
+@@ -0,0 +1,2 @@
++pref("testPref.unlocked.bool", true);
++locked_pref("testPref.locked.bool", false);
+diff --git a/modules/libpref/test/unit/data/testPrefLockedUser.js b/modules/libpref/test/unit/data/testPrefLockedUser.js
+new file mode 100644
+--- /dev/null
++++ b/modules/libpref/test/unit/data/testPrefLockedUser.js
+@@ -0,0 +1,3 @@
++// testPrefLocked.js defined this pref as a locked_pref().
++// Changing a locked pref has no effect.
++user_pref("testPref.locked.bool", true);
+diff --git a/modules/libpref/test/unit/test_lockedprefs.js b/modules/libpref/test/unit/test_lockedprefs.js
+new file mode 100644
+--- /dev/null
++++ b/modules/libpref/test/unit/test_lockedprefs.js
+@@ -0,0 +1,41 @@
++/* Any copyright is dedicated to the Public Domain.
++ * http://creativecommons.org/licenses/publicdomain/  */
++
++Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
++Components.utils.import("resource://gre/modules/Services.jsm");
++
++const ps = Services.prefs;
++
++// A little helper to reset the service and load some pref files
++function resetAndLoad(filenames=[]) {
++  ps.resetPrefs();
++  for (let filename of filenames) {
++    ps.readUserPrefsFromFile(do_get_file(filename));
++  }
++}
++
++add_test(function notChangedFromAPI() {
++  resetAndLoad(["data/testPrefLocked.js"]);
++  Assert.strictEqual(ps.getBoolPref("testPref.unlocked.bool"), true);
++  Assert.strictEqual(ps.getBoolPref("testPref.locked.bool"), false);
++
++  ps.setBoolPref("testPref.unlocked.bool", false);
++  Assert.ok(ps.prefHasUserValue("testPref.unlocked.bool"),
++            "should be able to set an unlocked pref");
++  Assert.strictEqual(ps.getBoolPref("testPref.unlocked.bool"), false);
++
++  ps.setBoolPref("testPref.locked.bool", true);
++  Assert.ok(ps.prefHasUserValue("testPref.locked.bool"),
++            "somehow, the user value is still set");
++  // But the user value is ignored on a get()
++  Assert.strictEqual(ps.getBoolPref("testPref.locked.bool"), false);
++  run_next_test();
++});
++
++add_test(function notChangedFromUserPrefs() {
++  resetAndLoad(["data/testPrefLocked.js", "data/testPrefLockedUser.js"]);
++  Assert.strictEqual(ps.getBoolPref("testPref.unlocked.bool"), true);
++  Assert.strictEqual(ps.getBoolPref("testPref.locked.bool"), false);
++
++  run_next_test();
++});
+diff --git a/modules/libpref/test/unit/xpcshell.ini b/modules/libpref/test/unit/xpcshell.ini
+--- a/modules/libpref/test/unit/xpcshell.ini
++++ b/modules/libpref/test/unit/xpcshell.ini
+@@ -6,13 +6,15 @@ support-files =
+ 
+ [test_warnings.js]
+ [test_bug345529.js]
+ [test_bug506224.js]
+ [test_bug577950.js]
+ [test_bug790374.js]
+ [test_stickyprefs.js]
+ support-files = data/testPrefSticky.js data/testPrefStickyUser.js
++[test_lockedprefs.js]
++support-files = data/testPrefLocked.js data/testPrefLockedUser.js
+ [test_changeType.js]
+ [test_defaultValues.js]
+ [test_dirtyPrefs.js]
+ [test_libPrefs.js]
+ [test_bug1354613.js]
+
