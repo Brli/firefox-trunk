@@ -50,6 +50,8 @@ firefox-trunk (59.0~a1~hg20171116r392158-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Jeremy Bicha ]
   * Avoid direct dependency on libgtk2.0-0 which is required by Flash only
+  * Drop obsolete Build-Depends on quilt, libgconf2-dev and libgnomeui-dev
+  * Depend on libdbusmenu-gtk3-4 instead of the GTK+ 2 version
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 14 Nov 2017 09:12:42 +0100
 
