@@ -47,6 +47,7 @@ firefox-trunk (59.0~a1~hg20171116r392158-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/support-coinstallable-trunk-build.patch
     - update debian/build/rules.mk
     - update debian/config/mozconfig.in
+  * Update unity-menubar.patch
 
   [ Jeremy Bicha ]
   * Avoid direct dependency on libgtk2.0-0 which is required by Flash only

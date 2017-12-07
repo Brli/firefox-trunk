@@ -5,7 +5,7 @@ allow-lockPref-everywhere.patch
 ubuntu-ua-string-changes.patch
 dont-override-general-useragent-locale.patch
 dont-checkout-locales.patch
-#unity-menubar.patch
+unity-menubar.patch
 #test-integration/automation-output-junit-xml.patch
 #test-integration/mochitest-allow-test-manifest-for-browser-chrome.patch
 #test-integration/xpcshell-output-valid-junit-xml.patch
