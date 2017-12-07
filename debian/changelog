@@ -48,6 +48,8 @@ firefox-trunk (59.0~a1~hg20171116r392158-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/build/rules.mk
     - update debian/config/mozconfig.in
   * Update unity-menubar.patch
+  * Drop dont-override-general-useragent-locale.patch. The preference is
+    gone, and the replacement pref is not hard-coded in the build
 
   [ Jeremy Bicha ]
   * Avoid direct dependency on libgtk2.0-0 which is required by Flash only

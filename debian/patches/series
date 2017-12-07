@@ -3,7 +3,6 @@ ubuntu-bookmarks.patch
 normalize-distribution-searchplugins.patch
 allow-lockPref-everywhere.patch
 ubuntu-ua-string-changes.patch
-dont-override-general-useragent-locale.patch
 dont-checkout-locales.patch
 unity-menubar.patch
 #test-integration/automation-output-junit-xml.patch
