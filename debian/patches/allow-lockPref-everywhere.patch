@@ -4,52 +4,65 @@ Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=440908
 diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
 --- a/modules/libpref/Preferences.cpp
 +++ b/modules/libpref/Preferences.cpp
-@@ -230,20 +230,23 @@ StrEscape(const char* aOriginal, nsCStri
+@@ -287,16 +287,18 @@ StrEscape(const char* aOriginal, nsCStri
+     }
+   }
+ 
    aResult.Append('"');
  }
- 
- enum
- {
-   kPrefSetDefault = 1,
-   kPrefForceSet = 2,
-   kPrefSticky = 4,
-+  kPrefLocked = 8,
- };
  
  static ArenaAllocator<8192, 1> gPrefNameArena;
  
 +static bool gIsAnyPrefLocked = false;
 +
- class PrefHashEntry : public PLDHashEntryHdr
+ class Pref : public PLDHashEntryHdr
  {
  public:
-   PrefHashEntry(const char* aName, PrefType aType)
+   explicit Pref(const char* aName)
    {
      mName = ArenaStrdup(aName, gPrefNameArena);
-     SetType(aType);
+ 
      // We don't set the other fields because PLDHashTable always zeroes new
-@@ -497,16 +500,20 @@ public:
-           ReplaceValue(PrefValueKind::Default, aType, aValue);
-           if (aFlags & kPrefSticky) {
-             mIsSticky = true;
-           }
-           if (!mHasUserValue) {
-             *aValueChanged = true;
-           }
-         }
-+        if (aFlags & kPrefLocked) {
+@@ -529,16 +531,17 @@ public:
+     }
+ 
+     mHasUserValue = false;
+   }
+ 
+   nsresult SetDefaultValue(PrefType aType,
+                            PrefValue aValue,
+                            bool aIsSticky,
++                           bool aIsLocked,
+                            bool* aValueChanged)
+   {
+     // Types must always match when setting the default value.
+     if (!IsType(aType)) {
+       return NS_ERROR_UNEXPECTED;
+     }
+ 
+     // Should we set the default value? Only if the pref is not locked, and
+@@ -547,16 +550,20 @@ public:
+       mDefaultValue.Replace(Type(), aType, aValue);
+       mHasDefaultValue = true;
+       if (aIsSticky) {
+         mIsSticky = true;
+       }
+       if (!mHasUserValue) {
+         *aValueChanged = true;
+       }
++      if (aIsLocked) {
 +          SetIsLocked(true);
 +          gIsAnyPrefLocked = true;
-+        }
-         // What if we change the default to be the same as the user value?
-         // Should we clear the user value?
-       }
-     } else {
-       // If we have a default value, types must match when setting the user
-       // value.
-       if (mHasDefaultValue && !IsType(aType)) {
-         return NS_ERROR_UNEXPECTED;
-@@ -608,18 +615,16 @@ struct CallbackNode
++      }
+       // What if we change the default to be the same as the user value?
+       // Should we clear the user value? Currently we don't.
+     }
+     return NS_OK;
+   }
+ 
+   nsresult SetUserValue(PrefType aType,
+                         PrefValue aValue,
+@@ -676,18 +683,16 @@ struct CallbackNode
  
  static PLDHashTable* gHashTable;
  
@@ -66,9 +79,46 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
  
  static PLDHashTableOps pref_HashTableOps = {
    PLDHashTable::HashStringKey,
-   PrefHashEntry::MatchEntry,
+   Pref::MatchEntry,
    PLDHashTable::MoveEntryStub,
-@@ -881,17 +886,18 @@ public:
+@@ -815,16 +820,17 @@ pref_HashTableLookup(const char* aPrefNa
+ }
+ 
+ static nsresult
+ pref_SetPref(const char* aPrefName,
+              PrefType aType,
+              PrefValueKind aKind,
+              PrefValue aValue,
+              bool aIsSticky,
++             bool aIsLocked,
+              bool aFromFile)
+ {
+   MOZ_ASSERT(NS_IsMainThread());
+ 
+   if (!gHashTable) {
+     return NS_ERROR_OUT_OF_MEMORY;
+   }
+ 
+@@ -837,17 +843,17 @@ pref_SetPref(const char* aPrefName,
+     // New (zeroed) entry. Partially initialize it.
+     new (pref) Pref(aPrefName);
+     pref->SetType(aType);
+   }
+ 
+   bool valueChanged = false;
+   nsresult rv;
+   if (aKind == PrefValueKind::Default) {
+-    rv = pref->SetDefaultValue(aType, aValue, aIsSticky, &valueChanged);
++    rv = pref->SetDefaultValue(aType, aValue, aIsSticky, aIsLocked, &valueChanged);
+   } else {
+     rv = pref->SetUserValue(aType, aValue, aFromFile, &valueChanged);
+   }
+   if (NS_FAILED(rv)) {
+     NS_WARNING(
+       nsPrintfCString(
+         "Rejected attempt to change type of pref %s's %s value from %s to %s",
+         aPrefName,
+@@ -966,17 +972,18 @@ public:
    bool Parse(const char* aBuf, int aBufLen);
  
    bool GrowBuf();
@@ -88,7 +138,7 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
    enum class State
    {
      eInit,
-@@ -915,16 +921,17 @@ private:
+@@ -1000,16 +1007,17 @@ private:
  
    static const int kUTF16EscapeNumDigits = 4;
    static const int kHexEscapeNumDigits = 2;
@@ -106,7 +156,7 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
    const char* mStrMatch;  // string to match
    int mStrIndex;          // next char of smatch to check;
                            // also, counter in \u parsing
-@@ -934,16 +941,17 @@ private:
+@@ -1019,16 +1027,17 @@ private:
    char mQuoteChar;        // char delimiter for quotations
    char* mLb;              // line buffer (only allocation)
    char* mLbCur;           // line buffer cursor
@@ -124,7 +174,7 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
  // mEscTmp buffer used for escape processing (currently 6 bytes).
  //
  // The buffer is used to store partial pref lines. It is freed when the parse
-@@ -980,24 +988,28 @@ Parser::GrowBuf()
+@@ -1065,21 +1074,22 @@ Parser::GrowBuf()
    return true;
  }
  
@@ -137,24 +187,19 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
 +                    bool aIsSticky,
 +                    bool aIsLocked)
  {
-   uint32_t flags = 0;
-   if (aIsDefault) {
-     flags |= kPrefSetDefault;
-     if (aIsSticky) {
-       flags |= kPrefSticky;
-     }
-+    if (aIsLocked) {
-+      flags |= kPrefLocked;
-+    }
-   } else {
-     flags |= kPrefForceSet;
-   }
-   pref_SetPref(aPrefName, aValue, aType, flags);
+   PrefValueKind kind =
+     aIsDefault ? PrefValueKind::Default : PrefValueKind::User;
+-  pref_SetPref(aPrefName, aType, kind, aValue, aIsSticky, /* fromFile */ true);
++  pref_SetPref(aPrefName, aType, kind, aValue, aIsSticky, aIsLocked, /* fromFile */ true);
  }
  
  // Report an error or a warning. If not specified, just dump to stderr.
  void
-@@ -1060,31 +1072,35 @@ Parser::Parse(const char* aBuf, int aBuf
+ Parser::ReportProblem(const char* aMessage, int aLine, bool aError)
+ {
+   nsPrintfCString message("** Preference parsing %s (line %d) = %s **\n",
+                           (aError ? "error" : "warning"),
+@@ -1138,31 +1148,35 @@ Parser::Parse(const char* aBuf, int aBuf
        // initial state
        case State::eInit:
          if (mLbCur != mLb) { // reset state
@@ -190,7 +235,7 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
              state = State::eMatchString;
              break;
              // else skip char
-@@ -1122,18 +1138,20 @@ Parser::Parse(const char* aBuf, int aBuf
+@@ -1200,18 +1214,20 @@ Parser::Parse(const char* aBuf, int aBuf
          } else {
            *mLbCur++ = c;
          }
@@ -212,7 +257,7 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
            state = State::eCommentMaybeStart;
          } else if (!isspace(c)) {
            ReportProblem("need space, comment or quote", lineNum, true);
-@@ -1440,17 +1458,17 @@ Parser::Parse(const char* aBuf, int aBuf
+@@ -1518,17 +1534,17 @@ Parser::Parse(const char* aBuf, int aBuf
                value.mBoolVal = (mVb == kTrue);
                break;
  
@@ -231,6 +276,60 @@ diff --git a/modules/libpref/Preferences.cpp b/modules/libpref/Preferences.cpp
          } else if (!isspace(c)) {
            ReportProblem("need space, comment or semicolon", lineNum, true);
            NS_WARNING("malformed pref file");
+@@ -4438,16 +4454,17 @@ Preferences::SetCStringInAnyProcess(cons
+   PrefValue prefValue;
+   const nsCString& flat = PromiseFlatCString(aValue);
+   prefValue.mStringVal = flat.get();
+   return pref_SetPref(aPrefName,
+                       PrefType::String,
+                       aKind,
+                       prefValue,
+                       /* isSticky */ false,
++                      /* isLocked */ false,
+                       /* fromFile */ false);
+ }
+ 
+ /* static */ nsresult
+ Preferences::SetCString(const char* aPrefName,
+                         const nsACString& aValue,
+                         PrefValueKind aKind)
+ {
+@@ -4464,16 +4481,17 @@ Preferences::SetBoolInAnyProcess(const c
+ 
+   PrefValue prefValue;
+   prefValue.mBoolVal = aValue;
+   return pref_SetPref(aPrefName,
+                       PrefType::Bool,
+                       aKind,
+                       prefValue,
+                       /* isSticky */ false,
++                      /* isLocked */ false,
+                       /* fromFile */ false);
+ }
+ 
+ /* static */ nsresult
+ Preferences::SetBool(const char* aPrefName, bool aValue, PrefValueKind aKind)
+ {
+   ENSURE_PARENT_PROCESS("SetBool", aPrefName);
+   return SetBoolInAnyProcess(aPrefName, aValue, aKind);
+@@ -4488,16 +4506,17 @@ Preferences::SetIntInAnyProcess(const ch
+ 
+   PrefValue prefValue;
+   prefValue.mIntVal = aValue;
+   return pref_SetPref(aPrefName,
+                       PrefType::Int,
+                       aKind,
+                       prefValue,
+                       /* isSticky */ false,
++                      /* isLocked */ false,
+                       /* fromFile */ false);
+ }
+ 
+ /* static */ nsresult
+ Preferences::SetInt(const char* aPrefName, int32_t aValue, PrefValueKind aKind)
+ {
+   ENSURE_PARENT_PROCESS("SetInt", aPrefName);
+   return SetIntInAnyProcess(aPrefName, aValue, aKind);
 diff --git a/modules/libpref/test/unit/data/testPrefLocked.js b/modules/libpref/test/unit/data/testPrefLocked.js
 new file mode 100644
 --- /dev/null
@@ -311,4 +410,3 @@ diff --git a/modules/libpref/test/unit/xpcshell.ini b/modules/libpref/test/unit/
  [test_dirtyPrefs.js]
  [test_libPrefs.js]
  [test_bug1354613.js]
-
