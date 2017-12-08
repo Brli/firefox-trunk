@@ -248,10 +248,7 @@ debian/stamp-installtestsuite: debian/stamp-maketestsuite debian/stamp-makefile-
 	install $(MOZ_DISTDIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).en-US.linux-*.tests.zip debian/tmp/$(MOZ_LIBDIR)/testing
 	@touch $@
 
-$(VIRTENV_PATH)/bin/compare-locales:
-	cd $(CURDIR)/l10n/compare-locales; $(MOZ_PYTHON) $(CURDIR)/l10n/compare-locales/setup.py install --old-and-unmanageable
-
-make-langpack-xpis: $(VIRTENV_PATH)/bin/compare-locales $(foreach locale,$(MOZ_LOCALES),debian/stamp-make-langpack-xpi-$(locale))
+make-langpack-xpis: $(foreach locale,$(MOZ_LOCALES),debian/stamp-make-langpack-xpi-$(locale))
 debian/stamp-make-langpack-xpi-%:
 	@echo ""
 	@echo ""

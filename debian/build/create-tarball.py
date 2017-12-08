@@ -206,8 +206,6 @@ class TarballCreator(OptionParser):
         if not os.path.isdir(l10ndir):
           os.makedirs(l10ndir)
 
-        checkout_source('https://hg.mozilla.org/build/compare-locales', cache, os.path.join(l10ndir, 'compare-locales'), rev='RELEASE_AUTOMATION')
-
         if l10nbase != None:
           got_locales = set()
           shipped_locales = os.path.join(application, 'locales/shipped-locales')

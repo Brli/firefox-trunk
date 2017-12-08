@@ -1,4 +1,4 @@
-firefox-trunk (59.0~a1~hg20171116r392158-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (59.0~a1~hg20171208r395495-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Follow change of icons location
@@ -51,6 +51,10 @@ firefox-trunk (59.0~a1~hg20171116r392158-0ubuntu1) UNRELEASED; urgency=medium
   * Drop dont-override-general-useragent-locale.patch. The preference is
     gone, and the replacement pref is not hard-coded in the build
   * Refresh debian/patches/allow-lockPref-everywhere.patch
+  * Drop the ancient and unused version of compare-locales from the
+    tarball
+    - update debian/build/create-tarball.py
+    - update debian/build/rules.mk
 
   [ Jeremy Bicha ]
   * Avoid direct dependency on libgtk2.0-0 which is required by Flash only
