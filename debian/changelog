@@ -9,6 +9,7 @@ firefox-trunk (59.0~a1~hg20171208r395495-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/allow-lockPref-everywhere.patch
     - debian/patches/normalize-distribution-searchplugins.patch
+  * Bump build-dep on rustc >= 1.22.1 and cargo >= 0.23
 
   [ Chris Coulson ]
   * Update disable-geo-specific-search-defaults-for-us.patch to pick up some
