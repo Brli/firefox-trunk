@@ -1,16 +1,15 @@
-Index: firefox-trunk-58.0~a1~hg20171112r391436/browser/locales/search/list.json
+Index: firefox-trunk-59.0~a1~hg20171208r395820/browser/locales/search/list.json
 ===================================================================
---- firefox-trunk-58.0~a1~hg20171112r391436.orig/browser/locales/search/list.json
-+++ firefox-trunk-58.0~a1~hg20171112r391436/browser/locales/search/list.json
-@@ -5,35 +5,10 @@
+--- firefox-trunk-59.0~a1~hg20171208r395820.orig/browser/locales/search/list.json
++++ firefox-trunk-59.0~a1~hg20171208r395820/browser/locales/search/list.json
+@@ -5,28 +5,10 @@
      ]
    },
    "regionOverrides": {
 -    "US": {
--      "google": "google-nocodes"
+-      "google": "google-2018"
 -    },
      "CA": {
--      "google": "google-nocodes",
        "ebay": "ebay-ca",
        "ebay-fr": "ebay-ca"
      },
@@ -27,12 +26,6 @@ Index: firefox-trunk-58.0~a1~hg20171112r391436/browser/locales/search/list.json
 -      "google": "google-nocodes"
 -    },
 -    "CN": {
--      "google": "google-nocodes"
--    },
--    "TW": {
--      "google": "google-nocodes"
--    },
--    "HK": {
 -      "google": "google-nocodes"
 -    },
      "AT": {

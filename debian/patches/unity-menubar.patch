@@ -263,7 +263,7 @@ diff --git a/widget/gtk/moz.build b/widget/gtk/moz.build
      UNIFIED_SOURCES += [
          'CompositorWidgetChild.cpp',
          'CompositorWidgetParent.cpp',
-         'InProcessX11CompositorWidget.cpp',
+         'GtkCompositorWidget.cpp',
 @@ -111,16 +121,17 @@ else:
      ]
  
