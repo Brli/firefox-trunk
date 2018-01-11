@@ -1,4 +1,4 @@
-firefox-trunk (59.0~a1~hg20171208r395495-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Follow change of icons location
@@ -10,6 +10,10 @@ firefox-trunk (59.0~a1~hg20171208r395495-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/allow-lockPref-everywhere.patch
     - debian/patches/normalize-distribution-searchplugins.patch
   * Bump build-dep on rustc >= 1.22.1 and cargo >= 0.23
+  * Add Interlingua language pack
+    - update debian/config/locales.all
+    - update debian/config/locales.shipped
+    - update debian/control
 
   [ Chris Coulson ]
   * Update disable-geo-specific-search-defaults-for-us.patch to pick up some
