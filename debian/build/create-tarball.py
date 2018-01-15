@@ -154,7 +154,6 @@ class TarballCreator(OptionParser):
       basename = name
 
     main_rev = None
-    locale_revs = {}
 
     if version != None:
       if build == None:
@@ -179,18 +178,6 @@ class TarballCreator(OptionParser):
         print('Failed to determine revision for main checkout', file=sys.stderr)
         sys.exit(1)
 
-      l10n_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/l10n_changesets.txt'
-                       % (basename, version, build))
-      u = urllib.urlopen(l10n_info_url)
-      for line in u.readlines():
-        line = line.strip()
-        if line == '':
-          continue
-        l = line.split(' ')[0].strip()
-        r = line.split(' ')[1].strip()
-        print('Revision to be used for %s locale checkout: %s' % (l, r))
-        locale_revs[l] = r
-
     with ScopedTmpdir() as tmpdir:
       print('*** Using temporary directory %s ***' % tmpdir)
       orig_cwd = os.getcwd()
@@ -211,7 +198,8 @@ class TarballCreator(OptionParser):
           shipped_locales = os.path.join(application, 'locales/shipped-locales')
           blacklist_file = get_setting(settings, 'l10n-blacklist')
 
-          with open(os.path.join(l10ndir, 'changesets'), 'w') as changesets:
+          with open(os.path.join(os.path.abspath(''), 'browser/locales/l10n-changesets.json'), 'r') as fd:
+            locale_revs = json.load(fd)
             with open(shipped_locales, 'r') as fd:
               for line in fd:
                 locale = line.split(' ')[0].strip()
@@ -221,15 +209,14 @@ class TarballCreator(OptionParser):
                 try:
                   rev = None
                   if main_rev != None:
-                    if locale not in locale_revs:
-                      print("Rev for locale '%s' is not present in l10n_changesets.txt" % locale)
+                    rev = locale_revs[locale]["revision"]
+                    if rev == None:
+                      print("Rev for locale '%s' is not present in l10n-changesets.json" % locale)
                       sys.exit(1)
-                    rev = locale_revs[locale]
                   checkout_source(os.path.join(l10nbase, locale), os.path.join(cache, 'l10n') if cache != None else None, 'l10n/' + locale, rev=rev)
                   
                   for line in CheckOutput(['hg', 'tip'], cwd='l10n/' + locale).split('\n'):
                     if line.startswith('changeset:'):
-                      changesets.write('%s %s\n' % (locale, line.split()[1].strip()))
                       break
 
                   got_locales.add(locale)

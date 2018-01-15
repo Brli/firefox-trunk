@@ -14,6 +14,8 @@ firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/config/locales.all
     - update debian/config/locales.shipped
     - update debian/control
+  * Read l10n changesets from in-tree file 'browser/locales/l10n-changesets.json'
+    - debian/build/create-tarball.py
 
   [ Chris Coulson ]
   * Update disable-geo-specific-search-defaults-for-us.patch to pick up some
