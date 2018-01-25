@@ -1,4 +1,4 @@
-firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) bionic; urgency=medium
 
   [ Rico Tzschichholz ]
   * Follow change of icons location
@@ -16,6 +16,8 @@ firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/control
   * Read l10n changesets from in-tree file 'browser/locales/l10n-changesets.json'
     - debian/build/create-tarball.py
+  * Don't pass --disable-elf-hack on arm64
+    - debian/config/mozconfig.in
 
   [ Chris Coulson ]
   * Update disable-geo-specific-search-defaults-for-us.patch to pick up some
@@ -62,6 +64,10 @@ firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) UNRELEASED; urgency=medium
     tarball
     - update debian/build/create-tarball.py
     - update debian/build/rules.mk
+  * Compile rust code with "debuginfo=1" on 32-bit hosts to reduce code size
+    and hopefully prevent the builds from running out of address space
+    - add debian/patches/reduce-rust-debuginfo-on-32bit-architectures.patch
+    - update debian/patches/series
 
   [ Jeremy Bicha ]
   * Avoid direct dependency on libgtk2.0-0 which is required by Flash only

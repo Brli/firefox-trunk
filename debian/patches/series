@@ -28,3 +28,4 @@ rust-drop-dll-checksums.patch
 webrtc-fix-compiler-flags-for-armhf.patch
 skia-fix-aarch64-build-on-older-linux.patch
 dont-treat-tilde-as-special.patch
+reduce-rust-debuginfo-on-32bit-architectures.patch
