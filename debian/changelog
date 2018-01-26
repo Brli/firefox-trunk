@@ -1,4 +1,4 @@
-firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) bionic; urgency=medium
+firefox-trunk (59.0~a1~hg20180120r400081-0ubuntu1) bionic; urgency=medium
 
   [ Rico Tzschichholz ]
   * Follow change of icons location
@@ -16,7 +16,7 @@ firefox-trunk (59.0~a1~hg20180109r398351-0ubuntu1) bionic; urgency=medium
     - update debian/control
   * Read l10n changesets from in-tree file 'browser/locales/l10n-changesets.json'
     - debian/build/create-tarball.py
-  * Don't pass --disable-elf-hack on arm64
+  * Don't pass --disable-elf-hack on arm64 and ppc64el
     - debian/config/mozconfig.in
 
   [ Chris Coulson ]

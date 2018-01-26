@@ -54,7 +54,9 @@ ac_add_options --enable-debug
 ac_add_options --disable-debug
 %%endif
 %%if DEB_HOST_ARCH != arm64
+%%if DEB_HOST_ARCH != ppc64el
 ac_add_options --disable-elf-hack
+%%endif
 %%endif
 %%if MOZ_APP_NAME != MOZ_DEFAULT_APP_NAME
 ac_add_options --with-app-name=@MOZ_APP_NAME@
