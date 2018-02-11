@@ -1,6 +1,11 @@
-firefox-trunk (60.0~a1~hg20180122r400158-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (60.0~a1~hg20180210r403272-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on rustc >= 1.23.0 and cargo >= 0.24
+  * Use https://ftp.mozilla.org/pub/firefox/candidates/*/*/SOURCE to determine
+    the revision for release builds
+    - update debian/build/create-tarball.py
+  * Update patches
+    - debian/patches/disable-geo-specific-search-defaults-for-us.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 22 Jan 2018 13:46:32 +0100
 
@@ -24,6 +29,8 @@ firefox-trunk (59.0~a1~hg20180120r400081-0ubuntu1) bionic; urgency=medium
     - debian/build/create-tarball.py
   * Don't pass --disable-elf-hack on arm64 and ppc64el
     - debian/config/mozconfig.in
+  * Update partner distribution configuration
+    - debian/distribution.ini
 
   [ Chris Coulson ]
   * Update disable-geo-specific-search-defaults-for-us.patch to pick up some
