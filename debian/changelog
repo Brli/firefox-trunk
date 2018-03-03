@@ -6,6 +6,10 @@ firefox-trunk (60.0~a1~hg20180210r403272-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/build/create-tarball.py
   * Update patches
     - debian/patches/disable-geo-specific-search-defaults-for-us.patch
+  * Add Occitan language pack
+    - update debian/config/locales.shipped
+    - update debian/control
+    - update debian/config/searchplugins.conf
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 22 Jan 2018 13:46:32 +0100
 
