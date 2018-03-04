@@ -300,7 +300,7 @@ class TarballCreator(OptionParser):
           topsrcdir = '%s-%s' % (name, version)
           with ScopedRename(name, topsrcdir):
             env = {'XZ_OPT': '--threads=0'}
-            args = ['tar', '-Jc', '--exclude=.git', '--exclude=.gitattributes', '--exclude=.gitmodules', '--exclude=.hg', '--exclude=.hgignore', '--exclude=.hgtags', '--exclude=.svn']
+            args = ['tar', '-Jc', '--exclude=.git', '--exclude=.gitattributes', '--exclude=.hg', '--exclude=.hgignore', '--exclude=.hgtags', '--exclude=.svn']
             for exclude in settings['excludes']:
               args.append('--no-wildcards-match-slash') if exclude['wms'] == False else args.append('--wildcards-match-slash')
               args.append('--exclude')
