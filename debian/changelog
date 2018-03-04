@@ -7,6 +7,7 @@ firefox-trunk (60.0~a1~hg20180210r403272-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/disable-geo-specific-search-defaults-for-us.patch
     - debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+    - debian/patches/skia-fix-aarch64-build-on-older-linux.patch
   * Add Occitan language pack
     - update debian/config/locales.shipped
     - update debian/control
