@@ -2,18 +2,16 @@
 # Author: Chris Coulson <chris.coulson@canonical.com>
 # Forwarded: no
 
---- a/media/webrtc/trunk/webrtc/build/common.gypi
-+++ b/media/webrtc/trunk/webrtc/build/common.gypi
-@@ -434,8 +434,7 @@
-             'defines': ['WEBRTC_ARCH_ARM_V7',
-                         'WEBRTC_BUILD_NEON_LIBS',
-                         'WEBRTC_HAS_NEON'],
--            'cflags_mozilla': ['-mfloat-abi=softfp',
--                               '-mfpu=neon'],
-+            'cflags_mozilla': ['-mfpu=neon'],
-           }],
-         ],
-       }],
+--- a/media/webrtc/trunk/build/common.gypi
++++ b/media/webrtc/trunk/build/common.gypi
+@@ -2425,7 +2425,6 @@
+                     'cflags': [
+                       '-march=armv7-a',
+                       '-mtune=cortex-a8',
+-                      '-mfloat-abi=<(arm_float_abi)',
+                     ],
+                     'conditions': [
+                       ['arm_neon==1', {
 --- a/build/gyp.mozbuild
 +++ b/build/gyp.mozbuild
 @@ -107,9 +107,15 @@
