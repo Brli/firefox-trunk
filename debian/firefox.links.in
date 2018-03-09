@@ -8,5 +8,5 @@
 usr/share/hunspell @MOZ_LIBDIR@/dictionaries
 
 @MOZ_LIBDIR@/firefox.sh usr/bin/@MOZ_APP_NAME@
-@MOZ_LIBDIR@/browser/chrome/icons/default/default128.png usr/share/pixmaps/@MOZ_APP_NAME@.png
+@MOZ_LIBDIR@/browser/chrome/icons/default/default128.png usr/share/icons/hicolor/128x128/apps/@MOZ_APP_NAME@.png
 etc/@MOZ_PKG_NAME@/syspref.js @MOZ_LIBDIR@/browser/defaults/preferences/syspref.js

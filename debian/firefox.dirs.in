@@ -6,4 +6,5 @@ etc/apparmor.d/disable
 etc/apport/native-origins.d
 etc/apport/blacklist.d
 @MOZ_LIBDIR@/distribution/searchplugins/common
+usr/share/icons/hicolor/128x128/apps
 usr/share/icons/hicolor/symbolic/apps
