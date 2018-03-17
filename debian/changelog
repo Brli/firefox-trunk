@@ -1,6 +1,10 @@
 firefox-trunk (61.0~a1~hg20180314r408098-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Drop upstreamed/obsolete patches
+    - debian/patches/skia-fix-aarch64-build-on-older-linux.patch
+  * Update patches
+    - debian/patches/reduce-rust-debuginfo-on-32bit-architectures.patch
+    - debian/patches/rust-drop-dll-checksums.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 14 Mar 2018 15:03:06 +0100
 

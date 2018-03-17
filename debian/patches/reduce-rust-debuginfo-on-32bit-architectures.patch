@@ -1,18 +1,17 @@
 --- a/build/moz.configure/toolchain.configure
 +++ b/build/moz.configure/toolchain.configure
-@@ -1330,9 +1330,9 @@
+@@ -1410,8 +1410,8 @@
+         return '1' if moz_optimize.optimize else '0'
  
  
- @depends('RUSTC_OPT_LEVEL', debug_rust, '--enable-debug-symbols',
--         moz_optimize)
-+         moz_optimize, host)
- def rust_compiler_flags(opt_level_option, debug_rust, debug_symbols,
--                        moz_optimize):
-+                        moz_optimize, host):
-     optimize = moz_optimize.optimize
- 
+-@depends(rustc_opt_level, debug_rust, '--enable-debug-symbols')
+-def rust_compiler_flags(opt_level, debug_rust, debug_symbols):
++@depends(rustc_opt_level, debug_rust, '--enable-debug-symbols', host)
++def rust_compiler_flags(opt_level, debug_rust, debug_symbols, host):
      # Cargo currently supports only two interesting profiles for building:
-@@ -1363,6 +1363,8 @@
+     # development and release. Those map (roughly) to --enable-debug and
+     # --disable-debug in Gecko, respectively.
+@@ -1434,6 +1434,8 @@
  
      if debug_symbols:
          debug_info = '2'
