@@ -5,6 +5,9 @@ firefox-trunk (61.0~a1~hg20180314r408098-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/reduce-rust-debuginfo-on-32bit-architectures.patch
     - debian/patches/rust-drop-dll-checksums.patch
+  * Add icon symlinks of application icon to usr/share/icons/hicolor/*/apps/
+    - debian/firefox.dirs.in
+    - debian/firefox.links.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 14 Mar 2018 15:03:06 +0100
 
