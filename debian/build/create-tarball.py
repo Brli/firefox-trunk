@@ -159,8 +159,8 @@ class TarballCreator(OptionParser):
       if build == None:
         build = 1
       print('*** Determing revisions to use for checkouts ***')
-      main_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/SOURCE'
-                       % (basename, version, build))
+      main_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/linux-x86_64/en-US/%s-%s.txt'
+                       % (basename, version, build, basename, version))
       u = urllib.urlopen(main_info_url)
       for line in u.readlines():
         line = line.strip()

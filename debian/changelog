@@ -1,4 +1,4 @@
-firefox-trunk (61.0~a1~hg20180314r408098-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (61.0~a1~hg20180322r409457-0ubuntu1) UNRELEASED; urgency=medium
 
   * Drop upstreamed/obsolete patches
     - debian/patches/skia-fix-aarch64-build-on-older-linux.patch
@@ -8,6 +8,11 @@ firefox-trunk (61.0~a1~hg20180314r408098-0ubuntu1) UNRELEASED; urgency=medium
   * Add icon symlinks of application icon to usr/share/icons/hicolor/*/apps/
     - debian/firefox.dirs.in
     - debian/firefox.links.in
+  * ICU's icudt60*.dat was embed directly into the library
+    - debian/firefox.install.in
+  * Revert "Use https://ftp.mozilla.org/pub/firefox/candidates/*/*/SOURCE
+    to determine the revision for release builds"
+    - update debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 14 Mar 2018 15:03:06 +0100
 

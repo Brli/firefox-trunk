@@ -11,7 +11,6 @@
 @MOZ_LIBDIR@/fonts
 @MOZ_LIBDIR@/gmp-clearkey
 @MOZ_LIBDIR@/gtk2
-@MOZ_LIBDIR@/*.dat
 @MOZ_LIBDIR@/omni.ja
 @MOZ_LIBDIR@/*.so
 @MOZ_LIBDIR@/*.ini
