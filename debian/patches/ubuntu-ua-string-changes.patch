@@ -5,15 +5,15 @@ Forwarded: not-needed
 --- a/netwerk/protocol/http/nsHttpHandler.cpp
 +++ b/netwerk/protocol/http/nsHttpHandler.cpp
 @@ -213,6 +213,9 @@
-     , mLegacyAppName("Mozilla")
-     , mLegacyAppVersion("5.0")
-     , mProduct("Gecko")
+   , mLegacyAppName("Mozilla")
+   , mLegacyAppVersion("5.0")
+   , mProduct("Gecko")
 +#ifdef MOZ_UA_VENDOR
-+    , mVendor(MOZ_UA_VENDOR)
++  , mVendor(MOZ_UA_VENDOR)
 +#endif
-     , mCompatFirefoxEnabled(false)
-     , mUserAgentIsDirty(true)
-     , mAcceptLanguagesIsDirty(true)
+   , mCompatFirefoxEnabled(false)
+   , mUserAgentIsDirty(true)
+   , mAcceptLanguagesIsDirty(true)
 @@ -502,6 +505,9 @@
      LOG(("> misc = %s\n", mMisc.get()));
      LOG(("> product = %s\n", mProduct.get()));
