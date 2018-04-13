@@ -1,7 +1,6 @@
 ppc-no-static-sizes.patch
 ubuntu-bookmarks.patch
 normalize-distribution-searchplugins.patch
-#allow-lockPref-everywhere.patch
 ubuntu-ua-string-changes.patch
 dont-checkout-locales.patch
 #unity-menubar.patch
