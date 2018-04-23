@@ -18,6 +18,10 @@ firefox-trunk (61.0~a1~hg20180322r409457-0ubuntu1) UNRELEASED; urgency=medium
     - debian/config/mozconfig.in
   * Disable webrtc/av1 on non-x86 archs
     - debian/config/mozconfig.in
+  * Fix skia build on arm64 and s390x
+    - debian/patches/arm64-skia.patch
+    - debian/patches/s390x-ycbcr.patch
+    - debian/patches/skia-big-endian.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 14 Mar 2018 15:03:06 +0100
 
