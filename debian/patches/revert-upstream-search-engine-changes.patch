@@ -1,8 +1,8 @@
-Index: firefox-trunk-59.0~a1~hg20171208r395820/browser/locales/search/list.json
+Index: b/browser/locales/search/list.json
 ===================================================================
---- firefox-trunk-59.0~a1~hg20171208r395820.orig/browser/locales/search/list.json
-+++ firefox-trunk-59.0~a1~hg20171208r395820/browser/locales/search/list.json
-@@ -5,28 +5,10 @@
+--- a/browser/locales/search/list.json
++++ b/browser/locales/search/list.json
+@@ -5,9 +5,6 @@
      ]
    },
    "regionOverrides": {
@@ -12,22 +12,3 @@ Index: firefox-trunk-59.0~a1~hg20171208r395820/browser/locales/search/list.json
      "CA": {
        "ebay": "ebay-ca",
        "ebay-fr": "ebay-ca"
-     },
--    "KZ": {
--      "google": "google-nocodes"
--    },
--    "BY": {
--      "google": "google-nocodes"
--    },
--    "RU": {
--      "google": "google-nocodes"
--    },
--    "TR": {
--      "google": "google-nocodes"
--    },
--    "CN": {
--      "google": "google-nocodes"
--    },
-     "AT": {
-       "ebay-de": "ebay-at"
-     },
