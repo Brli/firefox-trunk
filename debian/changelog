@@ -1,7 +1,13 @@
 firefox-trunk (62.0~a1~hg20180507r417106-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Drop upstreamed/obsolete patches
     - debian/patches/arm64-skia.patch
+
+  [ Chris Coulson ]
+  * Update search customizations to pick up some extra locales
+    - update debian/patches/disable-geo-specific-search-defaults-for-us.patch
+    - update debian/patches/ubuntu-search-defaults.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 13 May 2018 14:44:33 +0200
 
