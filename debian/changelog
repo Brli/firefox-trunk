@@ -1,4 +1,10 @@
-firefox-trunk (61.0~a1~hg20180507r417106-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (62.0~a1~hg20180507r417106-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 13 May 2018 14:44:33 +0200
+
+firefox-trunk (61.0~a1~hg20180507r417106-0ubuntu1) cosmic; urgency=medium
 
   * Drop upstreamed/obsolete patches
     - debian/patches/skia-fix-aarch64-build-on-older-linux.patch
