@@ -60,13 +60,15 @@ ac_add_options --disable-elf-hack
 %%endif
 %%endif
 %%endif
-%%if DEB_HOST_ARCH == amd64
-%%else
-%%if DEB_HOST_ARCH == i386
-%%else
+%%if DEB_HOST_ARCH != amd64
+%%if DEB_HOST_ARCH != i386
+%%if DEB_HOST_ARCH != armhf
+%%if DEB_HOST_ARCH != arm64
 # See https://bugzilla.mozilla.org/show_bug.cgi?id=1430094
 ac_add_options --disable-webrtc
 ac_add_options --disable-av1
+%%endif
+%%endif
 %%endif
 %%endif
 %%if MOZ_APP_NAME != MOZ_DEFAULT_APP_NAME

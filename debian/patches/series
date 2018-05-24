@@ -29,3 +29,6 @@ s390x-ycbcr.patch
 skia-big-endian.patch
 dont-treat-tilde-as-special.patch
 reduce-rust-debuginfo-on-32bit-architectures.patch
+fix-armhf-webrtc-build.patch
+extra-webrtc-build-configs.patch
+update-gn-mozbuild.patch
