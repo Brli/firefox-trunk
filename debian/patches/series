@@ -26,7 +26,6 @@ warn-only-on-duplicates.patch
 rust-drop-dll-checksums.patch
 webrtc-fix-compiler-flags-for-armhf.patch
 s390x-ycbcr.patch
-skia-big-endian.patch
 dont-treat-tilde-as-special.patch
 reduce-rust-debuginfo-on-32bit-architectures.patch
 fix-armhf-webrtc-build.patch

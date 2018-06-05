@@ -3,6 +3,7 @@ firefox-trunk (62.0~a1~hg20180507r417106-0ubuntu1) UNRELEASED; urgency=medium
   [ Rico Tzschichholz ]
   * Drop upstreamed/obsolete patches
     - debian/patches/arm64-skia.patch
+    - debian/patches/skia-big-endian.patch
 
   [ Chris Coulson ]
   * Fix the webrtc build on armhf and arm64 by providing build configs rather
