@@ -1,7 +1,7 @@
-Index: b/browser/locales/search/list.json
+Index: b/browser/components/search/searchplugins/list.json
 ===================================================================
---- a/browser/locales/search/list.json
-+++ b/browser/locales/search/list.json
+--- a/browser/components/search/searchplugins/list.json
++++ b/browser/components/search/searchplugins/list.json
 @@ -5,9 +5,6 @@
      ]
    },
