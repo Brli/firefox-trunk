@@ -1,6 +1,6 @@
-diff -r c13cb09f0c25 media/webrtc/trunk/moz.build
---- a/media/webrtc/trunk/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/moz.build
+--- a/media/webrtc/trunk/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -141,7 +141,6 @@
      DIRS += [
          "/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_gn",
@@ -9,7 +9,21 @@ diff -r c13cb09f0c25 media/webrtc/trunk/moz.build
          "/media/webrtc/trunk/webrtc/video_engine/video_engine_gn"
      ]
  
-@@ -244,6 +243,17 @@
+@@ -184,11 +183,12 @@
+         "/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn"
+     ]
+ 
+-if CONFIG["CPU_ARCH"] == "x86" and CONFIG["OS_TARGET"] == "Android":
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DIRS += [
+         "/media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn",
+         "/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn",
++        "/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn",
+         "/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn"
+     ]
+ 
+@@ -243,6 +243,17 @@
          "/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn"
      ]
  
@@ -27,21 +41,23 @@ diff -r c13cb09f0c25 media/webrtc/trunk/moz.build
  if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["OS_TARGET"] == "NetBSD":
  
      DIRS += [
-@@ -313,6 +323,12 @@
+@@ -312,11 +323,27 @@
          "/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn"
      ]
  
+-if CONFIG["CPU_ARCH"] == "x86" and CONFIG["OS_TARGET"] == "NetBSD":
 +if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["OS_TARGET"] == "Linux":
 +
 +    DIRS += [
 +        "/media/webrtc/trunk/webrtc/system_wrappers/cpu_features_linux_gn"
 +    ]
 +
- if CONFIG["CPU_ARCH"] == "x86" and CONFIG["OS_TARGET"] == "Android":
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["OS_TARGET"] == "Android":
  
      DIRS += [
-@@ -320,3 +336,14 @@
+         "/media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn",
          "/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn",
+-        "/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn",
          "/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn"
      ]
 +
@@ -55,10 +71,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/moz.build
 +        "/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_gn",
 +        "/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn"
 +    ]
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/audio_mixer_api_gn/moz.build
---- a/media/webrtc/trunk/webrtc/api/audio_mixer_api_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/api/audio_mixer_api_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -175,6 +175,19 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/api/audio_mixer_api_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/api/audio_mixer_api_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/api/audio_mixer_api_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -174,6 +174,19 @@
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
      DEFINES["WEBRTC_HAS_NEON"] = True
  
@@ -78,10 +94,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/audio_mixer_api_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/call_api_gn/moz.build
---- a/media/webrtc/trunk/webrtc/api/call_api_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/api/call_api_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -175,6 +175,19 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/api/call_api_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/api/call_api_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/api/call_api_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -174,6 +174,19 @@
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
      DEFINES["WEBRTC_HAS_NEON"] = True
  
@@ -101,10 +117,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/call_api_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/transport_api_gn/moz.build
---- a/media/webrtc/trunk/webrtc/api/transport_api_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/api/transport_api_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -171,6 +171,19 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/api/transport_api_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/api/transport_api_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/api/transport_api_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -170,6 +170,19 @@
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
      DEFINES["WEBRTC_HAS_NEON"] = True
  
@@ -124,10 +140,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/transport_api_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/video_frame_api_gn/moz.build
---- a/media/webrtc/trunk/webrtc/api/video_frame_api_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/api/video_frame_api_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -209,6 +209,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/api/video_frame_api_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/api/video_frame_api_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/api/video_frame_api_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -208,6 +208,23 @@
          "-msse2"
      ]
  
@@ -151,10 +167,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/api/video_frame_api_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/audio/audio_gn/moz.build
---- a/media/webrtc/trunk/webrtc/audio/audio_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/audio/audio_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -229,6 +229,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/audio/audio_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/audio/audio_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/audio/audio_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -228,6 +228,23 @@
          "-msse2"
      ]
  
@@ -178,10 +194,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/audio/audio_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/audio/utility/audio_frame_operations_gn/moz.build
---- a/media/webrtc/trunk/webrtc/audio/utility/audio_frame_operations_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/audio/utility/audio_frame_operations_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -199,6 +199,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/audio/utility/audio_frame_operations_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/audio/utility/audio_frame_operations_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/audio/utility/audio_frame_operations_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -198,6 +198,23 @@
          "-msse2"
      ]
  
@@ -205,10 +221,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/audio/utility/audio_frame_operati
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/gtest_prod_gn/moz.build
---- a/media/webrtc/trunk/webrtc/base/gtest_prod_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/base/gtest_prod_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -171,6 +171,19 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/base/gtest_prod_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/base/gtest_prod_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/base/gtest_prod_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -170,6 +170,19 @@
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
      DEFINES["WEBRTC_HAS_NEON"] = True
  
@@ -228,10 +244,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/gtest_prod_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/rtc_base_approved_gn/moz.build
---- a/media/webrtc/trunk/webrtc/base/rtc_base_approved_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/base/rtc_base_approved_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -262,6 +262,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/base/rtc_base_approved_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/base/rtc_base_approved_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/base/rtc_base_approved_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -261,6 +261,23 @@
          "-msse2"
      ]
  
@@ -255,10 +271,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/rtc_base_approved_gn/moz.bui
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/rtc_numerics_gn/moz.build
---- a/media/webrtc/trunk/webrtc/base/rtc_numerics_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/base/rtc_numerics_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -199,6 +199,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/base/rtc_numerics_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/base/rtc_numerics_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/base/rtc_numerics_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -198,6 +198,23 @@
          "-msse2"
      ]
  
@@ -282,10 +298,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/rtc_numerics_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/rtc_task_queue_gn/moz.build
---- a/media/webrtc/trunk/webrtc/base/rtc_task_queue_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/base/rtc_task_queue_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -275,6 +275,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/base/rtc_task_queue_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/base/rtc_task_queue_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/base/rtc_task_queue_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -274,6 +274,23 @@
          "-msse2"
      ]
  
@@ -309,10 +325,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/base/rtc_task_queue_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/call/call_gn/moz.build
---- a/media/webrtc/trunk/webrtc/call/call_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/call/call_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -220,6 +220,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/call/call_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/call/call_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/call/call_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -219,6 +219,23 @@
          "-msse2"
      ]
  
@@ -336,10 +352,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/call/call_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/call/call_interfaces_gn/moz.build
---- a/media/webrtc/trunk/webrtc/call/call_interfaces_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/call/call_interfaces_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -195,6 +195,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/call/call_interfaces_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/call/call_interfaces_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/call/call_interfaces_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -194,6 +194,23 @@
          "-msse2"
      ]
  
@@ -363,10 +379,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/call/call_interfaces_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -141,12 +141,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -140,12 +140,6 @@
      DEFINES["WEBRTC_POSIX"] = True
      DEFINES["_FILE_OFFSET_BITS"] = "64"
  
@@ -379,7 +395,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/mo
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["USE_X11"] = "1"
-@@ -216,6 +210,14 @@
+@@ -215,6 +209,14 @@
  
      DEFINES["_FORTIFY_SOURCE"] = "2"
  
@@ -394,7 +410,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/mo
  if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
  
      DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -306,6 +308,59 @@
+@@ -305,6 +307,59 @@
          "/media/webrtc/trunk/webrtc/common_audio/signal_processing/spl_sqrt_floor.c"
      ]
  
@@ -454,10 +470,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_c_gn/mo
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_gn/moz.build
---- a/media/webrtc/trunk/webrtc/common_audio/common_audio_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -228,6 +228,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/common_audio/common_audio_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/common_audio/common_audio_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -227,6 +227,23 @@
          "-msse2"
      ]
  
@@ -481,78 +497,9 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_gn/moz.
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_neon_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -40,7 +40,6 @@
-     DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
-     DEFINES["NDEBUG"] = True
-     DEFINES["NVALGRIND"] = True
--    DEFINES["_FORTIFY_SOURCE"] = "2"
- 
- if CONFIG["MOZ_DEBUG"] == "1":
- 
-@@ -65,6 +64,12 @@
-     DEFINES["USE_X11"] = "1"
-     DEFINES["WEBRTC_BSD"] = True
- 
-+if CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["USE_NSS_CERTS"] = "1"
-+    DEFINES["USE_X11"] = "1"
-+    DEFINES["WEBRTC_LINUX"] = True
-+
- if CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["USE_X11"] = "1"
-@@ -75,6 +80,22 @@
-     DEFINES["USE_X11"] = "1"
-     DEFINES["WEBRTC_BSD"] = True
- 
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "FreeBSD":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "OpenBSD":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-@@ -101,6 +122,21 @@
-     DEFINES["WEBRTC_ARCH_ARM"] = True
-     DEFINES["WEBRTC_ARCH_ARM_V7"] = True
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn/moz.build
---- a/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/common_audio/common_audio_neon_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -39,7 +39,6 @@
      DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
      DEFINES["NDEBUG"] = True
@@ -609,6 +556,75 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn
 +
 +if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
 +
++    CFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -38,7 +38,6 @@
+     DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
+     DEFINES["NDEBUG"] = True
+     DEFINES["NVALGRIND"] = True
+-    DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
+ if CONFIG["MOZ_DEBUG"] == "1":
+ 
+@@ -63,6 +62,12 @@
+     DEFINES["USE_X11"] = "1"
+     DEFINES["WEBRTC_BSD"] = True
+ 
++if CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["USE_NSS_CERTS"] = "1"
++    DEFINES["USE_X11"] = "1"
++    DEFINES["WEBRTC_LINUX"] = True
++
+ if CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["USE_X11"] = "1"
+@@ -73,6 +78,22 @@
+     DEFINES["USE_X11"] = "1"
+     DEFINES["WEBRTC_BSD"] = True
+ 
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "FreeBSD":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "OpenBSD":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+@@ -99,6 +120,21 @@
+     DEFINES["WEBRTC_ARCH_ARM"] = True
+     DEFINES["WEBRTC_ARCH_ARM_V7"] = True
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
 +    CXXFLAGS += [
 +        "-mfpu=neon"
 +    ]
@@ -619,10 +635,18 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_neon_gn
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn/moz.build
---- a/media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -111,6 +111,7 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -87,7 +87,6 @@
+ if CONFIG["OS_TARGET"] == "FreeBSD":
+ 
+     CXXFLAGS += [
+-        "-msse2",
+         "-msse2"
+     ]
+ 
+@@ -111,6 +110,7 @@
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      CXXFLAGS += [
@@ -630,10 +654,18 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_audio/common_audio_sse2_gn
          "-msse2"
      ]
  
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_video/common_video_gn/moz.build
---- a/media/webrtc/trunk/webrtc/common_video/common_video_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/common_video/common_video_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -236,6 +236,23 @@
+@@ -122,6 +122,7 @@
+ if CONFIG["OS_TARGET"] == "OpenBSD":
+ 
+     CXXFLAGS += [
++        "-msse2",
+         "-msse2"
+     ]
+ 
+diff -r a358755643e9 media/webrtc/trunk/webrtc/common_video/common_video_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/common_video/common_video_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/common_video/common_video_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -235,6 +235,23 @@
          "-msse2"
      ]
  
@@ -657,10 +689,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/common_video/common_video_gn/moz.
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/logging/rtc_event_log_api_gn/moz.build
---- a/media/webrtc/trunk/webrtc/logging/rtc_event_log_api_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/logging/rtc_event_log_api_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -171,6 +171,19 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/logging/rtc_event_log_api_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/logging/rtc_event_log_api_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/logging/rtc_event_log_api_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -170,6 +170,19 @@
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
      DEFINES["WEBRTC_HAS_NEON"] = True
  
@@ -680,10 +712,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/logging/rtc_event_log_api_gn/moz.
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/logging/rtc_event_log_impl_gn/moz.build
---- a/media/webrtc/trunk/webrtc/logging/rtc_event_log_impl_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/logging/rtc_event_log_impl_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -218,6 +218,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/logging/rtc_event_log_impl_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/logging/rtc_event_log_impl_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/logging/rtc_event_log_impl_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -217,6 +217,23 @@
          "-msse2"
      ]
  
@@ -707,10 +739,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/logging/rtc_event_log_impl_gn/moz
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/media/mozilla_rtc_media_gn/moz.build
---- a/media/webrtc/trunk/webrtc/media/mozilla_rtc_media_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/media/mozilla_rtc_media_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -197,6 +197,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/media/mozilla_rtc_media_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/media/mozilla_rtc_media_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/media/mozilla_rtc_media_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -196,6 +196,23 @@
          "-msse2"
      ]
  
@@ -734,10 +766,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/media/mozilla_rtc_media_gn/moz.bu
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -117,12 +117,7 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -116,12 +116,7 @@
      DEFINES["WEBRTC_POSIX"] = True
      DEFINES["_FILE_OFFSET_BITS"] = "64"
  
@@ -750,7 +782,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding
          "rt"
      ]
  
-@@ -197,6 +192,16 @@
+@@ -196,6 +191,16 @@
  
      DEFINES["_FORTIFY_SOURCE"] = "2"
  
@@ -767,7 +799,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding
  if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
  
      DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -273,6 +278,65 @@
+@@ -272,6 +277,65 @@
          "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
      ]
  
@@ -833,10 +865,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_coding
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_factory_interface_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_factory_interface_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_factory_interface_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -175,6 +175,19 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_factory_interface_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_factory_interface_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_factory_interface_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -174,6 +174,19 @@
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
      DEFINES["WEBRTC_HAS_NEON"] = True
  
@@ -856,9 +888,297 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_decode
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_interface_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_interface_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_interface_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_interface_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_interface_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_decoder_interface_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -199,6 +199,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/audio_encoder_interface_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_encoder_interface_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_encoder_interface_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -198,6 +198,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_conversion_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_conversion_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_conversion_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -198,6 +198,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -194,6 +194,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/audio_network_adaptor_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_network_adaptor_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_network_adaptor_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -218,6 +218,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/builtin_audio_decoder_factory_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/builtin_audio_decoder_factory_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/builtin_audio_decoder_factory_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -104,12 +104,7 @@
+     DEFINES["WEBRTC_POSIX"] = True
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+-    LOCAL_INCLUDES += [
+-        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
+-    ]
+-
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -184,6 +179,16 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -260,6 +265,65 @@
+         "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/include/"
++    ]
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/cng_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/cng_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/cng_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -211,6 +211,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/g711_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/g711_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g711_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -195,6 +195,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/g711_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/g711_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g711_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -200,6 +200,23 @@
          "-msse2"
      ]
@@ -883,10 +1203,37 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_decode
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_encoder_interface_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_encoder_interface_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_encoder_interface_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/g722_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/g722_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g722_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -199,6 +199,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/g722_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/g722_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g722_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -200,6 +200,23 @@
          "-msse2"
      ]
  
@@ -910,10 +1257,37 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_encode
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_conversion_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_conversion_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_conversion_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -199,6 +199,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/isac_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -239,6 +239,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/isac_common_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_common_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_common_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -198,6 +198,23 @@
          "-msse2"
      ]
  
@@ -937,9 +1311,348 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_format
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_format_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -142,14 +142,6 @@
+         "rt"
+     ]
+ 
+-    SOURCES += [
+-        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
+-    ]
+-
+-    UNIFIED_SOURCES += [
+-        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
+-    ]
+-
+ if CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["USE_X11"] = "1"
+@@ -225,6 +217,16 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
++    ]
++
++    UNIFIED_SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -323,6 +325,66 @@
+         "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
++    ]
++
++    UNIFIED_SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_armv7.S",
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_armv6.S"
++    ]
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
++    ]
++
++    UNIFIED_SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
++    ]
++
++    UNIFIED_SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
++    ]
++
++    UNIFIED_SOURCES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -212,6 +212,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/isac_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -210,6 +210,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/isac_neon_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_neon_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_neon_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -46,7 +46,6 @@
+     DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
+     DEFINES["NDEBUG"] = True
+     DEFINES["NVALGRIND"] = True
+-    DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
+ if CONFIG["MOZ_DEBUG"] == "1":
+ 
+@@ -75,6 +74,16 @@
+     DEFINES["USE_X11"] = "1"
+     DEFINES["WEBRTC_BSD"] = True
+ 
++if CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["USE_NSS_CERTS"] = "1"
++    DEFINES["USE_X11"] = "1"
++    DEFINES["WEBRTC_LINUX"] = True
++
++    OS_LIBS += [
++        "rt"
++    ]
++
+ if CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["USE_X11"] = "1"
+@@ -85,6 +94,22 @@
+     DEFINES["USE_X11"] = "1"
+     DEFINES["WEBRTC_BSD"] = True
+ 
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "FreeBSD":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
++if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "OpenBSD":
++
++    DEFINES["_FORTIFY_SOURCE"] = "2"
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+@@ -111,6 +136,21 @@
+     DEFINES["WEBRTC_ARCH_ARM"] = True
+     DEFINES["WEBRTC_ARCH_ARM_V7"] = True
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/neteq_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/neteq_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/neteq_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -144,17 +144,11 @@
+ 
+     DEFINES["USE_NSS_CERTS"] = "1"
+     DEFINES["USE_X11"] = "1"
+-    DEFINES["WEBRTC_CODEC_ISAC"] = True
+     DEFINES["WEBRTC_LINUX"] = True
+     DEFINES["WEBRTC_POSIX"] = True
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+-    LOCAL_INCLUDES += [
+-        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
+-    ]
+-
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -230,6 +224,18 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["WEBRTC_CODEC_ISAC"] = True
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -308,6 +314,69 @@
+         "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_CODEC_ISAC"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_CODEC_ISACFX"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["WEBRTC_CODEC_ISAC"] = True
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["WEBRTC_CODEC_ISAC"] = True
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["WEBRTC_CODEC_ISAC"] = True
++
++    LOCAL_INCLUDES += [
++        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
++    ]
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -195,6 +195,23 @@
          "-msse2"
      ]
@@ -953,7 +1666,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_format
 +
 +if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
 +
-+    CXXFLAGS += [
++    CFLAGS += [
 +        "-mfpu=neon"
 +    ]
 +
@@ -964,10 +1677,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_format
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_network_adaptor_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/audio_network_adaptor_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/audio_network_adaptor_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -219,6 +219,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -201,6 +201,23 @@
          "-msse2"
      ]
  
@@ -991,9 +1704,9 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/audio_networ
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/builtin_audio_decoder_factory_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/builtin_audio_decoder_factory_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/builtin_audio_decoder_factory_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/rent_a_codec_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/rent_a_codec_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/rent_a_codec_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -105,12 +105,7 @@
      DEFINES["WEBRTC_POSIX"] = True
      DEFINES["_FILE_OFFSET_BITS"] = "64"
@@ -1090,171 +1803,9 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/builtin_audi
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/cng_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/cng_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/cng_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -212,6 +212,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/g711_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/g711_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g711_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -196,6 +196,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/g711_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/g711_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g711_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -201,6 +201,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/g722_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/g722_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g722_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -200,6 +200,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/g722_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/g722_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/g722_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -201,6 +201,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -240,6 +240,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_common_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_common_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_common_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -199,6 +199,23 @@
          "-msse2"
      ]
@@ -1268,73 +1819,6 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_common_
 +
 +if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
 +
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -143,14 +143,6 @@
-         "rt"
-     ]
- 
--    SOURCES += [
--        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
--    ]
--
--    UNIFIED_SOURCES += [
--        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
--    ]
--
- if CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["USE_X11"] = "1"
-@@ -226,6 +218,16 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
-+    ]
-+
-+    UNIFIED_SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -324,6 +326,66 @@
-         "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
-+    ]
-+
-+    UNIFIED_SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
 +    CFLAGS += [
 +        "-mfpu=neon"
 +    ]
@@ -1343,74 +1827,12 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_c_g
 +    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
 +    DEFINES["WEBRTC_HAS_NEON"] = True
 +
-+    SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_armv7.S",
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_armv6.S"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
-+    ]
-+
-+    UNIFIED_SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
-+    ]
-+
-+    UNIFIED_SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_filter_c.c"
-+    ]
-+
-+    UNIFIED_SOURCES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/source/lattice_c.c"
-+    ]
-+
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_fix_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -213,6 +213,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -211,6 +211,23 @@
          "-msse2"
      ]
@@ -1435,220 +1857,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_gn/moz.
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/isac_neon_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/isac_neon_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/isac_neon_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -47,7 +47,6 @@
-     DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
-     DEFINES["NDEBUG"] = True
-     DEFINES["NVALGRIND"] = True
--    DEFINES["_FORTIFY_SOURCE"] = "2"
- 
- if CONFIG["MOZ_DEBUG"] == "1":
- 
-@@ -76,6 +75,16 @@
-     DEFINES["USE_X11"] = "1"
-     DEFINES["WEBRTC_BSD"] = True
- 
-+if CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["USE_NSS_CERTS"] = "1"
-+    DEFINES["USE_X11"] = "1"
-+    DEFINES["WEBRTC_LINUX"] = True
-+
-+    OS_LIBS += [
-+        "rt"
-+    ]
-+
- if CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["USE_X11"] = "1"
-@@ -86,6 +95,22 @@
-     DEFINES["USE_X11"] = "1"
-     DEFINES["WEBRTC_BSD"] = True
- 
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "FreeBSD":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
-+if not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "OpenBSD":
-+
-+    DEFINES["_FORTIFY_SOURCE"] = "2"
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-@@ -112,6 +137,21 @@
-     DEFINES["WEBRTC_ARCH_ARM"] = True
-     DEFINES["WEBRTC_ARCH_ARM_V7"] = True
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/neteq_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/neteq_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/neteq_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -145,17 +145,11 @@
- 
-     DEFINES["USE_NSS_CERTS"] = "1"
-     DEFINES["USE_X11"] = "1"
--    DEFINES["WEBRTC_CODEC_ISAC"] = True
-     DEFINES["WEBRTC_LINUX"] = True
-     DEFINES["WEBRTC_POSIX"] = True
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
--    LOCAL_INCLUDES += [
--        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
--    ]
--
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -231,6 +225,18 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["WEBRTC_CODEC_ISAC"] = True
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -309,6 +315,69 @@
-         "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_CODEC_ISAC"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_CODEC_ISACFX"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["WEBRTC_CODEC_ISAC"] = True
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["WEBRTC_CODEC_ISAC"] = True
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["WEBRTC_CODEC_ISAC"] = True
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -196,6 +196,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -202,6 +202,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_conference_mixer/audio_conference_mixer_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_conference_mixer/audio_conference_mixer_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_conference_mixer/audio_conference_mixer_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -211,6 +211,23 @@
          "-msse2"
      ]
  
@@ -1672,190 +1884,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/pcm16b_gn/mo
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/rent_a_codec_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/rent_a_codec_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/rent_a_codec_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -106,12 +106,7 @@
-     DEFINES["WEBRTC_POSIX"] = True
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
--    LOCAL_INCLUDES += [
--        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
--    ]
--
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -186,6 +181,16 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -262,6 +267,65 @@
-         "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/fix/include/"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    LOCAL_INCLUDES += [
-+        "/media/webrtc/trunk/webrtc/modules/audio_coding/codecs/isac/main/include/"
-+    ]
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -200,6 +200,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_coding/webrtc_opus_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -212,6 +212,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_conference_mixer/audio_conference_mixer_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_conference_mixer/audio_conference_mixer_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_conference_mixer/audio_conference_mixer_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -212,6 +212,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_device/audio_device_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_device/audio_device_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_device/audio_device_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -120,7 +120,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_device/audio_device_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_device/audio_device_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_device/audio_device_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -119,7 +119,6 @@
      ]
  
      OS_LIBS += [
@@ -1863,7 +1895,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_device/audio_device
          "rt"
      ]
  
-@@ -197,6 +196,12 @@
+@@ -196,6 +195,12 @@
  
      DEFINES["_FORTIFY_SOURCE"] = "2"
  
@@ -1876,7 +1908,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_device/audio_device
  if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
  
      DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -243,6 +248,45 @@
+@@ -242,6 +247,45 @@
          "-msse2"
      ]
  
@@ -1922,10 +1954,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_device/audio_device
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_mixer/audio_frame_manipulator_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_frame_manipulator_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_frame_manipulator_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -199,6 +199,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_mixer/audio_frame_manipulator_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_frame_manipulator_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_frame_manipulator_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -198,6 +198,23 @@
          "-msse2"
      ]
  
@@ -1949,10 +1981,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_mixer/audio_frame_m
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_mixer/audio_mixer_impl_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_mixer_impl_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_mixer_impl_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -209,6 +209,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_mixer/audio_mixer_impl_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_mixer_impl_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_mixer/audio_mixer_impl_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -208,6 +208,23 @@
          "-msse2"
      ]
  
@@ -1976,10 +2008,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_mixer/audio_mixer_i
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -111,11 +111,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -110,11 +110,6 @@
          "rt"
      ]
  
@@ -1991,7 +2023,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["USE_X11"] = "1"
-@@ -188,6 +183,13 @@
+@@ -187,6 +182,13 @@
  
      DEFINES["_FORTIFY_SOURCE"] = "2"
  
@@ -2005,7 +2037,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
  
      DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -275,6 +277,56 @@
+@@ -274,6 +276,56 @@
          "/media/webrtc/trunk/webrtc/modules/audio_processing/ns/ns_core.c"
      ]
  
@@ -2062,10 +2094,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -165,7 +165,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -164,7 +164,6 @@
      DEFINES["USE_NSS_CERTS"] = "1"
      DEFINES["USE_X11"] = "1"
      DEFINES["WEBRTC_LINUX"] = True
@@ -2073,7 +2105,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
      DEFINES["WEBRTC_POSIX"] = True
      DEFINES["_FILE_OFFSET_BITS"] = "64"
  
-@@ -242,6 +241,10 @@
+@@ -241,6 +240,10 @@
  
      DEFINES["_FORTIFY_SOURCE"] = "2"
  
@@ -2084,7 +2116,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
  
      DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -300,6 +303,37 @@
+@@ -299,6 +302,37 @@
  
      DEFINES["WEBRTC_NS_FLOAT"] = True
  
@@ -2122,10 +2154,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_c_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_c_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_c_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -38,7 +38,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_c_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_c_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_c_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -37,7 +37,6 @@
      DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
      DEFINES["NDEBUG"] = True
      DEFINES["NVALGRIND"] = True
@@ -2133,7 +2165,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  
  if CONFIG["MOZ_DEBUG"] == "1":
  
-@@ -67,6 +66,16 @@
+@@ -66,6 +65,16 @@
      DEFINES["USE_X11"] = "1"
      DEFINES["WEBRTC_BSD"] = True
  
@@ -2150,7 +2182,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["USE_X11"] = "1"
-@@ -77,6 +86,22 @@
+@@ -76,6 +85,22 @@
      DEFINES["USE_X11"] = "1"
      DEFINES["WEBRTC_BSD"] = True
  
@@ -2173,7 +2205,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-@@ -103,6 +128,21 @@
+@@ -102,6 +127,21 @@
      DEFINES["WEBRTC_ARCH_ARM"] = True
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
  
@@ -2195,10 +2227,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -44,7 +44,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_neon_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -43,7 +43,6 @@
      DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
      DEFINES["NDEBUG"] = True
      DEFINES["NVALGRIND"] = True
@@ -2206,7 +2238,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  
  if CONFIG["MOZ_DEBUG"] == "1":
  
-@@ -73,6 +72,16 @@
+@@ -72,6 +71,16 @@
      DEFINES["USE_X11"] = "1"
      DEFINES["WEBRTC_BSD"] = True
  
@@ -2223,7 +2255,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["USE_X11"] = "1"
-@@ -83,6 +92,22 @@
+@@ -82,6 +91,22 @@
      DEFINES["USE_X11"] = "1"
      DEFINES["WEBRTC_BSD"] = True
  
@@ -2246,7 +2278,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-@@ -109,6 +134,21 @@
+@@ -108,6 +133,21 @@
      DEFINES["WEBRTC_ARCH_ARM"] = True
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
  
@@ -2268,10 +2300,18 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -112,6 +112,7 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/audio_processing/audio_processing_sse2_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -88,7 +88,6 @@
+ if CONFIG["OS_TARGET"] == "FreeBSD":
+ 
+     CXXFLAGS += [
+-        "-msse2",
+         "-msse2"
+     ]
+ 
+@@ -112,6 +111,7 @@
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      CXXFLAGS += [
@@ -2279,118 +2319,18 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/audio_processing/audio_pr
          "-msse2"
      ]
  
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/bitrate_controller/bitrate_controller_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/bitrate_controller/bitrate_controller_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/bitrate_controller/bitrate_controller_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -219,6 +219,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/congestion_controller/congestion_controller_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/congestion_controller/congestion_controller_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/congestion_controller/congestion_controller_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -110,7 +110,6 @@
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -183,6 +182,12 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -229,6 +234,45 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -90,6 +90,7 @@
- if CONFIG["OS_TARGET"] == "NetBSD":
+@@ -123,6 +123,7 @@
+ if CONFIG["OS_TARGET"] == "OpenBSD":
  
      CXXFLAGS += [
 +        "-msse2",
          "-msse2"
      ]
  
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -347,6 +347,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/bitrate_controller/bitrate_controller_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/bitrate_controller/bitrate_controller_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/bitrate_controller/bitrate_controller_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -218,6 +218,23 @@
          "-msse2"
      ]
  
@@ -2414,559 +2354,9 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_c
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/desktop_capture/primitives_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/desktop_capture/primitives_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/desktop_capture/primitives_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -159,6 +159,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/media_file/media_file_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/media_file/media_file_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/media_file/media_file_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -211,6 +211,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/pacing/pacing_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/pacing/pacing_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/pacing/pacing_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -220,6 +220,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -219,6 +219,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/rtp_rtcp/rtp_rtcp_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/rtp_rtcp/rtp_rtcp_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/rtp_rtcp/rtp_rtcp_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -290,6 +290,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/utility/utility_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/utility/utility_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/utility/utility_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -105,7 +105,6 @@
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -178,6 +177,12 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -224,6 +229,45 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_capture/video_capture_internal_impl_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_internal_impl_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_internal_impl_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -126,7 +126,6 @@
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -232,6 +231,12 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -278,6 +283,45 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_capture/video_capture_module_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_module_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_module_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -103,7 +103,6 @@
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -176,6 +175,12 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -222,6 +227,45 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_coding/video_coding_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -131,7 +131,6 @@
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -204,6 +203,12 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -250,6 +255,45 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_coding/video_coding_utility_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_utility_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_utility_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -226,6 +226,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_h264_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_h264_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_h264_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -217,6 +217,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_i420_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_i420_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_i420_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -219,6 +219,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp8_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp8_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp8_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -225,6 +225,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp9_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp9_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp9_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -221,6 +221,23 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_processing_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/congestion_controller/congestion_controller_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/congestion_controller/congestion_controller_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/congestion_controller/congestion_controller_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -109,7 +109,6 @@
      DEFINES["_FILE_OFFSET_BITS"] = "64"
  
@@ -3034,10 +2424,684 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -38,7 +38,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_differ_sse2_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -66,7 +66,6 @@
+ if CONFIG["OS_TARGET"] == "FreeBSD":
+ 
+     CXXFLAGS += [
+-        "-msse2",
+         "-msse2"
+     ]
+ 
+@@ -90,6 +89,7 @@
+ if CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     CXXFLAGS += [
++        "-msse2",
+         "-msse2"
+     ]
+ 
+@@ -101,6 +101,7 @@
+ if CONFIG["OS_TARGET"] == "OpenBSD":
+ 
+     CXXFLAGS += [
++        "-msse2",
+         "-msse2"
+     ]
+ 
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/desktop_capture/desktop_capture_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -346,6 +346,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/desktop_capture/primitives_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/desktop_capture/primitives_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/desktop_capture/primitives_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -158,6 +158,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/media_file/media_file_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/media_file/media_file_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/media_file/media_file_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -210,6 +210,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/pacing/pacing_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/pacing/pacing_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/pacing/pacing_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -219,6 +219,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -218,6 +218,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/rtp_rtcp/rtp_rtcp_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/rtp_rtcp/rtp_rtcp_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/rtp_rtcp/rtp_rtcp_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -289,6 +289,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/utility/utility_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/utility/utility_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/utility/utility_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -104,7 +104,6 @@
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -177,6 +176,12 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -223,6 +228,45 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_capture/video_capture_internal_impl_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_internal_impl_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_internal_impl_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -125,7 +125,6 @@
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -231,6 +230,12 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -277,6 +282,45 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_capture/video_capture_module_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_module_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_capture/video_capture_module_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -102,7 +102,6 @@
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -175,6 +174,12 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -221,6 +226,45 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_coding/video_coding_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -130,7 +130,6 @@
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -203,6 +202,12 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -249,6 +254,45 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_coding/video_coding_utility_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_utility_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_coding/video_coding_utility_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -225,6 +225,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_h264_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_h264_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_h264_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -216,6 +216,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_i420_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_i420_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_i420_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -218,6 +218,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp8_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp8_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp8_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -224,6 +224,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp9_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp9_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_coding/webrtc_vp9_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -220,6 +220,23 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_processing/video_processing_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -108,7 +108,6 @@
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -181,6 +180,12 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -227,6 +232,45 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_neon_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -37,7 +37,6 @@
      DEFINES["DYNAMIC_ANNOTATIONS_ENABLED"] = "0"
      DEFINES["NDEBUG"] = True
      DEFINES["NVALGRIND"] = True
@@ -3045,7 +3109,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_pr
  
  if CONFIG["MOZ_DEBUG"] == "1":
  
-@@ -63,6 +62,12 @@
+@@ -62,6 +61,12 @@
      DEFINES["USE_X11"] = "1"
      DEFINES["WEBRTC_BSD"] = True
  
@@ -3058,7 +3122,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_pr
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["USE_X11"] = "1"
-@@ -73,6 +78,22 @@
+@@ -72,6 +77,22 @@
      DEFINES["USE_X11"] = "1"
      DEFINES["WEBRTC_BSD"] = True
  
@@ -3081,7 +3145,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Android":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-@@ -99,6 +120,21 @@
+@@ -98,6 +119,21 @@
      DEFINES["WEBRTC_ARCH_ARM"] = True
      DEFINES["WEBRTC_ARCH_ARM_V7"] = True
  
@@ -3103,10 +3167,18 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_pr
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn/moz.build
---- a/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -118,6 +118,7 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/modules/video_processing/video_processing_sse2_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -90,7 +90,6 @@
+ if CONFIG["OS_TARGET"] == "FreeBSD":
+ 
+     CXXFLAGS += [
+-        "-msse2",
+         "-msse2"
+     ]
+ 
+@@ -118,6 +117,7 @@
  if CONFIG["OS_TARGET"] == "NetBSD":
  
      CXXFLAGS += [
@@ -3114,10 +3186,18 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/modules/video_processing/video_pr
          "-msse2"
      ]
  
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/system_wrappers/field_trial_default_gn/moz.build
---- a/media/webrtc/trunk/webrtc/system_wrappers/field_trial_default_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/system_wrappers/field_trial_default_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -195,6 +195,23 @@
+@@ -129,6 +129,7 @@
+ if CONFIG["OS_TARGET"] == "OpenBSD":
+ 
+     CXXFLAGS += [
++        "-msse2",
+         "-msse2"
+     ]
+ 
+diff -r a358755643e9 media/webrtc/trunk/webrtc/system_wrappers/field_trial_default_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/system_wrappers/field_trial_default_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/system_wrappers/field_trial_default_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -194,6 +194,23 @@
          "-msse2"
      ]
  
@@ -3141,10 +3221,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/system_wrappers/field_trial_defau
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/system_wrappers/metrics_default_gn/moz.build
---- a/media/webrtc/trunk/webrtc/system_wrappers/metrics_default_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/system_wrappers/metrics_default_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -195,6 +195,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/system_wrappers/metrics_default_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/system_wrappers/metrics_default_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/system_wrappers/metrics_default_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -194,6 +194,23 @@
          "-msse2"
      ]
  
@@ -3168,10 +3248,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/system_wrappers/metrics_default_g
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/system_wrappers/system_wrappers_gn/moz.build
---- a/media/webrtc/trunk/webrtc/system_wrappers/system_wrappers_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/system_wrappers/system_wrappers_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -290,6 +290,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/system_wrappers/system_wrappers_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/system_wrappers/system_wrappers_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/system_wrappers/system_wrappers_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -289,6 +289,23 @@
          "-msse2"
      ]
  
@@ -3195,10 +3275,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/system_wrappers/system_wrappers_g
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/video/video_gn/moz.build
---- a/media/webrtc/trunk/webrtc/video/video_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/video/video_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -243,6 +243,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/video/video_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/video/video_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/video/video_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -242,6 +242,23 @@
          "-msse2"
      ]
  
@@ -3222,10 +3302,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/video/video_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/video_engine/video_engine_gn/moz.build
---- a/media/webrtc/trunk/webrtc/video_engine/video_engine_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/video_engine/video_engine_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -155,6 +155,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/video_engine/video_engine_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/video_engine/video_engine_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/video_engine/video_engine_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -154,6 +154,23 @@
          "-msse2"
      ]
  
@@ -3249,9 +3329,79 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/video_engine/video_engine_gn/moz.
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/audio_coder_gn/moz.build
---- a/media/webrtc/trunk/webrtc/voice_engine/audio_coder_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/voice_engine/audio_coder_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
+diff -r a358755643e9 media/webrtc/trunk/webrtc/voice_engine/audio_coder_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/voice_engine/audio_coder_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/voice_engine/audio_coder_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -92,7 +92,6 @@
+     DEFINES["_FILE_OFFSET_BITS"] = "64"
+ 
+     OS_LIBS += [
+-        "m",
+         "rt"
+     ]
+ 
+@@ -163,6 +162,12 @@
+ 
+     DEFINES["_FORTIFY_SOURCE"] = "2"
+ 
++if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
+ 
+     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
+@@ -209,6 +214,45 @@
+         "-msse2"
+     ]
+ 
++if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    DEFINES["DISABLE_NACL"] = True
++    DEFINES["NO_TCMALLOC"] = True
++    DEFINES["WEBRTC_ARCH_ARM64"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    CXXFLAGS += [
++        "-mfpu=neon"
++    ]
++
++    DEFINES["WEBRTC_ARCH_ARM"] = True
++    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
++    DEFINES["WEBRTC_HAS_NEON"] = True
++
++if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
++if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
++
++    OS_LIBS += [
++        "m"
++    ]
++
+ if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
+ 
+     DEFINES["WEBRTC_ARCH_ARM64"] = True
+diff -r a358755643e9 media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
 @@ -93,7 +93,6 @@
      DEFINES["_FILE_OFFSET_BITS"] = "64"
  
@@ -3319,10 +3469,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/audio_coder_gn/moz.b
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.build
---- a/media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -94,7 +94,6 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/voice_engine/file_recorder_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/voice_engine/file_recorder_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/voice_engine/file_recorder_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -93,7 +93,6 @@
      DEFINES["_FILE_OFFSET_BITS"] = "64"
  
      OS_LIBS += [
@@ -3330,7 +3480,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.b
          "rt"
      ]
  
-@@ -165,6 +164,12 @@
+@@ -164,6 +163,12 @@
  
      DEFINES["_FORTIFY_SOURCE"] = "2"
  
@@ -3343,7 +3493,7 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.b
  if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
  
      DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -211,6 +216,45 @@
+@@ -210,6 +215,45 @@
          "-msse2"
      ]
  
@@ -3389,80 +3539,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/file_player_gn/moz.b
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/file_recorder_gn/moz.build
---- a/media/webrtc/trunk/webrtc/voice_engine/file_recorder_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/voice_engine/file_recorder_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -94,7 +94,6 @@
-     DEFINES["_FILE_OFFSET_BITS"] = "64"
- 
-     OS_LIBS += [
--        "m",
-         "rt"
-     ]
- 
-@@ -165,6 +164,12 @@
- 
-     DEFINES["_FORTIFY_SOURCE"] = "2"
- 
-+if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["MOZ_DEBUG"] == "1" and CONFIG["OS_TARGET"] == "WINNT":
- 
-     DEFINES["_HAS_ITERATOR_DEBUGGING"] = "0"
-@@ -211,6 +216,45 @@
-         "-msse2"
-     ]
- 
-+if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    DEFINES["DISABLE_NACL"] = True
-+    DEFINES["NO_TCMALLOC"] = True
-+    DEFINES["WEBRTC_ARCH_ARM64"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "arm" and CONFIG["HOST_CPU_ARCH"] == "arm" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    CXXFLAGS += [
-+        "-mfpu=neon"
-+    ]
-+
-+    DEFINES["WEBRTC_ARCH_ARM"] = True
-+    DEFINES["WEBRTC_ARCH_ARM_V7"] = True
-+    DEFINES["WEBRTC_HAS_NEON"] = True
-+
-+if CONFIG["CPU_ARCH"] == "ppc64" and CONFIG["HOST_CPU_ARCH"] == "ppc64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86" and CONFIG["HOST_CPU_ARCH"] == "x86" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
-+if CONFIG["CPU_ARCH"] == "x86_64" and CONFIG["HOST_CPU_ARCH"] == "x86_64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "Linux":
-+
-+    OS_LIBS += [
-+        "m"
-+    ]
-+
- if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
- 
-     DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/level_indicator_gn/moz.build
---- a/media/webrtc/trunk/webrtc/voice_engine/level_indicator_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/voice_engine/level_indicator_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -210,6 +210,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/voice_engine/level_indicator_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/voice_engine/level_indicator_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/voice_engine/level_indicator_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -209,6 +209,23 @@
          "-msse2"
      ]
  
@@ -3486,10 +3566,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/level_indicator_gn/m
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/voice_engine_gn/moz.build
---- a/media/webrtc/trunk/webrtc/voice_engine/voice_engine_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/voice_engine/voice_engine_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -249,6 +249,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/voice_engine/voice_engine_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/voice_engine/voice_engine_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/voice_engine/voice_engine_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -248,6 +248,23 @@
          "-msse2"
      ]
  
@@ -3513,10 +3593,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/voice_engine/voice_engine_gn/moz.
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/webrtc_common_gn/moz.build
---- a/media/webrtc/trunk/webrtc/webrtc_common_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/webrtc_common_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -196,6 +196,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/webrtc_common_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/webrtc_common_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/webrtc_common_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -195,6 +195,23 @@
          "-msse2"
      ]
  
@@ -3540,10 +3620,10 @@ diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/webrtc_common_gn/moz.build
  if CONFIG["CPU_ARCH"] == "aarch64" and CONFIG["HOST_CPU_ARCH"] == "aarch64" and not CONFIG["MOZ_DEBUG"] and CONFIG["OS_TARGET"] == "NetBSD":
  
      DEFINES["WEBRTC_ARCH_ARM64"] = True
-diff -r c13cb09f0c25 media/webrtc/trunk/webrtc/webrtc_gn/moz.build
---- a/media/webrtc/trunk/webrtc/webrtc_gn/moz.build	Fri Jun 01 13:36:34 2018 -0700
-+++ b/media/webrtc/trunk/webrtc/webrtc_gn/moz.build	Mon Jun 04 20:40:06 2018 +0200
-@@ -300,6 +300,23 @@
+diff -r a358755643e9 media/webrtc/trunk/webrtc/webrtc_gn/moz.build
+--- a/media/webrtc/trunk/webrtc/webrtc_gn/moz.build	Tue Jun 05 07:49:02 2018 +0200
++++ b/media/webrtc/trunk/webrtc/webrtc_gn/moz.build	Tue Jun 05 12:53:33 2018 +0200
+@@ -299,6 +299,23 @@
          "-msse2"
      ]
  
