@@ -31,3 +31,4 @@ reduce-rust-debuginfo-on-32bit-architectures.patch
 fix-armhf-webrtc-build.patch
 extra-webrtc-build-configs.patch
 update-gn-mozbuild.patch
+allow-addon-signature-requirements-to-be-relaxed.patch

@@ -1,6 +1,14 @@
 firefox-trunk (63.0~a1~hg20180630r424517-0ubuntu1) UNRELEASED; urgency=medium
 
-  *
+  [ Chris Coulson ]
+  * Add patch from bmo: #1464766 to allow addon signature requirements
+    to be relaxed
+    - add debian/patches/allow-addon-signature-requirements-to-be-relaxed.patch
+    - update debian/patches/series
+  * Lock extensions.unsignedScopes to 4 to disable the addon signing
+    requirement for our language packs. This doesn't affect user installed
+    addons
+    - update debian/vendor-gre.js
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Sat, 30 Jun 2018 12:53:11 +0200
 
