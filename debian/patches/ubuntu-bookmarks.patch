@@ -2,24 +2,24 @@ Description: Customize the default bookmarks for Ubuntu
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: not-needed
 
-Index: firefox-trunk-52.0~a1~hg20161027r319780/browser/components/places/tests/unit/head_bookmarks.js
+Index: b/browser/components/places/tests/unit/head_bookmarks.js
 ===================================================================
---- firefox-trunk-52.0~a1~hg20161027r319780.orig/browser/components/places/tests/unit/head_bookmarks.js
-+++ firefox-trunk-52.0~a1~hg20161027r319780/browser/components/places/tests/unit/head_bookmarks.js
-@@ -44,7 +44,7 @@ const SMART_BOOKMARKS_ON_MENU =  2; // T
+--- a/browser/components/places/tests/unit/head_bookmarks.js
++++ b/browser/components/places/tests/unit/head_bookmarks.js
+@@ -29,7 +29,7 @@
  
  // Default bookmarks constants.
  const DEFAULT_BOOKMARKS_ON_TOOLBAR = 1;
 -const DEFAULT_BOOKMARKS_ON_MENU = 1;
 +const DEFAULT_BOOKMARKS_ON_MENU = 2;
  
- const SMART_BOOKMARKS_ANNO = "Places/SmartBookmark";
- 
-Index: firefox-trunk-52.0~a1~hg20161027r319780/browser/locales/generic/profile/bookmarks.html.in
+ function checkItemHasAnnotation(guid, name) {
+   return PlacesUtils.promiseItemId(guid).then(id => {
+Index: b/browser/locales/generic/profile/bookmarks.html.in
 ===================================================================
---- firefox-trunk-52.0~a1~hg20161027r319780.orig/browser/locales/generic/profile/bookmarks.html.in
-+++ firefox-trunk-52.0~a1~hg20161027r319780/browser/locales/generic/profile/bookmarks.html.in
-@@ -53,4 +53,11 @@
+--- a/browser/locales/generic/profile/bookmarks.html.in
++++ b/browser/locales/generic/profile/bookmarks.html.in
+@@ -49,4 +49,11 @@
              <dt><a href="https://planet.mozilla.org/" icon="@mozilla_icon@">@planet@</a>
          </dl>
  #endif
