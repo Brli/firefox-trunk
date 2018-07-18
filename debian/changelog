@@ -1,4 +1,4 @@
-firefox-trunk (63.0~a1~hg20180630r424517-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (63.0~a1~hg20180717r426859-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson ]
   * Add patch from bmo: #1464766 to allow addon signature requirements
@@ -11,11 +11,11 @@ firefox-trunk (63.0~a1~hg20180630r424517-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/vendor-gre.js
 
   [ Rico Tzschichholz ]
-  * Bump build-dep on rustc >= 1.26.0 and cargo >= 0.27
+  * Bump build-dep on rustc >= 1.27.0 and cargo >= 0.28
   * Refresh patches
     - update debian/patches/ubuntu-bookmarks.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Sat, 30 Jun 2018 12:53:11 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 17 Jul 2018 16:35:47 +0200
 
 firefox-trunk (62.0~a1~hg20180621r423217-0ubuntu1) cosmic; urgency=medium
 
