@@ -98,9 +98,9 @@ Forwarded: not-needed
 --- a/netwerk/protocol/http/moz.build
 +++ b/netwerk/protocol/http/moz.build
 @@ -138,3 +138,6 @@
-         DEFINES.update(
-             HAS_CONNECTX=True,
-         )
+ 
+ if CONFIG['CC_TYPE'] == 'clang-cl':
+     AllowCompilerWarnings()  # workaround for bug 1090497
 +
 +if CONFIG['MOZ_UA_VENDOR']:
 +    DEFINES['MOZ_UA_VENDOR'] = '"%s"' % CONFIG['MOZ_UA_VENDOR']

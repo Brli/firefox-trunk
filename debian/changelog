@@ -14,6 +14,8 @@ firefox-trunk (63.0~a1~hg20180717r426859-0ubuntu1) UNRELEASED; urgency=medium
   * Bump build-dep on rustc >= 1.28.0 and cargo >= 0.29
   * Refresh patches
     - update debian/patches/ubuntu-bookmarks.patch
+    - update debian/patches/ubuntu-ua-string-changes.patch
+    - update debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 17 Jul 2018 16:35:47 +0200
 
