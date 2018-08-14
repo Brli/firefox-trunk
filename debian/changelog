@@ -11,7 +11,7 @@ firefox-trunk (63.0~a1~hg20180717r426859-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/vendor-gre.js
 
   [ Rico Tzschichholz ]
-  * Bump build-dep on rustc >= 1.27.0 and cargo >= 0.28
+  * Bump build-dep on rustc >= 1.28.0 and cargo >= 0.29
   * Refresh patches
     - update debian/patches/ubuntu-bookmarks.patch
 
