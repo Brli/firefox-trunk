@@ -1,0 +1,19 @@
+Description: Fix broken build when HAVE_CONFIG_H is undefined.
+ This is part of https://cgit.freedesktop.org/pixman/commit/?id=cb5d131, and
+ contained in gfx/cairo/pixman-enable-altivec-acceleration.patch, which for
+ some reason is not applied.
+Author: Olivier Tilloy <olivier.tilloy@canonical.com>
+
+--- a/gfx/cairo/libpixman/src/pixman-vmx.c
++++ b/gfx/cairo/libpixman/src/pixman-vmx.c
+@@ -25,7 +25,10 @@
+  * Based on fbmmx.c by Owen Taylor, Søren Sandmann and Nicholas Miell
+  */
+ 
++#ifdef HAVE_CONFIG_H
+ #include <config.h>
++#endif
++
+ #include "pixman-private.h"
+ #include "pixman-combine32.h"
+ #include <altivec.h>

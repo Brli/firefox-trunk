@@ -120,6 +120,24 @@ class TarballCreator(OptionParser):
     self.add_option('-b', '--basename', dest='basename', help='The package basename')
     self.add_option('-a', '--application', dest='application', help='The application to build')
 
+  def vendor_cbindgen(self, dest):
+    # cbindgen is not available in Debian/Ubuntu yet (https://bugs.debian.org/908312)
+    print('*** Vendoring cbindgen and its dependencies ***')
+    with ScopedTmpdir() as tmpdir:
+      with ScopedWorkingDirectory(tmpdir):
+        CheckCall(['cargo', 'new', 'vendored-cbindgen', '--vcs', 'none'])
+        with ScopedWorkingDirectory('vendored-cbindgen'):
+          with open('Cargo.toml', 'a+') as fd:
+            fd.write('cbindgen = "0.6.4"')
+          CheckCall(['cargo', 'vendor'])
+          with ScopedWorkingDirectory('vendor/cbindgen'):
+            os.makedirs('.cargo')
+            with open('.cargo/config', 'w') as fd:
+              fd.write(CheckOutput(['cargo', 'vendor', '--relative-path']))
+            with open('Cargo.toml', 'a+') as fd:
+              fd.write('\n[workspace]')
+        shutil.copytree('vendored-cbindgen/vendor/cbindgen', dest)
+
   def run(self):
     (options, args) = self.parse_args()
 
@@ -270,6 +288,8 @@ class TarballCreator(OptionParser):
               if not locale in got_locales:
                 print("Locale %s is missing from the source tarball" % locale)
                 sys.exit(1)
+
+        self.vendor_cbindgen(os.path.join(os.getcwd(), 'third_party/cbindgen'))
 
         with open(os.path.join(options.application, 'config/version.txt'), 'r') as vf:
           upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))

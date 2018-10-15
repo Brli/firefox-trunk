@@ -83,9 +83,9 @@ VIRTENV_PATH	:= $(CURDIR)/$(MOZ_OBJDIR)/_virtualenv
 MOZ_PYTHON		:= $(VIRTENV_PATH)/bin/python
 DISTRIB 		:= $(shell lsb_release -i -s)
 
-CFLAGS			:= -g
-CXXFLAGS		:= -g
-LDFLAGS 		:= $(shell echo $$LDFLAGS | sed -e 's/-Wl,-Bsymbolic-functions//')
+CFLAGS			:= $(shell echo $(CFLAGS) | sed -e 's/\-g//' | sed -e 's/\-O[s0123]//')
+CXXFLAGS		:= $(shell echo $(CFLAGS) | sed -e 's/\-g//' | sed -e 's/\-O[s0123]//')
+LDFLAGS			:= $(shell echo $(LDFLAGS) | sed -e 's/-Wl,-Bsymbolic-functions//')
 
 ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 MOZ_WANT_UNIT_TESTS = 0
@@ -121,8 +121,6 @@ endif
 
 export SHELL=/bin/bash
 export NO_PNG_PKG_MANGLE=1
-export LDFLAGS
-export DEB_BUILD_HARDENING=1
 
 ifeq (linux-gnu, $(DEB_HOST_GNU_SYSTEM))
 LANGPACK_DIR := linux-$(DEB_HOST_GNU_CPU)/xpi
@@ -138,7 +136,7 @@ MOZ_DEFINES += 	-DMOZ_LIBDIR="$(MOZ_LIBDIR)" -DMOZ_APP_NAME="$(MOZ_APP_NAME)" \
 		-DMOZ_DISPLAY_NAME="$(MOZ_DISPLAY_NAME)" -DMOZ_PKG_NAME="$(MOZ_PKG_NAME)" -DDISTRIB="$(DISTRIB)" \
 		-DMOZ_BRANDING_OPTION="$(MOZ_BRANDING_OPTION)" -DTOPSRCDIR="$(CURDIR)" -DDEB_HOST_GNU_TYPE="$(DEB_HOST_GNU_TYPE)" \
 		-DMOZ_ADDONDIR="$(MOZ_ADDONDIR)" -DMOZ_SDKDIR="$(MOZ_SDKDIR)" -DMOZ_DISTDIR="$(MOZ_DISTDIR)" -DMOZ_UPDATE_CHANNEL="$(CHANNEL)" \
-		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" \
+		-DMOZ_OBJDIR="$(MOZ_OBJDIR)" -DDEB_BUILDDIR="$(DEB_BUILDDIR)" -DMOZ_PYTHON="$(MOZ_PYTHON)" -DDEB_BUILD_ARCH_BITS=$(DEB_BUILD_ARCH_BITS) \
 		-DMOZ_DEFAULT_APP_NAME="$(MOZ_DEFAULT_APP_NAME)" -DDISTRIB_VERSION="$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)"
 
 ifneq (,$(MOZ_APP_PROFILE))
@@ -263,14 +261,21 @@ debian/stamp-make-langpack-xpi-%:
 
 common-configure-arch common-configure-indep:: common-configure-impl
 common-configure-impl:: debian/stamp-mach-configure
-debian/stamp-mach-configure:
+debian/stamp-mach-configure: cbindgen/bin/cbindgen
 	$(CURDIR)/mach configure && $(CURDIR)/mach build-backend
 	touch $@
 clean::
 	rm -f debian/stamp-mach-configure
 
-#common-build-arch:: make-langpack-xpis make-testsuite run-tests
-common-build-arch:: make-langpack-xpis
+cbindgen/bin/cbindgen: third_party/cbindgen/Cargo.toml
+	cd $(CURDIR)/third_party/cbindgen; \
+	cargo build --release; \
+	cargo install --bin cbindgen --root ../../cbindgen
+clean::
+	rm -rf $(CURDIR)/cbindgen
+	rm -rf $(CURDIR)/third_party/cbindgen/target
+
+#common-build-arch:: make-testsuite run-tests
 
 install/$(MOZ_PKG_NAME)::
 	@echo "Adding suggests / recommends on support packages"
@@ -285,7 +290,7 @@ install/%::
 endif
 
 common-install-arch common-install-indep:: common-install-impl
-common-install-impl:: debian/stamp-mach-install
+common-install-impl:: debian/stamp-mach-install make-langpack-xpis
 debian/stamp-mach-install:
 	DESTDIR=$(CURDIR)/debian/tmp $(CURDIR)/mach install
 	$(foreach dir,$(MOZ_LIBDIR) $(MOZ_INCDIR) $(MOZ_IDLDIR) $(MOZ_SDKDIR), \

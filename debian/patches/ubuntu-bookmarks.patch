@@ -2,11 +2,9 @@ Description: Customize the default bookmarks for Ubuntu
 Author: Alexander Sack <asac@ubuntu.com>
 Forwarded: not-needed
 
-Index: b/browser/components/places/tests/unit/head_bookmarks.js
-===================================================================
 --- a/browser/components/places/tests/unit/head_bookmarks.js
 +++ b/browser/components/places/tests/unit/head_bookmarks.js
-@@ -29,7 +29,7 @@
+@@ -29,7 +29,7 @@ updateAppInfo({
  
  // Default bookmarks constants.
  const DEFAULT_BOOKMARKS_ON_TOOLBAR = 1;
@@ -15,11 +13,9 @@ Index: b/browser/components/places/tests/unit/head_bookmarks.js
  
  function checkItemHasAnnotation(guid, name) {
    return PlacesUtils.promiseItemId(guid).then(id => {
-Index: b/browser/locales/generic/profile/bookmarks.html.in
-===================================================================
 --- a/browser/locales/generic/profile/bookmarks.html.in
 +++ b/browser/locales/generic/profile/bookmarks.html.in
-@@ -49,4 +49,11 @@
+@@ -47,4 +47,11 @@
              <dt><a href="https://planet.mozilla.org/" icon="@mozilla_icon@">@planet@</a>
          </dl>
  #endif

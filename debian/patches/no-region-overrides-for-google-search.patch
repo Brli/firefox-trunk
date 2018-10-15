@@ -1,0 +1,20 @@
+Description: Drop the region overrides for google, as we don't supply a
+ custom version of this. Perhaps it would be better if
+ SearchService.prototype._parseListJSON honoured the
+ "browser.search.geoSpecificDefaults" pref and ignored these overrides
+ instead of having to do this.
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: not-needed
+
+--- a/browser/components/search/searchplugins/list.json
++++ b/browser/components/search/searchplugins/list.json
+@@ -7,9 +7,6 @@
+     ]
+   },
+   "regionOverrides": {
+-    "US": {
+-      "google": "google-2018"
+-    },
+     "CA": {
+       "ebay": "ebay-ca",
+       "ebay-fr": "ebay-ca"

@@ -1,9 +1,10 @@
-diff -r 932388b8c22c toolkit/locales/l10n.mk
---- a/toolkit/locales/l10n.mk	Wed Aug 16 20:58:18 2017 -0700
-+++ b/toolkit/locales/l10n.mk	Thu Aug 17 12:45:56 2017 +0200
-@@ -167,30 +167,8 @@
- # chrome directory.
- PKG_ZIP_DIRS = chrome $(or $(DIST_SUBDIRS),$(DIST_SUBDIR))
+Index: b/toolkit/locales/l10n.mk
+===================================================================
+--- a/toolkit/locales/l10n.mk
++++ b/toolkit/locales/l10n.mk
+@@ -171,30 +171,8 @@
+ # chrome directory and top-level localization for Fluent.
+ PKG_ZIP_DIRS = chrome localization $(or $(DIST_SUBDIRS),$(DIST_SUBDIR))
  
 -# Clone a l10n repository, either via hg or git
 -# Make this a variable as it's embedded in a sh conditional

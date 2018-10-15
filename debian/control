@@ -39,7 +39,8 @@ Build-Depends: cdbs,
 	clang-4.0,
 	llvm-4.0-dev,
 	cargo (>= 0.29),
-	rustc (>= 1.28.0)
+	rustc (>= 1.28.0),
+	nodejs (>= 8.11)
 Standards-Version: 3.9.1
 #XS-Testsuite: autopkgtest
 

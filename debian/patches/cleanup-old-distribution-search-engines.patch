@@ -1,0 +1,28 @@
+Description: Cleanup after LP: #1791789. This bug resulted in some en-US
+ distribution search engines (specifically Amazon.com) enabled for non en-US
+ users. This should have normally been cleaned up on upgrade because
+ SearchService.prototype._loadEnginesFromCache skips read-only engines when
+ rebuilding the cache, but prior to that bug being fixed, distribution search
+ engines were not marked as read-only.
+ .
+ This is a temporary fix to clean up profiles for users who upgraded to the
+ initial 60.0 release. It can be dropped at some point in the future.
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: not-needed
+
+--- a/toolkit/components/search/nsSearchService.js
++++ b/toolkit/components/search/nsSearchService.js
+@@ -3178,6 +3178,13 @@ SearchService.prototype = {
+         continue;
+       }
+ 
++      // Temporary cleanup for https://launchpad.net/bugs/1791789 - distribution
++      // engines prior to this update were not marked as read only
++      if (skipReadOnly && /^(\[distribution\])/.test(engine._loadPath)) {
++        ++skippedEngines;
++        continue;
++      }
++
+       this._loadEngineFromCache(engine);
+     }
+ 

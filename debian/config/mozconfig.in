@@ -12,6 +12,11 @@ ac_add_options --disable-updater
 ac_add_options --enable-application=browser
 ac_add_options --enable-startup-notification
 ac_add_options --with-distribution-id=com.ubuntu
+%%if DEB_BUILD_ARCH_BITS == 32
+ac_add_options --enable-debug-symbols=-g1
+%%else
+ac_add_options --enable-debug-symbols
+%%endif
 %%if DEB_HOST_ARCH == armel
 ac_add_options --disable-methodjit
 %%endif
@@ -83,6 +88,8 @@ ac_add_options --with-ua-vendor=Ubuntu
 %%if MOZ_UPDATE_CHANNEL == nightly
 ac_add_options --enable-profiling
 %%endif
+mk_add_options "export PATH=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin:${PATH}"
+ac_add_options --with-unsigned-addon-scopes=app
 # Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
 # Note: these are for Ubuntu use ONLY. For your own distribution,
 # please get your own set of keys.
@@ -90,4 +97,3 @@ ac_add_options --enable-profiling
 # Feel free to contact Chad Miller (chad.miller@canonical.com) or Chris
 # Coulson (chris.coulson@canonical.com) for more info
 ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/ga
-#ac_add_options --enable-alsa

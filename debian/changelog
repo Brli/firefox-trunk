@@ -1,14 +1,78 @@
-firefox-trunk (63.0~a1~hg20180717r426859-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (63.0~a1~hg20180717r426859-0ubuntu1) cosmic; urgency=medium
 
   [ Chris Coulson ]
-  * Add patch from bmo: #1464766 to allow addon signature requirements
-    to be relaxed
-    - add debian/patches/allow-addon-signature-requirements-to-be-relaxed.patch
-    - update debian/patches/series
-  * Lock extensions.unsignedScopes to 4 to disable the addon signing
-    requirement for our language packs. This doesn't affect user installed
-    addons
+  * Update and re-enable unity-menubar.patch
+  * Refresh how our customized search engines are installed to be aligned
+    with recent changes upstream
+    - update debian/config/searchplugins.conf
+    - update debian/install-distribution-searchplugins.py
+    - update debian/rules
+    - flatten debian/searchplugins
+  * Build language packs after running "mach install", as some generated files
+    (eg, bookmarks.html) are staged in non locale-specific output directories
+    and symlinked from the language pack stage area, and in the case of en-US,
+    are symlinked from the firefox stage area. Building language packs before
+    this results in the language pack builds breaking the en-US locale - eg,
+    default bookmarks for en-US appearing as zh-TW, which happens to be the
+    last language pack we build
+    - update debian/build/rules.mk
+  * Build with --with-unsigned-addon-scopes=app to allow our unsigned language
+    packs to work and drop the previous changes which did the same thing, as
+    this functionality has been provided a different way upstream
+    - update debian/config/mozconfig.in
     - update debian/vendor-gre.js
+    - remove debian/patches/allow-addon-signature-requirements-to-be-relaxed.patch
+    - update debian/patches/series
+  * Fix LP: #1791789: Mark distribution search engines as read-only, so that
+    they are marked as hidden in rather than removed from the search engine
+    cache when a user "removes" them (they can't actually be removed from disk).
+    This stops them from reappearing on cache rebuilds
+    - add debian/patches/mark-distribution-search-engines-as-read-only.patch
+    - update debian/patches/series
+  * Ensure that region-specific search defaults are disabled everywhere
+    again
+    - update debian/distribution.ini
+    - remove debian/patches/disable-geo-specific-search-defaults-for-us.patch
+    - update debian/patches/series
+  * Fix the Ubuntu search engine defaults now that the "browser.search.order."
+    and "browser.search.defaultengine" prefs have been removed from the default
+    build
+    - update debian/distribution.ini
+    - remove debian/patches/ubuntu-search-defaults.patch
+    - update debian/patches/series
+  * Set "intl.locale.requested" in vendor-gre.js rather than in distribution.ini.
+    The former is loaded by the pref service much earlier, and this pref needs
+    to be initialized before distribution.ini prefs are applied in order for
+    locale-specific prefs to work
+    - update debian/distribution.ini
+    - update debian/vendor-gre.js
+  * Rename debian/patches/revert-upstream-search-engine-changes.patch to
+    debian/patches/no-region-overrides-for-google-search.patch to better
+    reflect what the patch is for (described in the patch header)
+  * Drop debian/patches/normalize-distribution-searchplugins.patch - this is
+    no longer needed and hasn't been for a long time. It was added to fix
+    loss of metadata on upgrade for distribution search engines when the
+    Firefox install location was versioned
+  * Set "spellchecker.dictionary_path" by default to point to /usr/share/hunspell
+    so that system dictionaries are loaded again, now that Firefox no longer
+    loads them from its own install directory. Fixes another part of
+    LP: #1791789
+    - update debian/firefox.links.in
+    - update debian/vendor-gre.js
+  * Final part of the fix for LP: #1791789: Cleanup extra Amazon.com
+    search engine in locales that have their own Amazon search engine
+    - add debian/patches/cleanup-old-distribution-search-engines.patch
+    - update debian/patches/series
+  * Fix up the build-flags, ensuring we remove -g and optimization flags from
+    CFLAGS and CXXFLAGS, allowing the upstream build to choose these. Also
+    build with --enable-debug-symbols
+    - update debian/build/config.mk
+    - update debian/build/rules.mk
+    - update debian/config/mozconfig.in
+  * Compile with reduced debug info on 32-bit hosts to stop the linker
+    from running out of address space
+    - update debian/config/mozconfig.in
+    - update debian/build/rules.mk
 
   [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.28.0 and cargo >= 0.29
@@ -16,6 +80,32 @@ firefox-trunk (63.0~a1~hg20180717r426859-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/patches/ubuntu-bookmarks.patch
     - update debian/patches/ubuntu-ua-string-changes.patch
     - update debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+
+  [ Olivier Tilloy ]
+  * Vendor cbindgen and its dependencies in the tarball, because it's not
+    available in Debian/Ubuntu yet
+    - update debian/build/rules.mk
+  * Vendor cbindgen and its dependencies in the source tarball instead of the
+    debian tarball
+    - update debian/build/create-tarball.py
+    - update debian/build/rules.mk
+    - update debian/config/mozconfig.in
+  * Add a build dependency on Node.js 8.11
+    (see https://bugzilla.mozilla.org/1471028 for details)
+    - update debian/control{,.in}
+  * Build fixes
+    - add debian/patches/fix-armhf-aom-build.patch
+    - add debian/patches/fix-pixman-build-ppc64el.patch
+    - update debian/patches/extra-webrtc-build-configs.patch
+    - update debian/patches/reduce-rust-debuginfo-on-32bit-architectures.patch
+    - update debian/patches/update-gn-mozbuild.patch
+    - update debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+  * Re-enable and refactor debian/patches/unity-menubar.patch
+    - move native menu atoms to the one static atom table
+      (see https://bugzilla.mozilla.org/1482782 for details)
+  * Refresh fuzzy patches
+    - debian/patches/ubuntu-bookmarks.patch
+    - debian/patches/ubuntu-ua-string-changes.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 17 Jul 2018 16:35:47 +0200
 
