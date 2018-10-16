@@ -31,4 +31,3 @@ update-gn-mozbuild.patch
 mark-distribution-search-engines-as-read-only.patch
 cleanup-old-distribution-search-engines.patch
 fix-pixman-build-ppc64el.patch
-fix-armhf-aom-build.patch
