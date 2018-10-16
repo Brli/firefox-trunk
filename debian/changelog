@@ -1,3 +1,19 @@
+firefox-trunk (64.0~a1~hg20181014r441152-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Bump build-dep on rustc >= 1.29.0 and cargo >= 0.30
+  * Explicitly set HOME=/tmp
+    - update debian/build/rules.mk
+  * Drop upstreamed patches
+    - remove debian/patches/fix-armhf-aom-build.patch
+  * Update patches
+    - update debian/patches/dont-treat-tilde-as-special.patch
+    - update debian/patches/update-gn-mozbuild.patch
+  * Ship removed onboarding watermark.svg to keep using it as symbolic icon
+    - add debian/symbolic.svg
+    - update debian/build/rules.mk
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 15 Oct 2018 08:21:04 +0200
+
 firefox-trunk (63.0~a1~hg20180717r426859-0ubuntu1) cosmic; urgency=medium
 
   [ Chris Coulson ]
