@@ -207,6 +207,8 @@ class TarballCreator(OptionParser):
           rev = CheckOutput(['hg', 'parent', '--template={node}'])
           fd.write(rev)
 
+        self.vendor_cbindgen(os.path.join(os.getcwd(), 'third_party/cbindgen'))
+
         l10ndir = 'l10n'
         if not os.path.isdir(l10ndir):
           os.makedirs(l10ndir)
@@ -288,8 +290,6 @@ class TarballCreator(OptionParser):
               if not locale in got_locales:
                 print("Locale %s is missing from the source tarball" % locale)
                 sys.exit(1)
-
-        self.vendor_cbindgen(os.path.join(os.getcwd(), 'third_party/cbindgen'))
 
         with open(os.path.join(options.application, 'config/version.txt'), 'r') as vf:
           upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
