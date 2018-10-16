@@ -310,7 +310,7 @@ binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
 	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/native-origins.d/$(MOZ_PKG_NAME)
 	# Monochrome/symbolic icon for gnome-shell
-	install -m 0644 $(CURDIR)/browser/extensions/onboarding/content/img/watermark.svg $(CURDIR)/debian/$(MOZ_PKG_NAME)/usr/share/icons/hicolor/symbolic/apps/$(MOZ_PKG_NAME)-symbolic.svg
+	install -m 0644 $(CURDIR)/debian/symbolic.svg $(CURDIR)/debian/$(MOZ_PKG_NAME)/usr/share/icons/hicolor/symbolic/apps/$(MOZ_PKG_NAME)-symbolic.svg
 
 $(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)):: binary-post-install/%: install-langpack-xpis-%
 
