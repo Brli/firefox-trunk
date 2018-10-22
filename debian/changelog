@@ -11,6 +11,8 @@ firefox-trunk (64.0~a1~hg20181014r441152-0ubuntu1) UNRELEASED; urgency=medium
   * Ship removed onboarding watermark.svg to keep using it as symbolic icon
     - add debian/symbolic.svg
     - update debian/build/rules.mk
+  * Update cbindgen to 0.6.6
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 15 Oct 2018 08:21:04 +0200
 
