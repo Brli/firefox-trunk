@@ -1,6 +1,10 @@
 firefox-trunk (65.0~a1~hg20181026r443078-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Chris Coulson ]
+  * Update AppArmor profile as the shmem temp filename changed upstream (the
+    profile needs to allow access to /{dev,run}/shm/org.mozilla.*)
+    - update debian/usr.bin/firefox.apparmor.14.10
+    - update debian/usr.bin/firefox.apparmor.13.10
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 26 Oct 2018 07:46:08 +0200
 
