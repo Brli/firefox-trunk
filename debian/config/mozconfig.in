@@ -88,7 +88,7 @@ ac_add_options --with-ua-vendor=Ubuntu
 %%if MOZ_UPDATE_CHANNEL == nightly
 ac_add_options --enable-profiling
 %%endif
-mk_add_options "export PATH=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin:${PATH}"
+mk_add_options "export CBINDGEN=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin/cbindgen"
 ac_add_options --with-unsigned-addon-scopes=app
 # Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
 # Note: these are for Ubuntu use ONLY. For your own distribution,
