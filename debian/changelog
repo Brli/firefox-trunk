@@ -1,4 +1,4 @@
-firefox-trunk (65.0~a1~hg20181026r443078-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (65.0~a1~hg20181112r445848-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson ]
   * Update AppArmor profile as the shmem temp filename changed upstream (the
@@ -7,15 +7,21 @@ firefox-trunk (65.0~a1~hg20181026r443078-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/usr.bin/firefox.apparmor.13.10
 
   [ Olivier Tilloy ]
-  * Re-enable and update debian/patches/unity-menubar.patch
+  * Update debian/patches/unity-menubar.patch
   * export CBINDGEN variable instead of modifying PATH
     - update debian/config/mozconfig.in
+  * Pin cbindgen version in the tarball to the version explicitly requested
+    - update debian/build/create-tarball.py
 
   [ Rico Tzschichholz ]
   * Drop upstreamed patches
     - remove debian/patches/fix-pixman-build-ppc64el.patch
   * Update cbindgen to 0.6.7
     - debian/build/create-tarball.py
+  * Update patches
+    - debian/patches/rust-drop-dll-checksums.patch
+    - debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+  * Bump build-dep on rustc >= 1.30.0 and cargo >= 0.31
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 26 Oct 2018 07:46:08 +0200
 
