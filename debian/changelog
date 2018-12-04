@@ -1,4 +1,4 @@
-firefox-trunk (65.0~a1~hg20181112r445848-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (65.0~a1~hg20181202r449163-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Chris Coulson ]
   * Update AppArmor profile as the shmem temp filename changed upstream (the
@@ -21,6 +21,9 @@ firefox-trunk (65.0~a1~hg20181112r445848-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/rust-drop-dll-checksums.patch
     - debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+    - debian/patches/no-region-overrides-for-google-search.patch
+    - debian/patches/ppc-no-static-sizes.patch
+    - debian/patches/ubuntu-ua-string-changes.patch
   * Bump build-dep on rustc >= 1.30.0 and cargo >= 0.31
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 26 Oct 2018 07:46:08 +0200

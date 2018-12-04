@@ -6,6 +6,8 @@ Description: Drop the region overrides for google, as we don't supply a
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
+Index: b/browser/components/search/searchplugins/list.json
+===================================================================
 --- a/browser/components/search/searchplugins/list.json
 +++ b/browser/components/search/searchplugins/list.json
 @@ -7,9 +7,6 @@
@@ -17,4 +19,4 @@ Forwarded: not-needed
 -    },
      "CA": {
        "ebay": "ebay-ca",
-       "ebay-fr": "ebay-ca"
+       "ebay-fr": "ebay-ca",
