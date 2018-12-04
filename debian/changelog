@@ -25,6 +25,8 @@ firefox-trunk (65.0~a1~hg20181202r449163-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/ppc-no-static-sizes.patch
     - debian/patches/ubuntu-ua-string-changes.patch
   * Bump build-dep on rustc >= 1.30.0 and cargo >= 0.31
+  * Use amazon-in override for "gu-IN", "mai", "ml", "pa-IN", "ta"
+    - update debian/config/searchplugins.conf
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 26 Oct 2018 07:46:08 +0200
 
