@@ -12,6 +12,8 @@ firefox-trunk (65.0~a1~hg20181202r449163-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/config/mozconfig.in
   * Pin cbindgen version in the tarball to the version explicitly requested
     - update debian/build/create-tarball.py
+  * Do not attach Wi-Fi syslog to apport reports (LP: #1801383)
+    - update debian/apport/source_firefox.py.in
 
   [ Rico Tzschichholz ]
   * Drop upstreamed patches

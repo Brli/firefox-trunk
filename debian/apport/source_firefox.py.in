@@ -1445,7 +1445,6 @@ def add_info(report, ui):
         report['Lspci'] = command_output(['lspci','-vvnn'])
     attach_alsa(report)
     attach_network(report)
-    attach_wifi(report)
 
     # Get apparmor stuff if the profile isn't disabled. copied from
     # source_apparmor.py until apport runs hooks via attach_related_packages
