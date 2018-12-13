@@ -18,11 +18,14 @@ firefox-trunk (65.0~a1~hg20181202r449163-0ubuntu1) UNRELEASED; urgency=medium
   [ Rico Tzschichholz ]
   * Drop upstreamed patches
     - remove debian/patches/fix-pixman-build-ppc64el.patch
+    - remove debian/patches/extra-webrtc-build-configs.patch
+    - remove debian/patches/update-gn-mozbuild.patch
   * Update cbindgen to 0.6.7
     - debian/build/create-tarball.py
   * Update patches
     - debian/patches/rust-drop-dll-checksums.patch
     - debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+    - debian/patches/fix-armhf-webrtc-build.patch
     - debian/patches/no-region-overrides-for-google-search.patch
     - debian/patches/ppc-no-static-sizes.patch
     - debian/patches/ubuntu-ua-string-changes.patch

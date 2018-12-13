@@ -26,7 +26,5 @@ s390x-ycbcr.patch
 dont-treat-tilde-as-special.patch
 reduce-rust-debuginfo-on-selected-architectures.patch
 fix-armhf-webrtc-build.patch
-extra-webrtc-build-configs.patch
-update-gn-mozbuild.patch
 mark-distribution-search-engines-as-read-only.patch
 cleanup-old-distribution-search-engines.patch
