@@ -1,4 +1,10 @@
-firefox-trunk (65.0~a1~hg20181202r449163-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (66.0~a1~hg20181213r450373-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 13 Dec 2018 09:16:31 +0100
+
+firefox-trunk (65.0~a1~hg20181210r449682-0ubuntu1) disco; urgency=medium
 
   [ Chris Coulson ]
   * Update AppArmor profile as the shmem temp filename changed upstream (the
@@ -33,7 +39,7 @@ firefox-trunk (65.0~a1~hg20181202r449163-0ubuntu1) UNRELEASED; urgency=medium
   * Use amazon-in override for "gu-IN", "mai", "ml", "pa-IN", "ta"
     - update debian/config/searchplugins.conf
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 26 Oct 2018 07:46:08 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 10 Dec 2018 12:42:48 +0100
 
 firefox-trunk (64.0~a1~hg20181014r441152-0ubuntu1) cosmic; urgency=medium
 
