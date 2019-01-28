@@ -1,8 +1,7 @@
-Index: b/toolkit/locales/l10n.mk
-===================================================================
---- a/toolkit/locales/l10n.mk
-+++ b/toolkit/locales/l10n.mk
-@@ -171,30 +171,8 @@
+diff -r e56cc5e7b57a toolkit/locales/l10n.mk
+--- a/toolkit/locales/l10n.mk	Fri Jan 11 08:25:42 2019 +0000
++++ b/toolkit/locales/l10n.mk	Wed Jan 16 15:23:41 2019 +0100
+@@ -171,38 +171,8 @@
  # chrome directory and top-level localization for Fluent.
  PKG_ZIP_DIRS = chrome localization $(or $(DIST_SUBDIRS),$(DIST_SUBDIR))
  
@@ -18,14 +17,22 @@ Index: b/toolkit/locales/l10n.mk
 -endif
 -endif
 -
--
  merge-%: IS_LANGUAGE_REPACK=1
 -merge-%: AB_CD=$*
  merge-%:
 -# For nightly builds, we automatically check out missing localizations
--# from l10n-central.
+-# from l10n-central.  We never automatically check out in automation:
+-# automation builds check out revisions that have been signed-off by
+-# l10n drivers prior to use.
+-ifdef MOZ_AUTOMATION
+-	if  ! test -d $(L10NBASEDIR)/$(AB_CD) ; then \
+-		echo 'Error: Automation requires l10n repositories to be checked out: $(L10NBASEDIR)/$(AB_CD)' ; \
+-		exit 1 ; \
+-	fi
+-endif
 -ifdef NIGHTLY_BUILD
--	@if  ! test -d $(L10NBASEDIR)/$(AB_CD) ; then \
+-	if  ! test -d $(L10NBASEDIR)/$(AB_CD) ; then \
+-		echo 'Checking out $(L10NBASEDIR)/$(AB_CD)' ; \
 -		$(NSINSTALL) -D $(L10NBASEDIR) ; \
 -		$(L10N_CO) ; \
 -	fi

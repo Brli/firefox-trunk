@@ -271,7 +271,8 @@ clean::
 cbindgen/bin/cbindgen: third_party/cbindgen/Cargo.toml
 	cd $(CURDIR)/third_party/cbindgen; \
 	cargo build --release; \
-	cargo install --bin cbindgen --root ../../cbindgen
+	export CARGO_HOME=$(CURDIR)/third_party/cbindgen/.cargo; \
+	cargo install --path . --bin cbindgen --root ../../cbindgen
 clean::
 	rm -rf $(CURDIR)/cbindgen
 	rm -rf $(CURDIR)/third_party/cbindgen/target

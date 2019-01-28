@@ -1,6 +1,25 @@
-firefox-trunk (66.0~a1~hg20181213r450373-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (66.0~a1~hg20190124r455256-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Rico Tzschichholz ]
+  * Add build-dep on nasm (>= 2.10)
+  * Update patches
+    - debian/patches/reduce-rust-debuginfo-on-selected-architectures.patch
+    - debian/patches/ppc-no-static-sizes.patch
+    - debian/patches/unity-menubar.patch
+  * Drop upstreamed patches
+    - remove debian/patches/dont-treat-tilde-as-special.patch
+  * Revert parts of google search update
+    - add debian/patches/partially-revert-google-search-update.patch
+  * Bump build-dep on rustc >= 1.31.0 and cargo >= 0.32
+  * Build with --enable-rust-simd (LP: #1808980) (except on i386 and armhf)
+    - update debian/config/mozconfig.in
+  * Update cbindgen to 0.7.1
+    - debian/build/create-tarball.py
+
+  [ Olivier Tilloy ]
+  * Fix build with newer versions of cargo, which ignore local configuration
+    (see https://github.com/rust-lang/cargo/issues/6397)
+    - update debian/build/rules.mk
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 13 Dec 2018 09:16:31 +0100
 
