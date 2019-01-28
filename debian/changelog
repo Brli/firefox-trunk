@@ -1,4 +1,10 @@
-firefox-trunk (66.0~a1~hg20190124r455256-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (67.0~a1~hg20190128r455577-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 28 Jan 2019 19:53:26 +0100
+
+firefox-trunk (66.0~a1~hg20190128r455577-0ubuntu1) disco; urgency=medium
 
   [ Rico Tzschichholz ]
   * Add build-dep on nasm (>= 2.10)
@@ -21,7 +27,7 @@ firefox-trunk (66.0~a1~hg20190124r455256-0ubuntu1) UNRELEASED; urgency=medium
     (see https://github.com/rust-lang/cargo/issues/6397)
     - update debian/build/rules.mk
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 13 Dec 2018 09:16:31 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 28 Jan 2019 09:28:57 +0100
 
 firefox-trunk (65.0~a1~hg20181210r449682-0ubuntu1) disco; urgency=medium
 
