@@ -695,8 +695,8 @@ diff -r a7f72733a127 browser/components/search/searchplugins/list.json
      "rm": {
        "default": {
          "visibleDefaultEngines": [
--          "google-b-d", "bing", "ddg", "ebay-ch", "leo_ende_de-rm", "pledarigrond", "wikipedia-rm"
-+          "google", "bing", "ddg", "ebay-ch", "leo_ende_de-rm", "pledarigrond", "wikipedia-rm"
+-          "google-b-d", "bing", "ddg", "ebay-ch", "leo_ende_de", "pledarigrond", "wikipedia-rm"
++          "google", "bing", "ddg", "ebay-ch", "leo_ende_de", "pledarigrond", "wikipedia-rm"
          ]
        }
      },
