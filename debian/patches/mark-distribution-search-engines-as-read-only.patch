@@ -18,6 +18,6 @@ Bug-Ubuntu: https://launchpad.net/bugs/1791789
          file.initWithPath(osfile.path);
 -        addedEngine = new Engine(file, false);
 +        addedEngine = new Engine(file, true);
-         await checkForSyncCompletion(addedEngine._asyncInitFromFile(file));
+         await addedEngine._initFromFile(file);
          engines.push(addedEngine);
        } catch (ex) {
