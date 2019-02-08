@@ -7,6 +7,8 @@ firefox-trunk (67.0~a1~hg20190128r455577-0ubuntu1) UNRELEASED; urgency=medium
   * Bump build-dep to clang-7 and llvm-7-dev
     - debian/config/mozconfig.in
     - debian/control{,.in}
+  * Bump build-dep on nasm (>= 2.13.02)
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 28 Jan 2019 19:53:26 +0100
 
