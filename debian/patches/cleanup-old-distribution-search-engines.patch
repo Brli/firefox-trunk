@@ -10,8 +10,8 @@ Description: Cleanup after LP: #1791789. This bug resulted in some en-US
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
---- a/toolkit/components/search/nsSearchService.js
-+++ b/toolkit/components/search/nsSearchService.js
+--- a/toolkit/components/search/SearchService.jsm
++++ b/toolkit/components/search/SearchService.jsm
 @@ -3182,6 +3182,13 @@ SearchService.prototype = {
          continue;
        }

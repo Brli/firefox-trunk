@@ -107,12 +107,10 @@ Index: b/netwerk/protocol/http/moz.build
 ===================================================================
 --- a/netwerk/protocol/http/moz.build
 +++ b/netwerk/protocol/http/moz.build
-@@ -154,5 +154,8 @@
+@@ -154,3 +154,6 @@
+         DEFINES.update(
              HAS_CONNECTX=True,
          )
- 
++
 +if CONFIG['MOZ_UA_VENDOR']:
 +    DEFINES['MOZ_UA_VENDOR'] = '"%s"' % CONFIG['MOZ_UA_VENDOR']
-+
- if CONFIG['CC_TYPE'] == 'clang-cl':
-     AllowCompilerWarnings()  # workaround for bug 1090497

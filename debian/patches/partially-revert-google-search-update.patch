@@ -825,8 +825,8 @@ diff -r a7f72733a127 browser/components/search/searchplugins/list.json
      "uk": {
        "default": {
          "visibleDefaultEngines": [
--          "google-b-d", "bing", "meta-ua", "ddg", "wikipedia-uk", "hotline-ua"
-+          "google", "bing", "meta-ua", "ddg", "wikipedia-uk", "hotline-ua"
+-          "google-b-d", "bing", "ddg", "wikipedia-uk", "hotline-ua"
++          "google", "bing", "ddg", "wikipedia-uk", "hotline-ua"
          ]
        }
      },

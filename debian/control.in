@@ -39,8 +39,8 @@ Build-Depends: cdbs,
 	libffi-dev (>= 3.0.9) [powerpc ppc64el s390x],
 	clang-7,
 	llvm-7-dev,
-	cargo (>= 0.32),
-	rustc (>= 1.31.0),
+	cargo (>= 0.33),
+	rustc (>= 1.32.0),
 	nodejs (>= 8.11)
 Standards-Version: 3.9.1
 #XS-Testsuite: autopkgtest
