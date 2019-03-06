@@ -1,4 +1,4 @@
-firefox-trunk (67.0~a1~hg20190213r458857-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (67.0~a1~hg20190306r462531-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
@@ -13,7 +13,7 @@ firefox-trunk (67.0~a1~hg20190213r458857-0ubuntu1) UNRELEASED; urgency=medium
   * Bump build-dep on nasm (>= 2.13.02)
     - debian/control{,.in}
   * Bump build-dep on rustc >= 1.32.0 and cargo >= 0.33
-  * Update cbindgen to 0.8.0
+  * Update cbindgen to 0.8.1
     - debian/build/create-tarball.py
 
   [ Olivier Tilloy ]
