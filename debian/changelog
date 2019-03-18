@@ -1,3 +1,9 @@
+firefox-trunk (68.0~a1~hg20190318r464728-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 18 Mar 2019 13:00:31 +0100
+
 firefox-trunk (67.0~a1~hg20190316r464369-0ubuntu1) disco; urgency=medium
 
   [ Rico Tzschichholz ]
