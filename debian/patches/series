@@ -1,3 +1,4 @@
+revert-1fce91651f43.patch
 ppc-no-static-sizes.patch
 ubuntu-bookmarks.patch
 ubuntu-ua-string-changes.patch
@@ -28,3 +29,5 @@ reduce-rust-debuginfo-on-selected-architectures.patch
 fix-armhf-webrtc-build.patch
 mark-distribution-search-engines-as-read-only.patch
 cleanup-old-distribution-search-engines.patch
+armhf-disable-unaligned-fp-access-emulation.patch
+armhf-reduce-linker-memory-use.patch

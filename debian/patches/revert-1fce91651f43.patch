@@ -1,0 +1,28 @@
+# Revert 1fce91651f4385b00e99a76338c2ee4e475b1adf
+
+Bug 1522016 - Build NEON support for libopus on aarch64. r=jmvalin
+
+aarch64 ABI supports NEON as default, so we should turn on NEON code for
+aarch64.  Also, libopus's NEON code doesn't support MSVC yet.
+
+Differential Revision: https://phabricator.services.mozilla.com/D17332
+
+diff -r 7d9ca706a2a3 media/libopus/moz.build
+--- a/media/libopus/moz.build	Wed Feb 06 00:30:35 2019 +0000
++++ b/media/libopus/moz.build	Thu Feb 07 09:55:04 2019 +0100
+@@ -130,15 +130,6 @@
+     ]
+     ASFLAGS += CONFIG['NEON_FLAGS']
+ 
+-if CONFIG['CPU_ARCH'] == 'aarch64' and CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+-    DEFINES['OPUS_ARM_PRESUME_AARCH64_NEON_INTR'] = True
+-    DEFINES['OPUS_ARM_PRESUME_NEON'] = True
+-    DEFINES['OPUS_ARM_PRESUME_NEON_INTR'] = True
+-    SOURCES += celt_sources_arm_neon_intr
+-    SOURCES += silk_sources_arm_neon_intr
+-    if not CONFIG['MOZ_SAMPLE_TYPE_FLOAT32']:
+-        SOURCES += silk_sources_fixed_arm_neon_intr
+-
+ # Suppress warnings in third-party code.
+ if CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+     if CONFIG['CC_TYPE'] == 'clang':

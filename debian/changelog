@@ -1,4 +1,4 @@
-firefox-trunk (67.0~a1~hg20190306r462531-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (67.0~a1~hg20190316r464369-0ubuntu1) disco; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
@@ -18,8 +18,16 @@ firefox-trunk (67.0~a1~hg20190306r462531-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Olivier Tilloy ]
   * Update debian/patches/unity-menubar.patch
+  * Disable unaligned FP accesses emulation on armhf:
+    - armhf-disable-unaligned-fp-access-emulation.patch
+  * Update build arguments for upstream change that splits the Google
+    key management between location services and safe browsing
+    (https://bugzilla.mozilla.org/show_bug.cgi?id=1531176):
+    - debian/config/mozconfig.in
+  * Reduce linker memory usage on armhf:
+    - debian/patches/armhf-reduce-linker-memory-use.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 28 Jan 2019 19:53:26 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 17 Mar 2019 08:36:34 +0100
 
 firefox-trunk (66.0~a1~hg20190128r455577-0ubuntu1) disco; urgency=medium
 

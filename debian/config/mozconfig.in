@@ -100,6 +100,10 @@ ac_add_options --with-unsigned-addon-scopes=app
 # Note: these are for Ubuntu use ONLY. For your own distribution,
 # please get your own set of keys.
 # Included with permission from Paweł Hajdan.
-# Feel free to contact Chad Miller (chad.miller@canonical.com) or Chris
-# Coulson (chris.coulson@canonical.com) for more info
-ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/ga
+# Feel free to contact Chris Coulson (chris.coulson@canonical.com) for more info.
+# Since firefox 66.0, the single API key was split into two (potentially)
+# separate keys, one for the Google Location Services, and one for the
+# Safe Browsing API. See https://bugzilla.mozilla.org/show_bug.cgi?id=1531176
+# for details. It is fine to use the same key file for both.
+ac_add_options --with-google-location-service-api-keyfile=@TOPSRCDIR@/debian/ga
+ac_add_options --with-google-safebrowsing-api-keyfile=@TOPSRCDIR@/debian/ga
