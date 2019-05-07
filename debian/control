@@ -218,12 +218,13 @@ Description: Arabic language pack for Firefox
 Package: firefox-trunk-locale-as
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-as-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Assamese language pack for Firefox
- This package contains Assamese translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-ast
 Architecture: any
@@ -742,12 +743,13 @@ Description: Latvian language pack for Firefox
 Package: firefox-trunk-locale-mai
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-mai-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Maithili language pack for Firefox
- This package contains Maithili translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-mk
 Architecture: any
@@ -762,12 +764,13 @@ Description: Macedonian language pack for Firefox
 Package: firefox-trunk-locale-ml
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-ml-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Malayalam language pack for Firefox
- This package contains Malayalam translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-mn
 Architecture: any
@@ -874,12 +877,13 @@ Description: Occitan (post 1500) language pack for Firefox
 Package: firefox-trunk-locale-or
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: language-pack-or-base
 Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
-Description: Oriya language pack for Firefox
- This package contains Oriya translations and search plugins
- for Firefox
+Description: Transitional package for unavailable language
+ This language is unavailable for the current version of Firefox
+ .
+ This is an empty transitional package to ensure a clean upgrade
+ process. You can safely remove this package after installation.
 
 Package: firefox-trunk-locale-pa
 Architecture: any

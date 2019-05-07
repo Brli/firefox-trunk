@@ -13,11 +13,11 @@ Bug-Ubuntu: https://launchpad.net/bugs/1791789
 --- a/toolkit/components/search/SearchService.jsm
 +++ b/toolkit/components/search/SearchService.jsm
 @@ -3267,7 +3267,7 @@ SearchService.prototype = {
-       try {
-         let file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
          file.initWithPath(osfile.path);
--        addedEngine = new Engine(file, false);
-+        addedEngine = new Engine(file, true);
+         addedEngine = new SearchEngine({
+           fileURI: file,
+-          readOnly: false,
++          readOnly: true,
+         });
          await addedEngine._initFromFile(file);
          engines.push(addedEngine);
-       } catch (ex) {

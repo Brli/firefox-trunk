@@ -1,8 +1,22 @@
-firefox-trunk (68.0~a1~hg20190318r464728-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (68.0~a1~hg20190507r472844-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Rico Tzschichholz ]
+  * Update patches
+    - debian/patches/mark-distribution-search-engines-as-read-only.patch
+    - debian/patches/no-region-overrides-for-google-search.patch
+    - debian/patches/partially-revert-google-search-update.patch
+    - debian/patches/support-coinstallable-trunk-build.patch
+    - debian/patches/ubuntu-ua-string-changes.patch
+  * Update cbindgen to 0.8.4
+    - debian/build/create-tarball.py
+  * Update locales, remove 'as', 'mai', 'ml' and 'or'
+  * Follow change of location of list.json for searchplugins
+    - debian/rules
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 18 Mar 2019 13:00:31 +0100
+  [ Olivier Tilloy ]
+  * Update debian/patches/unity-menubar.patch
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 07 May 2019 16:30:13 +0200
 
 firefox-trunk (67.0~a1~hg20190316r464369-0ubuntu1) disco; urgency=medium
 

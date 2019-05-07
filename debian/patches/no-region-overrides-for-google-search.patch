@@ -6,10 +6,10 @@ Description: Drop the region overrides for google, as we don't supply a
 Author: Chris Coulson <chris.coulson@canonical.com>
 Forwarded: not-needed
 
-Index: b/browser/components/search/searchplugins/list.json
+Index: b/browser/components/search/extensions/list.json
 ===================================================================
---- a/browser/components/search/searchplugins/list.json
-+++ b/browser/components/search/searchplugins/list.json
+--- a/browser/components/search/extensions/list.json
++++ b/browser/components/search/extensions/list.json
 @@ -7,9 +7,6 @@
      ]
    },
