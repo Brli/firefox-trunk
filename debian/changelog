@@ -7,7 +7,8 @@ firefox-trunk (68.0~a1~hg20190507r472844-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/partially-revert-google-search-update.patch
     - debian/patches/support-coinstallable-trunk-build.patch
     - debian/patches/ubuntu-ua-string-changes.patch
-  * Update cbindgen to 0.8.6
+  * Bump build-dep on rustc >= 1.34.0 and cargo >= 0.35
+  * Update cbindgen to 0.8.7
     - debian/build/create-tarball.py
   * Update locales, remove 'as', 'mai', 'ml' and 'or'
   * Follow change of location of list.json for searchplugins
