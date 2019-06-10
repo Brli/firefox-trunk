@@ -107,10 +107,11 @@ Index: b/netwerk/protocol/http/moz.build
 ===================================================================
 --- a/netwerk/protocol/http/moz.build
 +++ b/netwerk/protocol/http/moz.build
-@@ -154,3 +154,6 @@
-         DEFINES.update(
+@@ -154,4 +154,7 @@
              HAS_CONNECTX=True,
          )
-+
+ 
 +if CONFIG['MOZ_UA_VENDOR']:
 +    DEFINES['MOZ_UA_VENDOR'] = '"%s"' % CONFIG['MOZ_UA_VENDOR']
++
+ include('/tools/fuzzing/libfuzzer-config.mozbuild')
