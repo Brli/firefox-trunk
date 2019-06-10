@@ -1,5 +1,10 @@
 firefox-trunk (69.0~a1~hg20190521r474670-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
+  * Bump build-dep to clang-8 and llvm-8-dev
+    - debian/config/mozconfig.in
+    - debian/control{,.in}
+
   [ Olivier Tilloy ]
   * Update debian/patches/unity-menubar.patch
 

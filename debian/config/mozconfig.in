@@ -88,7 +88,8 @@ ac_add_options --with-ua-vendor=Ubuntu
 %%if MOZ_UPDATE_CHANNEL == nightly
 ac_add_options --enable-profiling
 %%endif
-mk_add_options "export LLVM_CONFIG=/usr/bin/llvm-config-7"
+ac_add_options --with-clang-path=/usr/bin/clang-8 --with-libclang-path=/usr/lib/llvm-8/lib/
+mk_add_options "export LLVM_CONFIG=/usr/bin/llvm-config-8"
 mk_add_options "export CBINDGEN=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin/cbindgen"
 %%if DEB_HOST_ARCH != i386
 %%if DEB_HOST_ARCH != armhf
