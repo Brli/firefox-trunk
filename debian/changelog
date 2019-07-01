@@ -7,6 +7,8 @@ firefox-trunk (69.0~a1~hg20190521r474670-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/ppc-no-static-sizes.patch
     - debian/patches/ubuntu-ua-string-changes.patch
+  * Update cbindgen to 0.9.0
+    - debian/build/create-tarball.py
 
   [ Olivier Tilloy ]
   * Update debian/patches/unity-menubar.patch
