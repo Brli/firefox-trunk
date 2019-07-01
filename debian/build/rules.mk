@@ -202,6 +202,11 @@ debian/stamp-makebuildsymbols: debian/stamp-makefile-build
 	$(MAKE) -C $(MOZ_OBJDIR) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
 	@touch $@
 
+install-geckodriver: debian/stamp-installgeckodriver
+debian/stamp-installgeckodriver: debian/stamp-makefile-install
+	install -D $(MOZ_DISTDIR)/bin/geckodriver $(CURDIR)/debian/$(MOZ_PKG_NAME)-geckodriver/usr/bin/geckodriver
+	@touch $@
+
 make-langpack-xpis: $(foreach locale,$(MOZ_LOCALES),debian/stamp-make-langpack-xpi-$(locale))
 debian/stamp-make-langpack-xpi-%:
 	@echo ""
@@ -257,7 +262,7 @@ debian/stamp-mach-install:
 clean::
 	rm -f debian/stamp-mach-install
 
-#common-install-arch:: install-testsuite
+common-install-arch:: install-geckodriver
 
 common-binary-arch:: make-buildsymbols
 
