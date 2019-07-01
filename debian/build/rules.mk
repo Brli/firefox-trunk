@@ -54,8 +54,6 @@ DEB_DH_SHLIBDEPS_ARGS_ALL += -- -xlibgtk2.0-0
 DEB_DH_STRIP_ARGS		:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
-# scour breaks the testsuite
-DEB_DH_SCOUR_ARGS		:= -N$(MOZ_PKG_NAME)-testsuite
 # Stop the buildd from timing out during long links
 MAKE					:= python $(CURDIR)/debian/build/keepalive-wrapper.py 1440 $(MAKE)
 
@@ -87,20 +85,9 @@ CFLAGS			:= $(shell echo $(CFLAGS) | sed -e 's/\-g//' | sed -e 's/\-O[s0123]//')
 CXXFLAGS		:= $(shell echo $(CFLAGS) | sed -e 's/\-g//' | sed -e 's/\-O[s0123]//')
 LDFLAGS			:= $(shell echo $(LDFLAGS) | sed -e 's/-Wl,-Bsymbolic-functions//')
 
-ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
-MOZ_WANT_UNIT_TESTS = 0
-endif
-
-include $(CURDIR)/debian/build/testsuite.mk
-
 # enable the crash reporter only on i386, amd64 and armel
 ifeq (,$(filter i386 amd64 armhf,$(DEB_HOST_ARCH)))
 MOZ_ENABLE_BREAKPAD = 0
-endif
-
-# powerpc sucks
-ifneq (,$(filter powerpc,$(DEB_HOST_ARCH)))
-MOZ_WANT_UNIT_TESTS = 0
 endif
 
 # Ensure the crash reporter gets disabled for derivatives
@@ -152,9 +139,6 @@ endif
 ifeq (1,$(MOZ_NO_OPTIMIZE))
 MOZ_DEFINES += -DMOZ_NO_OPTIMIZE
 endif
-ifeq (1,$(MOZ_WANT_UNIT_TESTS))
-MOZ_DEFINES += -DMOZ_WANT_UNIT_TESTS
-endif
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 MOZ_DEFINES += -DDEB_BUILD_GNU_TYPE="$(DEB_BUILD_GNU_TYPE)"
 endif
@@ -189,9 +173,6 @@ appname_subst_files = \
 	$(MOZ_APPNAME_SUBST_FILES) \
 	$(NULL)
 
-#debian/tests/control: debian/tests/control.in
-#	sed -e 's/@MOZ_PKG_NAME@/$(MOZ_PKG_NAME)/g' < debian/tests/control.in > debian/tests/control
-
 debian/control:: debian/control.in debian/control.langpacks debian/control.langpacks.unavail debian/config/locales.shipped debian/config/locales.all
 	@echo ""
 	@echo "*****************************"
@@ -219,32 +200,6 @@ $(appname_subst_files): $(foreach file,$(appname_subst_files),$(subst $(MOZ_APP_
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
 	$(MAKE) -C $(MOZ_OBJDIR) buildsymbols MOZ_SYMBOLS_EXTRA_BUILDID=$(shell date -d "`dpkg-parsechangelog | grep Date: | sed -e 's/^Date: //'`" +%y%m%d%H%M%S)-$(DEB_HOST_GNU_CPU)
-	@touch $@
-
-make-testsuite: debian/stamp-maketestsuite
-debian/stamp-maketestsuite: debian/stamp-makefile-build
-ifneq ($(MOZ_APP_NAME),$(MOZ_DEFAULT_APP_NAME))
-	PYTHONDONTWRITEBYTECODE=1 python $(CURDIR)/debian/build/fix-mozinfo-appname.py $(MOZ_OBJDIR)/mozinfo.json $(MOZ_DEFAULT_APP_NAME)
-endif
-	$(MAKE) -C $(MOZ_OBJDIR) package-tests
-ifneq (,$(wildcard debian/testing/extra))
-	cp -r debian/testing/extra debian/testing/extra-stage
-	mkdir -p debian/testing/extra-stage/xpcshell/package-tests/data
-	cp debian/config/locales.shipped debian/testing/extra-stage/xpcshell/package-tests/data
-	cd debian/testing/extra-stage; \
-		zip -rq9D $(CURDIR)/debian/testing/extra.test.zip *
-endif
-	@touch $@
-
-install-testsuite: debian/stamp-installtestsuite
-debian/stamp-installtestsuite: debian/stamp-maketestsuite debian/stamp-makefile-install
-	install $(MOZ_DISTDIR)/bin/OCSPStaplingServer debian/tmp/$(MOZ_LIBDIR)
-	install $(MOZ_DISTDIR)/bin/xpcshell debian/tmp/$(MOZ_LIBDIR)
-	install $(MOZ_DISTDIR)/bin/components/httpd.js debian/tmp/$(MOZ_LIBDIR)/components
-	install $(MOZ_DISTDIR)/bin/components/httpd.manifest debian/tmp/$(MOZ_LIBDIR)/components
-	install $(MOZ_DISTDIR)/bin/components/test_necko.xpt debian/tmp/$(MOZ_LIBDIR)/components
-	install -d debian/tmp/$(MOZ_LIBDIR)/testing
-	install $(MOZ_DISTDIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).en-US.linux-*.tests.zip debian/tmp/$(MOZ_LIBDIR)/testing
 	@touch $@
 
 make-langpack-xpis: $(foreach locale,$(MOZ_LOCALES),debian/stamp-make-langpack-xpi-$(locale))
@@ -276,8 +231,6 @@ cbindgen/bin/cbindgen: third_party/cbindgen/Cargo.toml
 clean::
 	rm -rf $(CURDIR)/cbindgen
 	rm -rf $(CURDIR)/third_party/cbindgen/target
-
-#common-build-arch:: make-testsuite run-tests
 
 install/$(MOZ_PKG_NAME)::
 	@echo "Adding suggests / recommends on support packages"
@@ -417,13 +370,10 @@ echo-%:
 
 ifneq (1, $(MOZ_DISABLE_CLEAN_CHECKS))
 clean::
-#	cp debian/tests/control debian/tests/control.old
 	cp debian/config/locales.shipped debian/config/locales.shipped.old
-#clean:: debian/tests/control refresh-supported-locales
 clean:: refresh-supported-locales
 	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
 	$(call cmp_auto_generated_file,debian/control)
-#	$(call cmp_auto_generated_file,debian/tests/control)
 endif
 
 clean::
@@ -432,7 +382,5 @@ clean::
 	rm -rf debian/l10n-mergedirs
 	rm -rf $(MOZ_OBJDIR)
 	rm -f mozconfig
-	rm -f debian/testing/extra.test.zip
-	rm -rf debian/testing/extra-stage
 
-.PHONY: make-buildsymbols make-testsuite make-langpack-xpis refresh-supported-locales get-orig-source monkey-patch-upstream-files
+.PHONY: make-buildsymbols make-langpack-xpis refresh-supported-locales get-orig-source monkey-patch-upstream-files

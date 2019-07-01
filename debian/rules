@@ -33,8 +33,6 @@ MOZ_PKGNAME_SUBST_FILES = \
 	debian/apport/blacklist \
 	debian/apport/native-origins \
 	debian/apport/source_$(MOZ_PKG_NAME).py \
-	debian/testing/run_mochitest \
-	debian/testing/run_reftest \
 	$(NULL)
 
 MOZ_APPNAME_SUBST_FILES = \
@@ -51,13 +49,6 @@ export MOZ_SOURCE_CHANGESET=$(shell cat $(DEB_SRCDIR)/SOURCE_CHANGESET)
 endif
 
 include $(CURDIR)/debian/build/rules.mk
-
-#MOZ_EXECUTABLES_$(MOZ_PKG_NAME)-testsuite =	$(MOZ_LIBDIR)/testing/run_mochitest \
-						$(MOZ_LIBDIR)/testing/run_reftest \
-						$(MOZ_LIBDIR)/testing/run_xpcshell_tests \
-						$(MOZ_LIBDIR)/xpcshell \
-						$(MOZ_LIBDIR)/testing/filter_results \
-						$(NULL)
 
 debian/usr.bin.firefox.in:
 	if [ '$(DISTRIB_VERSION_MAJOR)$(DISTRIB_VERSION_MINOR)' -ge '1410' ]; then \

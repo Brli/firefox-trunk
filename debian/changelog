@@ -14,6 +14,7 @@ firefox-trunk (69.0~a1~hg20190521r474670-0ubuntu1) UNRELEASED; urgency=medium
   * Update debian/patches/unity-menubar.patch
   * Work around a GGC bug on i386 and s390x (https://gcc.gnu.org/PR90756)
     - debian/patches/skcms-workaround-gcc-bug.patch
+  * Stop building firefox-testsuite (LP: #1805019)
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 21 May 2019 14:54:49 +0200
 

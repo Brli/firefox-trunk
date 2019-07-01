@@ -43,7 +43,6 @@ Build-Depends: cdbs,
 	rustc (>= 1.34.0),
 	nodejs (>= 8.11)
 Standards-Version: 3.9.1
-#XS-Testsuite: autopkgtest
 
 Package: @MOZ_PKG_NAME@
 Architecture: any
@@ -113,51 +112,6 @@ Description: Safe and easy web browser from Mozilla - Breakpad symbols
  This package contains the Firefox symbols in a format expected by Mozilla's
  Breakpad. Eventually this package should go away and the symbol upload be
  implemented in soyuz (or other builders that build this package)
-
-Package: @MOZ_PKG_NAME@-testsuite
-Architecture: any
-Section: misc
-Priority: extra
-Depends: ${shlibs:Depends},
-	${misc:Depends},
-	@MOZ_PKG_NAME@ (= ${binary:Version}),
-	@MOZ_LOCALE_PKGS@
-	python,
-	dbus-x11,
-	xvfb,
-	make,
-	notify-osd,
-	metacity,
-	language-pack-en-base,
-	language-pack-es-base,
-	language-pack-fr-base,
-	language-pack-pt-base,
-	fonts-arabeyes,
-	fonts-kacst,
-	fonts-takao-mincho,
-	fonts-takao-gothic,
-	fonts-wqy-zenhei | ttf-wqy-zenhei,
-	fonts-arphic-uming,
-	fonts-arphic-ukai | ttf-arphic-ukai,
-	fonts-nanum,
-	fonts-nanum-coding,
-	fonts-unfonts-core,
-	fonts-liberation,
-	gnome-session,
-	gnome-settings-daemon,
-	ubuntu-settings,
-	light-themes,
-	unzip,
-	hunspell-en-us,
-	libgl1-mesa-dri
-Provides: ${app:Provides}
-Conflicts: ${app:Conflicts}
-Description: Safe and easy web browser from Mozilla - testsuite
- Firefox delivers safe, easy web browsing. A familiar user interface,
- enhanced security features including protection from online identity theft,
- and integrated search let you get the most out of the web.
- .
- This package contains the Firefox testsuite
 
 # Transitional packages below here
 
