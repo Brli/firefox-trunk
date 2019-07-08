@@ -1,4 +1,4 @@
-firefox-trunk (69.0~a1~hg20190521r474670-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (69.0~a1~hg20190708r481581-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep to clang-8 and llvm-8-dev
@@ -9,15 +9,20 @@ firefox-trunk (69.0~a1~hg20190521r474670-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/ubuntu-ua-string-changes.patch
   * Update cbindgen to 0.9.0
     - debian/build/create-tarball.py
+  * Pass --with-clang-path=... --with-libclang-path=... accordingly
+    - debian/config/mozconfig.in
+  * Bump build-dep on rustc >= 1.35.0 and cargo >= 0.36
+    - debian/control{,.in}
 
   [ Olivier Tilloy ]
   * Update debian/patches/unity-menubar.patch
-  * Work around a GGC bug on i386 and s390x (https://gcc.gnu.org/PR90756)
-    - debian/patches/skcms-workaround-gcc-bug.patch
   * Stop building firefox-testsuite (LP: #1805019)
   * New firefox-geckodriver package (LP: #1831204)
+  * Update exclusion patterns to remove outdated entries and to trim down the
+    final size of the source tarball
+    - debian/config/tarball.conf
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 21 May 2019 14:54:49 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 08 Jul 2019 14:12:43 +0200
 
 firefox-trunk (68.0~a1~hg20190520r474459-0ubuntu1) eoan; urgency=medium
 
