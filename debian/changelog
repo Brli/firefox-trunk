@@ -1,4 +1,10 @@
-firefox-trunk (69.0~a1~hg20190708r481581-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (70.0~a1~hg20190709r481811-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 09 Jul 2019 12:43:04 +0200
+
+firefox-trunk (69.0~a1~hg20190708r481581-0ubuntu1) eoan; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep to clang-8 and llvm-8-dev
