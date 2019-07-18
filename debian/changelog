@@ -1,6 +1,12 @@
 firefox-trunk (70.0~a1~hg20190709r481811-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Rico Tzschichholz ]
+  * Update patches
+    - debian/patches/partially-revert-google-search-update.patch
+    - debian/patches/reduce-rust-debuginfo-on-selected-architectures.patch
+
+  [ Olivier Tilloy ]
+  * Update debian/patches/unity-menubar.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 09 Jul 2019 12:43:04 +0200
 

@@ -1,9 +1,9 @@
 # https://bugzilla.mozilla.org/show_bug.cgi?id=1510296
 # https://hg.mozilla.org/releases/mozilla-beta/rev/fea77d171e0f
 
-diff -r f1082516d62f browser/components/search/extensions/list.json
---- a/browser/components/search/extensions/list.json	Tue May 07 17:49:24 2019 +0300
-+++ b/browser/components/search/extensions/list.json	Tue May 07 18:47:45 2019 +0200
+diff -r d6eed298a41b browser/components/search/extensions/list.json
+--- a/browser/components/search/extensions/list.json	Sun Jul 14 00:54:25 2019 +0300
++++ b/browser/components/search/extensions/list.json	Sun Jul 14 10:30:27 2019 +0200
 @@ -3,12 +3,12 @@
      "searchDefault": "Google",
      "searchOrder": ["Google", "Bing"],
@@ -19,15 +19,16 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
      },
      "CA": {
        "ebay": "ebay-ca",
-@@ -54,63 +54,63 @@
+@@ -54,7 +54,7 @@
      "en-US": {
        "default": {
          "visibleDefaultEngines": [
 -          "google-b-d", "amazondotcom", "bing", "ddg", "ebay", "twitter", "wikipedia"
 +          "google", "amazondotcom", "bing", "ddg", "ebay", "twitter", "wikipedia"
          ]
-       }
-     },
+       },
+       "KZ": {
+@@ -90,56 +90,56 @@
      "ach": {
        "default": {
          "visibleDefaultEngines": [
@@ -92,7 +93,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        },
        "BY": {
-@@ -129,63 +129,63 @@
+@@ -158,63 +158,63 @@
      "bg": {
        "default": {
          "visibleDefaultEngines": [
@@ -165,7 +166,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -193,252 +193,252 @@
+@@ -222,72 +222,72 @@
        "default": {
          "searchOrder": ["Google", "Seznam"],
          "visibleDefaultEngines": [
@@ -220,24 +221,108 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
 -          "google-b-d", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
 +          "google", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
          ]
-       }
-     },
+       },
+       "KZ": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
++          "yandex-en", "google", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "BY": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
++          "yandex-en", "google", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "RU": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
++          "yandex-en", "google", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "TR": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
++          "yandex-en", "google", "amazon-ca", "bing", "ddg", "ebay-ca", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+@@ -300,30 +300,30 @@
      "en-GB": {
        "default": {
          "visibleDefaultEngines": [
 -          "google-b-d", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
 +          "google", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
          ]
-       }
-     },
+       },
+       "KZ": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "BY": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "RU": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "TR": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazon-en-GB", "chambers-en-GB", "ddg", "ebay-uk", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+@@ -336,30 +336,30 @@
      "en-ZA": {
        "default": {
          "visibleDefaultEngines": [
 -          "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
 +          "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
          ]
+       },
+       "KZ": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "BY": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "RU": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
+       },
+       "TR": {
+         "visibleDefaultEngines": [
+-          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
++          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
+         ],
+         "searchDefault": "Yandex"
        }
-     },
+@@ -367,35 +367,35 @@
      "eo": {
        "default": {
          "visibleDefaultEngines": [
@@ -276,8 +361,9 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
 -          "google-b-d", "bing", "ddg", "mercadolibre-mx", "wikipedia-es"
 +          "google", "bing", "ddg", "mercadolibre-mx", "wikipedia-es"
          ]
-       }
-     },
+       },
+       "experimental-hidden": {
+@@ -407,49 +407,49 @@
      "et": {
        "default": {
          "visibleDefaultEngines": [
@@ -332,8 +418,9 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
 -          "google-b-d", "bing", "bolcom-fy-NL", "ddg", "ebay-nl", "marktplaats-fy-NL", "wikipedia-fy-NL"
 +          "google", "bing", "bolcom-fy-NL", "ddg", "ebay-nl", "marktplaats-fy-NL", "wikipedia-fy-NL"
          ]
-       }
-     },
+       },
+       "experimental-hidden": {
+@@ -461,105 +461,105 @@
      "ga-IE": {
        "default": {
          "visibleDefaultEngines": [
@@ -454,7 +541,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -446,7 +446,7 @@
+@@ -567,7 +567,7 @@
        "default": {
          "searchOrder": ["Google", "Yahoo! JAPAN", "Bing", "Amazon.co.jp", "楽天市場", "ヤフオク!", "教えて！goo", "Twitter", "Wikipedia (ja)"],
          "visibleDefaultEngines": [
@@ -463,7 +550,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -454,28 +454,28 @@
+@@ -575,28 +575,28 @@
        "default": {
          "searchOrder": ["Google", "Yahoo! JAPAN", "Bing", "Amazon.co.jp", "楽天市場", "ヤフオク!", "教えて！goo", "Twitter", "Wikipedia (ja)"],
          "visibleDefaultEngines": [
@@ -496,7 +583,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        },
        "KZ": {
-@@ -494,189 +494,189 @@
+@@ -615,119 +615,119 @@
      "km": {
        "default": {
          "visibleDefaultEngines": [
@@ -631,8 +718,9 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
 -          "google-b-d", "bing", "bolcom-nl", "ddg", "ebay-nl", "marktplaats-nl", "wikipedia-nl"
 +          "google", "bing", "bolcom-nl", "ddg", "ebay-nl", "marktplaats-nl", "wikipedia-nl"
          ]
-       }
-     },
+       },
+       "experimental-hidden": {
+@@ -739,70 +739,70 @@
      "nn-NO": {
        "default": {
          "visibleDefaultEngines": [
@@ -713,7 +801,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        },
        "RU": {
-@@ -695,84 +695,84 @@
+@@ -821,84 +821,84 @@
      "si": {
        "default": {
          "visibleDefaultEngines": [
@@ -810,7 +898,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        },
        "TR": {
-@@ -791,56 +791,56 @@
+@@ -917,56 +917,56 @@
      "trs": {
        "default": {
          "visibleDefaultEngines": [
@@ -875,7 +963,7 @@ diff -r f1082516d62f browser/components/search/extensions/list.json
          ]
        },
        "CN": {
-@@ -850,7 +850,7 @@
+@@ -976,7 +976,7 @@
      "zh-TW": {
        "default": {
          "visibleDefaultEngines": [
