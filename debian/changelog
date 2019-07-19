@@ -7,6 +7,7 @@ firefox-trunk (70.0~a1~hg20190709r481811-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Olivier Tilloy ]
   * Update debian/patches/unity-menubar.patch
+  * Stop building and remove firefox-globalmenu (LP: #1834866)
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 09 Jul 2019 12:43:04 +0200
 

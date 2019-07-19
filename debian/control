@@ -129,17 +129,6 @@ Description: Safe and easy web browser from Mozilla - geckodriver
 
 # Transitional packages below here
 
-# Can be dropped after 14.04
-Package: firefox-trunk-globalmenu
-Architecture: any
-Section: oldlibs
-Priority: extra
-Depends: firefox-trunk,
-	${misc:Depends}
-Description: Safe and easy web browser from Mozilla (transitional package)
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
 # Language packs below here
 
 Package: firefox-trunk-locale-ach
