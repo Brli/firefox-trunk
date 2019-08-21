@@ -177,24 +177,15 @@ class TarballCreator(OptionParser):
       if build == None:
         build = 1
       print('*** Determing revisions to use for checkouts ***')
-      main_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/linux-x86_64/en-US/%s-%s.txt'
+      main_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/linux-x86_64/en-US/%s-%s.json'
                        % (basename, version, build, basename, version))
       u = urllib.urlopen(main_info_url)
-      for line in u.readlines():
-        line = line.strip()
-        if not line.startswith(repo):
-          continue
-        r = re.match('%s/rev/(.*)' % repo, line)
-        if r == None:
-          print("Badly formatted file '%s'" % main_info_url, file=sys.stderr)
-          sys.exit(1)
-        main_rev = r.group(1)
-        print('Revision to be used for main checkout: %s' % main_rev)
-        break
-
-      if not main_rev:
+      build_refs = json.load(u)
+      main_rev = build_refs["moz_source_stamp"]
+      if main_rev == None:
         print('Failed to determine revision for main checkout', file=sys.stderr)
         sys.exit(1)
+      print('Revision to be used for main checkout: %s' % main_rev)
 
     with ScopedTmpdir() as tmpdir:
       print('*** Using temporary directory %s ***' % tmpdir)
