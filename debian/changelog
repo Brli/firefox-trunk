@@ -1,9 +1,10 @@
-firefox-trunk (70.0~a1~hg20190709r481811-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (70.0~a1~hg20190823r489627-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
     - debian/patches/partially-revert-google-search-update.patch
     - debian/patches/reduce-rust-debuginfo-on-selected-architectures.patch
+    - debian/patches/unity-menubar.patch
   * Bump build-dep on rustc >= 1.36.0 and cargo >= 0.37
     - debian/control{,.in}
   * Use firefox-*.json to retrieve revision
