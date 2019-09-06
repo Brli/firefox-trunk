@@ -1,4 +1,4 @@
-firefox-trunk (70.0~a1~hg20190823r489627-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (70.0~a1~hg20190831r491013-0ubuntu1) UNRELEASED; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
@@ -11,6 +11,9 @@ firefox-trunk (70.0~a1~hg20190823r489627-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/create-tarball.py
   * Use firefox-*.json to retrieve revision
     - debian/build/create-tarball.py
+  * Exclude and clean config.log
+    - debian/config/tarball.conf
+    - debian/rules
 
   [ Olivier Tilloy ]
   * Update debian/patches/unity-menubar.patch

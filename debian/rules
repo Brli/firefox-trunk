@@ -80,4 +80,4 @@ install-distribution-searchplugins-IMPL-%:
 		python debian/install-distribution-searchplugins.py -c debian/config/searchplugins.conf -l $(lang) -u browser/components/search/extensions -d debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang) -s debian/searchplugins;)
 
 clean::
-	rm -f debian/usr.bin.firefox.in
+	rm -f debian/usr.bin.firefox.in config.log
