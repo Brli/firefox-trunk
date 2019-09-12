@@ -1,6 +1,12 @@
 firefox-trunk (71.0~a1~hg20190904r491614-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Olivier Tilloy, Rico Tzschichholz ]
+  * Build with clang, as official firefox builds are now produced with clang
+    and select the highest clang version available to avoid hardcoding
+    one version for each supported Ubuntu release:
+    - debian/build/rules.mk
+    - debian/config/mozconfig.in
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 06 Sep 2019 13:05:17 +0200
 

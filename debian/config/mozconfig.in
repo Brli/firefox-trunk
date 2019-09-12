@@ -88,9 +88,16 @@ ac_add_options --with-ua-vendor=Ubuntu
 %%if MOZ_UPDATE_CHANNEL == nightly
 ac_add_options --enable-profiling
 %%endif
-ac_add_options --with-clang-path=/usr/bin/clang-8 --with-libclang-path=/usr/lib/llvm-8/lib/
-mk_add_options "export LLVM_CONFIG=/usr/bin/llvm-config-8"
+ac_add_options --with-clang-path=/usr/bin/clang-@DEB_LLVM_VERSION@ --with-libclang-path=/usr/lib/llvm-@DEB_LLVM_VERSION@/lib/
+mk_add_options "export CC=clang-@DEB_LLVM_VERSION@"
+mk_add_options "export CXX=clang++-@DEB_LLVM_VERSION@"
+mk_add_options "export AS=clang-@DEB_LLVM_VERSION@"
+mk_add_options "export LLVM_CONFIG=/usr/bin/llvm-config-@DEB_LLVM_VERSION@"
 mk_add_options "export CBINDGEN=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin/cbindgen"
+%%if DISTRIB_VERSION == 1604
+mk_add_options "export NODEJS=/usr/lib/nodejs-mozilla/bin/node"
+mk_add_options "export NASM=/usr/lib/nasm-mozilla/bin/nasm"
+%%endif
 %%if DEB_HOST_ARCH != i386
 %%if DEB_HOST_ARCH != armhf
 ac_add_options --enable-rust-simd
