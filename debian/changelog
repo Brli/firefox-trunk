@@ -11,6 +11,11 @@ firefox-trunk (71.0~a1~hg20190904r491614-0ubuntu1) UNRELEASED; urgency=medium
   [ Rico Tzschichholz ]
   * Update patches
     - debian/patches/partially-revert-google-search-update.patch
+  * Add Tagalog and Triqui language packs
+    - update debian/config/locales.all
+    - update debian/config/locales.shipped
+    - update debian/config/searchplugins.conf
+    - update debian/control
 
   [ Olivier Tilloy ]
   * Restore icons for the amazon search engine descriptions (LP: #1844051)

@@ -993,6 +993,16 @@ Description: Thai language pack for Firefox
  This package contains Thai translations and search plugins
  for Firefox
 
+Package: firefox-trunk-locale-tl
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-tl-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Tagalog language pack for Firefox
+ This package contains Tagalog translations and search plugins
+ for Firefox
+
 Package: firefox-trunk-locale-tr
 Architecture: any
 Depends: ${misc:Depends}
@@ -1001,6 +1011,16 @@ Conflicts: ${app:Conflicts}
 Provides: ${app:Provides}
 Description: Turkish language pack for Firefox
  This package contains Turkish translations and search plugins
+ for Firefox
+
+Package: firefox-trunk-locale-trs
+Architecture: any
+Depends: ${misc:Depends}
+Replaces: language-pack-trs-base
+Conflicts: ${app:Conflicts}
+Provides: ${app:Provides}
+Description: Triqui language pack for Firefox
+ This package contains Triqui translations and search plugins
  for Firefox
 
 Package: firefox-trunk-locale-uk

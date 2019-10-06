@@ -10,6 +10,7 @@ bn:bn
 br:br
 bs:bs
 ca:ca
+ca-valencia:ca
 cak:cak
 cs:cs
 cy:cy
@@ -77,7 +78,9 @@ sv-SE:sv
 ta:ta
 te:te
 th:th
+tl:tl
 tr:tr
+trs:trs
 uk:uk
 ur:ur
 uz:uz
