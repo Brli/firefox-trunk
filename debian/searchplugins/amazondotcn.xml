@@ -2,7 +2,7 @@
 <ShortName>亚马逊</ShortName>
 <Description>亚马逊搜索</Description>
 <InputEncoding>UTF-8</InputEncoding>
-<Image width="16" height="16">resource://search-plugins/images/amazon.ico</Image>
+<Image width="16" height="16">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAABaElEQVQ4y6VTPUvDUBQ9kWRSRHCqND9AcWicXJxCtjqopFtXOwod+g/chWQtThYXG8FV0E0pmUoFk8U6NMW6NKRdWuE4pIbmQyt64A7v4553zr3vCgBAkvgDBEEQhKxk13VRr9fx0u0CAPaLRZTL5WwWJmDbNkVJSkWtVmMWUgTHlQpFSaKqaXQcJ1rnZTmTIGWh3+/D8zz4vo8gCHDRaMCyLADAdDJZbMFxHBYUJdPGryzopRJFSWJBUeh5Hg3T/JFgKanoS66u68jlcmi329HZaDRabGFevqppMQuGaX5jYdyLtTEvy1HlDdOkXipR1TQGQUC652SrGkZEcLNJDp+5EHcHYeLTGXmJOYLebbjRqsbUpDDukd1m+NjVeuIfvFrA42FYmLU9QD6KF+vtHhhcA7tNQFoFhh1g6wTxj/RuA53T8GISy5vAjgFsqMDHrBviCjKHCb4DDB6AqT9TtB0mZk3kf8f5E5FB5xiRl94rAAAAAElFTkSuQmCC</Image>
 <Url type="text/html" method="GET" template="https://www.amazon.cn/mn/searchApp" resultdomain="amazon.cn">
   <Param name="keywords" value="{searchTerms}"/>
   <Param name="ix" value="sunray"/>
