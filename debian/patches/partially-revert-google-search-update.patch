@@ -1,9 +1,9 @@
 # https://bugzilla.mozilla.org/show_bug.cgi?id=1510296
 # https://hg.mozilla.org/releases/mozilla-beta/rev/fea77d171e0f
 
-diff -r d6eed298a41b browser/components/search/extensions/list.json
---- a/browser/components/search/extensions/list.json	Sun Jul 14 00:54:25 2019 +0300
-+++ b/browser/components/search/extensions/list.json	Sun Jul 14 10:30:27 2019 +0200
+diff -r 81ebffadd73a browser/components/search/extensions/list.json
+--- a/browser/components/search/extensions/list.json	Fri Oct 04 12:46:05 2019 +0300
++++ b/browser/components/search/extensions/list.json	Fri Oct 04 18:11:00 2019 +0200
 @@ -3,12 +3,12 @@
      "searchDefault": "Google",
      "searchOrder": ["Google", "Bing"],
@@ -93,7 +93,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "BY": {
-@@ -158,63 +158,63 @@
+@@ -158,84 +158,84 @@
      "bg": {
        "default": {
          "visibleDefaultEngines": [
@@ -126,11 +126,27 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        }
      },
+     "bo": {
+       "default": {
+         "visibleDefaultEngines": [
+-          "google-b-d", "ddg", "wikipedia"
++          "google", "ddg", "wikipedia"
+         ]
+       }
+     },
      "br": {
        "default": {
          "visibleDefaultEngines": [
 -          "google-b-d", "amazon-france", "ddg", "ebay-fr", "freelang", "wikipedia-br"
 +          "google", "amazon-france", "ddg", "ebay-fr", "freelang", "wikipedia-br"
+         ]
+       }
+     },
+     "brx": {
+       "default": {
+         "visibleDefaultEngines": [
+-          "google-b-d", "ddg", "wikipedia"
++          "google", "ddg", "wikipedia"
          ]
        }
      },
@@ -143,6 +159,14 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
        }
      },
      "ca": {
+       "default": {
+         "visibleDefaultEngines": [
+-          "google-b-d", "bing", "diec2", "ddg", "ebay-es", "twitter", "wikipedia-ca"
++          "google", "bing", "diec2", "ddg", "ebay-es", "twitter", "wikipedia-ca"
+         ]
+       }
+     },
+     "ca-valencia": {
        "default": {
          "visibleDefaultEngines": [
 -          "google-b-d", "bing", "diec2", "ddg", "ebay-es", "twitter", "wikipedia-ca"
@@ -166,7 +190,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -222,72 +222,72 @@
+@@ -243,72 +243,72 @@
        "default": {
          "searchOrder": ["Google", "Seznam"],
          "visibleDefaultEngines": [
@@ -250,7 +274,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ],
          "searchDefault": "Yandex"
        },
-@@ -300,30 +300,30 @@
+@@ -321,30 +321,30 @@
      "en-GB": {
        "default": {
          "visibleDefaultEngines": [
@@ -286,7 +310,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ],
          "searchDefault": "Yandex"
        },
-@@ -336,30 +336,30 @@
+@@ -357,30 +357,30 @@
      "en-ZA": {
        "default": {
          "visibleDefaultEngines": [
@@ -322,7 +346,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ],
          "searchDefault": "Yandex"
        }
-@@ -367,35 +367,35 @@
+@@ -388,35 +388,35 @@
      "eo": {
        "default": {
          "visibleDefaultEngines": [
@@ -363,7 +387,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "experimental-hidden": {
-@@ -407,49 +407,49 @@
+@@ -428,49 +428,49 @@
      "et": {
        "default": {
          "visibleDefaultEngines": [
@@ -420,7 +444,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "experimental-hidden": {
-@@ -461,105 +461,105 @@
+@@ -482,105 +482,105 @@
      "ga-IE": {
        "default": {
          "visibleDefaultEngines": [
@@ -541,7 +565,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -567,7 +567,7 @@
+@@ -588,7 +588,7 @@
        "default": {
          "searchOrder": ["Google", "Yahoo! JAPAN", "Bing", "Amazon.co.jp", "楽天市場", "ヤフオク!", "教えて！goo", "Twitter", "Wikipedia (ja)"],
          "visibleDefaultEngines": [
@@ -550,7 +574,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -575,28 +575,28 @@
+@@ -596,28 +596,28 @@
        "default": {
          "searchOrder": ["Google", "Yahoo! JAPAN", "Bing", "Amazon.co.jp", "楽天市場", "ヤフオク!", "教えて！goo", "Twitter", "Wikipedia (ja)"],
          "visibleDefaultEngines": [
@@ -583,7 +607,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "KZ": {
-@@ -615,119 +615,119 @@
+@@ -636,119 +636,119 @@
      "km": {
        "default": {
          "visibleDefaultEngines": [
@@ -720,7 +744,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "experimental-hidden": {
-@@ -739,70 +739,70 @@
+@@ -760,70 +760,70 @@
      "nn-NO": {
        "default": {
          "visibleDefaultEngines": [
@@ -801,7 +825,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "RU": {
-@@ -821,84 +821,84 @@
+@@ -842,84 +842,84 @@
      "si": {
        "default": {
          "visibleDefaultEngines": [
@@ -898,7 +922,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "TR": {
-@@ -917,56 +917,56 @@
+@@ -938,56 +938,56 @@
      "trs": {
        "default": {
          "visibleDefaultEngines": [
@@ -963,7 +987,7 @@ diff -r d6eed298a41b browser/components/search/extensions/list.json
          ]
        },
        "CN": {
-@@ -976,7 +976,7 @@
+@@ -997,7 +997,7 @@
      "zh-TW": {
        "default": {
          "visibleDefaultEngines": [

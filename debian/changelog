@@ -8,6 +8,10 @@ firefox-trunk (71.0~a1~hg20190904r491614-0ubuntu1) UNRELEASED; urgency=medium
     - debian/config/mozconfig.in
     - debian/control{,.in}
 
+  [ Rico Tzschichholz ]
+  * Update patches
+    - debian/patches/partially-revert-google-search-update.patch
+
   [ Olivier Tilloy ]
   * Restore icons for the amazon search engine descriptions (LP: #1844051)
     - update debian/searchplugins/amazon*.xml
