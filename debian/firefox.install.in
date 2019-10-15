@@ -24,6 +24,7 @@
 @MOZ_LIBDIR@/plugin-container
 %%ifdef MOZ_ENABLE_BREAKPAD
 @MOZ_LIBDIR@/crashreporter
+@MOZ_LIBDIR@/minidump-analyzer
 %%endif
 
 debian/distribution.ini @MOZ_LIBDIR@/distribution

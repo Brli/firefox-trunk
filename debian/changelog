@@ -20,6 +20,8 @@ firefox-trunk (71.0~a1~hg20190904r491614-0ubuntu1) UNRELEASED; urgency=medium
   [ Olivier Tilloy ]
   * Restore icons for the amazon search engine descriptions (LP: #1844051)
     - update debian/searchplugins/amazon*.xml
+  * Install the minidump-analyzer executable (LP: #1845205)
+    - update debian/firefox.install.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 06 Sep 2019 13:05:17 +0200
 
