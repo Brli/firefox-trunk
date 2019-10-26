@@ -1,4 +1,10 @@
-firefox-trunk (71.0~a1~hg20190904r491614-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (72.0~a1~hg20191021r498279-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 21 Oct 2019 20:04:47 +0200
+
+firefox-trunk (71.0~a1~hg20191019r498279-0ubuntu1) eoan; urgency=medium
 
   [ Olivier Tilloy, Rico Tzschichholz ]
   * Build with clang, as official firefox builds are now produced with clang
@@ -25,7 +31,7 @@ firefox-trunk (71.0~a1~hg20190904r491614-0ubuntu1) UNRELEASED; urgency=medium
   * Install the minidump-analyzer executable (LP: #1845205)
     - update debian/firefox.install.in
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 06 Sep 2019 13:05:17 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 21 Oct 2019 20:04:01 +0200
 
 firefox-trunk (70.0~a1~hg20190831r491013-0ubuntu1) eoan; urgency=medium
 
