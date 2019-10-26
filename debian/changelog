@@ -16,6 +16,8 @@ firefox-trunk (71.0~a1~hg20190904r491614-0ubuntu1) UNRELEASED; urgency=medium
     - update debian/config/locales.shipped
     - update debian/config/searchplugins.conf
     - update debian/control
+  * Bump build-dep on rustc >= 1.37.0 and cargo >= 0.38
+    - debian/control{,.in}
 
   [ Olivier Tilloy ]
   * Restore icons for the amazon search engine descriptions (LP: #1844051)
