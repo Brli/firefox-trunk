@@ -5,7 +5,7 @@ Description: reduce the rust debuginfo level on selected architectures where
 
 --- a/build/moz.configure/toolchain.configure
 +++ b/build/moz.configure/toolchain.configure
-@@ -1522,8 +1522,8 @@ def rustc_opt_level(opt_level_option, mo
+@@ -1866,8 +1866,8 @@ def rustc_opt_level(opt_level_option, mo
          return '1' if moz_optimize.optimize else '0'
  
  
@@ -16,7 +16,7 @@ Description: reduce the rust debuginfo level on selected architectures where
      # Cargo currently supports only two interesting profiles for building:
      # development and release. Those map (roughly) to --enable-debug and
      # --disable-debug in Gecko, respectively.
-@@ -1546,6 +1546,8 @@ def rust_compiler_flags(opt_level, debug
+@@ -1890,6 +1890,8 @@ def rust_compile_flags(opt_level, debug_
  
      if debug_symbols:
          debug_info = '2'

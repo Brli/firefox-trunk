@@ -6,7 +6,7 @@ by default. The profile can be enabled by performing:
 $ sudo aa-enforce /etc/apparmor.d/usr.bin.@MOZ_PKG_NAME@
 
 The profile can be disabled by performing:
-$ sudo aparmor_parser -R /etc/apparmor.d/usr.bin.@MOZ_PKG_NAME@
+$ sudo apparmor_parser -R /etc/apparmor.d/usr.bin.@MOZ_PKG_NAME@
 $ sudo ln -s /etc/apparmor.d/usr.bin.@MOZ_PKG_NAME@ /etc/apparmor.d/disable/usr.bin.@MOZ_PKG_NAME@
 
 This profile should work without modification for most plugins available in

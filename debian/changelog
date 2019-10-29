@@ -1,6 +1,16 @@
 firefox-trunk (72.0~a1~hg20191021r498279-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Rico Tzschichholz ]
+  * Add explicit build-dep on libclang-*-dev
+    - debian/control{,.in}
+
+  [ Olivier Tilloy ]
+  * Update symbolic icon to match the latest firefox brand update
+    (the asset was downloaded from https://mozilla.design/firefox/logos-usage/)
+    - debian/symbolic.svg
+
+  [ Jean-Louis Dupond ]
+  * Fix a typo in debian/README.Debian.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 21 Oct 2019 20:04:47 +0200
 
