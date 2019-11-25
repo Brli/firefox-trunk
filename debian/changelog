@@ -7,6 +7,9 @@ firefox-trunk (72.0~a1~hg20191021r498279-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/create-tarball.py
   * Exclude autoconf files from integrity check
     - debian/patches/drop-some-file-integrity-checks.patch
+  * Bump build-dep on clang >= 8
+    - debian/control{,.in}
+    - debian/build/rules.mk
 
   [ Olivier Tilloy ]
   * Update symbolic icon to match the latest firefox brand update
