@@ -19,3 +19,4 @@ mark-distribution-search-engines-as-read-only.patch
 cleanup-old-distribution-search-engines.patch
 armhf-disable-unaligned-fp-access-emulation.patch
 armhf-reduce-linker-memory-use.patch
+drop-some-file-integrity-checks.patch
