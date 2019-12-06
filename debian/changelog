@@ -1,6 +1,7 @@
 firefox-trunk (73.0~a1~hg20191202r504851-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Update cbindgen to 0.11.0
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 03 Dec 2019 10:32:36 +0100
 
