@@ -1,7 +1,15 @@
 firefox-trunk (73.0~a1~hg20191202r504851-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Update cbindgen to 0.11.1
     - debian/build/create-tarball.py
+
+  [ Olivier Tilloy ]
+  * Use the upstream Build ID, to ensure it is the same across Ubuntu releases
+    for a given firefox version (LP: #1851936)
+    - debian/build/create-tarball.py
+    - debian/build/rules.mk
+    - debian/config/mozconfig.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 03 Dec 2019 10:32:36 +0100
 

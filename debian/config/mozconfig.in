@@ -88,6 +88,7 @@ ac_add_options --with-ua-vendor=Ubuntu
 %%if MOZ_UPDATE_CHANNEL == nightly
 ac_add_options --enable-profiling
 %%endif
+mk_add_options "export MOZ_BUILD_DATE=@MOZ_BUILDID@"
 ac_add_options --with-clang-path=/usr/bin/clang-@DEB_LLVM_VERSION@ --with-libclang-path=/usr/lib/llvm-@DEB_LLVM_VERSION@/lib/
 mk_add_options "export CC=clang-@DEB_LLVM_VERSION@"
 mk_add_options "export CXX=clang++-@DEB_LLVM_VERSION@"

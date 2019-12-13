@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from __future__ import print_function
+from datetime import datetime
 from optparse import OptionParser
 import os
 import os.path
@@ -172,6 +173,7 @@ class TarballCreator(OptionParser):
       basename = name
 
     main_rev = None
+    buildid = None
 
     if version != None:
       if build == None:
@@ -186,6 +188,13 @@ class TarballCreator(OptionParser):
         print('Failed to determine revision for main checkout', file=sys.stderr)
         sys.exit(1)
       print('Revision to be used for main checkout: %s' % main_rev)
+      buildid = build_refs["buildid"]
+      if buildid == None:
+        print('Invalid build ID', file=sys.stderr)
+        sys.exit(1)
+    else:
+      buildid = datetime.now().strftime('%Y%m%d%H%M%S')
+    print('Build ID: %s' % buildid)
 
     with ScopedTmpdir() as tmpdir:
       print('*** Using temporary directory %s ***' % tmpdir)
@@ -304,6 +313,9 @@ class TarballCreator(OptionParser):
           if not version.startswith(upstream_version):
             print("Version '%s' does not match upstream version '%s'" % (version, upstream_version))
             sys.exit(1)
+
+        with open('BUILDID', 'w') as fd:
+          fd.write(buildid)
 
         print('*** Debian package version is %s' % version)
         print('*** Packing tarball ***')
