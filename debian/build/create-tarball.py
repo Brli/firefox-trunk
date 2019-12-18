@@ -129,7 +129,7 @@ class TarballCreator(OptionParser):
         CheckCall(['cargo', 'new', 'vendored-cbindgen', '--vcs', 'none'])
         with ScopedWorkingDirectory('vendored-cbindgen'):
           with open('Cargo.toml', 'a+') as fd:
-            fd.write('cbindgen = "=0.11.1"')
+            fd.write('cbindgen = "=0.12.0"')
           CheckCall(['cargo', 'vendor'])
           with ScopedWorkingDirectory('vendor/cbindgen'):
             os.makedirs('.cargo')
