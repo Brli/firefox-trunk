@@ -5,6 +5,9 @@ firefox-trunk (73.0~a1~hg20191202r504851-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/create-tarball.py
   * Drop browser/chrome.manifest which is not available or required anymore
     - debian/firefox.install.in
+  * Use ac_add_options to define specific compiler and tool versions
+    (https://bugzilla.mozilla.org/show_bug.cgi?id=1603860)
+    - debian/config/mozconfig.in
 
   [ Olivier Tilloy ]
   * Use the upstream Build ID, to ensure it is the same across Ubuntu releases
