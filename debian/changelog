@@ -8,6 +8,8 @@ firefox-trunk (73.0~a1~hg20191202r504851-0ubuntu1) UNRELEASED; urgency=medium
   * Use ac_add_options to define specific compiler and tool versions
     (https://bugzilla.mozilla.org/show_bug.cgi?id=1603860)
     - debian/config/mozconfig.in
+  * Bump build-dep on rustc >= 1.39.0 and cargo >= 0.40
+    - debian/control{,.in}
 
   [ Olivier Tilloy ]
   * Use the upstream Build ID, to ensure it is the same across Ubuntu releases
