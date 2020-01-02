@@ -109,19 +109,14 @@
  pref("ui.android.mouse_as_touch", 1);
 --- a/toolkit/content/xul.css
 +++ b/toolkit/content/xul.css
-@@ -201,6 +201,18 @@ toolbar[type="menubar"] {
+@@ -201,6 +201,13 @@ toolbar[type="menubar"] {
  }
  %endif
  
 +%ifdef MOZ_WIDGET_GTK
-+window[shellshowingmenubar="true"] menubar {
-+  display: none !important;
-+}
-+
-+window[shellshowingmenubar="true"]
++*|*:root[shellshowingmenubar="true"]
 +toolbar[type="menubar"]:not([customizing="true"]) {
-+  min-height: 0 !important;
-+  border: 0 !important;
++  display: none !important;
 +}
 +%endif
 +
