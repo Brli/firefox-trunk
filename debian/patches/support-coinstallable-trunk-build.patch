@@ -19,9 +19,9 @@ Forwarded: no
 +    MOZ_APP_PROFILE="$WITH_APP_PROFILE"
 +fi
 +
- # Special cases where we need to AC_DEFINE something. Also a holdover for apps
- # that haven't made a confvars.sh yet. Don't add new stuff here, use
- # MOZ_BUILD_APP.
+ dnl ========================================================
+ dnl Ensure Android SDK and build-tools versions depending on
+ dnl mobile target.
 --- a/build/moz.configure/old.configure
 +++ b/build/moz.configure/old.configure
 @@ -240,6 +240,7 @@

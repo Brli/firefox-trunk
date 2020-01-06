@@ -80,9 +80,9 @@ Index: b/old-configure.in
 +    MOZ_UA_VENDOR="$WITH_UA_VENDOR"
 +fi
 +
- # Special cases where we need to AC_DEFINE something. Also a holdover for apps
- # that haven't made a confvars.sh yet. Don't add new stuff here, use
- # MOZ_BUILD_APP.
+ dnl ========================================================
+ dnl Ensure Android SDK and build-tools versions depending on
+ dnl mobile target.
 @@ -4050,6 +4060,7 @@
  AC_SUBST(MOZ_APP_DISPLAYNAME)
  AC_SUBST(MOZ_APP_BASENAME)
