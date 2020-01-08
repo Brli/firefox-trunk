@@ -1,4 +1,10 @@
-firefox-trunk (73.0~a1~hg20191202r504851-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (74.0~a1~hg20200107r509036-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 07 Jan 2020 12:01:25 +0100
+
+firefox-trunk (73.0~a1~hg20200106r508847-0ubuntu1) focal; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update cbindgen to 0.12.1
