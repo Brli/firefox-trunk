@@ -1,8 +1,16 @@
-firefox-trunk (74.0~a1~hg20200107r509036-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (74.0~a1~hg20200209r512973-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Update patches
+    - debian/install-distribution-searchplugins.py
+    - debian/patches/partially-revert-google-search-update.patch
+    - debian/patches/ubuntu-ua-string-changes.patch
+  * Drop obsolete patches
+    - debian/patches/drop-some-file-integrity-checks.patch
+  * Update cbindgen to 0.13.1
+    - debian/build/create-tarball.py
+  * Sync from beta and stable branch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 07 Jan 2020 12:01:25 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 09 Feb 2020 19:48:28 +0100
 
 firefox-trunk (73.0~a1~hg20200106r508847-0ubuntu1) focal; urgency=medium
 

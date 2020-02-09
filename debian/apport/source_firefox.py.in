@@ -1224,6 +1224,8 @@ class Profile:
 
     @property
     def addon_compat_check_disabled(self):
+        if self.last_version == None:
+            return False
         is_nightly = re.sub(r'^[^\.]+\.[0-9]+([a-z0-9]*).*', r'\1', self.last_version) == 'a1'
         if is_nightly == True:
             pref = "extensions.checkCompatibility.nightly"

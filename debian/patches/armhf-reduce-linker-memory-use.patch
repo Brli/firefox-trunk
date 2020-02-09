@@ -5,7 +5,7 @@ Author: Olivier Tilloy <olivier.tilloy@canonical.com>
 
 --- a/build/moz.configure/toolchain.configure
 +++ b/build/moz.configure/toolchain.configure
-@@ -2003,15 +2003,16 @@ def select_linker(linker, c_compiler, de
+@@ -2056,15 +2056,16 @@ def select_linker(linker, c_compiler, de
  set_config('LINKER_KIND', select_linker.KIND)
  
  

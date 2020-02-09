@@ -77,7 +77,7 @@ $(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_N
 
 install-distribution-searchplugins-IMPL-%:
 	$(foreach lang,$(call locales_for_langpack,$*), \
-		python debian/install-distribution-searchplugins.py -c debian/config/searchplugins.conf -l $(lang) -u browser/components/search/extensions -d debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang) -s debian/searchplugins;)
+		python2 debian/install-distribution-searchplugins.py -c debian/config/searchplugins.conf -l $(lang) -u browser/components/search/extensions -d debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang) -s debian/searchplugins;)
 
 clean::
 	rm -f debian/usr.bin.firefox.in config.log

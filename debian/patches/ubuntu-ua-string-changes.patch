@@ -90,7 +90,7 @@ Index: b/old-configure.in
 +AC_SUBST(MOZ_UA_VENDOR)
  AC_SUBST(MOZ_APP_PROFILE)
  AC_SUBST(MOZ_APP_ID)
- AC_SUBST(MOZ_APP_ANDROID_VERSION_CODE)
+ AC_SUBST(MAR_CHANNEL_ID)
 Index: b/build/moz.configure/old.configure
 ===================================================================
 --- a/build/moz.configure/old.configure

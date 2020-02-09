@@ -1,9 +1,9 @@
 # https://bugzilla.mozilla.org/show_bug.cgi?id=1510296
 # https://hg.mozilla.org/releases/mozilla-beta/rev/fea77d171e0f
 
-diff -r 81ebffadd73a browser/components/search/extensions/list.json
---- a/browser/components/search/extensions/list.json	Fri Oct 04 12:46:05 2019 +0300
-+++ b/browser/components/search/extensions/list.json	Fri Oct 04 18:11:00 2019 +0200
+diff -r 558a2ae20a30 browser/components/search/extensions/list.json
+--- a/browser/components/search/extensions/list.json	Fri Jan 10 03:19:43 2020 +0200
++++ b/browser/components/search/extensions/list.json	Fri Jan 10 07:55:22 2020 +0100
 @@ -3,12 +3,12 @@
      "searchDefault": "Google",
      "searchOrder": ["Google", "Bing"],
@@ -28,7 +28,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "KZ": {
-@@ -90,56 +90,56 @@
+@@ -90,49 +90,49 @@
      "ach": {
        "default": {
          "visibleDefaultEngines": [
@@ -61,14 +61,6 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        }
      },
-     "as": {
-       "default": {
-         "visibleDefaultEngines": [
--          "google-b-d", "amazon-in", "ddg", "wikipedia-as"
-+          "google", "amazon-in", "ddg", "wikipedia-as"
-         ]
-       }
-     },
      "ast": {
        "default": {
          "visibleDefaultEngines": [
@@ -93,7 +85,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "BY": {
-@@ -158,84 +158,84 @@
+@@ -151,77 +151,77 @@
      "bg": {
        "default": {
          "visibleDefaultEngines": [
@@ -182,15 +174,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        }
      },
-     "crh": {
-       "default": {
-         "visibleDefaultEngines": [
--          "google-b-d", "ddg", "twitter", "wikipedia-crh"
-+          "google", "ddg", "twitter", "wikipedia-crh"
-         ]
-       }
-     },
-@@ -243,72 +243,72 @@
+@@ -229,72 +229,72 @@
        "default": {
          "searchOrder": ["Google", "Seznam"],
          "visibleDefaultEngines": [
@@ -274,7 +258,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ],
          "searchDefault": "Yandex"
        },
-@@ -321,30 +321,30 @@
+@@ -307,30 +307,30 @@
      "en-GB": {
        "default": {
          "visibleDefaultEngines": [
@@ -310,43 +294,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ],
          "searchDefault": "Yandex"
        },
-@@ -357,30 +357,30 @@
-     "en-ZA": {
-       "default": {
-         "visibleDefaultEngines": [
--          "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-+          "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-         ]
-       },
-       "KZ": {
-         "visibleDefaultEngines": [
--          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-+          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-         ],
-         "searchDefault": "Yandex"
-       },
-       "BY": {
-         "visibleDefaultEngines": [
--          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-+          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-         ],
-         "searchDefault": "Yandex"
-       },
-       "RU": {
-         "visibleDefaultEngines": [
--          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-+          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-         ],
-         "searchDefault": "Yandex"
-       },
-       "TR": {
-         "visibleDefaultEngines": [
--          "yandex-en", "google-b-d", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-+          "yandex-en", "google", "bing", "amazondotcom", "ddg", "twitter", "wikipedia"
-         ],
-         "searchDefault": "Yandex"
-       }
-@@ -388,35 +388,35 @@
+@@ -343,35 +343,35 @@
      "eo": {
        "default": {
          "visibleDefaultEngines": [
@@ -387,7 +335,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "experimental-hidden": {
-@@ -428,49 +428,49 @@
+@@ -383,49 +383,49 @@
      "et": {
        "default": {
          "visibleDefaultEngines": [
@@ -444,7 +392,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "experimental-hidden": {
-@@ -482,105 +482,105 @@
+@@ -437,105 +437,105 @@
      "ga-IE": {
        "default": {
          "visibleDefaultEngines": [
@@ -565,7 +513,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -588,7 +588,7 @@
+@@ -543,7 +543,7 @@
        "default": {
          "searchOrder": ["Google", "Yahoo! JAPAN", "Bing", "Amazon.co.jp", "楽天市場", "ヤフオク!", "教えて！goo", "Twitter", "Wikipedia (ja)"],
          "visibleDefaultEngines": [
@@ -574,7 +522,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        }
      },
-@@ -596,28 +596,28 @@
+@@ -551,28 +551,28 @@
        "default": {
          "searchOrder": ["Google", "Yahoo! JAPAN", "Bing", "Amazon.co.jp", "楽天市場", "ヤフオク!", "教えて！goo", "Twitter", "Wikipedia (ja)"],
          "visibleDefaultEngines": [
@@ -607,7 +555,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "KZ": {
-@@ -636,119 +636,119 @@
+@@ -591,105 +591,105 @@
      "km": {
        "default": {
          "visibleDefaultEngines": [
@@ -672,27 +620,11 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        }
      },
-     "mai": {
-       "default": {
-         "visibleDefaultEngines": [
--          "google-b-d", "bing", "amazon-in", "ddg", "twitter", "wikipedia-hi"
-+          "google", "bing", "amazon-in", "ddg", "twitter", "wikipedia-hi"
-         ]
-       }
-     },
      "mk": {
        "default": {
          "visibleDefaultEngines": [
 -          "google-b-d", "bing", "amazondotcom", "ddg", "wikipedia-mk"
 +          "google", "bing", "amazondotcom", "ddg", "wikipedia-mk"
-         ]
-       }
-     },
-     "ml": {
-       "default": {
-         "visibleDefaultEngines": [
--          "google-b-d", "bing", "amazon-in", "ddg", "wikipedia", "wikipedia-ml"
-+          "google", "bing", "amazon-in", "ddg", "wikipedia", "wikipedia-ml"
          ]
        }
      },
@@ -744,7 +676,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "experimental-hidden": {
-@@ -760,70 +760,70 @@
+@@ -701,63 +701,63 @@
      "nn-NO": {
        "default": {
          "visibleDefaultEngines": [
@@ -758,14 +690,6 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          "visibleDefaultEngines": [
 -          "google-b-d", "bing", "ddg", "twitter", "wikipedia-oc", "wiktionary-oc"
 +          "google", "bing", "ddg", "twitter", "wikipedia-oc", "wiktionary-oc"
-         ]
-       }
-     },
-     "or": {
-       "default": {
-         "visibleDefaultEngines": [
--          "google-b-d", "bing", "amazon-in", "ddg", "wikipedia-or"
-+          "google", "bing", "amazon-in", "ddg", "wikipedia-or"
          ]
        }
      },
@@ -825,7 +749,15 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "RU": {
-@@ -842,84 +842,84 @@
+@@ -776,91 +776,91 @@
+     "scn": {
+       "default": {
+         "visibleDefaultEngines": [
+-          "google-b-d", "ddg", "wikipedia"
++          "google", "ddg", "wikipedia"
+         ]
+       }
+     },
      "si": {
        "default": {
          "visibleDefaultEngines": [
@@ -922,7 +854,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "TR": {
-@@ -938,56 +938,56 @@
+@@ -879,56 +879,56 @@
      "trs": {
        "default": {
          "visibleDefaultEngines": [
@@ -987,7 +919,7 @@ diff -r 81ebffadd73a browser/components/search/extensions/list.json
          ]
        },
        "CN": {
-@@ -997,7 +997,7 @@
+@@ -938,7 +938,7 @@
      "zh-TW": {
        "default": {
          "visibleDefaultEngines": [

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 from __future__ import print_function
 from datetime import datetime
@@ -129,12 +129,12 @@ class TarballCreator(OptionParser):
         CheckCall(['cargo', 'new', 'vendored-cbindgen', '--vcs', 'none'])
         with ScopedWorkingDirectory('vendored-cbindgen'):
           with open('Cargo.toml', 'a+') as fd:
-            fd.write('cbindgen = "=0.12.1"')
+            fd.write('cbindgen = "=0.13.1"')
           CheckCall(['cargo', 'vendor'])
           with ScopedWorkingDirectory('vendor/cbindgen'):
             os.makedirs('.cargo')
             with open('.cargo/config', 'w') as fd:
-              fd.write(CheckOutput(['cargo', 'vendor', '--relative-path']))
+              fd.write(CheckOutput(['cargo', 'vendor']))
             with open('Cargo.toml', 'a+') as fd:
               fd.write('\n[workspace]')
         shutil.copytree('vendored-cbindgen/vendor/cbindgen', dest)
