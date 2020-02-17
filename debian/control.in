@@ -42,7 +42,7 @@ Build-Depends: cdbs,
 	llvm-9-dev | llvm-8-dev,
 	cargo (>= 0.40),
 	rustc (>= 1.39.0),
-	nodejs (>= 8.11) | nodejs-mozilla (>= 8.11)
+	nodejs (>= 10.19) | nodejs-mozilla (>= 10.19)
 Standards-Version: 3.9.1
 
 Package: @MOZ_PKG_NAME@
