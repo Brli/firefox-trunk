@@ -13,6 +13,7 @@ no-region-overrides-for-google-search.patch
 rust-drop-dll-checksums.patch
 webrtc-fix-compiler-flags-for-armhf.patch
 s390x-ycbcr.patch
+s390x-authenticator.patch
 reduce-rust-debuginfo-on-selected-architectures.patch
 fix-armhf-webrtc-build.patch
 mark-distribution-search-engines-as-read-only.patch
