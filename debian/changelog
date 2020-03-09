@@ -5,6 +5,9 @@ firefox-trunk (75.0~a1~hg20200211r513061-0ubuntu1) UNRELEASED; urgency=medium
     - debian/control{,.in}
   * Bump build-dep on rustc >= 1.41.0 and cargo >= 0.42
     - debian/control{,.in}
+  * Use clang 10 if available
+    - debian/control{,.in}
+    - debian/build/rules.mk
 
   [ Olivier Tilloy ]
   * Allow sideloading langpacks (LP: #1866059)
