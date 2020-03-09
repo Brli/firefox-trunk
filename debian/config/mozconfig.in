@@ -108,6 +108,8 @@ ac_add_options --enable-rust-simd
 %%endif
 %%endif
 ac_add_options --with-unsigned-addon-scopes=app
+# Re-enable addon sideloading to allow langpacks installed system-wide (LP: #1866059)
+ac_add_options --allow-addon-sideload
 # Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
 # Note: these are for Ubuntu use ONLY. For your own distribution,
 # please get your own set of keys.
