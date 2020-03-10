@@ -1,4 +1,10 @@
-firefox-trunk (75.0~a1~hg20200211r513061-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (76.0~a1~hg20200310r517711-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 10 Mar 2020 10:09:30 +0100
+
+firefox-trunk (75.0~a1~hg20200309r517485-0ubuntu1) focal; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep on nodejs >= 10.19
@@ -13,7 +19,7 @@ firefox-trunk (75.0~a1~hg20200211r513061-0ubuntu1) UNRELEASED; urgency=medium
   * Allow sideloading langpacks (LP: #1866059)
     - debian/config/mozconfig.in
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 11 Feb 2020 08:03:51 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 09 Mar 2020 08:13:59 +0100
 
 firefox-trunk (74.0~a1~hg20200209r512973-0ubuntu1) focal; urgency=medium
 
