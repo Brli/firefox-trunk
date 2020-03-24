@@ -18,7 +18,7 @@ Forwarded: not-needed
  
 +      // Temporary cleanup for https://launchpad.net/bugs/1791789 - distribution
 +      // engines prior to this update were not marked as read only
-+      if (skipReadOnly && /^(\[distribution\])/.test(engine._loadPath)) {
++      if (skipBuiltIn && /^(\[distribution\])/.test(engine._loadPath)) {
 +        ++skippedEngines;
 +        continue;
 +      }

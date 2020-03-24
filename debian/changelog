@@ -1,6 +1,18 @@
-firefox-trunk (76.0~a1~hg20200310r517711-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (76.0~a1~hg20200310r517730-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Update patches
+    - debian/patches/ubuntu-ua-string-changes.patch
+    - debian/patches/cleanup-old-distribution-search-engines.patch
+  * Drop obsolete patches
+    - debian/patches/s390x-authenticator.patch
+  * Fix i386 build
+    - debian/patches/bug1622013-vpx-mmx.diff
+  * Separately installed browser/blocklist.xml was removed
+    - debian/firefox.install.in
+  * Update cbindgen to 0.13.2
+    - debian/build/create-tarball.py
+  * Bump build-dep on nasm >= 2.14.02
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 10 Mar 2020 10:09:30 +0100
 

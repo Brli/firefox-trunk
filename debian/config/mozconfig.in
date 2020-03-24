@@ -95,8 +95,12 @@ ac_add_options CXX=clang++-@DEB_LLVM_VERSION@
 ac_add_options AS=clang-@DEB_LLVM_VERSION@
 ac_add_options LLVM_CONFIG=/usr/bin/llvm-config-@DEB_LLVM_VERSION@
 ac_add_options CBINDGEN=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin/cbindgen
+%%if DISTRIB_VERSION == 1910
+ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
+%%endif
 %%if DISTRIB_VERSION == 1804
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
+ac_add_options NASM=/usr/lib/nasm-mozilla/bin/nasm
 %%endif
 %%if DISTRIB_VERSION == 1604
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
