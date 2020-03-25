@@ -1,5 +1,6 @@
 firefox-trunk (76.0~a1~hg20200310r517730-0ubuntu1) UNRELEASED; urgency=medium
 
+ [ Rico Tzschichholz ]
   * Update patches
     - debian/patches/ubuntu-ua-string-changes.patch
     - debian/patches/cleanup-old-distribution-search-engines.patch
@@ -13,6 +14,9 @@ firefox-trunk (76.0~a1~hg20200310r517730-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/create-tarball.py
   * Bump build-dep on nasm >= 2.14.02
     - debian/control{,.in}
+
+  [ Olivier Tilloy ]
+  * Port packaging to python3
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 10 Mar 2020 10:09:30 +0100
 

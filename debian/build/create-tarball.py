@@ -1,6 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
-from __future__ import print_function
 from datetime import datetime
 from optparse import OptionParser
 import os
@@ -10,7 +9,7 @@ import shutil
 import subprocess
 import sys
 import time
-import urllib
+import urllib.request
 import xml.dom.minidom
 import json
 import tempfile
@@ -22,12 +21,12 @@ def CheckCall(args, cwd=None, quiet=False, env=None):
                          stdout = devnull if quiet == True else None,
                          stderr = devnull if quiet == True else None)
     r = p.wait()
-    if r is not 0: raise subprocess.CalledProcessError(r, args)
+    if r != 0: raise subprocess.CalledProcessError(r, args)
 
 def CheckOutput(args, cwd=None):
-  p = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE)
+  p = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE, universal_newlines=True)
   r = p.wait()
-  if r is not 0: raise subprocess.CalledProcessError(r, args)
+  if r != 0: raise subprocess.CalledProcessError(r, args)
   return p.stdout.read()
 
 def ensure_cache(repo, cache):
@@ -181,7 +180,7 @@ class TarballCreator(OptionParser):
       print('*** Determing revisions to use for checkouts ***')
       main_info_url = ('https://ftp.mozilla.org/pub/%s/candidates/%s-candidates/build%s/linux-x86_64/en-US/%s-%s.json'
                        % (basename, version, build, basename, version))
-      u = urllib.urlopen(main_info_url)
+      u = urllib.request.urlopen(main_info_url)
       build_refs = json.load(u)
       main_rev = build_refs["moz_source_stamp"]
       if main_rev == None:
@@ -258,7 +257,7 @@ class TarballCreator(OptionParser):
             with open(os.path.join(orig_cwd, blacklist_file), 'r') as fd:
               for line in fd:
                 locale = re.sub(r'([^#]*)#?.*', r'\1', line).strip()
-                if locale is '':
+                if locale == '':
                   continue
 
                 blacklist.add(locale)
@@ -302,7 +301,7 @@ class TarballCreator(OptionParser):
               changeset = line.split()[1].split(':')[1].strip()
               break
 
-          u = urllib.urlopen('%s/pushlog?changeset=%s' % (repo, changeset))
+          u = urllib.request.urlopen('%s/pushlog?changeset=%s' % (repo, changeset))
           dom = xml.dom.minidom.parseString(u.read())
           t = time.strptime(dom.getElementsByTagName('updated')[0].firstChild.nodeValue.strip(), '%Y-%m-%dT%H:%M:%SZ')
           version += '~hg%s%s%sr%s' % ('%02d' % t.tm_year, '%02d' % t.tm_mon, '%02d' % t.tm_mday, rev)

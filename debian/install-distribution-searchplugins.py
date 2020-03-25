@@ -1,6 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
-from __future__ import print_function
 from fnmatch import fnmatch
 from glob import glob
 from optparse import OptionParser

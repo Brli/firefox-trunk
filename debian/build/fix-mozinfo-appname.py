@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import os
 import sys
@@ -24,13 +24,13 @@ def jsonify(d):
     value types: bool, str, int, None.
     """
     jd = {}
-    for k, v in d.iteritems():
+    for k, v in d.items():
         jd[k] = JsonValue(v)
     return repr(jd)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print >>sys.stderr, "Must specify a single file and appname"
+        print("Must specify a single file and appname", file=sys.stderr)
 
     with open(sys.argv[1], 'r') as f:
         s = eval(f.read(),{'true':True,'false':False,'null':None})

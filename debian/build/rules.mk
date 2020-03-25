@@ -58,7 +58,7 @@ DEB_DH_STRIP_ARGS		:= --dbg-package=$(MOZ_PKG_NAME)-dbg
 # We don't want build-tree/mozilla/README to be shipped as a doc
 DEB_INSTALL_DOCS_ALL 	:= $(NULL)
 # Stop the buildd from timing out during long links
-MAKE					:= python2 $(CURDIR)/debian/build/keepalive-wrapper.py 1440 $(MAKE)
+MAKE					:= python3 $(CURDIR)/debian/build/keepalive-wrapper.py 1440 $(MAKE)
 
 MOZ_VERSION		:= $(shell cat $(DEB_SRCDIR)/$(MOZ_APP)/config/version.txt)
 MOZ_LIBDIR		:= usr/lib/$(MOZ_APP_NAME)
@@ -81,7 +81,7 @@ endif
 DEB_AUTO_UPDATE_DEBIAN_CONTROL	= no
 
 VIRTENV_PATH	:= $(CURDIR)/$(MOZ_OBJDIR)/_virtualenv
-MOZ_PYTHON		:= $(VIRTENV_PATH)/bin/python2
+MOZ_PYTHON		:= $(VIRTENV_PATH)/bin/python3
 DISTRIB 		:= $(shell lsb_release -i -s)
 
 CFLAGS			:= $(shell echo $(CFLAGS) | sed -e 's/\-g//' | sed -e 's/\-O[s0123]//')
@@ -196,14 +196,14 @@ debian/control:: debian/control.in debian/control.langpacks debian/control.langp
 	sed -i -e 's/@MOZ_LOCALE_PKGS@/$(foreach p,$(MOZ_LOCALE_PKGS),$(p) \(= $${binary:Version}\),)/' debian/control
 
 $(pkgname_subst_files): $(foreach file,$(pkgname_subst_files),$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	PYTHONDONTWRITEBYTECODE=1 python2 $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	PYTHONDONTWRITEBYTECODE=1 python3 $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_PKG_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 $(appname_subst_files): $(foreach file,$(appname_subst_files),$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$(file).in))
-	PYTHONDONTWRITEBYTECODE=1 python2 $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
+	PYTHONDONTWRITEBYTECODE=1 python3 $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) $(CURDIR)/$(subst $(MOZ_APP_NAME),$(MOZ_PKG_BASENAME),$@.in) > $(CURDIR)/$@
 
 %.pc: WCHAR_CFLAGS = $(shell cat $(MOZ_OBJDIR)/config/autoconf.mk | grep WCHAR_CFLAGS | sed 's/^[^=]*=[[:space:]]*\(.*\)$$/\1/')
 %.pc: %.pc.in debian/stamp-makefile-build
-	PYTHONDONTWRITEBYTECODE=1 python2 $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
+	PYTHONDONTWRITEBYTECODE=1 python3 $(CURDIR)/debian/build/Preprocessor.py -Fsubstitution --marker="%%" $(MOZ_DEFINES) -DWCHAR_CFLAGS="$(WCHAR_CFLAGS)" $(CURDIR)/$< > $(CURDIR)/$@
 
 make-buildsymbols: debian/stamp-makebuildsymbols
 debian/stamp-makebuildsymbols: debian/stamp-makefile-build
@@ -300,7 +300,7 @@ install-langpack-xpis-%:
 	@echo "Installing language pack xpis for $*"
 	dh_installdirs -p$* $(MOZ_ADDONDIR)/extensions
 	$(foreach lang,$(call locales_for_langpack,$*), \
-		id=`PYTHONDONTWRITEBYTECODE=1 python2 $(CURDIR)/debian/build/xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(lang).langpack.xpi 2>/dev/null`; \
+		id=`PYTHONDONTWRITEBYTECODE=1 python3 $(CURDIR)/debian/build/xpi-id.py $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(lang).langpack.xpi 2>/dev/null`; \
 		install -m 0644 $(CURDIR)/$(MOZ_DISTDIR)/$(LANGPACK_DIR)/$(MOZ_APP_NAME)-$(MOZ_VERSION).$(lang).langpack.xpi \
 			$(CURDIR)/debian/$*/$(MOZ_ADDONDIR)/extensions/$$id.xpi;)
 
@@ -376,7 +376,7 @@ ifdef LOCAL_BRANCH
 get-orig-source: ARGS += -c $(LOCAL_BRANCH)
 endif
 get-orig-source:
-	PYTHONDONTWRITEBYTECODE=1 python2 $(CURDIR)/debian/build/create-tarball.py $(ARGS)
+	PYTHONDONTWRITEBYTECODE=1 python3 $(CURDIR)/debian/build/create-tarball.py $(ARGS)
 
 echo-%:
 	@echo "$($*)"

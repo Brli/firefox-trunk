@@ -1,11 +1,11 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import datetime
 import os
 import select
 import subprocess
 import sys
-import thread
+import _thread
 
 proc = None
 
@@ -43,7 +43,7 @@ def main():
 
   (rfd, wfd) = os.pipe()
   f = os.fdopen(rfd, 'r')
-  thread.start_new_thread(run_child, (sys.argv[2:], wfd))
+  _thread.start_new_thread(run_child, (sys.argv[2:], wfd))
 
   # Make sure that we have a process before continuing
   f.read(1)
