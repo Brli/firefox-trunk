@@ -11,7 +11,7 @@
 #  /@MOZ_LIBDIR@/firefox
 # but not:
 #  /@MOZ_LIBDIR@/firefox.sh
-/@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
+profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
   #include <abstractions/audio>
   #include <abstractions/cups-client>
   #include <abstractions/dbus-strict>

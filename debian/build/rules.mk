@@ -277,6 +277,10 @@ common-binary-arch:: make-buildsymbols
 binary-install/$(MOZ_PKG_NAME)::
 	install -m 0644 $(CURDIR)/debian/apport/blacklist $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/blacklist.d/$(MOZ_PKG_NAME)
 	install -m 0644 $(CURDIR)/debian/apport/native-origins $(CURDIR)/debian/$(MOZ_PKG_NAME)/etc/apport/native-origins.d/$(MOZ_PKG_NAME)
+	# Copy hicolor icons (LP: #1639863)
+	$(foreach size,16 32 48 64 128, \
+		install -m 0644 -D $(CURDIR)/browser/branding/official/default$(size).png \
+			$(CURDIR)/debian/$(MOZ_PKG_NAME)/usr/share/icons/hicolor/$(size)x$(size)/apps/$(MOZ_PKG_NAME).png;)
 	# Monochrome/symbolic icon for gnome-shell
 	install -m 0644 $(CURDIR)/debian/symbolic.svg $(CURDIR)/debian/$(MOZ_PKG_NAME)/usr/share/icons/hicolor/symbolic/apps/$(MOZ_PKG_NAME)-symbolic.svg
 

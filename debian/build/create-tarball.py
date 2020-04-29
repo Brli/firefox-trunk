@@ -29,6 +29,14 @@ def CheckOutput(args, cwd=None):
   if r != 0: raise subprocess.CalledProcessError(r, args)
   return p.stdout.read()
 
+def check_external_dependencies():
+  for tool in ['hg', 'cargo', 'tar']:
+    try:
+      CheckCall([tool, '--version'], quiet=True)
+    except OSError:
+      print('Error: missing external tool: %s' % tool)
+      sys.exit(1)
+
 def ensure_cache(repo, cache):
   dest = os.path.join(cache, os.path.basename(repo))
   if os.path.isdir(dest):
@@ -335,6 +343,7 @@ class TarballCreator(OptionParser):
             CheckCall(args, env=env)
 
 def main():
+  check_external_dependencies()
   creator = TarballCreator()
   creator.run()
 
