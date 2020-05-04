@@ -10,7 +10,7 @@ if __name__ == '__main__':
         print("Must specify an xpi", file=sys.stderr)
         exit(1)
 
-    json_doc = json.loads(zipfile.ZipFile(sys.argv[1]).open('manifest.json').read().strip())
+    json_doc = json.loads(zipfile.ZipFile(sys.argv[1]).open('manifest.json').read().decode('utf-8').strip())
     gecko_id = json_doc["applications"]["gecko"]["id"]
 
     assert gecko_id
