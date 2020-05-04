@@ -1,4 +1,10 @@
-firefox-trunk (77.0~a1~hg20200405r522172-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (78.0~a1~hg20200504r527821-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 04 May 2020 08:38:10 +0200
+
+firefox-trunk (77.0~a1~hg20200503r527799-0ubuntu1) groovy; urgency=medium
 
   * Update cbindgen to 0.14.2
     - debian/build/create-tarball.py
@@ -9,7 +15,7 @@ firefox-trunk (77.0~a1~hg20200405r522172-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/partially-revert-google-search-update.patch
     - debian/patches/dont-checkout-locales.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 06 Apr 2020 21:22:53 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 04 May 2020 08:38:10 +0200
 
 firefox-trunk (76.0~a1~hg20200403r521956-0ubuntu1) focal; urgency=medium
 
