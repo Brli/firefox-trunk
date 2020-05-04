@@ -22,3 +22,4 @@ ppc64el-workaround-bug-1555531.patch
 ppc-drop-register.patch
 s390x-fix-hidden-symbol.patch
 armhf-clang-no-integrated-as-for-neon.patch
+typenum-i386-ftbfs.patch
