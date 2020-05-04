@@ -7,6 +7,7 @@ firefox-trunk (77.0~a1~hg20200405r522172-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/rust-drop-dll-checksums.patch
     - debian/patches/partially-revert-google-search-update.patch
+    - debian/patches/dont-checkout-locales.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 06 Apr 2020 21:22:53 +0200
 
