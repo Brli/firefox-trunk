@@ -1,6 +1,6 @@
 firefox-trunk (77.0~a1~hg20200405r522172-0ubuntu1) UNRELEASED; urgency=medium
 
-  * Update cbindgen to 0.14.1
+  * Update cbindgen to 0.14.2
     - debian/build/create-tarball.py
   * Drop obsolete patches
     - debian/patches/bug1622013-vpx-mmx.diff
