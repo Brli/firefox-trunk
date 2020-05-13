@@ -273,9 +273,9 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
     /usr/share/distro-info/*.csv r,
     /var/lib/dpkg/** r,
 
-    /usr/local/lib/python3.[0-6]/dist-packages/ r,
+    /usr/local/lib/python3.[0-8]/dist-packages/ r,
     /usr/bin/ r,
-    /usr/bin/python3.[0-6] mr,
+    /usr/bin/python3.[0-8] mr,
 
     # file_inherit
     deny /tmp/gtalkplugin.log w,
