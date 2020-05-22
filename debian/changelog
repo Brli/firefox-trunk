@@ -3,6 +3,8 @@ firefox-trunk (78.0~a1~hg20200504r527821-0ubuntu1) UNRELEASED; urgency=medium
   * Handle ja-JP-mac locale
     - update debian/config/locales.shipped
     - update debian/config/searchplugins.conf
+  * Drop obsolete patches
+    - debian/patches/ppc-drop-register.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 04 May 2020 08:38:10 +0200
 

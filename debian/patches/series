@@ -19,6 +19,5 @@ cleanup-old-distribution-search-engines.patch
 armhf-disable-unaligned-fp-access-emulation.patch
 armhf-reduce-linker-memory-use.patch
 ppc64el-workaround-bug-1555531.patch
-ppc-drop-register.patch
 s390x-fix-hidden-symbol.patch
 armhf-clang-no-integrated-as-for-neon.patch
