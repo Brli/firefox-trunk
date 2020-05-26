@@ -30,5 +30,5 @@ Forwarded: no
      '--with-app-name',
 +    '--with-app-profile',
      '--with-branding',
-     '--with-cross-lib',
      '--with-debug-label',
+     '--with-distribution-id',

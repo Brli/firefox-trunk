@@ -100,9 +100,9 @@ Index: b/build/moz.configure/old.configure
      '--with-system-png',
      '--with-system-zlib',
 +    '--with-ua-vendor',
-     '--with-unify-dist',
      '--with-user-appdir',
      '--x-includes',
+     '--x-libraries',
 Index: b/netwerk/protocol/http/moz.build
 ===================================================================
 --- a/netwerk/protocol/http/moz.build

@@ -6,11 +6,9 @@ ac_add_options --prefix=/usr
 ac_add_options --with-l10n-base=@TOPSRCDIR@/@DEB_BUILDDIR@/l10n
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/@MOZ_OBJDIR@
 ac_add_options --enable-release
-ac_add_options --disable-gconf
 ac_add_options --disable-install-strip
 ac_add_options --disable-updater
 ac_add_options --enable-application=browser
-ac_add_options --enable-startup-notification
 ac_add_options --with-distribution-id=com.ubuntu
 %%if DEB_BUILD_ARCH_BITS == 32
 ac_add_options --enable-debug-symbols=-g1
