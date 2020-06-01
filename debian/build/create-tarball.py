@@ -298,8 +298,8 @@ class TarballCreator(OptionParser):
                 print("Locale %s is missing from the source tarball" % locale)
                 sys.exit(1)
 
-        with open(os.path.join(options.application, 'config/version.txt'), 'r') as vf:
-          upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip()))
+        with open(os.path.join(application, 'config/version.txt'), 'r') as vf:
+          upstream_version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', vf.read().strip(), 1))
 
         if version == None:
           version = upstream_version
@@ -315,7 +315,7 @@ class TarballCreator(OptionParser):
           version += '~hg%s%s%sr%s' % ('%02d' % t.tm_year, '%02d' % t.tm_mon, '%02d' % t.tm_mday, rev)
           u.close()
         else:
-          version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', version))
+          version = re.sub(r'~$', '', re.sub(r'([0-9\.]*)(.*)', r'\1~\2', version, 1))
           version += '+build%s' % build
           if not version.startswith(upstream_version):
             print("Version '%s' does not match upstream version '%s'" % (version, upstream_version))
