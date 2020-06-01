@@ -96,9 +96,9 @@ Index: b/build/moz.configure/old.configure
 --- a/build/moz.configure/old.configure
 +++ b/build/moz.configure/old.configure
 @@ -262,6 +262,7 @@
-     '--with-system-nss',
+     '--with-macbundlename-prefix',
+     '--with-system-libevent',
      '--with-system-png',
-     '--with-system-zlib',
 +    '--with-ua-vendor',
      '--with-user-appdir',
      '--x-includes',
