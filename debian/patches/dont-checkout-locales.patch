@@ -39,4 +39,4 @@ diff -r e56cc5e7b57a toolkit/locales/l10n.mk
 -endif
  	$(RM) -rf $(REAL_LOCALE_MERGEDIR)
  	-$(MOZILLA_DIR)/mach compare-locales --merge $(BASE_MERGE) $(srcdir)/l10n.toml $(L10NBASEDIR) $*
- 
+ # Hunspell dictionaries are interesting, as we don't ship the en-US
