@@ -43,7 +43,7 @@ Build-Depends: cdbs,
 	llvm-10-dev | llvm-9-dev | llvm-8-dev,
 	cargo (>= 0.42),
 	rustc (>= 1.41.0),
-	nodejs (>= 10.19) | nodejs-mozilla (>= 10.19)
+	nodejs (>= 10.21) | nodejs-mozilla (>= 10.21),
 Standards-Version: 3.9.1
 
 Package: firefox-trunk
