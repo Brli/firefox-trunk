@@ -2,6 +2,7 @@ firefox-trunk (79.0~a1~hg20200601r533197-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on nodejs(-mozilla) >= 10.21
     - debian/control{,.in}
+  * Require python >= 3.6 and drop python 2 build-dep
   * Update patches
     - debian/patches/dont-checkout-locales.patch
 
