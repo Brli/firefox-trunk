@@ -5,6 +5,7 @@ firefox-trunk (79.0~a1~hg20200601r533197-0ubuntu1) UNRELEASED; urgency=medium
   * Require python >= 3.6 and drop python 2 build-dep
   * Update patches
     - debian/patches/dont-checkout-locales.patch
+    - debian/patches/fix-armhf-webrtc-build.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 01 Jun 2020 19:52:16 +0200
 
