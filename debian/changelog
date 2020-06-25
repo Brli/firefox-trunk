@@ -6,6 +6,9 @@ firefox-trunk (79.0~a1~hg20200601r533197-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/dont-checkout-locales.patch
     - debian/patches/fix-armhf-webrtc-build.patch
+  * Buildc required icudt67b.dat on s390x with /usr/sbin/icupkg
+    - debian/build/rules.mk
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 01 Jun 2020 19:52:16 +0200
 

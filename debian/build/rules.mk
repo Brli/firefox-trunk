@@ -230,11 +230,21 @@ debian/stamp-make-langpack-xpi-%:
 
 common-configure-arch common-configure-indep:: common-configure-impl
 common-configure-impl:: debian/stamp-mach-configure
+ifneq (,$(filter s390x, $(DEB_HOST_ARCH)))
+debian/stamp-mach-configure: config/external/icu/data/icudt67b.dat
+endif
 debian/stamp-mach-configure: cbindgen/bin/cbindgen
 	$(CURDIR)/mach configure && $(CURDIR)/mach build-backend
 	touch $@
 clean::
 	rm -f debian/stamp-mach-configure
+
+# Create big-endian/ASCII data file for e.g. s390x
+# https://bugzilla.mozilla.org/show_bug.cgi?id=1264836
+config/external/icu/data/icudt67b.dat:
+	icupkg -tb $(CURDIR)/config/external/icu/data/icudt67l.dat $(CURDIR)/config/external/icu/data/icudt67b.dat
+clean::
+	rm -f $(CURDIR)/config/external/icu/data/icudt67b.dat
 
 cbindgen/bin/cbindgen: third_party/cbindgen/Cargo.toml
 	cd $(CURDIR)/third_party/cbindgen; \
