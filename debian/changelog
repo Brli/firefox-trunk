@@ -10,6 +10,8 @@ firefox-trunk (79.0~a1~hg20200601r533197-0ubuntu1) UNRELEASED; urgency=medium
   * Buildc required icudt67b.dat on s390x with /usr/sbin/icupkg
     - debian/build/rules.mk
     - debian/control{,.in}
+  * Update cbindgen to 0.14.3
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 01 Jun 2020 19:52:16 +0200
 
