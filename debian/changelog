@@ -1,4 +1,10 @@
-firefox-trunk (79.0~a1~hg20200601r533197-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (80.0~a1~hg20200701r538121-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 01 Jul 2020 09:11:09 +0200
+
+firefox-trunk (79.0~a1~hg20200628r537743-0ubuntu1) groovy; urgency=medium
 
   * Bump build-dep on nodejs(-mozilla) >= 10.21
     - debian/control{,.in}
@@ -13,7 +19,7 @@ firefox-trunk (79.0~a1~hg20200601r533197-0ubuntu1) UNRELEASED; urgency=medium
   * Update cbindgen to 0.14.3
     - debian/build/create-tarball.py
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 01 Jun 2020 19:52:16 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 29 Jun 2020 10:04:47 +0200
 
 firefox-trunk (78.0~a1~hg20200531r533157-0ubuntu1) groovy; urgency=medium
 
