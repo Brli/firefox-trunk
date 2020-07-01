@@ -18,6 +18,8 @@ firefox-trunk (79.0~a1~hg20200628r537743-0ubuntu1) groovy; urgency=medium
     - debian/control{,.in}
   * Update cbindgen to 0.14.3
     - debian/build/create-tarball.py
+  * Bump build-dep on rustc >= 1.43.0 and cargo >= 0.44
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 29 Jun 2020 10:04:47 +0200
 
