@@ -1,4 +1,3 @@
-revert-1fce91651f43.patch
 ppc-no-static-sizes.patch
 ubuntu-bookmarks.patch
 ubuntu-ua-string-changes.patch
@@ -7,6 +6,7 @@ dont-checkout-locales.patch
 #fix-make-package-tests-without-webrtc.patch
 support-coinstallable-trunk-build.patch
 set-prgname-to-remoting-name.patch
+use-system-icupkg.patch
 warn-only-on-duplicates.patch
 partially-revert-google-search-update.patch
 no-region-overrides-for-google-search.patch
@@ -15,7 +15,6 @@ webrtc-fix-compiler-flags-for-armhf.patch
 s390x-ycbcr.patch
 reduce-rust-debuginfo-on-selected-architectures.patch
 fix-armhf-webrtc-build.patch
-cleanup-old-distribution-search-engines.patch
 armhf-disable-unaligned-fp-access-emulation.patch
 armhf-reduce-linker-memory-use.patch
 ppc64el-workaround-bug-1555531.patch

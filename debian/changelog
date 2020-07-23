@@ -1,6 +1,13 @@
 firefox-trunk (80.0~a1~hg20200701r538121-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Drop unnecessary patch to cleanup old distributions (LP: #1885903)
+    - debian/patches/cleanup-old-distribution-search-engines.patch
+  * Update patches
+    - debian/patches/armhf-reduce-linker-memory-use.patch
+  * Drop obsolete patches
+    - debian/patches/revert-1fce91651f43.patch
+  * Drop custom icupkg command in favour of upstream buildsys handling
+    - debian/patches/use-system-icupkg.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 01 Jul 2020 09:11:09 +0200
 
