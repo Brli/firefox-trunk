@@ -64,20 +64,5 @@ install/firefox::
 	$(call WRITE_SUBSTVARS,firefox,transitional:Replaces,kubuntu-firefox-installer)
 endif
 
-binary-post-install/$(MOZ_PKG_NAME):: install-distribution-searchplugins-$(MOZ_PKG_NAME)
-
-$(patsubst %,binary-post-install/%,$(MOZ_LOCALE_PKGS)):: binary-post-install/%: install-distribution-searchplugins-%
-
-$(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-distribution-searchplugins-% :
-	@echo ""
-	@echo "Installing distribution searchplugins for $*"
-$(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-distribution-searchplugins-% : install-distribution-searchplugins-IMPL-%
-$(patsubst %,install-distribution-searchplugins-%,$(MOZ_LOCALE_PKGS) $(MOZ_PKG_NAME)) :: install-distribution-searchplugins-% :
-	@echo ""
-
-install-distribution-searchplugins-IMPL-%:
-	$(foreach lang,$(call locales_for_langpack,$*), \
-		python3 debian/install-distribution-searchplugins.py -c debian/config/searchplugins.conf -l $(lang) -u browser/components/search/extensions -d debian/$*/$(MOZ_LIBDIR)/distribution/searchplugins/locale/$(lang) -s debian/searchplugins;)
-
 clean::
 	rm -f debian/usr.bin.firefox.in config.log

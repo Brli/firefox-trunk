@@ -1,5 +1,5 @@
 # Everything under browser/ except for extensions/ (installed in to
-# MOZ_ADDONDIR) and searchplugins/ (installed in distribution/searchplugins)
+# MOZ_ADDONDIR)
 @MOZ_LIBDIR@/browser/chrome
 @MOZ_LIBDIR@/browser/features
 @MOZ_LIBDIR@/browser/omni.ja
