@@ -1,4 +1,10 @@
-firefox-trunk (80.0~a1~hg20200701r538121-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (81.0~a1~hg20200728r542284-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 28 Jul 2020 12:27:46 +0200
+
+firefox-trunk (80.0~a1~hg20200726r542131-0ubuntu1) groovy; urgency=medium
 
   [ Rico Tzschichholz ]
   * Drop unnecessary patch to cleanup old distributions (LP: #1885903)
@@ -25,7 +31,7 @@ firefox-trunk (80.0~a1~hg20200701r538121-0ubuntu1) UNRELEASED; urgency=medium
     - debian/firefox.{dirs,install,links}.in
     - debian/rules
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 01 Jul 2020 09:11:09 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 26 Jul 2020 14:31:48 +0200
 
 firefox-trunk (79.0~a1~hg20200628r537743-0ubuntu1) groovy; urgency=medium
 
