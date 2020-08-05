@@ -91,9 +91,6 @@ ac_add_options CBINDGEN=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin/cbindgen
 %%if DISTRIB_VERSION == 2004
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
 %%endif
-%%if DISTRIB_VERSION == 1910
-ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
-%%endif
 %%if DISTRIB_VERSION == 1804
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
 ac_add_options NASM=/usr/lib/nasm-mozilla/bin/nasm
