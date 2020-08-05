@@ -109,7 +109,7 @@ ifeq (,$(filter i386 amd64, $(DEB_HOST_ARCH)))
 MOZ_BUILD_PGO = 0
 endif
 
-LLVM_VERSIONS = 10 9 8
+LLVM_VERSIONS = 11 10 8
 DEB_LLVM_VERSION = $(firstword $(foreach llvm_version, $(LLVM_VERSIONS), \
 	$(if $(shell which clang-$(llvm_version)), $(llvm_version))))
 

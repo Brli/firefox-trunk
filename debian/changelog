@@ -1,6 +1,8 @@
 firefox-trunk (81.0~a1~hg20200728r542284-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Use clang 11 if available and drop 9
+    - debian/control{,.in}
+    - debian/build/rules.mk
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 28 Jul 2020 12:27:46 +0200
 
