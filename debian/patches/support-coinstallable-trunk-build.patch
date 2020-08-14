@@ -25,9 +25,9 @@ Forwarded: no
 --- a/build/moz.configure/old.configure
 +++ b/build/moz.configure/old.configure
 @@ -240,6 +240,7 @@
+     '--with-android-distribution-directory',
+     '--with-android-max-sdk',
      '--with-android-min-sdk',
-     '--with-app-basename',
-     '--with-app-name',
 +    '--with-app-profile',
      '--with-branding',
      '--with-distribution-id',

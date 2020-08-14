@@ -67,7 +67,7 @@ Index: b/old-configure.in
 --- a/old-configure.in
 +++ b/old-configure.in
 @@ -1969,6 +1969,16 @@
-     MOZ_APP_BASENAME="$WITH_APP_BASENAME"
+   AC_MSG_RESULT([no])
  fi
  
 +# Allow someone to add a vendor component to the default user agent string
@@ -84,8 +84,8 @@ Index: b/old-configure.in
  dnl Ensure Android SDK and build-tools versions depending on
  dnl mobile target.
 @@ -4050,6 +4060,7 @@
+ 
  AC_SUBST(MOZ_APP_DISPLAYNAME)
- AC_SUBST(MOZ_APP_BASENAME)
  AC_SUBST(MOZ_APP_VENDOR)
 +AC_SUBST(MOZ_UA_VENDOR)
  AC_SUBST(MOZ_APP_PROFILE)
