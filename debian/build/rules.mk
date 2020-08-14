@@ -88,8 +88,8 @@ CFLAGS			:= $(shell echo $(CFLAGS) | sed -e 's/\-g//' | sed -e 's/\-O[s0123]//')
 CXXFLAGS		:= $(shell echo $(CFLAGS) | sed -e 's/\-g//' | sed -e 's/\-O[s0123]//')
 LDFLAGS			:= $(shell echo $(LDFLAGS) | sed -e 's/-Wl,-Bsymbolic-functions//')
 
-# enable the crash reporter only on i386, amd64 and armel
-ifeq (,$(filter i386 amd64 armhf,$(DEB_HOST_ARCH)))
+# enable the crash reporter only on i386 and amd64
+ifeq (,$(filter i386 amd64,$(DEB_HOST_ARCH)))
 MOZ_ENABLE_BREAKPAD = 0
 endif
 

@@ -15,9 +15,6 @@ ac_add_options --enable-debug-symbols=-g1
 %%else
 ac_add_options --enable-debug-symbols
 %%endif
-%%if DEB_HOST_ARCH == armel
-ac_add_options --disable-methodjit
-%%endif
 %%ifdef MOZ_NO_OPTIMIZE
 ac_add_options --disable-optimize
 %%else

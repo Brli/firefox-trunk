@@ -99,7 +99,7 @@ Description: Safe and easy web browser from Mozilla - development files
  It can be safely removed
 
 Package: firefox-trunk-mozsymbols
-Architecture: amd64 i386 armel
+Architecture: amd64 i386
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, 
