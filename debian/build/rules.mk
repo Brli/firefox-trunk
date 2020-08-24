@@ -116,6 +116,7 @@ DEB_LLVM_VERSION = $(firstword $(foreach llvm_version, $(LLVM_VERSIONS), \
 export HOME=/tmp
 export SHELL=/bin/bash
 export NO_PNG_PKG_MANGLE=1
+export MACH_USE_SYSTEM_PYTHON=1
 
 ifeq (linux-gnu, $(DEB_HOST_GNU_SYSTEM))
 LANGPACK_DIR := linux-$(DEB_HOST_GNU_CPU)/xpi
