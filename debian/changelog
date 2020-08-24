@@ -1,4 +1,10 @@
-firefox-trunk (81.0~a1~hg20200728r542284-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (82.0~a1~hg20200824r542284-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 24 Aug 2020 19:59:07 +0200
+
+firefox-trunk (81.0~a1~hg20200822r545722-0ubuntu1) groovy; urgency=medium
 
   * Use clang 11 if available and drop 9
     - debian/control{,.in}
@@ -12,7 +18,7 @@ firefox-trunk (81.0~a1~hg20200728r542284-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/create-tarball.py
   * Export MACH_USE_SYSTEM_PYTHON=1
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 28 Jul 2020 12:27:46 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 23 Aug 2020 08:46:14 +0200
 
 firefox-trunk (80.0~a1~hg20200726r542131-0ubuntu1) groovy; urgency=medium
 
