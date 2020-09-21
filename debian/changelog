@@ -1,6 +1,9 @@
 firefox-trunk (82.0~a1~hg20200824r542284-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Update cbindgen to 0.14.5
+    - debian/build/create-tarball.py
+  * Update patches
+    - debian/patches/ppc-no-static-sizes.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 24 Aug 2020 19:59:07 +0200
 
