@@ -12,7 +12,7 @@ rust-drop-dll-checksums.patch
 webrtc-fix-compiler-flags-for-armhf.patch
 s390x-ycbcr.patch
 reduce-rust-debuginfo-on-selected-architectures.patch
-fix-armhf-webrtc-build.patch
+#fix-armhf-webrtc-build.patch
 armhf-disable-unaligned-fp-access-emulation.patch
 armhf-reduce-linker-memory-use.patch
 ppc64el-workaround-bug-1555531.patch
