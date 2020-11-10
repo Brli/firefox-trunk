@@ -25,10 +25,10 @@ Forwarded: no
 --- a/build/moz.configure/old.configure
 +++ b/build/moz.configure/old.configure
 @@ -240,6 +240,7 @@
-     '--prefix',
-     '--with-android-max-sdk',
-     '--with-android-min-sdk',
-+    '--with-app-profile',
-     '--with-branding',
-     '--with-distribution-id',
-     '--with-macbundlename-prefix',
+     "--prefix",
+     "--with-android-max-sdk",
+     "--with-android-min-sdk",
++    "--with-app-profile",
+     "--with-branding",
+     "--with-distribution-id",
+     "--with-macbundlename-prefix",

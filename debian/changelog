@@ -1,6 +1,12 @@
-firefox-trunk (84.0~a1~hg20201022r554070-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (84.0~a1~hg20201108r556346-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Update patches
+    - debian/patches/armhf-reduce-linker-memory-use.patch
+    - debian/patches/dont-checkout-locales.patch
+    - debian/patches/reduce-rust-debuginfo-on-selected-architectures.patch
+    - debian/patches/support-coinstallable-trunk-build.patch
+    - debian/patches/ubuntu-ua-string-changes.patch
+    - debian/patches/use-system-icupkg.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 23 Oct 2020 10:42:58 +0200
 
