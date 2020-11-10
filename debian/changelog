@@ -1,4 +1,10 @@
-firefox-trunk (83.0~a1~hg20200921r549387-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (84.0~a1~hg20201022r554070-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 23 Oct 2020 10:42:58 +0200
+
+firefox-trunk (83.0~a1~hg20201019r553351-0ubuntu1) groovy; urgency=medium
 
   * Update cbindgen to 0.15.0
     - debian/build/create-tarball.py
@@ -7,7 +13,7 @@ firefox-trunk (83.0~a1~hg20200921r549387-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/unity-menubar.patch
     - debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 21 Sep 2020 19:53:49 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 19 Oct 2020 12:41:19 +0200
 
 firefox-trunk (82.0~a1~hg20200919r549372-0ubuntu1) groovy; urgency=medium
 
