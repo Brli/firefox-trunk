@@ -1,5 +1,6 @@
 firefox-trunk (84.0~a1~hg20201108r556346-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Update patches
     - debian/patches/armhf-reduce-linker-memory-use.patch
     - debian/patches/dont-checkout-locales.patch
@@ -7,6 +8,13 @@ firefox-trunk (84.0~a1~hg20201108r556346-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/support-coinstallable-trunk-build.patch
     - debian/patches/ubuntu-ua-string-changes.patch
     - debian/patches/use-system-icupkg.patch
+  * Irgnore checksums of cleaned files
+    - debian/patches/rust-drop-checksums.patch
+
+  [ Olivier Tilloy ]
+  * Fix FTBFS on armhf
+    - update and re-enable fix-armhf-webrtc-build.patch
+    - add armhf-do-not-build-qcms-with-neon.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 23 Oct 2020 10:42:58 +0200
 
