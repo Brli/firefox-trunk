@@ -23,12 +23,13 @@ Author: Olivier Tilloy <olivier.tilloy@canonical.com>
  use crate::transform_neon::{
      qcms_transform_data_bgra_out_lut_neon, qcms_transform_data_rgb_out_lut_neon,
      qcms_transform_data_rgba_out_lut_neon,
-@@ -1424,9 +1424,9 @@ pub unsafe extern "C" fn qcms_transform_
+@@ -1424,10 +1424,10 @@ pub unsafe extern "C" fn qcms_transform_
                          (*transform).transform_fn = Some(qcms_transform_data_bgra_out_lut_sse2)
                      }
                  }
--            } else if cfg!(any(target_arch = "arm", target_arch = "aarch64")) && qcms_supports_neon
-+            } else if cfg!(any(target_arch = "aarch64")) && qcms_supports_neon
+-            } else if cfg!(any(target_arch = "arm", target_arch = "aarch64"))
++            } else if cfg!(any(target_arch = "aarch64"))
+                 && qcms_supports_neon.load(Ordering::Relaxed)
              {
 -                #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
 +                #[cfg(any(target_arch = "aarch64"))]
@@ -39,6 +40,6 @@ Author: Olivier Tilloy <olivier.tilloy@canonical.com>
  }
  #[no_mangle]
  pub unsafe extern "C" fn qcms_enable_neon() {
--    qcms_supports_neon = true;
-+    qcms_supports_neon = cfg!(any(target_arch = "aarch64"));
+-    qcms_supports_neon.store(true, Ordering::Relaxed);
++    qcms_supports_neon.store(cfg!(any(target_arch = "aarch64")), Ordering::Relaxed);
  }

@@ -8,7 +8,6 @@ support-coinstallable-trunk-build.patch
 set-prgname-to-remoting-name.patch
 use-system-icupkg.patch
 warn-only-on-duplicates.patch
-rust-drop-checksums.patch
 rust-drop-dll-checksums.patch
 webrtc-fix-compiler-flags-for-armhf.patch
 s390x-ycbcr.patch
@@ -21,3 +20,4 @@ s390x-fix-hidden-symbol.patch
 armhf-clang-no-integrated-as-for-neon.patch
 s390x-workaround-sqlite3-clang-optimization-hang.patch
 armhf-do-not-build-qcms-with-neon.patch
+sandbox-update-arm-syscall-numbers.patch
