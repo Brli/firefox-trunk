@@ -1,6 +1,7 @@
 firefox-trunk (85.0~a1~hg20201117r557492-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Bump build-dep on rustc >= 1.47.0 and cargo >= 0.47
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 17 Nov 2020 16:48:10 +0100
 
