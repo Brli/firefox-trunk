@@ -67,6 +67,7 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
   owner /var/tmp/** m,
   owner /{,var/}run/shm/shmfd-* rw,
   owner /{dev,run}/shm/org.{chromium,mozilla}.* rwk,
+  owner /{dev,run}/shm/wayland.mozilla.ipc.[0-9]* rw,
   /tmp/.X[0-9]*-lock r,
   /etc/udev/udev.conf r,
   # Doesn't seem to be required, but noisy. Maybe allow 'r' for 'b*' if needed.
