@@ -1,3 +1,4 @@
+relax-cargo-dep.patch
 ppc-no-static-sizes.patch
 ubuntu-bookmarks.patch
 ubuntu-ua-string-changes.patch
@@ -11,7 +12,7 @@ warn-only-on-duplicates.patch
 rust-drop-dll-checksums.patch
 webrtc-fix-compiler-flags-for-armhf.patch
 s390x-ycbcr.patch
-reduce-rust-debuginfo-on-selected-architectures.patch
+reduce-rust-debuginfo.patch
 fix-armhf-webrtc-build.patch
 armhf-disable-unaligned-fp-access-emulation.patch
 armhf-reduce-linker-memory-use.patch

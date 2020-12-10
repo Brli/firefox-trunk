@@ -2,6 +2,10 @@ firefox-trunk (85.0~a1~hg20201117r557492-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on rustc >= 1.47.0 and cargo >= 0.47
     - debian/control{,.in}
+  * Make cargo 0.47 aka 1.46.0 sufficient
+    - debian/patches/relax-cargo-dep.patch
+  * Build with debug_info="1" on all archs to avoid frequent OOM failures
+    - debian/patches/reduce-rust-debuginfo.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 17 Nov 2020 16:48:10 +0100
 

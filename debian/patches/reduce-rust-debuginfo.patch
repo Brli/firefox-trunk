@@ -1,0 +1,18 @@
+Description: reduce the rust debuginfo level
+ compiling with debuginfo=2 causes the OOM killer to interrupt the build on
+ launchpad builders. Initially this was only on 32 bit architectures, but with
+ firefox 63 it started happening frequently on arm64 and ppc64el too, and with
+ newer versions it started happening very frequently on s390x too.
+ It also started to happen regulary on amd64.
+
+--- a/build/moz.configure/toolchain.configure
++++ b/build/moz.configure/toolchain.configure
+@@ -2173,7 +2173,7 @@
+         debug_assertions = False
+ 
+     if debug_symbols:
+-        debug_info = "2"
++        debug_info = "1"
+ 
+     opts = []
+ 
