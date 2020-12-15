@@ -1,4 +1,10 @@
-firefox-trunk (85.0~a1~hg20201117r557492-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (86.0~a1~hg20201215r560718-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 15 Dec 2020 15:14:57 +0100
+
+firefox-trunk (85.0~a1~hg20201213r560450-0ubuntu1) hirsute; urgency=medium
 
   * Bump build-dep on rustc >= 1.47.0 and cargo >= 0.47
     - debian/control{,.in}
@@ -7,7 +13,7 @@ firefox-trunk (85.0~a1~hg20201117r557492-0ubuntu1) UNRELEASED; urgency=medium
   * Build with debug_info="1" on all archs to avoid frequent OOM failures
     - debian/patches/reduce-rust-debuginfo.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 17 Nov 2020 16:48:10 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 13 Dec 2020 17:30:38 +0100
 
 firefox-trunk (84.0~a1~hg20201115r557261-0ubuntu1) hirsute; urgency=medium
 
