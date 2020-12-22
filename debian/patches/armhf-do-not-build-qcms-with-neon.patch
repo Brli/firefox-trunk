@@ -24,7 +24,7 @@ Author: Olivier Tilloy <olivier.tilloy@canonical.com>
      qcms_transform_data_bgra_out_lut_neon, qcms_transform_data_rgb_out_lut_neon,
      qcms_transform_data_rgba_out_lut_neon,
 @@ -1424,10 +1424,10 @@ pub unsafe extern "C" fn qcms_transform_
-                         (*transform).transform_fn = Some(qcms_transform_data_bgra_out_lut_sse2)
+                         transform.transform_fn = Some(qcms_transform_data_bgra_out_lut_sse2)
                      }
                  }
 -            } else if cfg!(any(target_arch = "arm", target_arch = "aarch64"))
@@ -34,12 +34,12 @@ Author: Olivier Tilloy <olivier.tilloy@canonical.com>
 -                #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
 +                #[cfg(any(target_arch = "aarch64"))]
                  {
-                     if in_type == QCMS_DATA_RGB_8 {
-                         (*transform).transform_fn = Some(qcms_transform_data_rgb_out_lut_neon)
+                     if in_type == DATA_RGB_8 {
+                         transform.transform_fn = Some(qcms_transform_data_rgb_out_lut_neon)
 @@ -1571,5 +1571,5 @@ pub unsafe extern "C" fn qcms_enable_avx
  }
  #[no_mangle]
- pub unsafe extern "C" fn qcms_enable_neon() {
+ pub extern "C" fn qcms_enable_neon() {
 -    qcms_supports_neon.store(true, Ordering::Relaxed);
 +    qcms_supports_neon.store(cfg!(any(target_arch = "aarch64")), Ordering::Relaxed);
  }
