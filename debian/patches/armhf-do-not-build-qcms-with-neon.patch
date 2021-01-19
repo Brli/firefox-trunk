@@ -4,14 +4,14 @@ Author: Olivier Tilloy <olivier.tilloy@canonical.com>
 --- a/gfx/qcms/src/lib.rs
 +++ b/gfx/qcms/src/lib.rs
 @@ -47,7 +47,7 @@ pub mod matrix;
- pub mod transform;
+ pub use transform::Transform;
  #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
- pub mod transform_avx;
+ mod transform_avx;
 -#[cfg(any(target_arch = "aarch64", target_arch = "arm"))]
 +#[cfg(any(target_arch = "aarch64"))]
- pub mod transform_neon;
+ mod transform_neon;
  #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
- pub mod transform_sse2;
+ mod transform_sse2;
 --- a/gfx/qcms/src/transform.rs
 +++ b/gfx/qcms/src/transform.rs
 @@ -21,7 +21,7 @@
@@ -23,23 +23,17 @@ Author: Olivier Tilloy <olivier.tilloy@canonical.com>
  use crate::transform_neon::{
      qcms_transform_data_bgra_out_lut_neon, qcms_transform_data_rgb_out_lut_neon,
      qcms_transform_data_rgba_out_lut_neon,
-@@ -1424,10 +1424,10 @@ pub unsafe extern "C" fn qcms_transform_
-                         transform.transform_fn = Some(qcms_transform_data_bgra_out_lut_sse2)
-                     }
+@@ -1234,12 +1234,10 @@
                  }
--            } else if cfg!(any(target_arch = "arm", target_arch = "aarch64"))
-+            } else if cfg!(any(target_arch = "aarch64"))
-                 && qcms_supports_neon.load(Ordering::Relaxed)
-             {
--                #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
-+                #[cfg(any(target_arch = "aarch64"))]
-                 {
-                     if in_type == DATA_RGB_8 {
-                         transform.transform_fn = Some(qcms_transform_data_rgb_out_lut_neon)
-@@ -1571,5 +1571,5 @@ pub unsafe extern "C" fn qcms_enable_avx
- }
- #[no_mangle]
- pub extern "C" fn qcms_enable_neon() {
--    qcms_supports_neon.store(true, Ordering::Relaxed);
-+    qcms_supports_neon.store(cfg!(any(target_arch = "aarch64")), Ordering::Relaxed);
- }
+             }
+ 
+-            #[cfg(target_arch = "arm")]
+-            let neon_supported = is_arm_feature_detected!("neon");
+             #[cfg(target_arch = "aarch64")]
+             let neon_supported = is_aarch64_feature_detected!("neon");
+ 
+-            #[cfg(any(target_arch = "arm", target_arch = "aarch64"))]
++            #[cfg(any(target_arch = "aarch64"))]
+             if neon_supported {
+                 if in_type == RGB8 {
+                     transform.transform_fn = Some(qcms_transform_data_rgb_out_lut_neon)
