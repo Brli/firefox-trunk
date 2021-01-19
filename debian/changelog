@@ -1,9 +1,16 @@
 firefox-trunk (86.0~a1~hg20201215r560718-0ubuntu1) UNRELEASED; urgency=medium
 
+  [ Rico Tzschichholz ]
   * Update cbindgen to 0.16.0
     - debian/build/create-tarball.py
   * Update patches
     - debian/patches/armhf-do-not-build-qcms-with-neon.patch
+
+  [ Olivier Tilloy ]
+  * Remove patches that are no longer needed
+    - debian/patches/fix-make-package-tests-without-webrtc.patch
+    - debian/patches/ppc-no-static-sizes.patch
+    - debian/patches/s390x-workaround-sqlite3-clang-optimization-hang.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 15 Dec 2020 15:14:57 +0100
 
