@@ -1,4 +1,10 @@
-firefox-trunk (86.0~a1~hg20201215r560718-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (87.0~a1~hg20210126r564659-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 26 Jan 2021 22:10:39 +0100
+
+firefox-trunk (86.0~a1~hg20210123r564375-0ubuntu1) hirsute; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update cbindgen to 0.16.0
@@ -12,7 +18,7 @@ firefox-trunk (86.0~a1~hg20201215r560718-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/ppc-no-static-sizes.patch
     - debian/patches/s390x-workaround-sqlite3-clang-optimization-hang.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 15 Dec 2020 15:14:57 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sat, 23 Jan 2021 22:38:24 +0100
 
 firefox-trunk (85.0~a1~hg20201213r560450-0ubuntu1) hirsute; urgency=medium
 
