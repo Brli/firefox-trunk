@@ -231,7 +231,7 @@ debian/stamp-make-langpack-xpi-%:
 
 common-configure-arch common-configure-indep:: common-configure-impl
 common-configure-impl:: debian/stamp-mach-configure
-debian/stamp-mach-configure: cbindgen/bin/cbindgen
+debian/stamp-mach-configure: cbindgen/bin/cbindgen dump_syms/bin/dump_syms
 	$(CURDIR)/mach configure && $(CURDIR)/mach build-backend
 	touch $@
 clean::
@@ -245,6 +245,15 @@ cbindgen/bin/cbindgen: third_party/cbindgen/Cargo.toml
 clean::
 	rm -rf $(CURDIR)/cbindgen
 	rm -rf $(CURDIR)/third_party/cbindgen/target
+
+dump_syms/bin/dump_syms: third_party/dump_syms/Cargo.toml
+	cd $(CURDIR)/third_party/dump_syms; \
+	cargo build --release; \
+	export CARGO_HOME=$(CURDIR)/third_party/dump_syms/.cargo; \
+	cargo install --path . --bin dump_syms --root ../../dump_syms
+clean::
+	rm -rf $(CURDIR)/dump_syms
+	rm -rf $(CURDIR)/third_party/dump_syms/target
 
 install/$(MOZ_PKG_NAME)::
 	@echo "Adding suggests / recommends on support packages"

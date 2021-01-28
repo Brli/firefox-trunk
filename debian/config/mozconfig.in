@@ -84,6 +84,7 @@ ac_add_options CC=clang-@DEB_LLVM_VERSION@
 ac_add_options CXX=clang++-@DEB_LLVM_VERSION@
 ac_add_options AS=clang-@DEB_LLVM_VERSION@
 ac_add_options CBINDGEN=@TOPSRCDIR@/@DEB_BUILDDIR@/cbindgen/bin/cbindgen
+ac_add_options DUMP_SYMS=@TOPSRCDIR@/@DEB_BUILDDIR@/dump_syms/bin/dump_syms
 %%if DISTRIB_VERSION == 2004
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
 %%endif

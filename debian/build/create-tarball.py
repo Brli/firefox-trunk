@@ -146,6 +146,24 @@ class TarballCreator(OptionParser):
               fd.write('\n[workspace]')
         shutil.copytree('vendored-cbindgen/vendor/cbindgen', dest)
 
+  def vendor_dump_syms(self, dest):
+    # dump_syms is not available in Debian/Ubuntu yet
+    print('*** Vendoring dump_syms and its dependencies ***')
+    with ScopedTmpdir() as tmpdir:
+      with ScopedWorkingDirectory(tmpdir):
+        CheckCall(['cargo', 'new', 'vendored-dump_syms', '--vcs', 'none'])
+        with ScopedWorkingDirectory('vendored-dump_syms'):
+          with open('Cargo.toml', 'a+') as fd:
+            fd.write('dump_syms = { git = "https://github.com/mozilla/dump_syms.git", tag = "v0.0.7" }')
+          CheckCall(['cargo', 'vendor'])
+          with ScopedWorkingDirectory('vendor/dump_syms'):
+            os.makedirs('.cargo')
+            with open('.cargo/config', 'w') as fd:
+              fd.write(CheckOutput(['cargo', 'vendor']))
+            with open('Cargo.toml', 'a+') as fd:
+              fd.write('\n[workspace]')
+        shutil.copytree('vendored-dump_syms/vendor/dump_syms', dest)
+
   def run(self):
     (options, args) = self.parse_args()
 
@@ -215,6 +233,7 @@ class TarballCreator(OptionParser):
           fd.write(rev)
 
         self.vendor_cbindgen(os.path.join(os.getcwd(), 'third_party/cbindgen'))
+        self.vendor_dump_syms(os.path.join(os.getcwd(), 'third_party/dump_syms'))
 
         l10ndir = 'l10n'
         if not os.path.isdir(l10ndir):
@@ -330,7 +349,7 @@ class TarballCreator(OptionParser):
           topsrcdir = '%s-%s' % (name, version)
           with ScopedRename(name, topsrcdir):
             env = {'XZ_OPT': '--threads=0'}
-            args = ['tar', '-Jc', '--exclude=.git', '--exclude=.gitattributes', '--exclude=.hg', '--exclude=.hgignore', '--exclude=.hgtags', '--exclude=.svn']
+            args = ['tar', '-Jc', '--exclude=.hg', '--exclude=.hgignore', '--exclude=.hgtags', '--exclude=.svn']
             for exclude in settings['excludes']:
               args.append('--no-wildcards-match-slash') if exclude['wms'] == False else args.append('--wildcards-match-slash')
               args.append('--exclude')

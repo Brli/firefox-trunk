@@ -1,6 +1,12 @@
 firefox-trunk (87.0~a1~hg20210126r564659-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Vendor dump_syms v0.0.7 and its dependencies in the source tarball
+    - debian/build/create-tarball.py
+    - debian/build/rules.mk
+    - debian/config/mozconfig.in
+    - debian/config/tarball.conf
+  * Build-dep on libssl-dev as dump_syms dependency
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 26 Jan 2021 22:10:39 +0100
 
