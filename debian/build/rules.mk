@@ -238,6 +238,8 @@ clean::
 	rm -f debian/stamp-mach-configure
 
 cbindgen/bin/cbindgen: third_party/cbindgen/Cargo.toml
+	export CC=clang-$(DEB_LLVM_VERSION); \
+	export CXX=clang++-$(DEB_LLVM_VERSION); \
 	cd $(CURDIR)/third_party/cbindgen; \
 	cargo build --release; \
 	export CARGO_HOME=$(CURDIR)/third_party/cbindgen/.cargo; \
@@ -247,6 +249,8 @@ clean::
 	rm -rf $(CURDIR)/third_party/cbindgen/target
 
 dump_syms/bin/dump_syms: third_party/dump_syms/Cargo.toml
+	export CC=clang-$(DEB_LLVM_VERSION); \
+	export CXX=clang++-$(DEB_LLVM_VERSION); \
 	cd $(CURDIR)/third_party/dump_syms; \
 	cargo build --release; \
 	export CARGO_HOME=$(CURDIR)/third_party/dump_syms/.cargo; \

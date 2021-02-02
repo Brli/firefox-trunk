@@ -7,6 +7,8 @@ firefox-trunk (87.0~a1~hg20210126r564659-0ubuntu1) UNRELEASED; urgency=medium
     - debian/config/tarball.conf
   * Build-dep on libssl-dev as dump_syms dependency
     - debian/control{,.in}
+  * Let cbindgen and dump_syms use clang where needed
+    - debian/build/rules.mk
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 26 Jan 2021 22:10:39 +0100
 
