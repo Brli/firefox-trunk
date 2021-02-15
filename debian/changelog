@@ -9,6 +9,16 @@ firefox-trunk (87.0~a1~hg20210126r564659-0ubuntu1) UNRELEASED; urgency=medium
     - debian/control{,.in}
   * Let cbindgen and dump_syms use clang where needed
     - debian/build/rules.mk
+  * Update cbindgen to 0.17.0
+    - debian/build/create-tarball.py
+  * Add Silesian language pack
+    - update debian/config/locales.all
+    - update debian/config/locales.shipped
+    - update debian/control
+  * Drop upstreamed patches
+    - debian/patches/s390x-fix-hidden-symbol.patch
+  * Update patches
+    - debian/patches/armhf-reduce-linker-memory-use.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 26 Jan 2021 22:10:39 +0100
 

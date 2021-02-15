@@ -15,7 +15,6 @@ fix-armhf-webrtc-build.patch
 armhf-disable-unaligned-fp-access-emulation.patch
 armhf-reduce-linker-memory-use.patch
 ppc64el-workaround-bug-1555531.patch
-s390x-fix-hidden-symbol.patch
 armhf-clang-no-integrated-as-for-neon.patch
 armhf-do-not-build-qcms-with-neon.patch
 sandbox-update-arm-syscall-numbers.patch
