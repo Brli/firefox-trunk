@@ -14,6 +14,7 @@ reduce-rust-debuginfo.patch
 fix-armhf-webrtc-build.patch
 armhf-disable-unaligned-fp-access-emulation.patch
 armhf-reduce-linker-memory-use.patch
+armhf-rustc-thin-lto.patch
 ppc64el-workaround-bug-1555531.patch
 armhf-clang-no-integrated-as-for-neon.patch
 armhf-do-not-build-qcms-with-neon.patch

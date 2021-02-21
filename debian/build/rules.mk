@@ -356,6 +356,18 @@ pre-build::
 pre-build:: debian/config/locales.shipped $(pkgname_subst_files) $(appname_subst_files) mozconfig
 	$(call cmp_auto_generated_file,debian/config/locales.shipped,refresh-supported-locales)
 
+# Conditionally patch the top-level Cargo.toml file to reduce the LTO to "thin"
+# on armhf to work around OOM failures on Launchpad builders. This is only one
+# half of the workaround, see also debian/patches/armhf-rustc-thin-lto.patch.
+ifneq (,$(filter armhf, $(DEB_HOST_ARCH)))
+pre-build:: Cargo.toml.bak
+Cargo.toml.bak: Cargo.toml
+	cp $< $@
+	sed -i 's/\[profile.release\]/\[profile.release\]\nlto = "thin"/' $<
+clean::
+	if [ -f Cargo.toml.bak ]; then mv Cargo.toml.bak Cargo.toml; fi
+endif
+
 EXTRACT_TARBALL = $(firstword $(shell TMPDIR=`mktemp -d`; tar -jxf $(1) -C $$TMPDIR > /dev/null 2>&1; echo $$TMPDIR/`ls $$TMPDIR/ | head -n1`))
 
 ifdef LANGPACK_O_MATIC
