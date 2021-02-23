@@ -1,4 +1,10 @@
-firefox-trunk (87.0~a1~hg20210126r564659-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (88.0~a1~hg20210222r568163-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 21 Feb 2021 18:22:19 +0100
+
+firefox-trunk (87.0~a1~hg20210221r568163-0ubuntu1) hirsute; urgency=emergency
 
   [ Rico Tzschichholz ]
   * Vendor dump_syms v0.0.7 and its dependencies in the source tarball
@@ -27,7 +33,7 @@ firefox-trunk (87.0~a1~hg20210126r564659-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/rules.mk
     - debian/patches/armhf-rustc-thin-lto.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 26 Jan 2021 22:10:39 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 21 Feb 2021 13:56:30 +0100
 
 firefox-trunk (86.0~a1~hg20210123r564375-0ubuntu1) hirsute; urgency=medium
 
