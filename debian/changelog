@@ -5,6 +5,10 @@ firefox-trunk (88.0~a1~hg20210222r568163-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/rules.mk
   * Update cbindgen to 0.18.0
     - debian/build/create-tarball.py
+  * Reduce the LTO level (to "thin") on i386 to work around OOM failures on
+    Launchpad builders
+    - debian/build/rules.mk
+    - debian/patches/armhf-rustc-thin-lto.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 21 Feb 2021 18:22:19 +0100
 
