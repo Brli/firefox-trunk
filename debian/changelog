@@ -9,6 +9,8 @@ firefox-trunk (88.0~a1~hg20210222r568163-0ubuntu1) UNRELEASED; urgency=medium
     Launchpad builders
     - debian/build/rules.mk
     - debian/patches/armhf-rustc-thin-lto.patch
+  * Update patches
+    - debian/patches/rust-drop-dll-checksums.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 21 Feb 2021 18:22:19 +0100
 
