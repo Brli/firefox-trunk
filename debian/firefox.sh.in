@@ -18,6 +18,9 @@ MOZ_APP_NAME=@MOZ_APP_NAME@
 
 export MOZ_APP_LAUNCHER
 
+# Enable native Wayland support (https://launchpad.net/bugs/1916469)
+export MOZ_ENABLE_WAYLAND=1
+
 while [ ! -x $MOZ_LIBDIR/$MOZ_APP_NAME ] ; do
     if [ -L "$MOZ_APP_LAUNCHER" ] ; then
         MOZ_APP_LAUNCHER=`readlink -f $MOZ_APP_LAUNCHER`
