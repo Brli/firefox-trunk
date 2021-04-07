@@ -12,7 +12,7 @@ Forwarded: not-needed
  # gkrust_gtest. And not when doing cross-language LTO.
  ifndef MOZ_LTO_RUST_CROSS
  ifeq (,$(findstring gkrust_gtest,$(RUST_LIBRARY_FILE)))
-+ifneq (,$(filter-out arm x86,$(CPU_ARCH)))
++ifneq (,$(filter-out aarch64 arm x86,$(CPU_ARCH)))
  cargo_rustc_flags += -Clto
  endif
 +endif
