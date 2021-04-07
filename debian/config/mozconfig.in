@@ -90,7 +90,15 @@ ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
 %%endif
 %%if DISTRIB_VERSION == 1804
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
+%%if DEB_HOST_ARCH != arm64
+%%if DEB_HOST_ARCH != armhf
+%%if DEB_HOST_ARCH != ppc64el
+%%if DEB_HOST_ARCH != s390x
 ac_add_options NASM=/usr/lib/nasm-mozilla/bin/nasm
+%%endif
+%%endif
+%%endif
+%%endif
 %%endif
 %%if DISTRIB_VERSION == 1604
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node

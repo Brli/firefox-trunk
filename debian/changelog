@@ -1,6 +1,7 @@
 firefox-trunk (89.0~a1~hg20210322r572328-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Pass NASM only on supported archs
+    - debian/config/mozconfig.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 22 Mar 2021 19:36:32 +0100
 
