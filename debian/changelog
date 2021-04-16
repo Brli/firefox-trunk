@@ -9,6 +9,7 @@ firefox-trunk (89.0~a1~hg20210322r572328-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/armhf-do-not-build-qcms-with-neon.patch
     - debian/patches/armhf-reduce-linker-memory-use.patch
+    - debian/patches/relax-cargo-dep.patch
   * Update cbindgen to 0.19.0
     - debian/build/create-tarball.py
 
