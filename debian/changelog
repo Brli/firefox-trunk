@@ -1,6 +1,8 @@
 firefox-trunk (90.0~a1~hg20210420r576722-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Drop gtk2 dependency
+    - debian/control{,.in}
+    - debian/firefox.install.in
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 20 Apr 2021 12:03:47 +0200
 
