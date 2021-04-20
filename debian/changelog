@@ -3,6 +3,8 @@ firefox-trunk (90.0~a1~hg20210420r576722-0ubuntu1) UNRELEASED; urgency=medium
   * Drop gtk2 dependency
     - debian/control{,.in}
     - debian/firefox.install.in
+  * Bump build-deps on gtk+-3.0 >= 3.14, glib2.0 >= 2.42
+    - debian/control{,.in}
   * Update patches
     - debian/patches/reduce-rust-debuginfo.patch
 
