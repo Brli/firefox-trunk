@@ -195,6 +195,23 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
        member=ListMountableInfo
        peer=(label=unconfined),
 
+  # Allow remote control when running on Wayland
+  dbus (send)
+       bus=session
+       path=/org/freedesktop/DBus
+       interface=org.freedesktop.DBus
+       member=RequestName
+       peer=(name=org.freedesktop.DBus),
+  dbus (bind)
+       bus=session
+       name=org.mozilla.firefox.*,
+  dbus (send, receive)
+       bus=session
+       path=/org/mozilla/firefox/Remote
+       interface=org.mozilla.firefox
+       member=OpenURL
+       peer=(label=firefox),
+
   # gnome-session
   dbus (send)
        bus=session
@@ -274,9 +291,9 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
     /usr/share/distro-info/*.csv r,
     /var/lib/dpkg/** r,
 
-    /usr/local/lib/python3.[0-8]/dist-packages/ r,
+    /usr/local/lib/python3.[0-9]/dist-packages/ r,
     /usr/bin/ r,
-    /usr/bin/python3.[0-8] mr,
+    /usr/bin/python3.[0-9] mr,
 
     # file_inherit
     deny /tmp/gtalkplugin.log w,
