@@ -1,6 +1,7 @@
 firefox-trunk (91.0~a1~hg20210602r581615-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Drop upstreamed patches
+    - debian/patches/sandbox-update-arm-syscall-numbers.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 02 Jun 2021 12:58:21 +0200
 

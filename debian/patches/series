@@ -18,4 +18,3 @@ armhf-rustc-thin-lto.patch
 ppc64el-workaround-bug-1555531.patch
 armhf-clang-no-integrated-as-for-neon.patch
 armhf-do-not-build-qcms-with-neon.patch
-sandbox-update-arm-syscall-numbers.patch
