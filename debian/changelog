@@ -2,6 +2,11 @@ firefox-trunk (91.0~a1~hg20210602r581615-0ubuntu1) UNRELEASED; urgency=medium
 
   * Drop upstreamed patches
     - debian/patches/sandbox-update-arm-syscall-numbers.patch
+  * Update patches
+    - debian/patches/armhf-reduce-linker-memory-use.patch
+    - debian/patches/fix-armhf-webrtc-build.patch
+    - debian/patches/rust-drop-dll-checksums.patch
+    - debian/patches/ubuntu-ua-string-changes.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 02 Jun 2021 12:58:21 +0200
 
