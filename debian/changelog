@@ -5,6 +5,9 @@ firefox-trunk (92.0~a1~hg20210714r585465-0ubuntu1) UNRELEASED; urgency=medium
   * Use clang 13 if available and drop usage of clang 8
     - debian/control{,.in}
     - debian/build/rules.mk
+  * Update patches
+    - debian/patches/armhf-do-not-build-qcms-with-neon.patch
+    - debian/patches/armhf-reduce-linker-memory-use.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 14 Jul 2021 12:10:39 +0200
 
