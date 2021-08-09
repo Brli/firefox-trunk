@@ -8,6 +8,8 @@ firefox-trunk (92.0~a1~hg20210714r585465-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/armhf-do-not-build-qcms-with-neon.patch
     - debian/patches/armhf-reduce-linker-memory-use.patch
+  * Remove patches that are no longer needed
+    - debian/patches/armhf-disable-unaligned-fp-access-emulation.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 14 Jul 2021 12:10:39 +0200
 
