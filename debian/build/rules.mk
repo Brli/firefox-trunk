@@ -47,10 +47,6 @@ DEB_MAKE_EXTRA_ARGS		:=
 DEB_MAKE_INSTALL_TARGET	:=
 # Prevent some files from being cleaned to avoid build failures
 DEB_CLEAN_EXCLUDE		:= Cargo.toml.orig
-# Flash should be the only thing that requires gtk2, but all the Debian &
-# Ubuntu Flash packages already depend on gtk2. So skip depending on it
-# so that we can install a gtk2-free system
-DEB_DH_SHLIBDEPS_ARGS_ALL += -- -xlibgtk2.0-0
 # Don't save debug symbols in firefox-dbg (rely on pkg-create-dbgsym to create
 # ddeb packages for us). This is needed as long as there is a firefox-dbg
 # transitional package
