@@ -3,6 +3,9 @@ firefox-trunk (93.0~a1~hg20210809r588278-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/armhf-reduce-linker-memory-use.patch
     - debian/patches/ubuntu-ua-string-changes.patch
+  * Use clang 13 if available
+    - debian/control{,.in}
+    - debian/build/rules.mk
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 10 Aug 2021 08:03:56 +0200
 
