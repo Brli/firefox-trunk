@@ -1,4 +1,10 @@
-firefox-trunk (93.0~a1~hg20210809r588278-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (94.0~a1~hg20210908r591274-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 08 Sep 2021 20:08:53 +0200
+
+firefox-trunk (93.0~a1~hg20210906r591057-0ubuntu1) impish; urgency=medium
 
   * Update patches
     - debian/patches/armhf-reduce-linker-memory-use.patch
@@ -9,7 +15,7 @@ firefox-trunk (93.0~a1~hg20210809r588278-0ubuntu1) UNRELEASED; urgency=medium
   * Explicitly set MOZBUILD_STATE_PATH
     - debian/build/rules.mk
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 10 Aug 2021 08:03:56 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 06 Sep 2021 10:04:03 +0200
 
 firefox-trunk (92.0~a1~hg20210808r588154-0ubuntu1) impish; urgency=medium
 
