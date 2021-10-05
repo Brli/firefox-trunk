@@ -2,6 +2,8 @@ firefox-trunk (94.0~a1~hg20210908r591274-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on rustc >= 1.53.0 and cargo >= 0.54
     - debian/control{,.in}
+  * Revert failing "pip --check" addition
+    - debian/patches/revert-pip-check.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 08 Sep 2021 20:08:53 +0200
 

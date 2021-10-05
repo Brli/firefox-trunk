@@ -1,3 +1,4 @@
+relax-cargo.patch
 ubuntu-bookmarks.patch
 ubuntu-ua-string-changes.patch
 dont-checkout-locales.patch
@@ -16,3 +17,4 @@ armhf-rustc-thin-lto.patch
 ppc64el-workaround-bug-1555531.patch
 armhf-clang-no-integrated-as-for-neon.patch
 armhf-do-not-build-qcms-with-neon.patch
+revert-pip-check.patch
