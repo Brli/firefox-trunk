@@ -1,4 +1,4 @@
-relax-cargo.patch
+relax-cargo-dep.patch
 ubuntu-bookmarks.patch
 ubuntu-ua-string-changes.patch
 dont-checkout-locales.patch
