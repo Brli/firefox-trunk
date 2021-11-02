@@ -1,7 +1,5 @@
 firefox-trunk (95.0~a1~hg20211006r594982-0ubuntu1) UNRELEASED; urgency=medium
 
-  * Make cargo 0.52 aka 1.51.0 sufficient
-    - debian/patches/relax-cargo-dep.patch
   * Pass --without-wasm-sandboxed-libraries
     - debian/config/mozconfig.in
   * Update patches
