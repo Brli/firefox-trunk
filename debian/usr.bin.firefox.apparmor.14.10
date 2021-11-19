@@ -51,6 +51,11 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
        bus=system
        path=/org/freedesktop/NetworkManager,
 
+  # used by third_party/rust/audio_thread_priority
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/RealtimeKit1,
+
   # should maybe be in abstractions
   /etc/ r,
   /etc/mime.types r,
@@ -121,7 +126,8 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
   @{PROC}/[0-9]*/status r,
   @{PROC}/filesystems r,
   @{PROC}/sys/vm/overcommit_memory r,
-  /sys/devices/pci[0-9]*/**/uevent r,
+  # prevent crash LP: #1931602
+  /sys/devices/pci[0-9]*/**/{uevent,resource,irq,class} r,
   /sys/devices/platform/**/uevent r,
   /sys/devices/pci*/**/{busnum,idVendor,idProduct} r,
   /sys/devices/pci*/**/{,subsystem_}device r,

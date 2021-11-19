@@ -22,9 +22,6 @@ export MOZ_APP_LAUNCHER
 # only in Wayland sessions (https://launchpad.net/bugs/1923116)
 if [ "$XDG_SESSION_TYPE" = "wayland" ] ; then
     export MOZ_ENABLE_WAYLAND=1
-    # ensure that opening links from XWayland apps still works
-    # (https://launchpad.net/bugs/1921931)
-    export MOZ_DBUS_REMOTE=1
 fi
 
 while [ ! -x $MOZ_LIBDIR/$MOZ_APP_NAME ] ; do
