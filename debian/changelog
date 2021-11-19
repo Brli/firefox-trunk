@@ -2,6 +2,8 @@ firefox-trunk (96.0~a1~hg20211102r597893-0ubuntu1) UNRELEASED; urgency=medium
 
   * Install more sizes of the firefox application icon
     - debian/build/rules.mk
+  * Update patches
+    - debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 02 Nov 2021 13:51:43 +0100
 
