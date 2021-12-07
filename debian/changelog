@@ -4,6 +4,8 @@ firefox-trunk (96.0~a1~hg20211102r597893-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/rules.mk
   * Update patches
     - debian/patches/webrtc-fix-compiler-flags-for-armhf.patch
+  * Bump dump_sys to bf7f6bd855eb6ecb233b52bfa7b2c975b7026540 (LP: #1945770)
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 02 Nov 2021 13:51:43 +0100
 
