@@ -9,8 +9,8 @@ Forwarded: not-needed
 --- a/config/makefiles/rust.mk
 +++ b/config/makefiles/rust.mk
 @@ -70,8 +70,10 @@ ifndef MOZ_DEBUG_RUST
- # Never enable when sancov is enabled to work around https://github.com/rust-lang/rust/issues/90300.
- ifndef rustflags_sancov
+ # Never enable when coverage is enabled to work around https://github.com/rust-lang/rust/issues/90045.
+ ifndef MOZ_CODE_COVERAGE
  ifeq (,$(findstring gkrust_gtest,$(RUST_LIBRARY_FILE)))
 +ifneq (,$(filter-out aarch64 arm x86,$(CPU_ARCH)))
  cargo_rustc_flags += -Clto
@@ -19,3 +19,4 @@ Forwarded: not-needed
  # We need -Cembed-bitcode=yes for all crates when using -Clto.
  RUSTFLAGS += -Cembed-bitcode=yes
  endif
+
