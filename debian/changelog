@@ -1,4 +1,10 @@
-firefox-trunk (96.0~a1~hg20211102r597893-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (97.0~a1~hg20211210r601674-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 10 Dec 2021 14:13:26 +0100
+
+firefox-trunk (96.0~a1~hg20211206r601067-0ubuntu1) jammy; urgency=medium
 
   * Install more sizes of the firefox application icon
     - debian/build/rules.mk
@@ -8,7 +14,7 @@ firefox-trunk (96.0~a1~hg20211102r597893-0ubuntu1) UNRELEASED; urgency=medium
   * Bump dump_sys to bf7f6bd855eb6ecb233b52bfa7b2c975b7026540 (LP: #1945770)
     - debian/build/create-tarball.py
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 02 Nov 2021 13:51:43 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 06 Dec 2021 12:53:28 +0100
 
 firefox-trunk (95.0~a1~hg20211029r597469-0ubuntu1) jammy; urgency=medium
 
