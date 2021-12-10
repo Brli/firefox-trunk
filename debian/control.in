@@ -41,7 +41,7 @@ Build-Depends: cdbs,
 	clang-13 | clang-12 | clang-11 | clang-10,
 	libclang-13-dev | libclang-12-dev | libclang-11-dev | libclang-10-dev,
 	llvm-13-dev | llvm-12-dev | llvm-11-dev | llvm-10-dev,
-	cargo (>= 0.52),
+	cargo (>= 0.54),
 	rustc (>= 1.53.0),
 	nodejs (>= 10.21) | nodejs-mozilla (>= 10.21),
 Standards-Version: 3.9.1
