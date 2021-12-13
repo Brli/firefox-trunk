@@ -137,6 +137,8 @@ class TarballCreator(OptionParser):
         with ScopedWorkingDirectory('vendored-cbindgen'):
           with open('Cargo.toml', 'a+') as fd:
             fd.write('cbindgen = "=0.20.0"')
+            # hermit-abi 0.1.20 requires rustc 1.56
+            fd.write('\nhermit-abi = "=0.1.16"')
           CheckCall(['cargo', 'vendor'])
           with ScopedWorkingDirectory('vendor/cbindgen'):
             os.makedirs('.cargo')
@@ -155,6 +157,8 @@ class TarballCreator(OptionParser):
         with ScopedWorkingDirectory('vendored-dump_syms'):
           with open('Cargo.toml', 'a+') as fd:
             fd.write('dump_syms = { git = "https://github.com/mozilla/dump_syms.git", rev = "bf7f6bd855eb6ecb233b52bfa7b2c975b7026540" }')
+            # hermit-abi 0.1.20 requires rustc 1.56
+            fd.write('\nhermit-abi = "=0.1.16"')
           CheckCall(['cargo', 'vendor'])
           with ScopedWorkingDirectory('vendor/dump_syms'):
             os.makedirs('.cargo')
