@@ -1,8 +1,31 @@
-firefox-trunk (97.0~a1~hg20211210r601674-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (98.0~a1~hg20220120r604921-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  [ Olivier Tilloy ]
+  * Cherry-pick a series of upstream patches to fix building WebRTC on armhf
+    (https://bugzilla.mozilla.org/1738845):
+    - debian/patches/webrtc-armhf/upstream-D134738.diff
+  * Remove an obsolete patch:
+    - debian/patches/fix-armhf-webrtc-build.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 10 Dec 2021 14:13:26 +0100
+  [ Rico Tzschichholz ]
+  * Bump build-dep on rustc >= 1.57.0 and cargo >= 0.58
+    - debian/control{,.in}
+  * Update patches
+    - debian/patches/armhf-reduce-linker-memory-use.patch
+    - debian/patches/rust-drop-dll-checksums.patch
+    - debian/patches/support-coinstallable-trunk-build.patch
+    - debian/patches/ubuntu-ua-string-changes.patch
+  * Disable patches
+    - debian/patches/ubuntu-bookmarks.patch
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 20 Jan 2022 11:01:38 +0100
+
+firefox-trunk (97.0~a1~hg20211217r602370-0ubuntu1) jammy; urgency=medium
+
+  * Update patches
+    - debian/patches/fix-armhf-webrtc-build.patch
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 17 Dec 2021 12:40:14 +0100
 
 firefox-trunk (96.0~a1~hg20211206r601067-0ubuntu1) jammy; urgency=medium
 

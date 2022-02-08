@@ -19,15 +19,15 @@ Forwarded: no
 +    MOZ_APP_PROFILE="$WITH_APP_PROFILE"
 +fi
 +
- dnl ========================================================
- dnl Ensure Android SDK and build-tools versions depending on
- dnl mobile target.
+ AC_SUBST(MOZ_OFFICIAL_BRANDING)
+ if test -n "$MOZ_OFFICIAL_BRANDING"; then
+   if test -z "$MOZ_OFFICIAL_BRANDING_DIRECTORY"; then
 --- a/build/moz.configure/old.configure
 +++ b/build/moz.configure/old.configure
 @@ -240,6 +240,7 @@
+     "--includedir",
+     "--libdir",
      "--prefix",
-     "--with-android-max-sdk",
-     "--with-android-min-sdk",
 +    "--with-app-profile",
      "--with-branding",
      "--with-distribution-id",

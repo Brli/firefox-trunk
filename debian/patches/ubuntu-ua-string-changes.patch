@@ -72,9 +72,9 @@ Index: b/old-configure.in
 +    MOZ_UA_VENDOR="$WITH_UA_VENDOR"
 +fi
 +
- dnl ========================================================
- dnl Ensure Android SDK and build-tools versions depending on
- dnl mobile target.
+ AC_SUBST(MOZ_OFFICIAL_BRANDING)
+ if test -n "$MOZ_OFFICIAL_BRANDING"; then
+   if test -z "$MOZ_OFFICIAL_BRANDING_DIRECTORY"; then
 @@ -4050,6 +4060,7 @@
  
  AC_SUBST(MOZ_APP_DISPLAYNAME)
@@ -88,13 +88,13 @@ Index: b/build/moz.configure/old.configure
 --- a/build/moz.configure/old.configure
 +++ b/build/moz.configure/old.configure
 @@ -262,6 +262,7 @@
+     "--with-branding",
+     "--with-distribution-id",
      "--with-macbundlename-prefix",
-     "--with-system-libevent",
-     "--with-system-png",
 +    "--with-ua-vendor",
-     "--with-user-appdir",
      "--x-includes",
      "--x-libraries",
+ )
 Index: b/netwerk/protocol/http/moz.build
 ===================================================================
 --- a/netwerk/protocol/http/moz.build
