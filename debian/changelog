@@ -1,4 +1,10 @@
-firefox-trunk (98.0~a1~hg20220120r604921-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (99.0~a1~hg20220207r606875-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 08 Feb 2022 07:57:58 +0100
+
+firefox-trunk (98.0~a1~hg20220207r606843-0ubuntu1) jammy; urgency=medium
 
   [ Olivier Tilloy ]
   * Cherry-pick a series of upstream patches to fix building WebRTC on armhf
@@ -18,7 +24,7 @@ firefox-trunk (98.0~a1~hg20220120r604921-0ubuntu1) UNRELEASED; urgency=medium
   * Disable patches
     - debian/patches/ubuntu-bookmarks.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 20 Jan 2022 11:01:38 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 07 Feb 2022 09:10:38 +0100
 
 firefox-trunk (97.0~a1~hg20211217r602370-0ubuntu1) jammy; urgency=medium
 
