@@ -1,6 +1,6 @@
 firefox-trunk (99.0~a1~hg20220207r606875-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Add StartupWMClass=@MOZ_APP_NAME@-nightly to fix window matching
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 08 Feb 2022 07:57:58 +0100
 
@@ -21,6 +21,8 @@ firefox-trunk (98.0~a1~hg20220207r606843-0ubuntu1) jammy; urgency=medium
     - debian/patches/rust-drop-dll-checksums.patch
     - debian/patches/support-coinstallable-trunk-build.patch
     - debian/patches/ubuntu-ua-string-changes.patch
+  * Drop upstreamed patches
+    - debian/patches/set-prgname-to-remoting-name.patch
   * Disable patches
     - debian/patches/ubuntu-bookmarks.patch
 
