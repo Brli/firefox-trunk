@@ -1,8 +1,8 @@
-Description: Do not enable LTO for rustc when building on armhf, to work around
- OOM failures on Launchpad builders. Note that this alone is not sufficient,
- because by default cargo will also enable full LTO when building with a release
- profile, so the top-level Cargo.toml file needs to be conditionally patched
- (this is done in debian/build/rules.mk).
+Description: Do not enable LTO for rustc when building on arm64, armhf and i386,
+ to work around OOM failures on Launchpad builders. Note that this alone is not
+ sufficient, because by default cargo will also enable full LTO when building
+ with a release profile, so the top-level Cargo.toml file needs to be
+ conditionally patched (this is done in debian/build/rules.mk).
 Author: Olivier Tilloy <olivier.tilloy@canonical.com>
 Forwarded: not-needed
 
@@ -12,7 +12,7 @@ Forwarded: not-needed
  # Never enable when coverage is enabled to work around https://github.com/rust-lang/rust/issues/90045.
  ifndef MOZ_CODE_COVERAGE
  ifeq (,$(findstring gkrust_gtest,$(RUST_LIBRARY_FILE)))
-+ifneq (,$(filter-out aarch64 arm x86,$(CPU_ARCH)))
++ifeq (,$(filter aarch64 arm x86,$(CPU_ARCH)))
  cargo_rustc_flags += -Clto
  endif
 +endif
