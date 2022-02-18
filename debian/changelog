@@ -1,6 +1,9 @@
 firefox-trunk (99.0~a1~hg20220207r606875-0ubuntu1) UNRELEASED; urgency=medium
 
   * Add StartupWMClass=@MOZ_APP_NAME@-nightly to fix window matching
+  * Use clang 14 if available
+    - debian/control{,.in}
+    - debian/build/rules.mk
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 08 Feb 2022 07:57:58 +0100
 
