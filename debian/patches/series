@@ -1,4 +1,4 @@
-#ubuntu-bookmarks.patch
+ubuntu-bookmarks.patch
 ubuntu-ua-string-changes.patch
 dont-checkout-locales.patch
 #unity-menubar.patch
