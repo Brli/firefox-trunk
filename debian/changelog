@@ -1,11 +1,17 @@
-firefox-trunk (99.0~a1~hg20220207r606875-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (100.0~a1~hg20220310r610213-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 10 Mar 2022 20:02:20 +0100
+
+firefox-trunk (99.0~a1~hg20220308r609974-0ubuntu1) UNRELEASED; urgency=medium
 
   * Add StartupWMClass=@MOZ_APP_NAME@-nightly to fix window matching
   * Use clang 14 if available
     - debian/control{,.in}
     - debian/build/rules.mk
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 08 Feb 2022 07:57:58 +0100
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 08 Mar 2022 07:44:00 +0100
 
 firefox-trunk (98.0~a1~hg20220207r606843-0ubuntu1) jammy; urgency=medium
 
