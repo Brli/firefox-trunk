@@ -1,6 +1,9 @@
 firefox-trunk (100.0~a1~hg20220310r610213-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Update cbindgen to 0.21.0
+    - debian/build/create-tarball.py
+  * Update patches
+    - debian/patches/ubuntu-ua-string-changes.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 10 Mar 2022 20:02:20 +0100
 

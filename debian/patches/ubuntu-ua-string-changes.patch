@@ -99,7 +99,7 @@ Index: b/netwerk/protocol/http/moz.build
 ===================================================================
 --- a/netwerk/protocol/http/moz.build
 +++ b/netwerk/protocol/http/moz.build
-@@ -154,6 +154,9 @@
+@@ -154,4 +154,7 @@
      elif CONFIG["HOST_MAJOR_VERSION"] >= "15":
          DEFINES["HAS_CONNECTX"] = True
  
@@ -107,5 +107,3 @@ Index: b/netwerk/protocol/http/moz.build
 +    DEFINES["MOZ_UA_VENDOR"] = "\"%s\"" % CONFIG["MOZ_UA_VENDOR"]
 +
  include("/tools/fuzzing/libfuzzer-config.mozbuild")
- 
- if CONFIG["MOZ_BUILD_APP"] == "browser":
