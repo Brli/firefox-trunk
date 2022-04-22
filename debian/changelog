@@ -2,6 +2,8 @@ firefox-trunk (101.0~a1~hg20220406r613473-0ubuntu1) UNRELEASED; urgency=medium
 
   * Bump build-dep on rustc >= 1.59.0 and cargo >= 0.60
     - debian/control{,.in}
+  * Update cbindgen to 0.23.0
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 06 Apr 2022 14:04:36 +0200
 
