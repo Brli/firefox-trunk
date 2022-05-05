@@ -1,4 +1,10 @@
-firefox-trunk (101.0~a1~hg20220406r613473-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (102.0~a1~hg20220505r616243-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 05 May 2022 16:37:03 +0200
+
+firefox-trunk (101.0~a1~hg20220501r615733-0ubuntu1) jammy; urgency=medium
 
   [ Rico Tzschichholz ]
   * Bump build-dep on rustc >= 1.59.0 and cargo >= 0.60
@@ -12,7 +18,7 @@ firefox-trunk (101.0~a1~hg20220406r613473-0ubuntu1) UNRELEASED; urgency=medium
   * Update patches
     - debian/patches/webrtc-armhf/upstream-D134738.diff
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 06 Apr 2022 14:04:36 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 01 May 2022 12:39:21 +0200
 
 firefox-trunk (100.0~a1~hg20220404r613239-0ubuntu1) jammy; urgency=medium
 
