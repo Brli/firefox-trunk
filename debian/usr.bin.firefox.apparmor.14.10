@@ -264,6 +264,13 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
        member=EnumerateDevices
        peer=(label=unconfined),
 
+  # File browser
+  dbus (send)
+       bus=session
+       interface=org.freedesktop.FileManager1
+       path=/org/freedesktop/FileManager1
+       member=ShowItems,
+
   #
   # Extensions
   # /usr/share/.../extensions/... is already covered by '/usr/** r', above.
