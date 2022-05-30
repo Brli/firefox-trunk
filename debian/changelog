@@ -1,4 +1,10 @@
-firefox-trunk (102.0~a1~hg20220505r616243-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (103.0~a1~hg20220530r619138-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 30 May 2022 18:51:13 +0200
+
+firefox-trunk (102.0~a1~hg20220529r619126-0ubuntu1) kinetic; urgency=medium
 
   [ Rico Tzschichholz ]
   * Update patches
@@ -7,7 +13,7 @@ firefox-trunk (102.0~a1~hg20220505r616243-0ubuntu1) UNRELEASED; urgency=medium
   [ Dariusz Gadomski ]
   * Enable launching external file browser with AppArmor enabled (LP: #1931603)
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 05 May 2022 16:37:03 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 29 May 2022 16:30:01 +0200
 
 firefox-trunk (101.0~a1~hg20220501r615733-0ubuntu1) jammy; urgency=medium
 
