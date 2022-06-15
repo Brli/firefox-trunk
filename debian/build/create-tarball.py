@@ -136,7 +136,7 @@ class TarballCreator(OptionParser):
         CheckCall(['cargo', 'new', 'vendored-cbindgen', '--vcs', 'none'])
         with ScopedWorkingDirectory('vendored-cbindgen'):
           with open('Cargo.toml', 'a+') as fd:
-            fd.write('cbindgen = "=0.23.0"')
+            fd.write('cbindgen = "=0.24.3"')
           CheckCall(['cargo', 'vendor'])
           with ScopedWorkingDirectory('vendor/cbindgen'):
             os.makedirs('.cargo')
@@ -154,7 +154,7 @@ class TarballCreator(OptionParser):
         CheckCall(['cargo', 'new', 'vendored-dump_syms', '--vcs', 'none'])
         with ScopedWorkingDirectory('vendored-dump_syms'):
           with open('Cargo.toml', 'a+') as fd:
-            fd.write('dump_syms = { git = "https://github.com/mozilla/dump_syms.git", rev = "c558ad1824b247e147dcc45ec105588883e379fb" }')
+            fd.write('dump_syms = { git = "https://github.com/mozilla/dump_syms.git", tag = "v1.0.1" }')
           CheckCall(['cargo', 'vendor'])
           with ScopedWorkingDirectory('vendor/dump_syms'):
             os.makedirs('.cargo')

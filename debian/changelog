@@ -1,6 +1,9 @@
 firefox-trunk (103.0~a1~hg20220530r619138-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Update dump_sys to v1.0.1
+    - debian/build/create-tarball.py
+  * Update cbindgen to 0.24.3
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 30 May 2022 18:51:13 +0200
 
