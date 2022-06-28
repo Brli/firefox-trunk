@@ -1,9 +1,15 @@
-firefox-trunk (103.0~a1~hg20220530r619138-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (104.0~a1~hg20220628r622283-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 28 Jun 2022 12:12:18 +0200
+
+firefox-trunk (103.0~a1~hg20220626r622105-0ubuntu1) kinetic; urgency=medium
 
   * Update cbindgen to 0.24.3
     - debian/build/create-tarball.py
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 30 May 2022 18:51:13 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sun, 26 Jun 2022 10:20:20 +0200
 
 firefox-trunk (102.0~a1~hg20220529r619126-0ubuntu1) kinetic; urgency=medium
 
