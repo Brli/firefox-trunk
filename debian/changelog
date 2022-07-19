@@ -1,6 +1,7 @@
 firefox-trunk (104.0~a1~hg20220628r622283-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Bump build-dep on nodejs(-mozilla) >= 12.22.1
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 28 Jun 2022 12:12:18 +0200
 
