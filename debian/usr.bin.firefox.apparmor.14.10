@@ -201,6 +201,19 @@ profile firefox /@MOZ_LIBDIR@/firefox{,*[^s][^h]} {
        member=ListMountableInfo
        peer=(label=unconfined),
 
+  # Allow access to xdg-desktop-portal and xdg-document-portal (LP: #1974449)
+  dbus (receive, send)
+       bus=session
+       interface=org.freedesktop.portal.*
+       path=/org/freedesktop/portal/{desktop,documents}{,/**}
+       peer=(label=unconfined),
+
+  dbus (receive, send)
+       bus=session
+       interface=org.freedesktop.DBus.Properties
+       path=/org/freedesktop/portal/{desktop,documents}{,/**}
+       peer=(label=unconfined),
+
   # Allow remote control when running on Wayland
   dbus (send)
        bus=session
