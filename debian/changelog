@@ -1,4 +1,13 @@
-firefox-trunk (104.0~a1~hg20220628r622283-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (105.0~a1~hg20220728r625450-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Bump build-dep on nodejs(-mozilla) >= 12.22.1
+    - debian/control{,.in}
+  * Bump build-dep on rustc >= 1.61.0 and cargo >= 0.62
+    - debian/control{,.in}
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 29 Jul 2022 08:35:19 +0200
+
+firefox-trunk (104.0~a1~hg20220723r624975-0ubuntu1) kinetic; urgency=medium
 
   * Bump build-dep on nodejs(-mozilla) >= 12.22.1
     - debian/control{,.in}
