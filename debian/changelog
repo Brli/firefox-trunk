@@ -2,6 +2,8 @@ firefox-trunk (106.0~a1~hg20220825r628156-0ubuntu1) UNRELEASED; urgency=medium
 
   * Update dump_sys to v2.0.0
     - debian/build/create-tarball.py
+  * Use MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none instead of
+    MACH_USE_SYSTEM_PYTHON=1
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 25 Aug 2022 09:55:04 +0200
 
