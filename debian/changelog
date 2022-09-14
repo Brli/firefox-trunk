@@ -2,6 +2,8 @@ firefox-trunk (106.0~a1~hg20220825r628156-0ubuntu1) UNRELEASED; urgency=medium
 
   * Use MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none instead of
     MACH_USE_SYSTEM_PYTHON=1
+  * Bump build-dep on nodejs(-mozilla) >= 12.22.12
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Thu, 25 Aug 2022 09:55:04 +0200
 
