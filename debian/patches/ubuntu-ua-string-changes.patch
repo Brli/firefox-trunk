@@ -100,8 +100,8 @@ Index: b/netwerk/protocol/http/moz.build
 --- a/netwerk/protocol/http/moz.build
 +++ b/netwerk/protocol/http/moz.build
 @@ -154,4 +154,7 @@
-     elif CONFIG["HOST_MAJOR_VERSION"] >= "15":
-         DEFINES["HAS_CONNECTX"] = True
+     "components.conf",
+ ]
  
 +if CONFIG["MOZ_UA_VENDOR"]:
 +    DEFINES["MOZ_UA_VENDOR"] = "\"%s\"" % CONFIG["MOZ_UA_VENDOR"]
