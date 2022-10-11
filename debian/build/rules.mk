@@ -235,6 +235,7 @@ clean::
 	rm -f debian/stamp-mach-configure
 
 cbindgen/bin/cbindgen: third_party/cbindgen/Cargo.toml
+	export RUST_BACKTRACE=full; \
 	export CC=clang-$(DEB_LLVM_VERSION); \
 	export CXX=clang++-$(DEB_LLVM_VERSION); \
 	cd $(CURDIR)/third_party/cbindgen; \
@@ -246,6 +247,7 @@ clean::
 	rm -rf $(CURDIR)/third_party/cbindgen/target
 
 dump_syms/bin/dump_syms: third_party/dump_syms/Cargo.toml
+	export RUST_BACKTRACE=full; \
 	export CC=clang-$(DEB_LLVM_VERSION); \
 	export CXX=clang++-$(DEB_LLVM_VERSION); \
 	cd $(CURDIR)/third_party/dump_syms; \
