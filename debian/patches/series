@@ -15,3 +15,4 @@ ppc64el-workaround-bug-1555531.patch
 armhf-clang-no-integrated-as-for-neon.patch
 armhf-do-not-build-qcms-with-neon.patch
 fix-fdlibm-ftbfs.patch
+libwebrtc-i386-sse2-ftbfs.patch
