@@ -4,6 +4,9 @@ firefox-trunk (107.0~a1~hg20220919r635747-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/create-tarball.py
   * Pass "export RUST_BACKTRACE=full" to cbindgen/dump_sys build
     - debian/build/rules.mk
+  * Fix building cubeb-rs on arm*
+    - debian/patches/D158954.patch,debian/patches/D158956.patch,
+      debian/patches/D158957.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 19 Sep 2022 19:41:14 +0200
 
