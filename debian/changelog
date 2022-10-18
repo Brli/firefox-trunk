@@ -1,4 +1,10 @@
-firefox-trunk (107.0~a1~hg20220919r635747-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (108.0~a1~hg20221018r638034-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 18 Oct 2022 07:56:36 +0200
+
+firefox-trunk (107.0~a1~hg20221014r637946-0ubuntu1) kinetic; urgency=medium
 
   * Bump dump_sys to 6b842ac0008e2e9efe1df31e1c918ba02cb31b4d
     - debian/build/create-tarball.py
@@ -8,7 +14,7 @@ firefox-trunk (107.0~a1~hg20220919r635747-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/D158954.patch,debian/patches/D158956.patch,
       debian/patches/D158957.patch
 
- -- Rico Tzschichholz <ricotz@ubuntu.com>  Mon, 19 Sep 2022 19:41:14 +0200
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Sat, 15 Oct 2022 15:48:59 +0200
 
 firefox-trunk (106.0~a1~hg20220918r635717-0ubuntu1) kinetic; urgency=medium
 
