@@ -16,6 +16,3 @@ armhf-clang-no-integrated-as-for-neon.patch
 armhf-do-not-build-qcms-with-neon.patch
 fix-fdlibm-ftbfs.patch
 libwebrtc-i386-sse2-ftbfs.patch
-D158956.patch
-D158954.patch
-D158957.patch
