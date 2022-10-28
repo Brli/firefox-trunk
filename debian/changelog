@@ -1,5 +1,9 @@
 firefox-trunk (108.0~a1~hg20221018r638034-0ubuntu1) UNRELEASED; urgency=medium
 
+  * Update patches
+    - debian/patches/fix-fdlibm-ftbfs.patch
+    - debian/patches/armhf-reduce-linker-memory-use.patch
+    - debian/patches/unity-menubar.patch
   * Bump dump_sys to 0ac53a9c561988b617a68bf4a59c92b33d4bdd19
     - debian/build/create-tarball.py
   * Drop upstreamed patches
