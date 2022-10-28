@@ -9,6 +9,10 @@ firefox-trunk (108.0~a1~hg20221018r638034-0ubuntu1) UNRELEASED; urgency=medium
   * Drop upstreamed patches
     - debian/patches/D158954.patch,debian/patches/D158956.patch,
       debian/patches/D158957.patch
+  * Stop signing NSS libraries using shlibsign 
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1620158
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1796504
+    - debian/build/rules.mk
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 18 Oct 2022 07:56:36 +0200
 

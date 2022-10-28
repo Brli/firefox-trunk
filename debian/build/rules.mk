@@ -325,11 +325,6 @@ $(patsubst %,binary-fixup/%,$(DEB_ALL_PACKAGES)) :: binary-fixup/%:
 	find debian/$(cdbs_curpkg) -type f -perm -5 \( -name '*.zip' -or -name '*.xml' -or -name '*.js' -or -name '*.manifest' -or -name '*.xpt' \) -print0 2>/dev/null | xargs -0r chmod 644
 	$(foreach f,$(call cdbs_expand_curvar,MOZ_EXECUTABLES),chmod a+x debian/$(cdbs_curpkg)/$(f);)
 
-binary-predeb/$(MOZ_PKG_NAME)::
-	$(foreach lib,libfreeblpriv3.so libnssdbm3.so libsoftokn3.so, \
-	        LD_LIBRARY_PATH=debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR):$$LD_LIBRARY_PATH \
-	        $(MOZ_DISTDIR)/bin/shlibsign -v -i debian/$(MOZ_PKG_NAME)/$(MOZ_LIBDIR)/$(lib);)
-
 mozconfig: debian/config/mozconfig
 	cp $< $@
 
