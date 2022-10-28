@@ -1,5 +1,7 @@
 firefox-trunk (108.0~a1~hg20221018r638034-0ubuntu1) UNRELEASED; urgency=medium
 
+  * Bump dump_sys to 0ac53a9c561988b617a68bf4a59c92b33d4bdd19
+    - debian/build/create-tarball.py
   * Drop upstreamed patches
     - debian/patches/D158954.patch,debian/patches/D158956.patch,
       debian/patches/D158957.patch
