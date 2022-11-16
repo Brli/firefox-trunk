@@ -1,4 +1,10 @@
-firefox-trunk (108.0~a1~hg20221018r638034-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (109.0~a1~hg20221116r642509-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 16 Nov 2022 13:12:30 +0100
+
+firefox-trunk (108.0~a1~hg20221031r639713-0ubuntu1) kinetic; urgency=medium
 
   * Update patches
     - debian/patches/fix-fdlibm-ftbfs.patch
