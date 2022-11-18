@@ -206,22 +206,23 @@ Forwarded: not-needed
 -#if defined(WEBRTC_ARCH_X86_FAMILY)
 +#if defined(WEBRTC_ARCH_X86_FAMILY) && defined(__SSE2__)
  
- void MatchedFilterCore_SSE2(size_t x_start_index,
-                             float x2_sum_threshold,
-@@ -410,11 +410,13 @@ void MatchedFilter::Update(const Downsam
+ void MatchedFilterCore_AccumulatedError_SSE2(
+     size_t x_start_index,
+@@ -410,12 +410,14 @@ void MatchedFilter::Update(const Downsam
  
      switch (optimization_) {
  #if defined(WEBRTC_ARCH_X86_FAMILY)
 +#if defined(__SSE2__)
        case Aec3Optimization::kSse2:
-         aec3::MatchedFilterCore_SSE2(x_start_index, x2_sum_threshold, smoothing,
-                                      render_buffer.buffer, y, filters_[n],
-                                      &filters_updated, &error_sum);
+         aec3::MatchedFilterCore_SSE2(
+             x_start_index, x2_sum_threshold, smoothing, render_buffer.buffer, y,
+             filters_[n], &filters_updated, &error_sum, compute_pre_echo,
+             instantaneous_accumulated_error_, scratch_memory_);
          break;
 +#endif
        case Aec3Optimization::kAvx2:
-         aec3::MatchedFilterCore_AVX2(x_start_index, x2_sum_threshold, smoothing,
-                                      render_buffer.buffer, y, filters_[n],
+         aec3::MatchedFilterCore_AVX2(
+             x_start_index, x2_sum_threshold, smoothing, render_buffer.buffer, y,
 --- a/third_party/libwebrtc/modules/audio_processing/aec3/fft_data.h
 +++ b/third_party/libwebrtc/modules/audio_processing/aec3/fft_data.h
 @@ -49,6 +49,7 @@ struct FftData {
@@ -251,9 +252,9 @@ Forwarded: not-needed
  void MatchedFilterCore_SSE2(size_t x_start_index,
                              float x2_sum_threshold,
 @@ -51,6 +52,7 @@ void MatchedFilterCore_SSE2(size_t x_sta
-                             rtc::ArrayView<float> h,
-                             bool* filters_updated,
-                             float* error_sum);
+                             bool compute_accumulated_error,
+                             rtc::ArrayView<float> accumulated_error,
+                             rtc::ArrayView<float> scratch_memory);
 +#endif
  
  // Filter core for the matched filter that is optimized for AVX2.
