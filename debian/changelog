@@ -5,6 +5,8 @@ firefox-trunk (109.0~a1~hg20221116r642509-0ubuntu1) UNRELEASED; urgency=medium
     - debian/build/rules.mk
   * Update patches
     - debian/patches/libwebrtc-i386-sse2-ftbfs.patch
+  * Bump dump_sys to 2.1.0
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 16 Nov 2022 13:12:30 +0100
 
