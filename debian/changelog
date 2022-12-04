@@ -8,6 +8,9 @@ firefox-trunk (109.0~a1~hg20221116r642509-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/armhf-reduce-linker-memory-use.patch
   * Bump dump_sys to 2.1.1
     - debian/build/create-tarball.py
+  * Update generated uniffi-js on armhf and i386
+    - debian/build/rules.mk
+    - debian/patches/uniffi-js.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 16 Nov 2022 13:12:30 +0100
 
