@@ -362,17 +362,6 @@ clean::
 	if [ -f Cargo.toml.bak ]; then mv Cargo.toml.bak Cargo.toml; fi
 endif
 
-# Conditionally patch the generated uniffi-js files.
-# https://bugzilla.mozilla.org/show_bug.cgi?id=1803726
-ifneq (,$(filter armhf i386, $(DEB_HOST_ARCH)))
-pre-build:: stamp-uniffi-js
-stamp-uniffi-js: debian/patches/uniffi-js.patch
-	patch -p1 < $<
-	touch $@
-clean::
-	if [ -f stamp-uniffi-js ]; then patch -p1 -R < debian/patches/uniffi-js.patch; rm stamp-uniffi-js; fi
-endif
-
 EXTRACT_TARBALL = $(firstword $(shell TMPDIR=`mktemp -d`; tar -jxf $(1) -C $$TMPDIR > /dev/null 2>&1; echo $$TMPDIR/`ls $$TMPDIR/ | head -n1`))
 
 ifdef LANGPACK_O_MATIC

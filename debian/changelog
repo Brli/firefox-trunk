@@ -1,6 +1,14 @@
 firefox-trunk (110.0~a1~hg20221213r645774-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Bump dump_sys to b204131a918a5d1b2f5d8efe941d902e0dcdf846
+    - debian/build/create-tarball.py
+  * Update patches
+    - debian/patches/rust-drop-dll-checksums.patch
+  * Drop patching of uniffi-js, not needed anymore
+    - debian/build/rules.mk
+    - debian/patches/uniffi-js.patch
+  * Don't pass deprecated 'U' mode to open() to fix build with python 3.11
+    - debian/build/Preprocessor.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 13 Dec 2022 09:28:10 +0100
 

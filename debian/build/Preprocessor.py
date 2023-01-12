@@ -401,7 +401,7 @@ class Preprocessor:
           args = self.applyFilters(args)
         if not os.path.isabs(args):
           args = os.path.join(self.context['DIRECTORY'], args)
-        args = open(args, 'rU')
+        args = open(args, 'r')
       except Preprocessor.Error:
         raise
       except:
