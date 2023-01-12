@@ -9,6 +9,8 @@ firefox-trunk (110.0~a1~hg20221213r645774-0ubuntu1) UNRELEASED; urgency=medium
     - debian/patches/uniffi-js.patch
   * Don't pass deprecated 'U' mode to open() to fix build with python 3.11
     - debian/build/Preprocessor.py
+  * Bump build-dep on rustc >= 1.65.0 and cargo >= 0.66
+    - debian/control{,.in}
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Tue, 13 Dec 2022 09:28:10 +0100
 
