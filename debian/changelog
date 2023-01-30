@@ -1,6 +1,7 @@
 firefox-trunk (111.0~a1~hg20230120r649675-0ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Bump dump_sys to 0bd3a3daf7f7119e0861657083d3233172d5263e
+    - debian/build/create-tarball.py
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Fri, 20 Jan 2023 07:55:50 +0100
 
