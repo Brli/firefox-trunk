@@ -11,7 +11,7 @@ if __name__ == '__main__':
         exit(1)
 
     json_doc = json.loads(zipfile.ZipFile(sys.argv[1]).open('manifest.json').read().decode('utf-8').strip())
-    gecko_id = json_doc["applications"]["gecko"]["id"]
+    gecko_id = json_doc["browser_specific_settings"]["gecko"]["id"]
 
     assert gecko_id
     print("%s" % gecko_id)
