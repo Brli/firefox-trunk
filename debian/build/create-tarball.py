@@ -154,7 +154,7 @@ class TarballCreator(OptionParser):
         CheckCall(['cargo', 'new', 'vendored-dump_syms', '--vcs', 'none'])
         with ScopedWorkingDirectory('vendored-dump_syms'):
           with open('Cargo.toml', 'a+') as fd:
-            fd.write('dump_syms = { git = "https://github.com/mozilla/dump_syms.git", rev = "2b8f4a9c269aa80f0126ea8ecfec971dcd7df50c" }')
+            fd.write('dump_syms = "=2.2.0"')
           CheckCall(['cargo', 'vendor'])
           with ScopedWorkingDirectory('vendor/dump_syms'):
             os.makedirs('.cargo')

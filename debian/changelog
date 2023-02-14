@@ -1,6 +1,6 @@
 firefox-trunk (111.0~a1~hg20230120r649675-0ubuntu1) UNRELEASED; urgency=medium
 
-  * Bump dump_sys to 2b8f4a9c269aa80f0126ea8ecfec971dcd7df50c
+  * Bump dump_sys to 2.2.0
     - debian/build/create-tarball.py
   * Update for upstream manifest changes
     https://bugzilla.mozilla.org/show_bug.cgi?id=1810734
