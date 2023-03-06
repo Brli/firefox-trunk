@@ -1,4 +1,10 @@
-firefox-trunk (111.0~a1~hg20230120r649675-0ubuntu1) UNRELEASED; urgency=medium
+firefox-trunk (112.0~a1~hg20230215r653168-0ubuntu1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 15 Feb 2023 17:56:21 +0100
+
+firefox-trunk (111.0~a1~hg20230212r652462-0ubuntu1) lunar; urgency=medium
 
   * Bump dump_sys to 2.2.0
     - debian/build/create-tarball.py
