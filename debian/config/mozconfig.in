@@ -91,6 +91,7 @@ ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
 %%endif
 %%if DISTRIB_VERSION == 1804
 ac_add_options NODEJS=/usr/lib/nodejs-mozilla/bin/node
+ac_add_options PYTHON3=/usr/bin/python3.7
 %%if DEB_HOST_ARCH != arm64
 %%if DEB_HOST_ARCH != armhf
 %%if DEB_HOST_ARCH != ppc64el
