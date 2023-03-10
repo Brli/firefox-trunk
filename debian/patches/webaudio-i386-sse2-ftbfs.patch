@@ -1,0 +1,17 @@
+Description: Disable SSE/SSE2 code paths in webaudio when building on i386,
+ because it's not available at build time. This is Debian/Ubuntu specific.
+Author: Rico Tzschichholz <ricotz@ubuntu.com>
+Forwarded: not-needed
+
+diff -r c0aa24001283 dom/media/webaudio/moz.build
+--- a/dom/media/webaudio/moz.build	Thu Mar 09 01:22:56 2023 -0500
++++ b/dom/media/webaudio/moz.build	Thu Mar 09 11:28:02 2023 +0100
+@@ -134,7 +134,7 @@
+         LOCAL_INCLUDES += ["/media/openmax_dl/dl/api/"]
+ 
+ # Are we targeting x86 or x64?  If so, build SSEX files.
+-if CONFIG["INTEL_ARCHITECTURE"]:
++if CONFIG["CPU_ARCH"] == "x86_64":
+     DEFINES["USE_SSE2"] = True
+     SOURCES += ["AudioNodeEngineSSE2.cpp"]
+     LOCAL_INCLUDES += ["/third_party/xsimd/include"]
