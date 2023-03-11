@@ -5,6 +5,9 @@ firefox-trunk (112.0~a1~hg20230215r653168-0ubuntu1) UNRELEASED; urgency=medium
   * Bump build-dep to python >= 3.7
     - debian/config/mozconfig.in
     - debian/control{,.in}
+  * Fix armhf build failure
+    - debian/patches/D172126.diff
+    - debian/patches/webaudio-armhf-neon-ftbfs.patch
 
  -- Rico Tzschichholz <ricotz@ubuntu.com>  Wed, 15 Feb 2023 17:56:21 +0100
 

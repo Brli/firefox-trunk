@@ -1,0 +1,31 @@
+Description: Unset BUILD_ARM_NEON in webaudio when building on armhf,
+ This is specific to clang in Debian/Ubuntu.
+Author: Rico Tzschichholz <ricotz@ubuntu.com>
+Forwarded: not-needed
+
+diff -r 81040f1134e8 dom/media/webaudio/FFTBlock.h
+--- a/dom/media/webaudio/FFTBlock.h	Fri Mar 10 02:39:26 2023 +0000
++++ b/dom/media/webaudio/FFTBlock.h	Fri Mar 10 23:47:12 2023 +0100
+@@ -7,6 +7,10 @@
+ #ifndef FFTBlock_h_
+ #define FFTBlock_h_
+ 
++#if defined(__arm__)
++#undef BUILD_ARM_NEON
++#endif
++
+ #ifdef BUILD_ARM_NEON
+ #  include <cmath>
+ #  include "mozilla/arm.h"
+diff -r 81040f1134e8 dom/media/webaudio/moz.build
+--- a/dom/media/webaudio/moz.build	Fri Mar 10 02:39:26 2023 +0000
++++ b/dom/media/webaudio/moz.build	Fri Mar 10 23:47:12 2023 +0100
+@@ -125,7 +125,7 @@
+     "WebAudioUtils.cpp",
+ ]
+ 
+-if CONFIG["CPU_ARCH"] == "aarch64" or CONFIG["BUILD_ARM_NEON"]:
++if CONFIG["CPU_ARCH"] == "aarch64":
+     DEFINES["USE_NEON"] = True
+     LOCAL_INCLUDES += ["/third_party/xsimd/include"]
+     SOURCES += ["AudioNodeEngineNEON.cpp"]
