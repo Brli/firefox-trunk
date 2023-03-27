@@ -1,0 +1,16 @@
+ name: Fetch and Mirror
+
+ on:
+  push:
+    branches:
+    - "action"
+
+jobs:
+  name: Fetch
+  fetch_and_mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - apt update && apt upgrade
+      - apt install git bzr
+      - bzr fast-export branch firefox/trunk firefox-trunk
+      - git fast-import firefox-trunk
