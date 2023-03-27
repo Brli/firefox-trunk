@@ -1,16 +1,32 @@
- name: Fetch and Mirror
+name: CI
 
- on:
+on:
   push:
-    branches:
-    - "action"
+    branches: ["action"]
 
 jobs:
-  name: Fetch
   fetch_and_mirror:
     runs-on: ubuntu-latest
     steps:
-      - apt update && apt upgrade
-      - apt install git bzr
-      - bzr fast-export branch firefox/trunk firefox-trunk
-      - git fast-import firefox-trunk
+      - name: Purge packages unwanted
+        run: |
+          sudo apt-get purge firefox xserver-common powershell dotnet-runtime-6.0 aspnetcore-runtime-6.0 imagemagick-6-common
+          sudo apt-get autoremove --purge
+      - name: Update System
+        run: sudo apt-get -y update && sudo apt-get -y upgrade
+      - name: Install git brz
+        run: sudo apt-get -y install git brz wget
+      - name: Download git-bzr tool
+        run: |
+          mkdir ~/bin
+          wget https://raw.github.com/felipec/git-remote-bzr/master/git-remote-bzr -O ~/bin/git-remote-bzr
+          chmod +x ~/bin/git-remote-bzr
+          export PATH=$PATH:~/bin
+      - name: Fetch from Launchpad
+        run: git clone "bzr::lp:firefox/trunk" repo
+      - run: cd repo && git switch -c master
+      - name: Deploy SSH Key
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add - <<< ${{ secrets.SSH_KEY }}
+      - run: cd repo && git push -f -u git@github.com/brli/firefox-trunk.git master
