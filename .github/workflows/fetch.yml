@@ -28,5 +28,5 @@ jobs:
       - name: Deploy SSH Key
         run: |
           eval $(ssh-agent -s)
-          ssh-add - <<< ${{ secrets.SSH_KEY }}
+          echo ${{ secrets.SSH_KEY }} | ssh-add -
       - run: cd repo && git push -f -u git@github.com/brli/firefox-trunk.git master
